@@ -19,6 +19,7 @@
         @if (ParentMenu is null)
         {
             <div @onkeydown="HandleActivatorKeydown"
+                 id="@_activatorElementId"
                  disabled="@Disabled"
                  class="@ActivatorClassname"
                  tabindex="0"
@@ -48,6 +49,7 @@
         if (ParentMenu is null)
         {
             <MudButton @ref="_buttonActivator"
+                       id="@_activatorElementId"
                        Class="mud-menu-button-activator"
                        StartIcon="@StartIcon"
                        EndIcon="@EndIcon"
@@ -81,6 +83,7 @@
     else
     {
         <MudIconButton @ref="_iconButtonActivator"
+                       id="@_activatorElementId"
                        Class="mud-menu-icon-button-activator"
                        Variant="@Variant"
                        Icon="@Icon"
@@ -123,6 +126,7 @@
     {
         <MudOverlay Visible="_openState.Value && !_isTransient"
                     AutoClose
+                    AutoCloseIgnoreElementIds="@(new[] { _activatorElementId })"
                     OnClosed="CloseMenuAsync"
                     LockScroll="LockScroll"
                     Modal="@GetModal()" />

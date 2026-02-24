@@ -129,6 +129,11 @@ class MudPointerEventsNone {
                 break;
             }
 
+            const options = map.get(element.id);
+            if (this._isEventExcluded(event, options?.excludeElementIds)) {
+                continue;
+            }
+
             matchingIds.push(element.id);
         }
 
@@ -139,6 +144,36 @@ class MudPointerEventsNone {
 
         this.logger("Raising", raiseMethod, "for matching element(s):", matchingIds);
         this.dotnet.invokeMethodAsync(raiseMethod, matchingIds);
+    }
+
+    _isEventExcluded(event, excludeElementIds) {
+        if (!Array.isArray(excludeElementIds) || excludeElementIds.length === 0) {
+            return false;
+        }
+
+        const target = event.target instanceof Element ? event.target : null;
+        const path = typeof event.composedPath === "function" ? event.composedPath() : null;
+
+        for (const elementId of excludeElementIds) {
+            if (!elementId) {
+                continue;
+            }
+
+            const excludedElement = document.getElementById(elementId);
+            if (!excludedElement) {
+                continue;
+            }
+
+            if (path && path.includes(excludedElement)) {
+                return true;
+            }
+
+            if (target && excludedElement.contains(target)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

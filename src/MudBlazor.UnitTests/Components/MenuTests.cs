@@ -104,6 +104,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Menu_ModelessOverlayClose_ShouldNotReopenInSamePointerSequence()
+        {
+            var comp = Context.Render<MenuTest1>();
+            IElement Activator() => comp.FindAll("button.mud-button-root")[0];
+
+            await Activator().ClickAsync(new MouseEventArgs { Button = 0 });
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            await Activator().PointerDownAsync(new PointerEventArgs { Button = 0 });
+            await Activator().ClickAsync(new MouseEventArgs { Button = 0 });
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+
+            await Activator().ClickAsync(new MouseEventArgs { Button = 0 });
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+        }
+
+        [Test]
         public async Task OpenMenu_CheckClass()
         {
             var comp = Context.Render<MenuTest1>();

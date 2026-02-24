@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Linq;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
@@ -284,6 +285,31 @@ public class OverlayTests : BunitTest
         );
 
         serviceMock.Verify(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()), callsStart ? Times.Once() : Times.Never());
+    }
+
+    [Test]
+    public void ModelessAutoClose_PropagatesIgnoreElementIdsToPointerEventsOptions()
+    {
+        Context.Services.Remove(ServiceDescriptor.Scoped<IPointerEventsNoneService, PointerEventsNoneService>());
+        var serviceMock = new Mock<IPointerEventsNoneService>();
+        serviceMock
+            .Setup(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()))
+            .Returns(Task.CompletedTask);
+        Context.Services.AddScoped(_ => serviceMock.Object);
+
+        var ignoredIds = new[] { "activator-1", "activator-2" };
+        Context.Render<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.AutoClose, true)
+            .Add(p => p.Modal, false)
+            .Add(p => p.AutoCloseIgnoreElementIds, ignoredIds));
+
+        serviceMock.Verify(s => s.SubscribeAsync(
+            It.IsAny<IPointerEventsNoneObserver>(),
+            It.Is<PointerEventsNoneOptions>(o =>
+                o.SubscribeDown &&
+                o.ExcludeElementIds is not null &&
+                o.ExcludeElementIds.SequenceEqual(ignoredIds))), Times.Once);
     }
 
     [Test]

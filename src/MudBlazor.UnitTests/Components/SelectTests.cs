@@ -1745,6 +1745,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_ModelessOverlayClose_ShouldNotReopenInSamePointerSequence()
+        {
+            var comp = Context.Render<SelectTest1>();
+            IElement Input() => comp.Find("div.mud-input-control");
+            IElement Menu() => comp.Find("div.mud-popover");
+
+            await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
+
+            await Input().PointerDownAsync(new PointerEventArgs { Button = 0 });
+            await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
+
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().NotContain("mud-popover-open"));
+
+            await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
+            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
+        }
+
+        [Test]
         public async Task SelectMultiSelectFieldChanged()
         {
             var comp = Context.Render<SelectMultiSelectFieldChangedTest>();

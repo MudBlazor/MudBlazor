@@ -34,6 +34,7 @@ namespace MudBlazor
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
+        private readonly string _activatorElementId = Identifier.Create("menu-activator");
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
