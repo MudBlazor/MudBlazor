@@ -13,6 +13,8 @@ namespace MudBlazor;
 /// </summary>
 public class MudTooltipChildContainer : ComponentBase
 {
+    private int _lastUpdateCount;
+
     /// <summary>
     /// The child content to render.
     /// </summary>
@@ -22,30 +24,20 @@ public class MudTooltipChildContainer : ComponentBase
     /// <summary>
     /// The update count of the parent component.
     /// </summary>
-    [Parameter]
+    [Parameter, EditorRequired]
     public int UpdateCount { get; set; }
 
-    private int _lastUpdateCount;
+    /// <inheritdoc />
+    protected override void OnInitialized() => _lastUpdateCount = UpdateCount;
 
-    protected override void OnInitialized()
-    {
-        _lastUpdateCount = UpdateCount;
-    }
-
+    /// <inheritdoc />
     protected override bool ShouldRender()
     {
-        if (UpdateCount != _lastUpdateCount)
-        {
-            _lastUpdateCount = UpdateCount;
-
-            return true;
-        }
-
-        return false;
+        var changed = UpdateCount != _lastUpdateCount;
+        _lastUpdateCount = UpdateCount;
+        return changed;
     }
 
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        builder.AddContent(0, ChildContent);
-    }
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder) => builder.AddContent(0, ChildContent);
 }

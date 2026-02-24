@@ -4,12 +4,4 @@
 
 namespace MudBlazor.UnitTests.TestComponents.Tooltip.RerenderTests;
 
-public class MyObject
-{
-    public DateTime Day;
-
-    public MyObject()
-    {
-        Day = DateTime.Now;
-    }
-}
+public class MyObject;

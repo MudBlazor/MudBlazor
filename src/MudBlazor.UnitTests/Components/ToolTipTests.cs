@@ -395,21 +395,6 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        private class ComplexComponent : ComponentBase
-        {
-            [Parameter]
-            public object Data { get; set; }
-
-            public int RenderCount { get; private set; }
-
-            protected override void BuildRenderTree(RenderTreeBuilder builder)
-            {
-                base.BuildRenderTree(builder);
-                RenderCount++;
-                builder.AddContent(0, "Complex Component Content");
-            }
-        }
-
         [Test]
         public async Task Tooltip_ShouldNotRerenderChildContent_WhenVisibleChangesInternally()
         {
@@ -454,6 +439,21 @@ namespace MudBlazor.UnitTests.Components
 
             // Should re-render because it should behave as if not encapsulated
             complexComp.RenderCount.Should().Be(initialCount + 1);
+        }
+
+        private class ComplexComponent : ComponentBase
+        {
+            [Parameter]
+            public object Data { get; set; }
+
+            public int RenderCount { get; private set; }
+
+            protected override void BuildRenderTree(RenderTreeBuilder builder)
+            {
+                base.BuildRenderTree(builder);
+                RenderCount++;
+                builder.AddContent(0, "Complex Component Content");
+            }
         }
     }
 }
