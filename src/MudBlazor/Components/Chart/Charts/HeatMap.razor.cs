@@ -35,7 +35,7 @@ namespace MudBlazor.Charts
         private const double BoundWidth = 800.0;
 
         private const double BoundHeight = 350.0;
-        
+
         private const int AxisLabelsPadding = 5;
 
         private const int AxisLabelsPadding = 5;
