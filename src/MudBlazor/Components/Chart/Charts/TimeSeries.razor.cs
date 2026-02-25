@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Numerics;
+﻿using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 

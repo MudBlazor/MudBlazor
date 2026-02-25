@@ -50,7 +50,7 @@ namespace MudBlazor.Charts
         /// </summary>
         public HashSet<SankeyEdge<T>> Edges { get; set; } = [];
 
-        private Dictionary<string, NodeRect> NodeRects { get; set; } = [];
+        private Dictionary<string, NodeRect> NodeRects { get; } = [];
         private Dictionary<string, double> NodeValues { get; set; } = [];
         private List<EdgePath> EdgePaths { get; } = [];
         private string? ActiveNode { get; set; }
@@ -285,7 +285,6 @@ namespace MudBlazor.Charts
                     : ChartSeries.Count;
 
             var aggregated = new ChartSeries<T>[maxCategoryLength];
-
             return aggregation switch
             {
                 AggregationOption.GroupByLabel => AggregateByLabel(aggregated),
@@ -303,7 +302,7 @@ namespace MudBlazor.Charts
                               .Max(x => x?.Data?.Values.Count ?? 0);
         }
 
-        private List<ChartSeries<T>> AggregateByLabel(ChartSeries<T>[] aggregated)
+        private List<ChartSeries<T>> AggregateByLabel(ChartSeries<T>[] _)
         {
             var result = new List<ChartSeries<T>>();
             var visibleSeries = ChartSeries.Where(s => s.Visible).ToList();
@@ -432,17 +431,16 @@ namespace MudBlazor.Charts
             // Calculate grid sizes
             var maxRows = nodesPerColumn.Max(n => n.Count());
             var maxColumns = nodesPerColumn.Length - 1;
-            var boundWidthRelativeToNodeWidth = _boundWidth - ChartOptions!.NodeWidth * maxColumns - 2 * HorizontalPadding;
+            var boundWidthRelativeToNodeWidth = _boundWidth - (ChartOptions!.NodeWidth * maxColumns) - (2 * HorizontalPadding);
 
-            boundHeightRelativeToNodeHeight = _boundHeight - ChartOptions!.MinVerticalSpacing * maxRows;
+            boundHeightRelativeToNodeHeight = _boundHeight - (ChartOptions!.MinVerticalSpacing * maxRows);
 
             // Draw all nodes column per column
-            var nodeRects = new Dictionary<string, NodeRect>();
             foreach (var column in nodesPerColumn)
             {
-                var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth + HorizontalPadding;
+                var x = (column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth) + HorizontalPadding;
                 var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]);
-                var totalVerticalSpace = _boundHeight - double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight;
+                var totalVerticalSpace = _boundHeight - (double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight);
                 var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), ChartOptions!.MinVerticalSpacing);
 
                 double currentY = 0;
@@ -469,7 +467,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private SankeyNode[] NormaliseNodeColumnIndices(SankeyNode[] nodes)
+        private static SankeyNode[] NormaliseNodeColumnIndices(SankeyNode[] nodes)
         {
             // Normalise column indices
             var columnMap = nodes
@@ -546,8 +544,8 @@ namespace MudBlazor.Charts
                         ),
                         LabelXValue = rectSource.Name,
                         LabelYValue = rectTarget.Name,
-                        LabelX = startX + Math.Abs(startX - endX) / 2,
-                        LabelY = startY + (endY - startY) / 2 + height / 2
+                        LabelX = startX + (Math.Abs(startX - endX) / 2),
+                        LabelY = startY + ((endY - startY) / 2) + (height / 2)
                     });
 
                     startYOffset += height;
@@ -566,8 +564,8 @@ namespace MudBlazor.Charts
             var ty1 = targetY + targetHeight;
 
             // Control points for cubic Bezier curve
-            var cx0 = sourceX + (targetX - sourceX) * curvature;
-            var cx1 = targetX - (targetX - sourceX) * curvature;
+            var cx0 = sourceX + ((targetX - sourceX) * curvature);
+            var cx1 = targetX - ((targetX - sourceX) * curvature);
 
             return $"M{ToS(sourceX)},{ToS(sy0)} " + // Top-left of source
                    $"C{ToS(cx0)},{ToS(sy0)} " + // Control point 1

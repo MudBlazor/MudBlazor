@@ -148,7 +148,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         {
             AggregationOption.GroupByLabel => AggregateByLabel(aggregated),
             AggregationOption.GroupByDataSet => AggregateByDataSet(aggregated),
-            _ => throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}")
+            _ => throw new ArgumentOutOfRangeException(nameof(aggregation), $@"Unsupported aggregation: {aggregation}")
         };
     }
 

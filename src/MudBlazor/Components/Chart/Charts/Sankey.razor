@@ -1,6 +1,4 @@
-﻿@using System.Globalization
-
-@namespace MudBlazor.Charts
+﻿@namespace MudBlazor.Charts
 
 @inherits MudChartBase<T, SankeyChartOptions>
 
@@ -93,7 +91,7 @@
     </svg>
 </div>
 
-@if (CanHideSeries is true)
+@if (CanHideSeries)
 {
     <Legend T="T" Data="@_legend" />
 }

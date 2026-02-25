@@ -16,7 +16,7 @@ namespace MudBlazor.Charts;
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>
-public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TOptions>, IMudAxisChart<T>
+public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TOptions>
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IAxisLineChartOptions
 {
@@ -113,7 +113,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             if (x > _boundWidth - HorizontalEndSpace)
                 break; // we are out of bounds
 
-            var line = new SvgPath()
+            var line = new SvgPath
             {
                 Index = i,
                 Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
@@ -122,7 +122,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
             var xLabels = GetVerticalGridLineLabel(i);
 
-            var lineValue = new SvgText()
+            var lineValue = new SvgText
             {
                 X = x,
                 Y = _boundHeight - XAxisLabelOffset,
@@ -162,20 +162,16 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             var dataLength = series.Data.Points.Count;
             if (dataLength == 0) continue;
 
-            double firstPointX;
-            double firstPointY;
-            double lastPointX;
-
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
 
             var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null;
 
-            (firstPointX, firstPointY, lastPointX) = interpolationEnabled
+            var (firstPointX, firstPointY, lastPointX) = interpolationEnabled
                 ? GenerateInterpolatedLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace)
                 : GenerateStraightLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
 
-            var line = new SvgPath()
+            var line = new SvgPath
             {
                 Index = i,
                 Data = chartLine.ToString()
@@ -239,7 +235,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
             if (ChartOptions?.ShowToolTips == true)
             {
-                chartDataCircles.Add(new SvgCircle()
+                chartDataCircles.Add(new SvgCircle
                 {
                     Index = seriesIndex,
                     CX = x,
@@ -276,7 +272,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     {
         double firstPointX = 0, firstPointY = 0, lastPointX = 0;
 
-        var interpolationResolution = 10;
+        const int InterpolationResolution = 10;
         var interpolator = CreateInterpolator(seriesIndex, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
 
         for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
@@ -302,13 +298,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             chartLine.Append(' ');
             chartLine.Append(ToS(y));
 
-            var originalIndex = j / interpolationResolution;
+            var originalIndex = j / InterpolationResolution;
             // Add tooltip points for interpolated data if needed
-            if (j % interpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
+            if (j % InterpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
                 Series[seriesIndex].Data != null && originalIndex < Series[seriesIndex].Data.Points.Count)
             {
 
-                chartDataCircles.Add(new SvgCircle()
+                chartDataCircles.Add(new SvgCircle
                 {
                     Index = seriesIndex,
                     CX = x,
@@ -343,7 +339,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// <param name="series">The chart series.</param>
     protected void AddLegend(int seriesIndex, ChartSeries<T> series)
     {
-        var legend = new SvgLegend()
+        var legend = new SvgLegend
         {
             Index = seriesIndex,
             Labels = series.Name,
@@ -390,7 +386,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         chartArea.Append(ToS(firstPointY));
         chartArea.Append(" Z");
 
-        var area = new SvgPath()
+        var area = new SvgPath
         {
             Index = seriesIndex,
             Data = chartArea.ToString()
