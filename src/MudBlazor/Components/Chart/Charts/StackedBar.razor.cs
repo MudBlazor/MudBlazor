@@ -124,8 +124,7 @@ namespace MudBlazor.Charts
             {
                 foreach (var seriesData in Series.Select(x => x.Data))
                 {
-                    if (j >= seriesData.Values.Count)
-                        continue;
+                    if (j >= seriesData.Values.Count) continue;
 
                     var value = seriesData[j].Y;
 
@@ -143,8 +142,7 @@ namespace MudBlazor.Charts
         {
             var maxY = stackedPositiveTotals.Length == 0 ? T.Zero : stackedPositiveTotals.Max();
 
-            if (ChartOptions?.YAxisSuggestedMax is { } suggestedMax)
-                maxY = T.Max(T.CreateSaturating(suggestedMax), maxY);
+            if (ChartOptions?.YAxisSuggestedMax is { } suggestedMax) maxY = T.Max(T.CreateSaturating(suggestedMax), maxY);
 
             var minY = stackedNegativeTotals.Length == 0 ? T.Zero : stackedNegativeTotals.Min();
 
@@ -249,13 +247,11 @@ namespace MudBlazor.Charts
 
                 foreach (var (series, seriesIndex) in Series.Select((s, i) => (s, i)))
                 {
-                    if (dataIndex >= series.Data.Values.Count)
-                        continue;
+                    if (dataIndex >= series.Data.Values.Count) continue;
 
                     var dataValue = series.Visible ? series.Data[dataIndex].Y : T.Zero;
 
-                    if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues)
-                        continue;
+                    if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues) continue;
 
                     var segmentHeight = (dataValue / T.CreateSaturating(gridYUnits)) * T.CreateSaturating(verticalSpace);
                     var isNegative = dataValue < T.Zero;
@@ -323,24 +319,24 @@ namespace MudBlazor.Charts
                 YLabel = bar.LabelYValue,
             }).CatchAndLog();
 
-            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-                chart.StateHasChanged();
+            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart) chart.StateHasChanged();
         }
 
         private void OnBarMouseOut()
         {
-            var bar = _hoveredBar;
-            _hoveredBar = null;
-            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            if (_hoveredBar != null)
             {
-                MouseIsOver = false,
-                Index = bar?.Index ?? -1,
-                XLabel = bar?.LabelXValue,
-                YLabel = bar?.LabelYValue,
-            }).CatchAndLog();
+                OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+                {
+                    MouseIsOver = false,
+                    Index = _hoveredBar.Index,
+                    XLabel = _hoveredBar.LabelXValue,
+                    YLabel = _hoveredBar.LabelYValue,
+                }).CatchAndLog();
+                _hoveredBar = null;
+            }
 
-            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-                chart.StateHasChanged();
+            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart) chart.StateHasChanged();
         }
     }
 }
