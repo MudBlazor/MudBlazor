@@ -38,7 +38,13 @@ internal sealed class DebounceDispatcher : IDisposable
     private CancellationTokenSource? _cancellationTokenSource;
     private CancellationTokenSource? _previousCancellationTokenSource;
     private DateTimeOffset _lastExecutionTime = DateTimeOffset.MinValue;
+    private int _pendingOperations;
     private bool _disposed;
+
+    /// <summary>
+    /// Indicates whether a debounce delay is currently pending.
+    /// </summary>
+    public bool IsPending => Volatile.Read(ref _pendingOperations) > 0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval.
@@ -193,15 +199,38 @@ internal sealed class DebounceDispatcher : IDisposable
             await action().ConfigureAwait(false);
             return;
         }
+        Interlocked.Increment(ref _pendingOperations);
         try
         {
             // Wait for the debounce interval
             await Task.Delay(_interval, _timeProvider, localCts!.Token).ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Silently ignore if CTS was disposed (happens when a new debounce call comes in or dispatcher is disposed)
+            return;
+        }
+        catch (TaskCanceledException)
+        {
+            // Silently ignore cancellation (either from new call or external cancellation)
+            return;
+        }
+        catch (OperationCanceledException)
+        {
+            // Silently ignore cancellation
+            return;
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _pendingOperations);
+        }
 
+        try
+        {
             // Update last execution time for leading mode
             if (_leading)
             {
-                await _lock.WaitAsync(localCts.Token).ConfigureAwait(false);
+                await _lock.WaitAsync(localCts!.Token).ConfigureAwait(false);
                 try
                 {
                     _lastExecutionTime = _timeProvider.GetUtcNow();
