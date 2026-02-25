@@ -121,6 +121,12 @@
     -o-transition: stroke .2s ease;
     transition: stroke .2s ease;
   }
+
+  & .mud-donut-text {
+    dominant-baseline: central;
+    text-anchor: middle;
+    fill: var(--mud-palette-primary-text);
+  }
 }
 
 .mud-chart-legend-marker {

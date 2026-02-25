@@ -160,7 +160,7 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
-    public bool CanHideSeries { get; set; } = false;
+    public bool CanHideSeries { get; set; }
 
     /// <summary>
     /// The palette of colors to be used for the legend.
