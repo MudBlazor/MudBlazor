@@ -8,6 +8,14 @@
 
     & .mud-select-input {
       cursor: text;
+
+      &.mud-readonly {
+        cursor: default;
+
+        & .mud-input-adornment {
+          cursor: default;
+        }
+      }
     }
 
     & .mud-input-adornment {
@@ -52,6 +60,10 @@
 
   .mud-select-input {
     cursor: pointer;
+
+    &.mud-readonly {
+      cursor: default;
+    }
 
     & .mud-input-slot {
       overflow: hidden;
