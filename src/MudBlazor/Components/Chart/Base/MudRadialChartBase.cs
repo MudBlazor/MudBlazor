@@ -347,12 +347,35 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     /// </summary>
     /// <param name="args">The mouse event arguments.</param>
     /// <param name="segment">The hovered segment path.</param>
-    internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
+    internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment)
+    {
+        _hoveredSegment = segment;
+        OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(segment, mouseIsOver: true)).CatchAndLog();
+    }
 
     /// <summary>
     /// Handles the mouse out event for a segment.
     /// </summary>
-    internal virtual void OnSegmentMouseOut() => _hoveredSegment = null;
+    internal virtual void OnSegmentMouseOut()
+    {
+        var hoverArgs = _hoveredSegment is { } s ? BuildHoverArgs(s, mouseIsOver: false) : new ChartHoverEventArgs<T>();
+        _hoveredSegment = null;
+        OnDataPointMouseOver.InvokeAsync(hoverArgs).CatchAndLog();
+    }
+
+    private ChartHoverEventArgs<T> BuildHoverArgs(SvgPath segment, bool mouseIsOver)
+    {
+        var data = AggregateSeriesData(ChartOptions!.AggregationOption);
+        var value = segment.Index >= 0 && segment.Index < data.Length ? (T?)data[segment.Index] : null;
+        return new ChartHoverEventArgs<T>
+        {
+            MouseIsOver = mouseIsOver,
+            Index = segment.Index,
+            XLabel = segment.LabelXValue,
+            YLabel = segment.LabelYValue,
+            Value = value,
+        };
+    }
 
     /// <summary>
     /// Called when the element size changes.

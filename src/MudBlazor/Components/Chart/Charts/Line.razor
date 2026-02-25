@@ -113,8 +113,8 @@
                 builder.AddAttribute(seq++, "cx", item.CX.ToStr());
                 builder.AddAttribute(seq++, "cy", item.CY.ToStr());
                 builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
-                builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
-                builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => HandleDataPointMouseEnter(e, item)));
+                builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, HandleDataPointMouseLeave));
                 builder.CloseElement();
             }
         }

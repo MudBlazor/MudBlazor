@@ -281,10 +281,7 @@ namespace MudBlazor.Charts
                 {
                     var legend = new SvgLegend
                     {
-                        Index = row,
-                        Labels = _series[row].Name,
-                        Visible = _series[row].Visible,
-                        OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+                        Index = row, Labels = _series[row].Name, Visible = _series[row].Visible, OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                     };
                     _toggleLegend.Add(legend);
                 }
@@ -562,12 +559,27 @@ namespace MudBlazor.Charts
         private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
+            if (cell is not null)
+                OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(cell, mouseIsOver: true)).CatchAndLog();
         }
 
         private void OnCellMouseOut(MouseEventArgs _)
         {
+            var hoverArgs = _hoveredCell is { } c ? BuildHoverArgs(c, mouseIsOver: false) : new ChartHoverEventArgs<T>();
             _hoveredCell = null;
+            OnDataPointMouseOver.InvokeAsync(hoverArgs).CatchAndLog();
         }
+
+        private ChartHoverEventArgs<T> BuildHoverArgs(HeatMapCell<T> cell, bool mouseIsOver) => new()
+        {
+            MouseIsOver = mouseIsOver,
+            Index = (cell.Row * ChartLabels.Length) + cell.Column,
+            XLabel = ChartLabels.Length > cell.Column ? ChartLabels[cell.Column] : null,
+            YLabel = _series.Count > cell.Row ? _series[cell.Row].Name : null,
+            Value = cell.Value,
+            Row = cell.Row,
+            Column = cell.Column,
+        };
 
         private void OnLegendMouseOver(MouseEventArgs _, (T value, string color) legend, PointF position)
         {

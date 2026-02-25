@@ -315,6 +315,13 @@ namespace MudBlazor.Charts
         private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
         {
             _hoveredBar = bar;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            {
+                MouseIsOver = true,
+                Index = bar.Index,
+                XLabel = bar.LabelXValue,
+                YLabel = bar.LabelYValue,
+            }).CatchAndLog();
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
                 chart.StateHasChanged();
@@ -322,7 +329,15 @@ namespace MudBlazor.Charts
 
         private void OnBarMouseOut()
         {
+            var bar = _hoveredBar;
             _hoveredBar = null;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            {
+                MouseIsOver = false,
+                Index = bar?.Index ?? -1,
+                XLabel = bar?.LabelXValue,
+                YLabel = bar?.LabelYValue,
+            }).CatchAndLog();
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
                 chart.StateHasChanged();

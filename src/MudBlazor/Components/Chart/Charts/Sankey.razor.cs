@@ -613,11 +613,13 @@ namespace MudBlazor.Charts
         private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect)
         {
             if (ChartOptions!.HighlightOnHover) ActiveNode = rect.Name;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = true }).CatchAndLog();
         }
 
         private void OnNodeMouseOut(MouseEventArgs _)
         {
             ActiveNode = null;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = false }).CatchAndLog();
         }
 
         private async Task OnNodeClick(MouseEventArgs _, NodeRect rect)
@@ -630,11 +632,13 @@ namespace MudBlazor.Charts
         private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)
         {
             if (ChartOptions!.HighlightOnHover) ActiveEdge = edge.Name;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = true }).CatchAndLog();
         }
 
         private void OnEdgeMouseOut(MouseEventArgs _)
         {
             ActiveEdge = null;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = false }).CatchAndLog();
         }
 
         [JSInvokable]

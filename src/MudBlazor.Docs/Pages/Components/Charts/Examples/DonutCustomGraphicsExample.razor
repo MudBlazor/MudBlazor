@@ -1,12 +1,21 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@Data.AsChartDataSet()" ChartLabels="@Labels">
-	<CustomGraphics>
-		<text class="mud-donut-text mud-typography-h3" x="50%" y="50%">@Data.Sum()</text>
-	</CustomGraphics>
+<MudChart T="int" ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@Data.AsChartDataSet()" ChartLabels="@Labels" OnDataPointMouseOver="OnDataPointMouseOver">
+    <CustomGraphics>
+        <text class="mud-donut-text mud-typography-h3" x="50%" y="50%">@_text</text>
+    </CustomGraphics>
 </MudChart>
 
 @code {
     private static readonly int[] Data = [25, 77, 28, 5];
     private static readonly string[] Labels = ["Oil", "Coal", "Gas", "Biomass"];
+
+    private string _text = Data.Sum().ToString();
+
+    private void OnDataPointMouseOver(ChartHoverEventArgs<int> args)
+    {
+        _text = args.MouseIsOver
+            ? args.Value.ToString()
+            : Data.Sum().ToString();
+    }
 }

@@ -33,6 +33,9 @@
                                                                      MatchBoundsToSize="@MatchBoundsToSize"
                                                                      CustomGraphics="@CustomGraphics"
                                                                      Width="@Width" Height="@Height"
+                                                                     
+                                                                     
+                                                                     OnDataPointMouseOver="@OnDataPointMouseOver"
                                                                      @ref="ChartReference"
                                                                      @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                      @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
@@ -46,8 +49,11 @@
                                                                  MatchBoundsToSize="@MatchBoundsToSize"
                                                                  CustomGraphics="@CustomGraphics"
                                                                  Width="@Width" Height="@Height"
-                                                                 @ref="ChartReference"
-                                                                 @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                                 
+                                                                 
+                                                                 OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
+                                                                 @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                  @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Pie, PieChartOptions pieOptions) => @<Pie ChartSeries="@ChartSeries"
                                                              ChartLabels="@ChartLabels"
@@ -59,7 +65,10 @@
                                                              MatchBoundsToSize="@MatchBoundsToSize"
                                                              CustomGraphics="@CustomGraphics"
                                                              Width="@Width" Height="@Height"
-                                                             @ref="ChartReference"
+                                                             
+                                                             
+                                                             OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries"
@@ -72,8 +81,11 @@
                                                              MatchBoundsToSize="@MatchBoundsToSize"
                                                              CustomGraphics="@CustomGraphics"
                                                              Width="@Width" Height="@Height"
-                                                             @ref="ChartReference"
-                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                             
+                                                             
+                                                             OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
+                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries"
                                                                                          ChartLabels="@ChartLabels"
@@ -85,8 +97,11 @@
                                                                                          MatchBoundsToSize="@MatchBoundsToSize"
                                                                                          CustomGraphics="@CustomGraphics"
                                                                                          Width="@Width" Height="@Height"
-                                                                                         @ref="ChartReference"
-                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                                                         
+                                                                                         
+                                                                                         OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
+                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                                          @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Timeseries, TimeSeriesChartOptions timeSeriesOptions) => @<TimeSeries ChartSeries="@ChartSeries"
                                                                                          ChartLabels="@ChartLabels"
@@ -98,7 +113,10 @@
                                                                                          MatchBoundsToSize="@MatchBoundsToSize"
                                                                                          CustomGraphics="@CustomGraphics"
                                                                                          Width="@Width" Height="@Height"
-                                                                                         @ref="ChartReference"
+                                                                                         
+                                                                                         
+                                                                                         OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
                                                                                          @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                                          @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.HeatMap, HeatMapChartOptions heatMapOptions) => @<HeatMap ChartSeries="@ChartSeries"
@@ -111,7 +129,10 @@
                                                                              MatchBoundsToSize="@MatchBoundsToSize"
                                                                              CustomGraphics="@CustomGraphics"
                                                                              Width="@Width" Height="@Height"
-                                                                             @ref="ChartReference"
+                                                                             
+                                                                             
+                                                                             OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
                                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Rose, RoseChartOptions roseOptions) => @<Rose ChartSeries="@ChartSeries"
@@ -124,7 +145,10 @@
                                                                  MatchBoundsToSize="@MatchBoundsToSize"
                                                                  CustomGraphics="@CustomGraphics"
                                                                  Width="@Width" Height="@Height"
-                                                                 @ref="ChartReference"
+                                                                 
+                                                                 
+                                                                 OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
                                                                  @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                  @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Radar, RadarChartOptions radarOptions) => @<Radar ChartSeries="@ChartSeries"
@@ -137,6 +161,9 @@
                                                                      MatchBoundsToSize="@MatchBoundsToSize"
                                                                      CustomGraphics="@CustomGraphics"
                                                                      Width="@Width" Height="@Height"
+                                                                     
+                                                                     
+                                                                     OnDataPointMouseOver="@OnDataPointMouseOver"
                                                                      @ref="ChartReference"
                                                                      @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                      @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
@@ -150,7 +177,10 @@
                                                                        MatchBoundsToSize="@MatchBoundsToSize"
                                                                        CustomGraphics="@CustomGraphics"
                                                                        Width="@Width" Height="@Height"
-                                                                       @ref="ChartReference"
+                                                                       
+                                                                       
+                                                                       OnDataPointMouseOver="@OnDataPointMouseOver"
+                                                                     @ref="ChartReference"
                                                                        @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                        @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")

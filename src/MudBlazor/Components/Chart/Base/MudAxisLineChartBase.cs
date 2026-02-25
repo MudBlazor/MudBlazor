@@ -433,9 +433,16 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// </summary>
     /// <param name="_">The mouse event arguments.</param>
     /// <param name="hoveredPoint">The hovered data point path.</param>
-    protected void OnDataPointMouseOver(MouseEventArgs _, SvgPath hoveredPoint)
+    protected void HandleDataPointMouseEnter(MouseEventArgs _, SvgPath hoveredPoint)
     {
         HoveredDataPointPath = hoveredPoint;
+        OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+        {
+            MouseIsOver = true,
+            Index = hoveredPoint.Index,
+            XLabel = hoveredPoint.LabelXValue,
+            YLabel = hoveredPoint.LabelYValue,
+        }).CatchAndLog();
 
         if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
             chart.StateHasChanged();
@@ -444,9 +451,17 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// <summary>
     /// Handles the mouse out event for a data point.
     /// </summary>
-    protected void OnDataPointMouseOut()
+    protected void HandleDataPointMouseLeave()
     {
+        var path = HoveredDataPointPath;
         HoveredDataPointPath = null;
+        OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+        {
+            MouseIsOver = false,
+            Index = path?.Index ?? -1,
+            XLabel = path?.LabelXValue,
+            YLabel = path?.LabelYValue,
+        }).CatchAndLog();
 
         if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
             chart.StateHasChanged();
