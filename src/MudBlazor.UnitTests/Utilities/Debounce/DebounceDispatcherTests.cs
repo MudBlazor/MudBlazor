@@ -707,4 +707,55 @@ public class DebounceDispatcherTests
         // Assert
         executionCount.Should().Be(2);
     }
+
+    [Test]
+    public async Task DebounceAsync_IsPending_TracksDelayWindowOnly()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+        var actionGate = new TaskCompletionSource<bool>();
+
+        async Task BlockingAction() => await actionGate.Task;
+
+        // Act
+        var task = debounceDispatcher.DebounceAsync(BlockingAction);
+        await Task.Yield();
+
+        // Assert - pending during delay
+        debounceDispatcher.IsPending.Should().BeTrue();
+
+        // advance debounce interval to begin action execution
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        for (var i = 0; i < 10 && debounceDispatcher.IsPending; i++)
+        {
+            await Task.Yield();
+        }
+
+        // Assert - pending cleared once delay elapses, even while action is still running
+        debounceDispatcher.IsPending.Should().BeFalse();
+
+        actionGate.SetResult(true);
+        await task;
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task DebounceAsync_IsPending_ClearsAfterCancellation()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+
+        // Act
+        var task = debounceDispatcher.DebounceAsync(() => Task.CompletedTask);
+        await Task.Yield();
+        debounceDispatcher.IsPending.Should().BeTrue();
+
+        await debounceDispatcher.CancelAsync();
+        await task;
+
+        // Assert
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
 }
