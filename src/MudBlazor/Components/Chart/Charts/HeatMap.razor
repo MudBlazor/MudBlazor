@@ -59,14 +59,14 @@
         var y = row * (_cellDimension.Height + _cellDimension.Padding) + _verticalStartSpace;
         var seriesLength = series[row].Data != null ? series[row].Data.Values.Count : 0;
 
-        @for (var col = 0; col < seriesLength; col++)
+        for (var col = 0; col < seriesLength; col++)
         {
             var colIndex = col;
             var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
             var x = col * (_cellDimension.Width + _cellDimension.Padding) + _horizontalStartSpace;
 
             // Gradient Overlays
-            @if (_options is { EnableSmoothGradient: true })
+            if (_options is { EnableSmoothGradient: true })
             {
                 // Apply the 4 gradient overlays with partial opacity
                 <rect x="@x.ToStr()"
@@ -115,7 +115,7 @@
                           @onmouseout="OnCellMouseOut"
                           fill="@(cellColor)"/>
 
-                    @if (_options is { ShowLabels: true } && cell is { Value: not null } && cell is { CustomFragment: null })
+                    @if (_options is { ShowLabels: true } && cell is { Value: not null } and { CustomFragment: null })
                     {
                         <g>
                             <text @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
@@ -132,7 +132,7 @@
                     }
                     else if (cell is { CustomFragment: not null })
                     {
-                        @if (cell.Width.HasValue || cell.Height.HasValue)
+                        if (cell.Width.HasValue || cell.Height.HasValue)
                         {
                             // If specific width/height are provided, scale to cell dimensions
                             var tempWidth = cell.Width ?? _cellDimension.Width;
@@ -167,31 +167,31 @@
 
             // XAxis Labels
             var xAxisLabels = ChartLabels;
-            @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
+            if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
             {
                 <g transform="translate(@((x + _cellDimension.Width / 2).ToStr()), @((y - CellPadding).ToStr()))">
-                    <text class="mud-charts-xaxis" x="0" y="0" text-anchor="middle" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
+                    <text class="mud-charts-xaxis" x="0" y="@(-AxisLabelsPadding)" text-anchor="middle" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
                 </g>
             }
             else if (row == RowCount - 1 && _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom && col < xAxisLabels.Length)
             {
                 <g transform="translate(@((x + _cellDimension.Width / 2).ToStr()), @((y + _cellDimension.Height + _dynamicFontSize).ToStr()))">
-                    <text class="mud-charts-xaxis" x="0" y="0" text-anchor="middle" fill="black" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
+                    <text class="mud-charts-xaxis" x="0" y="@AxisLabelsPadding" text-anchor="middle" fill="black" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
                 </g>
             }
         }
 
         // YAxis Labels
-        @if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
+        if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
         {
             <g transform="translate(@((_horizontalStartSpace - CellPadding).ToStr()), @((y + _cellDimension.Height / 2).ToStr()))">
-                @((MarkupString)$"<text class='mud-charts-yaxis' x='0' y='0' dominant-baseline='middle' text-anchor='end' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
+                @((MarkupString)$"<text class='mud-charts-yaxis' x='{-AxisLabelsPadding}' y='0' dominant-baseline='middle' text-anchor='end' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
             </g>
         }
         else if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
         {
             <g transform="translate(@((_horizontalStartSpace + HeatmapWidth + CellPadding).ToStr()), @((y + _cellDimension.Height / 2).ToStr()))">
-                @((MarkupString)$"<text class='mud-charts-yaxis' x='0' y='0' dominant-baseline='middle' text-anchor='start' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
+                @((MarkupString)$"<text class='mud-charts-yaxis' x='{AxisLabelsPadding}' y='0' dominant-baseline='middle' text-anchor='start' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
             </g>
         }
     }
@@ -199,7 +199,7 @@
     {
         var (legendX, legendY) = GetLegendPosition();
         var labelFontSize = LegendFontSize - 2;
-        @switch (_legendPosition)
+        switch (_legendPosition)
         {
             case Position.Top or Position.Bottom:
             {
@@ -338,7 +338,7 @@
         var x = colOffset + _horizontalStartSpace + _cellDimension.Width / 2;
         var y = rowOffset + _verticalStartSpace + _cellDimension.Height / 2;
 
-        var path = new SvgPath()
+        var path = new SvgPath
         {
             Index = _hoveredCell.Row,
             LabelX = x,
