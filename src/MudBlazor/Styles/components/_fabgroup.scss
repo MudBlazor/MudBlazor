@@ -1,0 +1,7 @@
+.mud-fab-group {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: calc(var(--mud-zindex-appbar) + 1);
+}

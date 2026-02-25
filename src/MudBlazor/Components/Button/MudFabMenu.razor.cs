@@ -12,7 +12,7 @@ namespace MudBlazor;
 public partial class MudFabMenu : MudFab
 {
     private new string Classname => new CssBuilder("mud-fab-menu-container")
-        .AddClass("fixed", Fixed)
+        .AddClass("fixed", Fixed && FabGroup is null)
         .AddClass($"align-{AlignItems.ToStringFast(true)}")
         .AddClass(Class)
         .Build();

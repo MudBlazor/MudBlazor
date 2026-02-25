@@ -16,12 +16,15 @@ namespace MudBlazor
     /// <seealso cref="MudToggleIconButton" />
     public partial class MudFab : MudBaseButton
     {
+        [CascadingParameter]
+        protected MudFabGroup? FabGroup { get; set; }
+
         protected string Classname => new CssBuilder("mud-button-root mud-fab")
-            .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
+            .AddClass("mud-fab-extended", !string.IsNullOrEmpty(Label))
             .AddClass($"mud-fab-{Color.ToStringFast(true)}")
             .AddClass($"mud-fab-size-{Size.ToStringFast(true)}")
-            .AddClass($"mud-ripple", Ripple && !GetDisabledState())
-            .AddClass($"mud-fab-disable-elevation", !DropShadow)
+            .AddClass("mud-ripple", Ripple && !GetDisabledState())
+            .AddClass("mud-fab-disable-elevation", !DropShadow)
             .AddClass(Class)
             .Build();
 
