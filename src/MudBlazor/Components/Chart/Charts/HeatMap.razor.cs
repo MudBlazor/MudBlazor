@@ -281,7 +281,10 @@ namespace MudBlazor.Charts
                 {
                     var legend = new SvgLegend
                     {
-                        Index = row, Labels = _series[row].Name, Visible = _series[row].Visible, OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+                        Index = row, 
+                        Labels = _series[row].Name, 
+                        Visible = _series[row].Visible, 
+                        OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                     };
                     _toggleLegend.Add(legend);
                 }
