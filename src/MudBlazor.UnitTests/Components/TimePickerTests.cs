@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
