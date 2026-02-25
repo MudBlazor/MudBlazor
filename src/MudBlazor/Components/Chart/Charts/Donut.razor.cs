@@ -91,13 +91,13 @@ namespace MudBlazor.Charts
 
             sb.Append($"M {ToS(ToR(g.Coords.StartX, g.OuterRadius))} {ToS(ToR(g.Coords.StartY, g.OuterRadius))} ");
 
-            if (g.Data >= 1.0) 
+            if (g.Data >= 1.0)
                 sb.Append($"A {ToS(g.OuterRadius)} {ToS(g.OuterRadius)} 0 {arcFlag} 1 {ToS(ToR(g.Coords.MidX, g.OuterRadius))} {ToS(ToR(g.Coords.MidY, g.OuterRadius))} ");
 
             sb.Append($"A {ToS(g.OuterRadius)} {ToS(g.OuterRadius)} 0 {arcFlag} 1 {ToS(ToR(g.Coords.EndX, g.OuterRadius))} {ToS(ToR(g.Coords.EndY, g.OuterRadius))} ");
             sb.Append($"L {ToS(ToR(g.Coords.EndX, g.InnerRadius))} {ToS(ToR(g.Coords.EndY, g.InnerRadius))} ");
 
-            if (g.Data >= 1.0) 
+            if (g.Data >= 1.0)
                 sb.Append($"A {ToS(g.InnerRadius)} {ToS(g.InnerRadius)} 0 {arcFlag} 0 {ToS(ToR(g.Coords.MidX, g.InnerRadius))} {ToS(ToR(g.Coords.MidY, g.InnerRadius))} ");
 
             sb.Append($"A {ToS(g.InnerRadius)} {ToS(g.InnerRadius)} 0 {arcFlag} 0 {ToS(ToR(g.Coords.StartX, g.InnerRadius))} {ToS(ToR(g.Coords.StartY, g.InnerRadius))} Z");
@@ -107,7 +107,7 @@ namespace MudBlazor.Charts
 
         private static (double X, double Y) GetLabelPosition(double angle, double outerRadius, double donutRatio, double data)
         {
-            if (donutRatio >= 1 && data >= 1.0) 
+            if (donutRatio >= 1 && data >= 1.0)
                 return (0, 0);
 
             var radius = outerRadius * (1 - (donutRatio / 2));

@@ -20,7 +20,7 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     where TChartOptions : IAxisChartOptions, new()
 {
     private const int AxisTitleOffset = 0;
-    
+
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 

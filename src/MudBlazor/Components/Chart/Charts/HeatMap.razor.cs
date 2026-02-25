@@ -35,7 +35,7 @@ namespace MudBlazor.Charts
         private const double BoundWidth = 800.0;
 
         private const double BoundHeight = 350.0;
-        
+
         private const int AxisLabelsPadding = 5;
 
         internal Position _legendPosition = Position.Bottom;
@@ -66,7 +66,7 @@ namespace MudBlazor.Charts
 
         private double _dynamicFontSize = 8;
 
-        private double _yAxisLabelWidth = 0;
+        private double _yAxisLabelWidth;
 
         // padding or legend area for each side of the heatmap
         private double _horizontalStartSpace = HeatMapPadding;
@@ -92,10 +92,10 @@ namespace MudBlazor.Charts
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
 
         // the amount of pixels a legend extends horizontally when it's on left/right
-        private int _legendLabelsYAxis = 0;
+        private int _legendLabelsYAxis;
 
         // the amount of pixels a legend extends vertically when it's on the top/bottom
-        private int _legendLabelsXAxis = 0;
+        private int _legendLabelsXAxis;
 
         // Calculate the actual width of the heatmap cells area
         private double HeatmapWidth => _boundWidth - _horizontalStartSpace - _horizontalEndSpace;
