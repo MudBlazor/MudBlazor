@@ -256,9 +256,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 _boundHeight = _elementSize.Height;
             }
             else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
-                && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                     && Height.EndsWith("px")
+                     && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
+                     && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;
@@ -358,7 +358,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     /// </summary>
     internal virtual void OnSegmentMouseOut()
     {
-        var hoverArgs = _hoveredSegment is { } s ? BuildHoverArgs(s, mouseIsOver: false) : new ChartHoverEventArgs<T>();
+        var hoverArgs = _hoveredSegment != null
+            ? BuildHoverArgs(_hoveredSegment, mouseIsOver: false)
+            : new ChartHoverEventArgs<T>();
         _hoveredSegment = null;
         OnDataPointMouseOver.InvokeAsync(hoverArgs).CatchAndLog();
     }
@@ -366,7 +368,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     private ChartHoverEventArgs<T> BuildHoverArgs(SvgPath segment, bool mouseIsOver)
     {
         var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-        var value = segment.Index >= 0 && segment.Index < data.Length ? (T?)data[segment.Index] : null;
+        var value = segment.Index >= 0 && segment.Index < data.Length
+            ? (T?)data[segment.Index]
+            : null;
         return new ChartHoverEventArgs<T>
         {
             MouseIsOver = mouseIsOver,

@@ -103,15 +103,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         VerticalLines.Clear();
         VerticalValues.Clear();
 
-        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Values.Any()))
-            return;
+        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Values.Any())) return;
 
         for (var i = 0; i < numVerticalLines; i++)
         {
             var x = startOffset + HorizontalStartSpace + (i * horizontalSpace);
 
-            if (x > _boundWidth - HorizontalEndSpace)
-                break; // we are out of bounds
+            if (x > _boundWidth - HorizontalEndSpace) break; // we are out of bounds
 
             var line = new SvgPath
             {
@@ -145,15 +143,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         ChartAreas.Clear();
         ChartDataPoints.Clear();
 
-        if (Series.Count == 0)
-            return;
+        if (Series.Count == 0) return;
 
         for (var i = 0; i < Series.Count; i++)
         {
             var series = Series[i];
 
-            if (!series.Visible || !series.Data.Points.Any())
-                continue;
+            if (!series.Visible || !series.Data.Points.Any()) continue;
 
             var chartLine = new StringBuilder();
             var chartDataCircles = new List<SvgCircle>();
@@ -303,7 +299,6 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             if (j % InterpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
                 Series[seriesIndex].Data != null && originalIndex < Series[seriesIndex].Data.Points.Count)
             {
-
                 chartDataCircles.Add(new SvgCircle
                 {
                     Index = seriesIndex,
@@ -359,8 +354,12 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// <param name="firstPointX">The X coordinate of the first point.</param>
     /// <param name="firstPointY">The Y coordinate of the first point.</param>
     /// <param name="lastPointX">The X coordinate of the last point.</param>
-    protected void GenerateAreaChart(int seriesIndex, StringBuilder chartLine, int lowestHorizontalLine,
-                                     double firstPointX, double firstPointY, double lastPointX)
+    protected void GenerateAreaChart(int seriesIndex,
+                                     StringBuilder chartLine,
+                                     int lowestHorizontalLine,
+                                     double firstPointX,
+                                     double firstPointY,
+                                     double lastPointX)
     {
         var chartArea = new StringBuilder();
         var zeroPointY = GetYForZeroPoint(lowestHorizontalLine);
@@ -441,11 +440,10 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             MouseIsOver = true,
             Index = hoveredPoint.Index,
             XLabel = hoveredPoint.LabelXValue,
-            YLabel = hoveredPoint.LabelYValue,
+            YLabel = hoveredPoint.LabelYValue
         }).CatchAndLog();
 
-        if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-            chart.StateHasChanged();
+        if (IsOverlayChart && ChartReference is IMudStateHasChanged chart) chart.StateHasChanged();
     }
 
     /// <summary>
@@ -453,17 +451,19 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// </summary>
     protected void HandleDataPointMouseLeave()
     {
-        var path = HoveredDataPointPath;
-        HoveredDataPointPath = null;
-        OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+        if (HoveredDataPointPath != null)
         {
-            MouseIsOver = false,
-            Index = path?.Index ?? -1,
-            XLabel = path?.LabelXValue,
-            YLabel = path?.LabelYValue,
-        }).CatchAndLog();
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            {
+                MouseIsOver = false,
+                Index = HoveredDataPointPath.Index,
+                XLabel = HoveredDataPointPath.LabelXValue,
+                YLabel = HoveredDataPointPath.LabelYValue
+            }).CatchAndLog();
+        }
 
-        if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-            chart.StateHasChanged();
+        HoveredDataPointPath = null;
+
+        if (IsOverlayChart && ChartReference is IMudStateHasChanged chart) chart.StateHasChanged();
     }
 }
