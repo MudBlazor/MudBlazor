@@ -62,6 +62,7 @@ async function buildJS() {
         entrypoints: [jsEntrypoint],
         outdir: path.dirname(jsOutputFile),
         minify: true,
+        format: "iife", // Keep bundle scope isolated so repeated/parallel script loads cannot clash on minified symbol names.
         target: "browser",
         naming: {
             entry: path.basename(jsOutputFile),
