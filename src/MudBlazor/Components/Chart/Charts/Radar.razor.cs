@@ -69,9 +69,8 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     }
 
     private bool HasValidData() =>
-        ChartSeries != null &&
-        ChartSeries.Count > 0 &&
-        ChartSeries.Any(s => s.Data != null && s.Data.Count > 0);
+        ChartSeries is { Count: > 0 } &&
+        ChartSeries.Any(s => s.Data is { Count: > 0 });
 
     private double CalculateRadius()
     {
@@ -85,7 +84,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         return Math.Min(Radius, maxR);
     }
 
-    private void GenerateSvgPaths(List<ChartSeries<T>> seriesData, T[] normalizedData, int numAxes,
+    private void GenerateSvgPaths(List<ChartSeries<T>> seriesData, double[] normalizedData, int numAxes,
                                   double angleStep, double currentAngle, double radius, T axisMaxValue)
     {
         Debug.Assert(ChartOptions is not null);
@@ -104,7 +103,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
                 Data = pathString,
                 Points = points,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                    ? ToS(Math.Round(double.CreateSaturating(normalizedData[seriesIndex]) * 100, 1)) + "%"
+                    ? ToS(Math.Round(normalizedData[seriesIndex] * 100, 1)) + "%"
                     : series.Data.Values.SumGeneric().ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = series.Name
             };

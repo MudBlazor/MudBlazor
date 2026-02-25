@@ -255,18 +255,16 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     /// <summary>
     /// Scales the input data to the range between 0 and 1
     /// </summary>
-    protected T[] GetNormalizedData()
+    protected double[] GetNormalizedData()
     {
-        if (ChartSeries is null || ChartSeries.Count == 0)
-            return [];
+        if (ChartSeries is null || ChartSeries.Count == 0) return [];
 
         var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-        var total = data.SumGeneric();
+        var total = double.CreateSaturating(data.SumGeneric());
 
-        if (total == T.Zero)
-            return data;
+        if (total == 0.0) return new double[data.Length];
 
-        return data.Select(x => T.Abs(x) / total).ToArray();
+        return data.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
     }
 
     /// <summary>
