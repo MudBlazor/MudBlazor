@@ -585,6 +585,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task AutocompleteReadOnlyShouldHaveMudReadonlyClass()
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(p => p
+                .Add(x => x.ReadOnly, false));
+
+            comp.Find(".mud-select-input").ClassList.Should().NotContain("mud-readonly");
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true));
+            comp.Find(".mud-select-input").ClassList.Should().Contain("mud-readonly");
+        }
+
         /// <summary>
         /// MoreItemsTemplate should render when there are more items than the MaxItems limit
         /// </summary>

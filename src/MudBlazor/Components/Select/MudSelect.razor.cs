@@ -81,6 +81,7 @@ namespace MudBlazor
 
         protected string InputClassname =>
             new CssBuilder("mud-select-input")
+                .AddClass("mud-readonly", GetReadOnlyState())
                 .AddClass(InputClass)
                 .Build();
 
