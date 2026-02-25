@@ -198,6 +198,29 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Test Value"));
         }
 
+        [Test]
+        public async Task DebouncedTextField_ShouldStayInSyncWithBoundValueAfterAsyncInitialization()
+        {
+            var comp = Context.Render<DebouncedTextFieldAsyncInitializationSyncTest>();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var inputs = comp.FindAll("input");
+                inputs[0].GetAttribute("value").Should().Be("init value");
+                inputs[1].GetAttribute("value").Should().Be("init value");
+            });
+
+            var immediateInput = comp.FindAll("input")[1];
+            await immediateInput.ChangeAsync(new ChangeEventArgs { Value = "changed value" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var inputs = comp.FindAll("input");
+                inputs[0].GetAttribute("value").Should().Be("changed value");
+                inputs[1].GetAttribute("value").Should().Be("changed value");
+            });
+        }
+
         /// <summary>
         /// Label and placeholder should not overlap.
         /// When placeholder is set, label should shrink
