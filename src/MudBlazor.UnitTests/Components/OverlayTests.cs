@@ -308,7 +308,7 @@ public class OverlayTests : BunitTest
             It.IsAny<IPointerEventsNoneObserver>(),
             It.Is<PointerEventsNoneOptions>(o =>
                 o.SubscribeDown &&
-                o.ExcludeElementIds is not null &&
+                o.ExcludeElementIds != null &&
                 o.ExcludeElementIds.SequenceEqual(ignoredIds))), Times.Once);
     }
 
