@@ -634,7 +634,7 @@ public class DebounceDispatcherTests
             var i1 = i;
             tasks.Add(Task.Run(async () =>
             {
-                await debounceDispatcher.UpdateIntervalAsync(100 + i1 * 10);
+                await debounceDispatcher.UpdateIntervalAsync(100 + (i1 * 10));
                 // ReSharper restore AccessToDisposedClosure
             }));
         }
