@@ -171,14 +171,9 @@ internal sealed class DebounceDispatcher : IDisposable
                 _cancellationTokenSource = localCts;
             }
         }
-        catch (ObjectDisposedException)
+        catch (Exception ex) when (IsExpectedDebounceFlowException(ex))
         {
-            // The lock can still be in use while disposal is racing; treat as a no-op.
-            return;
-        }
-        catch (OperationCanceledException)
-        {
-            // Silently return if operation was cancelled during lock acquisition.
+            // Lock-dispose and cancellation races are expected in debounce control flow.
             return;
         }
         finally
@@ -219,19 +214,9 @@ internal sealed class DebounceDispatcher : IDisposable
             // Wait for the debounce interval
             await Task.Delay(scheduledInterval, _timeProvider, delayToken).ConfigureAwait(false);
         }
-        catch (ObjectDisposedException)
+        catch (Exception ex) when (IsExpectedDebounceFlowException(ex))
         {
-            // Silently ignore if CTS was disposed (happens when cancelled/disposed races).
-            return;
-        }
-        catch (TaskCanceledException)
-        {
-            // Silently ignore cancellation (either from new call or external cancellation)
-            return;
-        }
-        catch (OperationCanceledException)
-        {
-            // Silently ignore cancellation
+            // Cancellation/disposal races are expected while waiting the debounce delay.
             return;
         }
         finally
@@ -263,17 +248,9 @@ internal sealed class DebounceDispatcher : IDisposable
             // Execute the action
             await action().ConfigureAwait(false);
         }
-        catch (ObjectDisposedException)
+        catch (Exception ex) when (IsExpectedDebounceFlowException(ex))
         {
-            // Silently ignore if CTS was disposed (happens when a new debounce call comes in or dispatcher is disposed)
-        }
-        catch (TaskCanceledException)
-        {
-            // Silently ignore cancellation (either from new call or external cancellation)
-        }
-        catch (OperationCanceledException)
-        {
-            // Silently ignore cancellation
+            // Cancellation/disposal races are expected around execution handoff.
         }
         finally
         {
@@ -323,8 +300,7 @@ internal sealed class DebounceDispatcher : IDisposable
             _lock.Release();
         }
 
-        SafeCancel(ctsToCancel);
-        ctsToCancel?.Dispose();
+        CancelAndDispose(ctsToCancel);
     }
 
     /// <summary>
@@ -395,8 +371,7 @@ internal sealed class DebounceDispatcher : IDisposable
             _lock.Release();
         }
 
-        await SafeCancelAsync(ctsToCancel).ConfigureAwait(false);
-        ctsToCancel?.Dispose();
+        await CancelAndDisposeAsync(ctsToCancel).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -431,8 +406,7 @@ internal sealed class DebounceDispatcher : IDisposable
             _lock.Release();
         }
 
-        SafeCancel(ctsToCancel);
-        ctsToCancel?.Dispose();
+        CancelAndDispose(ctsToCancel);
 
         // Intentionally do not dispose _lock. DebounceAsync/Cancel/UpdateIntervalAsync may still be racing and
         // disposing SemaphoreSlim while waiters exist can surface hangs/ObjectDisposedException paths.
@@ -449,14 +423,16 @@ internal sealed class DebounceDispatcher : IDisposable
         {
             cancellationTokenSource.Cancel();
         }
-        catch (ObjectDisposedException)
+        catch (Exception ex) when (IsExpectedCancellationException(ex))
         {
-            // Ignore races with disposal.
+            // Ignore cancellation callback/disposal race exceptions.
         }
-        catch (AggregateException)
-        {
-            // Ignore cancellation callback exceptions.
-        }
+    }
+
+    private static void CancelAndDispose(CancellationTokenSource? cancellationTokenSource)
+    {
+        SafeCancel(cancellationTokenSource);
+        DisposeSafely(cancellationTokenSource);
     }
 
     private static async Task SafeCancelAsync(CancellationTokenSource? cancellationTokenSource)
@@ -470,13 +446,33 @@ internal sealed class DebounceDispatcher : IDisposable
         {
             await cancellationTokenSource.CancelAsync().ConfigureAwait(false);
         }
+        catch (Exception ex) when (IsExpectedCancellationException(ex))
+        {
+            // Ignore cancellation callback/disposal race exceptions.
+        }
+    }
+
+    private static async Task CancelAndDisposeAsync(CancellationTokenSource? cancellationTokenSource)
+    {
+        await SafeCancelAsync(cancellationTokenSource).ConfigureAwait(false);
+        DisposeSafely(cancellationTokenSource);
+    }
+
+    private static void DisposeSafely(CancellationTokenSource? cancellationTokenSource)
+    {
+        try
+        {
+            cancellationTokenSource?.Dispose();
+        }
         catch (ObjectDisposedException)
         {
             // Ignore races with disposal.
         }
-        catch (AggregateException)
-        {
-            // Ignore cancellation callback exceptions.
-        }
     }
+
+    private static bool IsExpectedCancellationException(Exception exception) =>
+        exception is ObjectDisposedException or AggregateException;
+
+    private static bool IsExpectedDebounceFlowException(Exception exception) =>
+        exception is ObjectDisposedException or OperationCanceledException;
 }
