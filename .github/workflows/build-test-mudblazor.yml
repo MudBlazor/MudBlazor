@@ -83,7 +83,7 @@ jobs:
 
       - name: Upload coverage report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
           path: |
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Download coverage report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
 
       - name: Publish coverage
         uses: codecov/codecov-action@v5
