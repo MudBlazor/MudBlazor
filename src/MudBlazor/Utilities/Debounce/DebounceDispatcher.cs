@@ -289,6 +289,7 @@ internal sealed class DebounceDispatcher : IDisposable
     public void Cancel()
     {
         CancellationTokenSource? ctsToCancel;
+        // ReSharper disable once MethodSupportsCancellation
         _lock.Wait();
         try
         {
@@ -389,6 +390,7 @@ internal sealed class DebounceDispatcher : IDisposable
         }
 
         CancellationTokenSource? ctsToCancel;
+        // ReSharper disable once MethodSupportsCancellation
         _lock.Wait();
         try
         {
