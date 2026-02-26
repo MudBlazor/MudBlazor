@@ -17,4 +17,9 @@
     <BunToolRestore>dotnet tool restore --tool-manifest ../../.config/dotnet-tools.json</BunToolRestore>
     <BunWrapper>dotnet tool run bun -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
   </PropertyGroup>
+
+  <!-- Currently required as Rider's bundled NUnit engine requires Microsoft.Extensions.DependencyModel 8.x, which is not included in the .net 10 -->
+  <ItemGroup Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0"/>
+  </ItemGroup>
 </Project>
