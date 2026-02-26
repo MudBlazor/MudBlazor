@@ -250,6 +250,53 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("Second"));
         }
 
+
+
+        /// <summary>
+        /// Initial Text should be enums default value
+        /// Initial render fragment in input should be the pre-selected value's items's render fragment.
+        /// After clicking the second item, the render fragment should update
+        /// </summary>
+        [Test]
+        public async Task MultiSelectWithEnum()
+        {
+            var comp = Context.Render<MultiSelectWithEnumTest>();
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<MultiSelectWithEnumTest.MyEnum>>();
+            var input = comp.Find("div.mud-input-control");
+
+            select.Instance.GetState(x => x.SelectedValues).Should().BeEmpty();
+
+
+            await input.MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+
+            const string @unchecked =
+                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            const string @checked =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+            // Validate that none of the items are selected
+            comp.FindAll("div.mud-list-item path:not(:first-child)").Should().AllSatisfy(item =>
+                item.Attributes["d"]!.Value.Should().Be(@unchecked)
+            );
+            // Select the first item
+            await items[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("First"));
+            await comp.WaitForAssertionAsync(() =>
+                select.Instance.GetState(x => x.SelectedValues).Should().OnlyContain(item => item == MultiSelectWithEnumTest.MyEnum.First)
+            );
+            await comp.WaitForAssertionAsync(() =>
+            {
+                // Assert that the first item is checked
+                comp.FindAll("div.mud-list-item path:not(:first-child)")[0].Attributes["d"]!.Value.Should().Be(@checked);
+                // Remaining items should be unchecked
+                comp.FindAll("div.mud-list-item:not(:first-child) path:not(:first-child)").Should().AllSatisfy(item =>
+                    item.Attributes["d"]!.Value.Should().Be(@unchecked)
+                );
+            });
+        }
+
         /// <summary>
         /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
         /// </summary>
