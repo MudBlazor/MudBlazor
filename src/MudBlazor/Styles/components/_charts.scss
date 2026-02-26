@@ -53,6 +53,7 @@
   & .mud-chart-donut, .mud-chart-pie, .mud-chart-line, .mud-chart-bar {
     display: flex;
     margin: auto;
+    overflow: unset; // Workaround for clipped axis notations
   }
 
   & .mud-chart-legend {
@@ -126,7 +127,7 @@
   & .mud-donut-text {
     dominant-baseline: central;
     text-anchor: middle;
-    fill: var(--mud-palette-primary-text);
+    fill: var(mud-palette-text-primary);
   }
 }
 
