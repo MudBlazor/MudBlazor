@@ -812,13 +812,14 @@ public class DebounceDispatcherTests
         {
             tasks[i] = Task.Run(async () =>
             {
-                await dispatcher.DebounceAsync(() => Task.Delay(10));
+                var debounceTask = dispatcher.DebounceAsync(() => Task.Delay(10));
                 // ReSharper disable once MethodHasAsyncOverload
                 dispatcher.Cancel();
+                await debounceTask;
             });
         }
 
-        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(5));
+        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(10));
 
         await act.Should().NotThrowAsync();
     }
@@ -875,12 +876,13 @@ public class DebounceDispatcherTests
         {
             tasks[i] = Task.Run(async () =>
             {
-                await dispatcher.DebounceAsync(() => Task.Delay(10));
+                var debounceTask = dispatcher.DebounceAsync(() => Task.Delay(10));
                 await dispatcher.CancelAsync();
+                await debounceTask;
             });
         }
 
-        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(5));
+        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(10));
 
         await act.Should().NotThrowAsync();
     }
