@@ -210,7 +210,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void DebounceAsync_Dispose_CancelsPendingOperation()
+    public async Task DebounceAsync_Dispose_CancelsPendingOperation()
     {
         // Arrange
         var debounceDispatcher = new DebounceDispatcher(1000);
@@ -226,7 +226,7 @@ public class DebounceDispatcherTests
         debounceDispatcher.Dispose();
 
         // Assert - should complete silently without throwing
-        task.Wait(100);
+        await task.WaitAsync(TimeSpan.FromSeconds(5));
         executed.Should().BeFalse();
     }
 
@@ -768,11 +768,7 @@ public class DebounceDispatcherTests
         // create CTS by starting a debounce
         _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
 
-        // wait briefly for dispatcher to create the CTS
-        await Task.Delay(20);
-
-        var cts = GetPrivateCts(dispatcher);
-        cts.Should().NotBeNull();
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
 
         // register a callback that throws when Cancel() is called
         cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
@@ -789,10 +785,7 @@ public class DebounceDispatcherTests
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
 
         _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
-        await Task.Delay(20);
-
-        var cts = GetPrivateCts(dispatcher);
-        cts.Should().NotBeNull();
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
 
         // Dispose the CTS to simulate race
         cts.Dispose();
@@ -812,7 +805,7 @@ public class DebounceDispatcherTests
         {
             tasks[i] = Task.Run(async () =>
             {
-                var debounceTask = dispatcher.DebounceAsync(() => Task.Delay(10));
+                var debounceTask = dispatcher.DebounceAsync(() => Task.CompletedTask);
                 // ReSharper disable once MethodHasAsyncOverload
                 dispatcher.Cancel();
                 await debounceTask;
@@ -832,11 +825,7 @@ public class DebounceDispatcherTests
         // create CTS by starting a debounce
         _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
 
-        // wait briefly for dispatcher to create the CTS
-        await Task.Delay(20);
-
-        var cts = GetPrivateCts(dispatcher);
-        cts.Should().NotBeNull();
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
 
         // register a callback that throws when Cancel() is called
         cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
@@ -853,10 +842,7 @@ public class DebounceDispatcherTests
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
 
         _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
-        await Task.Delay(20);
-
-        var cts = GetPrivateCts(dispatcher);
-        cts.Should().NotBeNull();
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
 
         // Dispose the CTS to simulate race
         cts.Dispose();
@@ -876,7 +862,7 @@ public class DebounceDispatcherTests
         {
             tasks[i] = Task.Run(async () =>
             {
-                var debounceTask = dispatcher.DebounceAsync(() => Task.Delay(10));
+                var debounceTask = dispatcher.DebounceAsync(() => Task.CompletedTask);
                 await dispatcher.CancelAsync();
                 await debounceTask;
             });
@@ -895,11 +881,7 @@ public class DebounceDispatcherTests
         // create CTS by starting a debounce
         _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
 
-        // wait briefly for dispatcher to create the CTS
-        await Task.Delay(20);
-
-        var cts = GetPrivateCts(dispatcher);
-        cts.Should().NotBeNull();
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
 
         // register a callback that throws when Cancel() is called
         cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
@@ -916,10 +898,7 @@ public class DebounceDispatcherTests
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
 
         _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
-        await Task.Delay(20);
-
-        var cts = GetPrivateCts(dispatcher);
-        cts.Should().NotBeNull();
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
 
         // Dispose the CTS to simulate race
         cts.Dispose();
@@ -937,7 +916,7 @@ public class DebounceDispatcherTests
         var workers = Enumerable.Range(0, 100)
             .Select(_ => Task.Run(async () =>
             {
-                await dispatcher.DebounceAsync(() => Task.Delay(10));
+                await dispatcher.DebounceAsync(() => Task.CompletedTask);
             }))
             .ToArray();
 
@@ -952,5 +931,23 @@ public class DebounceDispatcherTests
     {
         var field = dispatcher.GetType().GetField("_cancellationTokenSource", BindingFlags.NonPublic | BindingFlags.Instance);
         return (CancellationTokenSource?)field?.GetValue(dispatcher);
+    }
+
+    private static async Task<CancellationTokenSource> WaitForPrivateCtsAsync(object dispatcher)
+    {
+        var timeoutTask = Task.Delay(TimeSpan.FromSeconds(1));
+        while (!timeoutTask.IsCompleted)
+        {
+            var cts = GetPrivateCts(dispatcher);
+            if (cts is not null)
+            {
+                return cts;
+            }
+
+            await Task.Yield();
+        }
+
+        Assert.Fail("Timed out waiting for DebounceDispatcher to create its cancellation token source.");
+        return null!;
     }
 }

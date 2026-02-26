@@ -126,7 +126,7 @@ internal sealed class DebounceDispatcher : IDisposable
     {
         ArgumentNullException.ThrowIfNull(action);
 
-        if (_disposed || cancellationToken.IsCancellationRequested)
+        if (Volatile.Read(ref _disposed) || cancellationToken.IsCancellationRequested)
         {
             return;
         }
@@ -199,6 +199,7 @@ internal sealed class DebounceDispatcher : IDisposable
         }
 
         Interlocked.Increment(ref _pendingOperations);
+        var proceedToExecution = false;
         try
         {
             CancellationToken delayToken;
@@ -213,6 +214,7 @@ internal sealed class DebounceDispatcher : IDisposable
 
             // Wait for the debounce interval
             await Task.Delay(scheduledInterval, _timeProvider, delayToken).ConfigureAwait(false);
+            proceedToExecution = true;
         }
         catch (Exception ex) when (IsExpectedDebounceFlowException(ex))
         {
@@ -222,6 +224,10 @@ internal sealed class DebounceDispatcher : IDisposable
         finally
         {
             Interlocked.Decrement(ref _pendingOperations);
+            if (!proceedToExecution)
+            {
+                scheduledCts.Dispose();
+            }
         }
 
         try
