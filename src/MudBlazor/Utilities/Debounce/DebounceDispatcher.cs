@@ -31,14 +31,14 @@ namespace MudBlazor.Utilities.Debounce;
 /// </remarks>
 internal sealed class DebounceDispatcher : IDisposable
 {
+    private bool _disposed;
     private TimeSpan _interval;
+    private int _pendingOperations;
     private readonly bool _leading;
     private readonly TimeProvider _timeProvider;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private CancellationTokenSource? _cancellationTokenSource;
     private DateTimeOffset _lastExecutionTime = DateTimeOffset.MinValue;
-    private int _pendingOperations;
-    private bool _disposed;
 
     /// <summary>
     /// Indicates whether a debounce delay is currently pending.
