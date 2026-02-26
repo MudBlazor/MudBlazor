@@ -1658,6 +1658,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ReadOnlyShouldHaveMudReadonlyClass()
+        {
+            var comp = Context.Render<MudSelect<string>>(p => p
+                .Add(x => x.ReadOnly, false));
+
+            comp.Find(".mud-select-input").ClassList.Should().NotContain("mud-readonly");
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ReadOnly, true));
+            comp.Find(".mud-select-input").ClassList.Should().Contain("mud-readonly");
+        }
+
+        [Test]
         public async Task SelectPopoverFullWidth()
         {
             var comp = Context.Render<SelectPopoverRelativeWidthTest>();
