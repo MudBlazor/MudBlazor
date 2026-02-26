@@ -105,11 +105,12 @@ Global conditions:
 - Thread does not have a `needs:` label or `help wanted` label
 
 Case — Thread is a pull request:
-- The author explicitly requests help/review (e.g., "any update?" comment, ready-for-review event, draft→ready transition) OR the initial triage/review never happened and at least 28 days have elapsed
+- The author comments a request for help/review/triage
 - No maintainer has replied since then
+- At least 7 days have elapsed
 
 Case — Thread is an issue:
-- Has at least two attention-request comments from any users (e.g., asks for help/review/triage or pings maintainers)
+- Has at least two attention-request comments from any users (e.g., asks for help/review/triage)
 - Those comments were within the last 12 months
 - Those comments are at least 14 days apart
 - No maintainer has replied since the first request
