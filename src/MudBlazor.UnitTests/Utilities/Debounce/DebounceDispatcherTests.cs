@@ -927,6 +927,25 @@ public class DebounceDispatcherTests
         act.Should().NotThrow();
     }
 
+    [Test]
+    public async Task Dispose_ConcurrentWithDebounceCalls_DoesNotHangOrThrow()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
+
+        var workers = Enumerable.Range(0, 100)
+            .Select(_ => Task.Run(async () =>
+            {
+                await dispatcher.DebounceAsync(() => Task.Delay(10));
+            }))
+            .ToArray();
+
+        var disposer = Task.Run(() => dispatcher.Dispose());
+
+        var act = async () => await Task.WhenAll(workers.Append(disposer)).WaitAsync(TimeSpan.FromSeconds(5));
+
+        await act.Should().NotThrowAsync();
+    }
+
     private static CancellationTokenSource? GetPrivateCts(object dispatcher)
     {
         var field = dispatcher.GetType().GetField("_cancellationTokenSource", BindingFlags.NonPublic | BindingFlags.Instance);

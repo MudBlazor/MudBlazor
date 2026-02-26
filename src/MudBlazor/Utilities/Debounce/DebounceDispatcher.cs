@@ -198,13 +198,18 @@ internal sealed class DebounceDispatcher : IDisposable
             return;
         }
 
+        if (localCts is not { } scheduledCts)
+        {
+            return;
+        }
+
         Interlocked.Increment(ref _pendingOperations);
         try
         {
             CancellationToken delayToken;
             try
             {
-                delayToken = localCts!.Token;
+                delayToken = scheduledCts.Token;
             }
             catch (ObjectDisposedException)
             {
@@ -242,7 +247,7 @@ internal sealed class DebounceDispatcher : IDisposable
                 var leadingLockAcquired = false;
                 try
                 {
-                    await _lock.WaitAsync(localCts.Token).ConfigureAwait(false);
+                    await _lock.WaitAsync(scheduledCts.Token).ConfigureAwait(false);
                     leadingLockAcquired = true;
                     _lastExecutionTime = _timeProvider.GetUtcNow();
                 }
@@ -277,7 +282,7 @@ internal sealed class DebounceDispatcher : IDisposable
             {
                 await _lock.WaitAsync(CancellationToken.None).ConfigureAwait(false);
                 cleanupLockAcquired = true;
-                if (ReferenceEquals(_cancellationTokenSource, localCts))
+                if (ReferenceEquals(_cancellationTokenSource, scheduledCts))
                 {
                     _cancellationTokenSource = null;
                 }
@@ -293,7 +298,7 @@ internal sealed class DebounceDispatcher : IDisposable
                     _lock.Release();
                 }
 
-                localCts.Dispose();
+                scheduledCts.Dispose();
             }
         }
     }
