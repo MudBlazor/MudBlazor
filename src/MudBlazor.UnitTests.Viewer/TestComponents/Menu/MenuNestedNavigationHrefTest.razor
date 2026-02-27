@@ -1,5 +1,15 @@
 @page "/test/{Id:int}"
 
+@* 
+   Repro for #12741:
+   Clicking a nested MudMenuItem with an in-app Href can throw
+   InvalidOperationException (InvalidOperation_EnumFailedVersion) during menu close.
+
+   There is intentionally no associated bUnit test because the failure depends on
+   browser anchor-navigation timing while an async click handler is still running.
+   bUnit's click pipeline does not reproduce that browser disposal timing reliably.
+*@
+
 @if (Id == 0)
 {
     <MudPopoverProvider />
@@ -35,12 +45,12 @@
 }
 else
 {
-    <h1>MenuNestedNavigationHrefTest</h1>
+    <h1>Menu navigation target</h1>
     <h1>Product @Id</h1>
 }
 
 @code {
-    public static string __description__ = "Repro for nested menu item navigation with in-app href targets.";
+    public static string __description__ = "Repro for #12741: nested menu item in-app navigation can throw InvalidOperation_EnumFailedVersion.";
 
     /// <summary>
     /// Gets or sets the product identifier from the <c>/test/{id:int}</c> route.

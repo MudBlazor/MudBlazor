@@ -6,9 +6,7 @@ using System.Reflection;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
@@ -642,31 +640,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             });
-        }
-
-        [Test]
-        public async Task ClickingNestedHrefItem_DuringNavigation_ShouldNotThrow_12741()
-        {
-            // https://github.com/MudBlazor/MudBlazor/pull/12741
-            var comp = Context.Render<MenuNestedNavigationHrefTest>();
-            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
-
-            IElement MainMenuActivator() => comp.Find("button.mud-button-root");
-            IElement FileItemsMenuActivator() => comp.Find("div.mud-menu:contains('File Items')");
-            IElement TestOneMenuItem() => comp.Find("a.mud-menu-item:contains('Test 1')");
-
-            await MainMenuActivator().ClickAsync();
-            await FileItemsMenuActivator().PointerEnterAsync();
-            await comp.WaitForAssertionAsync(() => comp.FindAll("a.mud-menu-item").Count.Should().Be(4));
-
-            Func<Task> clickAndNavigate = async () =>
-            {
-                var clickTask = TestOneMenuItem().ClickAsync();
-                await comp.InvokeAsync(() => navigationManager.NavigateTo("/test/1"));
-                await clickTask;
-            };
-
-            await clickAndNavigate.Should().NotThrowAsync();
         }
 
         [Test]
