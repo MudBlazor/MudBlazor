@@ -359,7 +359,7 @@ namespace MudBlazor
 
         private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
 
-        private bool GetDense() => Dense ?? MudList?.Dense == true;
+        private bool GetDense() => Dense ?? (MudList?.Dense == true);
 
         private bool GetGutters() => Gutters ?? MudList?.Gutters ?? true;
 

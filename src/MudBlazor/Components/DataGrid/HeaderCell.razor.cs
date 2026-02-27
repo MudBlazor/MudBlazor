@@ -139,7 +139,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Sortable ?? DataGrid?.SortMode != SortMode.None;
+                return Column?.Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
         }
 
@@ -147,7 +147,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Resizable ?? DataGrid?.ColumnResizeMode != ResizeMode.None;
+                return Column?.Resizable ?? (DataGrid?.ColumnResizeMode != ResizeMode.None);
             }
         }
 

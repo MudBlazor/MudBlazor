@@ -552,7 +552,7 @@ namespace MudBlazor
         {
             get
             {
-                return Sortable ?? DataGrid?.SortMode != SortMode.None;
+                return Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
         }
 

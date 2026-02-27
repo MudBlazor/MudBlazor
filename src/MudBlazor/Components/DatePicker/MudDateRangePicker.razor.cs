@@ -171,7 +171,7 @@ namespace MudBlazor
             get => _rangeText;
             set
             {
-                if (_rangeText?.Equals(value) ?? value == null)
+                if (_rangeText?.Equals(value) ?? (value == null))
                     return;
 
                 Touched = true;
