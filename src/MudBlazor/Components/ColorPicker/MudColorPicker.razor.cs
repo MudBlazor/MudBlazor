@@ -458,7 +458,7 @@ namespace MudBlazor
             await _textState.SetValueAsync(value);
         }
 
-        protected override string? ReadText => GetColorTextValue(_valueState.Value);
+        protected override string? ReadText => _textState.Value ?? GetColorTextValue(_valueState.Value);
 
         protected override Task WriteTextAsync(string? value) => SetInputStringAsync(value);
 
