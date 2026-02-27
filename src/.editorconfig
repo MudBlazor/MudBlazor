@@ -227,8 +227,8 @@ csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 
 # Other features
-csharp_style_prefer_index_operator = false:suggestion
-csharp_style_prefer_range_operator = false:suggestion
+csharp_style_prefer_index_operator = false
+csharp_style_prefer_range_operator = false
 
 # Space preferences
 csharp_space_after_cast = false
@@ -285,7 +285,7 @@ csharp_style_prefer_pattern_matching = true:suggestion
 csharp_style_deconstructed_variable_declaration = true
 csharp_style_implicit_object_creation_when_type_is_apparent = true
 csharp_style_prefer_method_group_conversion = true
-csharp_style_prefer_local_over_anonymous_function = true:suggestion
+csharp_style_prefer_local_over_anonymous_function = true
 csharp_style_prefer_null_check_over_type_check = true
 csharp_style_prefer_tuple_swap = true
 csharp_style_prefer_utf8_string_literals = true
