@@ -970,8 +970,8 @@ namespace MudBlazor
             {
                 return;
             }
-            _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
-            _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
+            _sliderPositionPercentage = GetLengthOfPanelItems(ActivePanel) / _allTabsSize * 100;
+            _sliderSizePercentage = GetPanelLength(ActivePanel) / _allTabsSize * 100;
             _isSliderPositionDetermined =
                 (_activePanelIndexState.Value > 0 && _sliderPositionPercentage > 0)
                 || IsFirstVisiblePanel(ActivePanel);

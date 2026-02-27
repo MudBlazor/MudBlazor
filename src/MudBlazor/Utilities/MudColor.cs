@@ -759,19 +759,19 @@ namespace MudBlazor.Utilities
             }
             else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized >= bNormalized))
             {
-                h = (60D * (gNormalized - bNormalized)) / (max - min);
+                h = 60D * (gNormalized - bNormalized) / (max - min);
             }
             else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized < bNormalized))
             {
-                h = ((60D * (gNormalized - bNormalized)) / (max - min)) + 360D;
+                h = (60D * (gNormalized - bNormalized) / (max - min)) + 360D;
             }
             else if (Math.Abs(max - gNormalized) < Epsilon)
             {
-                h = ((60D * (bNormalized - rNormalized)) / (max - min)) + 120D;
+                h = (60D * (bNormalized - rNormalized) / (max - min)) + 120D;
             }
             else if (Math.Abs(max - bNormalized) < Epsilon)
             {
-                h = ((60D * (rNormalized - gNormalized)) / (max - min)) + 240D;
+                h = (60D * (rNormalized - gNormalized) / (max - min)) + 240D;
             }
 
             // lightness

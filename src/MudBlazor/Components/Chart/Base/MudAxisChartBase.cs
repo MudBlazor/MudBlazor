@@ -125,7 +125,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The palette used for the legends.
     /// </summary>
-    public override string[] LegendPalette => [.. (ChartOptions?.ChartPalette ?? []), .. OverlayChart?.LegendPalette ?? []];
+    public override string[] LegendPalette => [.. ChartOptions?.ChartPalette ?? [], .. OverlayChart?.LegendPalette ?? []];
 
     /// <summary>
     /// Gets or sets the content to be rendered as an overlay.

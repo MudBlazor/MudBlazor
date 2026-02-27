@@ -450,7 +450,7 @@ namespace MudBlazor
             var actualWidth = await columnToShrink.UpdateColumnWidth(shrinkedWidth, gridHeight, finish);
             // Use actualWidth to see if the column could be made smaller or if it reached its min size.
             if (actualWidth >= shrinkedWidth)
-                enlargedWidth -= (actualWidth - shrinkedWidth);
+                enlargedWidth -= actualWidth - shrinkedWidth;
 
             await columnToEnlarge.UpdateColumnWidth(enlargedWidth, gridHeight, finish);
         }

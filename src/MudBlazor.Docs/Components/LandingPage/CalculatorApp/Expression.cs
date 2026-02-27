@@ -111,7 +111,7 @@ namespace PrimitiveCalculator
                 if (val == null)
                     return double.NaN;
                 if (op.Operator == "-")
-                    Value = (-1.0 * (val.Value));
+                    Value = -1.0 * val.Value;
                 else
                     Value = val;
             }
