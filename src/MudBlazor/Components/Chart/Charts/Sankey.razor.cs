@@ -647,7 +647,7 @@ namespace MudBlazor.Charts
         private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)
         {
             if (ChartOptions!.HighlightOnHover) ActiveEdge = edge.Name;
-            
+
             _hoveredEdge = edge;
             OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
             {

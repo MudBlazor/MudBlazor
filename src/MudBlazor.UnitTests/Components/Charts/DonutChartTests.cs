@@ -223,7 +223,7 @@ namespace MudBlazor.UnitTests.Charts
             receivedArgs.XLabel.Should().Be("50", "XLabel carries the formatted data value");
             receivedArgs.YLabel.Should().Be("Fossil", "YLabel carries the segment label");
             receivedArgs.Value.Should().Be(50.0, "Value carries the raw aggregated data value");
-            
+
             await comp.Find("path.mud-chart-serie").MouseOutAsync();
             receivedArgs.Should().NotBeNull("the callback should fire on mouseout");
             receivedArgs.MouseIsOver.Should().BeFalse("pointer left the segment");
