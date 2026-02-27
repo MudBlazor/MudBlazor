@@ -1,0 +1,32 @@
+@implements IDisposable
+@inject NavigationManager NavigationManager
+
+@if (_showMenu)
+{
+    <MenuNestedNavigationHrefTest />
+}
+else
+{
+    <PageRandom Id="1" />
+}
+
+@code {
+    private bool _showMenu = true;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _showMenu = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
