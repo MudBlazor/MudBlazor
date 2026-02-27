@@ -250,8 +250,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("Second"));
         }
 
-
-
         /// <summary>
         /// Initial Text should be enums default value
         /// Initial render fragment in input should be the pre-selected value's items's render fragment.
