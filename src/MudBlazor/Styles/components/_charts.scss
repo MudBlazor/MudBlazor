@@ -50,7 +50,7 @@
     }
   }
 
-  & .mud-chart-donut, .mud-chart-pie, .mud-chart-line, .mud-chart-bar {
+  & .mud-chart-donut, .mud-chart-pie, .mud-chart-radar, .mud-chart-line, .mud-chart-bar {
     display: flex;
     margin: auto;
     overflow: unset; // Workaround for clipped axis notations
