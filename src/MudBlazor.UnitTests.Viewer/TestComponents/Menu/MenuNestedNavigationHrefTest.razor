@@ -1,0 +1,34 @@
+<MudPopoverProvider />
+
+<MudMenu Dense="true"
+         Icon="@Icons.Material.Filled.MoreVert"
+         Variant="Variant.Filled"
+         AnchorOrigin="Origin.BottomLeft"
+         TransformOrigin="Origin.TopLeft"
+         Color="Color.Primary"
+         Size="Size.Medium">
+    <MudMenu ActivationEvent="MouseEvent.MouseOver"
+             AnchorOrigin="Origin.TopRight"
+             TransformOrigin="Origin.TopLeft"
+             Dense="true"
+             Label="File Items">
+        <ChildContent>
+            <MudMenuItem Href="test/1">
+                Test 1
+            </MudMenuItem>
+            <MudMenuItem Href="test/2">
+                Test 2
+            </MudMenuItem>
+            <MudMenuItem Href="test/3">
+                Test 3
+            </MudMenuItem>
+            <MudMenuItem Href="unknown">
+                Test 4
+            </MudMenuItem>
+        </ChildContent>
+    </MudMenu>
+</MudMenu>
+
+@code {
+    public static string __description__ = "Repro for nested menu item navigation with in-app href targets.";
+}

@@ -1,0 +1,13 @@
+@page "/test/{id:int}"
+
+<h1>PageRandom</h1>
+
+<h1>Product @Id</h1>
+
+@code {
+    /// <summary>
+    /// Gets or sets the product identifier from the route.
+    /// </summary>
+    [Parameter]
+    public int Id { get; set; }
+}
