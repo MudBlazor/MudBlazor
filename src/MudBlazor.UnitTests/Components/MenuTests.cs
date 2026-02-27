@@ -648,7 +648,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task ClickingNestedHrefItem_DuringNavigation_ShouldNotThrow_12741()
         {
             // https://github.com/MudBlazor/MudBlazor/pull/12741
-            var comp = Context.Render<MenuNestedNavigationHrefHostTest>();
+            var comp = Context.Render<MenuNestedNavigationHrefTest>();
             var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
 
             IElement MainMenuActivator() => comp.Find("button.mud-button-root");
