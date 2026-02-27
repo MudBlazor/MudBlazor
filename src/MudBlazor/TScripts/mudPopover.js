@@ -31,6 +31,13 @@ window.mudpopoverHelper = {
     baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
 
+    updateBaseZIndexValues: function () {
+        this.basePopoverZIndex = parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue('--mud-zindex-popover')) || 1200;
+        this.baseTooltipZIndex = parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue('--mud-zindex-tooltip')) || 1600;
+    },
+
     // static set of replacement values
     flipClassReplacements: {
         'top': {
@@ -673,6 +680,7 @@ window.mudpopoverHelper = {
 
     // set zindex order, popoverContentNode is the calling popover, parentNode is the node to compare to
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
+        this.updateBaseZIndexValues();
         // find the first parent mud-popover if it exists (nested popovers)
         const parentPopover = parentNode.closest('.mud-popover');
         const popoverNode = document.getElementById('popover-' + popoverContentNode.id.substr(15));
@@ -982,6 +990,7 @@ class MudPopover {
         // store options from PopoverOptions in mudpopoverHelper
         window.mudpopoverHelper.mainContainerClass = containerClass;
         window.mudpopoverHelper.overflowPadding = overflowPadding;
+        this.updateBaseZIndexValues();
 
         if (flipMargin) {
             window.mudpopoverHelper.flipMargin = flipMargin;
