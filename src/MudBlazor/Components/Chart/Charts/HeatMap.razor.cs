@@ -38,8 +38,6 @@ namespace MudBlazor.Charts
 
         private const int AxisLabelsPadding = 5;
 
-        private const int AxisLabelsPadding = 5;
-
         internal Position _legendPosition = Position.Bottom;
 
         // the minimum size a cell can shrink to (height and width)
@@ -560,14 +558,19 @@ namespace MudBlazor.Charts
         {
             _hoveredCell = cell;
             if (cell is not null)
-                OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(cell, mouseIsOver: true)).CatchAndLog();
+            {
+                OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(cell, true)).CatchAndLog();
+            }
         }
 
         private void OnCellMouseOut(MouseEventArgs _)
         {
-            var hoverArgs = _hoveredCell is { } c ? BuildHoverArgs(c, mouseIsOver: false) : new ChartHoverEventArgs<T>();
+            if (_hoveredCell != null)
+            {
+                OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(_hoveredCell, false)).CatchAndLog();
+            }
+            
             _hoveredCell = null;
-            OnDataPointMouseOver.InvokeAsync(hoverArgs).CatchAndLog();
         }
 
         private ChartHoverEventArgs<T> BuildHoverArgs(HeatMapCell<T> cell, bool mouseIsOver) => new()
