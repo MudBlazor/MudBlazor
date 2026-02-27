@@ -267,7 +267,6 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.GetState(x => x.SelectedValues).Should().BeEmpty();
 
-
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
