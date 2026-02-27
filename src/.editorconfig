@@ -309,7 +309,7 @@ csharp_style_allow_embedded_statements_on_same_line_experimental = false:suggest
 
 [*.{cs,razor}]
 file_header_template = Copyright (c) MudBlazor 2021\nMudBlazor licenses this file to you under the MIT license.\nSee the LICENSE file in the project root for more information.
-csharp_style_prefer_primary_constructors = false:warning                    # IDE0290
+csharp_style_prefer_primary_constructors = false:none                       # IDE0290
 csharp_style_unused_value_assignment_preference = discard_variable:warning  # IDE0059
 dotnet_code_quality_unused_parameters = all:warning                         # IDE0060
 dotnet_style_prefer_compound_assignment = true:suggestion                   # IDE0054
