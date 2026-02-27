@@ -66,6 +66,11 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     internal SvgPath? _hoveredSegment;
 
     /// <summary>
+    /// The aggregated series data computed during the last RebuildChart call.
+    /// </summary>
+    private T[] _aggregatedData = [];
+
+    /// <summary>
     /// The indices of hidden data series.
     /// </summary>
     protected HashSet<int> HiddenIndices { get; set; } = [];
@@ -276,12 +281,12 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
             return [];
         }
 
-        var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-        var total = double.CreateSaturating(data.SumGeneric());
+        _aggregatedData = AggregateSeriesData(ChartOptions!.AggregationOption);
+        var total = double.CreateSaturating(_aggregatedData.SumGeneric());
 
         return total == 0.0
-            ? (new double[data.Length])
-            : data.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
+            ? (new double[_aggregatedData.Length])
+            : _aggregatedData.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
     }
 
     /// <summary>
@@ -367,9 +372,8 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
 
     private ChartHoverEventArgs<T> BuildHoverArgs(SvgPath segment, bool mouseIsOver)
     {
-        var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-        var value = segment.Index >= 0 && segment.Index < data.Length
-            ? (T?)data[segment.Index]
+        var value = segment.Index >= 0 && segment.Index < _aggregatedData.Length
+            ? (T?)_aggregatedData[segment.Index]
             : null;
         return new ChartHoverEventArgs<T>
         {

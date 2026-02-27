@@ -576,7 +576,7 @@ namespace MudBlazor.Charts
         private ChartHoverEventArgs<T> BuildHoverArgs(HeatMapCell<T> cell, bool mouseIsOver) => new()
         {
             MouseIsOver = mouseIsOver,
-            Index = (cell.Row * ChartLabels.Length) + cell.Column,
+            Index = (cell.Row * SeriesLength) + cell.Column,
             XLabel = ChartLabels.Length > cell.Column ? ChartLabels[cell.Column] : null,
             YLabel = _series.Count > cell.Row ? _series[cell.Row].Name : null,
             Value = cell.Value,

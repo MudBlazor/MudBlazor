@@ -56,6 +56,8 @@ namespace MudBlazor.Charts
         private string? ActiveNode { get; set; }
         private string? ActiveEdge { get; set; }
 
+        private NodeRect? _hoveredNode;
+        private EdgePath? _hoveredEdge;
         private List<ChartSeries<T>> _seriesData = [];
         private Dictionary<string, SankeyNode> _nodeLookup = [];
 
@@ -613,13 +615,26 @@ namespace MudBlazor.Charts
         private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect)
         {
             if (ChartOptions!.HighlightOnHover) ActiveNode = rect.Name;
-            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = true }).CatchAndLog();
+            _hoveredNode = rect;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            {
+                MouseIsOver = true,
+                XLabel = rect.Name,
+            }).CatchAndLog();
         }
 
         private void OnNodeMouseOut(MouseEventArgs _)
         {
             ActiveNode = null;
-            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = false }).CatchAndLog();
+            if (_hoveredNode != null)
+            {
+                OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+                {
+                    MouseIsOver = false,
+                    XLabel = _hoveredNode.Name,
+                }).CatchAndLog();
+            }
+            _hoveredNode = null;
         }
 
         private async Task OnNodeClick(MouseEventArgs _, NodeRect rect)
@@ -632,13 +647,31 @@ namespace MudBlazor.Charts
         private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)
         {
             if (ChartOptions!.HighlightOnHover) ActiveEdge = edge.Name;
-            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = true }).CatchAndLog();
+            
+            _hoveredEdge = edge;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            {
+                MouseIsOver = true,
+                Index = edge.Index,
+                XLabel = edge.LabelXValue,
+                YLabel = edge.LabelYValue,
+            }).CatchAndLog();
         }
 
         private void OnEdgeMouseOut(MouseEventArgs _)
         {
             ActiveEdge = null;
-            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T> { MouseIsOver = false }).CatchAndLog();
+            if (_hoveredEdge != null)
+            {
+                OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+                {
+                    MouseIsOver = false,
+                    Index = _hoveredEdge.Index,
+                    XLabel = _hoveredEdge.LabelXValue,
+                    YLabel = _hoveredEdge.LabelYValue,
+                }).CatchAndLog();
+            }
+            _hoveredEdge = null;
         }
 
         [JSInvokable]
