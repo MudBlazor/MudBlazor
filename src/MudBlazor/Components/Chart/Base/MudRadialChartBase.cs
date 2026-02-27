@@ -145,8 +145,8 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         }
 
         var maxCategoryLength = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
-                ? GetMaxCategoryLengthForLabelGrouping()
-                : ChartSeries.Count;
+            ? GetMaxCategoryLengthForLabelGrouping()
+            : ChartSeries.Count;
 
         var aggregated = new T[maxCategoryLength];
 
@@ -163,7 +163,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         return ChartLabels.Length > 0
             ? ChartLabels.Length
             : ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                          .Max(x => x?.Data?.Values.Count ?? 0);
+                .Max(x => x?.Data?.Values.Count ?? 0);
     }
 
     private T[] AggregateByLabel(T[] aggregated)
@@ -279,8 +279,8 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         var data = AggregateSeriesData(ChartOptions!.AggregationOption);
         var total = double.CreateSaturating(data.SumGeneric());
 
-        return total == 0.0 
-            ? (new double[data.Length]) 
+        return total == 0.0
+            ? (new double[data.Length])
             : data.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
     }
 

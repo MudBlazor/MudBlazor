@@ -279,7 +279,10 @@ namespace MudBlazor.Charts
                 {
                     var legend = new SvgLegend
                     {
-                        Index = row, Labels = _series[row].Name, Visible = _series[row].Visible, OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+                        Index = row,
+                        Labels = _series[row].Name,
+                        Visible = _series[row].Visible,
+                        OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                     };
                     _toggleLegend.Add(legend);
                 }
@@ -434,8 +437,7 @@ namespace MudBlazor.Charts
 
         private string FormatValueForDisplay(T? value)
         {
-            if (value == null)
-                return string.Empty;
+            if (value == null) return string.Empty;
 
             var formatString = _options?.ValueFormatString ?? "G";
             // Format the value and truncate to 5 characters or fewer
@@ -529,13 +531,11 @@ namespace MudBlazor.Charts
         [JSInvokable]
         public void OnElementSizeChanged(ElementSize elementSize)
         {
-            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp)
-                return;
+            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp) return;
 
             _elementSize = elementSize;
 
-            if (!MatchBoundsToSize)
-                return;
+            if (!MatchBoundsToSize) return;
 
             if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
                 Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)
@@ -569,7 +569,7 @@ namespace MudBlazor.Charts
             {
                 OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(_hoveredCell, false)).CatchAndLog();
             }
-            
+
             _hoveredCell = null;
         }
 
