@@ -117,7 +117,7 @@ namespace MudBlazor
                 // fetch number of filtered items (once only)
                 var filteredItemsCount = Table?.GetFilteredItemsCount() ?? 0;
                 var firstItem = (filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table?.RowsPerPage) + 1) ?? 0;
-                var lastItem = Math.Min((Table?.CurrentPage + 1) * Table?.RowsPerPage ?? 0, filteredItemsCount);
+                var lastItem = Math.Min(((Table?.CurrentPage + 1) * Table?.RowsPerPage) ?? 0, filteredItemsCount);
 
                 if (string.IsNullOrEmpty(InfoFormat))
                 {

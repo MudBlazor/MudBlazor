@@ -337,7 +337,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         var dataPoint = GetCachedDataPoints()[seriesIndex][dataPointIndex];
 
-        var gridValue = (dataPoint.Value / T.CreateSaturating(gridYUnits) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
+        var gridValue = ((dataPoint.Value / T.CreateSaturating(gridYUnits)) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
         var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
 
         var diffFromMin = dataPoint.DateTime - _minDateTime;

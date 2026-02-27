@@ -231,7 +231,7 @@ namespace MudBlazor.Charts
             }
 
             var cellHeight = Math.Max(CellMinSize, (_boundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1))) / RowCount);
-            var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - (padding * (SeriesLength - 1))) / SeriesLength);
 
             _cellDimension = new CellDimension(cellWidth, cellHeight, padding);
         }
@@ -379,7 +379,7 @@ namespace MudBlazor.Charts
             for (var i = 0; i < colors.Length; i++)
             {
                 var t = i / (double)(colors.Length - 1);
-                var value = _minValue + T.CreateSaturating(t) * (_maxValue - _minValue);
+                var value = _minValue + (T.CreateSaturating(t) * (_maxValue - _minValue));
                 _legends.Add((value, colors[i].ToString(MudColorOutputFormats.RGB)));
             }
         }

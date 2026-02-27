@@ -600,7 +600,7 @@ namespace MudBlazor
                     var filteredItemCount = GetFilteredItemsCount();
                     var lastPageNo = filteredItemCount == 0
                         ? 0
-                        : filteredItemCount / RowsPerPage - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                        : (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 

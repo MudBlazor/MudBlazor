@@ -504,7 +504,7 @@ namespace MudBlazor
             var gX = 255 - (int)((255 - _baseColor.G) * x);
             var bX = 255 - (int)((255 - _baseColor.B) * x);
 
-            var y = 1.0 - _selectorY / MaxY;
+            var y = 1.0 - (_selectorY / MaxY);
 
             var r = rX * y;
             var g = gX * y;

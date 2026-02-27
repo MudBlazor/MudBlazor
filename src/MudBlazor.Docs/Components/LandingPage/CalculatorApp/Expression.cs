@@ -193,11 +193,11 @@ namespace PrimitiveCalculator
                 return double.NaN;
             return Operator switch
             {
-                "+" => v + Expression.Value ?? double.NaN,
-                "-" => v - Expression.Value ?? double.NaN,
-                "*" => v * Expression.Value ?? double.NaN,
-                "/" => v / Expression.Value ?? double.NaN,
-                "%" => v % Expression.Value ?? double.NaN,
+                "+" => (v + Expression.Value) ?? double.NaN,
+                "-" => (v - Expression.Value) ?? double.NaN,
+                "*" => (v * Expression.Value) ?? double.NaN,
+                "/" => (v / Expression.Value) ?? double.NaN,
+                "%" => (v % Expression.Value) ?? double.NaN,
                 "^" => Math.Pow(v, Expression.Value ?? double.NaN),
                 _ => double.NaN,
             };

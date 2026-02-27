@@ -47,7 +47,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         BuildLegends([.. seriesData.Select(x => x.Name)]);
 
         var angleStep = 2 * Math.PI / numAxes;
-        var currentAngle = -Math.PI / 2 + (ChartOptions.AngleOffset * (Math.PI / 180)); // Convert offset to radians
+        var currentAngle = (-Math.PI / 2) + (ChartOptions.AngleOffset * (Math.PI / 180)); // Convert offset to radians
         var radius = CalculateRadius();
 
         var axisMaxValue = CalculateAxisMaxValue(
@@ -124,7 +124,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
             var scale = radius * (axisMaxValue == T.Zero ? 0 : double.CreateSaturating(value / axisMaxValue));
             scale = Math.Max(0, scale);
 
-            var angle = currentAngle + i * angleStep;
+            var angle = currentAngle + (i * angleStep);
             var x = Math.Cos(angle) * scale;
             var y = Math.Sin(angle) * scale;
 
@@ -178,7 +178,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     {
         for (var i = 0; i < numAxes; i++)
         {
-            var angle = currentAngle + i * angleStep;
+            var angle = currentAngle + (i * angleStep);
             var xOuter = Math.Cos(angle) * radius;
             var yOuter = Math.Sin(angle) * radius;
 
@@ -203,7 +203,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
             for (var j = 0; j < numAxes; j++)
             {
-                var angle = currentAngle + j * angleStep;
+                var angle = currentAngle + (j * angleStep);
                 var x = Math.Cos(angle) * gridRadius;
                 var y = Math.Sin(angle) * gridRadius;
                 pathStringBuilder.Append($"{ToS(x)} {ToS(y)} L ");
