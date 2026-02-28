@@ -101,7 +101,7 @@ namespace MudBlazor
                 Debug.Assert(DataGrid is not null);
                 var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : (DataGrid.CurrentPage * DataGrid.RowsPerPage) + 1;
                 var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
-                var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
+                var allItems = DataGrid.GetFilteredItemsCount();
 
                 if (string.IsNullOrEmpty(InfoFormat))
                 {

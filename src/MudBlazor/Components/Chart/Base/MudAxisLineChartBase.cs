@@ -159,9 +159,6 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             var chartDataCircles = new List<SvgCircle>();
             ChartDataPoints[i] = chartDataCircles;
 
-            var dataLength = series.Data.Points.Count;
-            if (dataLength == 0) continue;
-
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
 
@@ -329,7 +326,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected virtual string GetDataValueAsString(int seriesIndex, int dataPointIndex)
     {
         var value = GetDataValue<double>(seriesIndex, dataPointIndex);
-        return value.ToString(Series[seriesIndex].TooltipYValueFormat) ?? string.Empty;
+        return value.ToString(Series[seriesIndex].TooltipYValueFormat);
     }
 
     /// <summary>
