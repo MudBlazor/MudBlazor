@@ -7,7 +7,7 @@ namespace MudBlazor.Charts;
 
 public partial class ChartTooltip : ComponentBase
 {
-    private record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
+    private sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
 
     private const double TriangleWidth = 16;
     private const double TriangleHeight = 8;

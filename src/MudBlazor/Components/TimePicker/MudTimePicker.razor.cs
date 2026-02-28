@@ -843,7 +843,7 @@ namespace MudBlazor
             }
         }
 
-        private record SetTime
+        private sealed record SetTime
         {
             public int Hour { get; set; }
 
