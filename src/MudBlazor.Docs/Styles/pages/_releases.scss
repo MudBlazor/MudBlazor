@@ -17,6 +17,24 @@
       }
     }
 
+    &:not(.old-releases) {
+      h6 {
+        margin-top: 24px;
+      }
+
+      p {
+        margin: 0 0 16px;
+        font-size: var(--mud-typography-body1-size);
+      }
+
+      .release-full-changelog {
+        padding: 12px 16px;
+        border: 1px solid var(--mud-palette-lines-default);
+        border-radius: var(--mud-default-borderradius);
+        background-color: var(--mud-palette-background-grey);
+      }
+    }
+
     h5 {
       &:first-child {
         padding: 12px 0;
@@ -31,11 +49,23 @@
     ul {
       list-style: disc;
       font-size: var(--mud-typography-body1-size);
+
+      li {
+        margin-bottom: 6px;
+      }
+
+      li:last-child {
+        margin-bottom: 0;
+      }
     }
 
     .github-user {
       font-weight: 700;
       color: var(--mud-palette-text-primary);
+    }
+
+    a {
+      overflow-wrap: anywhere;
     }
   }
 }

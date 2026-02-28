@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using Markdig;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
@@ -16,7 +14,7 @@ using Markdig.Syntax.Inlines;
 namespace MudBlazor.Docs.Utilities;
 
 #nullable enable
-public class MarkdownToHtml
+public partial class MarkdownToHtml
 {
     public enum RenderMode
     {
@@ -28,6 +26,10 @@ public class MarkdownToHtml
     {
         ArgumentNullException.ThrowIfNull(markdownBody);
 
+        var body = renderMode == RenderMode.ReleasePageRender
+            ? PreprocessReleaseMarkdown(markdownBody)
+            : markdownBody;
+
         var pipeline = new MarkdownPipelineBuilder()
             .UseAutoIdentifiers()
             .Build();
@@ -37,20 +39,31 @@ public class MarkdownToHtml
         renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<HeadingBlock>>(new MudHeadingRenderer(renderMode));
         renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<LinkInline>>(new MudLinkRenderer());
         renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<ListBlock>>(new MudListRenderer(renderMode));
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<ListItemBlock>>(new B());
-        var document = Markdown.Parse(markdownBody, pipeline);
+
+        var document = Markdown.Parse(body, pipeline);
         renderer.Render(document);
 
-        return builder.ToString();
-
+        var html = builder.ToString();
+        return renderMode == RenderMode.ReleasePageRender
+            ? PostProcessReleaseHtml(html)
+            : html;
     }
 
-    public class B : HtmlObjectRenderer<ListItemBlock>
+    private static string PreprocessReleaseMarkdown(string markdownBody)
     {
-        protected override void Write(HtmlRenderer renderer, ListItemBlock obj)
-        {
-            throw new NotImplementedException();
-        }
+        var body = LeadingReleaseCommentRegex().Replace(markdownBody, string.Empty);
+        body = PullRequestUrlRegex().Replace(body, "[#$1]($0)");
+        body = CompareUrlRegex().Replace(body, "[${range}]($0)");
+        body = GitHubMentionRegex().Replace(body, "[@$1](https://github.com/$1)");
+
+        return body;
+    }
+
+    private static string PostProcessReleaseHtml(string html)
+    {
+        return FullChangelogParagraphRegex().Replace(
+            html,
+            "<p class=\"release-full-changelog\"><strong>Full Changelog</strong>:");
     }
 
     public class MudListRenderer : HtmlObjectRenderer<ListBlock>
@@ -70,10 +83,10 @@ public class MarkdownToHtml
                 var attributes = obj.GetAttributes();
                 attributes.AddClass("mt-3 mb-6 px-6");
             }
+
             listRenderer.Write(renderer, obj);
         }
     }
-
 
     public class MudHeadingRenderer : HtmlObjectRenderer<HeadingBlock>
     {
@@ -88,7 +101,8 @@ public class MarkdownToHtml
             { 6, "h6" }
         };
 
-        public MudHeadingRenderer(RenderMode renderMode) {
+        public MudHeadingRenderer(RenderMode renderMode)
+        {
             _renderMode = renderMode;
         }
 
@@ -96,7 +110,7 @@ public class MarkdownToHtml
         {
             renderer.EnsureLine();
             var heading = _heading[obj.Level];
-            
+
             if (_renderMode == RenderMode.Default)
             {
                 renderer.Write($"<{heading} id=\"{obj.GetAttributes().Id}\" class=\"mud-typography mud-typography-{heading} mt-3\">");
@@ -105,7 +119,6 @@ public class MarkdownToHtml
             else
             {
                 renderer.Write($"<{heading} class=\"mud-typography mud-typography-{heading}\">");
-                //renderer.Write("<ul class=\"mt-3 mb-6 px-6\">");
             }
 
             renderer.WriteLeafInline(obj);
@@ -113,18 +126,11 @@ public class MarkdownToHtml
             {
                 renderer.Write("</b>");
             }
-            else
-            {
-                //renderer.Write("</ul>");
-            }
 
             renderer.Write($"</{heading}>");
-            if (obj.Level < 3)
+            if (obj.Level < 3 && _renderMode == RenderMode.Default)
             {
-                if (_renderMode == RenderMode.Default)
-                {
-                    renderer.Write("<hr class=\"mud-divider mud-divider-fullwidth\">");
-                }
+                renderer.Write("<hr class=\"mud-divider mud-divider-fullwidth\">");
             }
 
             renderer.EnsureLine();
@@ -135,21 +141,35 @@ public class MarkdownToHtml
     {
         protected override void Write(HtmlRenderer renderer, LinkInline obj)
         {
-            var defaultRenderer = new LinkInlineRenderer();
             if (obj.IsImage)
             {
                 // Ignore images
                 return;
             }
-           
+
+            var defaultRenderer = new LinkInlineRenderer();
             var attributes = obj.GetAttributes();
-            attributes.AddClass("mud-link mud-primary-text mud-link-underline-hover");
+            if (IsGitHubUserLink(obj))
+            {
+                attributes.AddClass("mud-link mud-default-text mud-link-underline-hover github-user");
+            }
+            else
+            {
+                attributes.AddClass("mud-link mud-primary-text mud-link-underline-hover");
+            }
+
+            if (IsCompareLink(obj.Url))
+            {
+                attributes.AddClass("docs-code docs-code-primary");
+            }
+
             if (obj.Url is not null)
             {
                 if (obj.Url.StartsWith("http://") || obj.Url.StartsWith("https://"))
                 {
                     // External url
                     attributes.AddProperty("target", "_blank");
+                    attributes.AddProperty("rel", "noopener noreferrer");
                 }
                 else
                 {
@@ -160,5 +180,58 @@ public class MarkdownToHtml
 
             defaultRenderer.Write(renderer, obj);
         }
+
+        private static bool IsCompareLink(string? url)
+        {
+            return url is not null
+                && url.Contains("/compare/", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsGitHubUserLink(LinkInline obj)
+        {
+            if (obj.Url is null
+                || !GitHubUserUrlRegex().IsMatch(obj.Url))
+            {
+                return false;
+            }
+
+            return GetInlineText(obj).StartsWith("@", StringComparison.Ordinal);
+        }
+
+        private static string GetInlineText(LinkInline obj)
+        {
+            var text = new StringBuilder();
+            var child = obj.FirstChild;
+
+            while (child is not null)
+            {
+                if (child is LiteralInline literal)
+                {
+                    text.Append(literal.Content.ToString());
+                }
+
+                child = child.NextSibling;
+            }
+
+            return text.ToString();
+        }
     }
+
+    [GeneratedRegex(@"^\s*<!--.*?-->\s*", RegexOptions.Singleline)]
+    private static partial Regex LeadingReleaseCommentRegex();
+
+    [GeneratedRegex(@"https://github\.com/MudBlazor/MudBlazor/pull/(?<id>\d{3,6})")]
+    private static partial Regex PullRequestUrlRegex();
+
+    [GeneratedRegex(@"https://github\.com/MudBlazor/MudBlazor/compare/(?<range>[^\s)]+)")]
+    private static partial Regex CompareUrlRegex();
+
+    [GeneratedRegex(@"(?<![\w/\[(`])@(?<user>[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))\b")]
+    private static partial Regex GitHubMentionRegex();
+
+    [GeneratedRegex(@"<p>\s*<strong>Full Changelog</strong>\s*:", RegexOptions.CultureInvariant)]
+    private static partial Regex FullChangelogParagraphRegex();
+
+    [GeneratedRegex(@"^https://github\.com/[A-Za-z0-9-]+/?$", RegexOptions.CultureInvariant)]
+    private static partial Regex GitHubUserUrlRegex();
 }
