@@ -320,7 +320,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         var value = chip.GetValue();
         if (MultiSelection)
         {
-            if (value is not null && (chip.Default == true && !_selection.Contains(value) || (chip.Default == false && _selection.Contains(value))))
+            if (value is not null && ((chip.Default == true && !_selection.Contains(value)) || (chip.Default == false && _selection.Contains(value))))
             {
                 var newSelection = MultiSelection ? new HashSet<T>(_selection, Comparer) : new HashSet<T>(Comparer);
                 if (chip.Default == true)

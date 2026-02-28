@@ -554,6 +554,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task InitializeDateRange_WithMinValue_ShouldTreatAsNull()
+        {
+            var range = new DateRange(DateTime.MinValue, DateTime.MinValue);
+
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var picker = comp.FindComponent<MudDateRangePicker>();
+
+                picker.Instance.DateRange.Should().NotBeNull();
+                picker.Instance.DateRange.Start.Should().BeNull();
+                picker.Instance.DateRange.End.Should().BeNull();
+            });
+        }
+
+        [Test]
+        public async Task InitializeDateRange_WithMinValueStartOnly_ShouldNormalizeStart()
+        {
+            var range = new DateRange(DateTime.MinValue, DateTime.Today);
+
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var picker = comp.FindComponent<MudDateRangePicker>();
+
+                picker.Instance.DateRange.Should().NotBeNull();
+                picker.Instance.DateRange.Start.Should().BeNull();
+                picker.Instance.DateRange.End.Should().Be(DateTime.Today);
+            });
+        }
+
+        [Test]
+        public async Task InitializeDateRange_WithMinValueEndOnly_ShouldNormalizeEnd()
+        {
+            var range = new DateRange(DateTime.Today, DateTime.MinValue);
+
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var picker = comp.FindComponent<MudDateRangePicker>();
+
+                picker.Instance.DateRange.Should().NotBeNull();
+                picker.Instance.DateRange.Start.Should().Be(DateTime.Today);
+                picker.Instance.DateRange.End.Should().BeNull();
+            });
+        }
+
+        [Test]
         public async Task InitializeDateRange_AllNullValues()
         {
             var range = new DateRange(null, null);

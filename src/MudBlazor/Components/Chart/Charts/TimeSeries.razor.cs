@@ -91,7 +91,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         if (_minDateLabelOffset != TimeSpan.Zero)
         {
-            startOffset = (_minDateLabelOffset.TotalMilliseconds / (_maxDateTime - _minDateTime).TotalMilliseconds) * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
+            startOffset = _minDateLabelOffset.TotalMilliseconds / (_maxDateTime - _minDateTime).TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
         }
 
         var fullDateTimeDiff = _maxDateTime - _minDateTime;
@@ -337,7 +337,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         var dataPoint = GetCachedDataPoints()[seriesIndex][dataPointIndex];
 
-        var gridValue = (dataPoint.Value / T.CreateSaturating(gridYUnits) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
+        var gridValue = ((dataPoint.Value / T.CreateSaturating(gridYUnits)) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
         var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
 
         var diffFromMin = dataPoint.DateTime - _minDateTime;

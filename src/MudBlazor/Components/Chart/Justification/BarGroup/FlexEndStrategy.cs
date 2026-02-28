@@ -14,12 +14,12 @@ internal class FlexEndStrategy : IBarGroupPositionStrategy
                                           ctx.CalculateSpaceWidth(ctx.HorizontalSpace, ctx.ColumnsPerDataSet));
 
         var start = ctx.HorizontalSpace + ctx.HorizontalEndSpace -
-                       (ctx.DataSetCount * ctx.BarGroupWidth + ctx.GapsPerDataSet * (spaceBetweenGroups + ctx.BarWidth)) +
-                       ctx.SpacesPerGroup * barGapOffset;
+                       ((ctx.DataSetCount * ctx.BarGroupWidth) + (ctx.GapsPerDataSet * (spaceBetweenGroups + ctx.BarWidth))) +
+                       (ctx.SpacesPerGroup * barGapOffset);
 
         var centerOffset = ctx.DataSetCount switch
         {
-            <= 2 => (ctx.BarGroupWidth / 2) + ctx.SpacesPerGroup * barGapOffset,
+            <= 2 => (ctx.BarGroupWidth / 2) + (ctx.SpacesPerGroup * barGapOffset),
             3 => ctx.BarGroupWidth * ctx.SpacesPerGroup,
             _ => (ctx.BarGroupWidth * ctx.SpacesPerGroup) + (ctx.BarWidth * (ctx.SpacesPerGroup - 2) * 0.5)
         };
@@ -28,7 +28,7 @@ internal class FlexEndStrategy : IBarGroupPositionStrategy
 
         for (var i = 0; i < ctx.ColumnsPerDataSet; i++)
         {
-            positions[i] = start + centerOffset + i * step;
+            positions[i] = start + centerOffset + (i * step);
         }
 
         return positions;

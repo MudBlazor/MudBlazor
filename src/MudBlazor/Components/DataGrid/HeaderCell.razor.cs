@@ -139,7 +139,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Sortable ?? DataGrid?.SortMode != SortMode.None;
+                return Column?.Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
         }
 
@@ -147,7 +147,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Resizable ?? DataGrid?.ColumnResizeMode != ResizeMode.None;
+                return Column?.Resizable ?? (DataGrid?.ColumnResizeMode != ResizeMode.None);
             }
         }
 
@@ -450,7 +450,7 @@ namespace MudBlazor
             var actualWidth = await columnToShrink.UpdateColumnWidth(shrinkedWidth, gridHeight, finish);
             // Use actualWidth to see if the column could be made smaller or if it reached its min size.
             if (actualWidth >= shrinkedWidth)
-                enlargedWidth -= (actualWidth - shrinkedWidth);
+                enlargedWidth -= actualWidth - shrinkedWidth;
 
             await columnToEnlarge.UpdateColumnWidth(enlargedWidth, gridHeight, finish);
         }
