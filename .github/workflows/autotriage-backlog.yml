@@ -47,6 +47,7 @@ jobs:
           issues: ${{ github.event.inputs.issues }}
           prompt-path: .github/AutoTriage.prompt
           context-caching: true
+          extended: true
           dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
           model-fast: gemini-2.5-flash
           max-fast-runs: 20
