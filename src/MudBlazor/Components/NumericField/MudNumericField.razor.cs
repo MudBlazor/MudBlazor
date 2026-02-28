@@ -181,13 +181,28 @@ namespace MudBlazor
         protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
             await base.OnBlurredAsync(obj);
-            // For non-immediate, non-debounced inputs the onchange path is responsible for value updates.
-            // Re-parsing here can conflict with already formatted text depending on blur/change event ordering.
+
             if (Immediate || DebounceInterval > 0)
             {
                 await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
             }
+            else
+            {
+                // For non-immediate, non-debounced inputs, browser onchange timing can race with blur handlers.
+                // Parse current text only when it is not already the formatted representation of the current value.
+                var formattedValueText = ConvertSet(ReadValue);
+                if (!string.Equals(ReadText, formattedValueText, StringComparison.Ordinal))
+                {
+                    await UpdateValuePropertyAsync(true);
+                }
+            }
+
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debounce period has elapsed
+
+            if (IsFormatted && DebounceInterval <= 0 && !ConversionError)
+            {
+                await _elementReference.SetText(ReadText, updateValue: false);
+            }
         }
 
         protected async Task<bool> ValidateInput(T? value)

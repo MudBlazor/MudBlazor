@@ -660,6 +660,28 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("value").Should().Be("3.145");
         }
 
+        [Test]
+        public async Task NumericField_NotImmediate_Should_Reformat_Consistently_Across_Repeated_Blurs()
+        {
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, false)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "#.###"));
+
+            var input = comp.Find("input");
+            const string rawText = "3.14514515415414515";
+
+            for (var i = 0; i < 5; i++)
+            {
+                await input.ChangeAsync(rawText);
+                await input.BlurAsync();
+
+                await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+                await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+                input.GetAttribute("value").Should().Be("3.145");
+            }
+        }
+
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Validation<T>(T value)
         {
