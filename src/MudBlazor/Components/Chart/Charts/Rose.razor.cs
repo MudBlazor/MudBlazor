@@ -26,7 +26,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
 
         var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
         var normalizedData = GetNormalizedData();
-        var nonZeroCount = normalizedData.Count(d => d > 0.0);
+        var nonZeroCount = normalizedData.Count(d => d > double.Epsilon);
         if (nonZeroCount == 0) return;
 
         var angleStep = 2 * Math.PI / nonZeroCount;
@@ -37,7 +37,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
 
         for (var i = 0; i < normalizedData.Length; i++)
         {
-            if (normalizedData[i] == 0.0)
+            if (Math.Abs(normalizedData[i]) < double.Epsilon)
                 continue;
 
             var value = T.Max(T.Zero, chartData[i]);
@@ -72,7 +72,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
 
     private double CalculateScaledRadius(double value, double max)
     {
-        return Math.Max(0, Radius * (max == 0.0 ? 0 : value / max) * ChartOptions!.ScaleFactor);
+        return Math.Max(0, Radius * (Math.Abs(max) < double.Epsilon ? 0 : value / max) * ChartOptions!.ScaleFactor);
     }
 
     private static SegmentCoordinates GetSegmentCoordinates(double angle, double step, int count) => new()

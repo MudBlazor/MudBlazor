@@ -279,7 +279,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         var data = AggregateSeriesData(ChartOptions!.AggregationOption);
         var total = double.CreateSaturating(data.SumGeneric());
 
-        return total == 0.0 ? (new double[data.Length]) : data.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
+        return Math.Abs(total) < double.Epsilon
+            ? (new double[data.Length])
+            : data.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
     }
 
     /// <summary>

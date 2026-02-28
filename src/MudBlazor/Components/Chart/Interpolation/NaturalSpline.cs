@@ -68,7 +68,7 @@ namespace MudBlazor.Interpolation
                         _matrix.a[i, i + 1] = h[i + 1];
                 }
 
-                if ((h[i] != 0.0) && (h[i + 1] != 0.0))
+                if (Math.Abs(h[i]) > double.Epsilon && Math.Abs(h[i + 1]) > double.Epsilon)
                     _matrix.y[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
                     _matrix.y[i] = 0.0;
@@ -87,7 +87,7 @@ namespace MudBlazor.Interpolation
 
             for (var i = 0; i < n - 1; i++)
             {
-                if (h[i] != 0.0)
+                if (Math.Abs(h[i]) > double.Epsilon)
                 {
                     d[i] = 1.0 / 3.0 / h[i] * (c[i + 1] - c[i]);
                     b[i] = (1.0 / h[i] * (a[i + 1] - a[i])) - (h[i] / 3.0 * (c[i + 1] + (2 * c[i])));

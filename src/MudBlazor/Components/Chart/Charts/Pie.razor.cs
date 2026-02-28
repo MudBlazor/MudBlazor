@@ -36,7 +36,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
-                if (normalizedData[i] == 0.0)
+                if (Math.Abs(normalizedData[i]) < double.Epsilon)
                     continue;
 
                 var data = normalizedData[i];

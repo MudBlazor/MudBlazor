@@ -45,11 +45,11 @@ namespace MudBlazor.Interpolation
             {
                 for (i = k; i <= _maxOrder - 2; i++)
                 {
-                    if (Math.Abs(_matrix.a[i + 1, i]) < 1e-8)
+                    if (Math.Abs(_matrix.a[i + 1, i]) < double.Epsilon)
                     {
                         SwitchRows(i + 1);
                     }
-                    if (_matrix.a[i + 1, k] != 0.0)
+                    if (Math.Abs(_matrix.a[i + 1, k]) > double.Epsilon)
                     {
                         for (l = k + 1; l <= _maxOrder - 1; l++)
                         {
@@ -80,7 +80,7 @@ namespace MudBlazor.Interpolation
                 {
                     _matrix.y[k] = _matrix.y[k] - (_matrix.x[l] * _matrix.a[k, l]);
                 }
-                if (_matrix.a[k, k] != 0)
+                if (Math.Abs(_matrix.a[k, k]) > double.Epsilon)
                     _matrix.x[k] = _matrix.y[k] / _matrix.a[k, k];
                 else
                     _matrix.x[k] = 0;
