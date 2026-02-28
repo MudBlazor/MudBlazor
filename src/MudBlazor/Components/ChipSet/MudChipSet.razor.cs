@@ -42,7 +42,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValues;
 
     private HashSet<T> _selection = new();
-    private HashSet<MudChip<T>> _chips = new();
+    private readonly HashSet<MudChip<T>> _chips = new();
     private bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
     private bool Mandatory => SelectionMode == SelectionMode.SingleSelection;
 

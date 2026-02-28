@@ -21,9 +21,9 @@ namespace MudBlazor
         private T? _step;
         private T? _max;
         private T? _min;
-        private T? _minDefault;
-        private T? _maxDefault;
-        private T? _stepDefault;
+        private readonly T? _minDefault;
+        private readonly T? _maxDefault;
+        private readonly T? _stepDefault;
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;

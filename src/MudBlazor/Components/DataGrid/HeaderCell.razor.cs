@@ -24,7 +24,7 @@ namespace MudBlazor
         private bool _filtersMenuVisible;
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
-        private string _id = Identifier.Create();
+        private readonly string _id = Identifier.Create();
 
         // Resize state
         private double _resizeStartX;

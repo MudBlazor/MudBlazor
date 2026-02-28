@@ -14,7 +14,7 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
-    private string _id = Identifier.Create();
+    private readonly string _id = Identifier.Create();
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;

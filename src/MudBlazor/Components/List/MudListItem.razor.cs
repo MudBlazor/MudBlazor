@@ -17,7 +17,7 @@ namespace MudBlazor
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
 
-        private ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _expandedState;
 
         public MudListItem()
         {
