@@ -459,7 +459,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
             yAxisLabels.Should().Contain("0");
-            yAxisLabels.Should().Contain(l => l.StartsWith("-")); // Negative values
+            yAxisLabels.Should().Contain(l => l.StartsWith("-") || l.StartsWith("-$")); // Negative values
             yAxisLabels.Should().Contain(l => char.IsDigit(l[0])); // Positive values (simple check)
         }
 
