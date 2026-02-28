@@ -1076,7 +1076,6 @@ namespace MudBlazor
 
             DetachValidationStateChangedListener();
             await DisposeAsyncCore();
-            GC.SuppressFinalize(this);
         }
     }
 }

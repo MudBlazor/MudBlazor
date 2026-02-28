@@ -320,7 +320,6 @@ namespace MudBlazor
         public async ValueTask DisposeAsync()
         {
             await DisposeAsyncCore();
-            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc />

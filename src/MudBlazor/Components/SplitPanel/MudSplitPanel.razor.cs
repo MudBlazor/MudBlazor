@@ -231,6 +231,5 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_destroy", _containerId);
-        GC.SuppressFinalize(this);
     }
 }
