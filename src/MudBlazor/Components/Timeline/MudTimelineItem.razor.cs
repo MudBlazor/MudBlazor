@@ -172,6 +172,7 @@ namespace MudBlazor
         public void Dispose()
         {
             Parent?.Items.Remove(this);
+            GC.SuppressFinalize(this);
         }
     }
 }

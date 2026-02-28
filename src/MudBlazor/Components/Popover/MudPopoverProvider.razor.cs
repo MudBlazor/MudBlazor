@@ -41,6 +41,7 @@ namespace MudBlazor
         public void Dispose()
         {
             PopoverService.Unsubscribe(this);
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc />

@@ -93,5 +93,6 @@ internal abstract class BackgroundWorkerBase : IDisposable
     public virtual void Dispose()
     {
         _stoppingCts?.Cancel();
+        GC.SuppressFinalize(this);
     }
 }

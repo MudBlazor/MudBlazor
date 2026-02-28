@@ -278,6 +278,7 @@
         NavManager.LocationChanged -= HandleLocationChanged;
         _searchCts?.Cancel();
         _searchCts?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     private void ParseQueryString()

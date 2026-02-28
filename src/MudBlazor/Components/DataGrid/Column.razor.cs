@@ -771,6 +771,7 @@ namespace MudBlazor
         public virtual void Dispose()
         {
             Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>

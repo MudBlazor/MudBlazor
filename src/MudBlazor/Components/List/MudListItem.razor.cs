@@ -407,6 +407,8 @@ namespace MudBlazor
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
+
             if (MudList is null)
             {
                 return;

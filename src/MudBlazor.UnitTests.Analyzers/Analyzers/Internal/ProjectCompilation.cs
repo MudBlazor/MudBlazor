@@ -57,5 +57,6 @@ internal class ProjectCompilation : IDisposable
     public void Dispose()
     {
         Workspace?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

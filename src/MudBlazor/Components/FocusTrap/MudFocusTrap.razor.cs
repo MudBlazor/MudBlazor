@@ -194,6 +194,8 @@ namespace MudBlazor
             {
                 RestoreFocusAsync().CatchAndLog(ignoreExceptions: true);
             }
+
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -53,5 +53,6 @@
         if (!_showContent)
             Disposed?.Invoke(this);
         Disposed = null;
+        GC.SuppressFinalize(this);
     }
 }

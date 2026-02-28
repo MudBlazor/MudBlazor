@@ -161,5 +161,7 @@ internal sealed class ThrottleDispatcher : IDisposable
         {
             _disposed = true;
         }
+
+        GC.SuppressFinalize(this);
     }
 }
