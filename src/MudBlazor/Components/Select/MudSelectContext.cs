@@ -177,6 +177,8 @@ internal sealed class MudSelectContext<T>
 
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
+
             var contextCopy = _context;
             var observerCopy = _observer;
 
