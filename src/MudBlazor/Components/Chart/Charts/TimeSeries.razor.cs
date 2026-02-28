@@ -147,10 +147,18 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         var now = TimeProvider.GetLocalNow().DateTime;
         _minDateTime = now;
-        _maxDateTime =
-            spacing.Days > 0 ? now.AddDays(1) :
-            spacing.Minutes > 0 ? now.AddHours(1) :
-            now.AddMinutes(1);
+        if (spacing.Days > 0)
+        {
+            _maxDateTime = now.AddDays(1);
+        }
+        else if (spacing.Minutes > 0)
+        {
+            _maxDateTime = now.AddHours(1);
+        }
+        else
+        {
+            _maxDateTime = now.AddMinutes(1);
+        }
     }
 
     private void ApplyLabelRounding(TimeSpan spacing)
