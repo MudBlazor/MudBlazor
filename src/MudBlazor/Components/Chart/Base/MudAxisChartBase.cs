@@ -243,10 +243,6 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
                 _boundWidth = width;
                 _boundHeight = height;
             }
-            else if (isWidthFixed && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var fixedWidth))
-            {
-                _boundWidth = fixedWidth;
-            }
         }
     }
 
