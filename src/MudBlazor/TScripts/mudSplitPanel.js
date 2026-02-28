@@ -244,16 +244,14 @@ class MudSplitPanel {
             } else if (key === "End") {
                 this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
             }
-        } else {
-            if (key === "ArrowLeft") {
-                delta = -this.keyboardStep;
-            } else if (key === "ArrowRight") {
-                delta = this.keyboardStep;
-            } else if (key === "Home") {
-                this._setPanelSizes(this.minPanelSize, containerSize);
-            } else if (key === "End") {
-                this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
-            }
+        } else if (key === "ArrowLeft") {
+            delta = -this.keyboardStep;
+        } else if (key === "ArrowRight") {
+            delta = this.keyboardStep;
+        } else if (key === "Home") {
+            this._setPanelSizes(this.minPanelSize, containerSize);
+        } else if (key === "End") {
+            this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
         }
 
         if (delta !== 0) {

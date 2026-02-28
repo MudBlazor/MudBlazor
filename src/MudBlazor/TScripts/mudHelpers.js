@@ -73,13 +73,11 @@ function serializeParameter(data, spec) {
                         res[i].push(arrayItem);
                     }
                 }
-            } else {
+            } else if (currentMember.length === 0) {
                 //the browser provides some member (like plugins) as hash with index as key, if length == 0 we shall not convert it
-                if (currentMember.length === 0) {
-                    res[i] = [];
-                } else {
-                    res[i] = serializeParameter(currentMember, currentMemberSpec);
-                }
+                res[i] = [];
+            } else {
+                res[i] = serializeParameter(currentMember, currentMemberSpec);
             }
         } else {
             // string, number or boolean
