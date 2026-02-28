@@ -104,10 +104,10 @@ class MudSplitPanel {
         this.secondPanel.style.height = "100%";
 
         const firstPanelSizeNew = firstPanelSize !== null ? firstPanelSize : this.firstPanelInitialSize;
-        if (firstPanelSizeNew !== null) {
-            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
-        } else {
+        if (firstPanelSizeNew === null) {
             this.divider.ariaValueNow = "50";
+        } else {
+            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
         }
     }
 

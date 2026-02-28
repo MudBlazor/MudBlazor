@@ -54,13 +54,13 @@ function serializeParameter(data, spec) {
         }
 
         let currentMemberSpec;
-        if (spec != "*") {
+        if (spec === "*") {
+            currentMemberSpec = "*";
+        } else {
             currentMemberSpec = Array.isArray(data) ? spec : spec[i];
             if (!currentMemberSpec) {
                 continue;
             }
-        } else {
-            currentMemberSpec = "*";
         }
 
         if (typeof currentMember === 'object') {
