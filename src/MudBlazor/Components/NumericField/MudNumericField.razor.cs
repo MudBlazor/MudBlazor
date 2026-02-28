@@ -21,9 +21,9 @@ namespace MudBlazor
         private T? _step;
         private T? _max;
         private T? _min;
-        private T? _minDefault;
-        private T? _maxDefault;
-        private T? _stepDefault;
+        private readonly T? _minDefault;
+        private readonly T? _maxDefault;
+        private readonly T? _stepDefault;
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
@@ -140,7 +140,7 @@ namespace MudBlazor
             GetFormat() is not null ||
             // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
             // If not, then we override to InvariantCulture to avoid issues with <input type="number">.
-            GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture);
+            (GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture));
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]

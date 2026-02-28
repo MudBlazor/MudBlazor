@@ -50,8 +50,8 @@ namespace MudBlazor
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
-                .AddClass("cursor-pointer", !GetDisabled() && (!GetReadOnly() || GetExpandOnClick() && HasChildren()))
-                .AddClass("mud-ripple", GetRipple() && !GetDisabled() && !GetExpandOnDoubleClick() && (!GetReadOnly() || GetExpandOnClick() && HasChildren()))
+                .AddClass("cursor-pointer", !GetDisabled() && (!GetReadOnly() || (GetExpandOnClick() && HasChildren())))
+                .AddClass("mud-ripple", GetRipple() && !GetDisabled() && !GetExpandOnDoubleClick() && (!GetReadOnly() || (GetExpandOnClick() && HasChildren())))
                 .AddClass("mud-treeview-item-selected", !GetDisabled() && !MultiSelection && _selectedState)
                 .Build();
 
@@ -583,7 +583,7 @@ namespace MudBlazor
 
         internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
 
-        private bool HasIcon => _expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon)) || !_expandedState && !string.IsNullOrWhiteSpace(Icon);
+        private bool HasIcon => (_expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon))) || (!_expandedState && !string.IsNullOrWhiteSpace(Icon));
 
         private string? GetIcon() => _expandedState && !string.IsNullOrWhiteSpace(IconExpanded) ? IconExpanded : Icon;
 

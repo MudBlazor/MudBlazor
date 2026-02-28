@@ -104,10 +104,10 @@ class MudSplitPanel {
         this.secondPanel.style.height = "100%";
 
         const firstPanelSizeNew = firstPanelSize !== null ? firstPanelSize : this.firstPanelInitialSize;
-        if (firstPanelSizeNew !== null) {
-            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
-        } else {
+        if (firstPanelSizeNew === null) {
             this.divider.ariaValueNow = "50";
+        } else {
+            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
         }
     }
 
@@ -244,16 +244,14 @@ class MudSplitPanel {
             } else if (key === "End") {
                 this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
             }
-        } else {
-            if (key === "ArrowLeft") {
-                delta = -this.keyboardStep;
-            } else if (key === "ArrowRight") {
-                delta = this.keyboardStep;
-            } else if (key === "Home") {
-                this._setPanelSizes(this.minPanelSize, containerSize);
-            } else if (key === "End") {
-                this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
-            }
+        } else if (key === "ArrowLeft") {
+            delta = -this.keyboardStep;
+        } else if (key === "ArrowRight") {
+            delta = this.keyboardStep;
+        } else if (key === "Home") {
+            this._setPanelSizes(this.minPanelSize, containerSize);
+        } else if (key === "End") {
+            this._setPanelSizes(containerSize - this.panelGap - this.minPanelSize, containerSize);
         }
 
         if (delta !== 0) {

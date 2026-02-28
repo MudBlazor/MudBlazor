@@ -262,7 +262,7 @@ namespace MudBlazor
             await _draggingState.SetValueAsync(false);
         }
 
-        private Task OnDragAreaClickAsync(MouseEventArgs _)
+        private Task OnDragAreaClickAsync()
         {
             if (GetDisabledState())
             {
@@ -272,7 +272,7 @@ namespace MudBlazor
             return OpenFilePickerAsync();
         }
 
-        private Task OnDragEnterAsync(DragEventArgs _)
+        private Task OnDragEnterAsync()
         {
             if (GetDisabledState())
             {

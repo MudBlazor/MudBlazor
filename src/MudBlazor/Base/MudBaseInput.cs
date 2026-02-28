@@ -552,7 +552,6 @@ namespace MudBlazor
 
         private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
         {
-            _isDirty = true;
             _validated = false;
 
             // When Value changes from parent, update Text from Value

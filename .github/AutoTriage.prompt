@@ -83,20 +83,6 @@ Exclude `help wanted` if:
 - A PR was opened addressing it less than 3 months ago
 - Thread was assigned less than 3 months ago
 
-<!-- Disabled due to low value and subjectivity in "bump comment"
-### Nudges
-Respond when ALL of these conditions are met:
-- A pure bump comment appears (content-free status requests like "any update?", "bump", "+1", or standalone emoji/reactions with no substantive information) OR a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") in a comment within the last 28 days. Responses to stale notifications are valid updates showing continued interest and should reset the timer normally. They are NOT "nudges" or "bumps"..
-- You or a maintainer has not responded to a nudge in this thread and suggested a PR already
-
-What to say:
-- Invite contributions and outline next steps.
-- Provide links:
-  - Contributing guide: https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md
-  - Creating a pull request: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
-- Example phrasing: "If you'd like to work on this, a pull request would be a great next step. Here are some helpful resources to get started. Feel free to reference this issue in your PR description so it gets linked automatically."
--->
-
 ## Needs Triage
 Apply `awaiting triage` only when ALL global conditions are met and at least one case below applies.
 
@@ -105,11 +91,12 @@ Global conditions:
 - Thread does not have a `needs:` label or `help wanted` label
 
 Case — Thread is a pull request:
-- The author explicitly requests help/review (e.g., "any update?" comment, ready-for-review event, draft→ready transition) OR the initial triage/review never happened and at least 28 days have elapsed
+- The author comments a request for help/review/triage
 - No maintainer has replied since then
+- At least 7 days have elapsed
 
 Case — Thread is an issue:
-- Has at least two attention-request comments from any users (e.g., asks for help/review/triage or pings maintainers)
+- Has at least two attention-request comments from any users (e.g., asks for help/review/triage)
 - Those comments were within the last 12 months
 - Those comments are at least 14 days apart
 - No maintainer has replied since the first request
@@ -188,17 +175,22 @@ When NOT to edit:
 - The author or a maintainer has criticized or overwritten a previous title change you made
 
 ### Format Guidelines
-- Issues Only: 
-  - Sentence case, descriptive
-  - No version numbers or redundant labels
+- Prioritize clarity and searchability over brevity.
+- Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); keep those in the description/comments.
+- Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not set `newTitle`; request a clearer title/description and add `needs: info`.
+- Issues Only:
+  - Use sentence case and keep the title descriptive.
+  - Do not include version numbers or redundant labels.
 - Pull Requests Only:
-  - Always add the most relevant prefix + a colon (e.g. "MudDataGrid: Fix row selection flicker", "MudStack: Add new component")
-  - You can also add multiple prefixes if it affects more than one component, up to three (e.g. "MudSelect, MudAutocomplete: Fix pointer cursor shown on readonly")
-  - If there are more than three affected components, prefer a more generic group (e.g. "Inputs: ", "Charts: ", etc)
-  - Prefer to prefix with "Docs: " if labeled with `docs`, Tests: " if labeled with `tests`, "Build: " if labeled with `build`
-  - Always use the literal name (e.g. "MudAutoComplete" -> "MudAutocomplete", "DatePicker" -> "MudDatePicker") with exact spelling/capitalization
-- Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); they belong in the PR description or comments instead
-- Prioritize clarity and searchability over brevity
+  - Required shape: `<Prefix>: <concrete action + target/symptom>`.
+  - Prefix selection order:
+    - Use `Docs:`, `Tests:`, or `Build:` when that is the labeled primary focus.
+    - Otherwise use the primary user-facing component/group being changed.
+    - If a new helper component mainly supports an existing component workflow, keep the existing component as prefix (e.g. prefer `MudDropZone: Add custom drag handle support` over `MudDragHandle: Add new component`).
+    - Use the new component name as prefix only when it is standalone (independent usage/docs/examples or broad cross-component impact).
+    - Use up to 3 component prefixes (e.g. `MudSelect, MudAutocomplete: ...`); if more than 3 components are affected, use a broader group prefix (e.g. `Inputs:`, `Charts:`).
+  - Use literal canonical component names with exact spelling/capitalization.
+  - Reject vague suffixes (e.g. `adjustments`, `updates`, `changes`, `improvements`, `fixes`, `refactor` without saying what changed).
 
 ## Inactivity Rules
 

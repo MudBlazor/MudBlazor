@@ -11,8 +11,8 @@
         {
             <div class="mud-chart-legend-item" 
                  @onclick:stopPropagation=@(ChartContainer!=null)
-                 @onclick=@(async ()=>{ if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); }})>
-                @if(CanHideSeries == false)
+                 @onclick=@(async () => { if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); }})>
+                @if(!CanHideSeries)
                 {
                     <span class="mud-chart-legend-marker" style="@($"background-color:{ChartPalette!.GetValue(item.Index % ChartPalette.Length)}")"></span>
                     <MudText Typo="Typo.body2" HtmlTag="span">@item.Labels</MudText>
@@ -20,7 +20,7 @@
                 else
                 {   
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
-                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool value) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense></MudCheckBox>
+                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense/>
                         <MudText Typo="Typo.body2" Class="ml-n2 align-self-end" HtmlTag="span">@item.Labels</MudText>
                     </div> 
                 }                 

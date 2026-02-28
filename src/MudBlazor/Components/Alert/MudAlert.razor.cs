@@ -200,7 +200,7 @@ namespace MudBlazor
                     Severity.Success => Icons.Custom.Uncategorized.AlertSuccess,
                     Severity.Warning => Icons.Material.Outlined.ReportProblem,
                     Severity.Error => Icons.Material.Filled.ErrorOutline,
-                    _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
+                    _ => throw new InvalidOperationException($"Unsupported {nameof(Severity)} value: {Severity}."),
                 };
             }
         }

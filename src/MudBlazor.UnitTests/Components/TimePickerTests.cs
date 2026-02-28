@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Globalization;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
@@ -88,6 +89,17 @@ namespace MudBlazor.UnitTests.Components
             // count hours
             underlyingPicker.Instance.AmPm.Should().Be(true);
             comp.FindAll("div.mud-hour").Count.Should().Be(12);
+        }
+
+        [Test]
+        public void TimePicker_WithAmPmTrue_Displays12HourText()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.AmPm, true)
+                .Add(x => x.Time, new TimeSpan(17, 45, 0)));
+
+            comp.Find("input").GetAttribute("value").Should().Be("05:45 PM");
         }
 
         [Test]

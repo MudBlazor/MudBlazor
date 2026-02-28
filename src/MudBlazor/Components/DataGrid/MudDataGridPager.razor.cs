@@ -99,7 +99,7 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return "DataGrid==null";
                 Debug.Assert(DataGrid is not null);
-                var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
+                var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : (DataGrid.CurrentPage * DataGrid.RowsPerPage) + 1;
                 var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
                 var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
 
@@ -164,6 +164,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (DataGrid != null)
             {
                 DataGrid.PagerStateHasChangedEvent -= StateHasChanged;

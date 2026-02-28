@@ -19,7 +19,7 @@ public class EmptyConverter<T> : IReversibleConverter<T, T>
     public T Convert(T input) => input;
 
     /// <inheritdoc />
-    public T ConvertBack(T output) => output;
+    public T ConvertBack(T input) => input;
 
     public static readonly EmptyConverter<T> Instance = new();
 }
