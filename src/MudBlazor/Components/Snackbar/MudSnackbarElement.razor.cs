@@ -94,8 +94,6 @@ namespace MudBlazor
             {
                 Snackbar.OnUpdate -= SnackbarUpdated;
             }
-
-            GC.SuppressFinalize(this);
         }
     }
 }

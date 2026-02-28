@@ -187,8 +187,6 @@ internal class ParameterScopeContainer : IParameterScopeContainer
         {
             ForceParametersAttachment();
         }
-
-        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc/>

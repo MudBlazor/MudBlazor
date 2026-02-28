@@ -406,7 +406,6 @@ namespace MudBlazor
         public void Dispose()
         {
             ParentList?.Unregister(this);
-            GC.SuppressFinalize(this);
         }
     }
 }

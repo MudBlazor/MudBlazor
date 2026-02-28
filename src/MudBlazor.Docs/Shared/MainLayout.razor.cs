@@ -37,7 +37,6 @@ namespace MudBlazor.Docs.Shared
         public void Dispose()
         {
             LayoutService.MajorUpdateOccurred -= OnMajorUpdateOccured;
-            GC.SuppressFinalize(this);
         }
 
         private void OnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();

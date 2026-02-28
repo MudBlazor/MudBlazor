@@ -14,7 +14,6 @@ namespace MudBlazor.UnitTests.Mocks
         public void Dispose()
         {
             //nothing to dispose
-            GC.SuppressFinalize(this);
         }
     }
 

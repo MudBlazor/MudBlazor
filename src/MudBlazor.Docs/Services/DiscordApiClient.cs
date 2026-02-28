@@ -48,7 +48,6 @@ namespace MudBlazor.Docs.Services
         public void Dispose()
         {
             _http.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

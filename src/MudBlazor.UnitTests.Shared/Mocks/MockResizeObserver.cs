@@ -127,6 +127,5 @@ public class MockResizeObserver : IResizeObserver
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
     }
 }

@@ -390,8 +390,6 @@ internal sealed class DebounceDispatcher : IDisposable
     /// </remarks>
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
-
         if (_disposed)
         {
             return;

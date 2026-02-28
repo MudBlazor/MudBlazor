@@ -660,7 +660,6 @@ namespace MudBlazor
         {
             MudTreeRoot?.RemoveChild(this);
             Parent?.RemoveChild(this);
-            GC.SuppressFinalize(this);
         }
 
         internal List<MudTreeViewItem<T?>> GetChildItemsRecursive(List<MudTreeViewItem<T?>>? list = null)
