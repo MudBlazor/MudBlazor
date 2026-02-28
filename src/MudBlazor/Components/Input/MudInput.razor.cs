@@ -348,8 +348,13 @@ namespace MudBlazor
         /// <param name="text">The new value.</param>
         public Task SetText(string? text)
         {
+            return SetText(text, updateValue: true);
+        }
+
+        internal Task SetText(string? text, bool updateValue)
+        {
             _internalText = text;
-            return SetTextAndUpdateValueAsync(text);
+            return SetTextAndUpdateValueAsync(text, updateValue);
         }
 
         // Certain HTML5 inputs (dates and color) have a native placeholder

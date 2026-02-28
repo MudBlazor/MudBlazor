@@ -181,7 +181,12 @@ namespace MudBlazor
         protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
             await base.OnBlurredAsync(obj);
-            await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+            // For non-immediate, non-debounced inputs the onchange path is responsible for value updates.
+            // Re-parsing here can conflict with already formatted text depending on blur/change event ordering.
+            if (Immediate || DebounceInterval > 0)
+            {
+                await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+            }
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debounce period has elapsed
         }
 
@@ -466,9 +471,21 @@ namespace MudBlazor
             _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
-        private Task OnInputValueChanged(string text)
+        private async Task OnInputValueChanged(string text)
         {
-            return SetTextAndUpdateValueAsync(text);
+            await SetTextAndUpdateValueAsync(text);
+
+            // Keep formatted text in sync when using formatted input mode.
+            // This also covers onchange updates that can occur around blur timing.
+            if (IsFormatted && DebounceInterval <= 0 && !ConversionError)
+            {
+                var formattedText = ConvertSet(ReadValue);
+                if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))
+                {
+                    await SetTextCoreAsync(formattedText);
+                    await _elementReference.SetText(formattedText, updateValue: false);
+                }
+            }
         }
 
         //avoids the format to use scientific notation for large or small number in floating points types, while covering all options
