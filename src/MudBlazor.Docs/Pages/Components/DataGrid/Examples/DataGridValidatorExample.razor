@@ -1,11 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudForm @ref="_form" ValidationDelay="0">
-    <MudDataGrid T="Item" Items="_items" Validator="@(_bindValidatorToForm ? _form : _defaultValidator)">
+    <MudDataGrid T="Item"
+                 Items="_items"
+                 Validator="@(_bindValidatorToForm ? _form : _defaultValidator)">
         <Columns>
             <TemplateColumn Title="Name">
                 <CellTemplate>
-                    <MudTextField @bind-Value="context.Item.Name" Immediate="true" Validation="(string name) => ValidateName(name)"/>
+                    <MudTextField @bind-Value="context.Item.Name"
+                                  Immediate="true"
+                                  Validation="(string name) => ValidateName(name)" />
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
@@ -24,7 +28,7 @@
     private MudForm _form;
     private bool _bindValidatorToForm = true;
 
-    private readonly Item[] _items =
+    private Item[] _items =
     [
         new() { Name = "valid" },
         new() { Name = "invalid" }
@@ -41,7 +45,7 @@
         {
             return "Name must not be 'invalid'";
         }
-        
+
         return null;
     }
 
