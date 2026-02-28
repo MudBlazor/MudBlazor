@@ -119,6 +119,9 @@ namespace MudBlazor
 
         protected async Task SetDateRangeAsync(DateRange? range, bool updateValue)
         {
+            // Normalize the DateRange before exception is thrown
+            range = NormalizeDateRange(range);
+
             if (_dateRange != range)
             {
                 var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
@@ -508,5 +511,42 @@ namespace MudBlazor
             var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
         }
+
+        /// <summary>
+        /// Normalize a date by treating DateTime.MinValue as null
+        /// This prevents an ArgumentOutOfRangeException from happening when performing date arithmetic
+        /// </summary>
+        /// <param name="date">The date to normalize</param>
+        /// <returns>Normalized date or null</returns>
+        private static DateTime? NormalizeDate(DateTime? date)
+        {
+            if (date is null)
+                return null;
+
+            // Treat DateTime.MinValue as null
+            if (date.Value == DateTime.MinValue)
+                return null;
+
+            return date;
+        }
+
+        /// <summary>
+        /// Normalize a date range by checking the start date and end date for DateTime.MinValue
+        /// This prevents an ArgumentOutOfRangeException from happening when performing date arithmetic
+        /// </summary>
+        /// <see cref="NormalizeDate"/>
+        /// <param name="range">The date range to normalize</param>
+        /// <returns>Normalized date range or null</returns>
+        private static DateRange? NormalizeDateRange(DateRange? range)
+        {
+            if (range is null)
+                return null;
+
+            var start = NormalizeDate(range.Start);
+            var end = NormalizeDate(range.End);
+
+            return new DateRange(start, end);
+        }
+
     }
 }
