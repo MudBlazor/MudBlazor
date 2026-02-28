@@ -181,28 +181,28 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     }
 
     /// <inheritdoc />
-    public Task<bool> IsBreakpointWithinReferenceSizeAsync(Breakpoint breakpoint, Breakpoint referenceBreakpoint)
+    public Task<bool> IsBreakpointWithinReferenceSizeAsync(Breakpoint breakpoint, Breakpoint reference)
     {
         var isBreakpointMet = breakpoint switch
         {
             Breakpoint.None => false,
             Breakpoint.Always => true,
-            Breakpoint.Xs => referenceBreakpoint == Breakpoint.Xs,
-            Breakpoint.Sm => referenceBreakpoint == Breakpoint.Sm,
-            Breakpoint.Md => referenceBreakpoint == Breakpoint.Md,
-            Breakpoint.Lg => referenceBreakpoint == Breakpoint.Lg,
-            Breakpoint.Xl => referenceBreakpoint == Breakpoint.Xl,
-            Breakpoint.Xxl => referenceBreakpoint == Breakpoint.Xxl,
+            Breakpoint.Xs => reference == Breakpoint.Xs,
+            Breakpoint.Sm => reference == Breakpoint.Sm,
+            Breakpoint.Md => reference == Breakpoint.Md,
+            Breakpoint.Lg => reference == Breakpoint.Lg,
+            Breakpoint.Xl => reference == Breakpoint.Xl,
+            Breakpoint.Xxl => reference == Breakpoint.Xxl,
             // * and down
-            Breakpoint.SmAndDown => referenceBreakpoint <= Breakpoint.Sm,
-            Breakpoint.MdAndDown => referenceBreakpoint <= Breakpoint.Md,
-            Breakpoint.LgAndDown => referenceBreakpoint <= Breakpoint.Lg,
-            Breakpoint.XlAndDown => referenceBreakpoint <= Breakpoint.Xl,
+            Breakpoint.SmAndDown => reference <= Breakpoint.Sm,
+            Breakpoint.MdAndDown => reference <= Breakpoint.Md,
+            Breakpoint.LgAndDown => reference <= Breakpoint.Lg,
+            Breakpoint.XlAndDown => reference <= Breakpoint.Xl,
             // * and up
-            Breakpoint.SmAndUp => referenceBreakpoint >= Breakpoint.Sm,
-            Breakpoint.MdAndUp => referenceBreakpoint >= Breakpoint.Md,
-            Breakpoint.LgAndUp => referenceBreakpoint >= Breakpoint.Lg,
-            Breakpoint.XlAndUp => referenceBreakpoint >= Breakpoint.Xl,
+            Breakpoint.SmAndUp => reference >= Breakpoint.Sm,
+            Breakpoint.MdAndUp => reference >= Breakpoint.Md,
+            Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
+            Breakpoint.XlAndUp => reference >= Breakpoint.Xl,
             _ => false
         };
 
