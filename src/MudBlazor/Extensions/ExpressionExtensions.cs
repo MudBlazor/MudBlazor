@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -13,20 +12,18 @@ namespace MudBlazor
     {
         public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)
         {
-            var pathSegments = new List<string>();
+            var resultingString = string.Empty;
             var p = property.Body as MemberExpression;
 
             while (p is not null)
             {
                 if (p.Expression is MemberExpression)
                 {
-                    pathSegments.Add(p.Member.Name);
+                    resultingString = p.Member.Name + (resultingString != string.Empty ? "." : string.Empty) + resultingString;
                 }
                 p = p.Expression as MemberExpression;
             }
-
-            pathSegments.Reverse();
-            return string.Join(".", pathSegments);
+            return resultingString;
         }
 
         /// <summary>
