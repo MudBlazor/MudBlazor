@@ -151,6 +151,7 @@ namespace MudBlazor
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>

@@ -542,6 +542,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

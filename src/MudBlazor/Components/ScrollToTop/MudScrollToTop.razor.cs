@@ -161,6 +161,7 @@ namespace MudBlazor
         public async ValueTask DisposeAsync()
         {
             await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
 
         protected virtual async ValueTask DisposeAsyncCore()
