@@ -11,11 +11,11 @@ class MudSplitPanel {
     /**
      * Creates and stores a split panel runtime instance for a container ID.
      */
-    static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
-        window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap);
+    static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, secondPanelInitialSize, panelGap) {
+        window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, secondPanelInitialSize, panelGap);
     }
 
-    constructor(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
+    constructor(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, secondPanelInitialSize, panelGap) {
         this.container = document.getElementById(containerId);
         if (!this.container) {
             console.warn(`MudSplitPanel: Container with id '${containerId}' not found.`);
@@ -39,6 +39,7 @@ class MudSplitPanel {
         this.lastTap = 0;
         this.lastDragEndDate = 0;
         this.firstPanelInitialSize = firstPanelInitialSize;
+        this.secondPanelInitialSize = secondPanelInitialSize;
         this.keyboardStep = 10;
 
         this._onMouseDown = this._onMouseDown.bind(this);
@@ -103,11 +104,16 @@ class MudSplitPanel {
         this.firstPanel.style.height = "100%";
         this.secondPanel.style.height = "100%";
 
-        const firstPanelSizeNew = firstPanelSize !== null ? firstPanelSize : this.firstPanelInitialSize;
+        const containerSize = this._getContainerSize();
+        let firstPanelSizeNew = firstPanelSize !== null ? firstPanelSize : this.firstPanelInitialSize;
+        if (firstPanelSizeNew === null && this.secondPanelInitialSize !== null) {
+            firstPanelSizeNew = containerSize - this.secondPanelInitialSize - this.panelGap;
+        }
+
         if (firstPanelSizeNew === null) {
             this.divider.ariaValueNow = "50";
         } else {
-            this._setPanelSizes(firstPanelSizeNew, this._getContainerSize());
+            this._setPanelSizes(firstPanelSizeNew, containerSize);
         }
     }
 
@@ -210,6 +216,9 @@ class MudSplitPanel {
             : this.container.offsetWidth;
 
         let firstPanelSize = this.firstPanelInitialSize;
+        if (!firstPanelSize && this.secondPanelInitialSize) {
+            firstPanelSize = containerSize - this.secondPanelInitialSize - this.panelGap;
+        }
         if (!firstPanelSize) {
             firstPanelSize = containerSize / 2 - this.panelGap / 2;
         }

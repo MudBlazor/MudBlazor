@@ -112,6 +112,16 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     public int? FirstPanelInitialSize { get; set; }
 
     /// <summary>
+    /// Sets the initial height or width of the second panel in pixels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// If both <see cref="FirstPanelInitialSize"/> and <see cref="SecondPanelInitialSize"/> are set, only <see cref="FirstPanelInitialSize"/> will be used.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.SplitPanel.Behavior)]
+    public int? SecondPanelInitialSize { get; set; }
+
+    /// <summary>
     /// The height and width in pixel each panel can't be made smaller than.
     /// </summary>
     /// <remarks>
@@ -148,10 +158,10 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     public bool ResetOnDoubleClick { get; set; } = true;
 
     /// <summary>
-    /// Makes the panels backgrounds transparent.
+    /// Makes the panels backgrounds transparent and click through.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
+    /// Defaults to <c>false</c>. Transparency is automatically applied to panels without any contents.
     /// </remarks>
     [Parameter, Category(CategoryTypes.SplitPanel.Appearance)]
     public bool Transparent { get; set; }
@@ -185,7 +195,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, SecondPanelInitialSize, PanelGap);
         }
     }
 
