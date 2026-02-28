@@ -1548,7 +1548,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ActivatePanelDragAndDropTest>();
             var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // no drop container
-            comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
+            comp.FindAll("div.mud-drop-container").Count.Should().Be(0);
             // all tabs should show
             divs.Count.Should().Be(4);
             divs[0].InnerHtml.Should().Be("One");
@@ -1584,7 +1584,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ActivatePanelDragAndDropTest>();
             var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // no drop container
-            comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
+            comp.FindAll("div.mud-drop-container").Count.Should().Be(0);
             // all tabs should show
             divs.Count.Should().Be(4);
             divs[0].InnerHtml.Should().Be("One");

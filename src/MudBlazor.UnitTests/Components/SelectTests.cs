@@ -184,7 +184,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("2, 1, 3"));
             await comp.FindAll("div.mud-list-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("2, 3"));
-            select.Instance.GetState(x => x.SelectedValues).Count().Should().Be(2);
+            select.Instance.GetState(x => x.SelectedValues).Count.Should().Be(2);
             select.Instance.GetState(x => x.SelectedValues).Should().Contain("2");
             select.Instance.GetState(x => x.SelectedValues).Should().Contain("3");
             const string @unchecked =
@@ -1494,10 +1494,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MultiSelectTest5>();
             var selectComponent = comp.FindComponent<MudSelect<string>>();
             var select = selectComponent.Instance;
-            select.GetState(x => x.SelectedValues).Count().Should().Be(2);
+            select.GetState(x => x.SelectedValues).Count.Should().Be(2);
             select.ReadText.Should().Be("Programista, test");
             await selectComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new List<string> { "test" }));
-            select.GetState(x => x.SelectedValues).Count().Should().Be(1);
+            select.GetState(x => x.SelectedValues).Count.Should().Be(1);
             select.ReadText.Should().Be("test");
         }
 
