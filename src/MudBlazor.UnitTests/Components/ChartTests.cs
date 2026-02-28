@@ -385,9 +385,13 @@ namespace MudBlazor.UnitTests.Components
 
             var options = new HeatMapChartOptions();
             if (position is XAxisLabelPosition xPos)
+            {
                 options.XAxisLabelPosition = xPos;
+            }
             else if (position is YAxisLabelPosition yPos)
+            {
                 options.YAxisLabelPosition = yPos;
+            }
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.HeatMap)
@@ -636,9 +640,13 @@ namespace MudBlazor.UnitTests.Components
             IChartOptions options = new ChartOptions();
 
             if (chart == ChartType.Line)
+            {
                 options = new LineChartOptions() { InterpolationOption = InterpolationOption.Periodic };
+            }
             else if (chart == ChartType.Timeseries)
+            {
                 options = new TimeSeriesChartOptions() { InterpolationOption = InterpolationOption.Periodic };
+            }
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                               .Add(p => p.ChartType, chart)

@@ -809,7 +809,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.FixDay, fixedDay));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[i] = true;
+            }
 
             comp.Instance.MinDate.Should().Be(minDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -831,7 +834,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.FixDay, fixedDay));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[11 - i] = true;
+            }
 
             comp.Instance.MaxDate.Should().Be(maxDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -851,7 +857,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.OpenTo, OpenTo.Month));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[i] = true;
+            }
 
             comp.Instance.MinDate.Should().Be(minDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -871,7 +880,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.OpenTo, OpenTo.Month));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[11 - i] = true;
+            }
 
             comp.Instance.MaxDate.Should().Be(maxDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
