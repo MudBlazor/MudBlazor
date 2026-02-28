@@ -165,8 +165,8 @@ window.mudResizeListenerFactory = {
      * Cancels and removes multiple listeners.
      */
     cancelListeners: (ids) => {
-        for (let i = 0; i < ids.length; i++) {
-            window.mudResizeListenerFactory.cancelListener(ids[i]);
+        for (const id of ids) {
+            window.mudResizeListenerFactory.cancelListener(id);
         }
     },
 

@@ -49,9 +49,7 @@ class MudScrollSpy {
         let minDifference = Number.MAX_SAFE_INTEGER;
         let foundAbove = false;
         let elementId = '';
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-
+        for (const element of Array.from(elements)) {
             const rect = element.getBoundingClientRect();
             const diff = Math.abs(rect.top - center);
 
