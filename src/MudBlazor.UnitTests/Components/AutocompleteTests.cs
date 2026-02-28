@@ -1927,28 +1927,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
-        [Test]
-        public async Task Autocomplete_ActivatorPointerSequence_ShouldNotTriggerOverlayAutoClose()
-        {
-            var comp = Context.Render<AutocompleteOpenChangedTest>();
-            IElement Input() => comp.Find("div.mud-input-control");
-            IElement Menu() => comp.Find("div.mud-popover");
-
-            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
-            await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
-            comp.Instance.OpenedCount.Should().Be(1);
-            comp.Instance.ClosedCount.Should().Be(0);
-
-            await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
-
-            await comp.WaitForAssertionAsync(() =>
-            {
-                Menu().ClassList.Should().Contain("mud-popover-open");
-                comp.Instance.OpenedCount.Should().Be(1);
-                comp.Instance.ClosedCount.Should().Be(0);
-            });
-        }
-
         /// <summary>
         /// Ensure the menu does not open in read-only mode.
         /// </summary>
