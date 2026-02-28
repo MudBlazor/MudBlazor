@@ -1,20 +1,18 @@
-﻿<MudChart T="double" ChartType="ChartType.Line" ChartOptions="@lineOptions"
-          ChartSeries="@series" ChartLabels="@labels" MatchBoundsToSize="true" />
+﻿<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="_index" ChartLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+    <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
+</div>
 
 @code {
-    LineChartOptions lineOptions = new LineChartOptions
-    {
-        XAxisLabelRotation = 25,
-        ShowDataMarkers = true,
-        YAxisTicks = 2,
-        YAxisFormat = "C2",
-        ShowLegend = false
-    };
+    public static string __description__ = "Clicking the chart series or legend should update the index.";
+    
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
 
-    List<ChartSeries<double>> series = new List<ChartSeries<double>>
-    {
-        new ChartSeries<double> { Data = new double[] { 12.2, 14.3, 11.5 } }
-    };
+    public List<ChartSeries<double>> Series =
+    [
+        new() { Name = "Series 1", Data = new([90, 79, 72, 69, 62, 62, 55, 65, 70]) },
+        new() { Name = "Series 2", Data = new([10, 41, 35, 51, 49, 62, 69, 91, 148]) }
+    ];
 
-    string[] labels = { "1/1/26", "2/1/26", "3/1/26" };
+    public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 }
