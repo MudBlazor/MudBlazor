@@ -2,14 +2,14 @@ name: AutoTriage (Backlog)
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
   workflow_dispatch:
     inputs:
       issues:
-        description: 'Space-separated issue numbers'
+        description: "Space-separated issue numbers"
         required: false
       dry-run:
-        description: 'Run in dry-run mode (true = no writes)'
+        description: "Run in dry-run mode (true = no writes)"
         type: boolean
         required: false
         default: true
@@ -48,9 +48,8 @@ jobs:
           prompt-path: .github/AutoTriage.prompt
           dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
           model-fast: gemini-2.5-flash
-          max-fast-runs: 20 # keep it low so we don't keep checking the same issues (for staleness, etc)
-          model-pro: gemini-3-flash-preview # use a cheaper model since we've already scanned the issues before
-          max-pro-runs: 20
+          max-fast-runs: 20
+          model-pro: gemini-3-flash-preview
           db-path: triage-db.json
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

@@ -23,7 +23,7 @@ jobs:
         with:
           issues: ${{ github.event.pull_request.number }}
           prompt-path: .github/AutoTriage.prompt
-          model-fast: '' # skip fast pass
+          model-fast: "" # skip fast pass
           model-pro: gemini-3.1-pro-preview
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
