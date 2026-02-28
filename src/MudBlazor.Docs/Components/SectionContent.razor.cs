@@ -160,7 +160,12 @@ public partial class SectionContent
         }
         else
         {
-            firstFile = Codes.FirstOrDefault().code;
+            firstFile = Codes.FirstOrDefault()?.code ?? Code;
+        }
+
+        if (string.IsNullOrWhiteSpace(firstFile))
+        {
+            return;
         }
 
         // We use a separator that won't be in code so we can send 2 files later

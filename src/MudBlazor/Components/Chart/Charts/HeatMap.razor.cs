@@ -316,7 +316,7 @@ namespace MudBlazor.Charts
             _dynamicFontSize = CalculateFontSize(estimatedCellWidth, estimatedCellHeight, 8);
 
             // Calculate Y-axis label width based on dynamic font size
-            _yAxisLabelWidth = (_series.Count > 0 ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
+            _yAxisLabelWidth = (_series.Count > 0 ? _series.Max(x => x.Name.Length) : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
 
             const double DefaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }

@@ -1210,7 +1210,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[5].BlurAsync();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1255,7 +1255,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[9].BlurAsync();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeFalse();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1310,7 +1310,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[9].BlurAsync();
 
             var form = comp.FindComponent<MudForm>().Instance;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
             form.IsValid.Should().BeTrue();
 
             var textfields = comp.FindComponents<MudTextField<string>>();
