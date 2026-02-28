@@ -153,7 +153,7 @@ class MudKeyInterceptor {
      */
     attachHandlers(child) {
         this.logger('[MudBlazor | KeyInterceptor] attaching handlers ', { child });
-        if (this._observedChildren.indexOf(child) > -1) {
+        if (this._observedChildren.includes(child)) {
             //console.log("... already attached");
             return;
         }

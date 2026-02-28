@@ -155,7 +155,7 @@ class MudJsEvent {
             this.logger('[MudBlazor | JsEvent] attaching event ' + eventName, child);
             child.addEventListener(eventName, this.eventHandler);
         }
-        if(this._observedChildren.indexOf(child) < 0)
+        if (!this._observedChildren.includes(child))
             this._observedChildren.push(child);
     }
 

@@ -108,74 +108,74 @@ window.mudpopoverHelper = {
         let top = boundingRect.top;     // default for mud-popover-anchor-top-left
         let left = boundingRect.left;   // default for mud-popover-anchor-top-left
 
-        const isPositionOverride = list.indexOf('mud-popover-position-override') >= 0;
+        const isPositionOverride = list.includes('mud-popover-position-override');
 
         let offsetX = 0;
         let offsetY = 0;
         // transform origin
 
-        if (list.indexOf('mud-popover-top-left') >= 0) {
+        if (list.includes('mud-popover-top-left')) {
             offsetX = 0;
             offsetY = 0;
-        } else if (list.indexOf('mud-popover-top-center') >= 0) {
+        } else if (list.includes('mud-popover-top-center')) {
             offsetX = -selfRect.width / 2;
             offsetY = 0;
-        } else if (list.indexOf('mud-popover-top-right') >= 0) {
+        } else if (list.includes('mud-popover-top-right')) {
             offsetX = -selfRect.width;
             offsetY = 0;
         }
 
-        else if (list.indexOf('mud-popover-center-left') >= 0) {
+        else if (list.includes('mud-popover-center-left')) {
             offsetX = 0;
             offsetY = -selfRect.height / 2;
-        } else if (list.indexOf('mud-popover-center-center') >= 0) {
+        } else if (list.includes('mud-popover-center-center')) {
             offsetX = -selfRect.width / 2;
             offsetY = -selfRect.height / 2;
-        } else if (list.indexOf('mud-popover-center-right') >= 0) {
+        } else if (list.includes('mud-popover-center-right')) {
             offsetX = -selfRect.width;
             offsetY = -selfRect.height / 2;
         }
 
-        else if (list.indexOf('mud-popover-bottom-left') >= 0) {
+        else if (list.includes('mud-popover-bottom-left')) {
             offsetX = 0;
             offsetY = -selfRect.height;
-        } else if (list.indexOf('mud-popover-bottom-center') >= 0) {
+        } else if (list.includes('mud-popover-bottom-center')) {
             offsetX = -selfRect.width / 2;
             offsetY = -selfRect.height;
-        } else if (list.indexOf('mud-popover-bottom-right') >= 0) {
+        } else if (list.includes('mud-popover-bottom-right')) {
             offsetX = -selfRect.width;
             offsetY = -selfRect.height;
         }
 
         if (!isPositionOverride) {
             // anchor origin, don't flip anchors on position override
-            if (list.indexOf('mud-popover-anchor-top-left') >= 0) {
+            if (list.includes('mud-popover-anchor-top-left')) {
                 left = boundingRect.left;
                 top = boundingRect.top;
-            } else if (list.indexOf('mud-popover-anchor-top-center') >= 0) {
+            } else if (list.includes('mud-popover-anchor-top-center')) {
                 left = boundingRect.left + boundingRect.width / 2;
                 top = boundingRect.top;
-            } else if (list.indexOf('mud-popover-anchor-top-right') >= 0) {
+            } else if (list.includes('mud-popover-anchor-top-right')) {
                 left = boundingRect.left + boundingRect.width;
                 top = boundingRect.top;
 
-            } else if (list.indexOf('mud-popover-anchor-center-left') >= 0) {
+            } else if (list.includes('mud-popover-anchor-center-left')) {
                 left = boundingRect.left;
                 top = boundingRect.top + boundingRect.height / 2;
-            } else if (list.indexOf('mud-popover-anchor-center-center') >= 0) {
+            } else if (list.includes('mud-popover-anchor-center-center')) {
                 left = boundingRect.left + boundingRect.width / 2;
                 top = boundingRect.top + boundingRect.height / 2;
-            } else if (list.indexOf('mud-popover-anchor-center-right') >= 0) {
+            } else if (list.includes('mud-popover-anchor-center-right')) {
                 left = boundingRect.left + boundingRect.width;
                 top = boundingRect.top + boundingRect.height / 2;
 
-            } else if (list.indexOf('mud-popover-anchor-bottom-left') >= 0) {
+            } else if (list.includes('mud-popover-anchor-bottom-left')) {
                 left = boundingRect.left;
                 top = boundingRect.top + boundingRect.height;
-            } else if (list.indexOf('mud-popover-anchor-bottom-center') >= 0) {
+            } else if (list.includes('mud-popover-anchor-bottom-center')) {
                 left = boundingRect.left + boundingRect.width / 2;
                 top = boundingRect.top + boundingRect.height;
-            } else if (list.indexOf('mud-popover-anchor-bottom-right') >= 0) {
+            } else if (list.includes('mud-popover-anchor-bottom-right')) {
                 left = boundingRect.left + boundingRect.width;
                 top = boundingRect.top + boundingRect.height;
             }
