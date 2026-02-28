@@ -48,7 +48,6 @@ internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
     {
         _periodicTimer.Dispose();
         base.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

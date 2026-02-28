@@ -407,17 +407,16 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
+            if (MudList is not null)
+            {
+                try
+                {
+                    MudList.Unregister(this);
+                }
+                catch (Exception) { /*ignore*/ }
+            }
 
-            if (MudList is null)
-            {
-                return;
-            }
-            try
-            {
-                MudList.Unregister(this);
-            }
-            catch (Exception) { /*ignore*/ }
+            GC.SuppressFinalize(this);
         }
     }
 }
