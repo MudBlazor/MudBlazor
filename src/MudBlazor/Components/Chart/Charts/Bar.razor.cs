@@ -264,7 +264,7 @@ namespace MudBlazor.Charts
             _barGroupWidth = Math.Max((MinBarWidth * seriesCount) - 2, groupWidthRelative - _barWidth);
         }
 
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
             OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>

@@ -377,7 +377,9 @@ public class DefaultConverterTests
         var trueInputs = new[] { "true", "True", "TrUe", "1", "on", "ON" };
 
         foreach (var input in trueInputs)
+        {
             conv.ConvertBack(input).Should().BeTrue();
+        }
     }
 
     [Test]
@@ -387,7 +389,9 @@ public class DefaultConverterTests
         var falseInputs = new[] { "false", "0", "off", "OFF", "random", string.Empty, null };
 
         foreach (var input in falseInputs)
+        {
             conv.ConvertBack(input).Should().BeFalse();
+        }
     }
 
     [Test]
@@ -398,15 +402,21 @@ public class DefaultConverterTests
 
         // true variants -> true
         foreach (var input in new[] { "true", "1", "on", "TrUe" })
+        {
             nullableConv.ConvertBack(input).Should().BeTrue();
+        }
 
         // false variants -> false
         foreach (var input in new[] { "false", "0", "off", "OFF" })
+        {
             nullableConv.ConvertBack(input).Should().BeFalse();
+        }
 
         // unknown / empty / null -> null
         foreach (var input in new[] { "maybe", string.Empty, null })
+        {
             nullableConv.ConvertBack(input).Should().BeNull();
+        }
     }
 
     #endregion

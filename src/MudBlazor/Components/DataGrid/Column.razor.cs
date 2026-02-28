@@ -32,8 +32,6 @@ namespace MudBlazor
         [CascadingParameter]
         public MudDataGrid<T> DataGrid { get; set; } = null!;
 
-        //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
-
         /// <summary>
         /// The value stored in this column.
         /// </summary>
@@ -44,12 +42,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
-
-        //[Parameter] public bool Visible { get; set; } = true;
-
-        //[Parameter] public string Field { get; set; }
-
-        //[Parameter] public Type FieldType { get; set; }
 
         /// <summary>
         /// The display text for this column.
@@ -552,7 +544,7 @@ namespace MudBlazor
         {
             get
             {
-                return Sortable ?? DataGrid?.SortMode != SortMode.None;
+                return Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
         }
 
@@ -657,21 +649,6 @@ namespace MudBlazor
             headerContext = new HeaderContext<T>(DataGrid);
 
             // Add the FilterContext
-            //if (filterable)
-            //{
-            //    filterContext = new FilterContext<T>(DataGrid);
-            //    var operators = FilterOperator.GetOperatorByDataType(dataType);
-            //    filterContext.FilterDefinition = new FilterDefinition<T>()
-            //    {
-            //        DataGrid = this.DataGrid,
-            //        Field = PropertyName,
-            //        FieldType = dataType,
-            //        Title = Title,
-            //        Operator = operators.FirstOrDefault()
-            //    };
-            //}
-
-            // Add the FilterContext
             filterContext = new FilterContext<T>(DataGrid);
 
             // Add the FooterContext
@@ -770,6 +747,21 @@ namespace MudBlazor
         /// </summary>
         public virtual void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this column.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
         }

@@ -111,7 +111,7 @@
                           width="@_cellDimension.Width.ToStr()"
                           height="@_cellDimension.Height.ToStr()"
                           @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                          @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                          @onmouseover="@(() => OnCellMouseOver(cell))"
                           @onmouseout="OnCellMouseOut"
                           fill="@(cellColor)"/>
 
@@ -119,7 +119,7 @@
                     {
                         <g>
                             <text @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                                  @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                                  @onmouseover="@(() => OnCellMouseOver(cell))"
                                   @onmouseout="OnCellMouseOut"
                                   font-size="@_dynamicFontSize.ToStr()"
                                   x="@((x + _cellDimension.Width / 2).ToStr())"
@@ -227,7 +227,7 @@
                         var tooltipX = legendX + offsetX + x + LegendBox / 2;
 
                         <g transform="translate(@x.ToStr(), 0)" class="mud-chart-heatmap-legend">
-                            <rect @onmouseover="(e) => OnLegendMouseOver(e, _legends[index], new((float)tooltipX , (float)legendY))"
+                            <rect @onmouseover="@(() => OnLegendMouseOver(_legends[index], new((float)tooltipX , (float)legendY)))"
                                   @onmouseout="OnLegendMouseOut"
                                   x="0"
                                   y="@((-LegendBox / 2).ToStr())"
@@ -290,7 +290,7 @@
                         var tooltipY = legendY + offsetY + y;
 
                         <g transform="translate(0, @y.ToStr())" class="mud-chart-heatmap-legend">
-                            <rect @onmouseover="(e) => OnLegendMouseOver(e, _legends[index], new((float)(legendX + LegendBox / 2) , (float)tooltipY))"
+                            <rect @onmouseover="@(() => OnLegendMouseOver(_legends[index], new((float)(legendX + LegendBox / 2) , (float)tooltipY)))"
                                   @onmouseout="OnLegendMouseOut"
                                   x="0"
                                   y="@((-LegendBox / 2).ToStr())"

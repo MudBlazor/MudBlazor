@@ -198,7 +198,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// <summary>
     /// Represents an enumerable reader for parameter states.
     /// </summary>
-    private class ParameterScopeContainerReadonlyEnumerable : IParameterStatesReader
+    private sealed class ParameterScopeContainerReadonlyEnumerable : IParameterStatesReader
     {
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 

@@ -47,7 +47,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
             var coords = GetSegmentCoordinates(currentAngle, angleStep, nonZeroCount);
             var arc = BuildRadialPath(coords, radius, nonZeroCount);
 
-            var midAngle = currentAngle + angleStep / 2;
+            var midAngle = currentAngle + (angleStep / 2);
             var (x, y) = GetRadialLabelPosition(midAngle, radius, nonZeroCount);
 
             _paths.Add(new SvgPetal

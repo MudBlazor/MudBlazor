@@ -231,7 +231,7 @@ namespace MudBlazor.Charts
             }
 
             var cellHeight = Math.Max(CellMinSize, (_boundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1))) / RowCount);
-            var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - (padding * (SeriesLength - 1))) / SeriesLength);
 
             _cellDimension = new CellDimension(cellWidth, cellHeight, padding);
         }
@@ -316,7 +316,7 @@ namespace MudBlazor.Charts
             _dynamicFontSize = CalculateFontSize(estimatedCellWidth, estimatedCellHeight, 8);
 
             // Calculate Y-axis label width based on dynamic font size
-            _yAxisLabelWidth = (_series.Count > 0 ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
+            _yAxisLabelWidth = (_series.Count > 0 ? _series.Max(x => x.Name.Length) : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
 
             const double DefaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }
@@ -379,7 +379,7 @@ namespace MudBlazor.Charts
             for (var i = 0; i < colors.Length; i++)
             {
                 var t = i / (double)(colors.Length - 1);
-                var value = _minValue + T.CreateSaturating(t) * (_maxValue - _minValue);
+                var value = _minValue + (T.CreateSaturating(t) * (_maxValue - _minValue));
                 _legends.Add((value, colors[i].ToString(MudColorOutputFormats.RGB)));
             }
         }
@@ -554,7 +554,7 @@ namespace MudBlazor.Charts
             }).CatchAndLog();
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T>? cell)
+        private void OnCellMouseOver(HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
             if (cell is not null)
@@ -563,7 +563,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void OnCellMouseOut(MouseEventArgs _)
+        private void OnCellMouseOut()
         {
             if (_hoveredCell != null)
             {
@@ -584,7 +584,7 @@ namespace MudBlazor.Charts
             Column = cell.Column,
         };
 
-        private void OnLegendMouseOver(MouseEventArgs _, (T value, string color) legend, PointF position)
+        private void OnLegendMouseOver((T value, string color) legend, PointF position)
         {
             _hoveredLegend = legend;
             _hoveredLegendPosition = position;

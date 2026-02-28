@@ -17,7 +17,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Inject]
     private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-    private string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+    private readonly string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
 
     internal readonly ParameterState<bool> SelectedState;
 

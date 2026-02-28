@@ -51,7 +51,6 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
     /// </exception>
     public TIn ConvertBack(TOut input)
     {
-        //var runtimeType = input is null ? typeof(TIn) : input.GetType();
         var runtimeType = typeof(TIn);
 
         if (_backwards.TryGetValue(runtimeType, out var del))

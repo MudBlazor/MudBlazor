@@ -297,13 +297,25 @@ namespace MudBlazor
         /// <remarks>
         /// Validation will occur even if form controls haven't changed yet.
         /// </remarks>
-        public async Task Validate()
+        [Obsolete("Use ValidateAsync instead.")]
+        public Task Validate()
+        {
+            return ValidateAsync();
+        }
+
+        /// <summary>
+        /// Forces a validation of all form controls (including in child forms).
+        /// </summary>
+        /// <remarks>
+        /// Validation will occur even if form controls haven't changed yet.
+        /// </remarks>
+        public async Task ValidateAsync()
         {
             await Task.WhenAll(_formControls.Select(x => x.ValidateAsync()));
 
             if (ChildForms.Count > 0)
             {
-                await Task.WhenAll(ChildForms.Select(x => x.Validate()));
+                await Task.WhenAll(ChildForms.Select(x => x.ValidateAsync()));
             }
 
             EvaluateForm(debounce: false);

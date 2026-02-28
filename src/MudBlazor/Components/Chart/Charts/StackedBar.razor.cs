@@ -191,7 +191,7 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1), 1);
 
             _barWidthStroke = _barWidth = Math.Max(MinBarWidth, barWidth * ChartOptions!.BarWidthRatio);
 
@@ -275,7 +275,7 @@ namespace MudBlazor.Charts
                         continue;
                     }
 
-                    var segmentHeight = (dataValue / T.CreateSaturating(gridYUnits)) * T.CreateSaturating(verticalSpace);
+                    var segmentHeight = dataValue / T.CreateSaturating(gridYUnits) * T.CreateSaturating(verticalSpace);
                     var isNegative = dataValue < T.Zero;
 
                     var yStart = isNegative ? negativeStack : positiveStack;
@@ -340,7 +340,7 @@ namespace MudBlazor.Charts
             return (int)Math.Max(0, spaceBetweenBars);
         }
 
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
             OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>

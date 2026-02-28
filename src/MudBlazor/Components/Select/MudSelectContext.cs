@@ -72,10 +72,11 @@ internal sealed class MudSelectContext<T>
         // Shadow items are registered separately via RegisterShadowItem
 
         // Check if this item's value is currently selected
-        var currentValue = _select.ReadValue;
-        var selectedValues = _select.GetSelectedValues();
-        return currentValue?.Equals(item.Value) == true ||
-               selectedValues?.Contains(item.Value) == true;
+        return _select.MultiSelection switch
+        {
+            true => _select.GetSelectedValues()?.Contains(item.Value) == true,
+            false => _select.ReadValue?.Equals(item.Value) == true
+        };
     }
 
     /// <summary>

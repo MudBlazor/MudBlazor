@@ -494,11 +494,18 @@ namespace MudBlazor
         /// If no items are selected, <see cref="UncheckedIcon"/> is returned.
         /// Otherwise, <see cref="IndeterminateIcon"/> is returned.
         /// </remarks>
-        protected string SelectAllCheckBoxIcon => _selectAllChecked.HasValue
-            ? _selectAllChecked.Value
-                ? CheckedIcon
-                : UncheckedIcon
-            : IndeterminateIcon;
+        protected string SelectAllCheckBoxIcon
+        {
+            get
+            {
+                if (!_selectAllChecked.HasValue)
+                {
+                    return IndeterminateIcon;
+                }
+
+                return _selectAllChecked.Value ? CheckedIcon : UncheckedIcon;
+            }
+        }
 
         /// <summary>
         /// Selects the item at the specified index.
@@ -781,7 +788,13 @@ namespace MudBlazor
 
         private void UpdateIcon()
         {
-            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _openState.Value ? CloseIcon : OpenIcon;
+            if (!string.IsNullOrWhiteSpace(AdornmentIcon))
+            {
+                _currentIcon = AdornmentIcon;
+                return;
+            }
+
+            _currentIcon = _openState.Value ? CloseIcon : OpenIcon;
         }
 
         private Task HighlightItemForValueAsync(T? value)
@@ -856,7 +869,7 @@ namespace MudBlazor
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
         }
 
-        private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
+        private async Task OnFocusOutAsync()
         {
             if (_openState.Value)
             {

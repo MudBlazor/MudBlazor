@@ -24,7 +24,7 @@ namespace MudBlazor
         private bool _filtersMenuVisible;
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
-        private string _id = Identifier.Create();
+        private readonly string _id = Identifier.Create();
 
         // Resize state
         private double _resizeStartX;
@@ -139,7 +139,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Sortable ?? DataGrid?.SortMode != SortMode.None;
+                return Column?.Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
         }
 
@@ -147,7 +147,7 @@ namespace MudBlazor
         {
             get
             {
-                return Column?.Resizable ?? DataGrid?.ColumnResizeMode != ResizeMode.None;
+                return Column?.Resizable ?? (DataGrid?.ColumnResizeMode != ResizeMode.None);
             }
         }
 
@@ -450,7 +450,7 @@ namespace MudBlazor
             var actualWidth = await columnToShrink.UpdateColumnWidth(shrinkedWidth, gridHeight, finish);
             // Use actualWidth to see if the column could be made smaller or if it reached its min size.
             if (actualWidth >= shrinkedWidth)
-                enlargedWidth -= (actualWidth - shrinkedWidth);
+                enlargedWidth -= actualWidth - shrinkedWidth;
 
             await columnToEnlarge.UpdateColumnWidth(enlargedWidth, gridHeight, finish);
         }
@@ -715,6 +715,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this header cell.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (DataGrid is not null)
             {
                 DataGrid.SortChangedEvent -= OnGridSortChanged;

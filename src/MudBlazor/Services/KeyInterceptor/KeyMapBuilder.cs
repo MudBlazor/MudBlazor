@@ -284,7 +284,7 @@ public sealed class KeyMapBuilder
         public bool IsHook => false;
 
         public bool CanExecute(KeyboardEventArgs args)
-            => _regex?.IsMatch(args.Key) ?? args.Key == key;
+            => _regex?.IsMatch(args.Key) ?? (args.Key == key);
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action();
@@ -299,7 +299,7 @@ public sealed class KeyMapBuilder
         public bool IsHook => false;
 
         public bool CanExecute(KeyboardEventArgs args)
-            => _regex?.IsMatch(args.Key) ?? args.Key == key;
+            => _regex?.IsMatch(args.Key) ?? (args.Key == key);
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => action(args);

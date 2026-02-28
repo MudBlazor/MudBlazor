@@ -47,7 +47,13 @@ jobs:
 
       - name: dotnet format
         run: |
+          # Skip format check when nothing changed under src.
           if [ "${{ steps.changed-files.outputs.any_changed }}" != "true" ]; then
+            exit 0
+          fi
+          # .editorconfig changes can affect any file, so check all.
+          if ${{ contains(format(' {0} ', steps.changed-files.outputs.all_changed_files), ' src/.editorconfig ') }}; then
+            dotnet format src --no-restore --verify-no-changes
             exit 0
           fi
           dotnet format src --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
