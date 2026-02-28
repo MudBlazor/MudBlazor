@@ -9,7 +9,7 @@ namespace MudBlazor
     /// A clickable column which toggles the sort column and direction for a <see cref="MudTable{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in the table.</typeparam>
-    public partial class MudTableSortLabel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
+    public partial class MudTableSortLabel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase, IDisposable
     {
         private SortDirection _direction = SortDirection.None;
 

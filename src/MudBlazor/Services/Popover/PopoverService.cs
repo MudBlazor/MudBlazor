@@ -229,7 +229,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             _observerManager.Clear();
 
             // Do not send our CancellationTokenSource as it was cancelled.
-            await _popoverJsInterop.Dispose(CancellationToken.None);
+            await _popoverJsInterop.DisposeAsync(CancellationToken.None);
 
             _cancellationTokenSource.Dispose();
         }

@@ -9,7 +9,7 @@ namespace MudBlazor
     /// <summary>
     /// A header row displayed at the top of a <see cref="MudTable{T}"/> and each group.
     /// </summary>
-    public partial class MudTHeadRow : MudComponentBase
+    public partial class MudTHeadRow : MudComponentBase, IDisposable
     {
         private bool? _checked = false;
 

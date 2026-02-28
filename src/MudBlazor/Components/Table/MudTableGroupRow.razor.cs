@@ -13,7 +13,7 @@ namespace MudBlazor
     /// A grouping of values for a column in a <see cref="MudTable{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being grouped.</typeparam>
-    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
+    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase, IDisposable
     {
         private bool? _checked = false;
         private IGrouping<object, T>? _items = null;

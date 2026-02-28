@@ -255,7 +255,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             }
 
             // Do not send our CancellationTokenSource as it was cancelled.
-            await _resizeListenerInterop.Dispose(CancellationToken.None);
+            await _resizeListenerInterop.DisposeAsync(CancellationToken.None);
 
             _cancellationTokenSource.Dispose();
         }

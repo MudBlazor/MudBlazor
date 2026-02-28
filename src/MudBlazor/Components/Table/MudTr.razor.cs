@@ -8,7 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// A row of data within a <see cref="MudTable{T}"/>.
     /// </summary>
-    public partial class MudTr : MudComponentBase
+    public partial class MudTr : MudComponentBase, IDisposable
     {
         private bool _checked;
         private bool _hasBeenCanceled;
