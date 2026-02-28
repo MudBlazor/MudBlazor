@@ -856,7 +856,7 @@ namespace MudBlazor
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
         }
 
-        private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
+        private async Task OnFocusOutAsync()
         {
             if (_openState.Value)
             {

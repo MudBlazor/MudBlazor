@@ -312,7 +312,7 @@ namespace MudBlazor.Charts
             return (int)Math.Max(0, spaceBetweenBars);
         }
 
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
 

@@ -186,7 +186,7 @@ namespace MudBlazor
             }
 
             if (_isFocused && Mask.Selection == null)
-                await SetCaretPositionAsync(Mask.CaretPos, _selection, render: false);
+                await SetCaretPositionAsync(Mask.CaretPos, _selection);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -404,7 +404,7 @@ namespace MudBlazor
             _isFocused = false;
         }
 
-        private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null, bool render = true)
+        private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null)
         {
             if (!_isFocused)
                 return;
@@ -462,7 +462,7 @@ namespace MudBlazor
             _mask = other;
         }
 
-        private async Task OnCutAsync(ClipboardEventArgs obj)
+        private async Task OnCutAsync()
         {
             if (GetReadOnlyState())
                 return;

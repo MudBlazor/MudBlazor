@@ -147,7 +147,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         StateHasChanged();
     }
 
-    private async Task DragEndedAsync(DragEventArgs e)
+    private async Task DragEndedAsync()
     {
         if (_dragOperationIsInProgress)
         {

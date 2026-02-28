@@ -287,7 +287,7 @@ namespace MudBlazor.Charts
             var aggregated = new ChartSeries<T>[maxCategoryLength];
             return aggregation switch
             {
-                AggregationOption.GroupByLabel => AggregateByLabel(aggregated),
+                AggregationOption.GroupByLabel => AggregateByLabel(),
                 AggregationOption.GroupByDataSet => AggregateByDataSet(aggregated),
                 _ => throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}")
             };
@@ -302,7 +302,7 @@ namespace MudBlazor.Charts
                               .Max(x => x?.Data?.Values.Count ?? 0);
         }
 
-        private List<ChartSeries<T>> AggregateByLabel(ChartSeries<T>[] _)
+        private List<ChartSeries<T>> AggregateByLabel()
         {
             var result = new List<ChartSeries<T>>();
             var visibleSeries = ChartSeries.Where(s => s.Visible).ToList();
@@ -512,7 +512,7 @@ namespace MudBlazor.Charts
             EdgePaths.Clear();
 
             var index = 0;
-            var edgesPerSources = Edges.GroupBy(e => e.Source).ToList();
+            var edgesPerSources = edges.GroupBy(e => e.Source).ToList();
             foreach (var sourceGrp in edgesPerSources)
             {
                 if (!NodeRects.TryGetValue(sourceGrp.Key, out var rectSource)) continue;
@@ -610,29 +610,29 @@ namespace MudBlazor.Charts
             RebuildChart();
         }
 
-        private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect)
+        private void OnNodeMouseOver(NodeRect rect)
         {
             if (ChartOptions!.HighlightOnHover) ActiveNode = rect.Name;
         }
 
-        private void OnNodeMouseOut(MouseEventArgs _)
+        private void OnNodeMouseOut()
         {
             ActiveNode = null;
         }
 
-        private async Task OnNodeClick(MouseEventArgs _, NodeRect rect)
+        private async Task OnNodeClick(NodeRect rect)
         {
             var index = Nodes.ToList().IndexOf(Nodes.First(n => n.Name == rect.Name));
 
             await SetSelectedIndexAsync(index);
         }
 
-        private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)
+        private void OnEdgeMouseOver(EdgePath edge)
         {
             if (ChartOptions!.HighlightOnHover) ActiveEdge = edge.Name;
         }
 
-        private void OnEdgeMouseOut(MouseEventArgs _)
+        private void OnEdgeMouseOut()
         {
             ActiveEdge = null;
         }

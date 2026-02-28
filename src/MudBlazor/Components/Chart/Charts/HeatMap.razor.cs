@@ -557,17 +557,17 @@ namespace MudBlazor.Charts
             }).CatchAndLog();
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T>? cell)
+        private void OnCellMouseOver(HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
         }
 
-        private void OnCellMouseOut(MouseEventArgs _)
+        private void OnCellMouseOut()
         {
             _hoveredCell = null;
         }
 
-        private void OnLegendMouseOver(MouseEventArgs _, (T value, string color) legend, PointF position)
+        private void OnLegendMouseOver((T value, string color) legend, PointF position)
         {
             _hoveredLegend = legend;
             _hoveredLegendPosition = position;
