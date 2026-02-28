@@ -38,8 +38,8 @@ internal sealed class ScrollManager : IScrollManager
         ScrollToAsync(id, 0, 0, scrollBehavior);
 
     /// <inheritdoc />
-    public ValueTask ScrollToBottomAsync(string id, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToStringFast(true));
+    public ValueTask ScrollToBottomAsync(string elementId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", elementId, scrollBehavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToYearAsync(string elementId) =>
