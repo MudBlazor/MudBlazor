@@ -456,12 +456,12 @@ namespace MudBlazor.UnitTests.Components
             var checkboxes = comp.FindAll(".mud-input-control.mud-input-control-boolean-input");
 
             // verify checkbox one maintains it's original structure, no aria class used, label with a span element
-            checkboxes[0].GetElementsByClassName("mud-sr-only").Count().Should().Be(0);
+            checkboxes[0].GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
             var element0 = comp.Find(".cb1 label.mud-checkbox span.mud-typography");
             element0.HasAttribute("aria-hidden").Should().BeFalse();
 
             // checkbox two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
-            checkboxes[1].GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            checkboxes[1].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".cb2 label.mud-checkbox span.mud-typography");
             element1.HasAttribute("aria-hidden").Should().BeTrue();
             var input1 = comp.Find(".cb2 label.mud-checkbox input");
@@ -469,12 +469,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find($".cb2 label.mud-checkbox #{input1ForId}").Should().NotBeNull();
 
             // checkbox three should have original structure intact, no aria class used, label with a span element for child content
-            checkboxes[2].GetElementsByClassName("mud-sr-only").Count().Should().Be(0);
+            checkboxes[2].GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
             var element2 = comp.Find(".cb3 label.mud-checkbox span.mud-typography");
             element2.HasAttribute("aria-hidden").Should().BeFalse();
 
             // checkbox four should look identical to two except this time it's with ChildContent
-            checkboxes[3].GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
+            checkboxes[3].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".cb4 label.mud-checkbox span.mud-typography");
             element3.HasAttribute("aria-hidden").Should().BeTrue();
             var input3 = comp.Find(".cb4 label.mud-checkbox input");
@@ -482,8 +482,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find($".cb4 label.mud-checkbox #{input3ForId}").Should().NotBeNull();
 
             // checkbox five has no label, no child content, just arialabel
-            checkboxes[4].GetElementsByClassName("mud-sr-only").Count().Should().Be(1);
-            comp.FindAll(".cb5 label.mud-checkbox span.mud-typography").Count().Should().Be(0);
+            checkboxes[4].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
+            comp.FindAll(".cb5 label.mud-checkbox span.mud-typography").Count.Should().Be(0);
             var input4 = comp.Find(".cb5 label.mud-checkbox input");
             var input4ForId = input4.GetAttribute("aria-labelledby");
             comp.Find($".cb5 label.mud-checkbox #{input4ForId}").Should().NotBeNull();

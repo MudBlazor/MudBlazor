@@ -287,7 +287,10 @@ namespace MudBlazor.UnitTests.Components
             var validationFunc = new Func<string, string>(s =>
             {
                 if (!(s.StartsWith("Marilyn") || s.EndsWith("Manson")))
+                {
                     return "Not a star!";
+                }
+
                 return null;
             });
             var comp = Context.Render<FormValidationTest>(parameters => parameters.Add(p => p.Validation, validationFunc));
@@ -346,7 +349,10 @@ namespace MudBlazor.UnitTests.Components
             var validationFunc = new Func<string, Task<string>>(async s =>
             {
                 if (s == null)
+                {
                     return null;
+                }
+
                 var valid = s == "abc";
                 await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
@@ -415,7 +421,10 @@ namespace MudBlazor.UnitTests.Components
             var chips = comp.FindAll("span.mud-chip-content");
             chips.Count.Should().Be(3);
             foreach (var chip in chips)
+            {
                 chip.TextContent.Trim().Should().EndWith("not changed");
+            }
+
             await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs() { Value = "asdf" });
             await comp.FindAll("input")[0].BlurAsync();
             comp.FindComponents<MudTextField<string>>()[0].Instance.ReadText.Should().Be("asdf");
@@ -453,7 +462,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[2].ChangeAsync("17"); // kg ;)
             await comp.FindAll("input")[2].BlurAsync();
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
+            {
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
+            }
+
             comp.FindComponent<MudTextField<int>>().Instance.ReadValue.Should().Be(17);
             // then click the checkbox
             comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue.Should().Be(true);
@@ -461,7 +473,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudCheckBox<bool>>().Instance.ReadValue.Should().Be(false);
             // the text fields should be unchanged
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
+            {
                 tf.Instance.ReadText.Should().NotBeNullOrEmpty();
+            }
+
             comp.FindComponent<MudTextField<int>>().Instance.ReadValue.Should().Be(17);
         }
 

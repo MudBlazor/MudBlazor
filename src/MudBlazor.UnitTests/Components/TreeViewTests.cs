@@ -904,15 +904,24 @@ namespace MudBlazor.UnitTests.Components
                     (x, y) =>
                     {
                         if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
                             return true;
+                        }
+
                         if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
                             return false;
+                        }
+
                         return x[0] == y[0];
                     },
                     obj =>
                     {
                         if (string.IsNullOrEmpty(obj))
+                        {
                             return 0;
+                        }
+
                         return obj[0].GetHashCode();
                     }
                 )
@@ -939,15 +948,24 @@ namespace MudBlazor.UnitTests.Components
                     (x, y) =>
                     {
                         if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
                             return true;
+                        }
+
                         if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
                             return false;
+                        }
+
                         return x[0] == y[0];
                     },
                     obj =>
                     {
                         if (string.IsNullOrEmpty(obj))
+                        {
                             return 0;
+                        }
+
                         return obj[0].GetHashCode();
                     }
                 )

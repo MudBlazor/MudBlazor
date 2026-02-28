@@ -184,7 +184,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 var result = Validate(arg);
                 if (result.IsValid)
+                {
                     return Array.Empty<string>();
+                }
+
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 
@@ -714,9 +717,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("");
 
             if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
+            {
                 value = Num.To<T>(0);
+            }
             else
+            {
                 value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
+            }
 
             await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.ReadValue.Should().Be(value);

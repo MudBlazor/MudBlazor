@@ -1383,7 +1383,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.That(matchingDays.Count != 0, $"Invalid day ({day}) selected");
 
             if (!firstOccurrence)
+            {
                 Assert.That(matchingDays.Count == 2, $"Only one instance of date ({day}) found");
+            }
 
             var selectedDate = matchingDays[firstOccurrence ? 0 : 1];
 
