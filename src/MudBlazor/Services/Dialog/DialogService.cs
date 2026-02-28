@@ -94,34 +94,34 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component)
         {
-            return ShowAsync(contentComponent, string.Empty, DialogParameters.Default, DialogOptions.Default);
+            return ShowAsync(component, string.Empty, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title)
         {
-            return ShowAsync(contentComponent, title, DialogParameters.Default, DialogOptions.Default);
+            return ShowAsync(component, title, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogOptions options)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options)
         {
-            return ShowAsync(contentComponent, title, DialogParameters.Default, options);
+            return ShowAsync(component, title, DialogParameters.Default, options);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters)
         {
-            return ShowAsync(contentComponent, title, parameters, DialogOptions.Default);
+            return ShowAsync(component, title, parameters, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title,
+        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title,
             DialogParameters parameters, DialogOptions options)
         {
-            var dialogReference = await ShowCoreAsync(contentComponent, title, parameters, options);
+            var dialogReference = await ShowCoreAsync(component, title, parameters, options);
 
             //Do not wait forever, what if render fails because of some internal exception and we will never release the method.
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));

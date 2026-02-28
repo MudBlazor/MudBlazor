@@ -256,19 +256,19 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
             catch (Exception)
             {
                 /*ignore*/
             }
 
-            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
+            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -279,19 +279,19 @@ namespace MudBlazor
 
         internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
 
-        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
             catch (Exception)
             {
                 /*ignore*/
             }
 
-            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -302,19 +302,19 @@ namespace MudBlazor
 
         internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
 
-        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
             catch (Exception)
             {
                 /*ignore*/
             }
 
-            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
