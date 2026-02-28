@@ -83,20 +83,6 @@ Exclude `help wanted` if:
 - A PR was opened addressing it less than 3 months ago
 - Thread was assigned less than 3 months ago
 
-<!-- Disabled due to low value and subjectivity in "bump comment"
-### Nudges
-Respond when ALL of these conditions are met:
-- A pure bump comment appears (content-free status requests like "any update?", "bump", "+1", or standalone emoji/reactions with no substantive information) OR a user explicitly offers to contribute a fix/feature (e.g., "I can open a PR", "I'll submit a PR") in a comment within the last 28 days. Responses to stale notifications are valid updates showing continued interest and should reset the timer normally. They are NOT "nudges" or "bumps"..
-- You or a maintainer has not responded to a nudge in this thread and suggested a PR already
-
-What to say:
-- Invite contributions and outline next steps.
-- Provide links:
-  - Contributing guide: https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md
-  - Creating a pull request: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
-- Example phrasing: "If you'd like to work on this, a pull request would be a great next step. Here are some helpful resources to get started. Feel free to reference this issue in your PR description so it gets linked automatically."
--->
-
 ## Needs Triage
 Apply `awaiting triage` only when ALL global conditions are met and at least one case below applies.
 

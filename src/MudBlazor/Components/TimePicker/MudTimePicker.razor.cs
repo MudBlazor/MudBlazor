@@ -637,25 +637,25 @@ namespace MudBlazor
             }
         }
 
-        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
 
-            await base.OnHandleKeyDownAsync(obj);
+            await base.OnHandleKeyDownAsync(args);
 
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "ArrowRight":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
@@ -679,11 +679,11 @@ namespace MudBlazor
                 case "ArrowLeft":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
@@ -709,11 +709,11 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.AltKey)
+                    else if (args.AltKey)
                     {
                         Open = false;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(5);
                     }
@@ -728,7 +728,7 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(-5);
                     }

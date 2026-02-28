@@ -65,7 +65,7 @@ internal class ConversionsTests
         // sanity: forward path works
         composed.Convert(2).Should().Be((2 + 4) * 2);
         // ensure backward conversion composes correctly
-        composed.ConvertBack(18).Should().Be(18 / 2 - 4);
+        composed.ConvertBack(18).Should().Be((18 / 2) - 4);
     }
 
     private sealed class MulConverter(int mul) : IConverter<int, string>

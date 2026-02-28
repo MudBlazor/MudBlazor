@@ -146,43 +146,43 @@ public partial class ChartTooltip : ComponentBase
 
         var xText = AnchorPositionX switch
         {
-            ChartTooltipAnchorPositionX.Start => X + textWidth / 2 + PaddingSize,
+            ChartTooltipAnchorPositionX.Start => X + (textWidth / 2) + PaddingSize,
             ChartTooltipAnchorPositionX.Center => X,
-            ChartTooltipAnchorPositionX.End => X - textWidth / 2 - PaddingSize,
+            ChartTooltipAnchorPositionX.End => X - (textWidth / 2) - PaddingSize,
             _ => throw new ArgumentException($"Unknown relative position {AnchorPositionX}")
         };
         if (ShowTriangle) textWidth = Math.Max(textWidth, TriangleWidth);
-        var triangleOffsetY = ShowTriangle ? TriangleHeight * 2 + TriangleStrokeWidth : 0;
+        var triangleOffsetY = ShowTriangle ? (TriangleHeight * 2) + TriangleStrokeWidth : 0;
         _textBbox = new BBox(
             X: xText,
-            Y: Y + textHeight / 2 - triangleOffsetY,
+            Y: Y + (textHeight / 2) - triangleOffsetY,
             Width: textWidth,
             Height: textHeight
         );
 
-        var backgroundWidth = textWidth + PaddingSize * 2;
+        var backgroundWidth = textWidth + (PaddingSize * 2);
         var xBackground = AnchorPositionX switch
         {
             ChartTooltipAnchorPositionX.Start => X,
-            ChartTooltipAnchorPositionX.Center => X - backgroundWidth / 2,
+            ChartTooltipAnchorPositionX.Center => X - (backgroundWidth / 2),
             ChartTooltipAnchorPositionX.End => X - backgroundWidth,
             _ => throw new ArgumentException($"Unknown relative position {AnchorPositionX}")
         };
-        var backgroundHeight = textHeight + PaddingSize * 2;
+        var backgroundHeight = textHeight + (PaddingSize * 2);
         _backgroundBBox = new BBox(
             X: xBackground,
-            Y: Y - backgroundHeight / 2 * (HasSubtitle ? 2.1 : 1) - triangleOffsetY,
+            Y: Y - (backgroundHeight / 2 * (HasSubtitle ? 2.1 : 1)) - triangleOffsetY,
             Width: backgroundWidth,
             Height: backgroundHeight * (HasSubtitle ? 1.5 : 1)
         );
 
         if (ShowTriangle)
         {
-            _triangleBorderPoints = $"{ToS(X - TriangleWidth / 2)},{ToS(Y - TriangleHeight)} " + // Left
-                                    $"{ToS(X + TriangleWidth / 2)},{ToS(Y - TriangleHeight)} " + // Right
+            _triangleBorderPoints = $"{ToS(X - (TriangleWidth / 2))},{ToS(Y - TriangleHeight)} " + // Left
+                                    $"{ToS(X + (TriangleWidth / 2))},{ToS(Y - TriangleHeight)} " + // Right
                                     $"{ToS(X)},{ToS(Y - TriangleStrokeWidth)}"; // Bottom
-            _triangleBackgroundPoints = $"{ToS(X - TriangleWidth / 2 - TriangleStrokeWidth)},{ToS(Y - TriangleHeight - TriangleStrokeWidth)} " + // Left
-                                        $"{ToS(X + TriangleWidth / 2 + TriangleStrokeWidth)},{ToS(Y - TriangleHeight - TriangleStrokeWidth)} " + // Right
+            _triangleBackgroundPoints = $"{ToS(X - (TriangleWidth / 2) - TriangleStrokeWidth)},{ToS(Y - TriangleHeight - TriangleStrokeWidth)} " + // Left
+                                        $"{ToS(X + (TriangleWidth / 2) + TriangleStrokeWidth)},{ToS(Y - TriangleHeight - TriangleStrokeWidth)} " + // Right
                                         $"{ToS(X)},{ToS(Y - TriangleStrokeWidth)}"; // Bottom
         }
 

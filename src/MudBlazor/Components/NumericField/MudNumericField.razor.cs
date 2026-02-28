@@ -140,7 +140,7 @@ namespace MudBlazor
             GetFormat() is not null ||
             // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
             // If not, then we override to InvariantCulture to avoid issues with <input type="number">.
-            GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture);
+            (GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture));
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]

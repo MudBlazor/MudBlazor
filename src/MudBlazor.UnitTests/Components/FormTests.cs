@@ -353,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
                     return null;
                 }
 
-                var valid = (s == "abc");
+                var valid = s == "abc";
                 await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
