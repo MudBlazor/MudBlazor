@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor;
@@ -145,7 +146,7 @@ public class PatternMask : BaseMask
             return text;
         // fill the rest with placeholder
         // don't fill if text is still empty
-        var filledText = text;
+        var filledText = new StringBuilder(text);
         var len = text.Length;
         var mask = Mask ?? string.Empty;
         if (len == 0 || len >= mask.Length)
@@ -154,11 +155,11 @@ public class PatternMask : BaseMask
         {
             var maskChar = mask[maskIndex];
             if (IsDelimiter(maskChar))
-                filledText += maskChar;
+                filledText.Append(maskChar);
             else
-                filledText += Placeholder.Value;
+                filledText.Append(Placeholder.Value);
         }
-        return filledText;
+        return filledText.ToString();
     }
 
     /// <summary>
@@ -171,7 +172,7 @@ public class PatternMask : BaseMask
     {
         text ??= string.Empty;
         var mask = Mask ?? string.Empty;
-        var alignedText = string.Empty;
+        var alignedTextBuilder = new StringBuilder();
         var maskIndex = maskOffset; // index in mask
         var textIndex = 0; // index in text
         while (textIndex < text.Length)
@@ -182,20 +183,24 @@ public class PatternMask : BaseMask
             var textChar = text[textIndex];
             if (IsDelimiter(maskChar))
             {
-                alignedText += maskChar;
+                alignedTextBuilder.Append(maskChar);
                 maskIndex++;
+                var alignedText = alignedTextBuilder.ToString();
                 ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
+                alignedTextBuilder = new StringBuilder(alignedText);
                 continue;
             }
             var isPlaceholder = textChar == Placeholder;
             if (IsMatch(maskChar, textChar) || isPlaceholder)
             {
                 var c = Transformation?.Invoke(textChar) ?? textChar;
-                alignedText += c;
+                alignedTextBuilder.Append(c);
                 maskIndex++;
             }
             textIndex++;
-            ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
+            var currentAlignedText = alignedTextBuilder.ToString();
+            ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref currentAlignedText);
+            alignedTextBuilder = new StringBuilder(currentAlignedText);
         }
         // fill any delimiters if possible
         for (var i = maskIndex; i < mask.Length; i++)
@@ -203,9 +208,9 @@ public class PatternMask : BaseMask
             var maskChar = mask[i];
             if (!IsDelimiter(maskChar))
                 break;
-            alignedText += maskChar;
+            alignedTextBuilder.Append(maskChar);
         }
-        return alignedText;
+        return alignedTextBuilder.ToString();
     }
 
     protected virtual void ModifyPartiallyAlignedMask(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
