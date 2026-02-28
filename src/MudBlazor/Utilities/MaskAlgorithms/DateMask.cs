@@ -167,8 +167,6 @@ public partial class DateMask : PatternMask
             var monthFound = monthIndex >= 0;
             var monthComplete = monthString?.Length == 2;
             var y = ExtractYear(Mask, text, 0);
-            //if (maskHasYear && y < 0 || maskHasMonth && (!monthFound || !monthComplete) || maskHasDay && (!dayFound || !dayComplete))
-            //    return text; // we have incomplete input, no final check necessary/possible
             int.TryParse(dayString ?? "", out var d);
             int.TryParse(monthString ?? "", out var m);
             if (!maskHasYear)

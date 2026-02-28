@@ -32,8 +32,6 @@ namespace MudBlazor
         [CascadingParameter]
         public MudDataGrid<T> DataGrid { get; set; } = null!;
 
-        //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
-
         /// <summary>
         /// The value stored in this column.
         /// </summary>
@@ -44,12 +42,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
-
-        //[Parameter] public bool Visible { get; set; } = true;
-
-        //[Parameter] public string Field { get; set; }
-
-        //[Parameter] public Type FieldType { get; set; }
 
         /// <summary>
         /// The display text for this column.
@@ -655,21 +647,6 @@ namespace MudBlazor
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
-
-            // Add the FilterContext
-            //if (filterable)
-            //{
-            //    filterContext = new FilterContext<T>(DataGrid);
-            //    var operators = FilterOperator.GetOperatorByDataType(dataType);
-            //    filterContext.FilterDefinition = new FilterDefinition<T>()
-            //    {
-            //        DataGrid = this.DataGrid,
-            //        Field = PropertyName,
-            //        FieldType = dataType,
-            //        Title = Title,
-            //        Operator = operators.FirstOrDefault()
-            //    };
-            //}
 
             // Add the FilterContext
             filterContext = new FilterContext<T>(DataGrid);

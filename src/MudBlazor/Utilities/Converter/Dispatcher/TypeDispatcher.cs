@@ -46,7 +46,6 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     /// </exception>
     public TOut Convert(TIn input)
     {
-        //var runtimeType = input is null ? typeof(TIn) : input.GetType();
         var runtimeType = typeof(TIn);
 
         if (_handlers.TryGetValue(runtimeType, out var del))

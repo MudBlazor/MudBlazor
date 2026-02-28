@@ -186,7 +186,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
             }
         }
 
-        //JS.InvokeVoidAsync("draggableTouch");
     }
 
     private async Task TouchEndedAsync(TouchEventArgs e)
@@ -225,7 +224,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
                 StateHasChanged();
             }
         }
-        //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
 
     /// <summary>

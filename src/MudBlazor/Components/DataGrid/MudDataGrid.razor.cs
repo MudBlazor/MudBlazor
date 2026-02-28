@@ -252,7 +252,6 @@ namespace MudBlazor
 
         internal T? _editingItem;
 
-        //internal int editingItemHash;
         internal T? _editingSourceItem;
 
         internal T? _previousEditingItem;

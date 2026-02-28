@@ -351,11 +351,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         if (_disposed)
             return; // don't raise any events if we are already disposed
         var value = chip.GetValue();
-        //if (chip.IsSelectedState.Value && value is not null)
-        //{
         await UpdateSelectedValuesAsync(_selection.Where(x => !Comparer.Equals(x, value)).ToList());
-        //}
-        // return Task.CompletedTask;
         StateHasChanged();
     }
 
