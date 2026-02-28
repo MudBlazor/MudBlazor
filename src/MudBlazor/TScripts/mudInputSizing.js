@@ -32,7 +32,7 @@ window.mudInputSizing = {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
-            while (curElem && curElem.parentNode && curElem.parentNode instanceof Element) {
+            while (curElem?.parentNode instanceof Element) {
                 if (curElem.parentNode.scrollTop) {
                     scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
                 }
