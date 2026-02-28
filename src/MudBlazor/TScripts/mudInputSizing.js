@@ -12,8 +12,8 @@ window.mudInputSizing = {
      */
     init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
-        const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
-        const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
+        const lineHeight = Number.parseFloat(compStyle.getPropertyValue('line-height'));
+        const paddingTop = Number.parseFloat(compStyle.getPropertyValue('padding-top'));
 
         let maxHeight = 0;
 

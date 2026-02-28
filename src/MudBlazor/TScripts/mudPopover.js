@@ -25,10 +25,10 @@ window.mudpopoverHelper = {
         };
     },
 
-    basePopoverZIndex: parseInt(getComputedStyle(document.documentElement)
+    basePopoverZIndex: Number.parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-popover')) || 1200,
 
-    baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
+    baseTooltipZIndex: Number.parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
 
     // static set of replacement values
@@ -283,9 +283,9 @@ window.mudpopoverHelper = {
 
             if (isPositionOverride) {
                 const attrY = popoverContentNode.getAttribute('data-pc-y');
-                const positiontop = attrY == null ? boundingRect.top : parseInt(attrY, 10);
+                const positiontop = attrY == null ? boundingRect.top : Number.parseInt(attrY, 10);
                 const attrX = popoverContentNode.getAttribute('data-pc-x');
-                const positionleft = attrX == null ? boundingRect.left : parseInt(attrX, 10);
+                const positionleft = attrX == null ? boundingRect.left : Number.parseInt(attrX, 10);
                 const scrollLeft = window.scrollX;
                 const scrollTop = window.scrollY;
 
@@ -678,7 +678,7 @@ window.mudpopoverHelper = {
         const popoverNode = document.getElementById('popover-' + popoverContentNode.id.substr(15));
         // get --mud-zindex-popover from root
         let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
-        const origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
+        const origZIndex = Number.parseInt(popoverContentNode.style['z-index']) || 1;
         const contentZIndex = popoverContentNode.style['z-index'];
         // normal nested position update parentPopover is a parent with .mud-popover so nested for sure
         if (parentPopover) {
@@ -689,7 +689,7 @@ window.mudpopoverHelper = {
                 // parentpopovers will never be auto zindex due to css rules
                 // children are set "auto" z-index in css and therefore need updated
                 // set new z-index 1 above parent
-                newZIndex = parseInt(parentZIndexValue) + 1;
+                newZIndex = Number.parseInt(parentZIndexValue) + 1;
             }
             popoverContentNode.style['z-index'] = newZIndex;
         }
@@ -698,7 +698,7 @@ window.mudpopoverHelper = {
             const computedStyle = window.getComputedStyle(parentNode);
             const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
             if (tooltipZIndexValue !== 'auto') {
-                newZIndex = parseInt(tooltipZIndexValue) + 1;
+                newZIndex = Number.parseInt(tooltipZIndexValue) + 1;
             }
             popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1);
         }
@@ -708,7 +708,7 @@ window.mudpopoverHelper = {
             const computedStyle = window.getComputedStyle(parentNode);
             const appBarZIndexValue = computedStyle.getPropertyValue('z-index');
             if (appBarZIndexValue !== 'auto') {
-                newZIndex = parseInt(appBarZIndexValue) + 1;
+                newZIndex = Number.parseInt(appBarZIndexValue) + 1;
             }
             popoverContentNode.style['z-index'] = newZIndex;
         }
@@ -719,7 +719,7 @@ window.mudpopoverHelper = {
             popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.basePopoverZIndex + 1, origZIndex);
         }
         // if popoverContentNode.style['z-index'] is not set or set lower than minimum set it to default popover zIndex
-        else if (!contentZIndex || parseInt(contentZIndex) < 1) {
+        else if (!contentZIndex || Number.parseInt(contentZIndex) < 1) {
             popoverContentNode.style['z-index'] = newZIndex;
         }
     },
@@ -743,10 +743,10 @@ window.mudpopoverHelper = {
             }
 
             const zIndex = style.getPropertyValue('z-index');
-            const zIndexValue = parseInt(zIndex, 10);
+            const zIndexValue = Number.parseInt(zIndex, 10);
 
             // update maxZIndex only if zIndexValue is defined and greater than current max
-            if (!isNaN(zIndexValue) && zIndexValue > maxZIndex) {
+            if (!Number.isNaN(zIndexValue) && zIndexValue > maxZIndex) {
                 maxZIndex = zIndexValue;
             }
 
@@ -930,7 +930,7 @@ class MudPopover {
                     this.map[id].isOpened = false;
                 }
                 // wait this long until we "move it off screen"
-                const delay = parseFloat(target.style['transition-duration']) || 0;
+                const delay = Number.parseFloat(target.style['transition-duration']) || 0;
                 if (delay == 0) {
                     // remove left and top styles
                     target.style.removeProperty('left');
@@ -1080,9 +1080,9 @@ class MudPopover {
         if (!timeStr) return 0;
         timeStr = timeStr.trim();
         if (timeStr.endsWith('ms')) {
-            return parseFloat(timeStr);
+            return Number.parseFloat(timeStr);
         } else if (timeStr.endsWith('s')) {
-            return parseFloat(timeStr) * 1000;
+            return Number.parseFloat(timeStr) * 1000;
         }
         return 0;
     }
