@@ -112,7 +112,6 @@ namespace MudBlazor.UnitTests.Components
             await Activator().ClickAsync(new MouseEventArgs { Button = 0 });
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            await Activator().PointerDownAsync(new PointerEventArgs { Button = 0 });
             await Activator().ClickAsync(new MouseEventArgs { Button = 0 });
 
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));

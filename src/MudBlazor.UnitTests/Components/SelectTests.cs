@@ -1754,7 +1754,6 @@ namespace MudBlazor.UnitTests.Components
             await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
             await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().Contain("mud-popover-open"));
 
-            await Input().PointerDownAsync(new PointerEventArgs { Button = 0 });
             await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
 
             await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().NotContain("mud-popover-open"));

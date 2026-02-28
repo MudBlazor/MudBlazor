@@ -1939,7 +1939,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.OpenedCount.Should().Be(1);
             comp.Instance.ClosedCount.Should().Be(0);
 
-            await Input().PointerDownAsync(new PointerEventArgs { Button = 0 });
             await Input().MouseDownAsync(new MouseEventArgs { Button = 0 });
 
             await comp.WaitForAssertionAsync(() =>
