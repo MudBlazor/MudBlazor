@@ -66,7 +66,8 @@ function serializeParameter(data, spec) {
         if (typeof currentMember === 'object') {
             if (Array.isArray(currentMember) || currentMember.length) {
                 res[i] = [];
-                for (const arrayItem of Array.from(currentMember)) {
+                for (let j = 0; j < currentMember.length; j++) {
+                    const arrayItem = currentMember[j];
                     if (typeof arrayItem === 'object') {
                         res[i].push(serializeParameter(arrayItem, currentMemberSpec));
                     } else {
