@@ -103,6 +103,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TimePicker_WithTimeFormat_DisplaysFormattedText()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.TimeFormat, "H:mm")
+                .Add(x => x.Time, new TimeSpan(17, 45, 0)));
+
+            comp.Find("input").GetAttribute("value").Should().Be("17:45");
+        }
+
+        [Test]
+        public async Task TimePicker_WhenAmPmChanges_UpdatesTextFieldFormat()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.AmPm, false)
+                .Add(x => x.Time, new TimeSpan(17, 45, 0)));
+
+            comp.Find("input").GetAttribute("value").Should().Be("17:45");
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.AmPm, true)));
+
+            comp.Find("input").GetAttribute("value").Should().Be("05:45 PM");
+        }
+
+        [Test]
+        public async Task TimePicker_WhenTimeFormatChanges_UpdatesTextFieldFormat()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.TimeFormat, "HH:mm")
+                .Add(x => x.Time, new TimeSpan(17, 45, 0)));
+
+            comp.Find("input").GetAttribute("value").Should().Be("17:45");
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TimeFormat, "H:mm")));
+
+            comp.Find("input").GetAttribute("value").Should().Be("17:45");
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TimeFormat, "hh:mm tt")));
+
+            comp.Find("input").GetAttribute("value").Should().Be("05:45 PM");
+        }
+
+        [Test]
         public async Task OpenToHours_CheckMinutesHidden()
         {
             var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Hours));

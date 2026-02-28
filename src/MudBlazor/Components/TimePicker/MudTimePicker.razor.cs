@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -19,11 +20,11 @@ namespace MudBlazor
     /// <seealso cref="MudDateRangePicker"/>
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
-        private bool _amPm = false;
+        private readonly ParameterState<bool> _amPmState;
         private OpenTo _currentView;
         private string? _clockElementReferenceId;
         private readonly SetTime _timeSet = new();
-        private string _timeFormat = string.Empty;
+        private readonly ParameterState<string?> _timeFormatState;
         private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
 
         [Inject]
@@ -38,6 +39,14 @@ namespace MudBlazor
         {
             AdornmentIcon = Icons.Material.Filled.AccessTime;
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
+
+            using var registerScope = CreateRegisterScope();
+            _amPmState = registerScope.RegisterParameter<bool>(nameof(AmPm))
+                .WithParameter(() => AmPm)
+                .WithChangeHandler(FormatChangedAsync);
+            _timeFormatState = registerScope.RegisterParameter<string?>(nameof(TimeFormat))
+                .WithParameter(() => TimeFormat)
+                .WithChangeHandler(FormatChangedAsync);
         }
 
         internal TimeSpan? TimeIntermediate { get; private set; }
@@ -103,24 +112,9 @@ namespace MudBlazor
         /// When <c>true</c>, hours 1-12 are displayed with an AM or PM marker.<br />
         /// When <c>false</c>, hours 0-23 are displayed.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool AmPm
-        {
-            get => _amPm;
-            set
-            {
-                if (value == _amPm)
-                {
-                    return;
-                }
-
-                _amPm = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public bool AmPm { get; set; }
 
         /// <summary>
         /// The format applied to time values.
@@ -134,24 +128,9 @@ namespace MudBlazor
         /// * <c>tt</c> for AM/PM markers.<br />
         /// For example: <c>h:mm tt</c> would display <c>6:32 PM</c>, and <c>HH:mm</c> would display <c>18:32</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string TimeFormat
-        {
-            get => _timeFormat;
-            set
-            {
-                if (_timeFormat == value)
-                {
-                    return;
-                }
-
-                _timeFormat = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public string? TimeFormat { get; set; }
 
         /// <summary>
         /// The currently selected time.
@@ -256,7 +235,7 @@ namespace MudBlazor
                 return "--";
             }
 
-            var h = AmPm ? TimeIntermediate.Value.ToAmPmHour() : TimeIntermediate.Value.Hours;
+            var h = _amPmState.Value ? TimeIntermediate.Value.ToAmPmHour() : TimeIntermediate.Value.Hours;
             return $"{Math.Min(23, Math.Max(0, h)):D2}";
         }
 
@@ -385,7 +364,7 @@ namespace MudBlazor
             {
                 var h = _timeSet.Hour;
 
-                if (AmPm)
+                if (_amPmState.Value)
                 {
                     h = _timeSet.Hour % 12;
                     if (_timeSet.Hour % 12 == 0)
@@ -460,7 +439,7 @@ namespace MudBlazor
 
             if (_currentView == OpenTo.Hours)
             {
-                if (!AmPm && _timeSet.Hour > 0 && _timeSet.Hour < 13)
+                if (!_amPmState.Value && _timeSet.Hour > 0 && _timeSet.Hour < 13)
                 {
                     height = 26;
                 }
@@ -590,7 +569,7 @@ namespace MudBlazor
 
         private int HourAmPm(int hour)
         {
-            if (AmPm)
+            if (_amPmState.Value)
             {
                 if (IsAm && hour == 12)
                 {
@@ -778,12 +757,18 @@ namespace MudBlazor
 
         protected override string GetFormat()
         {
-            if (!string.IsNullOrEmpty(TimeFormat))
+            if (!string.IsNullOrEmpty(_timeFormatState.Value))
             {
-                return TimeFormat;
+                return _timeFormatState.Value;
             }
 
-            return AmPm ? TimeSpanConverter.Format12Hours : TimeSpanConverter.Format24Hours;
+            return _amPmState.Value ? TimeSpanConverter.Format12Hours : TimeSpanConverter.Format24Hours;
+        }
+
+        private Task FormatChangedAsync()
+        {
+            Touched = true;
+            return SetTextAsync(ConvertSet(_value), false);
         }
 
         /// <inheritdoc />

@@ -20,7 +20,7 @@
                     <MudText Typo="Typo.h2" Class="mud-timepicker-separator">@GetHourString():@GetMinuteString()</MudText>
                 }
             </div>
-            @if (AmPm)
+            @if (_amPmState.Value)
             {
                 <div class="mud-timepicker-ampm">
                     <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@AmButtonClassname" OnClick="OnAmClickedAsync">AM</MudButton>
@@ -37,7 +37,7 @@
                             <div class="@GetClockPointerThumbColor()"></div>
                         </div>
                         <div class="@HourDialClassname">
-                            @if (AmPm)
+                            @if (_amPmState.Value)
                             {
                                 @*Hours from 1 to 12*@
                                 for (int i = 1; i <= 12; ++i)
