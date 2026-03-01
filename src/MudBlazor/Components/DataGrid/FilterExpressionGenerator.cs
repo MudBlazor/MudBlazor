@@ -160,7 +160,10 @@ public static class FilterExpressionGenerator
             return filter.Operator switch
             {
                 FilterOperator.Enum.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
-                FilterOperator.Enum.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
+                FilterOperator.Enum.IsNot =>
+                    propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
+                FilterOperator.Enum.IsAnyOf => GenerateEnumContainsExpression<T>(propertyExpression,
+                    (IEnumerable<Enum>)filter.Value),
                 _ => x => true
             };
         }
@@ -176,5 +179,40 @@ public static class FilterExpressionGenerator
         }
 
         return x => true;
+    }
+
+    /// <summary>
+    /// Generates an expression that checks if an enum value is contained in a list of enum values.
+    /// </summary>
+    /// <typeparam name="T">The kind of object to filter.</typeparam>
+    /// <param name="propertyExpression">The property expression to check.</param>
+    /// <param name="enumValues">The list of enum values to check against.</param>
+    /// <returns>An expression which checks if the property value is in the list.</returns>
+    private static Expression<Func<T, bool>> GenerateEnumContainsExpression<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(Expression propertyExpression,
+        IEnumerable<Enum>? enumValues)
+    {
+        // Convert to list first to avoid multiple enumeration
+        var enumList = enumValues?.ToList() ?? new List<Enum>();
+
+        if (!enumList.Any())
+        {
+            return x => true;
+        }
+
+        var bodyIdentifier = new ExpressionBodyIdentifier();
+        var body = bodyIdentifier.Identify(propertyExpression);
+        var parameterIdentifier = new ExpressionParameterIdentifier();
+        var parameter = (ParameterExpression)parameterIdentifier.Identify(propertyExpression);
+        var listConstant = Expression.Constant(enumList, typeof(List<Enum>));
+        var containsMethod = typeof(ICollection<Enum>).GetMethod("Contains");
+        ArgumentNullException.ThrowIfNull(containsMethod);
+
+        var containsCall = Expression.Call(
+            listConstant,
+            containsMethod,
+            // Cast to Enum
+            Expression.Convert(body, typeof(Enum)));
+        return Expression.Lambda<Func<T, bool>>(containsCall, parameter);
     }
 }

@@ -18,6 +18,7 @@ namespace MudBlazor
         internal string? _valueString;
         internal double? _valueNumber;
         internal Enum? _valueEnum;
+        internal IReadOnlyList<Enum?>? _valueEnumList;
         internal bool? _valueBool;
         internal DateTime? _valueDateOnlyForPicker;
         internal DateTime? _valueDateTimeForPicker;
@@ -40,7 +41,14 @@ namespace MudBlazor
             else if (fieldType.IsNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
             else if (fieldType.IsEnum)
-                _valueEnum = (Enum?)_filterDefinition.Value;
+                if (_filterDefinition.Operator is FilterOperator.Enum.IsAnyOf)
+                {
+                    _valueEnumList = _filterDefinition.Value as IReadOnlyList<Enum> ?? [];
+                }
+                else
+                {
+                    _valueEnum = (Enum?)_filterDefinition.Value;
+                }
             else if (fieldType.IsBoolean)
                 _valueBool = _filterDefinition.Value == null ? null : Convert.ToBoolean(_filterDefinition.Value);
             else if (fieldType.IsDateTime)
@@ -89,6 +97,13 @@ namespace MudBlazor
         {
             _valueEnum = value;
             _filterDefinition.Value = _valueEnum;
+            _dataGrid.GroupItems();
+        }
+
+        internal void EnumListValueChanged(IReadOnlyCollection<Enum?>? value)
+        {
+            _valueEnumList = value?.ToList();
+            _filterDefinition.Value = _valueEnumList;
             _dataGrid.GroupItems();
         }
 

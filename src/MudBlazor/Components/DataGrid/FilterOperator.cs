@@ -124,6 +124,11 @@ namespace MudBlazor
             /// Find values which do not match the filter value.
             /// </summary>
             public const string IsNot = "is not";
+
+            /// <summary>
+            /// Find text which is any of the filter values.
+            /// </summary>
+            public const string IsAnyOf = "is any of";
         }
 
         /// <summary>
@@ -286,6 +291,7 @@ namespace MudBlazor
                 return new[] {
                     Enum.Is,
                     Enum.IsNot,
+                    Enum.IsAnyOf,
                 };
             }
             if (fieldType.IsBoolean)
@@ -358,6 +364,7 @@ namespace MudBlazor
             //Number.NotEmpty => LanguageResource.MudDataGrid_IsNotEmpty,
             Enum.Is => LanguageResource.MudDataGrid_Is,
             Enum.IsNot => LanguageResource.MudDataGrid_IsNot,
+            Enum.IsAnyOf => LanguageResource.MudDataGrid_IsAnyOf,
             //Boolean.Is => LanguageResource.MudDataGrid_Is,
             //DateTime.Is => LanguageResource.MudDataGrid_Is,
             //DateTime.IsNot => LanguageResource.MudDataGrid_IsNot,

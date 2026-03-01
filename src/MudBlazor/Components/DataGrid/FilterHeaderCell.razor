@@ -26,13 +26,28 @@
                 }
                 else if (fieldType.IsEnum)
                 {
-                    <MudSelect T="Enum" Value="@valueEnum" ValueChanged="@EnumValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
-                        <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
-                        @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
-                        {
-                            <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
-                        }
-                    </MudSelect>
+                    @if (@operator == FilterOperator.Enum.IsAnyOf)
+                    {
+                        <MudSelect T="Enum" MultiSelection="true" SelectedValues="@valueListEnum" SelectedValuesChanged="@EnumValueListChangedAsync" FullWidth="true"
+                                   Dense="true" Margin="@Margin.Dense">
+                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                            @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                            {
+                                <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                    else
+                    {
+                        <MudSelect T="Enum" Value="@valueEnum" ValueChanged="@EnumValueChangedAsync" FullWidth="true"
+                                   Dense="true" Margin="@Margin.Dense">
+                            <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
+                            @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                            {
+                                <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
                 }
                 else if (fieldType.IsBoolean)
                 {

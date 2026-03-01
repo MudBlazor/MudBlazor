@@ -76,6 +76,7 @@ namespace MudBlazor
         private double? valueNumber => fieldType.IsNumber ? (double?)Column.FilterContext.FilterDefinition?.Value : default;
         private bool? valueBool => fieldType.IsBoolean && Column.FilterContext.FilterDefinition?.Value is not null ? (bool?)Column.FilterContext.FilterDefinition.Value : default;
         private Enum? valueEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition?.Value is not null ? (Enum)Column.FilterContext.FilterDefinition.Value : default;
+        private IReadOnlyList<Enum>? valueListEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition?.Value is not null ? (IReadOnlyList<Enum>?)Column.FilterContext.FilterDefinition.Value : default;
         private DateTime? valueDateTimeForPicker => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition?.Value : default;
         private DateTime? valueDateOnlyForPicker => fieldType.IsDateOnly && Column.FilterContext.FilterDefinition?.Value != null ? ((DateOnly)Column.FilterContext.FilterDefinition.Value).ToDateTime(TimeOnly.MinValue) : null;
         private TimeSpan? valueTime => fieldType.IsDateTime && Column.FilterContext.FilterDefinition?.Value is not null ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay : null;
@@ -112,6 +113,13 @@ namespace MudBlazor
         }
 
         internal async Task EnumValueChangedAsync(Enum value)
+        {
+            Debug.Assert(Column.FilterContext.FilterDefinition is not null);
+            Column.FilterContext.FilterDefinition.Value = value;
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
+        }
+
+        internal async Task EnumValueListChangedAsync(IReadOnlyCollection<Enum?> value)
         {
             Debug.Assert(Column.FilterContext.FilterDefinition is not null);
             Column.FilterContext.FilterDefinition.Value = value;
