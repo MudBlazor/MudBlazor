@@ -178,38 +178,6 @@ namespace MudBlazor
         /// </summary>
         private bool ShouldUseTextArea => Sizing != InputSizing.Fixed || Lines > 1;
 
-        private readonly record struct AutoSizingVisualState(
-            Variant Variant,
-            Margin Margin,
-            Typo Typo,
-            Adornment Adornment,
-            string? Class,
-            string? Style,
-            bool Disabled);
-
-        private AutoSizingVisualState CaptureAutoSizingVisualState()
-            => new(Variant, Margin, Typo, Adornment, Class, Style, GetDisabledState());
-
-        private static bool HasAutoSizingParametersChanged(int oldLines, int newLines, int oldMaxLines, int newMaxLines, InputSizing oldSizing, InputSizing newSizing)
-            => oldLines != newLines || oldMaxLines != newMaxLines || oldSizing != newSizing;
-
-        private void ClearDeferredAutoSizingFlags()
-        {
-            _shouldUpdateSizingParams = false;
-            _shouldAdjustSizingAfterRender = false;
-        }
-
-        private void ResetAutoSizingFlags()
-        {
-            _shouldInitSizing = false;
-            ClearDeferredAutoSizingFlags();
-        }
-
-        private void SyncAutoSizingTextSnapshot()
-        {
-            _oldText = _internalText;
-        }
-
         private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
 
         protected async Task OnInput(string? args)
@@ -306,6 +274,38 @@ namespace MudBlazor
             await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        private readonly record struct AutoSizingVisualState(
+            Variant Variant,
+            Margin Margin,
+            Typo Typo,
+            Adornment Adornment,
+            string? Class,
+            string? Style,
+            bool Disabled);
+
+        private AutoSizingVisualState CaptureAutoSizingVisualState()
+            => new(Variant, Margin, Typo, Adornment, Class, Style, GetDisabledState());
+
+        private static bool HasAutoSizingParametersChanged(int oldLines, int newLines, int oldMaxLines, int newMaxLines, InputSizing oldSizing, InputSizing newSizing)
+            => oldLines != newLines || oldMaxLines != newMaxLines || oldSizing != newSizing;
+
+        private void ClearDeferredAutoSizingFlags()
+        {
+            _shouldUpdateSizingParams = false;
+            _shouldAdjustSizingAfterRender = false;
+        }
+
+        private void ResetAutoSizingFlags()
+        {
+            _shouldInitSizing = false;
+            ClearDeferredAutoSizingFlags();
+        }
+
+        private void SyncAutoSizingTextSnapshot()
+        {
+            _oldText = _internalText;
         }
 
         /// <inheritdoc />
