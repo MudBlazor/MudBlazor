@@ -12,8 +12,12 @@ window.mudInputSizing = {
      */
     init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
-        const lineHeight = Number.parseFloat(compStyle.getPropertyValue('line-height'));
-        const paddingTop = Number.parseFloat(compStyle.getPropertyValue('padding-top'));
+        const lineHeightValue = Number.parseFloat(compStyle.getPropertyValue('line-height'));
+        const fontSize = Number.parseFloat(compStyle.getPropertyValue('font-size'));
+        const lineHeight = Number.isFinite(lineHeightValue) ? lineHeightValue : fontSize;
+        const paddingTop = Number.parseFloat(compStyle.getPropertyValue('padding-top')) || 0;
+        const paddingBottom = Number.parseFloat(compStyle.getPropertyValue('padding-bottom')) || 0;
+        const verticalPadding = paddingTop + paddingBottom;
 
         let maxHeight = 0;
 
@@ -21,7 +25,7 @@ window.mudInputSizing = {
         elem.updateParameters = function (newMaxLines) {
             if (newMaxLines > 0) {
                 // Cap the height to the number of lines specified in the input.
-                maxHeight = lineHeight * newMaxLines + paddingTop;
+                maxHeight = lineHeight * newMaxLines + verticalPadding;
             } else {
                 maxHeight = 0;
             }
@@ -46,7 +50,9 @@ window.mudInputSizing = {
                 elem.style.textAlign = null;
             }
 
-            const minHeight = lineHeight * elem.rows + paddingTop;
+            // Some browsers can report a too-small scrollHeight for disabled empty textareas.
+            // Keep a reliable baseline that includes both paddings (see issue #11630).
+            const minHeight = lineHeight * elem.rows + verticalPadding;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
             const initialOverflowY = elem.style.overflowY;
             if (maxHeight > 0 && newHeight > maxHeight) {

@@ -1,0 +1,15 @@
+﻿<p class="mt-3">If the TextField has <strong>Autogrow</strong>, <strong>no value</strong>, and is <strong>disabled</strong>, the height can be incorrect.</p>
+<p>Resize the render area to cause a rerender. Repro for <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/11630" Target="_blank">issue #11630</MudLink>.</p>
+
+<MudStack>
+    <MudCheckBox @bind-Value="_disabled" Label="Disabled" LabelPlacement="Placement.Right" />
+    <MudTextField @bind-Value="_text" Disabled="_disabled" Label="Empty & Disabled? => Wrong Height" Sizing="InputSizing.Auto" Variant="Variant.Outlined" />
+    <MudTextField @bind-Value="_text" Disabled="true" Label="Always Disabled => Wrong Height" Sizing="InputSizing.Auto" Variant="Variant.Outlined" />
+</MudStack>
+
+@code {
+    public static string __description__ = "Reproduction for issue #11630: disabled empty auto-sizing text fields can collapse on rerender.";
+
+    private bool _disabled = true;
+    private string? _text;
+}
