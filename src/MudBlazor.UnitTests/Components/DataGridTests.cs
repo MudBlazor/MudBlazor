@@ -833,7 +833,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridPaginationShouldFormatNumbersWithCommas()
+        public void DataGridPaginationShouldFormatNumbersGroupSeparator()
         {
             var comp = Context.Render<DataGridPaginationFormattingTest>();
             var groupSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
