@@ -21,11 +21,15 @@ window.mudInputSizing = {
         // Capture min and max height in closure to trigger height adjustment on element in the input.
         elem.adjustSizingHeight = function (didReflow = false) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
-            const scrollTops = [];
+            const scrollStates = [];
             let curElem = elem;
             while (curElem?.parentNode instanceof Element) {
                 if (curElem.parentNode.scrollTop) {
-                    scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
+                    scrollStates.push({
+                        node: curElem.parentNode,
+                        scrollTop: curElem.parentNode.scrollTop,
+                        previousScrollBehavior: curElem.parentNode.style.scrollBehavior
+                    });
                 }
                 curElem = curElem.parentNode;
             }
@@ -34,7 +38,9 @@ window.mudInputSizing = {
             elem.style.height = 0;
 
             if (didReflow) {
-                elem.style.textAlign = null;
+                const previousTextAlign = elem._mudInputSizingPreviousTextAlign;
+                elem.style.textAlign = previousTextAlign !== undefined ? previousTextAlign : '';
+                delete elem._mudInputSizingPreviousTextAlign;
             }
 
             // Styles can change at runtime (variant/margin/typography/classes), so always recalculate metrics.
@@ -53,7 +59,9 @@ window.mudInputSizing = {
             const minHeight = lineHeight * elem.rows + verticalPadding;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
             const initialOverflowY = elem.style.overflowY;
-            const maxHeight = maxLinesValue > 0 ? lineHeight * maxLinesValue + verticalPadding : 0;
+            const maxHeight = maxLinesValue > 0
+                ? Math.max(minHeight, lineHeight * maxLinesValue + verticalPadding)
+                : 0;
             if (maxHeight > 0 && newHeight > maxHeight) {
                 // Content height exceeds the max height so we'll see a scrollbar.
                 elem.style.overflowY = 'auto';
@@ -67,14 +75,15 @@ window.mudInputSizing = {
             elem.style.height = newHeight + "px";
 
             // Restore scroll positions.
-            scrollTops.forEach(([node, scrollTop]) => {
+            scrollStates.forEach(({ node, scrollTop, previousScrollBehavior }) => {
                 node.style.scrollBehavior = 'auto';
                 node.scrollTop = scrollTop;
-                node.style.scrollBehavior = null;
+                node.style.scrollBehavior = previousScrollBehavior;
             });
 
             // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
             if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
+                elem._mudInputSizingPreviousTextAlign = elem.style.textAlign;
                 elem.style.textAlign = 'end'; // Change to something other than the default.
                 elem.adjustSizingHeight(true);
             }

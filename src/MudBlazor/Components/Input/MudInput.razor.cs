@@ -282,10 +282,25 @@ namespace MudBlazor
             var oldLines = Lines;
             var oldMaxLines = MaxLines;
             var oldSizing = Sizing;
+            var oldVariant = Variant;
+            var oldMargin = Margin;
+            var oldTypo = Typo;
+            var oldAdornment = Adornment;
+            var oldClass = Class;
+            var oldStyle = Style;
+            var oldDisabledState = GetDisabledState();
 
             await base.SetParametersAsync(parameters);
 
             var newSizing = Sizing;
+            var styleOrClassRelatedSizingChange =
+                oldVariant != Variant ||
+                oldMargin != Margin ||
+                oldTypo != Typo ||
+                oldAdornment != Adornment ||
+                oldClass != Class ||
+                oldStyle != Style ||
+                oldDisabledState != GetDisabledState();
 
             // Always update internal text (TextUpdateSuppression removed)
             _internalText = ReadText;
@@ -296,9 +311,9 @@ namespace MudBlazor
                 _shouldInitSizing = true;
             }
 
-            if (newSizing != InputSizing.Fixed && !_shouldInitSizing)
+            if (newSizing != InputSizing.Fixed && !_shouldInitSizing && styleOrClassRelatedSizingChange)
             {
-                // Re-measure after parameter updates because runtime style/class changes can affect textarea metrics.
+                // Re-measure after style/class-related updates because runtime classes and computed styles can affect textarea metrics.
                 _shouldAdjustSizingAfterRender = true;
             }
 
