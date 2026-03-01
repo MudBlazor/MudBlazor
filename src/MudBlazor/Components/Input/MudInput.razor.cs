@@ -288,19 +288,11 @@ namespace MudBlazor
         private AutoSizingVisualState CaptureAutoSizingVisualState()
             => new(Variant, Margin, Typo, Adornment, Class, Style, GetDisabledState());
 
-        private static bool HasAutoSizingParametersChanged(int oldLines, int newLines, int oldMaxLines, int newMaxLines, InputSizing oldSizing, InputSizing newSizing)
-            => oldLines != newLines || oldMaxLines != newMaxLines || oldSizing != newSizing;
-
-        private void ClearDeferredAutoSizingFlags()
-        {
-            _shouldUpdateSizingParams = false;
-            _shouldAdjustSizingAfterRender = false;
-        }
-
         private void ResetAutoSizingFlags()
         {
             _shouldInitSizing = false;
-            ClearDeferredAutoSizingFlags();
+            _shouldUpdateSizingParams = false;
+            _shouldAdjustSizingAfterRender = false;
         }
 
         private void SyncAutoSizingTextSnapshot()
@@ -311,21 +303,23 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+            // Visual/style-affecting changes.
+            var oldVisualState = CaptureAutoSizingVisualState();
+
+            // Handled separately because they drive different lifecycle actions.
             var oldLines = Lines;
             var oldMaxLines = MaxLines;
             var oldSizing = Sizing;
-            var oldVisualState = CaptureAutoSizingVisualState();
 
             await base.SetParametersAsync(parameters);
 
             var newSizing = Sizing;
             var hasAutoSizingVisualChange = oldVisualState != CaptureAutoSizingVisualState();
-            var hasAutoSizingParameterChange = HasAutoSizingParametersChanged(oldLines, Lines, oldMaxLines, MaxLines, oldSizing, newSizing);
+            var hasAutoSizingParameterChange = oldLines != Lines || oldMaxLines != MaxLines || oldSizing != newSizing;
 
             // Always update internal text (TextUpdateSuppression removed)
             _internalText = ReadText;
 
-            // Flag dynamic sizing to be initialized on the next render.
             if (oldSizing == InputSizing.Fixed && newSizing != InputSizing.Fixed)
             {
                 _shouldInitSizing = true;
@@ -368,7 +362,8 @@ namespace MudBlazor
                 }
                 else if (_shouldUpdateSizingParams)
                 {
-                    ClearDeferredAutoSizingFlags();
+                    _shouldUpdateSizingParams = false;
+                    _shouldAdjustSizingAfterRender = false;
                     await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines);
                     SyncAutoSizingTextSnapshot();
                 }
