@@ -1034,5 +1034,28 @@ namespace MudBlazor.UnitTests.Components
             act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("step");
         }
 
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/8600
+        /// A nested vertical stepper inside a horizontal stepper must render with the vertical CSS class,
+        /// not pick up the horizontal layout from the outer stepper.
+        /// </summary>
+        [Test]
+        public async Task NestedStepper_InnerVertical_ShouldHaveVerticalClass()
+        {
+            var comp = Context.Render<StepperNestedOrientationTestComponent>();
+            var outerStepper = comp.FindComponents<MudStepper>()[0];
+            // Navigate to step 2 (Detailed Configuration) so the inner stepper is rendered
+            await comp.InvokeAsync(async () => await outerStepper.Instance.NextStepAsync());
+            var innerStepper = comp.FindComponents<MudStepper>()[1];
+            // The outer stepper must be horizontal
+            outerStepper.Find(".mud-stepper").ClassList.Should().Contain("mud-stepper__horizontal");
+            // The inner stepper must be vertical, not horizontal
+            innerStepper.Find(".mud-stepper").ClassList.Should().Contain("mud-stepper__vertical");
+            innerStepper.Find(".mud-stepper").ClassList.Should().NotContain("mud-stepper__horizontal");
+            // The inner stepper's steps must be registered with the inner stepper only
+            innerStepper.Instance.Steps.Count.Should().Be(2);
+            outerStepper.Instance.Steps.Count.Should().Be(3);
+        }
+
     }
 }
