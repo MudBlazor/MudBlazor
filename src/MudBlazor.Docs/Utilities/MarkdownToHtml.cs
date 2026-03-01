@@ -95,9 +95,27 @@ public partial class MarkdownToHtml
 
     private static string PostProcessReleaseHtml(string html)
     {
+        html = ReleaseCalloutRegex().Replace(html, ReleaseCalloutReplacer);
         return FullChangelogParagraphRegex().Replace(
             html,
             "<p class=\"release-full-changelog\"><strong>Full Changelog</strong>:");
+    }
+
+    private static string ReleaseCalloutReplacer(Match match)
+    {
+        var type = match.Groups["type"].Value.ToLowerInvariant();
+        var content = match.Groups["content"].Value.Trim();
+        var title = type switch
+        {
+            "note" => "Note",
+            "tip" => "Tip",
+            "important" => "Important",
+            "warning" => "Warning",
+            "caution" => "Caution",
+            _ => "Note"
+        };
+
+        return $"<div class=\"docs-release-callout docs-release-callout-{type}\"><p class=\"docs-release-callout-title\">{title}</p><p>{content}</p></div>";
     }
 
     private static string PreprocessContributionMarkdown(string markdownBody)
@@ -352,6 +370,9 @@ public partial class MarkdownToHtml
 
     [GeneratedRegex(@"<p>\s*<strong>Full Changelog</strong>\s*:", RegexOptions.CultureInvariant)]
     private static partial Regex FullChangelogParagraphRegex();
+
+    [GeneratedRegex(@"<blockquote>\s*<p>\s*\[!(?<type>NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(?<content>[\s\S]*?)</p>\s*</blockquote>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ReleaseCalloutRegex();
 
     [GeneratedRegex(@"^https://github\.com/[A-Za-z0-9-]+/?$", RegexOptions.CultureInvariant)]
     private static partial Regex GitHubUserUrlRegex();

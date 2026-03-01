@@ -33,6 +33,44 @@
         border-radius: var(--mud-default-borderradius);
         background-color: var(--mud-palette-background-grey);
       }
+
+      .docs-release-callout {
+        margin: 0 0 16px;
+        padding: 12px 16px;
+        border: 1px solid var(--mud-palette-lines-default);
+        border-left-width: 4px;
+        border-radius: var(--mud-default-borderradius);
+        background-color: var(--mud-palette-background-grey);
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .docs-release-callout-title {
+        font-weight: var(--mud-typography-subtitle2-weight);
+        margin-bottom: 6px;
+      }
+
+      .docs-release-callout-note {
+        border-left-color: var(--mud-palette-info);
+      }
+
+      .docs-release-callout-tip {
+        border-left-color: var(--mud-palette-success);
+      }
+
+      .docs-release-callout-important {
+        border-left-color: var(--mud-palette-primary);
+      }
+
+      .docs-release-callout-warning {
+        border-left-color: var(--mud-palette-warning);
+      }
+
+      .docs-release-callout-caution {
+        border-left-color: var(--mud-palette-error);
+      }
     }
 
     h5 {
