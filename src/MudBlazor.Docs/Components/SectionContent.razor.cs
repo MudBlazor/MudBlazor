@@ -56,7 +56,7 @@ public partial class SectionContent
     [Parameter] public bool FullWidth { get; set; }
     [Parameter] public string Code { get; set; }
     [Parameter] public string HighLight { get; set; }
-    [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
+    [Parameter] public IReadOnlyList<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public bool IsApiSection { get; set; }
 
@@ -68,7 +68,7 @@ public partial class SectionContent
         if (Codes != null)
         {
             _hasCode = true;
-            _activeCode = Codes.FirstOrDefault()?.code;
+            _activeCode = Codes.FirstOrDefault()?.Code;
         }
         else if (!string.IsNullOrWhiteSpace(Code))
         {
@@ -150,7 +150,7 @@ public partial class SectionContent
         }
         else
         {
-            firstFile = Codes.FirstOrDefault()?.code ?? Code;
+            firstFile = Codes.FirstOrDefault()?.Code ?? Code;
         }
 
         if (string.IsNullOrWhiteSpace(firstFile))
@@ -176,13 +176,13 @@ public partial class SectionContent
         // Data models
         if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
         {
-            if (ElementRegularExpression().Match(codeFiles).Success)
+            if (ElementRegularExpression().IsMatch(codeFiles))
             {
                 var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
                 codeFiles = codeFiles + (char)31 + elementCodeFile;
             }
 
-            if (ServerRegularExpression().Match(codeFiles).Success)
+            if (ServerRegularExpression().IsMatch(codeFiles))
             {
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;

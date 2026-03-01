@@ -8,7 +8,7 @@
                 {
                     @foreach (var codeFile in Codes)
                     {
-                        <MudButton Class="@GetActiveCode(codeFile.code)" OnClick="@(() => SetActiveCode(codeFile.code))" Size="Size.Small">@codeFile.title</MudButton>
+                        <MudButton Class="@GetActiveCode(codeFile.Code)" OnClick="@(() => SetActiveCode(codeFile.Code))" Size="Size.Small">@codeFile.Title</MudButton>
                     }
                 }
                 <MudSpacer/>
