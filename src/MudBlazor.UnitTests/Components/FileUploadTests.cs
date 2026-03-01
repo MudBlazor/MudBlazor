@@ -572,15 +572,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The wrapper must apply spacing class "mt-1" 
-        /// if and only if no SelectedTemplate is provided.
+        /// The wrapper should not hardcode spacing classes in markup.
         /// </summary>
         [Test]
         [TestCase(true, false)]
         [TestCase(false, true)]
-        public void FileUpload_FilesContainer_TopSpacing_Should_Depend_On_SelectedTemplate(
+        public void FileUpload_FilesContainer_Should_Not_Have_Hardcoded_Spacing_Classes(
             bool hasSelectedTemplate,
-            bool expectedMt1)
+            bool expectedHasContentSpacingClass)
         {
             // Arrange
             IReadOnlyList<IBrowserFile> files =
@@ -603,10 +602,17 @@ namespace MudBlazor.UnitTests.Components
 
             // Act
             var wrapper = comp.Find(".mud-file-upload-files");
-            var hasMt1 = wrapper.ClassList.Contains("mt-1");
 
             // Assert
-            hasMt1.Should().Be(expectedMt1);
+            wrapper.ClassList.Should().NotContain("mt-1");
+            if (expectedHasContentSpacingClass)
+            {
+                wrapper.ClassList.Should().Contain("mud-file-upload-files-has-content");
+            }
+            else
+            {
+                wrapper.ClassList.Should().NotContain("mud-file-upload-files-has-content");
+            }
         }
 
         /// <summary>

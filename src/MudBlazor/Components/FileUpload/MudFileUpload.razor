@@ -68,9 +68,9 @@
         }
         else
         {
-            <div class="mud-file-upload-files mt-1">
-                <!-- Make sure there is at least one file -->
-                @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
+            var hasFiles = !EqualityComparer<T>.Default.Equals(_filesState.Value, default);
+            <div class="mud-file-upload-files @(hasFiles ? "mud-file-upload-files-has-content" : null)">
+                @if (hasFiles)
                 {
                     <span class="mud-file-upload-filelist">
                         @foreach (var file in GetFilenames())
