@@ -12,7 +12,7 @@
         }
         else
         {
-            <MudStack Spacing="2" Class="mud-typography mud-typography-body1">
+            <MudStack Spacing="2" Class="mud-typography mud-typography-body1 docs-contribution-markdown">
                 @((MarkupString)GetBody(_contribution))
             </MudStack>
         }
@@ -36,7 +36,10 @@
 
     private string GetBody(string value)
     {
-        var html = MarkdownToHtml.Parse(value, new Uri(NavigationManager.Uri, UriKind.RelativeOrAbsolute));
+        var html = MarkdownToHtml.Parse(
+            value,
+            new Uri(NavigationManager.Uri, UriKind.RelativeOrAbsolute),
+            MarkdownToHtml.RenderMode.ContributionPageRender);
 
         return html;
     }

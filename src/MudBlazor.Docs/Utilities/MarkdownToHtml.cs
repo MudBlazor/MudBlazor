@@ -16,19 +16,26 @@ namespace MudBlazor.Docs.Utilities;
 #nullable enable
 public partial class MarkdownToHtml
 {
+    private const string GitHubBlobDevBaseUrl = "https://github.com/MudBlazor/MudBlazor/blob/dev/";
+    private const string GitHubRawDevBaseUrl = "https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/";
+
     public enum RenderMode
     {
         Default = 0,
         ReleasePageRender = 1,
+        ContributionPageRender = 2,
     }
 
     public static string Parse(string markdownBody, Uri? baseUrl = null, RenderMode renderMode = RenderMode.Default)
     {
         ArgumentNullException.ThrowIfNull(markdownBody);
 
-        var body = renderMode == RenderMode.ReleasePageRender
-            ? PreprocessReleaseMarkdown(markdownBody)
-            : markdownBody;
+        var body = renderMode switch
+        {
+            RenderMode.ReleasePageRender => PreprocessReleaseMarkdown(markdownBody),
+            RenderMode.ContributionPageRender => PreprocessContributionMarkdown(markdownBody),
+            _ => markdownBody
+        };
 
         var pipeline = new MarkdownPipelineBuilder()
             .UseAutoIdentifiers()
@@ -64,6 +71,63 @@ public partial class MarkdownToHtml
         return FullChangelogParagraphRegex().Replace(
             html,
             "<p class=\"release-full-changelog\"><strong>Full Changelog</strong>:");
+    }
+
+    private static string PreprocessContributionMarkdown(string markdownBody)
+    {
+        var body = ContributionImageSourceRegex().Replace(markdownBody, "$1=\"" + GitHubRawDevBaseUrl + "$2\"");
+        body = ContributionImageSourceSetRegex().Replace(body, "$1=\"" + GitHubRawDevBaseUrl + "$2\"");
+        body = ContributionTocBlockRegex().Replace(body, match =>
+        {
+            var tocContent = match.Groups["toc"].Value.Trim();
+            return $"## Table of Contents{Environment.NewLine}{Environment.NewLine}{tocContent}{Environment.NewLine}{Environment.NewLine}";
+        });
+
+        return MarkdownLinkRegex().Replace(body, RewriteContributionMarkdownLink);
+    }
+
+    private static string RewriteContributionMarkdownLink(Match match)
+    {
+        var text = match.Groups["text"].Value;
+        var url = match.Groups["url"].Value;
+        var suffix = match.Groups["suffix"].Value;
+
+        if (url.StartsWith('#')
+            || url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+            || url.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
+        {
+            return match.Value;
+        }
+
+        if (url.StartsWith('/'))
+        {
+            var normalizedPath = url.TrimStart('/');
+            return $"[{text}]({GitHubBlobDevBaseUrl}{normalizedPath}{suffix})";
+        }
+
+        if (!IsMarkdownFileLink(url))
+        {
+            return match.Value;
+        }
+
+        var relativePath = url.StartsWith("./", StringComparison.Ordinal)
+            ? url[2..]
+            : url;
+
+        return $"[{text}]({GitHubBlobDevBaseUrl}{relativePath}{suffix})";
+    }
+
+    private static bool IsMarkdownFileLink(string url)
+    {
+        var markdownExtensionIndex = url.IndexOf(".md", StringComparison.OrdinalIgnoreCase);
+        if (markdownExtensionIndex < 0)
+        {
+            return false;
+        }
+
+        var extensionEndIndex = markdownExtensionIndex + 3;
+        return extensionEndIndex == url.Length || url[extensionEndIndex] == '#';
     }
 
     public class MudListRenderer : HtmlObjectRenderer<ListBlock>
@@ -110,25 +174,26 @@ public partial class MarkdownToHtml
         {
             renderer.EnsureLine();
             var heading = _heading[obj.Level];
+            var headingId = obj.GetAttributes().Id;
 
-            if (_renderMode == RenderMode.Default)
-            {
-                renderer.Write($"<{heading} id=\"{obj.GetAttributes().Id}\" class=\"mud-typography mud-typography-{heading} mt-3\">");
-                renderer.Write("<b>");
-            }
-            else
+            if (_renderMode == RenderMode.ReleasePageRender)
             {
                 renderer.Write($"<{heading} class=\"mud-typography mud-typography-{heading}\">");
             }
+            else
+            {
+                renderer.Write($"<{heading} id=\"{headingId}\" class=\"mud-typography mud-typography-{heading} mt-3\">");
+                renderer.Write("<b>");
+            }
 
             renderer.WriteLeafInline(obj);
-            if (_renderMode == RenderMode.Default)
+            if (_renderMode != RenderMode.ReleasePageRender)
             {
                 renderer.Write("</b>");
             }
 
             renderer.Write($"</{heading}>");
-            if (obj.Level < 3 && _renderMode == RenderMode.Default)
+            if (obj.Level < 3 && _renderMode != RenderMode.ReleasePageRender)
             {
                 renderer.Write("<hr class=\"mud-divider mud-divider-fullwidth\">");
             }
@@ -234,4 +299,16 @@ public partial class MarkdownToHtml
 
     [GeneratedRegex(@"^https://github\.com/[A-Za-z0-9-]+/?$", RegexOptions.CultureInvariant)]
     private static partial Regex GitHubUserUrlRegex();
+
+    [GeneratedRegex(@"\[(?<text>[^\]]+)\]\((?<url>[^)\s]+)(?<suffix>\s+""[^""]*"")?\)", RegexOptions.CultureInvariant)]
+    private static partial Regex MarkdownLinkRegex();
+
+    [GeneratedRegex(@"<!--\s*TOC start.*?-->\s*(?<toc>[\s\S]*?)\s*<!--\s*TOC end\s*-->", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ContributionTocBlockRegex();
+
+    [GeneratedRegex(@"(src)\s*=\s*""(content/[^""]+)""", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ContributionImageSourceRegex();
+
+    [GeneratedRegex(@"(srcset)\s*=\s*""(content/[^""]+)""", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex ContributionImageSourceSetRegex();
 }
