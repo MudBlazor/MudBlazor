@@ -19,29 +19,18 @@ public partial class MarkdownToHtml
     private const string GitHubBlobDevBaseUrl = "https://github.com/MudBlazor/MudBlazor/blob/dev/";
     private const string GitHubRawDevBaseUrl = "https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/";
 
-    private static readonly RenderProfile _defaultProfile = new(
-        static value => value,
-        null,
-        false,
-        new HeadingRenderOptions(true, true, true, true),
-        new ListRenderOptions(null),
-        new LinkRenderOptions(true, true, false));
+    private static readonly HeadingRenderOptions _defaultHeadingOptions = new(true, true, true, true);
+    private static readonly HeadingRenderOptions _releaseHeadingOptions = new(false, false, false, false);
 
-    private static readonly RenderProfile _releaseProfile = new(
-        PreprocessReleaseMarkdown,
-        PostProcessReleaseHtml,
-        true,
-        new HeadingRenderOptions(false, false, false, false),
-        new ListRenderOptions("mt-3 mb-6 px-6"),
-        new LinkRenderOptions(true, true, false));
+    private static readonly ListRenderOptions _defaultListOptions = new(null);
+    private static readonly ListRenderOptions _releaseListOptions = new("mt-3 mb-6 px-6");
 
-    private static readonly RenderProfile _contributionProfile = new(
-        PreprocessContributionMarkdown,
-        null,
-        false,
-        new HeadingRenderOptions(true, true, true, true),
-        new ListRenderOptions(null),
-        new LinkRenderOptions(true, true, true));
+    private static readonly LinkRenderOptions _defaultLinkOptions = new(true, true, false);
+    private static readonly LinkRenderOptions _contributionLinkOptions = new(true, true, true);
+
+    private static readonly MarkdownPipeline _defaultPipeline = BuildDefaultPipeline();
+    private static readonly MarkdownPipeline _releasePipeline = BuildReleasePipeline();
+    private static readonly MarkdownPipeline _contributionPipeline = BuildContributionPipeline();
 
     public enum RenderMode
     {
@@ -54,41 +43,91 @@ public partial class MarkdownToHtml
     {
         ArgumentNullException.ThrowIfNull(markdownBody);
 
-        var profile = GetProfile(renderMode);
-        var body = profile.PreprocessMarkdown(markdownBody);
-
-        var pipelineBuilder = new MarkdownPipelineBuilder()
-            .UseAutoIdentifiers();
-        if (profile.EnableAlertBlocks)
+        return renderMode switch
         {
-            pipelineBuilder.UseAlertBlocks();
-        }
+            RenderMode.ReleasePageRender => ParseReleaseMarkdown(markdownBody, baseUrl),
+            RenderMode.ContributionPageRender => ParseContributionMarkdown(markdownBody, baseUrl),
+            _ => ParseDefaultMarkdown(markdownBody, baseUrl),
+        };
+    }
 
-        var pipeline = pipelineBuilder.Build();
+    private static string ParseDefaultMarkdown(string markdownBody, Uri? baseUrl)
+    {
+        return RenderMarkdown(
+            markdownBody,
+            baseUrl,
+            _defaultPipeline,
+            _defaultHeadingOptions,
+            _defaultListOptions,
+            _defaultLinkOptions);
+    }
+
+    private static string ParseReleaseMarkdown(string markdownBody, Uri? baseUrl)
+    {
+        var preprocessedBody = PreprocessReleaseMarkdown(markdownBody);
+        var html = RenderMarkdown(
+            preprocessedBody,
+            baseUrl,
+            _releasePipeline,
+            _releaseHeadingOptions,
+            _releaseListOptions,
+            _defaultLinkOptions);
+
+        return PostProcessReleaseHtml(html);
+    }
+
+    private static string ParseContributionMarkdown(string markdownBody, Uri? baseUrl)
+    {
+        var preprocessedBody = PreprocessContributionMarkdown(markdownBody);
+        return RenderMarkdown(
+            preprocessedBody,
+            baseUrl,
+            _contributionPipeline,
+            _defaultHeadingOptions,
+            _defaultListOptions,
+            _contributionLinkOptions);
+    }
+
+    private static string RenderMarkdown(
+        string markdownBody,
+        Uri? baseUrl,
+        MarkdownPipeline pipeline,
+        HeadingRenderOptions headingOptions,
+        ListRenderOptions listOptions,
+        LinkRenderOptions linkOptions)
+    {
         var builder = new StringBuilder();
         using var textWriter = new StringWriter(builder);
         var renderer = new HtmlRenderer(textWriter) { BaseUrl = baseUrl };
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<HeadingBlock>>(new MudHeadingRenderer(profile.HeadingOptions));
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<LinkInline>>(new MudLinkRenderer(profile.LinkOptions));
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<ListBlock>>(new MudListRenderer(profile.ListOptions));
+        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<HeadingBlock>>(new MudHeadingRenderer(headingOptions));
+        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<LinkInline>>(new MudLinkRenderer(linkOptions));
+        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<ListBlock>>(new MudListRenderer(listOptions));
 
-        var document = Markdown.Parse(body, pipeline);
+        var document = Markdown.Parse(markdownBody, pipeline);
         renderer.Render(document);
-
-        var html = builder.ToString();
-        return profile.PostprocessHtml is null
-            ? html
-            : profile.PostprocessHtml(html);
+        return builder.ToString();
     }
 
-    private static RenderProfile GetProfile(RenderMode renderMode)
+    private static MarkdownPipeline BuildDefaultPipeline()
     {
-        return renderMode switch
-        {
-            RenderMode.ReleasePageRender => _releaseProfile,
-            RenderMode.ContributionPageRender => _contributionProfile,
-            _ => _defaultProfile
-        };
+        return new MarkdownPipelineBuilder()
+            .UseAutoIdentifiers()
+            .Build();
+    }
+
+    private static MarkdownPipeline BuildReleasePipeline()
+    {
+        return new MarkdownPipelineBuilder()
+            .UseAutoIdentifiers()
+            .UseAlertBlocks()
+            .Build();
+    }
+
+    private static MarkdownPipeline BuildContributionPipeline()
+    {
+        return new MarkdownPipelineBuilder()
+            .UseAutoIdentifiers()
+            .Build();
     }
 
     private static string PreprocessReleaseMarkdown(string markdownBody)
@@ -332,14 +371,6 @@ public partial class MarkdownToHtml
             return text.ToString();
         }
     }
-
-    private sealed record RenderProfile(
-        Func<string, string> PreprocessMarkdown,
-        Func<string, string>? PostprocessHtml,
-        bool EnableAlertBlocks,
-        HeadingRenderOptions HeadingOptions,
-        ListRenderOptions ListOptions,
-        LinkRenderOptions LinkOptions);
 
     private sealed record HeadingRenderOptions(bool IncludeIds, bool IncludeTopMargin, bool BoldText, bool DividerForTopHeadings);
 
