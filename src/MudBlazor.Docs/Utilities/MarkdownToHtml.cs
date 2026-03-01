@@ -22,6 +22,7 @@ public partial class MarkdownToHtml
     private static readonly RenderProfile _defaultProfile = new(
         static value => value,
         null,
+        false,
         new HeadingRenderOptions(true, true, true, true),
         new ListRenderOptions(null),
         new LinkRenderOptions(true, true, false));
@@ -29,6 +30,7 @@ public partial class MarkdownToHtml
     private static readonly RenderProfile _releaseProfile = new(
         PreprocessReleaseMarkdown,
         PostProcessReleaseHtml,
+        true,
         new HeadingRenderOptions(false, false, false, false),
         new ListRenderOptions("mt-3 mb-6 px-6"),
         new LinkRenderOptions(true, true, false));
@@ -36,6 +38,7 @@ public partial class MarkdownToHtml
     private static readonly RenderProfile _contributionProfile = new(
         PreprocessContributionMarkdown,
         null,
+        false,
         new HeadingRenderOptions(true, true, true, true),
         new ListRenderOptions(null),
         new LinkRenderOptions(true, true, true));
@@ -54,9 +57,14 @@ public partial class MarkdownToHtml
         var profile = GetProfile(renderMode);
         var body = profile.PreprocessMarkdown(markdownBody);
 
-        var pipeline = new MarkdownPipelineBuilder()
-            .UseAutoIdentifiers()
-            .Build();
+        var pipelineBuilder = new MarkdownPipelineBuilder()
+            .UseAutoIdentifiers();
+        if (profile.EnableAlertBlocks)
+        {
+            pipelineBuilder.UseAlertBlocks();
+        }
+
+        var pipeline = pipelineBuilder.Build();
         var builder = new StringBuilder();
         using var textWriter = new StringWriter(builder);
         var renderer = new HtmlRenderer(textWriter) { BaseUrl = baseUrl };
@@ -95,27 +103,9 @@ public partial class MarkdownToHtml
 
     private static string PostProcessReleaseHtml(string html)
     {
-        html = ReleaseCalloutRegex().Replace(html, ReleaseCalloutReplacer);
         return FullChangelogParagraphRegex().Replace(
             html,
             "<p class=\"release-full-changelog\"><strong>Full Changelog</strong>:");
-    }
-
-    private static string ReleaseCalloutReplacer(Match match)
-    {
-        var type = match.Groups["type"].Value.ToLowerInvariant();
-        var content = match.Groups["content"].Value.Trim();
-        var title = type switch
-        {
-            "note" => "Note",
-            "tip" => "Tip",
-            "important" => "Important",
-            "warning" => "Warning",
-            "caution" => "Caution",
-            _ => "Note"
-        };
-
-        return $"<div class=\"docs-release-callout docs-release-callout-{type}\"><p class=\"docs-release-callout-title\">{title}</p><p>{content}</p></div>";
     }
 
     private static string PreprocessContributionMarkdown(string markdownBody)
@@ -346,6 +336,7 @@ public partial class MarkdownToHtml
     private sealed record RenderProfile(
         Func<string, string> PreprocessMarkdown,
         Func<string, string>? PostprocessHtml,
+        bool EnableAlertBlocks,
         HeadingRenderOptions HeadingOptions,
         ListRenderOptions ListOptions,
         LinkRenderOptions LinkOptions);
@@ -370,9 +361,6 @@ public partial class MarkdownToHtml
 
     [GeneratedRegex(@"<p>\s*<strong>Full Changelog</strong>\s*:", RegexOptions.CultureInvariant)]
     private static partial Regex FullChangelogParagraphRegex();
-
-    [GeneratedRegex(@"<blockquote>\s*<p>\s*\[!(?<type>NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(?<content>[\s\S]*?)</p>\s*</blockquote>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex ReleaseCalloutRegex();
 
     [GeneratedRegex(@"^https://github\.com/[A-Za-z0-9-]+/?$", RegexOptions.CultureInvariant)]
     private static partial Regex GitHubUserUrlRegex();
