@@ -1,0 +1,15 @@
+﻿<p>Reproduction for <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/11480" Target="_blank">issue #11480</MudLink>.</p>
+<p>Bottom underline should align for <code>Variant.Text</code> when <code>Sizing="InputSizing.Auto"</code> and <code>Margin.Dense</code>.</p>
+
+<div style="display: flex; flex-direction: row; gap: 16px;">
+    <MudTextField Margin="Margin.None" T="string" Variant="Variant.Text" />
+    <MudTextField Margin="Margin.None" T="string" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+</div>
+<div style="display: flex; flex-direction: row; gap: 16px;">
+    <MudTextField Margin="Margin.Dense" T="string" Variant="Variant.Text" />
+    <MudTextField Margin="Margin.Dense" T="string" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+</div>
+
+@code {
+    public static string __description__ = "Issue #11480: Variant.Text + InputSizing.Auto + Margin.Dense should keep underline alignment.";
+}
