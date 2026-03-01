@@ -372,6 +372,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(0.0, 100.0, 50, "50")]
+        [TestCase(0.0, 100.0, 25, "25")]
+        [TestCase(0.0, 100.0, 0, "0")]
+        [TestCase(0.0, 100.0, 100, "100")]
+        public void ValueLabelPosition_Rtl(double min, double max, double value, string expectedPercentage)
+        {
+            var comp = Context.Render<MudSlider<double>>(x =>
+            {
+                x.Add(p => p.Max, max);
+                x.Add(p => p.Min, min);
+                x.Add(p => p.Value, value);
+                x.Add(p => p.ValueLabel, true);
+                x.AddCascadingValue("RightToLeft", true);
+            });
+
+            IElement ValueLabel() => comp.Find(".mud-slider-value-label");
+            ValueLabel().GetAttribute("style").Should().Be($"right:{expectedPercentage}%;");
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public async Task CheckInput(bool immediate)
