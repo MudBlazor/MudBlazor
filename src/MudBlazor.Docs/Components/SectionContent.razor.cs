@@ -191,8 +191,8 @@ public partial class SectionContent
 
         var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
         // var tryMudBlazorLocation = "https://localhost:5001/";
-        var tryMudBlazorLocation = "https://try.mudblazor.com/";
-        var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
+        const string TryMudBlazorLocation = "https://try.mudblazor.com/";
+        var url = $"{TryMudBlazorLocation}snippet/{codeFileEncoded}";
         await JsApiService.OpenInNewTabAsync(url);
     }
 
