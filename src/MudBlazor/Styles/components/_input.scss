@@ -487,6 +487,18 @@
   }
 }
 
+// Keep text-variant auto-sizing textarea box model aligned with text-variant input.
+// This reduces subtle underline drift between Sizing.Fixed and Sizing.Auto.
+.mud-input.mud-input-sizing-auto > textarea.mud-input-root.mud-input-root-text {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 0 7px;
+
+  &.mud-input-root-margin-dense {
+    padding-top: 3px;
+  }
+}
+
 .mud-input-adornment {
   height: 0.01em;
   display: flex;
