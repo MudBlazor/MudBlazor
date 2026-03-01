@@ -11,24 +11,11 @@ window.mudInputSizing = {
      * Initializes auto-sizing behavior for a textarea element.
      */
     init: (elem, maxLines) => {
-        const compStyle = getComputedStyle(elem);
-        const lineHeightValue = Number.parseFloat(compStyle.getPropertyValue('line-height'));
-        const fontSize = Number.parseFloat(compStyle.getPropertyValue('font-size'));
-        const lineHeight = Number.isFinite(lineHeightValue) ? lineHeightValue : fontSize;
-        const paddingTop = Number.parseFloat(compStyle.getPropertyValue('padding-top')) || 0;
-        const paddingBottom = Number.parseFloat(compStyle.getPropertyValue('padding-bottom')) || 0;
-        const verticalPadding = paddingTop + paddingBottom;
-
-        let maxHeight = 0;
+        let maxLinesValue = 0;
 
         // Update parameters that affect the functionality and visuals of the sizing input.
         elem.updateParameters = function (newMaxLines) {
-            if (newMaxLines > 0) {
-                // Cap the height to the number of lines specified in the input.
-                maxHeight = lineHeight * newMaxLines + verticalPadding;
-            } else {
-                maxHeight = 0;
-            }
+            maxLinesValue = newMaxLines > 0 ? newMaxLines : 0;
         };
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.
@@ -50,11 +37,23 @@ window.mudInputSizing = {
                 elem.style.textAlign = null;
             }
 
+            // Styles can change at runtime (variant/margin/typography/classes), so always recalculate metrics.
+            const compStyle = getComputedStyle(elem);
+            const lineHeightValue = Number.parseFloat(compStyle.getPropertyValue('line-height'));
+            const fontSize = Number.parseFloat(compStyle.getPropertyValue('font-size'));
+            const lineHeight = Number.isFinite(lineHeightValue)
+                ? lineHeightValue
+                : (Number.isFinite(fontSize) ? fontSize : 0);
+            const paddingTop = Number.parseFloat(compStyle.getPropertyValue('padding-top')) || 0;
+            const paddingBottom = Number.parseFloat(compStyle.getPropertyValue('padding-bottom')) || 0;
+            const verticalPadding = paddingTop + paddingBottom;
+
             // Some browsers can report a too-small scrollHeight for disabled empty textareas.
             // Keep a reliable baseline that includes both paddings (see issue #11630).
             const minHeight = lineHeight * elem.rows + verticalPadding;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
             const initialOverflowY = elem.style.overflowY;
+            const maxHeight = maxLinesValue > 0 ? lineHeight * maxLinesValue + verticalPadding : 0;
             if (maxHeight > 0 && newHeight > maxHeight) {
                 // Content height exceeds the max height so we'll see a scrollbar.
                 elem.style.overflowY = 'auto';
