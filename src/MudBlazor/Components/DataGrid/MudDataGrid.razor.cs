@@ -2215,7 +2215,7 @@ namespace MudBlazor
             _previousEditingItem = _editingItem;
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
-            await StartedEditingItem.InvokeAsync(_editingItem);
+            await StartedEditingItem.InvokeAsync(_editingSourceItem);
             _isEditFormOpen = true;
         }
 
@@ -2225,7 +2225,7 @@ namespace MudBlazor
         public async Task CancelEditingItemAsync()
         {
             EditingCanceledEvent?.Invoke();
-            await CanceledEditingItem.InvokeAsync(_editingItem);
+            await CanceledEditingItem.InvokeAsync(_editingSourceItem);
             ClearEditingItem();
             _isEditFormOpen = false;
         }

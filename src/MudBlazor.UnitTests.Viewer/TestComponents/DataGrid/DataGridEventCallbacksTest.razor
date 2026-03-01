@@ -24,6 +24,8 @@
         new Item("C")
     };
 
+    public IEnumerable<Item> Items => _items;
+
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
     public bool SelectedItemChanged { get; set; }
@@ -31,6 +33,8 @@
     public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
     public bool CanceledEditingItem { get; set; }
+    public Item? StartedEditingItemRef { get; set; }
+    public Item? CanceledEditingItemRef { get; set; }
 
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
@@ -61,11 +65,13 @@
     private void OnStartedEditingItem(Item item)
     {
         StartedEditingItem = true;
+        StartedEditingItemRef = item;
     }
 
     private void OnCanceledEditingItem(Item item)
     {
         CanceledEditingItem = true;
+        CanceledEditingItemRef = item;
     }
 
     public class Item

@@ -1314,10 +1314,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
 
+            // Directly invoke SetEditingItemAsync to fire StartedEditingItem and verify reference equality.
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetEditingItemAsync(comp.Instance.Items.First()));
+            comp.Instance.StartedEditingItem.Should().Be(true);
+            // Verify that StartedEditingItem callback received the original item reference (not a clone).
+            comp.Instance.StartedEditingItemRef.Should().BeSameAs(comp.Instance.Items.First());
+
             // TODO: Triggering of the CancelEditingItem callback appears to require the Form edit mode
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
             await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
             comp.Instance.CanceledEditingItem.Should().Be(true);
+
+            // Verify that CanceledEditingItem callback received the original item reference (not a clone).
+            comp.Instance.CanceledEditingItemRef.Should().BeSameAs(comp.Instance.Items.First());
         }
 
         [Test]
