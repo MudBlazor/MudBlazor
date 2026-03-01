@@ -14,7 +14,7 @@ internal class CenterStrategy : IBarGroupPositionStrategy
         var spaceBetweenGroups = Math.Max(ctx.DataSetCount == 1 ? 0 : ctx.BarGroupWidth,
                                              ctx.CalculateSpaceWidth(ctx.HorizontalSpace, ctx.ColumnsPerDataSet));
 
-        var start = ctx.HorizontalStartSpace + (ctx.HorizontalSpace - ctx.DataSetCount * ctx.BarGroupWidth) / 2;
+        var start = ctx.HorizontalStartSpace + ((ctx.HorizontalSpace - (ctx.DataSetCount * ctx.BarGroupWidth)) / 2);
 
         var centerOffset = ctx.DataSetCount switch
         {
@@ -28,8 +28,8 @@ internal class CenterStrategy : IBarGroupPositionStrategy
 
         for (var i = 0; i < ctx.ColumnsPerDataSet; i++)
         {
-            positions[i] = start + centerOffset - leftShift + ctx.SpacesPerGroup * barGapOffset +
-                           i * (spaceBetweenGroups + ctx.BarWidth + barGapOffset * ctx.SeriesSpacingRatio / 2);
+            positions[i] = start + centerOffset - leftShift + (ctx.SpacesPerGroup * barGapOffset) +
+                           (i * (spaceBetweenGroups + ctx.BarWidth + (barGapOffset * ctx.SeriesSpacingRatio / 2)));
         }
 
         return positions;

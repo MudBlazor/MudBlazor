@@ -357,9 +357,15 @@ namespace MudBlazor.UnitTests.Components
             var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             if (string.IsNullOrEmpty(scope))
+            {
                 scope = ":root";
+            }
+
             if (!scope.StartsWith(':'))
+            {
                 scope = $":{scope}";
+            }
+
             styleLines.Should().Contain($"{scope}{{");
         }
 

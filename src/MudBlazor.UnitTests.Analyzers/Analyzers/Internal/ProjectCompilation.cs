@@ -42,7 +42,9 @@ internal class ProjectCompilation : IDisposable
         foreach (var document in project.AdditionalDocuments)
         {
             if (document.FilePath is not null)
+            {
                 additionalTexts = additionalTexts.Add(new TestAdditionalText(document.FilePath, await document.GetTextAsync()));
+            }
         }
 
         return new ProjectCompilation(workspace, project, compilation!, additionalTexts);

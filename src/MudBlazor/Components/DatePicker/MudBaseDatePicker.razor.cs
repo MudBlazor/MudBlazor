@@ -400,7 +400,7 @@ namespace MudBlazor
         {
             OpenTo? nextView = CurrentView switch
             {
-                OpenTo.Year => !FixMonth.HasValue ? OpenTo.Month : !FixDay.HasValue ? OpenTo.Date : null,
+                OpenTo.Year => GetNextViewFromYear(),
                 OpenTo.Month => !FixDay.HasValue ? OpenTo.Date : null,
                 _ => null,
             };
@@ -411,11 +411,41 @@ namespace MudBlazor
         {
             OpenTo? previousView = CurrentView switch
             {
-                OpenTo.Date => !FixMonth.HasValue ? OpenTo.Month : !FixYear.HasValue ? OpenTo.Year : null,
+                OpenTo.Date => GetPreviousViewFromDate(),
                 OpenTo.Month => !FixYear.HasValue ? OpenTo.Year : null,
                 _ => null,
             };
             return previousView;
+        }
+
+        private OpenTo? GetNextViewFromYear()
+        {
+            if (!FixMonth.HasValue)
+            {
+                return OpenTo.Month;
+            }
+
+            if (!FixDay.HasValue)
+            {
+                return OpenTo.Date;
+            }
+
+            return null;
+        }
+
+        private OpenTo? GetPreviousViewFromDate()
+        {
+            if (!FixMonth.HasValue)
+            {
+                return OpenTo.Month;
+            }
+
+            if (!FixYear.HasValue)
+            {
+                return OpenTo.Year;
+            }
+
+            return null;
         }
 
         protected virtual async Task SubmitAndCloseAsync()

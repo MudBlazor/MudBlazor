@@ -58,7 +58,10 @@ namespace MudBlazor.UnitTests.UserAttributes
             foreach (var componentType in mudComponentTypes)
             {
                 if (excludedComponents.Contains(componentType.Name))
+                {
                     continue;
+                }
+
                 var component = componentFactory.Create(componentType, testContext);
                 component.Markup.Should()
                     .NotBeEmpty(because: $"the component {componentType.Name} should at least contain one element");

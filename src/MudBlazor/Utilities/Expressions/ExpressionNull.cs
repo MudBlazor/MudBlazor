@@ -18,7 +18,6 @@ internal static class ExpressionNull
         var parameter = expression.Parameters[0];
         var body = AddNullChecks(expression.Body);
 
-        //return body;
         return Expression.Lambda<Func<T, TProperty>>(body, parameter);
     }
 

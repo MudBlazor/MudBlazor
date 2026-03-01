@@ -14,7 +14,7 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
-    private string _id = Identifier.Create();
+    private readonly string _id = Identifier.Create();
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;
@@ -147,7 +147,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         StateHasChanged();
     }
 
-    private async Task DragEndedAsync(DragEventArgs e)
+    private async Task DragEndedAsync()
     {
         if (_dragOperationIsInProgress)
         {
@@ -186,7 +186,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
             }
         }
 
-        //JS.InvokeVoidAsync("draggableTouch");
     }
 
     private async Task TouchEndedAsync(TouchEventArgs e)
@@ -225,7 +224,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
                 StateHasChanged();
             }
         }
-        //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
 
     /// <summary>

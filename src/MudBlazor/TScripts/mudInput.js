@@ -66,7 +66,7 @@ class MudInput {
 
     _clampPosition(position, max) {
         const pos = Number(position);
-        return isNaN(pos)
+        return Number.isNaN(pos)
             ? max
             : Math.max(0, Math.min(pos, max));
     }

@@ -59,7 +59,7 @@
             builder.AddAttribute(seq++, "stroke", color);
             builder.AddAttribute(seq++, "stroke-width", _barWidth.ToStr());
             builder.AddAttribute(seq++, "d", bar.Data);
-            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnBarMouseOver(e, bar)));
+            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create(this, () => OnBarMouseOver(bar)));
             builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnBarMouseOut));
             builder.CloseElement();
         }

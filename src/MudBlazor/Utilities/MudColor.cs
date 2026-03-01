@@ -631,12 +631,12 @@ namespace MudBlazor.Utilities
             var hNormalized = hsl.H / 360d;
             var t2 = hsl.L <= 0.5d
                 ? hsl.L * (1.0d + hsl.S)
-                : hsl.L + hsl.S - hsl.L * hsl.S;
-            var t1 = 2.0d * hsl.L - t2;
+                : hsl.L + hsl.S - (hsl.L * hsl.S);
+            var t1 = (2.0d * hsl.L) - t2;
 
-            var tr = HueToRgb(t1, t2, hNormalized + 1.0d / 3.0d);
+            var tr = HueToRgb(t1, t2, hNormalized + (1.0d / 3.0d));
             var tg = HueToRgb(t1, t2, hNormalized);
-            var tb = HueToRgb(t1, t2, hNormalized - 1.0d / 3.0d);
+            var tb = HueToRgb(t1, t2, hNormalized - (1.0d / 3.0d));
 
             var r = ((int)Math.Round(tr * 255d)).EnsureRangeToByte();
             var g = ((int)Math.Round(tg * 255d)).EnsureRangeToByte();
@@ -651,9 +651,9 @@ namespace MudBlazor.Utilities
             if (hueNormalized > 1.0d) hueNormalized -= 1.0d;
             return hueNormalized switch
             {
-                < 1.0d / 6.0d => t1 + (t2 - t1) * 6.0d * hueNormalized,
+                < 1.0d / 6.0d => t1 + ((t2 - t1) * 6.0d * hueNormalized),
                 < 1.0d / 2.0d => t2,
-                < 2.0d / 3.0d => t1 + (t2 - t1) * (2.0d / 3.0d - hueNormalized) * 6.0d,
+                < 2.0d / 3.0d => t1 + ((t2 - t1) * ((2.0d / 3.0d) - hueNormalized) * 6.0d),
                 _ => t1
             };
         }
@@ -759,19 +759,19 @@ namespace MudBlazor.Utilities
             }
             else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized >= bNormalized))
             {
-                h = (60D * (gNormalized - bNormalized)) / (max - min);
+                h = 60D * (gNormalized - bNormalized) / (max - min);
             }
             else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized < bNormalized))
             {
-                h = ((60D * (gNormalized - bNormalized)) / (max - min)) + 360D;
+                h = (60D * (gNormalized - bNormalized) / (max - min)) + 360D;
             }
             else if (Math.Abs(max - gNormalized) < Epsilon)
             {
-                h = ((60D * (bNormalized - rNormalized)) / (max - min)) + 120D;
+                h = (60D * (bNormalized - rNormalized) / (max - min)) + 120D;
             }
             else if (Math.Abs(max - bNormalized) < Epsilon)
             {
-                h = ((60D * (rNormalized - gNormalized)) / (max - min)) + 240D;
+                h = (60D * (rNormalized - gNormalized) / (max - min)) + 240D;
             }
 
             // lightness

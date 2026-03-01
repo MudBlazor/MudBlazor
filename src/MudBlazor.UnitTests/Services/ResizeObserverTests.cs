@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Services
 
             Dictionary<ElementReference, BoundingClientRect> expectedRects = new(ElementReferenceComparer.Default);
 
-            for (var i = 0; i < resolvedElements.Count(); i++)
+            for (var i = 0; i < resolvedElements.Count; i++)
             {
                 var item = resolvedElements.ElementAt(i);
                 var correspondingId = ids[i];

@@ -15,7 +15,6 @@ namespace MudBlazor;
 /// <seealso cref="MudTheme"/>
 partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 {
-    // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
     private bool _observing;
     private const string Palette = "mud-palette";
@@ -388,14 +387,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         themeStringBuilder.AppendLine(
             $"--{LayoutProperties}-drawer-width-mini-right: {theme.LayoutProperties.DrawerMiniWidthRight};");
         themeStringBuilder.AppendLine($"--{LayoutProperties}-appbar-height: {theme.LayoutProperties.AppbarHeight};");
-
-        //Breakpoint
-        //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");
-        //theme.AppendLine($"--{Breakpoint}-sm: {Theme.Breakpoints.sm};");
-        //theme.AppendLine($"--{Breakpoint}-md: {Theme.Breakpoints.md};");
-        //theme.AppendLine($"--{Breakpoint}-lg: {Theme.Breakpoints.lg};");
-        //theme.AppendLine($"--{Breakpoint}-xl: {Theme.Breakpoints.xl};");
-        //theme.AppendLine($"--{Breakpoint}-xxl: {Theme.Breakpoints.xxl};");
 
         //Typography
         themeStringBuilder.AppendLine(

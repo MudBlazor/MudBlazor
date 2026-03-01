@@ -36,21 +36,21 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
-                if (normalizedData[i] == T.Zero)
+                if (normalizedData[i] == 0.0)
                     continue;
 
                 var data = normalizedData[i];
                 var value = T.Max(T.Zero, chartData[i]);
-                var radians = 2 * Math.PI * double.CreateSaturating(data);
+                var radians = 2 * Math.PI * data;
                 var half = radians / 2;
 
-                var coords = Pie<T>.GetSegmentCoordinates(cumulativeRadians, half, radians);
+                var coords = GetSegmentCoordinates(cumulativeRadians, half, radians);
                 cumulativeRadians += radians;
 
-                var pathData = Pie<T>.BuildSvgPath(coords, Radius, data);
+                var pathData = BuildSvgPath(coords, Radius, data);
 
-                var midAngle = cumulativeRadians - Math.PI * double.CreateSaturating(data);
-                var (x, y) = Pie<T>.GetLabelPosition(midAngle, Radius, data);
+                var midAngle = cumulativeRadians - (Math.PI * data);
+                var (x, y) = GetLabelPosition(midAngle, Radius, data);
 
                 _paths.Add(new SvgPetal
                 {
@@ -59,7 +59,7 @@ namespace MudBlazor.Charts
                     LabelX = x,
                     LabelY = y,
                     LabelXValue = ChartOptions.ShowAsPercentage
-                        ? $"{Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString()}%"
+                        ? $"{Math.Round(data * 100, 1).ToInvariantString()}%"
                         : value.ToString(null, CultureInfo.InvariantCulture),
                     LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty,
                     SegmentRadius = Radius,
@@ -85,12 +85,12 @@ namespace MudBlazor.Charts
             };
         }
 
-        private static string BuildSvgPath(SegmentCoordinates c, double radius, T data)
+        private static string BuildSvgPath(SegmentCoordinates c, double radius, double data)
         {
             var sb = new StringBuilder();
 
             sb.Append($"M {ToS(c.StartX * radius)} {ToS(c.StartY * radius)} ");
-            if (data >= T.One)
+            if (data >= 1.0)
                 sb.Append($"A {ToS(radius)} {ToS(radius)} 0 {c.LargeArcFlag} 1 {ToS(c.MidX * radius)} {ToS(c.MidY * radius)} ");
             sb.Append($"A {ToS(radius)} {ToS(radius)} 0 {c.LargeArcFlag} 1 {ToS(c.EndX * radius)} {ToS(c.EndY * radius)} ");
             sb.Append("L 0 0 Z");
@@ -98,9 +98,9 @@ namespace MudBlazor.Charts
             return sb.ToString();
         }
 
-        private static (double X, double Y) GetLabelPosition(double angle, double radius, T data)
+        private static (double X, double Y) GetLabelPosition(double angle, double radius, double data)
         {
-            if (data >= T.One)
+            if (data >= 1.0)
                 return (0, 0);
 
             var r = radius * 0.5;

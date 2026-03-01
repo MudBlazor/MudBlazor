@@ -279,7 +279,9 @@ namespace MudBlazor.UnitTests.Components
             // Ensure no color classes are present, like "mud-primary-text", "mud-error-text", etc.
             var classNames = svgClassNames.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             foreach (var className in classNames)
+            {
                 Regex.IsMatch(className, "^mud-[a-z]+-text$", RegexOptions.IgnoreCase).Should().BeFalse();
+            }
         }
 
         [Test]
@@ -799,9 +801,13 @@ namespace MudBlazor.UnitTests.Components
                 });
 
                 if (clicked)
+                {
                     clickAttempts++;
+                }
                 else
+                {
                     break;
+                }
             }
 
             // Only one click should have been successful and multiple clicks should have been attempted.
@@ -845,9 +851,13 @@ namespace MudBlazor.UnitTests.Components
                 });
 
                 if (clicked)
+                {
                     clickAttempts++;
+                }
                 else
+                {
                     break;
+                }
             }
 
             // Only one click should have been successful and multiple clicks should have been attempted.

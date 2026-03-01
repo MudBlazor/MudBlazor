@@ -125,7 +125,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The palette used for the legends.
     /// </summary>
-    public override string[] LegendPalette => [.. (ChartOptions?.ChartPalette ?? []), .. OverlayChart?.LegendPalette ?? []];
+    public override string[] LegendPalette => [.. ChartOptions?.ChartPalette ?? [], .. OverlayChart?.LegendPalette ?? []];
 
     /// <summary>
     /// Gets or sets the content to be rendered as an overlay.
@@ -227,13 +227,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
 
         if (MatchBoundsToSize)
         {
+
+            var isWidthFixed = Width.AsSpan().Trim().EndsWith("px");
+            var isHeightFixed = Height.AsSpan().Trim().EndsWith("px");
+
             if (_elementSize is not null)
             {
-                _boundWidth = _elementSize.Width;
-                _boundHeight = _elementSize.Height;
+                _boundWidth = _elementSize.Width > 0 ? _elementSize.Width : BoundWidthDefault;
+                _boundHeight = isHeightFixed ? _elementSize.Height : BoundHeightDefault;
             }
-            else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
+            else if (isWidthFixed && isHeightFixed
                 && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
                 && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
