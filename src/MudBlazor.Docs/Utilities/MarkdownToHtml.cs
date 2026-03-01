@@ -24,21 +24,21 @@ public partial class MarkdownToHtml
         null,
         new HeadingRenderOptions(true, true, true, true),
         new ListRenderOptions(null),
-        new LinkRenderOptions(true, true));
+        new LinkRenderOptions(true, true, false));
 
     private static readonly RenderProfile _releaseProfile = new(
         PreprocessReleaseMarkdown,
         PostProcessReleaseHtml,
         new HeadingRenderOptions(false, false, false, false),
         new ListRenderOptions("mt-3 mb-6 px-6"),
-        new LinkRenderOptions(true, true));
+        new LinkRenderOptions(true, true, false));
 
     private static readonly RenderProfile _contributionProfile = new(
         PreprocessContributionMarkdown,
         null,
         new HeadingRenderOptions(true, true, true, true),
         new ListRenderOptions(null),
-        new LinkRenderOptions(true, true));
+        new LinkRenderOptions(true, true, true));
 
     public enum RenderMode
     {
@@ -128,39 +128,7 @@ public partial class MarkdownToHtml
             return $"## Table of Contents{Environment.NewLine}{Environment.NewLine}{tocContent}{Environment.NewLine}{Environment.NewLine}";
         });
 
-        return MarkdownLinkRegex().Replace(body, RewriteContributionMarkdownLink);
-    }
-
-    private static string RewriteContributionMarkdownLink(Match match)
-    {
-        var text = match.Groups["text"].Value;
-        var url = match.Groups["url"].Value;
-        var suffix = match.Groups["suffix"].Value;
-
-        if (url.StartsWith('#')
-            || url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
-            || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
-            || url.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
-        {
-            return match.Value;
-        }
-
-        if (url.StartsWith('/'))
-        {
-            var normalizedPath = url.TrimStart('/');
-            return $"[{text}]({GitHubBlobDevBaseUrl}{normalizedPath}{suffix})";
-        }
-
-        if (!IsMarkdownFileLink(url))
-        {
-            return match.Value;
-        }
-
-        var relativePath = url.StartsWith("./", StringComparison.Ordinal)
-            ? url[2..]
-            : url;
-
-        return $"[{text}]({GitHubBlobDevBaseUrl}{relativePath}{suffix})";
+        return body;
     }
 
     private static bool IsMarkdownFileLink(string url)
@@ -273,6 +241,11 @@ public partial class MarkdownToHtml
                 return;
             }
 
+            if (_options.RewriteContributionLinks && obj.Url is not null)
+            {
+                obj.Url = RewriteContributionLink(obj.Url);
+            }
+
             var defaultRenderer = new LinkInlineRenderer();
             var attributes = obj.GetAttributes();
             if (_options.HighlightGitHubMentions && IsGitHubUserLink(obj))
@@ -324,6 +297,33 @@ public partial class MarkdownToHtml
             return GetInlineText(obj).StartsWith("@", StringComparison.Ordinal);
         }
 
+        private static string RewriteContributionLink(string url)
+        {
+            if (url.StartsWith('#')
+                || url.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase)
+                || url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return url;
+            }
+
+            if (url.StartsWith('/'))
+            {
+                return $"{GitHubBlobDevBaseUrl}{url.TrimStart('/')}";
+            }
+
+            if (!IsMarkdownFileLink(url))
+            {
+                return url;
+            }
+
+            var relativePath = url.StartsWith("./", StringComparison.Ordinal)
+                ? url[2..]
+                : url;
+
+            return $"{GitHubBlobDevBaseUrl}{relativePath}";
+        }
+
         private static string GetInlineText(LinkInline obj)
         {
             var text = new StringBuilder();
@@ -354,7 +354,7 @@ public partial class MarkdownToHtml
 
     private sealed record ListRenderOptions(string? AdditionalCssClass);
 
-    private sealed record LinkRenderOptions(bool HighlightGitHubMentions, bool HighlightCompareLinks);
+    private sealed record LinkRenderOptions(bool HighlightGitHubMentions, bool HighlightCompareLinks, bool RewriteContributionLinks);
 
     [GeneratedRegex(@"^\s*<!--.*?-->\s*", RegexOptions.Singleline)]
     private static partial Regex LeadingReleaseCommentRegex();
@@ -376,9 +376,6 @@ public partial class MarkdownToHtml
 
     [GeneratedRegex(@"^https://github\.com/[A-Za-z0-9-]+/?$", RegexOptions.CultureInvariant)]
     private static partial Regex GitHubUserUrlRegex();
-
-    [GeneratedRegex(@"\[(?<text>[^\]]+)\]\((?<url>[^)\s]+)(?<suffix>\s+""[^""]*"")?\)", RegexOptions.CultureInvariant)]
-    private static partial Regex MarkdownLinkRegex();
 
     [GeneratedRegex(@"<!--\s*TOC start.*?-->\s*(?<toc>[\s\S]*?)\s*<!--\s*TOC end\s*-->", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ContributionTocBlockRegex();
