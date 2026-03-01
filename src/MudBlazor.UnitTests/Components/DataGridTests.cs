@@ -836,16 +836,16 @@ namespace MudBlazor.UnitTests.Components
         public void DataGridPaginationShouldFormatNumbersWithCommas()
         {
             var comp = Context.Render<DataGridPaginationFormattingTest>();
-
-            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 1,000");
+            var groupSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be($"1-10 of 1{groupSeparator}000");
         }
 
         [Test]
         public void DataGridPaginationShouldRespectCustomFormatWithSingleTag()
         {
             var comp = Context.Render<DataGridPaginationCustomFormatTest>();
-
-            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("Total: 1,000");
+            var groupSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be($"Total: 1{groupSeparator}000");
         }
 
         [Test]
