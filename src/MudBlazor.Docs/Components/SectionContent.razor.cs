@@ -2,12 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
@@ -51,7 +46,7 @@ public partial class SectionContent
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
-    private string _snippetId = Identifier.Create();
+    private readonly string _snippetId = Identifier.Create();
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
@@ -94,14 +89,9 @@ public partial class SectionContent
 
     private string GetActiveCode(string value)
     {
-        if (value == _activeCode)
-        {
-            return "file-button active";
-        }
-        else
-        {
-            return "file-button";
-        }
+        return value == _activeCode
+            ? "file-button active"
+            : "file-button";
     }
 
     private async Task CopyTextToClipboard()
@@ -112,7 +102,7 @@ public partial class SectionContent
         SnackbarService.Add("Copied to clipboard");
     }
 
-    RenderFragment CodeComponent(string code) => builder =>
+    private RenderFragment CodeComponent(string code) => builder =>
     {
         try
         {
@@ -151,7 +141,7 @@ public partial class SectionContent
         }
     };
 
-    protected virtual async void RunOnTryMudBlazor()
+    protected virtual async Task RunOnTryMudBlazorAsync()
     {
         string firstFile;
         if (Codes == null)
