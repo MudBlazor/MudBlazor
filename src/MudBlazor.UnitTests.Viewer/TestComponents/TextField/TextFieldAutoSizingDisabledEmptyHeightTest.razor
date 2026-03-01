@@ -1,15 +1,49 @@
-﻿<p class="mt-3">If the TextField has <strong>Autogrow</strong>, <strong>no value</strong>, and is <strong>disabled</strong>, the height can be incorrect.</p>
-<p>Resize the render area to cause a rerender. Repro for <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/11630" Target="_blank">issue #11630</MudLink>.</p>
+﻿<p class="mt-3">Reproduction for <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/11630" Target="_blank">issue #11630</MudLink>.</p>
+<p>Compare <code>Sizing.Fixed</code> vs <code>Sizing.Auto</code> with empty values. Resize the render area to force rerendering and check for height collapse.</p>
 
-<MudStack>
-    <MudCheckBox @bind-Value="_disabled" Label="Disabled" LabelPlacement="Placement.Right" />
-    <MudTextField @bind-Value="_text" Disabled="_disabled" Label="Empty & Disabled? => Wrong Height" Sizing="InputSizing.Auto" Variant="Variant.Outlined" />
-    <MudTextField @bind-Value="_text" Disabled="true" Label="Always Disabled => Wrong Height" Sizing="InputSizing.Auto" Variant="Variant.Outlined" />
+<MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="mb-2">
+    <MudCheckBox @bind-Value="_disabled" Label="Toggle Disabled Rows" LabelPlacement="Placement.Right" />
+    <MudCheckBox @bind-Value="_dense" Label="Dense Margin" LabelPlacement="Placement.Right" />
 </MudStack>
 
+<div style="display:grid; grid-template-columns: 240px minmax(0,1fr) minmax(0,1fr); gap: 12px; align-items:start;">
+    <MudText Typo="Typo.subtitle2">Case</MudText>
+    <MudText Typo="Typo.subtitle2">Sizing.Fixed</MudText>
+    <MudText Typo="Typo.subtitle2">Sizing.Auto</MudText>
+
+    <MudText Typo="Typo.body2">Outlined, toggle disabled</MudText>
+    <MudTextField @bind-Value="_outlinedText" Disabled="_disabled" Margin="@CurrentMargin" Label="Outlined fixed" Variant="Variant.Outlined" Sizing="InputSizing.Fixed" />
+    <MudTextField @bind-Value="_outlinedText" Disabled="_disabled" Margin="@CurrentMargin" Label="Outlined auto" Variant="Variant.Outlined" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Outlined, always disabled</MudText>
+    <MudTextField @bind-Value="_outlinedText" Disabled="true" Margin="@CurrentMargin" Label="Outlined fixed always disabled" Variant="Variant.Outlined" Sizing="InputSizing.Fixed" />
+    <MudTextField @bind-Value="_outlinedText" Disabled="true" Margin="@CurrentMargin" Label="Outlined auto always disabled" Variant="Variant.Outlined" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Filled, toggle disabled</MudText>
+    <MudTextField @bind-Value="_filledText" Disabled="_disabled" Margin="@CurrentMargin" Label="Filled fixed" Variant="Variant.Filled" Sizing="InputSizing.Fixed" />
+    <MudTextField @bind-Value="_filledText" Disabled="_disabled" Margin="@CurrentMargin" Label="Filled auto" Variant="Variant.Filled" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Filled, always disabled</MudText>
+    <MudTextField @bind-Value="_filledText" Disabled="true" Margin="@CurrentMargin" Label="Filled fixed always disabled" Variant="Variant.Filled" Sizing="InputSizing.Fixed" />
+    <MudTextField @bind-Value="_filledText" Disabled="true" Margin="@CurrentMargin" Label="Filled auto always disabled" Variant="Variant.Filled" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, toggle disabled</MudText>
+    <MudTextField @bind-Value="_textVariantText" Disabled="_disabled" Margin="@CurrentMargin" Label="Text fixed" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField @bind-Value="_textVariantText" Disabled="_disabled" Margin="@CurrentMargin" Label="Text auto" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, always disabled</MudText>
+    <MudTextField @bind-Value="_textVariantText" Disabled="true" Margin="@CurrentMargin" Label="Text fixed always disabled" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField @bind-Value="_textVariantText" Disabled="true" Margin="@CurrentMargin" Label="Text auto always disabled" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+</div>
+
 @code {
-    public static string __description__ = "Reproduction for issue #11630: disabled empty auto-sizing text fields can collapse on rerender.";
+    public static string __description__ = "Issue #11630 regression matrix: empty disabled text fields comparing Sizing.Fixed vs Sizing.Auto across variants.";
 
     private bool _disabled = true;
-    private string? _text;
+    private bool _dense = true;
+    private string? _outlinedText;
+    private string? _filledText;
+    private string? _textVariantText;
+
+    private Margin CurrentMargin => _dense ? Margin.Dense : Margin.None;
 }
