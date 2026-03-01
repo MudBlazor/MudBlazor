@@ -19,6 +19,27 @@ public partial class MarkdownToHtml
     private const string GitHubBlobDevBaseUrl = "https://github.com/MudBlazor/MudBlazor/blob/dev/";
     private const string GitHubRawDevBaseUrl = "https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/";
 
+    private static readonly RenderProfile _defaultProfile = new(
+        static value => value,
+        null,
+        new HeadingRenderOptions(true, true, true, true),
+        new ListRenderOptions(null),
+        new LinkRenderOptions(true, true));
+
+    private static readonly RenderProfile _releaseProfile = new(
+        PreprocessReleaseMarkdown,
+        PostProcessReleaseHtml,
+        new HeadingRenderOptions(false, false, false, false),
+        new ListRenderOptions("mt-3 mb-6 px-6"),
+        new LinkRenderOptions(true, true));
+
+    private static readonly RenderProfile _contributionProfile = new(
+        PreprocessContributionMarkdown,
+        null,
+        new HeadingRenderOptions(true, true, true, true),
+        new ListRenderOptions(null),
+        new LinkRenderOptions(true, true));
+
     public enum RenderMode
     {
         Default = 0,
@@ -30,12 +51,8 @@ public partial class MarkdownToHtml
     {
         ArgumentNullException.ThrowIfNull(markdownBody);
 
-        var body = renderMode switch
-        {
-            RenderMode.ReleasePageRender => PreprocessReleaseMarkdown(markdownBody),
-            RenderMode.ContributionPageRender => PreprocessContributionMarkdown(markdownBody),
-            _ => markdownBody
-        };
+        var profile = GetProfile(renderMode);
+        var body = profile.PreprocessMarkdown(markdownBody);
 
         var pipeline = new MarkdownPipelineBuilder()
             .UseAutoIdentifiers()
@@ -43,17 +60,27 @@ public partial class MarkdownToHtml
         var builder = new StringBuilder();
         using var textWriter = new StringWriter(builder);
         var renderer = new HtmlRenderer(textWriter) { BaseUrl = baseUrl };
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<HeadingBlock>>(new MudHeadingRenderer(renderMode));
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<LinkInline>>(new MudLinkRenderer());
-        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<ListBlock>>(new MudListRenderer(renderMode));
+        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<HeadingBlock>>(new MudHeadingRenderer(profile.HeadingOptions));
+        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<LinkInline>>(new MudLinkRenderer(profile.LinkOptions));
+        renderer.ObjectRenderers.ReplaceOrAdd<HtmlObjectRenderer<ListBlock>>(new MudListRenderer(profile.ListOptions));
 
         var document = Markdown.Parse(body, pipeline);
         renderer.Render(document);
 
         var html = builder.ToString();
-        return renderMode == RenderMode.ReleasePageRender
-            ? PostProcessReleaseHtml(html)
-            : html;
+        return profile.PostprocessHtml is null
+            ? html
+            : profile.PostprocessHtml(html);
+    }
+
+    private static RenderProfile GetProfile(RenderMode renderMode)
+    {
+        return renderMode switch
+        {
+            RenderMode.ReleasePageRender => _releaseProfile,
+            RenderMode.ContributionPageRender => _contributionProfile,
+            _ => _defaultProfile
+        };
     }
 
     private static string PreprocessReleaseMarkdown(string markdownBody)
@@ -77,7 +104,7 @@ public partial class MarkdownToHtml
     {
         var body = ContributionImageSourceRegex().Replace(markdownBody, "$1=\"" + GitHubRawDevBaseUrl + "$2\"");
         body = ContributionImageSourceSetRegex().Replace(body, "$1=\"" + GitHubRawDevBaseUrl + "$2\"");
-        body = ContributionTocBlockRegex().Replace(body, match =>
+        body = ContributionTocBlockRegex().Replace(body, static match =>
         {
             var tocContent = match.Groups["toc"].Value.Trim();
             return $"## Table of Contents{Environment.NewLine}{Environment.NewLine}{tocContent}{Environment.NewLine}{Environment.NewLine}";
@@ -130,31 +157,31 @@ public partial class MarkdownToHtml
         return extensionEndIndex == url.Length || url[extensionEndIndex] == '#';
     }
 
-    public class MudListRenderer : HtmlObjectRenderer<ListBlock>
+    private class MudListRenderer : HtmlObjectRenderer<ListBlock>
     {
-        private readonly RenderMode _renderMode;
+        private readonly ListRenderOptions _options;
 
-        public MudListRenderer(RenderMode renderMode)
+        public MudListRenderer(ListRenderOptions options)
         {
-            _renderMode = renderMode;
+            _options = options;
         }
 
         protected override void Write(HtmlRenderer renderer, ListBlock obj)
         {
             var listRenderer = new ListRenderer();
-            if (_renderMode == RenderMode.ReleasePageRender)
+            if (!string.IsNullOrWhiteSpace(_options.AdditionalCssClass))
             {
                 var attributes = obj.GetAttributes();
-                attributes.AddClass("mt-3 mb-6 px-6");
+                attributes.AddClass(_options.AdditionalCssClass);
             }
 
             listRenderer.Write(renderer, obj);
         }
     }
 
-    public class MudHeadingRenderer : HtmlObjectRenderer<HeadingBlock>
+    private class MudHeadingRenderer : HtmlObjectRenderer<HeadingBlock>
     {
-        private readonly RenderMode _renderMode;
+        private readonly HeadingRenderOptions _options;
         private readonly Dictionary<int, string> _heading = new()
         {
             { 1, "h4" },
@@ -165,35 +192,44 @@ public partial class MarkdownToHtml
             { 6, "h6" }
         };
 
-        public MudHeadingRenderer(RenderMode renderMode)
+        public MudHeadingRenderer(HeadingRenderOptions options)
         {
-            _renderMode = renderMode;
+            _options = options;
         }
 
         protected override void Write(HtmlRenderer renderer, HeadingBlock obj)
         {
             renderer.EnsureLine();
+
             var heading = _heading[obj.Level];
             var headingId = obj.GetAttributes().Id;
+            var className = _options.IncludeTopMargin
+                ? $"mud-typography mud-typography-{heading} mt-3"
+                : $"mud-typography mud-typography-{heading}";
 
-            if (_renderMode == RenderMode.ReleasePageRender)
+            if (_options.IncludeIds && !string.IsNullOrWhiteSpace(headingId))
             {
-                renderer.Write($"<{heading} class=\"mud-typography mud-typography-{heading}\">");
+                renderer.Write($"<{heading} id=\"{headingId}\" class=\"{className}\">");
             }
             else
             {
-                renderer.Write($"<{heading} id=\"{headingId}\" class=\"mud-typography mud-typography-{heading} mt-3\">");
+                renderer.Write($"<{heading} class=\"{className}\">");
+            }
+
+            if (_options.BoldText)
+            {
                 renderer.Write("<b>");
             }
 
             renderer.WriteLeafInline(obj);
-            if (_renderMode != RenderMode.ReleasePageRender)
+
+            if (_options.BoldText)
             {
                 renderer.Write("</b>");
             }
 
             renderer.Write($"</{heading}>");
-            if (obj.Level < 3 && _renderMode != RenderMode.ReleasePageRender)
+            if (_options.DividerForTopHeadings && obj.Level < 3)
             {
                 renderer.Write("<hr class=\"mud-divider mud-divider-fullwidth\">");
             }
@@ -202,8 +238,15 @@ public partial class MarkdownToHtml
         }
     }
 
-    public class MudLinkRenderer : HtmlObjectRenderer<LinkInline>
+    private class MudLinkRenderer : HtmlObjectRenderer<LinkInline>
     {
+        private readonly LinkRenderOptions _options;
+
+        public MudLinkRenderer(LinkRenderOptions options)
+        {
+            _options = options;
+        }
+
         protected override void Write(HtmlRenderer renderer, LinkInline obj)
         {
             if (obj.IsImage)
@@ -214,7 +257,7 @@ public partial class MarkdownToHtml
 
             var defaultRenderer = new LinkInlineRenderer();
             var attributes = obj.GetAttributes();
-            if (IsGitHubUserLink(obj))
+            if (_options.HighlightGitHubMentions && IsGitHubUserLink(obj))
             {
                 attributes.AddClass("mud-link mud-default-text mud-link-underline-hover github-user");
             }
@@ -223,7 +266,7 @@ public partial class MarkdownToHtml
                 attributes.AddClass("mud-link mud-primary-text mud-link-underline-hover");
             }
 
-            if (IsCompareLink(obj.Url))
+            if (_options.HighlightCompareLinks && IsCompareLink(obj.Url))
             {
                 attributes.AddClass("docs-code docs-code-primary");
             }
@@ -281,6 +324,19 @@ public partial class MarkdownToHtml
             return text.ToString();
         }
     }
+
+    private sealed record RenderProfile(
+        Func<string, string> PreprocessMarkdown,
+        Func<string, string>? PostprocessHtml,
+        HeadingRenderOptions HeadingOptions,
+        ListRenderOptions ListOptions,
+        LinkRenderOptions LinkOptions);
+
+    private sealed record HeadingRenderOptions(bool IncludeIds, bool IncludeTopMargin, bool BoldText, bool DividerForTopHeadings);
+
+    private sealed record ListRenderOptions(string? AdditionalCssClass);
+
+    private sealed record LinkRenderOptions(bool HighlightGitHubMentions, bool HighlightCompareLinks);
 
     [GeneratedRegex(@"^\s*<!--.*?-->\s*", RegexOptions.Singleline)]
     private static partial Regex LeadingReleaseCommentRegex();
