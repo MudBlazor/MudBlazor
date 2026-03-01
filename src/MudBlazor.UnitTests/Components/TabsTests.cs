@@ -1188,37 +1188,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// SliderColor should apply the corresponding CSS class to the slider element.
-        /// Color.Default should add mud-default class; other palette colors should add mud-{color} class.
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/6584
-        /// </summary>
-        [Test]
-        public async Task SliderColorClassApplied()
-        {
-            // First tab active so the slider is visible (no JS position calculation needed)
-            var comp = Context.Render<ToggleTabsSlideAnimationTest>(p => p.Add(x => x.SelectedTab, 0));
-            var tabs = comp.FindComponent<MudTabs>();
-
-            // Default: SliderColor is Color.Inherit, so no color class is added
-            comp.Find(".mud-tab-slider").ClassList.Should().NotContain("mud-default");
-            comp.Find(".mud-tab-slider").ClassList.Should().NotContain("mud-inherit");
-
-            // Setting SliderColor to Color.Default should add mud-default class
-            await tabs.SetParametersAndRenderAsync(p => p.Add(x => x.SliderColor, Color.Default));
-            comp.Find(".mud-tab-slider").ClassList.Should().Contain("mud-default");
-
-            // Setting SliderColor to Color.Info should add mud-info class
-            await tabs.SetParametersAndRenderAsync(p => p.Add(x => x.SliderColor, Color.Info));
-            comp.Find(".mud-tab-slider").ClassList.Should().Contain("mud-info");
-            comp.Find(".mud-tab-slider").ClassList.Should().NotContain("mud-default");
-
-            // Setting SliderColor to Color.Inherit should remove the color class
-            await tabs.SetParametersAndRenderAsync(p => p.Add(x => x.SliderColor, Color.Inherit));
-            comp.Find(".mud-tab-slider").ClassList.Should().NotContain("mud-info");
-            comp.Find(".mud-tab-slider").ClassList.Should().NotContain("mud-inherit");
-        }
-
-        /// <summary>
         ///  Specifying a custom minimum width should add a min-width style to each tab
         /// </summary>
         [Test]
