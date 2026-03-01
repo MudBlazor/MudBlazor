@@ -242,6 +242,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensure that the loading row has the mud-table-loading-row CSS class
+        /// so it is displayed correctly in small-device (mobile) view.
+        /// </summary>
+        [Test]
+        public async Task LoadingRowHasMudTableLoadingRowClass()
+        {
+            var comp = Context.Render<TableLoadingTest>();
+
+            var loadingSwitch = comp.Find("#switch");
+            await loadingSwitch.ChangeAsync(true);
+
+            var loaderRow = comp.Find("thead tr.mud-table-loading-row");
+            loaderRow.Should().NotBeNull();
+        }
+
+        /// <summary>
         /// Check if the loading and no records functionality is working in grouped table.
         /// </summary>
         [Test]
