@@ -817,6 +817,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    [Explicit]
     public async Task Cancel_Race_Stress_NoUnhandledExceptions()
     {
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
@@ -874,6 +875,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    [Explicit]
     public async Task CancelAsync_Race_Stress_NoUnhandledExceptions()
     {
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));

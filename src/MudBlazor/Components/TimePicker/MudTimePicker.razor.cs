@@ -276,6 +276,8 @@ namespace MudBlazor
 
         private Task UpdateTimeAsync()
         {
+            if (GetReadOnlyState())
+                return Task.CompletedTask;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {

@@ -39,7 +39,7 @@
                @bind-value:get="@GetValueText" @bind-value:set="@SetValueTextAsync" @bind-value:event="@(Immediate ? "oninput" : "onchange")" />
         @if (ValueLabel)
         {
-            <div class="mud-slider-value-label" style="@($"left:{Width}%;")">
+            <div class="mud-slider-value-label" style="@ValueLabelPositionStyle">
                 @if (ValueLabelContent is null)
                 {
                     @_valueState.Value.ToString(ValueLabelFormat, Culture)

@@ -430,6 +430,8 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
+            if (GetReadOnlyState())
+                return;
             if (_firstDate == null || _secondDate != null)
             {
                 _secondDate = null;
