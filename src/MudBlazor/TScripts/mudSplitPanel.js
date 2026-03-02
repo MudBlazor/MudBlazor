@@ -113,7 +113,9 @@ class MudSplitPanel {
         if (firstPanelSizeNew === null) {
             this.divider.ariaValueNow = "50";
         } else {
-            this._setPanelSizes(firstPanelSizeNew, containerSize);
+            const maxPanelSize = containerSize - this.panelGap - this.minPanelSize;
+            const clampedFirstPanelSize = Math.min(Math.max(firstPanelSizeNew, this.minPanelSize), maxPanelSize);
+            this._setPanelSizes(clampedFirstPanelSize, containerSize);
         }
     }
 
@@ -216,10 +218,10 @@ class MudSplitPanel {
             : this.container.offsetWidth;
 
         let firstPanelSize = this.firstPanelInitialSize;
-        if (!firstPanelSize && this.secondPanelInitialSize) {
+        if (firstPanelSize === null && this.secondPanelInitialSize !== null) {
             firstPanelSize = containerSize - this.secondPanelInitialSize - this.panelGap;
         }
-        if (!firstPanelSize) {
+        if (firstPanelSize === null) {
             firstPanelSize = containerSize / 2 - this.panelGap / 2;
         }
 
