@@ -18,6 +18,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
     private bool _observing;
+    private int _oldPopoverZIndex;
+    private int _oldTooltipZIndex;
+    private bool _updateZIndex;
     private const string Palette = "mud-palette";
     private const string Ripple = "mud-ripple";
     private const string Elevation = "mud-elevation";
@@ -149,6 +152,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         }
     }
 
+
     // <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -160,8 +164,32 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
                 await WatchDarkMode();
             }
         }
-
+        if (_oldPopoverZIndex != Theme?.ZIndex.Popover || _oldTooltipZIndex != Theme?.ZIndex.Tooltip)
+        {
+            // a ZIndex change won't initiate a re-render unless they replace the object ZIndex or call StateHasChanged
+            _oldPopoverZIndex = Theme?.ZIndex.Popover ?? 0;
+            _oldTooltipZIndex = Theme?.ZIndex.Tooltip ?? 0;
+            _updateZIndex = true;
+            await UpdateZIndexValuesAsync(); // Immediately invoke the method
+        }
+        else if (_updateZIndex)
+        {
+            _updateZIndex = false;
+            await UpdateZIndexValuesAsync();
+        }
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    // <inheritdoc />
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        if (parameters.TryGetValue<bool>(nameof(IsDarkMode), out var newIsDarkMode)
+            && newIsDarkMode != _isDarkModeState.Value)
+        {
+            _updateZIndex = true;
+        }
+
+        await base.SetParametersAsync(parameters);
     }
 
     // <inheritdoc />
@@ -596,6 +624,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
             }
         }
     }
+
+    private ValueTask UpdateZIndexValuesAsync() => JsRuntime.InvokeVoidAsyncIgnoreErrors("mudpopoverHelper.updateBaseZIndexValues");
 
     private ValueTask WatchDarkMode() => JsRuntime.InvokeVoidAsyncIgnoreErrors("mudThemeProvider.watchDarkMode", _lazyDotNetRef.Value);
 

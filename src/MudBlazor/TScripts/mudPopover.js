@@ -25,13 +25,13 @@ window.mudpopoverHelper = {
         };
     },
 
-    basePopoverZIndex: parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--mud-zindex-popover')) || 1200,
+    basePopoverZIndex: null,
 
-    baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--mud-zindex-tooltip')) || 1600,
+    baseTooltipZIndex: null,
 
+    // updates the ZIndex of the popover and tooltip from the css variable on initialzie and by the MudThemeProvider
     updateBaseZIndexValues: function () {
+        console.log("update");
         this.basePopoverZIndex = parseInt(getComputedStyle(document.documentElement)
             .getPropertyValue('--mud-zindex-popover')) || 1200;
         this.baseTooltipZIndex = parseInt(getComputedStyle(document.documentElement)
@@ -680,7 +680,6 @@ window.mudpopoverHelper = {
 
     // set zindex order, popoverContentNode is the calling popover, parentNode is the node to compare to
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
-        this.updateBaseZIndexValues();
         // find the first parent mud-popover if it exists (nested popovers)
         const parentPopover = parentNode.closest('.mud-popover');
         const popoverNode = document.getElementById('popover-' + popoverContentNode.id.substr(15));
@@ -990,7 +989,7 @@ class MudPopover {
         // store options from PopoverOptions in mudpopoverHelper
         window.mudpopoverHelper.mainContainerClass = containerClass;
         window.mudpopoverHelper.overflowPadding = overflowPadding;
-        this.updateBaseZIndexValues();
+        window.mudpopoverHelper.updateBaseZIndexValues();
 
         if (flipMargin) {
             window.mudpopoverHelper.flipMargin = flipMargin;

@@ -431,6 +431,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task UpdateZIndexValuesAsync_ShouldBeCalled_WhenIsDarkModeChanges()
+        {
+            // Arrange
+            Context.JSInterop.SetupVoid("mudpopoverHelper.updateBaseZIndexValues");
+            var theme = new MudTheme
+            {
+                ZIndex = new ZIndex
+                {
+                    Popover = 1200,
+                    Tooltip = 1600
+                }
+            };
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
+                .Add(p => p.Theme, theme)
+                .Add(p => p.IsDarkMode, false));
+
+            // Act: Change IsDarkMode
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.IsDarkMode, true));
+
+            // Assert: JSInterop should have been called
+            Context.JSInterop.VerifyInvoke("mudpopoverHelper.updateBaseZIndexValues", 1);
+        }
+
+        [Test]
         public async Task Dispose_ShouldInvokeJs()
         {
             // Arrange
@@ -670,6 +695,70 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert - should be light palette again
             comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
+        }
+
+        [Test]
+        public async Task UpdateZIndexValuesAsync_ShouldBeCalled_WhenZIndexChanges()
+        {
+            // Arrange
+            Context.JSInterop.SetupVoid("mudpopoverHelper.updateBaseZIndexValues");
+            var initialTheme = new MudTheme
+            {
+                ZIndex = new ZIndex
+                {
+                    Popover = 1200,
+                    Tooltip = 1600
+                }
+            };
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
+                .Add(p => p.Theme, initialTheme));
+
+            // Act: Change ZIndex values
+            var updatedTheme = new MudTheme
+            {
+                ZIndex = new ZIndex
+                {
+                    Popover = 1300, // changed
+                    Tooltip = 1700  // changed
+                }
+            };
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Theme, updatedTheme));
+
+            // Assert: JSInterop should have been called initially and after theme update
+            Context.JSInterop.VerifyInvoke("mudpopoverHelper.updateBaseZIndexValues", 2);
+        }
+
+        [Test]
+        public async Task UpdateZIndexValuesAsync_ShouldNotBeCalled_WhenZIndexDoesNotChange()
+        {
+            // Arrange
+            Context.JSInterop.SetupVoid("mudpopoverHelper.updateBaseZIndexValues");
+            var initialTheme = new MudTheme
+            {
+                ZIndex = new ZIndex
+                {
+                    Popover = 1200,
+                    Tooltip = 1600
+                }
+            };
+            var comp = Context.Render<MudThemeProvider>(parameters => parameters
+                .Add(p => p.Theme, initialTheme));
+
+            // Act: Change a non-ZIndex property
+            var updatedTheme = new MudTheme
+            {
+                PaletteLight = new PaletteLight
+                {
+                    Primary = Colors.Red.Default // changed, but not ZIndex
+                },
+                ZIndex = initialTheme.ZIndex // same ZIndex
+            };
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Theme, updatedTheme));
+
+            // Assert: JSInterop should not have been called since ZIndex didn't change except for initial render
+            Context.JSInterop.VerifyInvoke("mudpopoverHelper.updateBaseZIndexValues", 1);
         }
     }
 }
