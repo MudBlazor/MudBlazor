@@ -572,15 +572,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       border-top: 1px solid var(--mud-palette-table-lines);
     }
 
-    .mud-table-loading-row {
-      display: block;
-
-      th {
-        display: block;
-        padding: 0;
-      }
-    }
-
     .mud-table-row {
       display: revert;
 
