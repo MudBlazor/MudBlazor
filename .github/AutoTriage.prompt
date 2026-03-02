@@ -104,7 +104,7 @@ Case — Thread is an issue:
 - No maintainer has replied since the first request
 
 ## Missing Information Handling
-Purpose: Capture essential details early on open threads so maintainers can act quickly, while staying out of their way once they engage.
+Purpose: Capture essential details early on open threads so maintainers can act quickly, including low-signal reports (link-only, screenshot/video-only, missing PR rationale, or unsubstantiated enhancements), while staying out of their way once they engage.
 
 ### Step 1 — Check for maintainer involvement
 - Treat a maintainer as "involved" if the thread is assigned to a maintainer, the author is a maintainer, or any maintainer has commented after the original post.
@@ -112,26 +112,26 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 - Skip reviving dormant threads (no human comments for >=28 days); maintainers will decide whether to re-engage.
 
 ### Step 2 — Evaluate essential gaps (first-touch threads only)
-- When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change (e.g., missing reproduction, unknown environment, unclear enhancement scope, or a vague PR title/description that cannot be made specific from available context).
-- If the report already contains enough information to understand and act, take no action.
+- When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change (e.g., missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context).
+- If the report already contains enough written information to understand and act without inferring intent from links or media alone, take no action.
 
 ### Step 3 — Compose the request comment
-- Post one concise checklist covering only the blocking items.
+- Post one concise checklist covering only the blocking items and requesting the minimum written context needed to make any links/visuals actionable.
 - You may add up to three optional suggestions prefaced with "It may help to include…" when they are directly relevant to this issue type.
 - Keep the tone neutral and collaborative; the goal is to accelerate maintainer review, not to flood the thread.
 
 ### Examples of helpful details (pick only what applies)
-- Bugs: minimal reproduction (prefer `https://try.mudblazor.com/snippet/XXXX`), exact steps, expected vs. actual behavior, environment versions, last-known-good vs. first-broken release, relevant logs or visuals.
-- Visual/UI issues: screenshot or video, browser/OS/zoom/DPI, theme or contrast settings, reproduction link/snippet.
-- Enhancements: problem statement and goal, scope or constraints, comparable examples, related components, alternatives considered.
-- Pull Requests: explanation of the changes and the problem they solve.
+- Bugs: brief written summary of the problem (required when only a link is provided), minimal reproduction (prefer `https://try.mudblazor.com/snippet/XXXX`), exact steps, expected vs. actual behavior, environment versions, last-known-good vs. first-broken release, relevant logs or visuals.
+- Visual/UI issues: screenshot or video plus written expected vs. actual behavior, browser/OS/zoom/DPI, theme or contrast settings, reproduction link/snippet.
+- Enhancements: problem statement and goal, why current behavior is insufficient, scope or constraints, comparable examples, related components, alternatives considered.
+- Pull Requests: explanation of what changed, why the change is needed, and the problem it resolves.
 
 ### Missing Information Labeling
 
 Valid `needs:` labels and when to apply them:
 - `needs: changes`: A maintainer has asked for further modifications to be made to this pull request.
 - `needs: example`: A usage example is absent (e.g. reproduction link or code snippet) — logic is described but not shown.
-- `needs: info`: This issue/PR lacks key context (e.g. goal, setup, environment, or a clear description of the pull request changes).
+- `needs: info`: This issue/PR lacks key context (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, missing enhancement justification, or missing explanation of pull request changes and rationale).
 - `needs: tests`: A maintainer has explicitly asked for associated test cases to be added to this pull request.
 - `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes.
 
