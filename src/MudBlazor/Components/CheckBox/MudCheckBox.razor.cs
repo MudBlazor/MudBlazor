@@ -217,19 +217,6 @@ namespace MudBlazor
                 ? SetBoolValueAsync(null, true)
                 : Task.CompletedTask;
 
-        private int GetResolvedTabIndex()
-        {
-            if (GetDisabledState())
-                return -1;
-
-            if (UserAttributes != null &&
-                UserAttributes.TryGetValue("tabindex", out var value) &&
-                int.TryParse(value?.ToString(), out var parsed))
-                return parsed;
-
-            return 0;
-        }
-
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {

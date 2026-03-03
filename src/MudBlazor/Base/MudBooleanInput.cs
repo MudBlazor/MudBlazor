@@ -42,6 +42,23 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
+        protected int GetResolvedTabIndex()
+        {
+            if (GetDisabledState())
+            {
+                return -1;
+            }
+
+            if (UserAttributes != null &&
+                UserAttributes.TryGetValue("tabindex", out var value) &&
+                int.TryParse(value?.ToString(), out var parsed))
+            {
+                return parsed;
+            }
+
+            return 0;
+        }
+
         /// <summary>
         /// Prevents the user from changing the input.
         /// </summary>
