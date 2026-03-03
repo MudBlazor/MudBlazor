@@ -195,6 +195,10 @@
     user-select: none;
   }
 
+  .mud-application-layout-rtl & .mud-slider-value-label {
+    transform: translateX(50%) translateY(-125%);
+  }
+
   .mud-slider-tickmarks {
     display: flex;
     justify-content: space-between;

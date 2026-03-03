@@ -2,16 +2,43 @@ name: AutoTriage (Backlog)
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
   workflow_dispatch:
     inputs:
       issues:
-        description: 'Space-separated issue numbers'
+        description: "Space-separated issue numbers"
+        type: string
         required: false
-      enabled:
-        description: 'Enable writes (false = dry-run)'
+      dry-run:
+        description: "Run in dry-run mode (true = no writes)"
         type: boolean
         required: false
+        default: true
+      max-fast-runs:
+        description: "Max number of runs"
+        type: number
+        required: false
+        default: 20
+      context-caching:
+        description: "Enable context caching"
+        type: boolean
+        required: false
+        default: true
+      extended:
+        description: "Enable extended analysis"
+        type: boolean
+        required: false
+        default: true
+      model-fast:
+        description: "Fast model"
+        type: string
+        required: false
+        default: gemini-2.5-flash
+      model-pro:
+        description: "Pro model"
+        type: string
+        required: false
+        default: gemini-3-flash-preview
 
 concurrency:
   group: autotriage-backlog
@@ -41,17 +68,16 @@ jobs:
             ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage backlog
-        uses: danielchalmers/AutoTriage@v2
+        uses: danielchalmers/AutoTriage@v3
         with:
-          issue-numbers: ${{ github.event.inputs.issues }}
+          issues: ${{ github.event.inputs.issues }}
           prompt-path: .github/AutoTriage.prompt
-          enabled: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.enabled) }}
-          model-fast: gemini-2.5-flash
-          model-fast-temperature: 0.0
-          max-fast-runs: 20 # keep it low so we don't keep checking the same issues (for staleness, etc)
-          model-pro: gemini-3-flash-preview # use a cheaper model since we've already scanned the issues before
-          model-pro-temperature: 1.0
-          max-triages: 20
+          dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
+          max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || 20 }}
+          context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || true }}
+          extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || true }}
+          model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-2.5-flash' }}
+          model-pro: ${{ github.event_name == 'workflow_dispatch' && inputs['model-pro'] || 'gemini-3-flash-preview' }}
           db-path: triage-db.json
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

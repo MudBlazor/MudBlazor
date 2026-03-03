@@ -267,7 +267,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 var result = Validate(arg);
                 if (result.IsValid)
+                {
                     return Array.Empty<string>();
+                }
+
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 

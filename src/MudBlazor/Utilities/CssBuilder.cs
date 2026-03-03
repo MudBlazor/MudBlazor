@@ -150,11 +150,17 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClassFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
-            return additionalAttributes is null
-                ? this
-                : additionalAttributes.TryGetValue("class", out var result)
-                    ? AddClass(result.ToString())
-                    : this;
+            if (additionalAttributes is null)
+            {
+                return this;
+            }
+
+            if (additionalAttributes.TryGetValue("class", out var result))
+            {
+                return AddClass(result.ToString());
+            }
+
+            return this;
         }
 
         /// <summary>

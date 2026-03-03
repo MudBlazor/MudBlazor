@@ -17,15 +17,14 @@ jobs:
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
 
       - uses: actions/checkout@v6
-      
+
       - name: AutoTriage - triage issue
-        uses: danielchalmers/AutoTriage@v2
+        uses: danielchalmers/AutoTriage@v3
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issues: ${{ github.event.issue.number }}
           prompt-path: .github/AutoTriage.prompt
-          model-fast: '' # skip fast pass
+          model-fast: "" # skip fast pass
           model-pro: gemini-3.1-pro-preview
-          model-pro-temperature: 1.0
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

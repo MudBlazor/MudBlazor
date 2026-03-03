@@ -38,7 +38,7 @@ namespace MudBlazor
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>>? _dropContainer;
         private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
-        private PropertyInfo[] _properties = typeof(T).GetProperties();
+        private readonly PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource? _serverDataCancellationTokenSource;
         private IEnumerable<T>? _currentRenderFilteredItemsCache = null;
         internal GroupDefinition<T>? _groupDefinition;
@@ -252,7 +252,6 @@ namespace MudBlazor
 
         internal T? _editingItem;
 
-        //internal int editingItemHash;
         internal T? _editingSourceItem;
 
         internal T? _previousEditingItem;
@@ -1974,7 +1973,7 @@ namespace MudBlazor
         {
             Debug.Assert(_editingItem is not null);
             Debug.Assert(_editForm is not null);
-            await _editForm.Validate();
+            await _editForm.ValidateAsync();
             if (!_editForm.IsValid)
             {
                 return;

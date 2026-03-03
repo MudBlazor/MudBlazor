@@ -13,10 +13,10 @@ namespace MudBlazor
     /// </summary>
     public partial class MudPagination : MudComponentBase
     {
-        private ParameterState<int> _countState;
-        private ParameterState<int> _selectedState;
-        private ParameterState<int> _middleCountState;
-        private ParameterState<int> _boundaryCountState;
+        private readonly ParameterState<int> _countState;
+        private readonly ParameterState<int> _selectedState;
+        private readonly ParameterState<int> _middleCountState;
+        private readonly ParameterState<int> _boundaryCountState;
 
         private string Classname =>
             new CssBuilder("mud-pagination")

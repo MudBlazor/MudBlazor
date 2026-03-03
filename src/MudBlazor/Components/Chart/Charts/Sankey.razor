@@ -34,7 +34,7 @@
                   fill="@($"url(#gradient_{NodeRects[edge.Source.Name].Hash}_{NodeRects[edge.Target.Name].Hash})")"
                   opacity="@ToS(ChartOptions?.EdgeOpacity ?? 0.5)"
                   filter="@(ActiveNode == edge.Source.Name || ActiveNode == edge.Target.Name || edge.Name == ActiveEdge ? $"url(#{glowName})" : "")"
-                  @onmouseover="@((e) => OnEdgeMouseOver(e, edge))"
+                  @onmouseover="@(() => OnEdgeMouseOver(edge))"
                   @onmouseout="@OnEdgeMouseOut" />
         }
         @foreach (var kv in NodeRects)
@@ -45,9 +45,9 @@
                   height="@ToS(kv.Value.Height)"
                   fill="@kv.Value.Color"
                   filter="@(ActiveNode == kv.Key ? $"url(#{glowName})" : "")"
-                  @onmouseover="@((e) => OnNodeMouseOver(e, kv.Value))"
+                  @onmouseover="@(() => OnNodeMouseOver(kv.Value))"
                   @onmouseout="@OnNodeMouseOut"
-                  @onclick="@(e => OnNodeClick(e, kv.Value))" />
+                  @onclick="@(() => OnNodeClick(kv.Value))" />
 
             if (ChartOptions?.ShowLabels is true || kv.Key == ActiveNode)
             {

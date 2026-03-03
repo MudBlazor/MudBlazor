@@ -61,7 +61,7 @@
                             }
                             @if (Loading)
                             {
-                                <tr>
+                                <tr class="mud-table-loading-row">
                                     <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                         <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudTable_Loading]" />
                                     </th>
@@ -72,7 +72,7 @@
                     else if (Loading)
                     {
                         <thead class="@HeadClassname">
-                            <tr class="mud-table-row">
+                            <tr class="mud-table-loading-row">
                                 <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                     <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudTable_Loading]" />
                                 </th>
