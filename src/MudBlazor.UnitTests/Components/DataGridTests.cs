@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Count the number of rows including header.
             var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+            rows.Count.Should().Be(9, because: "1 header row + 5 data rows + 1 footer row + 2 Virtualize spacer rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
@@ -180,7 +180,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Count the number of rows including header.
             var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+            rows.Count.Should().Be(11, because: "1 header row + 7 data rows + 1 footer row + 2 Virtualize spacer rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
@@ -375,7 +375,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
             // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
+            dataGrid.FindAll("tr").Count.Should().Be(8, because: "header row + four rows + footer row + 2 Virtualize spacer rows");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
