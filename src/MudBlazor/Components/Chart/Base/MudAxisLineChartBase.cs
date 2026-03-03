@@ -162,7 +162,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
 
-            var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null;
+            var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null && series.Data.Count > 2;
 
             var (firstPointX, firstPointY, lastPointX) = interpolationEnabled
                 ? GenerateInterpolatedLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace)
