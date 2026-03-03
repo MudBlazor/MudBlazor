@@ -18,6 +18,10 @@
 
 Le projet de test a comme référence la librairie officielle MudBlazor donc tous les changements effectués dans la librairie sont traduits dans le projet de test.
 
+## Description des issues effectuées
+
+Le fichier décrivant toutes les issues effectuées se trouve dans `MudBlazor` -> `MudBlazor.Docs` -> `issue.md`
+
 ## 🤝 Contributing 
 
 📚 Fichier Contributing : [contribution guidelines](/CONTRIBUTING.md) 
