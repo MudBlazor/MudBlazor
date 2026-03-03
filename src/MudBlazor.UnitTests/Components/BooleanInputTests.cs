@@ -1,8 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Bunit;
 using NUnit.Framework;
 
@@ -15,36 +11,68 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("tabindex", "5")]
         [TestCase("tabIndex", "7")]
         [TestCase("TABINDEX", "9")]
-        public void GetResolvedTabIndex_RespectsCaseInsensitiveTabIndex(string key, string value)
+        public void ResolveTabIndexAndAttributes_RespectsCaseInsensitiveTabIndex(string key, string value)
         {
-            var input = new TestBooleanInput();
-            input.SetUserAttributes(new Dictionary<string, object> { { key, value } });
-            input.GetResolvedTabIndex().Should().Be(int.Parse(value));
+            var comp = Context.Render<TestBooleanInput>(p =>
+                p.AddUnmatched(key, value)
+            );
+
+            var result = comp.Instance.Resolve();
+
+            result.TabIndex.Should().Be(int.Parse(value));
+            result.Attributes.Should().BeNull();
         }
 
         [Test]
         [TestCase("tabindex")]
         [TestCase("tabIndex")]
         [TestCase("TABINDEX")]
-        public void GetResolvedUserAttributes_RemovesAllTabIndexVariants(string key)
+        public void ResolveTabIndexAndAttributes_RemovesAllTabIndexVariants(string key)
         {
-            var input = new TestBooleanInput();
-            input.SetUserAttributes(new Dictionary<string, object>
+            var comp = Context.Render<TestBooleanInput>(p =>
             {
-                { key, "5" },
-                { "other", "value" }
+                p.AddUnmatched(key, "5");
+                p.AddUnmatched("other", "value");
             });
-            var attrs = input.GetResolvedUserAttributes();
-            attrs.Should().NotContainKey(key);
-            attrs.Should().ContainKey("other");
+
+            var result = comp.Instance.Resolve();
+
+            result.TabIndex.Should().Be(5);
+            result.Attributes.Should().NotContainKey(key);
+            result.Attributes.Should().ContainKey("other");
+        }
+
+        [Test]
+        public void ResolveTabIndexAndAttributes_DefaultsToZero_WhenNoUserTabIndex()
+        {
+            var comp = Context.Render<TestBooleanInput>(p =>
+                p.AddUnmatched("other", "value")
+            );
+
+            var result = comp.Instance.Resolve();
+
+            result.TabIndex.Should().Be(0);
+            result.Attributes.Should().ContainKey("other");
+        }
+
+        [Test]
+        public void ResolveTabIndexAndAttributes_Disabled_ForcesMinusOne()
+        {
+            var comp = Context.Render<TestBooleanInput>(p =>
+            {
+                p.Add(x => x.Disabled, true);
+                p.AddUnmatched("tabindex", "5");
+            });
+
+            var result = comp.Instance.Resolve();
+
+            result.TabIndex.Should().Be(-1);
         }
 
         private class TestBooleanInput : MudBooleanInput<bool>
         {
-            public void SetUserAttributes(Dictionary<string, object> attrs)
-            {
-                base.UserAttributes = attrs;
-            }
-        }            
+            public (int TabIndex, IReadOnlyDictionary<string, object> Attributes) Resolve()
+                => ResolveTabIndexAndAttributes();
+        }
     }
 }

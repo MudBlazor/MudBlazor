@@ -43,42 +43,43 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         ///  <summary>
-        /// Returns the resolved tabindex for the input element.
+        /// Returns the resolved tabindex for the input element as well as user attributes splatted onto the input element. 
         /// </summary>
-        /// <returns>The first resolved tabindex value.</returns>
-        protected internal int GetResolvedTabIndex()
+        internal (int TabIndex, IReadOnlyDictionary<string, object>? Attributes) ResolveTabIndexAndAttributes()
         {
-            if (GetDisabledState())
+            if (UserAttributes == null || UserAttributes.Count == 0)
             {
-                return -1;
+                return (GetDisabledState() ? -1 : 0, null);
             }
 
-            if (UserAttributes != null)
+            int? userTabIndex = null;
+            Dictionary<string, object>? filtered = null;
+
+            foreach (var kvp in UserAttributes)
             {
-                foreach (var attribute in UserAttributes)
+                if (string.Equals(kvp.Key, "tabindex", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (string.Equals(attribute.Key, "tabindex", StringComparison.OrdinalIgnoreCase) &&
-                        int.TryParse(attribute.Value?.ToString(), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var parsed))
+                    if (int.TryParse(
+                        kvp.Value?.ToString(),
+                        System.Globalization.NumberStyles.Integer,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out var parsed))
                     {
-                        return parsed;
+                        userTabIndex = parsed;
                     }
+
+                    continue;
                 }
+
+                filtered ??= new Dictionary<string, object>(UserAttributes.Count);
+                filtered[kvp.Key] = kvp.Value!;
             }
 
-            return 0;
-        }
+            var resolvedTabIndex = GetDisabledState()
+                ? -1
+                : userTabIndex ?? 0;
 
-        /// <summary>
-        /// Returns UserAttributes excluding any tabindex key (case-insensitive).
-        /// </summary>
-        protected internal IReadOnlyDictionary<string, object>? GetResolvedUserAttributes()
-        {
-            if (UserAttributes == null)
-                return null;
-
-            return UserAttributes
-                .Where(a => !string.Equals(a.Key, "tabindex", StringComparison.OrdinalIgnoreCase))
-                .ToDictionary(a => a.Key, a => (object)a.Value!);
+            return (resolvedTabIndex, filtered);
         }
 
         /// <summary>

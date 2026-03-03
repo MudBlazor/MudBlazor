@@ -8,10 +8,13 @@
             <span class="@SpanClassname">
                 <span class="@SwitchClassname">
                     <span class="mud-switch-button">
-                           <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetResolvedUserAttributes()" 
-                                  tabindex="@GetResolvedTabIndex()" aria-readonly="@(GetReadOnlyState().ToString().ToLower())" type="checkbox" 
-                                  class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" 
-                                  @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
+                        @{
+                            var (resolvedForTabIndex, resolvedUserAttributes) = ResolveTabIndexAndAttributes();
+                        }
+                        <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="@resolvedUserAttributes" 
+                                tabindex="@resolvedForTabIndex" aria-readonly="@(GetReadOnlyState().ToString().ToLower())" type="checkbox" 
+                                class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" 
+                                @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
                         <span class="@ThumbClassname">
                             @if (!string.IsNullOrEmpty(ThumbIcon))
                             {
