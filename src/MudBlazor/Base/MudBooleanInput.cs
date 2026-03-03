@@ -43,7 +43,7 @@ namespace MudBlazor
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         ///  <summary>
-        /// Returns the resolved tabindex for the input element as well as user attributes splatted onto the input element. 
+        /// Returns the resolved tabindex for this input element as well as user attributes splatted onto this input element. 
         /// </summary>
         internal (int TabIndex, IReadOnlyDictionary<string, object>? Attributes) ResolveTabIndexAndAttributes()
         {
