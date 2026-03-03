@@ -1,10 +1,9 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
 using Bunit;
-using MudBlazor.Charts;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -72,7 +71,10 @@ namespace MudBlazor.UnitTests.Charts
         public void SplineInterpolation_ShouldNotThrow_WithManyPoints(InterpolationOption option)
         {
             var data = new double[600];
-            for (int i = 0; i < 600; i++) data[i] = Math.Sin(i * 0.1);
+            for (var i = 0; i < 600; i++)
+            {
+                data[i] = Math.Sin(i * 0.1);
+            }
 
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -90,10 +92,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void NaturalSpline_LargeData_ShouldBeStable()
         {
-            int n = 1000;
+            var n = 1000;
             var xs = new double[n];
             var ys = new double[n];
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 xs[i] = i;
                 ys[i] = i % 2 == 0 ? 0 : 100;
