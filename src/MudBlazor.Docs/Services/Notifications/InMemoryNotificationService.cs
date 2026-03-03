@@ -2,44 +2,26 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Blazored.LocalStorage;
-using Microsoft.Extensions.Logging;
 using MudBlazor.Docs.NotificationContent;
 
 namespace MudBlazor.Docs.Services.Notifications;
 
-public class InMemoryNotificationService : INotificationService
+public class InMemoryNotificationService(ILocalStorageService localStorageService) : INotificationService
 {
     private const string LocalStorageKey = "__notficationTimestamp";
-    private readonly ILocalStorageService _localStorageService;
-    private readonly ILogger<InMemoryNotificationService> _logger;
 
-    private readonly List<NotificationMessage> _messages;
-
-    public InMemoryNotificationService(ILocalStorageService localStorageService,
-        ILogger<InMemoryNotificationService> logger)
-    {
-        _localStorageService = localStorageService;
-        _logger = logger;
-
-        _messages = new List<NotificationMessage>();
-    }
+    private readonly List<NotificationMessage> _messages = [];
 
     private async Task<DateTime> GetLastReadTimestamp()
     {
-        if (await _localStorageService.ContainKeyAsync(LocalStorageKey) == false)
+        if (!await localStorageService.ContainKeyAsync(LocalStorageKey))
         {
             return DateTime.MinValue;
         }
-        else
-        {
-            var timestamp = await _localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
-            return timestamp;
-        }
+
+        var timestamp = await localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
+        return timestamp;
     }
 
     public async Task<bool> AreNewNotificationsAvailable()
@@ -52,7 +34,7 @@ public class InMemoryNotificationService : INotificationService
 
     public async Task MarkNotificationsAsRead()
     {
-        await _localStorageService.SetItemAsync(LocalStorageKey, DateTime.UtcNow.Date);
+        await localStorageService.SetItemAsync(LocalStorageKey, DateTime.UtcNow.Date);
     }
 
     public async Task MarkNotificationsAsRead(string id)
@@ -60,10 +42,10 @@ public class InMemoryNotificationService : INotificationService
         var message = await GetMessageById(id);
         if (message == null) { return; }
 
-        var timestamp = await _localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
+        var timestamp = await localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
         if (message.PublishDate > timestamp)
         {
-            await _localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
+            await localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
         }
 
     }
@@ -87,7 +69,18 @@ public class InMemoryNotificationService : INotificationService
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
-            typeof(Announcement_v8_GA).Name,
+            nameof(Announcement_v9_GA),
+            "MudBlazor v9.0.0 Released",
+            "Major Version",
+            "Announcement",
+            new DateTime(2026, 03, 01),
+            "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
+            [
+                new NotificationAuthor("The MudBlazor Team", "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
+            ], typeof(Announcement_v9_GA)));
+
+        _messages.Add(new NotificationMessage(
+            nameof(Announcement_v8_GA),
             "MudBlazor v8.0.0 Released",
             "Major Version",
             "Announcement",
@@ -98,7 +91,7 @@ public class InMemoryNotificationService : INotificationService
             ], typeof(Announcement_v8_GA)));
 
         _messages.Add(new NotificationMessage(
-            typeof(Announcement_v7_GA).Name,
+            nameof(Announcement_v7_GA),
             "MudBlazor v7.0.0 Released",
             "Major Version",
             "Announcement",

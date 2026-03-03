@@ -18,7 +18,9 @@ internal static class DiagnosticHelper
         {
             if (diagnostic.Properties.TryGetValue(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey, out var cn)
                 && string.Equals(cn, className))
+            {
                 results.Add(diagnostic);
+            }
         }
 
         return results;

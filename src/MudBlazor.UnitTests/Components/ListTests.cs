@@ -104,6 +104,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ListMultiSelection_DisabledItems_ShouldDisplaySelectedStateAndNotBeClickable()
+        {
+            var comp = Context.Render<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Apple Juice", "Orange Juice"]));
+            var list = comp.FindComponent<MudList<string>>().Instance;
+            var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
+            comp.Find("p.selected-values").TrimmedText().Should().Be("Apple Juice, Orange Juice");
+            GetCheckBox("Apple Juice").ReadValue.Should().Be(true);
+            GetCheckBox("Orange Juice").ReadValue.Should().Be(true);
+            // attempt to click disabled items: selection state must not change
+            var appleItem = comp.FindComponents<MudListItem<string>>()
+                .FirstOrDefault(x => x.Instance.Text == "Apple Juice");
+            var orangeItem = comp.FindComponents<MudListItem<string>>()
+                .FirstOrDefault(x => x.Instance.Text == "Orange Juice");
+            await appleItem.Find("div.mud-list-item").ClickAsync();
+            await orangeItem.Find("div.mud-list-item").ClickAsync();
+            // after click attempts, disabled items should remain selected
+            comp.Find("p.selected-values").TrimmedText().Should().Be("Apple Juice, Orange Juice");
+            GetCheckBox("Apple Juice").ReadValue.Should().Be(true);
+            GetCheckBox("Orange Juice").ReadValue.Should().Be(true);
+        }
+
+        [Test]
         public async Task ListMultiSelectionBinding()
         {
             var comp = Context.Render<ListMultiSelectionBindingTest>();

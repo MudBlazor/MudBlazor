@@ -17,7 +17,7 @@ namespace MudBlazor
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
 
-        private ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _expandedState;
 
         public MudListItem()
         {
@@ -338,7 +338,7 @@ namespace MudBlazor
 
         internal void SetSelected(bool selected)
         {
-            if (GetDisabled() || _selected == selected)
+            if (_selected == selected)
             {
                 return;
             }
@@ -359,7 +359,7 @@ namespace MudBlazor
 
         private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
 
-        private bool GetDense() => Dense ?? MudList?.Dense == true;
+        private bool GetDense() => Dense ?? (MudList?.Dense == true);
 
         private bool GetGutters() => Gutters ?? MudList?.Gutters ?? true;
 

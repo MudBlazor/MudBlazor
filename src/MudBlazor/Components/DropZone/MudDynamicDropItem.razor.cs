@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -14,7 +12,7 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
-    private string _id = Identifier.Create();
+    private readonly string _id = Identifier.Create();
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;
@@ -193,7 +191,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         StateHasChanged();
     }
 
-    internal async Task DragEndedAsync(DragEventArgs e)
+    internal async Task DragEndedAsync()
     {
         if (_dragOperationIsInProgress)
         {
@@ -232,7 +230,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
             }
         }
 
-        //JS.InvokeVoidAsync("draggableTouch");
     }
 
     internal async Task TouchEndedAsync(TouchEventArgs e)
@@ -271,7 +268,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
                 StateHasChanged();
             }
         }
-        //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
 
     /// <summary>

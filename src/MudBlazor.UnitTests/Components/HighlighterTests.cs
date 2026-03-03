@@ -225,7 +225,7 @@ namespace MudBlazor.UnitTests.Components
             fragments1.Should().NotBeEmpty();
             outRegex1.Should().NotBeEmpty();
             outRegex1.Should().ContainAll(highlightedTexts1);
-            fragments1.Length.Should().Be(highlightedTexts1.Length * 2 - 1 + 2);
+            fragments1.Length.Should().Be((highlightedTexts1.Length * 2) - 1 + 2);
 
             var text2 = "Another test sentence with new words like example and cache.";
             var highlightedTexts2 = new[] { "sentence", "words", "example", "cache" };
@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
             fragments2.Should().NotBeEmpty();
             outRegex2.Should().NotBeEmpty();
             outRegex2.Should().ContainAll(highlightedTexts2);
-            fragments2.Length.Should().Be(highlightedTexts2.Length * 2 - 1 + 2);
+            fragments2.Length.Should().Be((highlightedTexts2.Length * 2) - 1 + 2);
 
             var text3 = "No highlights here.";
             var fragments3 = GetFragments(text3, null, [], out var outRegex3, caseSensitive: false, untilNextBoundary: false).ToArray();

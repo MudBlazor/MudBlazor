@@ -19,6 +19,8 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TChartOptions : IAxisChartOptions, new()
 {
+    private const int AxisTitleOffset = 0;
+
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 

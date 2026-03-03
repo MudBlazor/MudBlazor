@@ -40,7 +40,7 @@ internal class ResizeListenerInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", cancellationToken, jsListenerIds);
     }
 
-    public ValueTask Dispose(CancellationToken cancellationToken = default)
+    public ValueTask DisposeAsync(CancellationToken cancellationToken = default)
     {
         return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudResizeListenerFactory.dispose", cancellationToken);
     }

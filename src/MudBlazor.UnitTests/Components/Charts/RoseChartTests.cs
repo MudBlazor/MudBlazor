@@ -702,7 +702,7 @@ public class RoseChartTests : BunitTest
         var tooltipDiv = comp.Find("g.svg-tooltip text");
         tooltipDiv.Should().NotBeNull();
 
-        var expectedLeft = (123.0).ToString(System.Globalization.CultureInfo.InvariantCulture);
+        var expectedLeft = 123.0.ToString(System.Globalization.CultureInfo.InvariantCulture);
         tooltipDiv.GetAttribute("x").Should().Be(expectedLeft);
     }
 

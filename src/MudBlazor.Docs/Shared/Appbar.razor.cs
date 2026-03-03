@@ -48,7 +48,7 @@ public partial class Appbar
     [Parameter]
     public bool DisplaySearchBar { get; set; } = true;
 
-    private async void OnSearchResult(ApiLinkServiceEntry? entry)
+    private async Task OnSearchResult(ApiLinkServiceEntry? entry)
     {
         if (entry is null)
         {

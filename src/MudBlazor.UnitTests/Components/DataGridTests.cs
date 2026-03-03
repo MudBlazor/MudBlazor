@@ -712,7 +712,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
 
             // test that all rows, header and footer have cell with a checkbox
-            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count() + 2);
+            dataGrid.FindAll("input.mud-checkbox-input").Count.Should().Be(dataGrid.Instance.Items.Count() + 2);
 
             //test that changing header sets all items selected
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
@@ -5158,7 +5158,7 @@ namespace MudBlazor.UnitTests.Components
 
             // two way binding should have updated
             selectedItems.Should().Contain(5);
-            selectedItems.Count().Should().Be(1);
+            selectedItems.Count.Should().Be(1);
             selectedItem.Should().Be(5);
 
             // in multi selection toggle selection using row click method
@@ -5169,7 +5169,7 @@ namespace MudBlazor.UnitTests.Components
             // two way binding should have updated
             selectedItems.Should().Contain(4);
             selectedItems.Should().Contain(5);
-            selectedItems.Count().Should().Be(2);
+            selectedItems.Count.Should().Be(2);
             selectedItem.Should().Be(4);
         }
 

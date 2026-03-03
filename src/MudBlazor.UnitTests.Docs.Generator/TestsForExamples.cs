@@ -84,14 +84,21 @@ public class TestsForExamples
             .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
         {
             if (entry.EndsWith("Code.razor"))
+            {
                 continue;
+            }
+
             var filename = Path.GetFileName(entry);
             var componentName = Path.GetFileNameWithoutExtension(filename);
             if (!filename.Contains(Paths.ExampleDiscriminator))
+            {
                 continue;
+            }
             // skip over table/data grid virtualization since it takes too long.
             if (filename == "TableVirtualizationExample.razor" || filename == "DataGridVirtualizationExample.razor")
+            {
                 continue;
+            }
 
             cb.AddLine($"yield return new TestCaseData(\"{componentName}\", typeof({componentName})).SetName(\"{componentName}\");");
         }

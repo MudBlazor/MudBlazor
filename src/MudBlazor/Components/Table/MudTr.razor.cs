@@ -8,7 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// A row of data within a <see cref="MudTable{T}"/>.
     /// </summary>
-    public partial class MudTr : MudComponentBase
+    public partial class MudTr : MudComponentBase, IDisposable
     {
         private bool _checked;
         private bool _hasBeenCanceled;
@@ -261,6 +261,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this row.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             Context?.Remove(this, Item);
         }
 
