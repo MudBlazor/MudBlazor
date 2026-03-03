@@ -1,9 +1,10 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
 using Bunit;
+using MudBlazor.Charts;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -71,10 +72,7 @@ namespace MudBlazor.UnitTests.Charts
         public void SplineInterpolation_ShouldNotThrow_WithManyPoints(InterpolationOption option)
         {
             var data = new double[600];
-            for (var i = 0; i < 600; i++)
-            {
-                data[i] = Math.Sin(i * 0.1);
-            }
+            for (int i = 0; i < 600; i++) data[i] = Math.Sin(i * 0.1);
 
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -92,10 +90,10 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void NaturalSpline_LargeData_ShouldBeStable()
         {
-            var n = 1000;
+            int n = 1000;
             var xs = new double[n];
             var ys = new double[n];
-            for (var i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 xs[i] = i;
                 ys[i] = i % 2 == 0 ? 0 : 100;
@@ -108,6 +106,23 @@ namespace MudBlazor.UnitTests.Charts
             spline.InterpolatedYs.Should().NotContain(double.NaN);
             spline.InterpolatedYs.Should().NotContain(double.PositiveInfinity);
             spline.InterpolatedYs.Should().NotContain(double.NegativeInfinity);
+        }
+
+        [Test]
+        public void SplineInterpolation_ShouldClampToZero_WhenAllValuesAreNonNegative()
+        {
+            // [1, 0, 0, 1] for natural spline will typically dip below zero between indices 1 and 2
+            var xs = new double[] { 0, 1, 2, 3 };
+            var ys = new double[] { 1, 0, 0, 1 };
+
+            var spline = new MudBlazor.Interpolation.NaturalSpline(xs, ys, resolution: 100);
+
+            spline.InterpolatedYs.Should().OnlyContain(y => y >= 0, "All interpolated values should be non-negative when input values are non-negative");
+
+            // Just to verify it WOULD have been negative without clamping:
+            // For n=4, natural spline at x=1.5 is:
+            // y(1.5) = a1 + b1*0.5 + c1*0.25 + d1*0.125
+            // With ys=[1,0,0,1], the natural spline coefficients would result in a dip.
         }
     }
 }

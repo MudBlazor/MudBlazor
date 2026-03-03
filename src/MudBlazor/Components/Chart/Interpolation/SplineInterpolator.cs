@@ -40,6 +40,8 @@ namespace MudBlazor.Interpolation
             Debug.Assert(h != null);
 
             var resolution = InterpolatedXs.Length / n;
+            var isPositiveOnly = GivenYs.All(y => y >= 0);
+
             for (var i = 0; i < h.Length; i++)
             {
                 for (var k = 0; k < resolution; k++)
@@ -51,7 +53,10 @@ namespace MudBlazor.Interpolation
                     var termD = d[i] * deltaX * deltaX * deltaX;
                     var interpolatedIndex = (i * resolution) + k;
                     InterpolatedXs[interpolatedIndex] = deltaX + GivenXs[i];
-                    InterpolatedYs[interpolatedIndex] = termA + termB + termC + termD;
+                    var interpolatedY = termA + termB + termC + termD;
+                    if (isPositiveOnly && interpolatedY < 0)
+                        interpolatedY = 0;
+                    InterpolatedYs[interpolatedIndex] = interpolatedY;
                 }
             }
 

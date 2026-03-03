@@ -1,6 +1,8 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+
+using System;
 
 namespace MudBlazor.Interpolation
 {
@@ -17,40 +19,34 @@ namespace MudBlazor.Interpolation
         /// <returns>Solution vector x (size N)</returns>
         public static double[] Solve(double[] a, double[] b, double[] c, double[] d)
         {
-            var n = d.Length;
-            if (n == 0)
-            {
-                return [];
-            }
+            int n = d.Length;
+            if (n == 0) return Array.Empty<double>();
 
-            var x = new double[n];
+            double[] x = new double[n];
             if (n == 1)
             {
                 x[0] = d[0] / b[0];
                 return x;
             }
 
-            var cPrime = new double[n];
-            var dPrime = new double[n];
+            double[] cPrime = new double[n];
+            double[] dPrime = new double[n];
 
             cPrime[0] = c[0] / b[0];
             dPrime[0] = d[0] / b[0];
 
-            for (var i = 1; i < n; i++)
+            for (int i = 1; i < n; i++)
             {
-                var m = 1.0 / (b[i] - (a[i] * cPrime[i - 1]));
+                double m = 1.0 / (b[i] - a[i] * cPrime[i - 1]);
                 if (i < n - 1)
-                {
                     cPrime[i] = c[i] * m;
-                }
-
-                dPrime[i] = (d[i] - (a[i] * dPrime[i - 1])) * m;
+                dPrime[i] = (d[i] - a[i] * dPrime[i - 1]) * m;
             }
 
             x[n - 1] = dPrime[n - 1];
-            for (var i = n - 2; i >= 0; i--)
+            for (int i = n - 2; i >= 0; i--)
             {
-                x[i] = dPrime[i] - (cPrime[i] * x[i + 1]);
+                x[i] = dPrime[i] - cPrime[i] * x[i + 1];
             }
 
             return x;
@@ -61,32 +57,37 @@ namespace MudBlazor.Interpolation
         /// </summary>
         public static double[] SolveCyclic(double[] a, double[] b, double[] c, double[] d)
         {
-            var n = d.Length;
-            if (n <= 2)
-            {
-                return Solve(a, b, c, d);
-            }
+            int n = d.Length;
+            if (n <= 2) return Solve(a, b, c, d);
 
-            var alpha = a[0];
-            var beta = c[n - 1];
+            // The cyclic tridiagonal system is A x = d
+            // where A is tridiagonal plus elements A[0, n-1] = alpha and A[n-1, 0] = beta.
+            // In MudBlazor's PeriodicSpline, alpha = a[0] and beta = c[n-1] (conceptually)
+            // but let's look at PeriodicSpline.cs:
+            // _matrix.a[0, n - 2] = h[0];
+            // _matrix.a[n - 2, 0] = h[0];
+            // Here matrix size is N = n-1. So alpha = A[0, N-1] = h[0], beta = A[N-1, 0] = h[0].
+
+            double alpha = a[0];
+            double beta = c[n - 1];
 
             // Modified system A' x = d where A' is tridiagonal
-            var bPrime = (double[])b.Clone();
-            var gamma = -b[0]; // To avoid small denominators
+            double[] bPrime = (double[])b.Clone();
+            double gamma = -b[0]; // To avoid small denominators
             bPrime[0] -= gamma;
             bPrime[n - 1] -= alpha * beta / gamma;
 
-            var x = Solve(a, bPrime, c, d);
+            double[] x = Solve(a, bPrime, c, d);
 
             // Solve A' u = v where v = [gamma, 0, ..., beta]^T
-            var v = new double[n];
+            double[] v = new double[n];
             v[0] = gamma;
             v[n - 1] = beta;
-            var u = Solve(a, bPrime, c, v);
+            double[] u = Solve(a, bPrime, c, v);
 
-            var factor = (x[0] + (alpha * x[n - 1] / gamma)) / (1.0 + u[0] + (alpha * u[n - 1] / gamma));
+            double factor = (x[0] + alpha * x[n - 1] / gamma) / (1.0 + u[0] + alpha * u[n - 1] / gamma);
 
-            for (var i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 x[i] -= factor * u[i];
             }

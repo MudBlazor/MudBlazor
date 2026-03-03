@@ -9,7 +9,8 @@ namespace MudBlazor.Interpolation
 {
     internal class EndSlopeSpline : SplineInterpolator
     {
-        public EndSlopeSpline(double[] xs, double[] ys, int resolution = 10, double firstSlopeDegrees = 0, double lastSlopeDegrees = 0) :
+        public EndSlopeSpline(double[] xs, double[] ys,
+           int resolution = 10, double firstSlopeDegrees = 0, double lastSlopeDegrees = 0) :
            base(xs, ys, resolution)
         {
             a = new double[n];
@@ -31,14 +32,10 @@ namespace MudBlazor.Interpolation
             Debug.Assert(h != null);
 
             for (var i = 0; i < n; i++)
-            {
                 a[i] = GivenYs[i];
-            }
 
             for (var i = 0; i < n - 1; i++)
-            {
                 h[i] = GivenXs[i + 1] - GivenXs[i];
-            }
 
             if (n == 1)
             {
@@ -61,13 +58,9 @@ namespace MudBlazor.Interpolation
                 sup[i + 1] = h[i + 1];
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                {
                     rhs[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
-                }
                 else
-                {
                     rhs[i + 1] = 0.0;
-                }
             }
 
             sub[n - 1] = h[n - 2];

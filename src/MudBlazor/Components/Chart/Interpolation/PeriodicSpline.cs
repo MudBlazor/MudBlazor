@@ -56,33 +56,29 @@ namespace MudBlazor.Interpolation
                 {
                     sub[i] = h[i];
                 }
-
                 if (i < size - 1)
                 {
                     sup[i] = h[i + 1];
                 }
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                {
                     rhs[i] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
-                }
                 else
-                {
                     rhs[i] = 0.0;
-                }
             }
 
             // For cyclic tridiagonal, alpha = A[0, size-1] = h[0] and beta = A[size-1, 0] = h[size] = h[n-1]
+            // Wait, in PeriodicSpline.cs original code:
+            // _matrix.a[0, n - 2] = h[0];
+            // _matrix.a[n - 2, 0] = h[0];
+            // n-2 is size-1. So it uses h[0] for both.
             sub[0] = h[0];
             sup[size - 1] = h[0];
 
             var xValues = TridiagonalSolver.SolveCyclic(sub, diag, sup, rhs);
 
             for (var i = 1; i < n; i++)
-            {
                 c[i] = xValues[i - 1];
-            }
-
             c[0] = c[n - 1];
 
             for (var i = 0; i < n; i++)
