@@ -16,13 +16,19 @@ namespace MudBlazor.Interpolation
         public SplineInterpolator(double[] xs, double[] ys, int resolution = 10)
         {
             if (xs.Length != ys.Length)
+            {
                 throw new ArgumentException("xs and ys must have the same length");
+            }
 
             if (xs.Length < 1)
+            {
                 throw new ArgumentException("xs and ys must have a length of 1 or greater");
+            }
 
             if (resolution < 1)
+            {
                 throw new ArgumentException("resolution must be 1 or greater");
+            }
 
             GivenXs = xs;
             GivenYs = ys;
@@ -55,7 +61,10 @@ namespace MudBlazor.Interpolation
                     InterpolatedXs[interpolatedIndex] = deltaX + GivenXs[i];
                     var interpolatedY = termA + termB + termC + termD;
                     if (isPositiveOnly && interpolatedY < 0)
+                    {
                         interpolatedY = 0;
+                    }
+
                     InterpolatedYs[interpolatedIndex] = interpolatedY;
                 }
             }
@@ -91,6 +100,7 @@ namespace MudBlazor.Interpolation
                 var termD = d[i] * Math.Pow(h[i], 4) / 4.0;
                 integral += termA + termB + termC + termD;
             }
+
             return integral;
         }
     }
