@@ -42,21 +42,43 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
-        protected int GetResolvedTabIndex()
+        ///  <summary>
+        /// Returns the resolved tabindex for the input element.
+        /// </summary>
+        /// <returns>The first resolved tabindex value.</returns>
+        protected internal int GetResolvedTabIndex()
         {
             if (GetDisabledState())
             {
                 return -1;
             }
 
-            if (UserAttributes != null &&
-                UserAttributes.TryGetValue("tabindex", out var value) &&
-                int.TryParse(value?.ToString(), out var parsed))
+            if (UserAttributes != null)
             {
-                return parsed;
+                foreach (var attribute in UserAttributes)
+                {
+                    if (string.Equals(attribute.Key, "tabindex", StringComparison.OrdinalIgnoreCase) &&
+                        int.TryParse(attribute.Value?.ToString(), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var parsed))
+                    {
+                        return parsed;
+                    }
+                }
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Returns UserAttributes excluding any tabindex key (case-insensitive).
+        /// </summary>
+        protected internal IReadOnlyDictionary<string, object>? GetResolvedUserAttributes()
+        {
+            if (UserAttributes == null)
+                return null;
+
+            return UserAttributes
+                .Where(a => !string.Equals(a.Key, "tabindex", StringComparison.OrdinalIgnoreCase))
+                .ToDictionary(a => a.Key, a => (object)a.Value!);
         }
 
         /// <summary>
