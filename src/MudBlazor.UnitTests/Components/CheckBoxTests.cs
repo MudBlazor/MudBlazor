@@ -488,5 +488,63 @@ namespace MudBlazor.UnitTests.Components
             var input4ForId = input4.GetAttribute("aria-labelledby");
             comp.Find($".cb5 label.mud-checkbox #{input4ForId}").Should().NotBeNull();
         }
+
+        [TestCase("0")]
+        [TestCase("-1")]
+        public void CheckBox_RespectsUserTabIndex_WhenNotDisabled(string userTabIndex)
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(
+                p => p.AddUnmatched("tabindex", userTabIndex)
+            );
+
+            var label = comp.Find("label");
+            var input = comp.Find("input");
+
+            // tabindex should NOT be on label
+            Assert.That(label.HasAttribute("tabindex"), Is.False);
+
+            // tabindex should be on input and match user value
+            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo(userTabIndex));
+        }
+
+        [Test]
+        public void CheckBox_DefaultTabIndexIsZero_WhenNotProvided()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>();
+
+            var label = comp.Find("label");
+            var input = comp.Find("input");
+
+            Assert.That(label.HasAttribute("tabindex"), Is.False);
+            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo("0"));
+        }
+
+        [TestCase("0")]
+        [TestCase("5")]
+        [TestCase("-1")]
+        public void CheckBox_Disabled_ForcesTabIndexMinusOne(string userTabIndex)
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(
+                p => p.Add(x => x.Disabled, true)
+                      .AddUnmatched("tabindex", userTabIndex)
+            );
+
+            var input = comp.Find("input");
+
+            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo("-1"));
+            Assert.That(input.HasAttribute("disabled"), Is.True);
+        }
+
+        [Test]
+        public void CheckBox_Disabled_DefaultsToMinusOne()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(
+                p => p.Add(x => x.Disabled, true)
+            );
+
+            var input = comp.Find("input");
+
+            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo("-1"));
+        }
     }
 }
