@@ -188,5 +188,35 @@ namespace MudBlazor.UnitTests.Components
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, true)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
         }
+
+        [Test]
+        [TestCase("5")]
+        [TestCase("7")]
+        public void Switch_RespectsUserTabIndex_WhenNotDisabled(string userTabIndex)
+        {
+            var comp = Context.Render<MudSwitch<bool>>(p => p.AddUnmatched("tabindex", userTabIndex));
+            var input = comp.Find("input");
+            input.GetAttribute("tabindex").Should().Be(userTabIndex);
+            input.Attributes.Count(a => string.Equals(a.Name, "tabindex", StringComparison.OrdinalIgnoreCase)).Should().Be(1);
+        }
+
+        [Test]
+        public void Switch_DefaultTabIndexIsZero_WhenNotProvided()
+        {
+            var comp = Context.Render<MudSwitch<bool>>();
+            var input = comp.Find("input");
+            input.GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        [TestCase("5")]
+        [TestCase("7")]
+        public void Switch_Disabled_ForcesTabIndexMinusOne(string userTabIndex)
+        {
+            var comp = Context.Render<MudSwitch<bool>>(p => p.AddUnmatched("tabindex", userTabIndex).Add(x => x.Disabled, true));
+            var input = comp.Find("input");
+            input.GetAttribute("tabindex").Should().Be("-1");
+            input.Attributes.Count(a => string.Equals(a.Name, "tabindex", StringComparison.OrdinalIgnoreCase)).Should().Be(1);
+        }
     }
 }

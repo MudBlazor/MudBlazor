@@ -447,5 +447,35 @@ namespace MudBlazor.UnitTests.Components
             var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
+
+        [Test]
+        [TestCase("5")]
+        [TestCase("7")]
+        public void Radio_RespectsUserTabIndex_WhenNotDisabled(string userTabIndex)
+        {
+            var comp = Context.Render<MudRadio<bool>>(p => p.AddUnmatched("tabindex", userTabIndex));
+            var input = comp.Find("input");
+            input.GetAttribute("tabindex").Should().Be(userTabIndex);
+            input.Attributes.Count(a => string.Equals(a.Name, "tabindex", StringComparison.OrdinalIgnoreCase)).Should().Be(1);
+        }
+
+        [Test]
+        public void Radio_DefaultTabIndexIsZero_WhenNotProvided()
+        {
+            var comp = Context.Render<MudRadio<bool>>();
+            var input = comp.Find("input");
+            input.GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        [TestCase("5")]
+        [TestCase("7")]
+        public void Radio_Disabled_ForcesTabIndexMinusOne(string userTabIndex)
+        {
+            var comp = Context.Render<MudRadio<bool>>(p => p.AddUnmatched("tabindex", userTabIndex).Add(x => x.Disabled, true));
+            var input = comp.Find("input");
+            input.GetAttribute("tabindex").Should().Be("-1");
+            input.Attributes.Count(a => string.Equals(a.Name, "tabindex", StringComparison.OrdinalIgnoreCase)).Should().Be(1);
+        }
     }
 }
