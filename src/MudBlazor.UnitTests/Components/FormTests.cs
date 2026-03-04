@@ -446,7 +446,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task EditFormOnFieldChanged_ShouldNotFireOnBlurWithoutValueChange()
+        public async Task BlurWithoutValueChangeShouldNotTriggerEditContextFieldChanged()
         {
             var comp = Context.Render<EditFormOnFieldChangedTest>();
 
