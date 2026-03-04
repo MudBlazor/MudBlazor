@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.ExceptionServices;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
@@ -23,7 +24,21 @@ public static class TypeDispatcher
     /// A builder implementing <see cref="IDispatcherBuilder{TIn,TOut}"/> to register per-type converters
     /// and produce a concrete dispatcher via <see cref="IDispatcherBuilder{TIn,TOut}.Build"/>.
     /// </returns>
-    public static IDispatcherBuilder<TIn, TOut> Create<TIn, TOut>() => new TypeDispatcher<TIn, TOut>.Builder();
+    public static IDispatcherBuilder<TIn, TOut> Create<TIn, TOut>()
+        => new TypeDispatcher<TIn, TOut>.Builder(DispatcherRegistrationPolicy.LastWins);
+
+    /// <summary>
+    /// Creates a new dispatcher builder for dispatching conversions from <typeparamref name="TIn"/> to <typeparamref name="TOut"/>.
+    /// </summary>
+    /// <typeparam name="TIn">The general input type accepted by the resulting dispatcher.</typeparam>
+    /// <typeparam name="TOut">The output type produced by registered converters.</typeparam>
+    /// <param name="duplicateRegistrationPolicy">How registrations for the same concrete type are handled.</param>
+    /// <returns>
+    /// A builder implementing <see cref="IDispatcherBuilder{TIn,TOut}"/> to register per-type converters
+    /// and produce a concrete dispatcher via <see cref="IDispatcherBuilder{TIn,TOut}.Build"/>.
+    /// </returns>
+    public static IDispatcherBuilder<TIn, TOut> Create<TIn, TOut>(DispatcherRegistrationPolicy duplicateRegistrationPolicy)
+        => new TypeDispatcher<TIn, TOut>.Builder(duplicateRegistrationPolicy);
 }
 
 internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
@@ -50,7 +65,15 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 
         if (_handlers.TryGetValue(runtimeType, out var del))
         {
-            return (TOut)del.DynamicInvoke(input)!;
+            try
+            {
+                return (TOut)del.DynamicInvoke(input)!;
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException is not null)
+            {
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
         }
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
@@ -59,11 +82,17 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     internal class Builder : IDispatcherBuilder<TIn, TOut>
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
+        private readonly DispatcherRegistrationPolicy _duplicateRegistrationPolicy;
+
+        public Builder(DispatcherRegistrationPolicy duplicateRegistrationPolicy)
+        {
+            _duplicateRegistrationPolicy = duplicateRegistrationPolicy;
+        }
 
         /// <inheritdoc />
         public IDispatcherBuilder<TIn, TOut> Add<TSpecific>(IConverter<TSpecific, TOut> converter)
         {
-            _handlers[typeof(TSpecific)] = new Func<TSpecific, TOut>(converter.Convert);
+            AddHandler(typeof(TSpecific), new Func<TSpecific, TOut>(converter.Convert));
 
             return this;
         }
@@ -86,12 +115,35 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 
             var forwardDelegate = convertMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
 
-            _handlers[specificType] = forwardDelegate;
+            AddHandler(specificType, forwardDelegate);
 
             return this;
+        }
+
+        private void AddHandler(Type specificType, Delegate handler)
+        {
+            switch (_duplicateRegistrationPolicy)
+            {
+                case DispatcherRegistrationPolicy.LastWins:
+                    _handlers[specificType] = handler;
+                    return;
+                case DispatcherRegistrationPolicy.FirstWins:
+                    _handlers.TryAdd(specificType, handler);
+                    return;
+                case DispatcherRegistrationPolicy.Throw:
+                    if (!_handlers.TryAdd(specificType, handler))
+                    {
+                        throw new InvalidOperationException($"Converter already registered for {specificType}.");
+                    }
+
+                    return;
+                default:
+                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {_duplicateRegistrationPolicy}.");
+            }
         }
 
         /// <inheritdoc />
         public IConverter<TIn, TOut> Build() => new TypeDispatcher<TIn, TOut>(_handlers);
     }
 }
+

@@ -42,7 +42,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         // The dispatcher caches method delegates and captures the converter's field values at registration time.
         // Using () => Culture() and () => Format() ensures the converters always read the latest property values.
         // We could make Add a factory Func<IConverter> overload, but that would create instance on each conversion attempt which is less performant than current the trick.
-        _dispatcher = ReversibleTypeDispatcher.Create<T?, string?>()
+        var builder = ReversibleTypeDispatcher.Create<T?, string?>(DispatcherRegistrationPolicy.FirstWins)
             .Add(StringConverter.Instance)
             .Add<char>(CharConverter.Instance)
             .Add<char?>(CharConverter.Instance)
@@ -83,10 +83,13 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add<TimeOnly>(new TimeOnlyConverter(() => Culture(), () => Format()))
             .Add<TimeOnly?>(new TimeOnlyConverter(() => Culture(), () => Format()))
             .Add<TimeSpan>(new DefaultConverter.TimeSpanConverter(() => Culture(), () => Format()))
-            .Add<TimeSpan?>(new DefaultConverter.TimeSpanConverter(() => Culture(), () => Format()))
+            .Add<TimeSpan?>(new DefaultConverter.TimeSpanConverter(() => Culture(), () => Format()));
             // Let's not use that for now and see if we really need it
             //.Add(new ObjectConverter(() => Culture(), () => Format()))
-            .Build();
+
+        AddParsableConverters(builder);
+
+        _dispatcher = builder.Build();
     }
 
     /// <inheritdoc />
@@ -158,5 +161,52 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         result = null!;
         return false;
+    }
+
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2090",
+        Justification = "We should add DAM.Interfaces to DefaultConverter<[DAM(DAM.PublicParameterlessConstructor)]T> for true safety, but it would require MudInput<T> etc to be annotate with it too, external library will get compilation errors. Perhaps a change for future major versions?")]
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2091",
+        Justification = "We should add DAM.Interfaces to DefaultConverter<[DAM(DAM.PublicParameterlessConstructor)]T> for true safety, but it would require MudInput<T> etc to be annotate with it too, external library will get compilation errors. Perhaps a change for future major versions?")]
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2087",
+        Justification = "We should add DAM.Interfaces to DefaultConverter<[DAM(DAM.Interfaces)]T> for true safety, but it would require MudInput<T> etc to be annotate with it too, external library will get compilation errors. Perhaps a change for future major versions?")]
+    private void AddParsableConverters(IReversibleDispatcherBuilder<T?, string?> builder)
+    {
+        var targetType = typeof(T);
+
+        var nullableUnderlyingType = Nullable.GetUnderlyingType(targetType);
+        if (nullableUnderlyingType is not null && ImplementsIParsable(nullableUnderlyingType))
+        {
+            var nullableConverterType = typeof(NullableParsableConverter<>).MakeGenericType(nullableUnderlyingType);
+            var nullableConverter = Activator.CreateInstance(nullableConverterType, (Func<CultureInfo>)(() => Culture()));
+            if (nullableConverter is not null)
+            {
+                builder.AddDynamic(targetType, nullableConverter);
+            }
+        }
+
+        if (ImplementsIParsable(targetType))
+        {
+            var converterType = typeof(ParsableConverter<>).MakeGenericType(targetType);
+            var converter = Activator.CreateInstance(converterType, (Func<CultureInfo>)(() => Culture()));
+            if (converter is not null)
+            {
+                builder.AddDynamic(targetType, converter);
+            }
+        }
+    }
+
+    private static bool ImplementsIParsable([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] Type type)
+    {
+        return type
+            .GetInterfaces()
+            .Any(x => x.IsGenericType
+                      && x.GetGenericTypeDefinition() == typeof(IParsable<>)
+                      && x.GenericTypeArguments[0] == type);
     }
 }

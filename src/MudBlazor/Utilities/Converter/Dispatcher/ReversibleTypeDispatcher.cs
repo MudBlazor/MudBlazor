@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.ExceptionServices;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
@@ -23,7 +24,21 @@ public static class ReversibleTypeDispatcher
     /// A builder implementing <see cref="IReversibleDispatcherBuilder{TIn,TOut}"/>
     /// to register per-type reversible converters and produce a concrete dispatcher via <see cref="IReversibleDispatcherBuilder{TIn,TOut}.Build"/>.
     /// </returns>
-    public static IReversibleDispatcherBuilder<TIn, TOut> Create<TIn, TOut>() => new ReversibleTypeDispatcher<TIn, TOut>.ReversibleBuilder();
+    public static IReversibleDispatcherBuilder<TIn, TOut> Create<TIn, TOut>()
+        => new ReversibleTypeDispatcher<TIn, TOut>.ReversibleBuilder(DispatcherRegistrationPolicy.LastWins);
+
+    /// <summary>
+    /// Creates a new reversible dispatcher builder for dispatching conversions from <typeparamref name="TIn"/> to <typeparamref name="TOut"/>.
+    /// </summary>
+    /// <typeparam name="TIn">The general input type accepted by the resulting dispatcher.</typeparam>
+    /// <typeparam name="TOut">The output type produced by registered reversible converters.</typeparam>
+    /// <param name="duplicateRegistrationPolicy">How registrations for the same concrete type are handled.</param>
+    /// <returns>
+    /// A builder implementing <see cref="IReversibleDispatcherBuilder{TIn,TOut}"/>
+    /// to register per-type reversible converters and produce a concrete dispatcher via <see cref="IReversibleDispatcherBuilder{TIn,TOut}.Build"/>.
+    /// </returns>
+    public static IReversibleDispatcherBuilder<TIn, TOut> Create<TIn, TOut>(DispatcherRegistrationPolicy duplicateRegistrationPolicy)
+        => new ReversibleTypeDispatcher<TIn, TOut>.ReversibleBuilder(duplicateRegistrationPolicy);
 }
 
 internal class ReversibleTypeDispatcher<TIn, TOut> :
@@ -55,7 +70,15 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
 
         if (_backwards.TryGetValue(runtimeType, out var del))
         {
-            return (TIn)del.DynamicInvoke(input)!;
+            try
+            {
+                return (TIn)del.DynamicInvoke(input)!;
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException is not null)
+            {
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
         }
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
@@ -65,14 +88,20 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
         private readonly Dictionary<Type, Delegate> _reverseHandlers = new();
+        private readonly DispatcherRegistrationPolicy _duplicateRegistrationPolicy;
+
+        public ReversibleBuilder(DispatcherRegistrationPolicy duplicateRegistrationPolicy)
+        {
+            _duplicateRegistrationPolicy = duplicateRegistrationPolicy;
+        }
 
         /// <inheritdoc />
         public IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter)
         {
-            _handlers[typeof(TSpecific)] = new Func<TSpecific, TOut>(converter.Convert);
-
-            // backward
-            _reverseHandlers[typeof(TSpecific)] = new Func<TOut, TSpecific>(converter.ConvertBack);
+            AddHandlers(
+                typeof(TSpecific),
+                new Func<TSpecific, TOut>(converter.Convert),
+                new Func<TOut, TSpecific>(converter.ConvertBack));
 
             return this;
         }
@@ -104,13 +133,39 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             var forwardDelegate = convertMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
             var backwardDelegate = convertBackMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(TOut), specificType), converter);
 
-            _handlers[specificType] = forwardDelegate;
-            _reverseHandlers[specificType] = backwardDelegate;
+            AddHandlers(specificType, forwardDelegate, backwardDelegate);
 
             return this;
+        }
+
+        private void AddHandlers(Type specificType, Delegate forwardHandler, Delegate backwardHandler)
+        {
+            switch (_duplicateRegistrationPolicy)
+            {
+                case DispatcherRegistrationPolicy.LastWins:
+                    _handlers[specificType] = forwardHandler;
+                    _reverseHandlers[specificType] = backwardHandler;
+                    return;
+                case DispatcherRegistrationPolicy.FirstWins:
+                    _handlers.TryAdd(specificType, forwardHandler);
+                    _reverseHandlers.TryAdd(specificType, backwardHandler);
+                    return;
+                case DispatcherRegistrationPolicy.Throw:
+                    if (_handlers.ContainsKey(specificType) || _reverseHandlers.ContainsKey(specificType))
+                    {
+                        throw new InvalidOperationException($"Converter already registered for {specificType}.");
+                    }
+
+                    _handlers.Add(specificType, forwardHandler);
+                    _reverseHandlers.Add(specificType, backwardHandler);
+                    return;
+                default:
+                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {_duplicateRegistrationPolicy}.");
+            }
         }
 
         /// <inheritdoc />
         public IReversibleConverter<TIn, TOut> Build() => new ReversibleTypeDispatcher<TIn, TOut>(_handlers, _reverseHandlers);
     }
 }
+

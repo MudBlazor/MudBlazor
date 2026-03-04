@@ -1121,4 +1121,80 @@ public class DefaultConverterTests
     }
 
     #endregion
+
+    #region IParsable
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_ValidValue_UsesCulture()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>
+        {
+            Culture = () => new CultureInfo("fr-FR")
+        };
+
+        var parsed = conv.ConvertBack("12,5");
+
+        parsed.Value.Should().Be(12.5m);
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_NullOrEmpty_ReturnsNull()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+
+        conv.ConvertBack(null).Should().BeNull();
+        conv.ConvertBack(string.Empty).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_NullOrEmpty_ReturnsDefault()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+
+        conv.ConvertBack(null).Should().Be(default(ParsableTemperature));
+        conv.ConvertBack(string.Empty).Should().Be(default(ParsableTemperature));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKeyAndTypeName()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+
+        Action act = () => conv.ConvertBack("not-a-temperature");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_InvalidType);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(ParsableTemperature));
+    }
+
+    private readonly record struct ParsableTemperature(decimal Value) : IParsable<ParsableTemperature>
+    {
+        public static ParsableTemperature Parse(string s, IFormatProvider? provider)
+        {
+            if (!TryParse(s, provider, out var result))
+            {
+                throw new FormatException();
+            }
+
+            return result;
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableTemperature result)
+        {
+            if (decimal.TryParse(s, NumberStyles.Any, provider, out var value))
+            {
+                result = new ParsableTemperature(value);
+                return true;
+            }
+
+            result = default;
+            return false;
+        }
+    }
+
+    #endregion
 }
