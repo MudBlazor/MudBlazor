@@ -52,5 +52,28 @@ namespace MudBlazor.Examples.Data.Models
         public string IpAddress { get; set; }
     }
 }";
+
+        public const string USState = @"#nullable enable
+
+namespace MudBlazor.Examples.Data.Models;
+
+public class USState
+{
+    public int Id { get; set; }
+
+    public string? State { get; set; }
+
+    public int Counties { get; set; }
+
+    public int Population { get; set; }
+
+    public string? PrimaryIndustry { get; set; }
+
+    public string? Region { get; set; }
+
+    public string? Climate { get; set; }
+
+    public int YearInducted { get; set; }
+}";
     }
 }

@@ -192,6 +192,12 @@ public partial class SectionContent
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
             }
+
+            if (USStateRegularExpression().Match(codeFiles).Success)
+            {
+                var usStateCodeFile = "USState.cs" + (char)31 + Snippets.GetCode("USState");
+                codeFiles = codeFiles + (char)31 + usStateCodeFile;
+            }
         }
 
         var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
@@ -209,4 +215,14 @@ public partial class SectionContent
 
     [GeneratedRegex(@"\bServer\b")]
     private static partial Regex ServerRegularExpression();
+
+    [GeneratedRegex(@"\bUSState\b")]
+    private static partial Regex USStateRegularExpression();
 }
+
+
+
+
+
+
+
