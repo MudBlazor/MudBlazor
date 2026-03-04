@@ -150,6 +150,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         return _dispatcher.ConvertBack(input);
     }
 
+    // TODO: Consider adding DynamicallyAccessedMembers attribute in future as DefaultConverter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.Interfaces)]T>, affects MudBaseInput, MudBaseDatePicker, MudFileUpload, MudColorPicker + 3rd party libraries.
     [UnconditionalSuppressMessage(
         "Trimming",
         "IL2090",
