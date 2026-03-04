@@ -577,22 +577,8 @@
         StartSearch();
     }
 
-    private static int GetSearchScore(string query, TestEntry entry)
+    private int GetSearchScore(string query, TestEntry entry)
     {
-        // Exact name matches should always win regardless of fuzzy noise from other entries.
-        if (entry.Name.Equals(query, StringComparison.OrdinalIgnoreCase))
-        {
-            return 300;
-        }
-
-        // Users typically expect direct substring hits to beat fuzzy neighbors, especially for near-complete queries.
-        var containsIndex = entry.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase);
-        if (containsIndex >= 0)
-        {
-            // Earlier position is a stronger intent signal than later position.
-            return 230 - Math.Min(containsIndex, 30);
-        }
-
         // Combining multiple fuzzy signals reduces false positives from any single algorithm.
         var nameRatio = Fuzz.Ratio(entry.Name, query);
         var nameTokenSort = Fuzz.TokenSortRatio(entry.Name, query);
