@@ -501,10 +501,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             // tabindex should NOT be on label
-            Assert.That(label.HasAttribute("tabindex"), Is.False);
+            label.HasAttribute("tabindex").Should().BeFalse();
 
             // tabindex should be on input and match user value
-            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo(userTabIndex));
+            input.GetAttribute("tabindex").Should().Be(userTabIndex);
         }
 
         [Test]
@@ -515,8 +515,8 @@ namespace MudBlazor.UnitTests.Components
             var label = comp.Find("label");
             var input = comp.Find("input");
 
-            Assert.That(label.HasAttribute("tabindex"), Is.False);
-            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo("0"));
+            label.HasAttribute("tabindex").Should().BeFalse();
+            input.GetAttribute("tabindex").Should().Be("0");
         }
 
         [TestCase("0")]
@@ -531,8 +531,8 @@ namespace MudBlazor.UnitTests.Components
 
             var input = comp.Find("input");
 
-            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo("-1"));
-            Assert.That(input.HasAttribute("disabled"), Is.True);
+            input.GetAttribute("tabindex").Should().Be("-1");
+            input.HasAttribute("disabled").Should().BeTrue();
         }
 
         [Test]
@@ -544,7 +544,7 @@ namespace MudBlazor.UnitTests.Components
 
             var input = comp.Find("input");
 
-            Assert.That(input.GetAttribute("tabindex"), Is.EqualTo("-1"));
+            input.GetAttribute("tabindex").Should().Be("-1");
         }
     }
 }
