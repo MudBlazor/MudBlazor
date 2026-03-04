@@ -158,6 +158,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
 
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
             var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
             dataRows.Count.Should().Be(5, because: "5 data rows");
 
@@ -177,6 +178,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridSortableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
             var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
             dataRows.Count.Should().Be(7, because: "7 data rows");
 
@@ -372,6 +374,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFilterableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
             dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().Be(4, because: "four data rows");
 
             // Check the values of rows
