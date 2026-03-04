@@ -11,23 +11,21 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("tabindex", "5")]
         [TestCase("tabIndex", "7")]
         [TestCase("TABINDEX", "9")]
-        public void ResolveTabIndexAndAttributes_RespectsCaseInsensitiveTabIndex(string key, string value)
+        public void InputTabIndex_RespectsCaseInsensitiveTabIndex(string key, string value)
         {
             var comp = Context.Render<TestBooleanInput>(p =>
                 p.AddUnmatched(key, value)
             );
 
-            var result = comp.Instance.Resolve();
-
-            result.TabIndex.Should().Be(int.Parse(value));
-            result.Attributes.Should().BeNull();
+            comp.Instance.TabIndex.Should().Be(int.Parse(value));
+            comp.Instance.Attributes.Should().BeNull();
         }
 
         [Test]
         [TestCase("tabindex")]
         [TestCase("tabIndex")]
         [TestCase("TABINDEX")]
-        public void ResolveTabIndexAndAttributes_RemovesAllTabIndexVariants(string key)
+        public void InputUserAttributes_RemovesAllTabIndexVariants(string key)
         {
             var comp = Context.Render<TestBooleanInput>(p =>
             {
@@ -35,28 +33,24 @@ namespace MudBlazor.UnitTests.Components
                 p.AddUnmatched("other", "value");
             });
 
-            var result = comp.Instance.Resolve();
-
-            result.TabIndex.Should().Be(5);
-            result.Attributes.Should().NotContainKey(key);
-            result.Attributes.Should().ContainKey("other");
+            comp.Instance.TabIndex.Should().Be(5);
+            comp.Instance.Attributes.Should().NotContainKey(key);
+            comp.Instance.Attributes.Should().ContainKey("other");
         }
 
         [Test]
-        public void ResolveTabIndexAndAttributes_DefaultsToZero_WhenNoUserTabIndex()
+        public void InputTabIndex_DefaultsToZero_WhenNoUserTabIndex()
         {
             var comp = Context.Render<TestBooleanInput>(p =>
                 p.AddUnmatched("other", "value")
             );
 
-            var result = comp.Instance.Resolve();
-
-            result.TabIndex.Should().Be(0);
-            result.Attributes.Should().ContainKey("other");
+            comp.Instance.TabIndex.Should().Be(0);
+            comp.Instance.Attributes.Should().ContainKey("other");
         }
 
         [Test]
-        public void ResolveTabIndexAndAttributes_Disabled_ForcesMinusOne()
+        public void InputTabIndex_Disabled_ForcesMinusOne()
         {
             var comp = Context.Render<TestBooleanInput>(p =>
             {
@@ -64,15 +58,13 @@ namespace MudBlazor.UnitTests.Components
                 p.AddUnmatched("tabindex", "5");
             });
 
-            var result = comp.Instance.Resolve();
-
-            result.TabIndex.Should().Be(-1);
+            comp.Instance.TabIndex.Should().Be(-1);
         }
 
         private class TestBooleanInput : MudBooleanInput<bool>
         {
-            public (int TabIndex, IReadOnlyDictionary<string, object> Attributes) Resolve()
-                => ResolveTabIndexAndAttributes();
+            public int TabIndex => InputTabIndex;
+            public IReadOnlyDictionary<string, object> Attributes => InputUserAttributes?.ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }

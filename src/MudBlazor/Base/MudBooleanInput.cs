@@ -14,6 +14,8 @@ namespace MudBlazor
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
         private readonly ParameterState<T?> _valueState;
+        private int _inputTabIndex;
+        private IReadOnlyDictionary<string, object?>? _inputUserAttributes;
 
         public MudBooleanInput()
         {
@@ -42,18 +44,30 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
-        ///  <summary>
-        /// Returns the resolved tabindex for this input element as well as user attributes splatted onto this input element. 
+        /// <summary>
+        /// The <c>tabindex</c> value resolved for the underlying input element.
         /// </summary>
-        internal (int TabIndex, IReadOnlyDictionary<string, object>? Attributes) ResolveTabIndexAndAttributes()
+        protected int InputTabIndex => _inputTabIndex;
+
+        /// <summary>
+        /// The user attributes for the underlying input element, excluding <c>tabindex</c>.
+        /// </summary>
+        protected IReadOnlyDictionary<string, object?>? InputUserAttributes => _inputUserAttributes;
+
+        /// <inheritdoc />
+        protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             if (UserAttributes == null || UserAttributes.Count == 0)
             {
-                return (GetDisabledState() ? -1 : 0, null);
+                _inputTabIndex = GetDisabledState() ? -1 : 0;
+                _inputUserAttributes = null;
+                return;
             }
 
             int? userTabIndex = null;
-            Dictionary<string, object>? filtered = null;
+            Dictionary<string, object?>? filtered = null;
 
             foreach (var kvp in UserAttributes)
             {
@@ -71,15 +85,15 @@ namespace MudBlazor
                     continue;
                 }
 
-                filtered ??= new Dictionary<string, object>(UserAttributes.Count);
-                filtered[kvp.Key] = kvp.Value!;
+                filtered ??= new Dictionary<string, object?>(UserAttributes.Count);
+                filtered[kvp.Key] = kvp.Value;
             }
 
-            var resolvedTabIndex = GetDisabledState()
+            _inputTabIndex = GetDisabledState()
                 ? -1
                 : userTabIndex ?? 0;
 
-            return (resolvedTabIndex, filtered);
+            _inputUserAttributes = filtered;
         }
 
         /// <summary>
