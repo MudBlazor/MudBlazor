@@ -6,9 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using MudBlazor.Extensions;
-using MudBlazor.Resources;
 using MudBlazor.Utilities.Converter.Dispatcher;
-using MudBlazor.Utilities.Exceptions;
 using static MudBlazor.DefaultConverter;
 
 namespace MudBlazor;
@@ -87,6 +85,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         // Let's not use that for now and see if we really need it
         //.Add(new ObjectConverter(() => Culture(), () => Format()))
 
+        AddEnumConverters(builder);
         AddParsableConverters(builder);
 
         _dispatcher = builder.Build();
@@ -95,60 +94,13 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     /// <inheritdoc />
     public string? Convert(T? input)
     {
-        // Special handling for enums
-        if (IsNullableEnum(typeof(T), out _))
-        {
-            var value = input as Enum;
-            return value?.ToString();
-        }
-
-        if (typeof(T).IsEnum)
-        {
-            var value = input as Enum;
-            return value?.ToString();
-        }
-
         var result = _dispatcher.TryConvert(input);
         // If conversion failed, fallback to ToString() implementation of the T
         return result.Success ? result.Value : input?.ToString();
     }
 
     /// <inheritdoc />
-    public T? ConvertBack(string? input)
-    {
-        // Special handling for enums
-        if (IsNullableEnum(typeof(T), out var enumType))
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return default;
-            }
-
-            if (Enum.TryParse(enumType, input, out var result))
-            {
-                return (T)result;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_NotValueOf, [enumType.Name]);
-        }
-
-        if (typeof(T).IsEnum)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return default;
-            }
-
-            if (Enum.TryParse(typeof(T), input, out var result))
-            {
-                return (T)result;
-            }
-
-            throw new ConversionException(LanguageResource.Converter_NotValueOf, [typeof(T).Name]);
-        }
-
-        return _dispatcher.ConvertBack(input);
-    }
+    public T? ConvertBack(string? input) => _dispatcher.ConvertBack(input);
 
     // TODO: Consider adding DynamicallyAccessedMembers attribute in future as DefaultConverter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.Interfaces)]T>, affects MudBaseInput, MudBaseDatePicker, MudFileUpload, MudColorPicker + 3rd party libraries.
     [UnconditionalSuppressMessage(
@@ -198,16 +150,39 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
                       && x.GenericTypeArguments[0] == type);
     }
 
-    private static bool IsNullableEnum(Type type, [NotNullWhen(true)] out Type? result)
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2090", // Missing DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
+        Justification = "Not 200% safe without annotation, but considering if type is supplied by the user, it should work. Suppressed for backward compatibility.")]
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2091", // Missing DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
+        Justification = "Not 200% safe without annotation, but considering if type is supplied by the user, it should work. Suppressed for backward compatibility.")]
+    private static void AddEnumConverters(IReversibleDispatcherBuilder<T?, string?> builder)
     {
-        var underlyingType = Nullable.GetUnderlyingType(type);
-        if (underlyingType?.IsEnum is true)
+        var targetType = typeof(T);
+
+        var nullableUnderlyingType = Nullable.GetUnderlyingType(targetType);
+        if (nullableUnderlyingType?.IsEnum is true)
         {
-            result = underlyingType;
-            return true;
+            var nullableEnumConverterType = typeof(NullableEnumConverter<>).MakeGenericType(nullableUnderlyingType);
+            var nullableEnumConverter = Activator.CreateInstance(nullableEnumConverterType);
+            if (nullableEnumConverter is not null)
+            {
+                builder.AddDynamic(targetType, nullableEnumConverter);
+            }
+
+            return;
         }
 
-        result = null!;
-        return false;
+        if (targetType.IsEnum)
+        {
+            var enumConverterType = typeof(EnumConverter<>).MakeGenericType(targetType);
+            var enumConverter = Activator.CreateInstance(enumConverterType);
+            if (enumConverter is not null)
+            {
+                builder.AddDynamic(targetType, enumConverter);
+            }
+        }
     }
 }
