@@ -69,12 +69,12 @@ namespace MudBlazor
             int? userTabIndex = null;
             Dictionary<string, object?>? filtered = null;
 
-            foreach (var kvp in UserAttributes)
+            foreach (var (key, value) in UserAttributes)
             {
-                if (string.Equals(kvp.Key, "tabindex", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(key, "tabindex", StringComparison.OrdinalIgnoreCase))
                 {
                     if (int.TryParse(
-                        kvp.Value?.ToString(),
+                        value?.ToString(),
                         System.Globalization.NumberStyles.Integer,
                         System.Globalization.CultureInfo.InvariantCulture,
                         out var parsed))
@@ -85,14 +85,11 @@ namespace MudBlazor
                     continue;
                 }
 
-                filtered ??= new Dictionary<string, object?>(UserAttributes.Count);
-                filtered[kvp.Key] = kvp.Value;
+                filtered ??= new(UserAttributes.Count);
+                filtered[key] = value;
             }
 
-            _inputTabIndex = GetDisabledState()
-                ? -1
-                : userTabIndex ?? 0;
-
+            _inputTabIndex = GetDisabledState() ? -1 : userTabIndex ?? 0;
             _inputUserAttributes = filtered;
         }
 
