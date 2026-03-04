@@ -153,16 +153,16 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     // TODO: Consider adding DynamicallyAccessedMembers attribute in future as DefaultConverter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.Interfaces)]T>, affects MudBaseInput, MudBaseDatePicker, MudFileUpload, MudColorPicker + 3rd party libraries.
     [UnconditionalSuppressMessage(
         "Trimming",
-        "IL2090",
-        Justification = "We should add DAM.Interfaces to DefaultConverter<[DAM(DAM.PublicParameterlessConstructor)]T> for true safety, but it would require MudInput<T> etc to be annotate with it too, external library will get compilation errors. Perhaps a change for future major versions?")]
+        "IL2090", // Missing DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
+        Justification = "Not 200% safe without annotation, but considering if type is supplied by the user, it should work. Suppressed for backward compatibility.")]
     [UnconditionalSuppressMessage(
         "Trimming",
-        "IL2091",
-        Justification = "We should add DAM.Interfaces to DefaultConverter<[DAM(DAM.PublicParameterlessConstructor)]T> for true safety, but it would require MudInput<T> etc to be annotate with it too, external library will get compilation errors. Perhaps a change for future major versions?")]
+        "IL2091", // Missing DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
+        Justification = "Not 200% safe without annotation, but considering if type is supplied by the user, it should work. Suppressed for backward compatibility.")]
     [UnconditionalSuppressMessage(
         "Trimming",
-        "IL2087",
-        Justification = "We should add DAM.Interfaces to DefaultConverter<[DAM(DAM.Interfaces)]T> for true safety, but it would require MudInput<T> etc to be annotate with it too, external library will get compilation errors. Perhaps a change for future major versions?")]
+        "IL2087", // Missing DynamicallyAccessedMemberTypes.Interfaces
+        Justification = "Not 200% safe without annotation, but considering if type is supplied by the user, it should work. Suppressed for backward compatibility.")]
     private void AddParsableConverters(IReversibleDispatcherBuilder<T?, string?> builder)
     {
         var targetType = typeof(T);
