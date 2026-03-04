@@ -885,10 +885,10 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(3 * 9, because: "3 series with 9 data points each");
 
             comp.Markup.Should()
-                .Contain("d=\"M 44 320 L 44 235.2143\"");
+                .Contain("d=\"M 44 320 L 44 221.1667\"");
 
             comp.Markup.Should()
-                .Contain("d=\"M 656 223.0714 L 656 184.6429\"");
+                .Contain("d=\"M 656 206.9167 L 656 162.1667\"");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
                       .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
