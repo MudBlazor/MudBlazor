@@ -47,12 +47,12 @@ namespace MudBlazor
         /// <summary>
         /// The <c>tabindex</c> value resolved for the underlying input element.
         /// </summary>
-        protected int InputTabIndex => _inputTabIndex;
+        internal int InputTabIndex => _inputTabIndex;
 
         /// <summary>
         /// The user attributes for the underlying input element, excluding <c>tabindex</c>.
         /// </summary>
-        protected IReadOnlyDictionary<string, object?>? InputUserAttributes => _inputUserAttributes;
+        internal IReadOnlyDictionary<string, object?>? InputUserAttributes => _inputUserAttributes;
 
         /// <inheritdoc />
         protected override void OnParametersSet()
