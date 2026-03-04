@@ -232,8 +232,8 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
                 _boundWidth = _elementSize.Width;
                 _boundHeight = _elementSize.Height;
             }
-            else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
+            else if (Width.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
+                && Height.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
                 && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
                 && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
