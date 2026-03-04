@@ -579,28 +579,39 @@
 
     private static int GetSearchScore(string query, TestEntry entry)
     {
-        if (string.IsNullOrWhiteSpace(query))
+        // Exact name matches should always win regardless of fuzzy noise from other entries.
+        if (entry.Name.Equals(query, StringComparison.OrdinalIgnoreCase))
         {
-            return 0;
+            return 300;
         }
 
-        var trimmedQuery = query.Trim();
-        var compactQuery = trimmedQuery.Replace(" ", string.Empty);
+        // Users typically expect direct substring hits to beat fuzzy neighbors, especially for near-complete queries.
+        var containsIndex = entry.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase);
+        if (containsIndex >= 0)
+        {
+            // Earlier position is a stronger intent signal than later position.
+            return 230 - Math.Min(containsIndex, 30);
+        }
 
-        // Name-like fields should drive ranking because they reflect what users are trying to open.
-        var nameScore = Math.Max(
-            Math.Max(
-                Math.Max(Fuzz.Ratio(entry.Name, trimmedQuery), Fuzz.PartialRatio(entry.Name, trimmedQuery)),
-                Math.Max(Fuzz.TokenSortRatio(entry.Name, trimmedQuery), Fuzz.PartialRatio(entry.Name, compactQuery))),
-            Math.Max(
-                Math.Max(Fuzz.Ratio(entry.DisplayName, trimmedQuery), Fuzz.PartialRatio(entry.DisplayName, trimmedQuery)),
-                Fuzz.TokenSortRatio(entry.DisplayName, trimmedQuery)));
+        // Combining multiple fuzzy signals reduces false positives from any single algorithm.
+        var nameRatio = Fuzz.Ratio(entry.Name, query);
+        var nameTokenSort = Fuzz.TokenSortRatio(entry.Name, query);
+        var namePartial = Fuzz.PartialRatio(entry.Name, query);
+        var nameScore = (int)Math.Round(nameRatio * 0.55 + nameTokenSort * 0.25 + namePartial * 0.20);
 
-        // Category/description are still searchable, but penalized so broad metadata does not crowd out better name matches.
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, trimmedQuery) - 20;
-        var descriptionScore = string.IsNullOrWhiteSpace(entry.Description) ? 0 : Fuzz.PartialTokenSortRatio(entry.Description, trimmedQuery) - 10;
+        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
 
-        return Math.Max(nameScore, Math.Max(categoryScore, descriptionScore));
+        // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
+        var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
+
+        if (!string.IsNullOrWhiteSpace(entry.Description))
+        {
+            var descriptionScore = Fuzz.PartialTokenSortRatio(entry.Description, query);
+            // Descriptions are helpful fallback context but should not overpower name intent.
+            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.92 + descriptionScore * 0.08));
+        }
+
+        return combined;
     }
 
     private string GetEntryClass(TestEntry entry)
