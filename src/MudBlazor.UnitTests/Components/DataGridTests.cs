@@ -4768,6 +4768,39 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 
         }
+
+        [Test]
+        public async Task DataGridColumnReorderingMethods()
+        {
+            var comp = Context.Render<DataGridDragAndDropTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
+
+            await dataGrid.InvokeAsync(() =>
+            {
+                var ageColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Age");
+                dataGrid.Instance.ColumnDown(ageColumn);
+            });
+
+            dataGrid.Instance.RenderedColumns[2].PropertyName.Should().Be("Age");
+
+            await dataGrid.InvokeAsync(() =>
+            {
+                var ageColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Age");
+                dataGrid.Instance.ColumnUp(ageColumn);
+            });
+
+            dataGrid.Instance.RenderedColumns[1].PropertyName.Should().Be("Age");
+
+            await dataGrid.InvokeAsync(async () =>
+            {
+                var statusColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Status");
+                var dropItem = new MudItemDropInfo<Column<DataGridDragAndDropTest.Model>>(statusColumn, "columns-panel", 1);
+                await dataGrid.Instance.ColumnOrderUpdated(dropItem);
+            });
+
+            dataGrid.Instance.RenderedColumns[1].PropertyName.Should().Be("Status");
+        }
+
         [Test]
         public async Task DataGridEditFormDialogIsCustomizable()
         {

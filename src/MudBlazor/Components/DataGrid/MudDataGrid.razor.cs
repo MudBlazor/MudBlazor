@@ -2311,7 +2311,11 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
+        /// <summary>
+        /// Updates the order of a column after drag-and-drop in the columns panel.
+        /// </summary>
+        /// <param name="dropItem">The dropped column information.</param>
+        public Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
         {
             Debug.Assert(dropItem.Item is not null);
             RenderedColumns.Remove(dropItem.Item);
@@ -2321,7 +2325,11 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private void ColumnUp(Column<T> column)
+        /// <summary>
+        /// Moves the specified column one position up in the rendered columns order.
+        /// </summary>
+        /// <param name="column">The column to move.</param>
+        public void ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
             if (index > 0)
@@ -2332,10 +2340,14 @@ namespace MudBlazor
             DropContainerHasChanged();
         }
 
-        private void ColumnDown(Column<T> column)
+        /// <summary>
+        /// Moves the specified column one position down in the rendered columns order.
+        /// </summary>
+        /// <param name="column">The column to move.</param>
+        public void ColumnDown(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
-            if (index < RenderedColumns.Count - 1)
+            if (index >= 0 && index < RenderedColumns.Count - 1)
             {
                 RenderedColumns.RemoveAt(index);
                 RenderedColumns.Insert(index + 1, column);
