@@ -1147,6 +1147,14 @@ public class DefaultConverterTests
     }
 
     [Test]
+    public void DefaultConverter_IParsableReference_Convert_Null_ReturnsNull()
+    {
+        var conv = new DefaultConverter<ParsableLabel>();
+
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
     public void DefaultConverter_IParsableNullable_ConvertBack_NullOrEmpty_ReturnsNull()
     {
         var conv = new DefaultConverter<ParsableTemperature?>();
@@ -1240,6 +1248,35 @@ public class DefaultConverterTests
             }
 
             result = default;
+            return false;
+        }
+    }
+
+    private sealed class ParsableLabel(string value) : IParsable<ParsableLabel>
+    {
+        public string Value { get; } = value;
+
+        public override string ToString() => Value;
+
+        public static ParsableLabel Parse(string s, IFormatProvider? provider)
+        {
+            if (TryParse(s, provider, out var result))
+            {
+                return result;
+            }
+
+            throw new FormatException();
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableLabel result)
+        {
+            if (!string.IsNullOrWhiteSpace(s))
+            {
+                result = new ParsableLabel(s);
+                return true;
+            }
+
+            result = null!;
             return false;
         }
     }

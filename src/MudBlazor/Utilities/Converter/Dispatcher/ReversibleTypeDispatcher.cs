@@ -154,7 +154,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
                     _reverseHandlers.Add(specificType, backwardHandler);
                     return;
                 default:
-                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {registrationPolicy}.");
+                    throw new InvalidOperationException($"Unsupported registration policy: {registrationPolicy}.");
             }
         }
 

@@ -131,7 +131,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 
                     return;
                 default:
-                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {registrationPolicy}.");
+                    throw new InvalidOperationException($"Unsupported registration policy: {registrationPolicy}.");
             }
         }
 

@@ -114,6 +114,50 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
+    public void ReversibleTypeDispatcher_ConvertBack_WhenNoConverterRegistered_ThrowsConversionException()
+    {
+        var dispatcher = ReversibleTypeDispatcher
+            .Create<int, string>()
+            .Build();
+
+        Action act = () => dispatcher.ConvertBack("x");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_ConversionNotImplemented);
+        exception.ErrorMessageArgs.Should().ContainSingle().Which.Should().Be(typeof(int));
+        exception.InnerException.Should().BeOfType<InvalidOperationException>();
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddDynamic_NullSpecificType_ThrowsArgumentNullException()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamic(null!, new PrefixConverter("A"));
+
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .Which.ParamName
+            .Should()
+            .Be("specificType");
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_UnsupportedRegistrationPolicy_ThrowsOnAdd()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>((DispatcherRegistrationPolicy)999);
+
+        Action act = () => builder.Add(new PrefixConverter("A"));
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Unsupported registration policy:*");
+    }
+
+    [Test]
     public void TypeDispatcher_Convert_WhenConverterThrowsConversionException_RethrowsInnerException()
     {
         var dispatcher = TypeDispatcher
