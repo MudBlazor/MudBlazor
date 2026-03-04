@@ -1121,4 +1121,165 @@ public class DefaultConverterTests
     }
 
     #endregion
+
+    #region IParsable
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_ValidValue_UsesCulture()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>
+        {
+            Culture = () => new CultureInfo("fr-FR")
+        };
+
+        var parsed = conv.ConvertBack("12,5");
+
+        parsed.Value.Should().Be(12.5m);
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_Convert_ReturnsStringRepresentation()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+        var value = new ParsableTemperature(12.5m);
+
+        conv.Convert(value).Should().Be(value.ToString());
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableReference_Convert_Null_ReturnsNull()
+    {
+        var conv = new DefaultConverter<ParsableLabel>();
+
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_NullOrEmpty_ReturnsNull()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+
+        conv.ConvertBack(null).Should().BeNull();
+        conv.ConvertBack(string.Empty).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_Convert_ReturnsStringRepresentation()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+        var value = new ParsableTemperature(7.25m);
+
+        conv.Convert(value).Should().Be(value.ToString());
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_ValidValue_UsesCulture()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>
+        {
+            Culture = () => new CultureInfo("fr-FR")
+        };
+
+        var parsed = conv.ConvertBack("7,25");
+
+        parsed.Should().Be(new ParsableTemperature(7.25m));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_NullOrEmpty_ReturnsDefault()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+
+        conv.ConvertBack(null).Should().Be(default(ParsableTemperature));
+        conv.ConvertBack(string.Empty).Should().Be(default(ParsableTemperature));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKeyAndTypeName()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+
+        Action act = () => conv.ConvertBack("not-a-temperature");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_InvalidType);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(ParsableTemperature));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKeyAndTypeName()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+
+        Action act = () => conv.ConvertBack("not-a-temperature");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_InvalidType);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(ParsableTemperature));
+    }
+
+    private readonly record struct ParsableTemperature(decimal Value) : IParsable<ParsableTemperature>
+    {
+        public static ParsableTemperature Parse(string s, IFormatProvider? provider)
+        {
+            if (!TryParse(s, provider, out var result))
+            {
+                throw new FormatException();
+            }
+
+            return result;
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableTemperature result)
+        {
+            if (decimal.TryParse(s, NumberStyles.Any, provider, out var value))
+            {
+                result = new ParsableTemperature(value);
+                return true;
+            }
+
+            result = default;
+            return false;
+        }
+    }
+
+    private sealed class ParsableLabel(string value) : IParsable<ParsableLabel>
+    {
+        public string Value { get; } = value;
+
+        public override string ToString() => Value;
+
+        public static ParsableLabel Parse(string s, IFormatProvider? provider)
+        {
+            if (TryParse(s, provider, out var result))
+            {
+                return result;
+            }
+
+            throw new FormatException();
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableLabel result)
+        {
+            if (!string.IsNullOrWhiteSpace(s))
+            {
+                result = new ParsableLabel(s);
+                return true;
+            }
+
+            result = null!;
+            return false;
+        }
+    }
+
+    #endregion
 }

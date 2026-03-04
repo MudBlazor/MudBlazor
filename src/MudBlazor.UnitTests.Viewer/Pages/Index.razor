@@ -577,22 +577,24 @@
         StartSearch();
     }
 
-    private static int GetSearchScore(string query, TestEntry entry)
+    private int GetSearchScore(string query, TestEntry entry)
     {
-        if (entry.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
-        {
-            return 200;
-        }
+        // Combining multiple fuzzy signals reduces false positives from any single algorithm.
+        var nameRatio = Fuzz.Ratio(entry.Name, query);
+        var nameTokenSort = Fuzz.TokenSortRatio(entry.Name, query);
+        var namePartial = Fuzz.PartialRatio(entry.Name, query);
+        var nameScore = (int)Math.Round(nameRatio * 0.55 + nameTokenSort * 0.25 + namePartial * 0.20);
 
-        var nameScore = Fuzz.PartialTokenSortRatio(entry.Name, query);
         var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
 
-        var combined = (int)Math.Round(nameScore * 0.85 + categoryScore * 0.15);
+        // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
+        var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
 
         if (!string.IsNullOrWhiteSpace(entry.Description))
         {
             var descriptionScore = Fuzz.PartialTokenSortRatio(entry.Description, query);
-            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.8 + descriptionScore * 0.2));
+            // Descriptions are helpful fallback context but should not overpower name intent.
+            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.92 + descriptionScore * 0.08));
         }
 
         return combined;

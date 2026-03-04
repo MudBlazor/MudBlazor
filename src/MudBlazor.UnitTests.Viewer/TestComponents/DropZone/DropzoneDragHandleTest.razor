@@ -1,4 +1,4 @@
-@namespace MudBlazor.UnitTests.TestComponents.DropZone
+﻿@namespace MudBlazor.UnitTests.TestComponents.DropZone
 
 <MudDropContainer T="SimpleDropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated">
     <ChildContent>
@@ -16,10 +16,7 @@
 </MudDropContainer>
 
 @code {
-    private List<SimpleDropItem> _items = new()
-    {
-        new SimpleDropItem { Name = "Item 1", Selector = "Zone 1" }
-    };
+    private readonly List<SimpleDropItem> _items = [new() { Name = "Item 1", Selector = "Zone 1" }];
 
     private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropInfo)
     {
