@@ -109,6 +109,10 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     [Category(CategoryTypes.Chart.Appearance)]
     public double ViewBoxHeight { get; set; }
 
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public bool MatchBoundsToSize { get; set; }
+
     /// <summary>
     /// The child content of the component.
     /// </summary>
