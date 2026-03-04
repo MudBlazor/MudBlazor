@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.ExceptionServices;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
@@ -43,7 +42,7 @@ public static class TypeDispatcher
 
 internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 {
-    private readonly Dictionary<Type, Delegate> _handlers;
+    private readonly Func<TIn, TOut>? _forward;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TypeDispatcher{TIn,TOut}"/> class.
@@ -51,7 +50,11 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     /// <param name="handlers">A pre-populated map of concrete input <see cref="Type"/> to conversion delegates.</param>
     protected TypeDispatcher(Dictionary<Type, Delegate> handlers)
     {
-        _handlers = handlers;
+        if (handlers.TryGetValue(typeof(TIn), out var del))
+        {
+            _forward = del as Func<TIn, TOut>
+                ?? (input => (TOut)del.DynamicInvoke(input)!);
+        }
     }
 
     /// <inheritdoc />
@@ -63,16 +66,9 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     {
         var runtimeType = typeof(TIn);
 
-        if (_handlers.TryGetValue(runtimeType, out var del))
+        if (_forward is not null)
         {
-            try
-            {
-                return (TOut)del.DynamicInvoke(input)!;
-            }
-            catch (TargetInvocationException ex) when (ex.InnerException is not null)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-            }
+            return _forward(input);
         }
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));

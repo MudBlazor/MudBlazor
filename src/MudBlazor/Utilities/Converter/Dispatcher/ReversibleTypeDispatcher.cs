@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.ExceptionServices;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
@@ -44,7 +43,7 @@ public static class ReversibleTypeDispatcher
 internal class ReversibleTypeDispatcher<TIn, TOut> :
     TypeDispatcher<TIn, TOut>, IReversibleConverter<TIn, TOut>
 {
-    private readonly Dictionary<Type, Delegate> _backwards;
+    private readonly Func<TOut, TIn>? _backward;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReversibleTypeDispatcher{TIn,TOut}"/> class.
@@ -56,7 +55,11 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         Dictionary<Type, Delegate> backwards)
         : base(forwards)
     {
-        _backwards = backwards;
+        if (backwards.TryGetValue(typeof(TIn), out var del))
+        {
+            _backward = del as Func<TOut, TIn>
+                ?? (input => (TIn)del.DynamicInvoke(input)!);
+        }
     }
 
     /// <inheritdoc />
@@ -68,16 +71,9 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
     {
         var runtimeType = typeof(TIn);
 
-        if (_backwards.TryGetValue(runtimeType, out var del))
+        if (_backward is not null)
         {
-            try
-            {
-                return (TIn)del.DynamicInvoke(input)!;
-            }
-            catch (TargetInvocationException ex) when (ex.InnerException is not null)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-            }
+            return _backward(input);
         }
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
