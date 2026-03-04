@@ -77,7 +77,6 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             catch (TargetInvocationException ex) when (ex.InnerException is not null)
             {
                 ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-                throw;
             }
         }
 

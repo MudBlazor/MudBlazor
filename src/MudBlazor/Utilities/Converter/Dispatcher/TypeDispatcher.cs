@@ -72,7 +72,6 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
             catch (TargetInvocationException ex) when (ex.InnerException is not null)
             {
                 ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-                throw;
             }
         }
 
