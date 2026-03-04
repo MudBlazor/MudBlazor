@@ -63,6 +63,30 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
+    public void TypeDispatcher_AddDynamic_WhenConverterTypeDoesNotImplementTargetInterface_ThrowsInvalidOperationException()
+    {
+        var builder = TypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamic(typeof(int), new ForwardOnlyStringConverter());
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Converter type*does not implement Convert(System.Int32)");
+    }
+
+    [Test]
+    public void TypeDispatcher_UnsupportedRegistrationPolicy_ThrowsOnAdd()
+    {
+        var builder = TypeDispatcher.Create<int, string>((DispatcherRegistrationPolicy)999);
+
+        Action act = () => builder.Add(new ConstantConverter("A"));
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Unsupported registration policy:*");
+    }
+
+    [Test]
     public void ReversibleTypeDispatcher_DefaultPolicy_LastWins()
     {
         var dispatcher = ReversibleTypeDispatcher
@@ -111,6 +135,30 @@ public class TypeDispatcherPolicyTests
 
         dispatcher.Convert(3).Should().Be("A3");
         dispatcher.ConvertBack("A3").Should().Be(3);
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddDynamic_WhenConverterTypeDoesNotImplementForwardInterface_ThrowsInvalidOperationException()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamic(typeof(int), new ForwardOnlyStringConverter());
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Converter type*does not implement Convert(System.Int32)");
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddDynamic_WhenConverterTypeDoesNotImplementReverseInterface_ThrowsInvalidOperationException()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamic(typeof(int), new ForwardOnlyIntConverter());
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Converter type*does not implement ConvertBack(System.String)");
     }
 
     [Test]
@@ -221,5 +269,15 @@ public class TypeDispatcherPolicyTests
         public string Convert(int input) => input.ToString();
 
         public int ConvertBack(string input) => throw new ConversionException(LanguageResource.Converter_InvalidType, [nameof(Int32)]);
+    }
+
+    private sealed class ForwardOnlyStringConverter : IConverter<string, string>
+    {
+        public string Convert(string input) => input;
+    }
+
+    private sealed class ForwardOnlyIntConverter : IConverter<int, string>
+    {
+        public string Convert(int input) => input.ToString();
     }
 }

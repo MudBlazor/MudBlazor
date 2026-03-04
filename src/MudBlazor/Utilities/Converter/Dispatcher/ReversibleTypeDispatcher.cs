@@ -109,23 +109,24 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             var convType = converter.GetType();
 
             var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            if (convertMethod is null)
+            if (!convertMethodInterface.IsAssignableFrom(convType))
             {
                 throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
             }
 
-            var convertBackMethodInterface = typeof(IReversibleConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            var convertBackMethod = convertBackMethodInterface.GetMethod(nameof(IReversibleConverter<TIn, TOut>.ConvertBack), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            if (convertBackMethod is null)
+            var convertBackMethodInterface = typeof(IReversibleConverter<,>).MakeGenericType(specificType, typeof(TOut));
+            if (!convertBackMethodInterface.IsAssignableFrom(convType))
             {
                 throw new InvalidOperationException($"Converter type {convType.FullName} does not implement ConvertBack({typeof(TOut)})");
             }
 
-            var forwardDelegate = convertMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
-            var backwardDelegate = convertBackMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(TOut), specificType), converter);
+            var convertBackMethod = convertBackMethodInterface.GetMethod(nameof(IReversibleConverter<TIn, TOut>.ConvertBack), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            // Cannot be null since we already verified the interface is implemented
+            var forwardDelegate = convertMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+            var backwardDelegate = convertBackMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(TOut), specificType), converter);
 
             AddHandlers(specificType, forwardDelegate, backwardDelegate);
 
@@ -162,4 +163,3 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         public IReversibleConverter<TIn, TOut> Build() => new ReversibleTypeDispatcher<TIn, TOut>(_handlers, _reverseHandlers);
     }
 }
-

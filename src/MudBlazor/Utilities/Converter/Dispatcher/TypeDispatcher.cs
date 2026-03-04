@@ -99,14 +99,15 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
             var convType = converter.GetType();
 
             var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            if (convertMethod is null)
+            if (!convertMethodInterface.IsAssignableFrom(convType))
             {
                 throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
             }
 
-            var forwardDelegate = convertMethod.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            // Cannot be null since we already verified the interface is implemented
+            var forwardDelegate = convertMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
 
             AddHandler(specificType, forwardDelegate);
 
@@ -139,4 +140,3 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         public IConverter<TIn, TOut> Build() => new TypeDispatcher<TIn, TOut>(_handlers);
     }
 }
-
