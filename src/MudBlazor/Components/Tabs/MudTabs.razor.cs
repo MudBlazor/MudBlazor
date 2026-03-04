@@ -561,12 +561,7 @@ namespace MudBlazor
         /// <summary>
         /// Called to dispose this instance.
         /// </summary>
-        protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
-
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
-        public async ValueTask DisposeAsync()
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             if (_isDisposed)
             {
@@ -593,7 +588,13 @@ namespace MudBlazor
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
+        }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
             await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
