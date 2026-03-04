@@ -264,6 +264,11 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        protected string PreviewStartDropItemClassname =>
+            new CssBuilder("mud-drop-item-preview-start")
+                .AddClass("mud-drop-item-preview-start-inactive", Container?.TransactionInProgress() != true)
+                .Build();
+
         protected string PlaceholderClassname =>
             new CssBuilder("border-2 mud-border-primary border-dashed mud-chip-text mud-chip-color-primary pa-4 mud-dropitem-placeholder")
                 .AddClass("d-none", !AllowReorder || Container?.TransactionInProgress() == false || Container?.GetTransactionCurrentZoneIdentifier() != Identifier)

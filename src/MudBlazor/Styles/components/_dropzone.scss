@@ -33,6 +33,10 @@
   left: 0;
   z-index: +1;
   user-select: none;
+
+  &.mud-drop-item-preview-start-inactive {
+    pointer-events: none;
+  }
 }
 
 .mud-drop-item {
