@@ -4770,7 +4770,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridColumnReorderingMethods()
+        public async Task PublicColumnReorderingMethodsWorkCorrectly()
         {
             var comp = Context.Render<DataGridDragAndDropTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
