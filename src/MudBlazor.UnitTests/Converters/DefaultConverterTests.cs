@@ -1138,6 +1138,15 @@ public class DefaultConverterTests
     }
 
     [Test]
+    public void DefaultConverter_IParsable_Convert_ReturnsStringRepresentation()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+        var value = new ParsableTemperature(12.5m);
+
+        conv.Convert(value).Should().Be(value.ToString());
+    }
+
+    [Test]
     public void DefaultConverter_IParsableNullable_ConvertBack_NullOrEmpty_ReturnsNull()
     {
         var conv = new DefaultConverter<ParsableTemperature?>();
@@ -1147,12 +1156,51 @@ public class DefaultConverterTests
     }
 
     [Test]
+    public void DefaultConverter_IParsableNullable_Convert_ReturnsStringRepresentation()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+        var value = new ParsableTemperature(7.25m);
+
+        conv.Convert(value).Should().Be(value.ToString());
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_ValidValue_UsesCulture()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>
+        {
+            Culture = () => new CultureInfo("fr-FR")
+        };
+
+        var parsed = conv.ConvertBack("7,25");
+
+        parsed.Should().Be(new ParsableTemperature(7.25m));
+    }
+
+    [Test]
     public void DefaultConverter_IParsable_ConvertBack_NullOrEmpty_ReturnsDefault()
     {
         var conv = new DefaultConverter<ParsableTemperature>();
 
         conv.ConvertBack(null).Should().Be(default(ParsableTemperature));
         conv.ConvertBack(string.Empty).Should().Be(default(ParsableTemperature));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKeyAndTypeName()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+
+        Action act = () => conv.ConvertBack("not-a-temperature");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_InvalidType);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(ParsableTemperature));
     }
 
     [Test]
