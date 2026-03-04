@@ -465,7 +465,6 @@
                 return;
             }
 
-            var query = _searchText.Trim();
             _filteredCountLabel = "Searching…";
             await InvokeAsync(StateHasChanged);
 
@@ -479,7 +478,7 @@
             {
                 token.ThrowIfCancellationRequested();
                 var entry = _entries[i];
-                var score = GetSearchScore(query, entry);
+                var score = GetSearchScore(_searchText, entry);
                 if (score < threshold)
                 {
                     if (i % 25 == 0)
@@ -577,28 +576,22 @@
         StartSearch();
     }
 
-    private static int GetSearchScore(string query, TestEntry entry)
+    private int GetSearchScore(string query, TestEntry entry)
     {
-        if (string.IsNullOrWhiteSpace(query))
-        {
-            return 0;
-        }
-
-        var trimmedQuery = query.Trim();
-        var compactQuery = trimmedQuery.Replace(" ", string.Empty);
+        query = query.Replace(" ", string.Empty);
 
         // Name-like fields should drive ranking because they reflect what users are trying to open.
         var nameScore = Math.Max(
             Math.Max(
-                Math.Max(Fuzz.Ratio(entry.Name, trimmedQuery), Fuzz.PartialRatio(entry.Name, trimmedQuery)),
-                Math.Max(Fuzz.TokenSortRatio(entry.Name, trimmedQuery), Fuzz.PartialRatio(entry.Name, compactQuery))),
+                Math.Max(Fuzz.Ratio(entry.Name, query), Fuzz.PartialRatio(entry.Name, query)),
+                Math.Max(Fuzz.TokenSortRatio(entry.Name, query), Fuzz.PartialRatio(entry.Name, query))),
             Math.Max(
-                Math.Max(Fuzz.Ratio(entry.DisplayName, trimmedQuery), Fuzz.PartialRatio(entry.DisplayName, trimmedQuery)),
-                Fuzz.TokenSortRatio(entry.DisplayName, trimmedQuery)));
+                Math.Max(Fuzz.Ratio(entry.DisplayName, query), Fuzz.PartialRatio(entry.DisplayName, query)),
+                Fuzz.TokenSortRatio(entry.DisplayName, query)));
 
         // Category/description are still searchable, but penalized so broad metadata does not crowd out better name matches.
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, trimmedQuery) - 20;
-        var descriptionScore = string.IsNullOrWhiteSpace(entry.Description) ? 0 : Fuzz.PartialTokenSortRatio(entry.Description, trimmedQuery) - 10;
+        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query) - 20;
+        var descriptionScore = string.IsNullOrWhiteSpace(entry.Description) ? 0 : Fuzz.PartialTokenSortRatio(entry.Description, query) - 10;
 
         return Math.Max(nameScore, Math.Max(categoryScore, descriptionScore));
     }
