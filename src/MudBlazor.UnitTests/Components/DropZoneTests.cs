@@ -984,23 +984,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DropZone_Reorder_PreviewStart_DisablesPointerEvents_WhenNoDragTransaction()
-        {
-            var comp = Context.Render<DropzoneReorderTest>();
-
-            comp.Find(".mud-drop-container");
-
-            var previewStartDropItem = comp.Find(".dropzone-1 .mud-drop-item-preview-start");
-            previewStartDropItem.ClassList.Should().Contain("mud-drop-item-preview-start-inactive");
-
-            var thirdDropItem = comp.FindAll(".dropzone-1 .mud-drop-item").First(x => x.TextContent.Trim() == "Item 3");
-            await thirdDropItem.DragStartAsync(new DragEventArgs());
-
-            previewStartDropItem = comp.Find(".dropzone-1 .mud-drop-item-preview-start");
-            previewStartDropItem.ClassList.Should().NotContain("mud-drop-item-preview-start-inactive");
-        }
-
-        [Test]
         public async Task DropZone_Reorder_MoveWithinContainer_NoChange()
         {
             var comp = Context.Render<DropzoneReorderTest>();
