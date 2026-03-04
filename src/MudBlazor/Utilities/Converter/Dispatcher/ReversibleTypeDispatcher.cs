@@ -84,16 +84,11 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
 
-    internal class ReversibleBuilder : IReversibleDispatcherBuilder<TIn, TOut>
+    internal class ReversibleBuilder(DispatcherRegistrationPolicy registrationPolicy)
+        : IReversibleDispatcherBuilder<TIn, TOut>
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
         private readonly Dictionary<Type, Delegate> _reverseHandlers = new();
-        private readonly DispatcherRegistrationPolicy _duplicateRegistrationPolicy;
-
-        public ReversibleBuilder(DispatcherRegistrationPolicy duplicateRegistrationPolicy)
-        {
-            _duplicateRegistrationPolicy = duplicateRegistrationPolicy;
-        }
 
         /// <inheritdoc />
         public IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter)
@@ -140,7 +135,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
 
         private void AddHandlers(Type specificType, Delegate forwardHandler, Delegate backwardHandler)
         {
-            switch (_duplicateRegistrationPolicy)
+            switch (registrationPolicy)
             {
                 case DispatcherRegistrationPolicy.LastWins:
                     _handlers[specificType] = forwardHandler;
@@ -160,7 +155,7 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
                     _reverseHandlers.Add(specificType, backwardHandler);
                     return;
                 default:
-                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {_duplicateRegistrationPolicy}.");
+                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {registrationPolicy}.");
             }
         }
 

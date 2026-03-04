@@ -79,15 +79,9 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
 
-    internal class Builder : IDispatcherBuilder<TIn, TOut>
+    internal class Builder(DispatcherRegistrationPolicy registrationPolicy) : IDispatcherBuilder<TIn, TOut>
     {
         private readonly Dictionary<Type, Delegate> _handlers = new();
-        private readonly DispatcherRegistrationPolicy _duplicateRegistrationPolicy;
-
-        public Builder(DispatcherRegistrationPolicy duplicateRegistrationPolicy)
-        {
-            _duplicateRegistrationPolicy = duplicateRegistrationPolicy;
-        }
 
         /// <inheritdoc />
         public IDispatcherBuilder<TIn, TOut> Add<TSpecific>(IConverter<TSpecific, TOut> converter)
@@ -122,7 +116,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 
         private void AddHandler(Type specificType, Delegate handler)
         {
-            switch (_duplicateRegistrationPolicy)
+            switch (registrationPolicy)
             {
                 case DispatcherRegistrationPolicy.LastWins:
                     _handlers[specificType] = handler;
@@ -138,7 +132,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 
                     return;
                 default:
-                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {_duplicateRegistrationPolicy}.");
+                    throw new InvalidOperationException($"Unsupported duplicate registration policy: {registrationPolicy}.");
             }
         }
 
