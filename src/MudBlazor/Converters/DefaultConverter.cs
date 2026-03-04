@@ -150,19 +150,6 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         return _dispatcher.ConvertBack(input);
     }
 
-    private static bool IsNullableEnum(Type type, [NotNullWhen(true)] out Type? result)
-    {
-        var underlyingType = Nullable.GetUnderlyingType(type);
-        if (underlyingType?.IsEnum is true)
-        {
-            result = underlyingType;
-            return true;
-        }
-
-        result = null!;
-        return false;
-    }
-
     [UnconditionalSuppressMessage(
         "Trimming",
         "IL2090",
@@ -208,5 +195,18 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Any(x => x.IsGenericType
                       && x.GetGenericTypeDefinition() == typeof(IParsable<>)
                       && x.GenericTypeArguments[0] == type);
+    }
+
+    private static bool IsNullableEnum(Type type, [NotNullWhen(true)] out Type? result)
+    {
+        var underlyingType = Nullable.GetUnderlyingType(type);
+        if (underlyingType?.IsEnum is true)
+        {
+            result = underlyingType;
+            return true;
+        }
+
+        result = null!;
+        return false;
     }
 }
