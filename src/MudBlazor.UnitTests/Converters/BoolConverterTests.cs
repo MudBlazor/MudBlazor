@@ -516,8 +516,7 @@ public class BoolConverterTests
         Action act = () => conv.Convert(new object());
 
         act.Should()
-            .Throw<TargetInvocationException>()
-            .WithInnerException<InvalidOperationException>()
+            .Throw<InvalidOperationException>()
             .WithMessage("Cannot convert type System.Object to bool?");
     }
 }
