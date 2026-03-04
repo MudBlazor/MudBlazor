@@ -405,6 +405,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Radio_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Enabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>();
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Disabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex_CaseInsensitive()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("TabIndex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Ripple()
         {
             var create = (bool readOnly, bool disabled) => Context.Render<MudRadioGroup<bool>>(self => self

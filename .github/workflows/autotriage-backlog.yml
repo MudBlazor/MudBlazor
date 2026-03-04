@@ -33,7 +33,7 @@ on:
         description: "Fast model"
         type: string
         required: false
-        default: gemini-2.5-flash
+        default: gemini-3.1-flash-lite-preview
       model-pro:
         description: "Pro model"
         type: string
@@ -76,7 +76,7 @@ jobs:
           max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || 20 }}
           context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || true }}
           extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || true }}
-          model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-2.5-flash' }}
+          model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-3.1-flash-lite-preview' }}
           model-pro: ${{ github.event_name == 'workflow_dispatch' && inputs['model-pro'] || 'gemini-3-flash-preview' }}
           db-path: triage-db.json
         env:
