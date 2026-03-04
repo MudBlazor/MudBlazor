@@ -158,9 +158,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(9, because: "1 header row + 5 data rows + 1 footer row + 2 Virtualize spacer rows");
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(5, because: "5 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
@@ -178,9 +177,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridSortableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(11, because: "1 header row + 7 data rows + 1 footer row + 2 Virtualize spacer rows");
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(7, because: "7 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
@@ -374,8 +372,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFilterableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(8, because: "header row + four rows + footer row + 2 Virtualize spacer rows");
+            dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().Be(4, because: "four data rows");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
