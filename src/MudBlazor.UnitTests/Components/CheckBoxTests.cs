@@ -439,6 +439,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void CheckBox_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
             Context.Render<MudCheckBox<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span").ClassList.Should().Contain("hover:mud-default-hover");

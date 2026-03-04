@@ -405,6 +405,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Radio_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Ripple()
         {
             var create = (bool readOnly, bool disabled) => Context.Render<MudRadioGroup<bool>>(self => self
