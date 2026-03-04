@@ -282,7 +282,7 @@ namespace MudBlazor
         /// </summary>
         protected T? _value;
 
-        protected Task BeginValidationAfterAsync(Task task)
+        protected Task BeginValidationAfterAsync(Task task, bool notifyEditContext = true)
         {
             Func<Task> execute = async () =>
             {
@@ -294,14 +294,14 @@ namespace MudBlazor
                 // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
-                    await BeginValidateAsync();
+                    await BeginValidateAsync(notifyEditContext);
                 }
             };
 
             return execute();
         }
 
-        protected Task BeginValidateAsync()
+        protected Task BeginValidateAsync(bool notifyEditContext = true)
         {
             Func<Task> execute = async () =>
             {
@@ -309,7 +309,7 @@ namespace MudBlazor
 
                 await ValidateValue();
 
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue))
+                if (notifyEditContext && EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
                     EditFormValidate();
                 }

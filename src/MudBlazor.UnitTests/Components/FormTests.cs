@@ -445,6 +445,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("Field3 changed");
         }
 
+        [Test]
+        public async Task EditFormOnFieldChanged_ShouldNotFireOnBlurWithoutValueChange()
+        {
+            var comp = Context.Render<EditFormOnFieldChangedTest>();
+
+            await comp.FindAll("input")[0].BlurAsync();
+
+            comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("not changed");
+        }
+
         /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
@@ -2110,4 +2122,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-
