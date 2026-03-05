@@ -394,7 +394,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
     // When virtualized, <Virtualize> renders spacer <tr> elements that shift
     // :nth-of-type(odd) ordering. Override with index-based .mud-table-row-stripe class instead.
     &.mud-table-body-virtualized {
-      & .mud-table-row:nth-of-type(odd) {
+      & .mud-table-row:nth-of-type(odd):not(:hover) {
         background-color: initial;
       }
 
