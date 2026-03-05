@@ -294,7 +294,7 @@ namespace MudBlazor
                 // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
-                    await BeginValidateAsync();
+                    await ValidateValue();
                 }
             };
 
@@ -693,36 +693,10 @@ namespace MudBlazor
         /// </summary>
         internal void EditFormValidate()
         {
-            if (EditContext is null || IsNullOrEmpty(_fieldIdentifier.FieldName))
-                return;
-
-            var value = ReadValue;
-
-            if (!_hasLastEditContextNotifiedValue)
+            if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
             {
-                _lastEditContextNotifiedValue = value;
-                _hasLastEditContextNotifiedValue = true;
-                return;
+                EditContext?.NotifyFieldChanged(_fieldIdentifier);
             }
-
-            if (EqualityComparer<T?>.Default.Equals(_lastEditContextNotifiedValue, value))
-                return;
-
-            _lastEditContextNotifiedValue = value;
-            EditContext.NotifyFieldChanged(_fieldIdentifier);
-        }
-
-        internal void UpdateEditContextFieldChangedBaseline(T? value)
-        {
-            if (EditContext is null || IsNullOrEmpty(_fieldIdentifier.FieldName))
-            {
-                _lastEditContextNotifiedValue = default;
-                _hasLastEditContextNotifiedValue = false;
-                return;
-            }
-
-            _lastEditContextNotifiedValue = value;
-            _hasLastEditContextNotifiedValue = true;
         }
 
         /// <summary>
@@ -785,9 +759,6 @@ namespace MudBlazor
         /// </summary>
         private EditContext? _currentEditContext;
 
-        private T? _lastEditContextNotifiedValue;
-        private bool _hasLastEditContextNotifiedValue;
-
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -813,7 +784,6 @@ namespace MudBlazor
 
                 _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
-                ResetEditContextFieldChangedTracking();
             }
 
             if (EditContext is not null && EditContext != _currentEditContext)
@@ -821,7 +791,6 @@ namespace MudBlazor
                 DetachValidationStateChangedListener();
                 EditContext.OnValidationStateChanged += OnValidationStateChanged;
                 _currentEditContext = EditContext;
-                ResetEditContextFieldChangedTracking();
             }
         }
 
@@ -831,11 +800,6 @@ namespace MudBlazor
             {
                 _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
             }
-        }
-
-        private void ResetEditContextFieldChangedTracking()
-        {
-            UpdateEditContextFieldChangedBaseline(ReadValue);
         }
 
         #endregion
