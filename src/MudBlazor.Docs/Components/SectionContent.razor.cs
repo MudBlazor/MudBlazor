@@ -193,13 +193,14 @@ public partial class SectionContent
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
             }
 
-            if (USStateRegularExpression().Match(codeFiles).Success)
-            {
-                var usStateCodeFile = "USState.cs" + (char)31 + Snippets.GetCode("USState");
-                codeFiles = codeFiles + (char)31 + usStateCodeFile;
-            }
+
         }
 
+        if (CompanyRegularExpression().Match(codeFiles).Success)
+        {
+            var companyCodeFile = "Company.cs" + (char)31 + Snippets.GetCode("Company");
+            codeFiles = codeFiles + (char)31 + companyCodeFile;
+        }
         var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
         // var tryMudBlazorLocation = "https://localhost:5001/";
         var tryMudBlazorLocation = "https://try.mudblazor.com/";
@@ -216,9 +217,12 @@ public partial class SectionContent
     [GeneratedRegex(@"\bServer\b")]
     private static partial Regex ServerRegularExpression();
 
-    [GeneratedRegex(@"\bUSState\b")]
-    private static partial Regex USStateRegularExpression();
+    [GeneratedRegex(@"\bCompany\b")]
+    private static partial Regex CompanyRegularExpression();
 }
+
+
+
 
 
 

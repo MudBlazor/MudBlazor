@@ -135,32 +135,43 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping">
                 <Description>
-                    Use grouping to organize rows by shared values and make large datasets easier to scan.
-                    <br /><br />
-                    Start with single-level grouping, then extend to multi-level grouping when users need grouped data across multiple columns.
-                    <br /><br />
-                    Grouping state can be controlled declaratively and synchronized with two-way binding using
-                    <CodeInline>@@bind-Grouping</CodeInline>, <CodeInline>@@bind-GroupByOrder</CodeInline>, and <CodeInline>@@bind-GroupExpanded</CodeInline>.
+                    The <CodeInline Tag="true">MudDataGrid</CodeInline> allows users to organize data by grouping rows that share common values in selected columns.
+                    Grouping collapses similar data into expandable sections, making large datasets more manageable.
                 </Description>
             </SectionHeader>
-            <MudText Typo="Typo.h6" Class="mb-2">Single-Level Grouping</MudText>
-            <MudText HtmlTag="p" Class="mb-4">
-                This example shows the baseline grouping setup with one primary grouped column, optional group templates, and simple expand/collapse interaction.
-            </MudText>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridGroupingExample />
-            </SectionContent>
-            <MudDivider Class="my-4" />
-            <MudText Typo="Typo.h6" Class="mb-2">Multi-Level Grouping</MudText>
-            <MudText HtmlTag="p" Class="mb-4">
-                This example demonstrates grouped data at multiple levels using ordered group columns and bound grouping state.
-            </MudText>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingMultiLevelExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridGroupingMultiLevelExample />
-            </SectionContent>
+
+            <DocsPageSection>
+                <SectionHeader Title="Single Level Grouping">
+                    <Description>
+                        To enable grouping functionality across the grid, set <CodeInline>Groupable</CodeInline> on <CodeInline Tag="true">MudDataGrid</CodeInline> to <CodeInline>true</CodeInline>.
+                        This enables grouping globally unless a column overrides it with <CodeInline>Groupable="false"</CodeInline>.
+                        <br /><br />
+                        To define an initial grouped column, set <CodeInline>Grouping</CodeInline> on that column.
+                        This parameter supports two-way binding via <CodeInline>@@bind-Grouping</CodeInline>.
+                        <br /><br />
+                        For <CodeInline>Grouping</CodeInline> to take effect, either the column or grid must have <CodeInline>Groupable</CodeInline> enabled.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridGroupingExample />
+                </SectionContent>
+            </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Multi Level Grouping">
+                    <Description>
+                        Multi-level grouping lets you group data across multiple columns and control the order of grouped levels.
+                        <br /><br />
+                        <CodeInline>Grouping</CodeInline>, <CodeInline>GroupExpanded</CodeInline>, and <CodeInline>GroupByOrder</CodeInline> support two-way binding.
+                        <br /><br />
+                        Use <CodeInline>GroupByOrder</CodeInline> to control grouped level order and <CodeInline>GroupExpanded</CodeInline> to control initial expansion state per grouped column.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingMultiLevelExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridGroupingMultiLevelExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
-
-
         <DocsPageSection>
             <SectionHeader Title="Sorting">
                 <Description>

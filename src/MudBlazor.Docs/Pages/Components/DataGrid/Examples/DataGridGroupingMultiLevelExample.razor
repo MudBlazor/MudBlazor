@@ -1,105 +1,76 @@
 ﻿@using System.Threading
-@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 
-<MudDataGrid @ref="_dataGrid" T="USState"
+<MudDataGrid @ref="_dataGrid" T="Company"
              ServerData="ServerReload"
              Groupable
              FixedHeader
              Height="500px">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">US States Information</MudText>
+        <MudText Typo="Typo.h6">Company Org</MudText>
         <MudSpacer />
-        <MudTextField T="string"
-                      ValueChanged="@OnSearch"
-                      Placeholder="Filter Results"
-                      Adornment="Adornment.End"
-                      AdornmentIcon="@Icons.Material.Outlined.Search"
-                      DebounceInterval="100"
-                      Variant="Variant.Outlined"
-                      Clearable />
+        <MudTextField T="string" ValueChanged="OnSearch" />
     </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="x => x.State" Title="State" Groupable="false" />
-        <PropertyColumn Property="x => x.Counties" Groupable="false" />
-        <PropertyColumn Property="x => x.Population" Groupable="false" Format="N0" />
-        <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" Grouping="true" GroupByOrder="0" GroupExpanded="true" />
-        <PropertyColumn Property="x => x.Region" Title="Region" Grouping="true" GroupByOrder="1" GroupExpanded="true" />
-        <PropertyColumn Property="x => x.Climate" Title="Climate" Grouping="true" GroupByOrder="2" GroupExpanded="true" />
-        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" Groupable="false" />
+        <PropertyColumn Property="x => x.Department" Title="Department" Grouping GroupExpanded />
+        <PropertyColumn Property="x => x.Team" Title="Team" Grouping GroupByOrder="1" GroupExpanded />
+        <PropertyColumn Property="x => x.Role" Title="Role" Grouping GroupByOrder="2" GroupExpanded />
+        <PropertyColumn Property="x => x.Name" Title="Name" Groupable="false" />
+        <PropertyColumn Property="x => x.Score" Title="Score" Groupable="false" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="USState" />
+        <MudDataGridPager T="Company" />
     </PagerContent>
 </MudDataGrid>
 
 @code {
 #nullable enable
-    public static string __description__ = "Multi-level grouping in DataGrid";
+    private static readonly IReadOnlyCollection<Company> _org = Company.GetRecords();
 
-    private static readonly IReadOnlyCollection<USState> _allStates =
-    [
-        new() { Id = 1, State = "Alabama", Counties = 67, Population = 5024279, PrimaryIndustry = "Manufacturing", Region = "Southeast", Climate = "Humid Subtropical", YearInducted = 1819 },
-        new() { Id = 2, State = "Alaska", Counties = 19, Population = 733583, PrimaryIndustry = "Tourism", Region = "Pacific", Climate = "Continental", YearInducted = 1959 },
-        new() { Id = 3, State = "Arizona", Counties = 15, Population = 7431344, PrimaryIndustry = "Technology", Region = "Southwest", Climate = "Desert", YearInducted = 1912 },
-        new() { Id = 4, State = "Arkansas", Counties = 75, Population = 3067732, PrimaryIndustry = "Agriculture", Region = "Southeast", Climate = "Humid Subtropical", YearInducted = 1836 },
-        new() { Id = 5, State = "California", Counties = 58, Population = 38965193, PrimaryIndustry = "Technology", Region = "West", Climate = "Mediterranean", YearInducted = 1850 },
-        new() { Id = 6, State = "Colorado", Counties = 64, Population = 5877610, PrimaryIndustry = "Tourism", Region = "West", Climate = "Semi-arid", YearInducted = 1876 },
-        new() { Id = 7, State = "Connecticut", Counties = 8, Population = 3617176, PrimaryIndustry = "Finance", Region = "Northeast", Climate = "Continental", YearInducted = 1788 },
-        new() { Id = 8, State = "Delaware", Counties = 3, Population = 1031890, PrimaryIndustry = "Healthcare", Region = "Northeast", Climate = "Humid Subtropical", YearInducted = 1787 },
-        new() { Id = 9, State = "Florida", Counties = 67, Population = 22610726, PrimaryIndustry = "Tourism", Region = "Southeast", Climate = "Tropical", YearInducted = 1845 },
-        new() { Id = 10, State = "Georgia", Counties = 159, Population = 11029227, PrimaryIndustry = "Agriculture", Region = "Southeast", Climate = "Humid Subtropical", YearInducted = 1788 },
-        new() { Id = 11, State = "Illinois", Counties = 102, Population = 12549689, PrimaryIndustry = "Manufacturing", Region = "Midwest", Climate = "Continental", YearInducted = 1818 },
-        new() { Id = 12, State = "Michigan", Counties = 83, Population = 10037261, PrimaryIndustry = "Manufacturing", Region = "Midwest", Climate = "Continental", YearInducted = 1837 }
-    ];
+    private MudDataGrid<Company> _dataGrid = null!;
+    private string? _search;
 
-    private MudDataGrid<USState> _dataGrid = null!;
-    private string? _searchString;
-
-    private Task<GridData<USState>> ServerReload(GridState<USState> state, CancellationToken token)
+    private Task<GridData<Company>> ServerReload(GridState<Company> state, CancellationToken _)
     {
-        IEnumerable<USState> data = _allStates;
+        var data = _org.AsEnumerable();
 
-        if (!string.IsNullOrWhiteSpace(_searchString))
+        if (!string.IsNullOrWhiteSpace(_search))
         {
+            var c = StringComparison.OrdinalIgnoreCase;
+            var n = string.Empty;
             data = data.Where(x =>
-                (x.State ?? string.Empty).Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                || (x.PrimaryIndustry ?? string.Empty).Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                || (x.Region ?? string.Empty).Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                || (x.Climate ?? string.Empty).Contains(_searchString, StringComparison.OrdinalIgnoreCase)
-                || x.YearInducted.ToString().Contains(_searchString));
+                (x.Department ?? n).Contains(_search, c)
+                || (x.Team ?? n).Contains(_search, c)
+                || (x.Role ?? n).Contains(_search, c)
+                || (x.Name ?? n).Contains(_search, c));
         }
 
-        var sortDefinition = state.SortDefinitions.FirstOrDefault();
-        if (sortDefinition is not null)
+        var s = state.SortDefinitions.FirstOrDefault();
+        if (s is not null)
         {
-            data = sortDefinition.SortBy switch
+            var d = s.Descending ? SortDirection.Descending : SortDirection.Ascending;
+            data = s.SortBy switch
             {
-                nameof(USState.State) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.State),
-                nameof(USState.Counties) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.Counties),
-                nameof(USState.Population) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.Population),
-                nameof(USState.PrimaryIndustry) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.PrimaryIndustry),
-                nameof(USState.Region) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.Region),
-                nameof(USState.Climate) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.Climate),
-                nameof(USState.YearInducted) => data.OrderByDirection(sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending, x => x.YearInducted),
+                nameof(Company.Department) => data.OrderByDirection(d, x => x.Department),
+                nameof(Company.Team) => data.OrderByDirection(d, x => x.Team),
+                nameof(Company.Role) => data.OrderByDirection(d, x => x.Role),
+                nameof(Company.Name) => data.OrderByDirection(d, x => x.Name),
+                nameof(Company.Score) => data.OrderByDirection(d, x => x.Score),
                 _ => data
             };
         }
 
-        var list = data.ToList();
-        var totalItems = list.Count;
-        var pagedData = list.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
-
-        return Task.FromResult(new GridData<USState>
+        var total = data.Count();
+        return Task.FromResult(new GridData<Company>
         {
-            TotalItems = totalItems,
-            Items = pagedData
+            TotalItems = total,
+            Items = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray()
         });
     }
 
     private Task OnSearch(string value)
     {
-        _searchString = value;
+        _search = value;
         return _dataGrid.ReloadServerData();
     }
 }
