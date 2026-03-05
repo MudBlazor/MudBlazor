@@ -498,7 +498,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await BeginValidateWithoutNotifyFieldChangedAsync();
+                        await BeginValidateAsync();
                     }
                 }
             }
@@ -553,6 +553,13 @@ namespace MudBlazor
         private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
         {
             _validated = false;
+
+            // Keep EditContext field-change tracking aligned with external model updates
+            // so blur-only interactions do not raise OnFieldChanged for non-user changes.
+            if (!arg.IsChildOriginatedChange)
+            {
+                UpdateEditContextFieldChangedBaseline(arg.Value);
+            }
 
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
