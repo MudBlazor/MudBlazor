@@ -47,14 +47,18 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     /// <summary>
     /// Initializes a new instance of the <see cref="TypeDispatcher{TIn,TOut}"/> class.
     /// </summary>
-    /// <param name="handlers">A pre-populated map of concrete input <see cref="Type"/> to conversion delegates.</param>
-    protected TypeDispatcher(Dictionary<Type, Delegate> handlers)
+    /// <param name="forward">The resolved forward delegate for <typeparamref name="TIn"/>, or <c>null</c> when no converter is registered.</param>
+    protected TypeDispatcher(Func<TIn, TOut>? forward) => _forward = forward;
+
+    internal static Func<TIn, TOut>? ResolveForwardHandler(Dictionary<Type, Delegate> handlers)
     {
-        if (handlers.TryGetValue(typeof(TIn), out var del))
+        var runtimeType = typeof(TIn);
+        if (handlers.TryGetValue(runtimeType, out var del))
         {
-            _forward = del as Func<TIn, TOut>
-                ?? (input => (TOut)del.DynamicInvoke(input)!);
+            return del as Func<TIn, TOut> ?? (input => (TOut)del.DynamicInvoke(input)!);
         }
+
+        return null;
     }
 
     /// <inheritdoc />
@@ -64,12 +68,12 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     /// </exception>
     public TOut Convert(TIn input)
     {
-        var runtimeType = typeof(TIn);
-
         if (_forward is not null)
         {
             return _forward(input);
         }
+
+        var runtimeType = typeof(TIn);
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
@@ -133,6 +137,10 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         }
 
         /// <inheritdoc />
-        public IConverter<TIn, TOut> Build() => new TypeDispatcher<TIn, TOut>(_handlers);
+        public IConverter<TIn, TOut> Build()
+        {
+            var forward = ResolveForwardHandler(_handlers);
+            return new TypeDispatcher<TIn, TOut>(forward);
+        }
     }
 }
