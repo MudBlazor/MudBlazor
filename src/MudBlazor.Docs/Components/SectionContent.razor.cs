@@ -192,8 +192,6 @@ public partial class SectionContent
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
             }
-
-
         }
 
         if (CompanyRegularExpression().Match(codeFiles).Success)
@@ -220,13 +218,3 @@ public partial class SectionContent
     [GeneratedRegex(@"\bCompany\b")]
     private static partial Regex CompanyRegularExpression();
 }
-
-
-
-
-
-
-
-
-
-

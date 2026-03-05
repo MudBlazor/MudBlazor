@@ -45,26 +45,34 @@
                 || (x.Name ?? n).Contains(_search, c));
         }
 
-        var s = state.SortDefinitions.FirstOrDefault();
-        if (s is not null)
+        IOrderedEnumerable<Company>? ordered = null;
+        foreach (var s in state.SortDefinitions)
         {
-            var d = s.Descending ? SortDirection.Descending : SortDirection.Ascending;
-            data = s.SortBy switch
+            Func<Company, object?> key = s.SortBy switch
             {
-                nameof(Company.Department) => data.OrderByDirection(d, x => x.Department),
-                nameof(Company.Team) => data.OrderByDirection(d, x => x.Team),
-                nameof(Company.Role) => data.OrderByDirection(d, x => x.Role),
-                nameof(Company.Name) => data.OrderByDirection(d, x => x.Name),
-                nameof(Company.Score) => data.OrderByDirection(d, x => x.Score),
-                _ => data
+                nameof(Company.Department) => x => x.Department,
+                nameof(Company.Team) => x => x.Team,
+                nameof(Company.Role) => x => x.Role,
+                nameof(Company.Name) => x => x.Name,
+                nameof(Company.Score) => x => x.Score,
+                _ => x => x.Name
             };
+
+            ordered = ordered is null
+                ? (s.Descending ? data.OrderByDescending(key) : data.OrderBy(key))
+                : (s.Descending ? ordered.ThenByDescending(key) : ordered.ThenBy(key));
         }
 
-        var total = data.Count();
+        if (ordered is not null)
+        {
+            data = ordered;
+        }
+
+        var list = data.ToList();
         return Task.FromResult(new GridData<Company>
         {
-            TotalItems = total,
-            Items = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray()
+            TotalItems = list.Count,
+            Items = list.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray()
         });
     }
 
