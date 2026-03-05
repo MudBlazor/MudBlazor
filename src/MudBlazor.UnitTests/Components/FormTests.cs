@@ -409,9 +409,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
+        /// #12790: After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
         /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task EditFormOnFieldChanged_BlurWithoutValueChange_ShouldNotNotify()
         {
