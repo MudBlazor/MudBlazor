@@ -294,7 +294,7 @@ namespace MudBlazor
                 // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
-                    await BeginValidateAsync();
+                    await BeginValidateWithoutNotifyFieldChangedAsync();
                 }
             };
 
@@ -303,13 +303,23 @@ namespace MudBlazor
 
         protected Task BeginValidateAsync()
         {
+            return BeginValidateAsync(notifyFieldChanged: true);
+        }
+
+        internal Task BeginValidateWithoutNotifyFieldChangedAsync()
+        {
+            return BeginValidateAsync(notifyFieldChanged: false);
+        }
+
+        private Task BeginValidateAsync(bool notifyFieldChanged)
+        {
             Func<Task> execute = async () =>
             {
                 var value = ReadValue;
 
                 await ValidateValue();
 
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue))
+                if (notifyFieldChanged && EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
                     EditFormValidate();
                 }
