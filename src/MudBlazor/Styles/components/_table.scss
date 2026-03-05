@@ -415,7 +415,8 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
     &.mud-table-body-virtualized {
       @media(hover: hover) and (pointer: fine) {
-        & .mud-table-row.mud-table-row-stripe:hover {
+        & .mud-table-row.mud-table-row-stripe:hover,
+        & .mud-table-row:nth-of-type(odd):hover {
           background-color: var(--mud-palette-table-hover);
         }
       }

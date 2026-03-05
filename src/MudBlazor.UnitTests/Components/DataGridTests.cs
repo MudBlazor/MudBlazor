@@ -153,6 +153,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridVirtualizeSpacerElementsAreTableRows()
+        {
+            var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Virtualize spacer elements must be <tr>, not <div>, so that CSS table layout respects
+            // their height. A <div> inside <tbody> has its height ignored, causing scroll-position jumping.
+            var tbody = dataGrid.Find("tbody");
+            tbody.QuerySelectorAll("div").Should().BeEmpty(because: "Virtualize spacers inside <tbody> must be <tr> elements, not <div>s");
+
+            // Virtualize renders one before-spacer and one after-spacer <tr>; neither has the mud-table-row class.
+            var spacerTrs = tbody.QuerySelectorAll("tr:not(.mud-table-row)").ToList();
+            spacerTrs.Should().HaveCount(2, because: "Virtualize renders exactly one before-spacer and one after-spacer <tr>");
+        }
+
+        [Test]
         public void DataGirdWithServerDataAndVirtualize()
         {
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
