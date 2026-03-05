@@ -46,8 +46,8 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
             .Add<char?>(CharConverter.Instance)
             .Add<bool>(DefaultConverter.BoolConverter.Instance)
             .Add<bool?>(DefaultConverter.BoolConverter.Instance)
-            .Add<Guid>(GuidConverter.Instance)
-            .Add<Guid?>(GuidConverter.Instance)
+            .Add<Guid>(new GuidConverter(() => Culture(), () => Format()))
+            .Add<Guid?>(new GuidConverter(() => Culture(), () => Format()))
             .Add(new NumberConverter<sbyte>(() => Culture(), () => Format()))
             .Add(new NullableNumberConverter<sbyte>(() => Culture(), () => Format()))
             .Add(new NumberConverter<byte>(() => Culture(), () => Format()))
@@ -123,7 +123,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         if (nullableUnderlyingType is not null && ImplementsIParsable(nullableUnderlyingType))
         {
             var nullableConverterType = typeof(NullableParsableConverter<>).MakeGenericType(nullableUnderlyingType);
-            var nullableConverter = Activator.CreateInstance(nullableConverterType, (Func<CultureInfo>)(() => Culture()));
+            var nullableConverter = Activator.CreateInstance(nullableConverterType, (Func<CultureInfo>)(() => Culture()), (Func<string?>)(() => Format()));
             if (nullableConverter is not null)
             {
                 builder.AddDynamic(targetType, nullableConverter);
@@ -133,7 +133,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         if (ImplementsIParsable(targetType))
         {
             var converterType = typeof(ParsableConverter<>).MakeGenericType(targetType);
-            var converter = Activator.CreateInstance(converterType, (Func<CultureInfo>)(() => Culture()));
+            var converter = Activator.CreateInstance(converterType, (Func<CultureInfo>)(() => Culture()), (Func<string?>)(() => Format()));
             if (converter is not null)
             {
                 builder.AddDynamic(targetType, converter);

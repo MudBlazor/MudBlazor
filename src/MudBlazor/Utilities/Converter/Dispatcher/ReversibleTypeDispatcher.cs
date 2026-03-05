@@ -50,11 +50,8 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
     /// </summary>
     /// <param name="forward">The resolved forward delegate for <typeparamref name="TIn"/>, or <c>null</c> when no converter is registered.</param>
     /// <param name="backward">The resolved backward delegate for <typeparamref name="TIn"/>, or <c>null</c> when no converter is registered.</param>
-    protected ReversibleTypeDispatcher(
-        Func<TIn, TOut>? forward,
-        Func<TOut, TIn>? backward)
-        : base(forward)
-        => _backward = backward;
+    protected ReversibleTypeDispatcher(Func<TIn, TOut>? forward, Func<TOut, TIn>? backward)
+        : base(forward) => _backward = backward;
 
     internal static Func<TOut, TIn>? ResolveBackwardHandler(Dictionary<Type, Delegate> reverseHandlers)
     {

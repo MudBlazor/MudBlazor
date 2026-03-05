@@ -735,7 +735,7 @@ public class DefaultConverterTests
     [Test]
     public void Guid_Convert_ShouldReturnString()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = new DefaultConverter.GuidConverter(() => CultureInfo.InvariantCulture, () => null);
         var guid = Guid.NewGuid();
 
         conv.Convert(guid).Should().Be(guid.ToString());
@@ -744,14 +744,14 @@ public class DefaultConverterTests
     [Test]
     public void Guid_Convert_NullableNull_ReturnsNull()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = new DefaultConverter.GuidConverter(() => CultureInfo.InvariantCulture, () => null);
         conv.Convert(null).Should().BeNull();
     }
 
     [Test]
     public void Guid_ConvertBack_NullOrEmpty_ReturnsEmptyGuid()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = new DefaultConverter.GuidConverter(() => CultureInfo.InvariantCulture, () => null);
         conv.ConvertBack(null).Should().Be(Guid.Empty);
         conv.ConvertBack(string.Empty).Should().Be(Guid.Empty);
     }
@@ -759,7 +759,7 @@ public class DefaultConverterTests
     [Test]
     public void Guid_ConvertBack_ValidGuidString_ReturnsParsedGuid()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = new DefaultConverter.GuidConverter(() => CultureInfo.InvariantCulture, () => null);
         var guid = Guid.NewGuid();
         var text = guid.ToString();
 
@@ -769,7 +769,7 @@ public class DefaultConverterTests
     [Test]
     public void Guid_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = new DefaultConverter.GuidConverter(() => CultureInfo.InvariantCulture, () => null);
 
         Action act = () => conv.ConvertBack("not-a-guid");
 
@@ -783,7 +783,7 @@ public class DefaultConverterTests
     [Test]
     public void Guid_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = new DefaultConverter.GuidConverter(() => CultureInfo.InvariantCulture, () => null);
         IReversibleConverter<Guid?, string?> nullableConv = conv;
 
         nullableConv.ConvertBack(null).Should().BeNull();
