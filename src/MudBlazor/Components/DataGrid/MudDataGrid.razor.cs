@@ -134,6 +134,11 @@ namespace MudBlazor
             new CssBuilder("mud-table-foot")
                 .AddClass(FooterClass).Build();
 
+        protected string BodyClassname =>
+            new CssBuilder("mud-table-body")
+                .AddClass("mud-table-body-virtualized", Virtualize)
+                .Build();
+
         protected string HeaderFooterStyle =>
             new StyleBuilder()
                 .AddStyle("position", "sticky", when: HasStickyColumns)
