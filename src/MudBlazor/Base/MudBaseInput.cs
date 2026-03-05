@@ -494,11 +494,25 @@ namespace MudBlazor
                     if (OnBlur.HasDelegate)
                     {
                         obj.Type += ".additional";
-                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj), _isDirty);
+                        if (_isDirty)
+                        {
+                            await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                        }
+                        else
+                        {
+                            await BeginValidationAfterWithoutEditContextFieldChangedAsync(OnBlur.InvokeAsync(obj));
+                        }
                     }
                     else
                     {
-                        await BeginValidateAsync(_isDirty);
+                        if (_isDirty)
+                        {
+                            await BeginValidateAsync();
+                        }
+                        else
+                        {
+                            await BeginValidateWithoutEditContextFieldChangedAsync();
+                        }
                     }
                 }
             }

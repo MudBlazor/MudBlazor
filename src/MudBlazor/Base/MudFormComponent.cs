@@ -282,7 +282,9 @@ namespace MudBlazor
         /// </summary>
         protected T? _value;
 
-        protected Task BeginValidationAfterAsync(Task task, bool notifyEditContext = true)
+        private int _suppressEditContextFieldChangedCounter;
+
+        protected Task BeginValidationAfterAsync(Task task)
         {
             Func<Task> execute = async () =>
             {
@@ -294,14 +296,14 @@ namespace MudBlazor
                 // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
-                    await BeginValidateAsync(notifyEditContext);
+                    await BeginValidateAsync();
                 }
             };
 
             return execute();
         }
 
-        protected Task BeginValidateAsync(bool notifyEditContext = true)
+        protected Task BeginValidateAsync()
         {
             Func<Task> execute = async () =>
             {
@@ -309,13 +311,39 @@ namespace MudBlazor
 
                 await ValidateValue();
 
-                if (notifyEditContext && EqualityComparer<T>.Default.Equals(value, ReadValue))
+                if (_suppressEditContextFieldChangedCounter == 0 && EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
                     EditFormValidate();
                 }
             };
 
             return execute();
+        }
+
+        internal async Task BeginValidationAfterWithoutEditContextFieldChangedAsync(Task task)
+        {
+            _suppressEditContextFieldChangedCounter++;
+            try
+            {
+                await BeginValidationAfterAsync(task);
+            }
+            finally
+            {
+                _suppressEditContextFieldChangedCounter--;
+            }
+        }
+
+        internal async Task BeginValidateWithoutEditContextFieldChangedAsync()
+        {
+            _suppressEditContextFieldChangedCounter++;
+            try
+            {
+                await BeginValidateAsync();
+            }
+            finally
+            {
+                _suppressEditContextFieldChangedCounter--;
+            }
         }
 
         /// <summary>
