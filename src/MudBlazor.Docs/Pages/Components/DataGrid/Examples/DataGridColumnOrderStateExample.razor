@@ -2,39 +2,70 @@
 
 <MudDataGrid Items="_items"
              DragDropColumnReordering="true"
-             ColumnOrderChanged="OnColumnOrderChanged">
+             ColumnsPanelReordering="true"
+             ShowMenuIcon="true"
+             ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Item> args) => OnColumnOrderChanged(args))">
     <Columns>
+        <SelectColumn T="Item" @bind-Order="_selectOrder" />
         <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="_nameOrder" />
         <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="_ageOrder" />
         <PropertyColumn Property="x => x.Role" Title="Role" @bind-Order="_roleOrder" />
     </Columns>
 </MudDataGrid>
 
-<div class="d-flex gap-2 mt-3">
+<div class="d-flex gap-2 mt-2">
     <MudButton OnClick="SaveLayout" Variant="Variant.Filled" Color="Color.Primary">Save layout</MudButton>
     <MudButton OnClick="ResetLayout" Variant="Variant.Outlined" Color="Color.Primary">Reset layout</MudButton>
     <MudButton OnClick="RestoreLayout" Variant="Variant.Outlined" Color="Color.Primary">Restore layout</MudButton>
 </div>
 
-<div class="d-flex flex-wrap gap-2 mt-3">
-    <MudSelect T="int?" Label="Name Order" Value="_nameOrder" ValueChanged="value => UpdateOrder(nameof(Item.Name), value)" Dense="true">
-        <MudSelectItem T="int?" Value="@((int?)null)">Default</MudSelectItem>
-        <MudSelectItem T="int?" Value="0">0</MudSelectItem>
-        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
-        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
-    </MudSelect>
-    <MudSelect T="int?" Label="Age Order" Value="_ageOrder" ValueChanged="value => UpdateOrder(nameof(Item.Age), value)" Dense="true">
-        <MudSelectItem T="int?" Value="@((int?)null)">Default</MudSelectItem>
-        <MudSelectItem T="int?" Value="0">0</MudSelectItem>
-        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
-        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
-    </MudSelect>
-    <MudSelect T="int?" Label="Role Order" Value="_roleOrder" ValueChanged="value => UpdateOrder(nameof(Item.Role), value)" Dense="true">
-        <MudSelectItem T="int?" Value="@((int?)null)">Default</MudSelectItem>
-        <MudSelectItem T="int?" Value="0">0</MudSelectItem>
-        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
-        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
-    </MudSelect>
+<div class="d-flex justify-center">
+    <MudPaper Class="mt-3" Style="width: 420px; max-width: 100%;">
+        <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
+            <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Select</MudText>
+            <MudSelect T="int?" @bind-Value="_selectOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+                <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
+                <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+                <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+                <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+                <MudSelectItem T="int?" Value="3">3</MudSelectItem>
+            </MudSelect>
+            <MudText Typo="Typo.body2" Class="font-weight-medium">@FormatOrder(_selectOrder)</MudText>
+        </div>
+        <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
+            <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Name</MudText>
+            <MudSelect T="int?" @bind-Value="_nameOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+                <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
+                <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+                <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+                <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+                <MudSelectItem T="int?" Value="3">3</MudSelectItem>
+            </MudSelect>
+            <MudText Typo="Typo.body2" Class="font-weight-medium">@FormatOrder(_nameOrder)</MudText>
+        </div>
+        <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
+            <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Age</MudText>
+            <MudSelect T="int?" @bind-Value="_ageOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+                <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
+                <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+                <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+                <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+                <MudSelectItem T="int?" Value="3">3</MudSelectItem>
+            </MudSelect>
+            <MudText Typo="Typo.body2" Class="font-weight-medium">@FormatOrder(_ageOrder)</MudText>
+        </div>
+        <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
+            <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Role</MudText>
+            <MudSelect T="int?" @bind-Value="_roleOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+                <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
+                <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+                <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+                <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+                <MudSelectItem T="int?" Value="3">3</MudSelectItem>
+            </MudSelect>
+            <MudText Typo="Typo.body2" Class="font-weight-medium">@FormatOrder(_roleOrder)</MudText>
+        </div>
+    </MudPaper>
 </div>
 
 <MudText Class="mt-2" Typo="Typo.body2">@_status</MudText>
@@ -47,58 +78,48 @@
         new("Ira", 27, "Developer")
     ];
 
+    private int? _selectOrder;
     private int? _nameOrder;
     private int? _ageOrder;
     private int? _roleOrder;
     private SavedLayout _savedLayout = new();
-    private string _status = "Reorder columns or change a bound Order value.";
+    private string _status = "Drag columns or set Order values below to reorder them.";
 
     private void SaveLayout()
     {
-        _savedLayout = new SavedLayout(_nameOrder, _ageOrder, _roleOrder);
-        _status = "Layout saved.";
+        _savedLayout = new SavedLayout(_selectOrder, _nameOrder, _ageOrder, _roleOrder);
+        _status = $"Layout saved as Select={FormatOrder(_savedLayout.SelectOrder)}, Name={FormatOrder(_savedLayout.NameOrder)}, Age={FormatOrder(_savedLayout.AgeOrder)}, Role={FormatOrder(_savedLayout.RoleOrder)}.";
     }
 
     private void ResetLayout()
     {
+        _selectOrder = null;
         _nameOrder = null;
         _ageOrder = null;
         _roleOrder = null;
-        _status = "Layout reset to default order.";
+        _status = "Layout reset to null order values.";
     }
 
     private void RestoreLayout()
     {
+        _selectOrder = _savedLayout.SelectOrder;
         _nameOrder = _savedLayout.NameOrder;
         _ageOrder = _savedLayout.AgeOrder;
         _roleOrder = _savedLayout.RoleOrder;
-        _status = "Layout restored.";
-    }
-
-    private void UpdateOrder(string columnName, int? order)
-    {
-        switch (columnName)
-        {
-            case nameof(Item.Name):
-                _nameOrder = order;
-                break;
-            case nameof(Item.Age):
-                _ageOrder = order;
-                break;
-            case nameof(Item.Role):
-                _roleOrder = order;
-                break;
-        }
-
-        _status = $"{columnName} Order set to {(order?.ToString() ?? "Default")}.";
+        _status = "Saved bound Order values restored.";
     }
 
     private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Item> args)
     {
-        _status = $"{args.Column.Title} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+        _status = $"{GetColumnLabel(args.Column)} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
     }
 
-    private sealed record SavedLayout(int? NameOrder = null, int? AgeOrder = null, int? RoleOrder = null);
+    private static string FormatOrder(int? order) => order?.ToString() ?? "(unset)";
+
+    private static string GetColumnLabel(Column<Item> column) =>
+        !string.IsNullOrWhiteSpace(column.Title) ? column.Title : column.PropertyName ?? "Column";
+
+    private sealed record SavedLayout(int? SelectOrder = null, int? NameOrder = null, int? AgeOrder = null, int? RoleOrder = null);
 
     private sealed record Item(string Name, int Age, string Role);
 }

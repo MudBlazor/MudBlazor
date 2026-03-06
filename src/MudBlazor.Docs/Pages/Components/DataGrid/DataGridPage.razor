@@ -1,4 +1,4 @@
-ï»¿@page "/components/datagrid"
+@page "/components/datagrid"
 
 <DocsPage>
     <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)">
@@ -142,14 +142,14 @@
                         To enable grouping functionality across the grid set the <CodeInline>Groupable</CodeInline> property on <CodeInline Tag="true">MudDataGrid</CodeInline>
                         to <CodeInline>true</CodeInline>. This activates the grouping feature globally, allowing all columns to be groupable unless explicitly overridden.
                         Each column also supports its own <CodeInline>Groupable</CodeInline> property. This column-level property takes precedence over the grid-level
-                        setting. For example, if the gridâ€™s <CodeInline>Groupable</CodeInline> is <CodeInline>true</CodeInline> but a columnâ€™s
+                        setting. For example, if the grid’s <CodeInline>Groupable</CodeInline> is <CodeInline>true</CodeInline> but a column’s
                         <CodeInline>Groupable</CodeInline> is set to <CodeInline>false</CodeInline>, that column will not be groupable via the UI.
                     </MudText>
                     <MudText Typo="Typo.h6" Class="mt-2">Default Grouping State</MudText>
                     <MudText HtmlTag="p">
                         To define whether a column should start grouped by default, set its <CodeInline>Grouping</CodeInline> property to <CodeInline>true</CodeInline>.
                         This property supports two-way binding <CodeInline>@@bind-Grouping</CodeInline>, meaning it updates if the user groups or ungroups the column
-                        via the gridâ€™s UI.
+                        via the grid’s UI.
                     </MudText>
                     <MudAlert Severity="Severity.Info" Dense="true">
                         Note that for <CodeInline>Grouping</CodeInline> to take effect, either the column or grid must have <CodeInline>Groupable</CodeInline> enabled.
@@ -447,46 +447,47 @@
         <DocsPageSection>
             <SectionHeader Title="Column Reordering">
                 <Description>
-                    To enable Column Reordering via Drag and Drop, set the <CodeInline>DragDropColumnReordering</CodeInline> parameter to true. Columns can override this parameter with their <CodeInline>DragAndDropEnabled</CodeInline> parameter if necessary.
-                    In the example all but two fixed columns can be reordered by dragging their header onto another column header to swap places. On mouse-over the draggable columns show their <CodeInline>DragIndicatorIcon</CodeInline> and when dragging
-                    a header over another column header, it will signal its ability to swap places by changing its text color. The drag-over effect can be customized by setting parameters <CodeInline>DropAllowedClass</CodeInline> and <CodeInline>DropNotAllowedClass</CodeInline>
-                    to your own CSS classes.
+                    Reorder columns through direct drag-and-drop, the columns panel, or bound <CodeInline>Order</CodeInline> values.
+                    The examples below group the three related patterns for column ordering.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumReorderingExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridColumReorderingExample />
-            </SectionContent>
-        </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Columns Panel">
-                <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>.
-                    The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options except column re-ordering.
-                    <br><br>
-                    Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis, so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
-                    For declarative ordering, set <CodeInline>Order</CodeInline> on individual columns. To observe runtime reordering, handle <CodeInline>ColumnOrderChanged</CodeInline> on the grid.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridColumnsPanelExample />
-            </SectionContent>
-        </DocsPageSection>
+            <DocsPageSection>
+                <SectionHeader Title="Drag and Drop Columns">
+                    <Description>
+                        The first example keeps focus on drag-and-drop column reordering.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumReorderingExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridColumReorderingExample />
+                </SectionContent>
+            </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Column Order State">
-                <Description>
-                    Bind <CodeInline>Order</CodeInline> on each column to persist layout state, and handle <CodeInline>ColumnOrderChanged</CodeInline> to react to runtime reordering.
-                    This example keeps the saved state in component fields to show the smallest possible save and restore flow.
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        <CodeInline>HierarchyColumn</CodeInline> stays pinned and is not restored through <CodeInline>Order</CodeInline>.
-                        <CodeInline>SelectColumn</CodeInline> uses its default position until reordered, then participates in saved <CodeInline>Order</CodeInline> state like other columns.
-                    </MudAlert>
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnOrderStateExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridColumnOrderStateExample />
-            </SectionContent>
+            <DocsPageSection>
+                <SectionHeader Title="Columns Panel">
+                    <Description>
+                        The second example demonstrates reordering from the columns panel.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridColumnsPanelExample />
+                </SectionContent>
+            </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Order State">
+                    <Description>
+                        The last example uses bound <CodeInline>Order</CodeInline> values with save, reset, and restore behavior.
+                        <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                            <div>* <CodeInline>HierarchyColumn</CodeInline> is pinned and does not participate in <CodeInline>Order</CodeInline> state.</div>
+                            <div>* <CodeInline>(unset)</CodeInline> indicates a null order value.</div>
+                        </MudAlert>
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnOrderStateExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridColumnOrderStateExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -535,3 +536,5 @@
 
     </DocsPageContent>
 </DocsPage>
+
+
