@@ -31,6 +31,8 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
+        private bool _pendingParameterDrivenColumnOrderNormalization;
+        private ColumnOrderChangeOrigin _columnOrderChangeOrigin = ColumnOrderChangeOrigin.None;
         internal HashSet<T> _openHierarchies = [];
         private readonly HashSet<T> _initialExpansions = [];
         private Func<T, bool>? _initialExpandedFunc = null;
@@ -241,7 +243,7 @@ namespace MudBlazor
                 dragAndDropSource.HeaderCell.Width = dest;
                 dragAndDropDestination.HeaderCell.Width = src;
 
-                StateHasChanged();
+                return UpdateColumnOrderStateAsync(dragAndDropSource, dragAndDropSourceIndex);
             }
             return Task.CompletedTask;
         }
@@ -1511,6 +1513,12 @@ namespace MudBlazor
                 PagerStateHasChangedEvent?.Invoke();
             }
 
+            if (_pendingParameterDrivenColumnOrderNormalization)
+            {
+                _pendingParameterDrivenColumnOrderNormalization = false;
+                await NormalizeColumnOrderStateAsync(null, -1, ColumnOrderChangeOrigin.ParameterUpdate);
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -1699,21 +1707,18 @@ namespace MudBlazor
         {
             column.RegistrationIndex = _nextColumnRegistrationIndex++;
 
-            if (column.Tag?.ToString() == "hierarchy-column")
+            if (column.Tag?.ToString() == "hierarchy-column" && column is TemplateColumn<T> templateColumn)
             {
-                if (column is TemplateColumn<T> templateColumn)
+                _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
+                _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
+                // Apply expansion now if items or _serverData.Items is already set
+                if (Items is not null)
                 {
-                    _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
-                    _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
-                    // Apply expansion now if items or _serverData.Items is already set
-                    if (Items is not null)
-                    {
-                        ApplyInitialExpansionForItems(Items);
-                    }
-                    else if (_serverData?.Items?.Any() == true)
-                    {
-                        ApplyInitialExpansionForItems(_serverData.Items);
-                    }
+                    ApplyInitialExpansionForItems(Items);
+                }
+                else if (_serverData?.Items?.Any() == true)
+                {
+                    ApplyInitialExpansionForItems(_serverData.Items);
                 }
             }
 
@@ -2361,18 +2366,7 @@ namespace MudBlazor
                 return;
             }
 
-            var previousIndex = RenderedColumns.IndexOf(column);
-            var reordered = ApplyColumnOrdering();
-            var currentIndex = RenderedColumns.IndexOf(column);
-
-            if (!reordered && previousIndex == currentIndex)
-            {
-                return;
-            }
-
-            DropContainerHasChanged();
-            await NotifyColumnOrderChangedAsync(column, previousIndex, currentIndex);
-            await InvokeAsync(StateHasChanged);
+            _pendingParameterDrivenColumnOrderNormalization = true;
         }
 
         internal void DropContainerHasChanged()
@@ -2407,11 +2401,11 @@ namespace MudBlazor
 
         private static int GetColumnBucket(Column<T> column)
         {
-            var tag = column.Tag?.ToString();
-            return tag switch
+            return column.Tag?.ToString() switch
             {
                 "hierarchy-column" => 0,
-                _ => 1
+                "select-column" when column._orderState.Value is null => 1,
+                _ => 2
             };
         }
 
@@ -2422,30 +2416,153 @@ namespace MudBlazor
                 return 0;
             }
 
-            return column.Tag?.ToString() == "select-column" ? 1 : 2;
+            return 1;
         }
 
         private async Task UpdateColumnOrderStateAsync(Column<T> changedColumn, int previousIndex)
         {
-            var orderedColumns = RenderedColumns.Where(x => GetColumnBucket(x) != 0).ToList();
-            for (var i = 0; i < orderedColumns.Count; i++)
+            await NormalizeColumnOrderStateAsync(changedColumn, previousIndex, ColumnOrderChangeOrigin.UserInteraction);
+        }
+
+        private async Task NormalizeColumnOrderStateAsync(Column<T>? changedColumn, int previousIndex, ColumnOrderChangeOrigin origin)
+        {
+            _columnOrderChangeOrigin = origin;
+            if (_columnOrderChangeOrigin == ColumnOrderChangeOrigin.ParameterUpdate)
             {
-                if (orderedColumns[i]._orderState.Value != i)
+                ApplyColumnOrdering();
+            }
+
+            var orderedColumns = GetColumnsToNormalize();
+            if (_columnOrderChangeOrigin == ColumnOrderChangeOrigin.ParameterUpdate)
+            {
+                await NormalizeColumnOrderStateForParameterUpdatesAsync(orderedColumns);
+            }
+            else
+            {
+                for (var i = 0; i < orderedColumns.Count; i++)
                 {
-                    await orderedColumns[i]._orderState.SetValueAsync(i);
+                    if (orderedColumns[i]._orderState.Value != i)
+                    {
+                        await orderedColumns[i]._orderState.SetValueAsync(i);
+                    }
                 }
             }
 
             ApplyColumnOrdering();
             DropContainerHasChanged();
-            await NotifyColumnOrderChangedAsync(changedColumn, previousIndex, RenderedColumns.IndexOf(changedColumn));
+
+            if (_columnOrderChangeOrigin == ColumnOrderChangeOrigin.UserInteraction && changedColumn is not null)
+            {
+                await NotifyColumnOrderChangedAsync(changedColumn, previousIndex, RenderedColumns.IndexOf(changedColumn));
+            }
+
+            _columnOrderChangeOrigin = ColumnOrderChangeOrigin.None;
             await InvokeAsync(StateHasChanged);
         }
+
+        private async Task NormalizeColumnOrderStateForParameterUpdatesAsync(List<Column<T>> orderedColumns)
+        {
+            if (orderedColumns.Count == 0)
+            {
+                return;
+            }
+
+            var explicitColumns = orderedColumns
+                .Where(column => column._orderState.Value is not null)
+                .OrderBy(column => column._orderState.Value)
+                .ThenBy(column => column.RegistrationIndex)
+                .ToList();
+
+            if (explicitColumns.Count == 0)
+            {
+                for (var i = 0; i < orderedColumns.Count; i++)
+                {
+                    if (orderedColumns[i]._orderState.Value != i)
+                    {
+                        await orderedColumns[i]._orderState.SetValueAsync(i);
+                    }
+                }
+
+                return;
+            }
+
+            var normalized = new Column<T>?[orderedColumns.Count];
+            var usedIndexes = new HashSet<int>();
+            var unresolvedExplicitColumns = new List<Column<T>>();
+
+            foreach (var column in explicitColumns)
+            {
+                var desiredIndex = column._orderState.Value!.Value;
+                if (desiredIndex < 0 || desiredIndex >= orderedColumns.Count || usedIndexes.Contains(desiredIndex))
+                {
+                    unresolvedExplicitColumns.Add(column);
+                    continue;
+                }
+
+                normalized[desiredIndex] = column;
+                usedIndexes.Add(desiredIndex);
+            }
+
+            var fillOrder = orderedColumns
+                .Where(column => column._orderState.Value is null)
+                .Concat(unresolvedExplicitColumns)
+                .ToList();
+
+            for (var i = 0; i < normalized.Length; i++)
+            {
+                if (normalized[i] is not null)
+                {
+                    continue;
+                }
+
+                if (fillOrder.Count == 0)
+                {
+                    break;
+                }
+
+                normalized[i] = fillOrder[0];
+                fillOrder.RemoveAt(0);
+            }
+
+            for (var i = 0; i < normalized.Length; i++)
+            {
+                if (normalized[i] is null)
+                {
+                    continue;
+                }
+
+                if (normalized[i]!._orderState.Value != i)
+                {
+                    await normalized[i]!._orderState.SetValueAsync(i);
+                }
+            }
+        }
+        private List<Column<T>> GetColumnsToNormalize()
+        {
+            var orderedColumns = RenderedColumns.Where(x => !IsHierarchyColumn(x)).ToList();
+            if (orderedColumns.Count > 0 && IsDefaultSelectColumn(orderedColumns[0]))
+            {
+                orderedColumns.RemoveAt(0);
+            }
+
+            return orderedColumns;
+        }
+
+        private static bool IsHierarchyColumn(Column<T> column) => column.Tag?.ToString() == "hierarchy-column";
+
+        private static bool IsDefaultSelectColumn(Column<T> column) => column.Tag?.ToString() == "select-column" && column._orderState.Value is null;
 
         private Task NotifyColumnOrderChangedAsync(Column<T> column, int previousIndex, int currentIndex)
         {
             var orderedColumns = RenderedColumns.ToList().AsReadOnly();
             return ColumnOrderChanged.InvokeAsync(new DataGridColumnOrderChangedEventArgs<T>(column, previousIndex, currentIndex, orderedColumns));
+        }
+
+        private enum ColumnOrderChangeOrigin
+        {
+            None,
+            ParameterUpdate,
+            UserInteraction
         }
         /// <summary>
         /// Performs grouping of the current items.
@@ -2790,3 +2907,4 @@ namespace MudBlazor
         internal record GroupKey(string? Title, object? ItemsKey);
     }
 }
+
