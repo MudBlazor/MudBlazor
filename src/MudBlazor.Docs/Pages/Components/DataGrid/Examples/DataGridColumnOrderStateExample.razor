@@ -4,7 +4,6 @@
              DragDropColumnReordering="true"
              ColumnOrderChanged="OnColumnOrderChanged">
     <Columns>
-        <SelectColumn T="Item" @bind-Order="_selectOrder" />
         <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="_nameOrder" />
         <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="_ageOrder" />
         <PropertyColumn Property="x => x.Role" Title="Role" @bind-Order="_roleOrder" />
@@ -13,15 +12,32 @@
 
 <div class="d-flex gap-2 mt-3">
     <MudButton OnClick="SaveLayout" Variant="Variant.Filled" Color="Color.Primary">Save layout</MudButton>
+    <MudButton OnClick="ResetLayout" Variant="Variant.Outlined" Color="Color.Primary">Reset layout</MudButton>
     <MudButton OnClick="RestoreLayout" Variant="Variant.Outlined" Color="Color.Primary">Restore layout</MudButton>
 </div>
 
-<MudText Class="mt-2" Typo="Typo.body2">@_status</MudText>
+<div class="d-flex flex-wrap gap-2 mt-3">
+    <MudSelect T="int?" Label="Name Order" Value="_nameOrder" ValueChanged="value => UpdateOrder(nameof(Item.Name), value)" Dense="true">
+        <MudSelectItem T="int?" Value="@((int?)null)">Default</MudSelectItem>
+        <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+    </MudSelect>
+    <MudSelect T="int?" Label="Age Order" Value="_ageOrder" ValueChanged="value => UpdateOrder(nameof(Item.Age), value)" Dense="true">
+        <MudSelectItem T="int?" Value="@((int?)null)">Default</MudSelectItem>
+        <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+    </MudSelect>
+    <MudSelect T="int?" Label="Role Order" Value="_roleOrder" ValueChanged="value => UpdateOrder(nameof(Item.Role), value)" Dense="true">
+        <MudSelectItem T="int?" Value="@((int?)null)">Default</MudSelectItem>
+        <MudSelectItem T="int?" Value="0">0</MudSelectItem>
+        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+    </MudSelect>
+</div>
 
-<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-    <CodeInline>HierarchyColumn</CodeInline> stays pinned and is not restored through <CodeInline>Order</CodeInline>.
-    <CodeInline>SelectColumn</CodeInline> uses its default position until reordered, then participates in saved <CodeInline>Order</CodeInline> state like other columns.
-</MudAlert>
+<MudText Class="mt-2" Typo="Typo.body2">@_status</MudText>
 
 @code {
     private readonly IReadOnlyList<Item> _items =
@@ -31,34 +47,58 @@
         new("Ira", 27, "Developer")
     ];
 
-    private int? _selectOrder;
     private int? _nameOrder;
     private int? _ageOrder;
     private int? _roleOrder;
     private SavedLayout _savedLayout = new();
-    private string _status = "Reorder columns, then save or restore the layout.";
+    private string _status = "Reorder columns or change a bound Order value.";
 
     private void SaveLayout()
     {
-        _savedLayout = new SavedLayout(_selectOrder, _nameOrder, _ageOrder, _roleOrder);
+        _savedLayout = new SavedLayout(_nameOrder, _ageOrder, _roleOrder);
         _status = "Layout saved.";
+    }
+
+    private void ResetLayout()
+    {
+        _nameOrder = null;
+        _ageOrder = null;
+        _roleOrder = null;
+        _status = "Layout reset to default order.";
     }
 
     private void RestoreLayout()
     {
-        _selectOrder = _savedLayout.SelectOrder;
         _nameOrder = _savedLayout.NameOrder;
         _ageOrder = _savedLayout.AgeOrder;
         _roleOrder = _savedLayout.RoleOrder;
         _status = "Layout restored.";
     }
 
-    private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Item> args)
+    private void UpdateOrder(string columnName, int? order)
     {
-        _status = $"{args.Column.Title ?? "Select"} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+        switch (columnName)
+        {
+            case nameof(Item.Name):
+                _nameOrder = order;
+                break;
+            case nameof(Item.Age):
+                _ageOrder = order;
+                break;
+            case nameof(Item.Role):
+                _roleOrder = order;
+                break;
+        }
+
+        _status = $"{columnName} Order set to {(order?.ToString() ?? "Default")}.";
     }
 
-    private sealed record SavedLayout(int? SelectOrder = null, int? NameOrder = null, int? AgeOrder = null, int? RoleOrder = null);
+    private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Item> args)
+    {
+        _status = $"{args.Column.Title} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+    }
+
+    private sealed record SavedLayout(int? NameOrder = null, int? AgeOrder = null, int? RoleOrder = null);
 
     private sealed record Item(string Name, int Age, string Role);
 }
