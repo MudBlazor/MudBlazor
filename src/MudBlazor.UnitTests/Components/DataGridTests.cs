@@ -3765,7 +3765,7 @@ namespace MudBlazor.UnitTests.Components
         //    dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(2);
         //    dataGrid.Instance.RenderedColumns[0].Filterable = false;
         //    await comp.InvokeAsync(dataGrid.Instance.ExternalStateHasChanged);
-        //    //If the column is visible and Filterable is false there still shouldďbe the cell
+        //    //If the column is visible and Filterable is false there still should be the cell
         //    //without the input
         //    dataGrid.FindAll(".mud-table-cell.filter-header-cell").Count.Should().Be(2);
         //    dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(1);
@@ -4777,7 +4777,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 1, ageOrder: 0, statusOrder: 2));
 
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
-            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Age", "Name", "Status");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Age", "Name", "Status");
+            });
         }
 
         [Test]
@@ -4803,6 +4806,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_OrderParameterChanges_ShouldPreserveExplicitAgeOrderWhenOthersAreUnset()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.InitialAgeOrder, 2));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+                comp.Instance.AgeOrder.Should().Be(2);
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.StatusOrder.Should().BeNull();
+            });
+        }
+        [Test]
         public async Task DataGrid_ColumnOrderChanged_ShouldFireWhenColumnsPanelReorders()
         {
             var comp = Context.Render<DataGridColumnOrderStateTest>();
@@ -4824,7 +4842,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGrid_ColumnOrderChanged_ShouldFireWhenOrderParameterChanges()
+        public async Task DataGrid_OrderParameterChanges_ShouldNormalizeBoundColumnsWithoutFiringColumnOrderChanged()
         {
             var comp = Context.Render<DataGridColumnOrderStateTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
@@ -4834,10 +4852,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() =>
             {
                 dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Status", "Age", "Name");
-                comp.Instance.CallbackCount.Should().BeGreaterThan(0);
-                comp.Instance.LastArgs.Should().NotBeNull();
-                comp.Instance.LastArgs!.Column.PropertyName.Should().Be("Status");
-                comp.Instance.LastArgs.CurrentIndex.Should().Be(0);
+                comp.Instance.StatusOrder.Should().Be(0);
+                comp.Instance.AgeOrder.Should().Be(1);
+                comp.Instance.NameOrder.Should().Be(2);
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
             });
         }
 
@@ -4888,8 +4907,31 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectOrder.Should().Be(1);
             comp.Instance.AgeOrder.Should().Be(2);
             comp.Instance.StatusOrder.Should().Be(3);
+            comp.Instance.CallbackCount.Should().Be(1);
             comp.Instance.LastArgs.Should().NotBeNull();
             comp.Instance.LastArgs!.Columns[0].PropertyName.Should().Be("Name");
+        }
+
+        [Test]
+        public async Task DataGrid_OrderParameterChanges_WithDefaultSelect_ShouldNormalizeColumnsAfterSelectWithoutFiringColumnOrderChanged()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 2, ageOrder: 0, statusOrder: 1));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns[0].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+                dataGrid.Instance.RenderedColumns.Skip(1).Select(x => x.PropertyName).Should().ContainInOrder("Age", "Status", "Name");
+                comp.Instance.SelectOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().Be(0);
+                comp.Instance.StatusOrder.Should().Be(1);
+                comp.Instance.NameOrder.Should().Be(2);
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
+            });
         }
 
         [Test]
@@ -6467,3 +6509,4 @@ namespace MudBlazor.UnitTests.Components
         #endregion
     }
 }
+
