@@ -13,6 +13,10 @@ namespace MudBlazor;
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
 /// <seealso cref="Column{T}"/>
 /// <seealso cref="MudDataGrid{T}"/>
+/// <remarks>
+/// This component wraps an internal <see cref="TemplateColumn{T}"/>. If it is ever refactored to derive from <see cref="Column{T}"/>,
+/// keep its ordering behavior pinned ahead of reorderable columns instead of exposing a user-configurable <c>Order</c>. e.g. Hide Order
+/// </remarks>
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     /// <summary>

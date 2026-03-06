@@ -2390,7 +2390,7 @@ namespace MudBlazor
 
             var orderedColumns = RenderedColumns
                 .OrderBy(GetColumnBucket)
-                .ThenBy(x => x._orderState.Value is null ? 1 : 0)
+                .ThenBy(GetColumnOrderPriority)
                 .ThenBy(x => x._orderState.Value ?? int.MaxValue)
                 .ThenBy(x => x.RegistrationIndex)
                 .ToList();
@@ -2411,14 +2411,23 @@ namespace MudBlazor
             return tag switch
             {
                 "hierarchy-column" => 0,
-                "select-column" => 1,
-                _ => 2
+                _ => 1
             };
+        }
+
+        private static int GetColumnOrderPriority(Column<T> column)
+        {
+            if (column._orderState.Value is not null)
+            {
+                return 0;
+            }
+
+            return column.Tag?.ToString() == "select-column" ? 1 : 2;
         }
 
         private async Task UpdateColumnOrderStateAsync(Column<T> changedColumn, int previousIndex)
         {
-            var orderedColumns = RenderedColumns.Where(x => GetColumnBucket(x) == 2).ToList();
+            var orderedColumns = RenderedColumns.Where(x => GetColumnBucket(x) != 0).ToList();
             for (var i = 0; i < orderedColumns.Count; i++)
             {
                 if (orderedColumns[i]._orderState.Value != i)
