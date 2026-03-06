@@ -1,0 +1,64 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="_items"
+             DragDropColumnReordering="true"
+             ColumnOrderChanged="OnColumnOrderChanged">
+    <Columns>
+        <SelectColumn T="Item" @bind-Order="_selectOrder" />
+        <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="_nameOrder" />
+        <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="_ageOrder" />
+        <PropertyColumn Property="x => x.Role" Title="Role" @bind-Order="_roleOrder" />
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex gap-2 mt-3">
+    <MudButton OnClick="SaveLayout" Variant="Variant.Filled" Color="Color.Primary">Save layout</MudButton>
+    <MudButton OnClick="RestoreLayout" Variant="Variant.Outlined" Color="Color.Primary">Restore layout</MudButton>
+</div>
+
+<MudText Class="mt-2" Typo="Typo.body2">@_status</MudText>
+
+<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+    <CodeInline>HierarchyColumn</CodeInline> stays pinned and is not restored through <CodeInline>Order</CodeInline>.
+    <CodeInline>SelectColumn</CodeInline> uses its default position until reordered, then participates in saved <CodeInline>Order</CodeInline> state like other columns.
+</MudAlert>
+
+@code {
+    private readonly IReadOnlyList<Item> _items =
+    [
+        new("Sam", 56, "Manager"),
+        new("Alicia", 54, "Designer"),
+        new("Ira", 27, "Developer")
+    ];
+
+    private int? _selectOrder;
+    private int? _nameOrder;
+    private int? _ageOrder;
+    private int? _roleOrder;
+    private SavedLayout _savedLayout = new();
+    private string _status = "Reorder columns, then save or restore the layout.";
+
+    private void SaveLayout()
+    {
+        _savedLayout = new SavedLayout(_selectOrder, _nameOrder, _ageOrder, _roleOrder);
+        _status = "Layout saved.";
+    }
+
+    private void RestoreLayout()
+    {
+        _selectOrder = _savedLayout.SelectOrder;
+        _nameOrder = _savedLayout.NameOrder;
+        _ageOrder = _savedLayout.AgeOrder;
+        _roleOrder = _savedLayout.RoleOrder;
+        _status = "Layout restored.";
+    }
+
+    private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Item> args)
+    {
+        _status = $"{args.Column.Title ?? "Select"} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+    }
+
+    private sealed record SavedLayout(int? SelectOrder = null, int? NameOrder = null, int? AgeOrder = null, int? RoleOrder = null);
+
+    private sealed record Item(string Name, int Age, string Role);
+}

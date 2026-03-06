@@ -474,6 +474,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Column Order State">
+                <Description>
+                    Bind <CodeInline>Order</CodeInline> on each column to persist layout state, and handle <CodeInline>ColumnOrderChanged</CodeInline> to react to runtime reordering.
+                    This example keeps the saved state in component fields to show the smallest possible save and restore flow.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnOrderStateExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnOrderStateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Context Menu">
                 <Description>
                     A context menu can be added to increase the flexibility and efficiency that the <CodeInline>&lt;MudDataGrid></CodeInline> offers.
