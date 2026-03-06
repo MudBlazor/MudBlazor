@@ -1,0 +1,46 @@
+<MudDataGrid Items="@Items"
+             DragDropColumnReordering="true"
+             ColumnsPanelReordering="true"
+             ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Model> args) => OnColumnOrderChanged(args))">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="NameOrder" />
+        <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="AgeOrder" />
+        <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public List<Model> Items { get; } =
+    [
+        new("Sam", 56, Severity.Normal),
+        new("Alicia", 54, Severity.Info),
+        new("Ira", 27, Severity.Success)
+    ];
+
+    public int? NameOrder { get; set; }
+
+    public int? AgeOrder { get; set; }
+
+    public int? StatusOrder { get; set; }
+
+    public int CallbackCount { get; private set; }
+
+    public DataGridColumnOrderChangedEventArgs<Model>? LastArgs { get; private set; }
+
+    public void SetOrders(int? nameOrder, int? ageOrder, int? statusOrder)
+    {
+        NameOrder = nameOrder;
+        AgeOrder = ageOrder;
+        StatusOrder = statusOrder;
+        StateHasChanged();
+    }
+
+    private Task OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Model> args)
+    {
+        CallbackCount++;
+        LastArgs = args;
+        return Task.CompletedTask;
+    }
+
+    public record Model(string Name, int? Age, Severity? Status);
+}

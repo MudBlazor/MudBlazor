@@ -50,6 +50,7 @@ namespace MudBlazor
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
+        private int _nextColumnRegistrationIndex;
 
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
@@ -352,6 +353,12 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
+
+        /// <summary>
+        /// Occurs when the rendered column order has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridColumnOrderChangedEventArgs<T>> ColumnOrderChanged { get; set; }
 
         /// <summary>
         /// Occurs when hierarchy visibility toggled.
@@ -1690,6 +1697,8 @@ namespace MudBlazor
 
         internal void AddColumn(Column<T> column)
         {
+            column.RegistrationIndex = _nextColumnRegistrationIndex++;
+
             if (column.Tag?.ToString() == "hierarchy-column")
             {
                 if (column is TemplateColumn<T> templateColumn)
@@ -1706,24 +1715,10 @@ namespace MudBlazor
                         ApplyInitialExpansionForItems(_serverData.Items);
                     }
                 }
-                RenderedColumns.Insert(0, column);
             }
-            else if (column.Tag?.ToString() == "select-column")
-            {
-                // Position SelectColumn after HierarchyColumn if present
-                if (RenderedColumns.Select(x => x.Tag).Contains("hierarchy-column"))
-                {
-                    RenderedColumns.Insert(1, column);
-                }
-                else
-                {
-                    RenderedColumns.Insert(0, column);
-                }
-            }
-            else
-            {
-                RenderedColumns.Add(column);
-            }
+
+            RenderedColumns.Add(column);
+            ApplyColumnOrdering();
         }
 
         internal void CancelServerDataToken()
@@ -1743,6 +1738,7 @@ namespace MudBlazor
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
+            ApplyColumnOrdering();
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
@@ -2315,50 +2311,132 @@ namespace MudBlazor
         /// Updates the order of a column after drag-and-drop in the columns panel.
         /// </summary>
         /// <param name="dropItem">The dropped column information.</param>
-        public Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
+        internal Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
         {
             Debug.Assert(dropItem.Item is not null);
+            var previousIndex = RenderedColumns.IndexOf(dropItem.Item);
             RenderedColumns.Remove(dropItem.Item);
             RenderedColumns.Insert(dropItem.IndexInZone, dropItem.Item);
-            DropContainerHasChanged();
-
-            return Task.CompletedTask;
+            return UpdateColumnOrderStateAsync(dropItem.Item, previousIndex);
         }
 
         /// <summary>
         /// Moves the specified column one position up in the rendered columns order.
         /// </summary>
         /// <param name="column">The column to move.</param>
-        public void ColumnUp(Column<T> column)
+        internal Task ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
             if (index > 0)
             {
                 RenderedColumns.RemoveAt(index);
                 RenderedColumns.Insert(index - 1, column);
+                return UpdateColumnOrderStateAsync(column, index);
             }
-            DropContainerHasChanged();
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Moves the specified column one position down in the rendered columns order.
         /// </summary>
         /// <param name="column">The column to move.</param>
-        public void ColumnDown(Column<T> column)
+        internal Task ColumnDown(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
             if (index >= 0 && index < RenderedColumns.Count - 1)
             {
                 RenderedColumns.RemoveAt(index);
                 RenderedColumns.Insert(index + 1, column);
+                return UpdateColumnOrderStateAsync(column, index);
             }
+
+            return Task.CompletedTask;
+        }
+
+        internal async Task OnColumnOrderParameterChangedAsync(Column<T> column, ParameterChangedEventArgs<int?> args)
+        {
+            if (!RenderedColumns.Contains(column) || args.IsChildOriginatedChange)
+            {
+                return;
+            }
+
+            var previousIndex = RenderedColumns.IndexOf(column);
+            var reordered = ApplyColumnOrdering();
+            var currentIndex = RenderedColumns.IndexOf(column);
+
+            if (!reordered && previousIndex == currentIndex)
+            {
+                return;
+            }
+
             DropContainerHasChanged();
+            await NotifyColumnOrderChangedAsync(column, previousIndex, currentIndex);
+            await InvokeAsync(StateHasChanged);
         }
 
         internal void DropContainerHasChanged()
         {
             _dropContainer?.Refresh();
             _columnsPanelDropContainer?.Refresh();
+        }
+
+        private bool ApplyColumnOrdering()
+        {
+            if (RenderedColumns.Count <= 1)
+            {
+                return false;
+            }
+
+            var orderedColumns = RenderedColumns
+                .OrderBy(GetColumnBucket)
+                .ThenBy(x => x._orderState.Value is null ? 1 : 0)
+                .ThenBy(x => x._orderState.Value ?? int.MaxValue)
+                .ThenBy(x => x.RegistrationIndex)
+                .ToList();
+
+            if (RenderedColumns.SequenceEqual(orderedColumns))
+            {
+                return false;
+            }
+
+            RenderedColumns.Clear();
+            RenderedColumns.AddRange(orderedColumns);
+            return true;
+        }
+
+        private static int GetColumnBucket(Column<T> column)
+        {
+            var tag = column.Tag?.ToString();
+            return tag switch
+            {
+                "hierarchy-column" => 0,
+                "select-column" => 1,
+                _ => 2
+            };
+        }
+
+        private async Task UpdateColumnOrderStateAsync(Column<T> changedColumn, int previousIndex)
+        {
+            var orderedColumns = RenderedColumns.Where(x => GetColumnBucket(x) == 2).ToList();
+            for (var i = 0; i < orderedColumns.Count; i++)
+            {
+                if (orderedColumns[i]._orderState.Value != i)
+                {
+                    await orderedColumns[i]._orderState.SetValueAsync(i);
+                }
+            }
+
+            ApplyColumnOrdering();
+            DropContainerHasChanged();
+            await NotifyColumnOrderChangedAsync(changedColumn, previousIndex, RenderedColumns.IndexOf(changedColumn));
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private Task NotifyColumnOrderChangedAsync(Column<T> column, int previousIndex, int currentIndex)
+        {
+            var orderedColumns = RenderedColumns.ToList().AsReadOnly();
+            return ColumnOrderChanged.InvokeAsync(new DataGridColumnOrderChangedEventArgs<T>(column, previousIndex, currentIndex, orderedColumns));
         }
         /// <summary>
         /// Performs grouping of the current items.

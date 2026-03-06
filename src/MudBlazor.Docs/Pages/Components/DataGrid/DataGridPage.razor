@@ -465,6 +465,7 @@
                     The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options except column re-ordering.
                     <br><br>
                     Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis, so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
+                    For declarative ordering, set <CodeInline>Order</CodeInline> on individual columns. To observe runtime reordering, handle <CodeInline>ColumnOrderChanged</CodeInline> on the grid.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">

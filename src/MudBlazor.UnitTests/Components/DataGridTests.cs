@@ -4770,35 +4770,75 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PublicColumnReorderingMethodsWorkCorrectly()
+        public async Task DataGrid_OrderParameter_ShouldSetInitialRenderedOrder()
         {
-            var comp = Context.Render<DataGridDragAndDropTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
 
-            await dataGrid.InvokeAsync(() =>
-            {
-                var ageColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Age");
-                dataGrid.Instance.ColumnDown(ageColumn);
-            });
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 1, ageOrder: 0, statusOrder: 2));
 
-            dataGrid.Instance.RenderedColumns[2].PropertyName.Should().Be("Age");
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Age", "Name", "Status");
+        }
 
-            await dataGrid.InvokeAsync(() =>
-            {
-                var ageColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Age");
-                dataGrid.Instance.ColumnUp(ageColumn);
-            });
-
-            dataGrid.Instance.RenderedColumns[1].PropertyName.Should().Be("Age");
+        [Test]
+        public async Task DataGrid_ColumnOrderChanged_ShouldFireWhenColumnsMove()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
 
             await dataGrid.InvokeAsync(async () =>
             {
                 var statusColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Status");
-                var dropItem = new MudItemDropInfo<Column<DataGridDragAndDropTest.Model>>(statusColumn, "columns-panel", 1);
+                await dataGrid.Instance.ColumnUp(statusColumn);
+            });
+
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Column.PropertyName.Should().Be("Status");
+            comp.Instance.LastArgs.PreviousIndex.Should().Be(2);
+            comp.Instance.LastArgs.CurrentIndex.Should().Be(1);
+            comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+            comp.Instance.StatusOrder.Should().Be(1);
+            comp.Instance.AgeOrder.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGrid_ColumnOrderChanged_ShouldFireWhenColumnsPanelReorders()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(async () =>
+            {
+                var statusColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Status");
+                var dropItem = new MudItemDropInfo<Column<DataGridColumnOrderStateTest.Model>>(statusColumn, "columns-panel", 1);
                 await dataGrid.Instance.ColumnOrderUpdated(dropItem);
             });
 
-            dataGrid.Instance.RenderedColumns[1].PropertyName.Should().Be("Status");
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Column.PropertyName.Should().Be("Status");
+            comp.Instance.LastArgs.PreviousIndex.Should().Be(2);
+            comp.Instance.LastArgs.CurrentIndex.Should().Be(1);
+            comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+        }
+
+        [Test]
+        public async Task DataGrid_ColumnOrderChanged_ShouldFireWhenOrderParameterChanges()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 2, ageOrder: 1, statusOrder: 0));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Status", "Age", "Name");
+                comp.Instance.CallbackCount.Should().BeGreaterThan(0);
+                comp.Instance.LastArgs.Should().NotBeNull();
+                comp.Instance.LastArgs!.Column.PropertyName.Should().Be("Status");
+                comp.Instance.LastArgs.CurrentIndex.Should().Be(0);
+            });
         }
 
         [Test]

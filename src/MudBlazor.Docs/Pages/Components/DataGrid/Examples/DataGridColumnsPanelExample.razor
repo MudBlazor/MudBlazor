@@ -4,7 +4,8 @@
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" @ref="_grid" Items="_elements" DragDropColumnReordering="_dragDropReorderingEnabled" ColumnsPanelReordering="_columnsPanelReorderingEnabled"
-             ColumnResizeMode="ResizeMode.Container" Hideable="_hideable" Filterable="_filterable" Groupable="_groupable" FilterMode="_filterMode" ShowMenuIcon="true">
+             ColumnResizeMode="ResizeMode.Container" Hideable="_hideable" Filterable="_filterable" Groupable="_groupable" FilterMode="_filterMode" ShowMenuIcon="true"
+             ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Element> args) => OnColumnOrderChanged(args))">
     <Columns>
         <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr" />
@@ -37,6 +38,8 @@
     <MudButton OnClick="@(() => HideColumnsAsync(true))" Variant="Variant.Filled" Color="Color.Primary">Hide all columns</MudButton>
 </div>
 
+<MudText Class="mt-2" Typo="Typo.body2">@_lastOrderChange</MudText>
+
 <div class="d-flex flex-rows flex-wrap mr-4">
     <MudSwitch @bind-Value="_groupable" Color="Color.Primary">Groupable</MudSwitch>
     <MudSwitch @bind-Value="_groupMolar" Color="Color.Primary">Group By Molar</MudSwitch>
@@ -65,6 +68,7 @@
     private bool _groupMolar;
     private bool _groupCategory;
     private MudDataGrid<Element> _grid = null!;
+    private string _lastOrderChange = "Reorder a column to see ColumnOrderChanged fire.";
 
     private readonly IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From(value => !value, (bool? value) => !value ?? true);
     protected override async Task OnInitializedAsync()
@@ -85,5 +89,10 @@
                 await column.ShowAsync();
             }
         };
+    }
+
+    private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Element> args)
+    {
+        _lastOrderChange = $"{args.Column.Title ?? args.Column.PropertyName} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
     }
 }
