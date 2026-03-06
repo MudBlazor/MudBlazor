@@ -3,8 +3,23 @@
              ColumnsPanelReordering="true"
              ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Model> args) => OnColumnOrderChanged(args))">
     <Columns>
+        @if (ShowHierarchy)
+        {
+            <HierarchyColumn T="Model" />
+        }
+        @if (ShowSelect)
+        {
+            <SelectColumn T="Model" @bind-Order="SelectOrder" />
+        }
         <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="NameOrder" />
-        <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="AgeOrder" />
+        @if (BindAgeOrder)
+        {
+            <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="AgeOrder" />
+        }
+        else
+        {
+            <PropertyColumn Property="x => x.Age" Title="Age" />
+        }
         <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
     </Columns>
 </MudDataGrid>
@@ -23,15 +38,47 @@
 
     public int? StatusOrder { get; set; }
 
+    [Parameter]
+    public bool ShowSelect { get; set; }
+
+    [Parameter]
+    public bool ShowHierarchy { get; set; }
+
+    [Parameter]
+    public bool BindAgeOrder { get; set; } = true;
+
+    [Parameter]
+    public int? InitialNameOrder { get; set; }
+
+    [Parameter]
+    public int? InitialAgeOrder { get; set; }
+
+    [Parameter]
+    public int? InitialStatusOrder { get; set; }
+
+    [Parameter]
+    public int? InitialSelectOrder { get; set; }
+
+    public int? SelectOrder { get; set; }
+
     public int CallbackCount { get; private set; }
 
     public DataGridColumnOrderChangedEventArgs<Model>? LastArgs { get; private set; }
 
-    public void SetOrders(int? nameOrder, int? ageOrder, int? statusOrder)
+    protected override void OnInitialized()
+    {
+        NameOrder = InitialNameOrder;
+        AgeOrder = InitialAgeOrder;
+        StatusOrder = InitialStatusOrder;
+        SelectOrder = InitialSelectOrder;
+    }
+
+    public void SetOrders(int? nameOrder, int? ageOrder, int? statusOrder, int? selectOrder = null)
     {
         NameOrder = nameOrder;
         AgeOrder = ageOrder;
         StatusOrder = statusOrder;
+        SelectOrder = selectOrder;
         StateHasChanged();
     }
 

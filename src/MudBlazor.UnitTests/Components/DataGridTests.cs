@@ -4842,6 +4842,117 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_SelectColumn_ShouldDefaultToFirstWhenOrderIsUnset()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            dataGrid.Instance.RenderedColumns[0].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Skip(1).Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+            comp.Instance.SelectOrder.Should().BeNull();
+        }
+
+        [Test]
+        public void DataGrid_SelectColumn_ShouldDefaultToAfterHierarchyWhenOrderIsUnset()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowHierarchy, true)
+                .Add(x => x.ShowSelect, true));
+
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            dataGrid.Instance.RenderedColumns[0].Tag.Should().Be("hierarchy-column");
+            dataGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Skip(2).Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+            comp.Instance.SelectOrder.Should().BeNull();
+        }
+
+        [Test]
+        public async Task DataGrid_ReorderingAheadOfUnsetSelectColumn_ShouldMaterializeExplicitOrderState()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(async () =>
+            {
+                var nameColumn = dataGrid.Instance.RenderedColumns.OfType<PropertyColumn<DataGridColumnOrderStateTest.Model, string>>().First(x => x.PropertyName == "Name");
+                await dataGrid.Instance.ColumnUp(nameColumn);
+            });
+
+            dataGrid.Instance.RenderedColumns[0].PropertyName.Should().Be("Name");
+            dataGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            comp.Instance.NameOrder.Should().Be(0);
+            comp.Instance.SelectOrder.Should().Be(1);
+            comp.Instance.AgeOrder.Should().Be(2);
+            comp.Instance.StatusOrder.Should().Be(3);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Columns[0].PropertyName.Should().Be("Name");
+        }
+
+        [Test]
+        public async Task DataGrid_ReorderingWithUnboundColumn_ShouldKeepRenderedOrderAndOnlyPersistBoundColumns()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.BindAgeOrder, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(async () =>
+            {
+                var statusColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Status");
+                await dataGrid.Instance.ColumnUp(statusColumn);
+            });
+
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+            comp.Instance.NameOrder.Should().Be(0);
+            comp.Instance.AgeOrder.Should().BeNull();
+            comp.Instance.StatusOrder.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Columns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+        }
+
+        [Test]
+        public async Task DataGrid_ReopenedGrid_ShouldRestoreColumnOrderFromBoundParameters()
+        {
+            var firstComp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+            var firstGrid = firstComp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await firstGrid.InvokeAsync(async () =>
+            {
+                var nameColumn = firstGrid.Instance.RenderedColumns.First(x => x.PropertyName == "Name");
+                await firstGrid.Instance.ColumnUp(nameColumn);
+            });
+
+            firstComp.Instance.LastArgs.Should().NotBeNull();
+            var selectOrder = firstComp.Instance.SelectOrder;
+            var nameOrder = firstComp.Instance.NameOrder;
+            var ageOrder = firstComp.Instance.AgeOrder;
+            var statusOrder = firstComp.Instance.StatusOrder;
+
+            firstComp.Dispose();
+
+            var restoredComp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true)
+                .Add(x => x.InitialSelectOrder, selectOrder)
+                .Add(x => x.InitialNameOrder, nameOrder)
+                .Add(x => x.InitialAgeOrder, ageOrder)
+                .Add(x => x.InitialStatusOrder, statusOrder));
+            var restoredGrid = restoredComp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            restoredGrid.Instance.RenderedColumns[0].PropertyName.Should().Be("Name");
+            restoredGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            restoredGrid.Instance.RenderedColumns[2].PropertyName.Should().Be("Age");
+            restoredGrid.Instance.RenderedColumns[3].PropertyName.Should().Be("Status");
+            restoredComp.Instance.SelectOrder.Should().Be(selectOrder);
+            restoredComp.Instance.NameOrder.Should().Be(nameOrder);
+            restoredComp.Instance.AgeOrder.Should().Be(ageOrder);
+            restoredComp.Instance.StatusOrder.Should().Be(statusOrder);
+        }
+
+        [Test]
         public async Task DataGridEditFormDialogIsCustomizable()
         {
             var comp = Context.Render<DataGridEditFormCustomizedDialogTest>();
