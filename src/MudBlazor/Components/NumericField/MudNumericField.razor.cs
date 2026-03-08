@@ -492,7 +492,8 @@ namespace MudBlazor
 
             // Keep formatted text in sync when using formatted input mode.
             // This also covers onchange updates that can occur around blur timing.
-            if (IsFormatted && DebounceInterval <= 0 && !ConversionError)
+            // Skip formatting during Immediate mode to prevent cursor jumping.
+            if (IsFormatted && !Immediate && DebounceInterval <= 0 && !ConversionError)
             {
                 var formattedText = ConvertSet(ReadValue);
                 if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))
