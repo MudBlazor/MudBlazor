@@ -138,6 +138,74 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
+    public void ReversibleTypeDispatcher_AddForward_RegistersForwardOnly()
+    {
+        var dispatcher = ReversibleTypeDispatcher
+            .Create<int, string>()
+            .AddForward(new ConstantConverter("forward"))
+            .Build();
+
+        dispatcher.Convert(3).Should().Be("forward");
+
+        Action act = () => dispatcher.ConvertBack("forward");
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_ConversionNotImplemented);
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddDynamicForward_RegistersForwardOnly()
+    {
+        var dispatcher = ReversibleTypeDispatcher
+            .Create<int, string>()
+            .AddDynamicForward(typeof(int), new ForwardOnlyIntConverter())
+            .Build();
+
+        dispatcher.Convert(3).Should().Be("3");
+
+        Action act = () => dispatcher.ConvertBack("3");
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_ConversionNotImplemented);
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddForward_LastWinsPolicy_RemovesReverseHandler()
+    {
+        var dispatcher = ReversibleTypeDispatcher
+            .Create<int, string>()
+            .Add(new PrefixConverter("A"))
+            .AddForward(new ConstantConverter("forward"))
+            .Build();
+
+        dispatcher.Convert(3).Should().Be("forward");
+
+        Action act = () => dispatcher.ConvertBack("A3");
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_ConversionNotImplemented);
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddForward_FirstWinsPolicy_KeepsFirstRegistration()
+    {
+        var dispatcher = ReversibleTypeDispatcher
+            .Create<int, string>(DispatcherRegistrationPolicy.FirstWins)
+            .AddForward(new ConstantConverter("forward"))
+            .Add(new PrefixConverter("A"))
+            .Build();
+
+        dispatcher.Convert(3).Should().Be("forward");
+        dispatcher.ConvertBack("A3").Should().Be(3);
+    }
+
+    [Test]
     public void ReversibleTypeDispatcher_AddDynamic_WhenConverterTypeDoesNotImplementForwardInterface_ThrowsInvalidOperationException()
     {
         var builder = ReversibleTypeDispatcher.Create<int, string>();
@@ -159,6 +227,18 @@ public class TypeDispatcherPolicyTests
         act.Should()
             .Throw<InvalidOperationException>()
             .WithMessage("Converter type*does not implement ConvertBack(System.String)");
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_AddDynamicForward_WhenConverterTypeDoesNotImplementForwardInterface_ThrowsInvalidOperationException()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamicForward(typeof(int), new ForwardOnlyStringConverter());
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Converter type*does not implement Convert(System.Int32)");
     }
 
     [Test]

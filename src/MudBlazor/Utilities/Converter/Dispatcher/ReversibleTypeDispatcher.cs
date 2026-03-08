@@ -99,6 +99,16 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         }
 
         /// <inheritdoc />
+        public IReversibleDispatcherBuilder<TIn, TOut> AddForward<TSpecific>(IConverter<TSpecific, TOut> converter)
+        {
+            AddForwardHandler(
+                typeof(TSpecific),
+                new Func<TSpecific, TOut>(converter.Convert));
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object? converter)
         {
             ArgumentNullException.ThrowIfNull(specificType);
@@ -129,6 +139,54 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             AddHandlers(specificType, forwardDelegate, backwardDelegate);
 
             return this;
+        }
+
+        /// <inheritdoc />
+        public IReversibleDispatcherBuilder<TIn, TOut> AddDynamicForward(Type specificType, object? converter)
+        {
+            ArgumentNullException.ThrowIfNull(specificType);
+            ArgumentNullException.ThrowIfNull(converter);
+
+            var convType = converter.GetType();
+
+            var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
+            if (!convertMethodInterface.IsAssignableFrom(convType))
+            {
+                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
+            }
+
+            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            // Cannot be null since we already verified the interface is implemented
+            var forwardDelegate = convertMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+
+            AddForwardHandler(specificType, forwardDelegate);
+
+            return this;
+        }
+
+        private void AddForwardHandler(Type specificType, Delegate forwardHandler)
+        {
+            switch (registrationPolicy)
+            {
+                case DispatcherRegistrationPolicy.LastWins:
+                    _handlers[specificType] = forwardHandler;
+                    _reverseHandlers.Remove(specificType);
+                    return;
+                case DispatcherRegistrationPolicy.FirstWins:
+                    _handlers.TryAdd(specificType, forwardHandler);
+                    return;
+                case DispatcherRegistrationPolicy.Throw:
+                    if (_handlers.ContainsKey(specificType) || _reverseHandlers.ContainsKey(specificType))
+                    {
+                        throw new InvalidOperationException($"Converter already registered for {specificType}.");
+                    }
+
+                    _handlers.Add(specificType, forwardHandler);
+                    return;
+                default:
+                    throw new InvalidOperationException($"Unsupported registration policy: {registrationPolicy}.");
+            }
         }
 
         private void AddHandlers(Type specificType, Delegate forwardHandler, Delegate backwardHandler)
