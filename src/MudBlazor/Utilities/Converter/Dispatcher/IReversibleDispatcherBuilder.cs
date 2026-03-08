@@ -68,7 +68,7 @@ public interface IReversibleDispatcherBuilder<TIn, TOut>
     /// <exception cref="InvalidOperationException">Thrown when the supplied <paramref name="converter"/> does not provide a compatible <c>Convert</c> method for <paramref name="specificType"/>.</exception>
     /// <remarks>
     /// This method registers only the forward conversion (<c>Convert</c>). It does not register a reverse conversion,
-    /// so <c>ConvertBack</c> remains unresolved for <typeparamref name="TSpecific"/>.
+    /// so <c>ConvertBack</c> remains unresolved for the supplied <paramref name="specificType"/>.
     /// </remarks>
     IReversibleDispatcherBuilder<TIn, TOut> AddDynamicForward(Type specificType, object? converter);
 
