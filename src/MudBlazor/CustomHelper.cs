@@ -25,7 +25,7 @@ namespace MudBlazor
                 throw new ArgumentException($"Expression not a Property: {expression}", nameof(expression));
             }
 
-            MethodInfo getMethod = propertyInfo.GetGetMethod(true);
+            MethodInfo? getMethod = propertyInfo.GetGetMethod(true);
             if (getMethod is null)
             {
                 throw new ArgumentException($"Expression has no GET method: {expression}", nameof(expression));
@@ -47,7 +47,7 @@ namespace MudBlazor
                 throw new ArgumentException($"Expression has no DeclaringType: {expression}", nameof(expression));
             }
 
-            PropertyInfo realPropertyInfo = realType.GetProperty(propertyInfo.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            PropertyInfo? realPropertyInfo = realType.GetProperty(propertyInfo.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             // If the "realType" is an interface which itself does not have the property you are looking for
             // because it is in a parent interface, then the property is not found.
