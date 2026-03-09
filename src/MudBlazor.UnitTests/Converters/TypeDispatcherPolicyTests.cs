@@ -87,6 +87,24 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
+    public void TypeDispatcher_Convert_WhenNoConverterRegistered_ThrowsConversionException()
+    {
+        var dispatcher = TypeDispatcher
+            .Create<int, string>()
+            .Build();
+
+        Action act = () => dispatcher.Convert(1);
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_ConversionNotImplemented);
+        exception.ErrorMessageArgs.Should().ContainSingle().Which.Should().Be(typeof(int));
+        exception.InnerException.Should().BeOfType<InvalidOperationException>();
+    }
+
+    [Test]
     public void ReversibleTypeDispatcher_DefaultPolicy_LastWins()
     {
         var dispatcher = ReversibleTypeDispatcher
@@ -200,6 +218,22 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
+    public void ReversibleTypeDispatcher_AddForward_ThrowPolicy_ThrowsOnDuplicateRegistration()
+    {
+        var builder = ReversibleTypeDispatcher
+            .Create<int, string>(DispatcherRegistrationPolicy.Throw)
+            .AddForward(new ConstantConverter("forward"));
+
+        builder.Build().Convert(3).Should().Be("forward");
+
+        Action act = () => builder.AddForward(new ConstantConverter("duplicate"));
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Converter already registered for System.Int32.");
+    }
+
+    [Test]
     public void ReversibleTypeDispatcher_AddDynamic_WhenConverterTypeDoesNotImplementForwardInterface_ThrowsInvalidOperationException()
     {
         var builder = ReversibleTypeDispatcher.Create<int, string>();
@@ -273,6 +307,18 @@ public class TypeDispatcherPolicyTests
         var builder = ReversibleTypeDispatcher.Create<int, string>((DispatcherRegistrationPolicy)999);
 
         Action act = () => builder.Add(new PrefixConverter("A"));
+
+        act.Should()
+            .Throw<InvalidOperationException>()
+            .WithMessage("Unsupported registration policy:*");
+    }
+
+    [Test]
+    public void ReversibleTypeDispatcher_UnsupportedRegistrationPolicy_ThrowsOnAddForward()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>((DispatcherRegistrationPolicy)999);
+
+        Action act = () => builder.AddForward(new ConstantConverter("A"));
 
         act.Should()
             .Throw<InvalidOperationException>()
