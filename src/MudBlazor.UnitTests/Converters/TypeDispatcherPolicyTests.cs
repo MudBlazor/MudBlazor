@@ -174,7 +174,7 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
-    public void ReversibleTypeDispatcher_AddForward_LastWinsPolicy_RemovesReverseHandler()
+    public void ReversibleTypeDispatcher_AddForward_LastWinsPolicy()
     {
         var dispatcher = ReversibleTypeDispatcher
             .Create<int, string>()
@@ -183,13 +183,7 @@ public class TypeDispatcherPolicyTests
             .Build();
 
         dispatcher.Convert(3).Should().Be("forward");
-
-        Action act = () => dispatcher.ConvertBack("A3");
-        act.Should()
-            .Throw<ConversionException>()
-            .Which.ErrorMessageKey
-            .Should()
-            .Be(LanguageResource.Converter_ConversionNotImplemented);
+        dispatcher.ConvertBack("A3").Should().Be(3);
     }
 
     [Test]

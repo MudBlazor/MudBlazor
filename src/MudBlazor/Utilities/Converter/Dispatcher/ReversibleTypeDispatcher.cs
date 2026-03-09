@@ -140,18 +140,16 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
             {
                 case DispatcherRegistrationPolicy.LastWins:
                     _handlers[specificType] = forwardHandler;
-                    _reverseHandlers.Remove(specificType);
                     return;
                 case DispatcherRegistrationPolicy.FirstWins:
                     _handlers.TryAdd(specificType, forwardHandler);
                     return;
                 case DispatcherRegistrationPolicy.Throw:
-                    if (_handlers.ContainsKey(specificType) || _reverseHandlers.ContainsKey(specificType))
+                    if (!_handlers.TryAdd(specificType, forwardHandler))
                     {
                         throw new InvalidOperationException($"Converter already registered for {specificType}.");
                     }
 
-                    _handlers.Add(specificType, forwardHandler);
                     return;
                 default:
                     throw new InvalidOperationException($"Unsupported registration policy: {registrationPolicy}.");
