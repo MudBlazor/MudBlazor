@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents.Select
 
-<MudSelect @ref="Select" T="string" Label="Select" ToStringFunc="@(x => x == "item1" ? null : x?.ToUpperInvariant())" Value="@("item1")">
+<MudSelect T="string" Label="Select" ToStringFunc="@(x => x == "item1" ? null : x?.ToUpperInvariant())" Value="@("item1")">
     <MudSelectItem Value="@("item1")">
         <span class="custom-render">Item 1 Rendered</span>
     </MudSelectItem>
@@ -8,7 +8,3 @@
         <span class="custom-render">Item 2 Rendered</span>
     </MudSelectItem>
 </MudSelect>
-
-@code {
-    public MudSelect<string>? Select { get; set; }
-}

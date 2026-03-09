@@ -61,13 +61,11 @@
                 {
                     <MudStack Class="@FillerClassname" Spacing="1" Row>
                         @{
-                            string? toStringValue = null;
                             var value = string.Empty;
 
                             if (_longestItem is { Value: not null })
                             {
-                                toStringValue = ToStringFunc?.Invoke(_longestItem.Value);
-                                value = toStringValue ?? ConvertSet(_longestItem.Value) ?? string.Empty;
+                                value = ConvertSet(_longestItem.Value) ?? string.Empty;
                             }
 
                             var useLabel = Label is not null && Placeholder is null && !ShrinkLabel 
@@ -76,7 +74,7 @@
                             var defaultValue = useLabel ? Label : Placeholder;
                             var showDefault = defaultValue?.Length > value.Length;
                             var hasChildContent = _longestItem?.ChildContent is not null;
-                            var hasStringValue = !string.IsNullOrEmpty(toStringValue);
+                            var hasStringValue = ToStringFunc is not null && !string.IsNullOrEmpty(value);
 
                             var renderText = showDefault || !hasChildContent || MultiSelectionTextFunc is not null || hasStringValue;
                         }

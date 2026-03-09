@@ -1896,7 +1896,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task Select_ToStringFunc_ShouldTakePrecedenceOverChildContent()
         {
             var comp = Context.Render<SelectPrecedenceTest>();
-            var select = comp.Instance.Select;
+            var selectComponent = comp.FindComponent<MudSelect<string>>();
+            var select = selectComponent.Instance;
 
             // 1. Initially item1 is selected. ToStringFunc returns null for item1.
             // Should fall back to RenderFragment.
