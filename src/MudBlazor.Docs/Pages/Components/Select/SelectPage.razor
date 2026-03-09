@@ -106,6 +106,8 @@
                 <Description>
                     Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
                     but the value that has been set is not in the list, it will also be displayed as text.
+                    <br /><br />
+                    If you provide a <CodeInline>ToStringFunc</CodeInline>, it takes precedence over the item's render fragment for the selection display, provided it returns a non-empty string.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(SelectPresentationExample)">

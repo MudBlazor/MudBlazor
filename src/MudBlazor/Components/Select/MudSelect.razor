@@ -71,7 +71,7 @@
                         {
                             <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([defaultValue]) ?? defaultValue)</MudText>
                         }
-                        else if (_longestItem?.ChildContent is null || MultiSelectionTextFunc is not null)
+                        else if (_longestItem?.ChildContent is null || MultiSelectionTextFunc is not null || !string.IsNullOrEmpty(ToStringFunc?.Invoke(_longestItem.Value)))
                         {
                             <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([value!]) ?? value!)</MudText>
                         }
