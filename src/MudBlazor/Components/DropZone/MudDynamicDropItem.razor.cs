@@ -11,11 +11,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
-    private string _id = Identifier.Create();
+    private readonly string _id = Identifier.Create();
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;
@@ -82,10 +81,16 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     [Category(CategoryTypes.DropZone.Disabled)]
     public string? DisabledClass { get; set; }
 
+    /// <summary>
+    /// The index of this item within its drop zone.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
     public int Index { get; set; } = -1;
 
+    /// <summary>
+    /// Hides this item's content.
+    /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
     public bool HideContent { get; set; }
@@ -142,7 +147,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         StateHasChanged();
     }
 
-    private async Task DragEndedAsync(DragEventArgs e)
+    private async Task DragEndedAsync()
     {
         if (_dragOperationIsInProgress)
         {
@@ -181,7 +186,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
             }
         }
 
-        //JS.InvokeVoidAsync("draggableTouch");
     }
 
     private async Task TouchEndedAsync(TouchEventArgs e)
@@ -220,7 +224,6 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
                 StateHasChanged();
             }
         }
-        //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
 
     /// <summary>

@@ -1,0 +1,18 @@
+﻿<MudTabs>
+    <MudTabPanel Class="@TabButtonClass" PanelClass="@PanelClass">
+        <ChildContent>
+            <MudText>Tab content</MudText>
+        </ChildContent>
+        <TabContent>
+            Item One
+        </TabContent>
+    </MudTabPanel>
+</MudTabs>
+
+@code{
+    [Parameter]
+    public string TabButtonClass { get; set; } = null!;
+
+    [Parameter]
+    public string PanelClass { get; set; } = null!;
+}

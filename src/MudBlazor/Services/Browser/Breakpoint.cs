@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Indicates a browser width used to trigger behaviors.
 /// </summary>
 /// <remarks>
 /// Breakpoints are typically used to show or hide content based on the width of the browser window, such as customizing content for desktops, tablets, and mobile devices.
 /// </remarks>
+[EnumExtensions]
 public enum Breakpoint
 {
     /// <summary>

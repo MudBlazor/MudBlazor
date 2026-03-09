@@ -1,0 +1,195 @@
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Docs.Examples
+
+<MudStack Row="true" Justify="Justify.Center" Class="mud-width-full">
+    <MudPaper Class="pa-4">
+        <MudStack Row="true">
+            <MudNumericField @bind-Value="_nodeCount" Label="Nodes" Min="2" Max="500"/>
+            <MudNumericField @bind-Value="_columnCount" Label="Columns" Min="2" Max="5"/>
+            <MudButton OnClick="@(() => GenerateData())" StartIcon="@Icons.Material.Outlined.Refresh" Color="Color.Primary" Variant="Variant.Outlined">Generate</MudButton>
+        </MudStack>
+    </MudPaper>
+</MudStack>
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Sankey" ChartSeries="@_series" Width="@($"{_width}px")" Height="@($"{_height}px")" ChartOptions="@_options"/>
+</MudPaper>
+
+<MudGrid>
+    <MudItem xs="12" Class="d-flex justify-center">
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Class="pt-4">
+            <MudTooltip Text="Show edge values">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.ShortText" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowEdgeLabels"/>
+            </MudTooltip>
+            <MudTooltip Text="Show labels">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Textsms" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowLabels"/>
+            </MudTooltip>
+            <MudTooltip Text="Show node values">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Money" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowNodeValues"/>
+            </MudTooltip>
+            <MudTooltip Text="Highlight on hover">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Highlight" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HighlightOnHover"/>
+            </MudTooltip>
+            <MudTooltip Text="Hide nodes with no edges">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.DisabledVisible" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HideNodesWithNoEdges"/>
+            </MudTooltip>
+            <MudTooltip Text="Order nodes by value">
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Sort" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.OrderNodesByValue"/>
+            </MudTooltip>
+        </MudButtonGroup>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudSlider @bind-Value="_options.NodeWidth" Max="50" ValueLabel="true">Node width</MudSlider>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudSlider @bind-Value="_options.MinVerticalSpacing" Max="30" ValueLabel="true">Min. vertical spacing</MudSlider>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudSlider @bind-Value="_options.EdgeOpacity" Step="0.01" Max="1" ValueLabel="true">Edge opacity</MudSlider>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSlider @bind-Value="_width" ValueLabel="true" Max="2000">Chart width</MudSlider>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSlider @bind-Value="_height" ValueLabel="true" Max="2000">Chart height</MudSlider>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudColorPicker Label="Highlighting color" @bind-Text="@_options.HighlightColor"/>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudNumericField @bind-Value="_options.HideNodesSmallerThan" Label="Hide nodes smaller than"/>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSelect @bind-Value="_options.LabelFontSize" Label="Label font size">
+            <MudSelectItem Value="@("0.25rem")">0.25rem</MudSelectItem>
+            <MudSelectItem Value="@("0.33rem")">0.33rem</MudSelectItem>
+            <MudSelectItem Value="@("0.5rem")">0.5rem</MudSelectItem>
+            <MudSelectItem Value="@("0.66rem")">0.66rem</MudSelectItem>
+            <MudSelectItem Value="@("0.75rem")">0.75rem</MudSelectItem>
+            <MudSelectItem Value="@("1rem")">1rem</MudSelectItem>
+            <MudSelectItem Value="@("1.25rem")">1.25rem</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudNumericField @bind-Value="_options.LabelPadding" Label="Label padding"/>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private List<SankeyNode> _nodes = [];
+    private List<SankeyEdge<double>> _edges = [];
+    private List<ChartSeries<double>> _series = [];
+
+    private readonly SankeyChartOptions _options = new()
+    {
+        NodeWidth = 5,
+        MinVerticalSpacing = 5,
+        LabelFontSize = "0.33rem",
+        LabelPadding = 2,
+        OrderNodesByValue = true,
+        HideNodesSmallerThan = 1
+    };
+
+    private int _width = 1000;
+    private int _height = 550;
+    private int _nodeCount = 50;
+    private int _columnCount = 3;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender) GenerateData();
+    }
+
+    private void GenerateData(double minEdgePercentage = 0.15, double maxEdgePercentage = 0.7)
+    {
+        var rnd = new Random();
+        _nodes = [];
+        _edges = [];
+
+        var nodesPerColumn = (int)Math.Ceiling((double)_nodeCount / _columnCount);
+        for (var col = 0; col < _columnCount; col++)
+        {
+            var nodesInCurrentColumn = Math.Min(nodesPerColumn, _nodeCount - _nodes.Count);
+            for (var i = 0; i < nodesInCurrentColumn; i++)
+            {
+                var nodeName = $"Node_{col}_{i}";
+                _nodes.Add(new SankeyNode(nodeName, col));
+            }
+        }
+
+        var nodesByColumn = _nodes.GroupBy(n => n.Column)
+            .OrderBy(g => g.Key)
+            .Select(g => g.ToList())
+            .ToList();
+        var nodeOutputs = new Dictionary<string, double>();
+        var nodeInputs = new Dictionary<string, double>();
+        foreach (var node in _nodes)
+        {
+            nodeOutputs[node.Name] = 0;
+            nodeInputs[node.Name] = 0;
+        }
+
+        for (var colI = 0; colI < nodesByColumn.Count - 1; colI++)
+        {
+            var sourceNodes = nodesByColumn[colI];
+            var targetNodes = nodesByColumn[colI + 1];
+
+            if (colI == 0)
+            {
+                foreach (var sourceNode in sourceNodes)
+                {
+                    nodeOutputs[sourceNode.Name] = rnd.Next(1, 1000);
+                }
+            }
+
+            foreach (var sourceNode in sourceNodes)
+            {
+                var remainingEdgeValue = nodeOutputs[sourceNode.Name];
+                var edgeCount = rnd.Next(1, Math.Min(targetNodes.Count, 3) + 1);
+                var selectedTargets = targetNodes.OrderBy(_ => rnd.Next()).Take(edgeCount).ToList();
+
+                for (var i = 0; i < selectedTargets.Count; i++)
+                {
+                    var targetNode = selectedTargets[i];
+                    double edgeValue;
+
+                    if (i == selectedTargets.Count - 1)
+                    {
+                        edgeValue = remainingEdgeValue;
+                    }
+                    else
+                    {
+                        var maxEdgeValue = remainingEdgeValue - (selectedTargets.Count - i - 1) * 10;
+                        edgeValue = rnd.NextDouble() * maxEdgeValue * maxEdgePercentage + maxEdgeValue * minEdgePercentage;
+                        remainingEdgeValue -= edgeValue;
+                    }
+
+                    _edges.Add(new SankeyEdge<double>(sourceNode.Name, targetNode.Name, Math.Round(edgeValue)));
+                    nodeInputs[targetNode.Name] += edgeValue;
+                }
+            }
+
+            foreach (var targetNode in targetNodes)
+            {
+                nodeOutputs[targetNode.Name] = nodeInputs[targetNode.Name];
+            }
+        }
+
+        _edges.RemoveAll(e => e.Weight <= 0);
+
+        _series = new List<ChartSeries<double>>()
+        {
+            new()
+            {
+                Name = "Generated Data",
+                Data = _edges
+            }
+        };
+
+        _options.NodeOverrides = _nodes;
+
+        StateHasChanged();
+    }
+}

@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A component which can be expanded to show more content or collapsed to show only its header.
@@ -34,6 +33,7 @@ namespace MudBlazor
 
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
+                .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
                 .AddClass(HeaderClass)
                 .Build();
 

@@ -6,8 +6,7 @@
         <ItemTemplate>
             <MudTreeViewItem 
                 Value="@context.Value" 
-                Items="@context.Children" 
-                ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string>>>(items => OnItemsLoaded(context, items)))" 
+                @bind-Items="context.Children" 
                 @bind-Expanded="@context.Expanded"
                 CanExpand="@context.Expandable"
                 Icon="@context.Icon" 
@@ -52,10 +51,4 @@
         ];        
     }
 
-    private void OnItemsLoaded(TreeItemData<string> treeItemData, IReadOnlyCollection<TreeItemData<string>> children)
-    {
-        // here we store the server-loaded children in the treeItemData so that they are available in the InitialTreeItems
-        // if you don't do this you loose already loaded children on next render update
-        treeItemData.Children = children?.ToList();
-    }
 }

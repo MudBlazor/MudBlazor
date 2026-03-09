@@ -10,7 +10,6 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor.Utilities
 {
-#nullable enable
     /// <summary>
     /// Specifies different output formats for <seealso cref="MudColor"/>.
     /// </summary>
@@ -38,6 +37,13 @@ namespace MudBlazor.Utilities
         ColorElements
     }
 
+    public enum MudColorComparison
+    {
+        Rgba = 0,
+        Hsl = 1,
+        RgbaAndHsl = 3
+    }
+
     /// <summary>
     /// Represents a color with methods to manipulate color values.
     /// </summary>
@@ -61,7 +67,7 @@ namespace MudBlazor.Utilities
         /// Gets the 32-bit unsigned integer representation of the color.
         /// </summary>
         [JsonIgnore]
-        public uint UInt32 => (uint)(R << 24 | G << 16 | B << 8 | A);
+        public uint UInt32 => (uint)((R << 24) | (G << 16) | (B << 8) | A);
 
         /// <summary>
         /// Gets the red component value of the color.
@@ -330,14 +336,14 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="other">The <see cref="MudColor"/> instance to compare HSL values with.</param>
         /// <returns>True if the HSL are equal; otherwise, false.</returns>
-        public bool HslEquals(MudColor? other) => other is not null && _hsl.Equals(other._hsl);
+        public bool HslEquals(MudColor? other) => Equals(other, MudColorComparison.Hsl);
 
         /// <summary>
         /// Checks whether the RGBA (Red, Green, Blue, Alpha) values of this <see cref="MudColor"/> instance are equal compared to another <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="other">The <see cref="MudColor"/> instance to compare HSL values with.</param>
         /// <returns>True if the RGBA are equal; otherwise, false.</returns>
-        public bool RgbaEquals(MudColor? other) => other is not null && _rgba.Equals(other._rgba);
+        public bool RgbaEquals(MudColor? other) => Equals(other, MudColorComparison.Rgba);
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is MudColor color && Equals(color);
@@ -347,18 +353,41 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="other">The <see cref="MudColor"/> instance to compare.</param>
         /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public bool Equals(MudColor? other)
+        public bool Equals(MudColor? other) => Equals(other, MudColorComparison.Rgba);
+
+        /// <summary>
+        /// Determines whether this <see cref="MudColor"/> instance is equal to another
+        /// <see cref="MudColor"/> instance using the specified comparison mode.
+        /// </summary>
+        /// <param name="other">The <see cref="MudColor"/> instance to compare with.</param>
+        /// <param name="comparison">
+        /// The comparison mode to use. Possible values:
+        /// <see cref="MudColorComparison.Rgba"/>,
+        /// <see cref="MudColorComparison.Hsl"/>,
+        /// <see cref="MudColorComparison.RgbaAndHsl"/>.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if the colors are considered equal according to the specified comparison mode;
+        /// otherwise, <c>false</c>.
+        /// </returns>
+        public bool Equals(MudColor? other, MudColorComparison comparison)
         {
             if (ReferenceEquals(other, null))
             {
                 return false;
             }
 
-            return RgbaEquals(other) && HslEquals(other);
+            return comparison switch
+            {
+                MudColorComparison.Rgba => _rgba.Equals(other._rgba),
+                MudColorComparison.Hsl => _hsl.Equals(other._hsl),
+                MudColorComparison.RgbaAndHsl => RgbaEquals(other) && HslEquals(other),
+                _ => Equals(other)
+            };
         }
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(_rgba, _hsl);
+        public override int GetHashCode() => HashCode.Combine(_rgba);
 
         /// <inheritdoc />
         public override string ToString() => ToString(MudColorOutputFormats.RGBA);
@@ -453,14 +482,6 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
-        /// Determines whether two <see cref="MudColor"/> instances are not equal.
-        /// </summary>
-        /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
-        /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
-        /// <returns>True if the instances are not equal; otherwise, false.</returns>
-        public static bool operator !=(MudColor? lhs, MudColor? rhs) => !(lhs == rhs);
-
-        /// <summary>
         /// Determines whether two <see cref="MudColor"/> instances are equal.
         /// </summary>
         /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
@@ -487,6 +508,14 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
+        /// Determines whether two <see cref="MudColor"/> instances are not equal.
+        /// </summary>
+        /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
+        /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
+        /// <returns>True if the instances are not equal; otherwise, false.</returns>
+        public static bool operator !=(MudColor? lhs, MudColor? rhs) => !(lhs == rhs);
+
+        /// <summary>
         /// Converts a string representation of a color to a <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="input">The string representation of the color.</param>
@@ -506,6 +535,11 @@ namespace MudBlazor.Utilities
         /// <param name="mudColor">The MudColor instance to convert.</param>
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        /// <summary>
+        /// Represents an empty <see cref="MudColor"/> instance with default values (black with full opacity).
+        /// </summary>
+        public static readonly MudColor Empty = new();
 
         /// <summary>
         /// Parses a string representation of a color to a <see cref="MudColor"/> instance.
@@ -597,12 +631,12 @@ namespace MudBlazor.Utilities
             var hNormalized = hsl.H / 360d;
             var t2 = hsl.L <= 0.5d
                 ? hsl.L * (1.0d + hsl.S)
-                : hsl.L + hsl.S - hsl.L * hsl.S;
-            var t1 = 2.0d * hsl.L - t2;
+                : hsl.L + hsl.S - (hsl.L * hsl.S);
+            var t1 = (2.0d * hsl.L) - t2;
 
-            var tr = HueToRgb(t1, t2, hNormalized + 1.0d / 3.0d);
+            var tr = HueToRgb(t1, t2, hNormalized + (1.0d / 3.0d));
             var tg = HueToRgb(t1, t2, hNormalized);
-            var tb = HueToRgb(t1, t2, hNormalized - 1.0d / 3.0d);
+            var tb = HueToRgb(t1, t2, hNormalized - (1.0d / 3.0d));
 
             var r = ((int)Math.Round(tr * 255d)).EnsureRangeToByte();
             var g = ((int)Math.Round(tg * 255d)).EnsureRangeToByte();
@@ -617,9 +651,9 @@ namespace MudBlazor.Utilities
             if (hueNormalized > 1.0d) hueNormalized -= 1.0d;
             return hueNormalized switch
             {
-                < 1.0d / 6.0d => t1 + (t2 - t1) * 6.0d * hueNormalized,
+                < 1.0d / 6.0d => t1 + ((t2 - t1) * 6.0d * hueNormalized),
                 < 1.0d / 2.0d => t2,
-                < 2.0d / 3.0d => t1 + (t2 - t1) * (2.0d / 3.0d - hueNormalized) * 6.0d,
+                < 2.0d / 3.0d => t1 + ((t2 - t1) * ((2.0d / 3.0d) - hueNormalized) * 6.0d),
                 _ => t1
             };
         }
@@ -725,19 +759,19 @@ namespace MudBlazor.Utilities
             }
             else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized >= bNormalized))
             {
-                h = (60D * (gNormalized - bNormalized)) / (max - min);
+                h = 60D * (gNormalized - bNormalized) / (max - min);
             }
             else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized < bNormalized))
             {
-                h = ((60D * (gNormalized - bNormalized)) / (max - min)) + 360D;
+                h = (60D * (gNormalized - bNormalized) / (max - min)) + 360D;
             }
             else if (Math.Abs(max - gNormalized) < Epsilon)
             {
-                h = ((60D * (bNormalized - rNormalized)) / (max - min)) + 120D;
+                h = (60D * (bNormalized - rNormalized) / (max - min)) + 120D;
             }
             else if (Math.Abs(max - bNormalized) < Epsilon)
             {
-                h = ((60D * (rNormalized - gNormalized)) / (max - min)) + 240D;
+                h = (60D * (rNormalized - gNormalized) / (max - min)) + 240D;
             }
 
             // lightness
@@ -767,6 +801,84 @@ namespace MudBlazor.Utilities
             info.AddValue(nameof(G), G);
             info.AddValue(nameof(B), B);
             info.AddValue(nameof(A), A);
+        }
+
+        /// <summary>
+        /// Provides comparison and hashing capabilities for <see cref="MudColor"/> using the
+        /// specified <see cref="MudColorComparison"/> mode.
+        /// </summary>
+        public sealed class MudColorComparer : IEqualityComparer<MudColor?>
+        {
+            /// <summary>
+            /// Gets the comparison mode used by this comparer.
+            /// </summary>
+            public MudColorComparison Comparison { get; }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MudColorComparer"/> class.
+            /// </summary>
+            /// <param name="comparison">The comparison mode to use.</param>
+            private MudColorComparer(MudColorComparison comparison)
+            {
+                Comparison = comparison;
+            }
+
+            /// <inheritdoc />
+            public bool Equals(MudColor? x, MudColor? y)
+            {
+                if (ReferenceEquals(x, y))
+                {
+                    return true;
+                }
+
+                if (x is null || y is null)
+                {
+                    return false;
+                }
+
+                return Comparison switch
+                {
+                    MudColorComparison.Rgba => x.RgbaEquals(y),
+                    MudColorComparison.Hsl => x.HslEquals(y),
+                    MudColorComparison.RgbaAndHsl => x.RgbaEquals(y) && x.HslEquals(y),
+                    _ => x.Equals(y)
+                };
+            }
+
+            /// <inheritdoc />
+            public int GetHashCode(MudColor? mudColor)
+            {
+                if (mudColor is null)
+                {
+                    return 0;
+                }
+
+                return Comparison switch
+                {
+                    MudColorComparison.Rgba => mudColor._rgba.GetHashCode(),
+                    MudColorComparison.Hsl => mudColor._hsl.GetHashCode(),
+                    MudColorComparison.RgbaAndHsl => HashCode.Combine(mudColor._rgba, mudColor._hsl),
+                    _ => mudColor.GetHashCode()
+                };
+            }
+
+            /// <summary>
+            /// Gets an instance of <see cref="MudColorComparer"/> that compares colors using
+            /// their RGBA channel values only.
+            /// </summary>
+            public static MudColorComparer Rgba { get; } = new(MudColorComparison.Rgba);
+
+            /// <summary>
+            /// Gets an instance of <see cref="MudColorComparer"/> that compares colors using
+            /// their HSL values only.
+            /// </summary>
+            public static MudColorComparer Hsl { get; } = new(MudColorComparison.Hsl);
+
+            /// <summary>
+            /// Gets an instance of <see cref="MudColorComparer"/> that compares colors using
+            /// both RGBA and HSL values.
+            /// </summary>
+            public static MudColorComparer RgbaAndHsl { get; } = new(MudColorComparison.RgbaAndHsl);
         }
     }
 }

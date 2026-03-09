@@ -256,8 +256,7 @@
     }
 
     &.mud-input-root-type-search {
-      -moz-appearance: textfield;
-      -webkit-appearance: textfield;
+      appearance: textfield;
     }
 
     &:focus, &:active {
@@ -374,8 +373,7 @@
     }
 
     &.mud-input-root-type-search {
-      -moz-appearance: textfield;
-      -webkit-appearance: textfield;
+      appearance: textfield;
     }
 
     &:focus, &:active {

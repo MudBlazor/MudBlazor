@@ -26,6 +26,7 @@
     - [Example of a bad code](#example-of-a-bad-code-1)
     - [Example of a good code](#example-of-a-good-code-1)
   - [Unit Testing and Continuous Integration](#unit-testing-and-continuous-integration)
+    - [Test naming conventions](#test-naming-conventions)
     - [How not to break stuff](#how-not-to-break-stuff)
     - [Make your code break-safe](#make-your-code-break-safe)
     - [How to write a unit test?](#how-to-write-a-unit-test)
@@ -33,6 +34,7 @@
     - [What are common errors when writing tests?](#what-are-common-errors-when-writing-tests)
       - [Do not save html elements you query via `Find` or `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-find-or-findall-in-a-variable)
       - [Always use InvokeAsync to set parameter values on a component](#always-use-invokeasync-to-set-parameter-values-on-a-component)
+      - [Keep tests isolated for parallel execution](#keep-tests-isolated-for-parallel-execution)
     - [What does not need to be tested?](#what-does-not-need-to-be-tested)
     - [What is the MudBlazor.UnitTests.Viewer for?](#what-is-the-mudblazorunittestsviewer-for)
     - [What are the auto-generated tests for?](#what-are-the-auto-generated-tests-for)
@@ -339,6 +341,12 @@ We strive for complete test coverage to keep stuff from breaking and
 deliver a rock-solid library. For every component that has C# logic we 
 require a bUnit test that checks its logic.
 
+### Test naming conventions
+
+- Do not use `Test` or `Async` suffixes in test method names (e.g., `Toggle_OpenAsync` -> `Toggle_Open`)
+- Do not embed `Test_` in the middle of names (e.g., `AlertTest_Click` -> `Alert_Click`)
+- No trailing underscores or double underscores in test method names (e.g., `BarChart_CanHideSeries_` -> `BarChart_CanHideSeries`)
+
 ### How not to break stuff
 
 When you are making changes to any components and preparing a PR make sure you run the entire test suite to see if anything broke.
@@ -384,8 +392,8 @@ In the Test make sure to instantiate the razor file you just prepared above.
    
    // wrong - this will fail:
    var textField = comp.Find("input");
-   textField.Change("Garfield");
-   textField.Blur();
+   await textField.ChangeAsync("Garfield");
+   await textField.BlurAsync();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
@@ -395,8 +403,8 @@ As soon as you interact with html elements they are potentially re-rendered, and
    var comp = ctx.RenderComponent<MudTextField<string>>();
    
    // correct   
-   comp.Find("input").Change("Garfield");
-   comp.Find("input").Blur();
+   await comp.Find("input").ChangeAsync("Garfield");
+   await comp.Find("input").BlurAsync();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
@@ -415,6 +423,10 @@ The bUnit test logic is not running on the Blazor UI-thread, so whenever directl
    // correct
    await comp.InvokeAsync(()=>textField.Value="I love dogs");
 ```
+
+#### Keep tests isolated for parallel execution
+
+Avoid modifying shared/static state (such as `MudGlobal` defaults or singletons) without restoring it in `[TearDown]`. If a fixture must change global state, mark it `[NonParallelizable]` and prefer deterministic timing helpers like `TimeProvider`/`FakeTimeProvider` over `Task.Delay`.
 
 ### What does not need to be tested?
 

@@ -3,6 +3,10 @@
 @typeparam T
 @inherits MudFormComponent<T, T>
 
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
+
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">

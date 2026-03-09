@@ -1,7 +1,5 @@
-﻿using System;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Scroll;
 using NUnit.Framework;
 
@@ -14,19 +12,19 @@ namespace MudBlazor.UnitTests.Components
         /// Test scrolling and clicking on 'scroll to top' element
         /// </summary>
         [Test]
-        public void ScrollToTopTest()
+        public async Task ScrollToTop()
         {
-            var comp = Context.RenderComponent<ScrollToTopTest>();
+            var comp = Context.Render<ScrollToTopTest>();
 
             comp.Instance.Clicked.Should().BeFalse(because: "Not clicked yet");
 
             // scrollBottomButton click check
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             var scrollIntoViewInvocation = Context.JSInterop.VerifyInvoke("mudScrollManager.scrollIntoView");
             scrollIntoViewInvocation.Arguments.Count.Should().Be(2);
 
             // checks invocation of js scroll function to ensure main functionality
-            comp.Find("span.mud-scroll-to-top").Click();
+            await comp.Find("span.mud-scroll-to-top").ClickAsync();
             var scrollToInvocation = Context.JSInterop.VerifyInvoke("mudScrollManager.scrollTo");
             scrollToInvocation.Arguments.Count.Should().Be(4);
 

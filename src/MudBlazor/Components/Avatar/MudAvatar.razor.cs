@@ -4,7 +4,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a component which displays circular user profile pictures, icons or text.
     /// </summary>
@@ -15,11 +14,11 @@ namespace MudBlazor
         protected MudAvatarGroup? AvatarGroup { get; set; }
 
         protected string Classname => new CssBuilder("mud-avatar")
-            .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Size.ToStringFast(true)}")
             .AddClass($"mud-avatar-rounded", Rounded)
             .AddClass($"mud-avatar-square", Square)
-            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+            .AddClass($"mud-avatar-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-avatar-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
             .AddClass(AvatarGroup?.GetAvatarSpacing() ?? new CssBuilder(), AvatarGroup != null)
             .AddClass(Class)
@@ -45,23 +44,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
+        public bool Square { get; set; }
 
         /// <summary>
         /// Uses rounded corners instead of a circle.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The color of the avatar.
@@ -116,6 +113,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             AvatarGroup?.RemoveAvatar(this);
         }
     }

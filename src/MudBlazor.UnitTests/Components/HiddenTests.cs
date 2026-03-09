@@ -1,12 +1,11 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Hidden;
 using NUnit.Framework;
 
@@ -40,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var comp = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
+            var comp = Context.Render<SimpleMudHiddenTest>(parameterBuilder =>
             {
                 parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
                 parameterBuilder.Add(parameter => parameter.Invert, invert);
@@ -75,7 +74,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
+            var component = Context.Render<SimpleMudHiddenTest>(parameterBuilder =>
             {
                 parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
                 parameterBuilder.Add(parameter => parameter.Invert, false);
@@ -98,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void InvertChangedAfterInitializing()
+        public async Task InvertChangedAfterInitializing()
         {
             BrowserWindowSize GetBrowserSize()
             {
@@ -114,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var comp = Context.RenderComponent<SimpleMudHiddenTest>(p =>
+            var comp = Context.Render<SimpleMudHiddenTest>(p =>
             {
                 p.Add(x => x.Breakpoint, Breakpoint.Lg);
                 p.Add(x => x.Invert, false);
@@ -122,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("p").TextContent.Should().Be("MudHidden content");
 
-            comp.SetParametersAndRender(p => p.Add(x => x.Invert, true));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Invert, true));
 
             Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
 
@@ -130,7 +129,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReferenceBreakpointChangedAfterInitializing()
+        public async Task ReferenceBreakpointChangedAfterInitializing()
         {
             BrowserWindowSize GetBrowserSize()
             {
@@ -147,7 +146,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
+            var component = Context.Render<SimpleMudHiddenTest>(parameterBuilder =>
             {
                 parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
                 parameterBuilder.Add(parameter => parameter.Invert, false);
@@ -155,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
 
             component.Find("p").TextContent.Should().Be("MudHidden content");
 
-            component.SetParametersAndRender(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
+            await component.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
 
             Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
 
@@ -180,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.RenderComponent<SimpleMudHiddenTest>(parameterBuilder =>
+            var component = Context.Render<SimpleMudHiddenTest>(parameterBuilder =>
             {
                 parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
                 parameterBuilder.Add(parameter => parameter.Invert, false);
@@ -204,7 +203,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.RenderComponent<BreakpointProviderWithMudHiddenTest>(parameterBuilder =>
+            var component = Context.Render<BreakpointProviderWithMudHiddenTest>(parameterBuilder =>
             {
                 parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
             });
@@ -243,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.RenderComponent<BreakpointProviderWithMudHiddenTest>(parameterBuilder =>
+            var component = Context.Render<BreakpointProviderWithMudHiddenTest>(parameterBuilder =>
             {
                 parameterBuilder.Add(parameter => parameter.Breakpoint, Breakpoint.Lg);
             });
@@ -282,7 +281,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TestSemaphore_RenderInParallel()
+        [NonParallelizable]
+        public async Task TestSemaphore_RenderInParallel()
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
@@ -299,12 +299,12 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.RenderComponent<RenderMultipleHiddenInParallel>();
+            var component = Context.Render<RenderMultipleHiddenInParallel>();
 
-            component.WaitForAssertion(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            component.WaitForAssertion(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            component.WaitForAssertion(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            component.WaitForAssertion(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
         }
     }
 }

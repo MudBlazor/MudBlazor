@@ -99,8 +99,7 @@ namespace MudBlazor.Docs.Compiler
                 success = false;
             }
 
-            Console.WriteLine(@$"Docs.Compiler updated {noOfFilesUpdated} generated files");
-            Console.WriteLine(@$"Docs.Compiler generated {noOfFilesCreated} new files");
+            Console.WriteLine(@$"Docs.Compiler markup: updated {noOfFilesUpdated} files, generated {noOfFilesCreated} new files");
             return success;
         }
 

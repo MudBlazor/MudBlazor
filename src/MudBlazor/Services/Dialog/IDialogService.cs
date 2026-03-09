@@ -7,7 +7,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -28,102 +27,6 @@ namespace MudBlazor
         /// Occurs when a request is made to close a dialog.
         /// </summary>
         event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
-
-        /// <summary>
-        /// Displays a dialog.
-        /// </summary>
-        /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>() where TComponent : IComponent;
-
-        /// <summary>
-        /// Displays a dialog with a custom title.
-        /// </summary>
-        /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title) where TComponent : IComponent;
-
-        /// <summary>
-        /// Displays a dialog with a custom title and options.
-        /// </summary>
-        /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <param name="options">The custom display options for the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogOptions options) where TComponent : IComponent;
-
-        /// <summary>
-        /// Displays a dialog with custom parameters.
-        /// </summary>
-        /// <typeparam name="TComponent">The type of dialog to display.</typeparam>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <param name="parameters">The custom parameters to set within the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters) where TComponent : IComponent;
-
-        /// <summary>
-        /// Displays a dialog with custom options and parameters.
-        /// </summary>
-        /// <typeparam name="TComponent"></typeparam>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <param name="parameters">The custom parameters to set within the dialog.</param>
-        /// <param name="options">The custom display options for the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogParameters parameters, DialogOptions? options) where TComponent : IComponent;
-
-        /// <summary>
-        /// Displays a dialog.
-        /// </summary>
-        /// <param name="component">The type of dialog to display.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component);
-
-        /// <summary>
-        /// Displays a dialog with a custom title.
-        /// </summary>
-        /// <param name="component">The type of dialog to display.</param>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title);
-
-        /// <summary>
-        /// Displays a dialog with a custom title and options.
-        /// </summary>
-        /// <param name="component">The type of dialog to display.</param>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <param name="options">The custom display options for the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options);
-
-        /// <summary>
-        /// Displays a dialog with a custom title and options.
-        /// </summary>
-        /// <param name="component">The type of dialog to display.</param>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <param name="parameters">The custom parameters to set within the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters);
-
-        /// <summary>
-        /// Displays a dialog with a custom title, parameters, and options.
-        /// </summary>
-        /// <param name="component">The type of dialog to display.</param>
-        /// <param name="title">The text at the top of the dialog.</param>
-        /// <param name="parameters">The custom parameters to set within the dialog.</param>
-        /// <param name="options">The custom display options for the dialog.</param>
-        /// <returns>A reference to the dialog.</returns>
-        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
-        IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters, DialogOptions options);
 
         /// <summary>
         /// Displays a dialog.
@@ -227,7 +130,7 @@ namespace MudBlazor
         /// <param name="cancelText">The text of the "Cancel" button.  Defaults to <c>null</c>.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(string? title, string message, string yesText = "OK",
+        Task<bool?> ShowMessageBoxAsync(string? title, string message, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null);
 
         /// <summary>
@@ -240,7 +143,7 @@ namespace MudBlazor
         /// <param name="cancelText">The text of the "Cancel" button.  Defaults to <c>null</c>.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(string? title, MarkupString markupMessage, string yesText = "OK",
+        Task<bool?> ShowMessageBoxAsync(string? title, MarkupString markupMessage, string yesText = "OK",
             string? noText = null, string? cancelText = null, DialogOptions? options = null);
 
         /// <summary>
@@ -249,7 +152,7 @@ namespace MudBlazor
         /// <param name="messageBoxOptions">The options for the message box.</param>
         /// <param name="options">The custom display options for the dialog.  Defaults to <c>null</c>.</param>
         /// <returns>Returns <c>null</c> if the <c>Cancel</c> button was clicked, <c>true</c> if the <c>Yes</c> button was clicked, or <c>false</c> if the <c>No</c> button was clicked.</returns>
-        Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null);
+        Task<bool?> ShowMessageBoxAsync(MessageBoxOptions messageBoxOptions, DialogOptions? options = null);
 
         /// <summary>
         /// Hides an existing dialog.

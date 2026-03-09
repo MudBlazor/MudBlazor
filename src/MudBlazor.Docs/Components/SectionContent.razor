@@ -1,15 +1,4 @@
-﻿@using MudBlazor.Utilities
-@using System;
-@using System.IO;
-@using System.Linq;
-@using System.Text.RegularExpressions;
-@using System.Threading.Tasks;
-@using Microsoft.AspNetCore.Components;
-@using MudBlazor.Docs.Extensions;
-@using MudBlazor.Docs.Models;
-
-
-@if (Codes != null || ChildContent != null)
+﻿@if (Codes != null || ChildContent != null)
 {
     <div class="@Classname">
         @if (Codes != null || (_hasCode && ChildContent != null))
@@ -17,18 +6,18 @@
             <MudToolBar Class="@ToolbarClassname">
                 @if(Codes != null)
                 {
-                    @foreach (var codefile in Codes)
+                    @foreach (var codeFile in Codes)
                     {
-                        <MudButton Class="@GetActiveCode(codefile.code)" OnClick="@(() => SetActiveCode(codefile.code))" Size="Size.Small">@codefile.title</MudButton>
+                        <MudButton Class="@GetActiveCode(codeFile.Code)" OnClick="@(() => SetActiveCode(codeFile.Code))" Size="Size.Small">@codeFile.Title</MudButton>
                     }
                 }
                 <MudSpacer/>
                 @if (_hasCode && ChildContent != null)
                 {
                     <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500" ShowOnFocus="false">
-                        <MudButton OnClick="RunOnTryMudBlazor" StartIcon="@Icons.Material.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
+                        <MudButton OnClick="RunOnTryMudBlazorAsync" StartIcon="@Icons.Material.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
                     </MudTooltip>
-                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? @Icons.Material.Rounded.CodeOff : Icons.Material.Rounded.Code)" Color="Color.Default" Size="Size.Small">
+                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? Icons.Material.Rounded.CodeOff : Icons.Material.Rounded.Code)" Color="Color.Default" Size="Size.Small">
                         @(ShowCode ? "Hide code" : "Show code")
                     </MudButton>
                 }

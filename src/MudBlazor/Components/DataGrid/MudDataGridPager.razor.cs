@@ -24,7 +24,7 @@ namespace MudBlazor
         /// The grid which contains this pager.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T> DataGrid { get; set; }
+        public MudDataGrid<T>? DataGrid { get; set; }
 
         /// <summary>
         /// Shows the page-size drop-down list.
@@ -98,20 +98,20 @@ namespace MudBlazor
             {
                 if (DataGrid == null)
                     return "DataGrid==null";
-                Debug.Assert(DataGrid != null);
-                var firstItem = DataGrid?.GetFilteredItemsCount() == 0 ? 0 : DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
+                Debug.Assert(DataGrid is not null);
+                var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : (DataGrid.CurrentPage * DataGrid.RowsPerPage) + 1;
                 var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
-                var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
+                var allItems = DataGrid.GetFilteredItemsCount();
 
-                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
+                if (string.IsNullOrEmpty(InfoFormat))
                 {
-                    return InfoFormat
-                        .Replace("{first_item}", $"{firstItem}")
-                        .Replace("{last_item}", $"{lastItem}")
-                        .Replace("{all_items}", $"{allItems}");
+                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, $"{firstItem:N0}", $"{lastItem:N0}", $"{allItems:N0}"];
                 }
 
-                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, allItems];
+                return InfoFormat
+                    .Replace("{first_item}", $"{firstItem:N0}")
+                    .Replace("{last_item}", $"{lastItem:N0}")
+                    .Replace("{all_items}", $"{allItems:N0}");
             }
         }
 
@@ -164,6 +164,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (DataGrid != null)
             {
                 DataGrid.PagerStateHasChangedEvent -= StateHasChanged;

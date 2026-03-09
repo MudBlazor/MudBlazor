@@ -10,7 +10,7 @@ internal static class TypeSymbolExtensions
     public static IList<INamedTypeSymbol> GetAllInterfacesIncludingThis(this ITypeSymbol type)
     {
         var allInterfaces = type.AllInterfaces;
-        if (type is INamedTypeSymbol namedType && namedType.TypeKind == TypeKind.Interface && !allInterfaces.Contains(namedType))
+        if (type is INamedTypeSymbol { TypeKind: TypeKind.Interface } namedType && !allInterfaces.Contains(namedType))
         {
             var result = new List<INamedTypeSymbol>(allInterfaces.Length + 1);
             result.AddRange(allInterfaces);

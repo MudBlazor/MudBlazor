@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Utilities.Background;
 
-#nullable enable
 /// <summary>
 /// Base class for implementing a long-running background worker.
 /// </summary>

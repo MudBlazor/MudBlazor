@@ -11,7 +11,7 @@
                 Class="@Classname"
                 Style="@Style"
                 @attributes="GetAttributes()"
-                @onclick="@(IsButton ? this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync) : null)">
+                @onclick="@((IsButton ? this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync) : null)!)">
         @{
             if (AvatarContent is not null)
             {

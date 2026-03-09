@@ -1,12 +1,14 @@
 ﻿<MudFileUpload T="IBrowserFile" Disabled="Disabled">
-    <ActivatorContent>
-        <MudButton>
+    <CustomContent>
+        <MudButton OnClick="@context.OpenFilePickerAsync">
             Upload
         </MudButton>
-    </ActivatorContent>
+    </CustomContent>
 </MudFileUpload>
 
 @code {
+    public static string __description__ = "Tests that file upload respects the disabled state with custom activator content.";
+
     [Parameter]
     public bool Disabled { get; set; }
 }

@@ -7,7 +7,6 @@ using MudBlazor.Resources;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents comparison operations which execute a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
@@ -246,7 +245,7 @@ namespace MudBlazor
             public const string NotEqual = "not equals";
         }
 
-        internal static string[] GetOperatorByDataType(Type type)
+        internal static string[] GetOperatorByDataType(Type? type)
         {
             var fieldType = FieldType.Identify(type);
             return GetOperatorByDataType(fieldType);

@@ -3,7 +3,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 internal enum SnackbarState
 {
     Init,

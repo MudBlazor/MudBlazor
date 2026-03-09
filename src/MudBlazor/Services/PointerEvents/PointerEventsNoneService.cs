@@ -10,13 +10,13 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
-#nullable enable
 
-/// <inheritdoc />
+/// <summary>
+/// Globally observes pointer events for elements that have pointer events disabled.
+/// </summary>
 /// <remarks>
 /// This implementation uses JavaScript interop to globally listen for pointer events such as pointer down and up.
-/// Since elements with <c>pointer-events: none</c> do not receive events normally, the interop captures these events
-/// and checks if they occurred over any registered element IDs. Matching observers are then notified in C#.
+/// Since elements with <c>pointer-events: none</c> do not receive events normally, the interop captures these events and checks if they occurred over any registered element IDs. Matching observers are then notified in C#.
 ///
 /// This allows you to make elements with disabled pointer interaction still participate in interaction logic,
 /// such as overlays or custom render layers.

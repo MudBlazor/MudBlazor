@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Chip;
 using NUnit.Framework;
 
@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Chip_ShouldRenderDivByDefault()
         {
-            var comp = Context.RenderComponent<MudChip<string>>();
+            var comp = Context.Render<MudChip<string>>();
 
             var chip = comp.Find(".mud-chip");
 
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
             [Values(null, "noopener", "nofollow")] string rel)
         {
 
-            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.Href, "https://example.com")
                 .Add(p => p.Target, target)
                 .Add(p => p.Rel, rel)
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
             [Values(null, "", "ASDF", "_blank")] string target,
             [Values(null, "", "noopener", "nofollow")] string rel)
         {
-            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { })
                 .Add(p => p.Href, href)
                 .Add(p => p.Target, target)
@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
                 { "data-test", "testValue" }
             };
 
-            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { })
                 .Add(p => p.UserAttributes, userAttributes)
             );
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Chip_ShouldRenderAvatar()
         {
-            var comp = Context.RenderComponent<ChipAvatarContentTest>();
+            var comp = Context.Render<ChipAvatarContentTest>();
 
             comp.Find("div.mud-chip").InnerHtml.Should().Contain("mud-avatar");
         }
@@ -112,9 +112,9 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the chip and tests if the OnClick event works
         /// </summary>
         [Test]
-        public void Chip_OnClick()
+        public async Task Chip_OnClick()
         {
-            var comp = Context.RenderComponent<ChipOnClickTest>();
+            var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on chip
-            chip.Click();
+            await chip.ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
@@ -133,9 +133,9 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the close button and tests if the OnClose event works
         /// </summary>
         [Test]
-        public void Chip_OnClose()
+        public async Task Chip_OnClose()
         {
-            var comp = Context.RenderComponent<ChipOnClickTest>();
+            var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
@@ -144,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on close button
-            comp.Find("button.mud-chip-close-button").Click();
+            await comp.Find("button.mud-chip-close-button").ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");

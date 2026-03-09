@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the behavior of a <see cref="MudDrawer"/>.
 /// </summary>
+[EnumExtensions]
 public enum DrawerVariant
 {
     /// <summary>

@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a floating action button.
     /// </summary>
@@ -19,8 +18,8 @@ namespace MudBlazor
     {
         protected string Classname => new CssBuilder("mud-button-root mud-fab")
             .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
-            .AddClass($"mud-fab-{Color.ToDescriptionString()}")
-            .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-fab-{Color.ToStringFast(true)}")
+            .AddClass($"mud-fab-size-{Size.ToStringFast(true)}")
             .AddClass($"mud-ripple", Ripple && !GetDisabledState())
             .AddClass($"mud-fab-disable-elevation", !DropShadow)
             .AddClass(Class)
@@ -44,7 +43,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Large;
+        public virtual Size Size { get; set; } = Size.Large;
 
         /// <summary>
         /// The icon shown before any text.

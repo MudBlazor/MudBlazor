@@ -55,7 +55,7 @@
         {
             if (item.Value == parentValue)
             {
-                return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(item.Children);
+                return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(ToTreeItems(item.Children));
             }
 
             if (!item.HasChildren)
@@ -66,14 +66,22 @@
             var descendantItem = FindTreeItemData(parentValue, item);
             if (descendantItem != null)
             {
-                return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(descendantItem.Children);
+                return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>?>(ToTreeItems(descendantItem.Children));
             }
         }
 
         return null;
     }
 
-    private static TreeItemData<string>? FindTreeItemData(string value, TreeItemData<string> parent)
+    private static IReadOnlyCollection<TreeItemData<string>>? ToTreeItems(IReadOnlyCollection<ITreeItemData<string>>? children)
+        => children switch
+        {
+            null => null,
+            IReadOnlyCollection<TreeItemData<string>> treeItems => treeItems,
+            _ => children.OfType<TreeItemData<string>>().ToList()
+        };
+
+    private static ITreeItemData<string>? FindTreeItemData(string value, ITreeItemData<string> parent)
     {
         if (parent.Children != null)
         {

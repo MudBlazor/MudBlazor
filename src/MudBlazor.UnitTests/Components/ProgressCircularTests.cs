@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
             var valueValue = -400;
             var strokeWidthValue = 50;
 
-            var comp = Context.RenderComponent<MudProgressCircular>(x =>
+            var comp = Context.Render<MudProgressCircular>(x =>
                 {
                     x.Add(y => y.Value, valueValue);
                     x.Add(y => y.Min, minValue);
@@ -44,6 +44,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
+            container.GetAttribute("aria-busy").Should().Be("true");
             container.GetAttribute("aria-valuenow").Should().Be(valueValue.ToString());
             container.GetAttribute("aria-valuemin").Should().Be(minValue.ToString());
             container.GetAttribute("aria-valuemax").Should().Be(maxValue.ToString());
@@ -76,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void TestClassesForRounded(bool rounded)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Rounded, rounded));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Rounded, rounded));
 
             var container = comp.Find(".mud-progress-circular-circle");
 
@@ -95,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Indeterminate, indeterminate));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Indeterminate, indeterminate));
 
             var container = comp.Find(".mud-progress-circular");
 
@@ -130,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Size, size));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-circular");
 
@@ -143,7 +144,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Color, color));
+            var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Color, color));
 
             var container = comp.Find(".mud-progress-circular");
 
@@ -158,7 +159,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(0, "24 24 40 40")]
         public void MudProgressCircular_ShouldHaveCorrectViewBox_BasedOnStrokeWidth(int strokeWidth, string expectedViewBox)
         {
-            var comp = Context.RenderComponent<MudProgressCircular>(parameters => parameters
+            var comp = Context.Render<MudProgressCircular>(parameters => parameters
                 .Add(p => p.StrokeWidth, strokeWidth)
             );
 
@@ -171,7 +172,7 @@ namespace MudBlazor.UnitTests.Components
             viewBoxAttribute.Should().Be(expectedViewBox);
 
             // Test with Indeterminate = true as well
-            var compIndeterminate = Context.RenderComponent<MudProgressCircular>(parameters => parameters
+            var compIndeterminate = Context.Render<MudProgressCircular>(parameters => parameters
                 .Add(p => p.StrokeWidth, strokeWidth)
                 .Add(p => p.Indeterminate, true)
             );
@@ -181,6 +182,51 @@ namespace MudBlazor.UnitTests.Components
 
             var viewBoxAttributeIndeterminate = svgElementIndeterminate.GetAttribute("viewBox");
             viewBoxAttributeIndeterminate.Should().Be(expectedViewBox);
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeFalse_WhenValueEqualsMax()
+        {
+            // When Value >= Max, aria-busy should be "false" (progress is complete)
+            var comp = Context.Render<MudProgressCircular>(x =>
+            {
+                x.Add(y => y.Value, 100);
+                x.Add(y => y.Min, 0);
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-circular");
+            container.GetAttribute("aria-busy").Should().Be("false");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeTrue_WhenValueLessThanMax()
+        {
+            // When Value < Max, aria-busy should be "true" (progress in progress)
+            var comp = Context.Render<MudProgressCircular>(x =>
+            {
+                x.Add(y => y.Value, 50);
+                x.Add(y => y.Min, 0);
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-circular");
+            container.GetAttribute("aria-busy").Should().Be("true");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeTrue_WhenIndeterminate()
+        {
+            // When Indeterminate is true, aria-busy should always be "true"
+            var comp = Context.Render<MudProgressCircular>(x =>
+            {
+                x.Add(y => y.Indeterminate, true);
+                x.Add(y => y.Value, 100); // Even when Value >= Max
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-circular");
+            container.GetAttribute("aria-busy").Should().Be("true");
         }
     }
 }

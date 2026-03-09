@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a base class for designing components which contain items.
     /// </summary>

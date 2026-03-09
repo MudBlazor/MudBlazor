@@ -1,0 +1,64 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<style>
+    .mud-file-upload-dragarea {
+        height: 150px;
+        width: 100%;
+    }
+</style>
+
+<MudCard Style="width: 25%;height: 300px;">
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">Default Button</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudFileUpload @bind-Files="_file"
+                       Disabled="_disabled" />
+    </MudCardContent>
+</MudCard>
+
+<MudCard Style="width: 65%;height:300px;">
+    <MudCardHeader>
+        <MudText Typo="Typo.h6">Drag and Drop</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudFileUpload @bind-Files="_files"
+                       DragAndDrop="true"
+                       Disabled="_disabled" />
+    </MudCardContent>
+</MudCard>
+
+<MudItem md="12" Class="d-flex justify-center">
+    <MudSwitch T="bool" @bind-Value="_disabled" Label="Disabled" LabelPlacement="Placement.Right" />
+</MudItem>
+
+@code
+{
+    private bool _disabled = false;
+    private IBrowserFile _file = new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 0, "image/jpeg", []);
+    private IReadOnlyList<IBrowserFile> _files =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 0, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 0, "image/jpeg", []),
+    ];
+
+    public class DummyBrowserFile : IBrowserFile
+    {
+        public string Name { get; }
+        public DateTimeOffset LastModified { get; }
+        public long Size { get; }
+        public string ContentType { get; }
+        public byte[] Content { get; }
+
+        public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)
+        {
+            Name = name;
+            LastModified = lastModified;
+            Size = size;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
+}

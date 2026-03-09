@@ -4,10 +4,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// An area which receives swipe events.
+    /// Detects and responds to swipe gestures for navigation or actions.
     /// </summary>
     public partial class MudSwipeArea : MudComponentBase
     {
@@ -171,9 +170,15 @@ namespace MudBlazor
                 return;
             }
 
-            var swipeDirection = Math.Abs(xDiff) > Math.Abs(yDiff) ?
-                xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight :
-                yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom;
+            SwipeDirection swipeDirection;
+            if (Math.Abs(xDiff) > Math.Abs(yDiff))
+            {
+                swipeDirection = xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight;
+            }
+            else
+            {
+                swipeDirection = yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom;
+            }
 
             if (Math.Abs(xDiff) > Math.Abs(yDiff))
             {

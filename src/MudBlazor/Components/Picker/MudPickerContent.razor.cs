@@ -12,7 +12,6 @@ namespace MudBlazor;
 /// </summary>
 /// <seealso cref="MudPicker{T}" />
 /// <seealso cref="MudPickerToolbar" />
-#nullable enable
 public partial class MudPickerContent : MudComponentBase
 {
     protected string Classname =>

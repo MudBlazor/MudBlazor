@@ -95,5 +95,13 @@
     "Link": "https://mudx.org",
     "GitHubUserPath": "MudXtra",
     "GitHubRepoPath": "MudX"
+  },
+  {
+    "Category": "Utility",
+    "Name": "Mud MCP",
+    "Description": "A local MCP (Model Context Protocol) server that lets AI assistants query MudBlazor documentation (components, parameters, examples) through structured tools.",
+    "Link": "https://github.com/mcbodge/MudMCP",
+    "GitHubUserPath": "mcbodge",
+    "GitHubRepoPath": "MudMCP"
   }
 ]

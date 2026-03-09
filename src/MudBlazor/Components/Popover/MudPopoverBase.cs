@@ -8,7 +8,6 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A base class for implementing Popover components.
@@ -50,10 +49,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
-        if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-        {
-            await PopoverService.CreatePopoverAsync(this);
-        }
+        await PopoverService.CreatePopoverAsync(this);
 
         await base.OnInitializedAsync();
     }
@@ -65,10 +61,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
 
         if (_afterFirstRender)
         {
-            if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-            {
-                await PopoverService.UpdatePopoverAsync(this);
-            }
+            await PopoverService.UpdatePopoverAsync(this);
         }
     }
 
@@ -77,10 +70,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         if (firstRender)
         {
-            if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-            {
-                await PopoverService.UpdatePopoverAsync(this);
-            }
+            await PopoverService.UpdatePopoverAsync(this);
 
             _afterFirstRender = true;
         }
@@ -96,10 +86,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
         {
             if (IsJSRuntimeAvailable)
             {
-                if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-                {
-                    await PopoverService.DestroyPopoverAsync(this);
-                }
+                await PopoverService.DestroyPopoverAsync(this);
             }
         }
         catch (JSDisconnectedException) { }

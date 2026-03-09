@@ -1,0 +1,145 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<MudTable @ref="_table" T="Element" Items="@Elements" @bind-SelectedItem="_selectedElement"
+          RowEditPreview="BackupItem" 
+          RowEditCancel="ResetItemValues"
+          EditTrigger="TableEditTrigger.RowClick"
+          RowClassFunc="@SelectedRowClassFunc"
+          Virtualize FixedHeader 
+          RowsPerPage="100"
+          Height="300px" >
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">
+            <MudTextField @bind-Value="context.Sign" Required />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="context.Name" Required />
+        </MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudSpacer />
+    <MudNumericField @bind-Value="_scrollToRow" Label="Scroll to Row Number" Min="1" Max="@(Elements.Count)" For="@(() => _scrollToRow)" Class="mr-2 mb-2" />
+    <MudButton OnClick="ScrollToElementByIndex" Variant="Variant.Filled" Color="Color.Primary" Class="mr-4 mb-2" Style="align-self: center;">Scroll to Element</MudButton>
+    <MudButton OnClick="@(() => FocusOnCellOfSelectedElement(1))" Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(_selectedElement == null)" Class="mb-2" Style="align-self: center;">Edit Sign</MudButton>
+    <MudButton OnClick="@(() => FocusOnCellOfSelectedElement(2))" Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(_selectedElement == null)" Class="mb-2" Style="align-self: center;">Edit Name</MudButton>
+    <MudSpacer />
+</MudStack>
+
+@code {
+    #nullable enable
+
+    private MudTable<Element> _table = null!;
+    private List<Element> Elements = new List<Element>();
+    private Element? _selectedElement;
+    private int _scrollToRow = 10;
+    private int _editRowNumber = -1;
+
+    protected override void OnInitialized()
+    {
+        // Populate Elements with sample data
+        for (int i = 0; i < 100; i++)
+        {
+            Elements.Add(new Element { Number = i + 1, Sign = "E" + i, Name = "Element " + i, Position = i % 10, Molar = (i * 1.23).ToString("F2") });
+        }
+    }
+
+    private async Task ScrollToElementByIndex()
+    {
+        if (_scrollToRow > 0 && _scrollToRow <= Elements.Count)
+        {
+            _selectedElement = Elements[_scrollToRow - 1];
+            await _table.ScrollToItemAsync(_selectedElement);
+            Snackbar.Add($"Scrolled to: {_selectedElement.Name} Row {_scrollToRow}", Severity.Info);
+        }
+        else
+        {
+            Snackbar.Add("Index out of bounds.", Severity.Warning);
+        }
+    }
+
+    private async Task FocusOnCellOfSelectedElement(int column)
+    {
+        if (_selectedElement != null)
+        {
+            _editRowNumber = _selectedElement.Number - 1;
+            await _table.FocusCellAsync(_selectedElement, column);
+        }
+        else
+        {
+            Snackbar.Add("Please select an element from the table first by clicking on a row.", Severity.Error);
+        }
+    }
+
+    private string SelectedRowClassFunc(Element element, int rowNumber)
+    {
+        if (_selectedElement != null && _selectedElement.Equals(element))
+        {
+            return _editRowNumber == rowNumber ? "" : "selected";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    public class Element
+    {
+        public int Number { get; set; }
+        public string? Sign { get; set; }
+        public string? Name { get; set; }
+        public int Position { get; set; }
+        public string? Molar { get; set; }
+    }
+
+    private Element? elementBeforeEdit;
+
+    private void BackupItem(object element)
+    {
+        elementBeforeEdit = new()
+        {
+            Sign = ((Element)element).Sign,
+            Name = ((Element)element).Name,
+        };
+    }
+
+    private void ResetItemValues(object element)
+    {
+        ((Element)element).Sign = elementBeforeEdit?.Sign;
+        ((Element)element).Name = elementBeforeEdit?.Name;
+    }
+}
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+    .selected > td {
+        color: white !important;
+    }
+    .selected > td .mud-input {
+        color: white !important;
+    }
+</style>

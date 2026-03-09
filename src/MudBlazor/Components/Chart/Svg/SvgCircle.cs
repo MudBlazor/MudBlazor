@@ -1,19 +1,13 @@
 ﻿using System.Diagnostics;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
     /// Represents a circular shape drawn as an SVG path.
     /// </summary>
     [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
-    internal class SvgCircle
+    public sealed class SvgCircle : SvgPath
     {
-        /// <summary>
-        /// The position of this path within a list.
-        /// </summary>
-        public int Index { get; set; }
-
         /// <summary>
         /// The horizontal position of the center of the circle.
         /// </summary>
@@ -38,25 +32,5 @@ namespace MudBlazor
         /// The offset applied to the <see cref="StrokeDashArray"/>.
         /// </summary>
         public double StrokeDashOffset { get; set; }
-
-        /// <summary>
-        /// The label text for on hover.
-        /// </summary>
-        public string LabelXValue { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The label text for on hover.
-        /// </summary>
-        public string LabelYValue { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The label X position for on hover.
-        /// </summary>
-        public double LabelX { get; set; }
-
-        /// <summary>
-        /// The label Y position for on hover.
-        /// </summary>
-        public double LabelY { get; set; }
     }
 }

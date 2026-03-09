@@ -1,6 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
+﻿using AwesomeAssertions;
+using Bunit;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
@@ -15,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavMenuTests_DefaultValues()
         {
-            var comp = Context.RenderComponent<MudNavMenu>();
+            var comp = Context.Render<MudNavMenu>();
 
             comp.Instance.Bordered.Should().Be(false);
             comp.Instance.Color.Should().Be(Color.Default);
@@ -36,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavMenuTests_CheckAllStyling()
         {
-            var comp = Context.RenderComponent<MudNavMenu>(x =>
+            var comp = Context.Render<MudNavMenu>(x =>
             {
                 x.Add(p => p.Bordered, true);
                 x.Add(p => p.Color, Color.Success);
@@ -57,14 +56,14 @@ namespace MudBlazor.UnitTests.Components
         /// And even so, he changes when clicked
         /// </summary>
         [Test]
-        public void One_Way_Bindable()
+        public async Task One_Way_Bindable()
         {
-            var comp = Context.RenderComponent<NavMenuOneWay>();
+            var comp = Context.Render<NavMenuOneWay>();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            navgroup.Click();
+            await navgroup.ClickAsync();
 
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
@@ -75,16 +74,16 @@ namespace MudBlazor.UnitTests.Components
         /// Initially is set to false and after clicking the navgroup should change to true
         /// </summary>
         [Test]
-        public void Two_Way_Bindable()
+        public async Task Two_Way_Bindable()
         {
-            var comp = Context.RenderComponent<NavMenuTwoWay>();
+            var comp = Context.Render<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
             var expanded = comp.Instance.Expanded;
             expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            navgroup.Click();
+            await navgroup.ClickAsync();
 
             expanded = comp.Instance.Expanded;
             expanded.Should().BeTrue();

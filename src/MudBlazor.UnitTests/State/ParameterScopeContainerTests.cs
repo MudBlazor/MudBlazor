@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
@@ -106,10 +106,46 @@ public class ParameterScopeContainerTests
 
         // Act
         using var parameterScopeContainer = new ParameterScopeContainer(parameterState, parameterState);
+        // ReSharper disable once AccessToDisposedClosure
         var count = () => parameterScopeContainer.Count();
 
         // Assert
         count.Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public async Task SetParametersAsync_NoHandlers()
+    {
+        // Arrange
+        const int Parameter1 = 1;
+        const int Parameter2 = 2;
+        const int Parameter1NewValue = 2;
+        const int Parameter2NewValue = 3;
+        const string Parameter1Name = nameof(Parameter1);
+        const string Parameter2Name = nameof(Parameter2);
+        var parametersDictionary = new Dictionary<string, object?>
+        {
+            { Parameter1Name, Parameter1NewValue },
+            { Parameter2Name, Parameter2NewValue }
+        };
+        var parameterView = ParameterView.FromDictionary(parametersDictionary);
+        var parameter1State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter1Name))
+            .WithGetParameterValueFunc(() => Parameter1)
+            .Attach();
+        var parameter2State = ParameterAttachBuilder
+            .Create<int>()
+            .WithMetadata(new ParameterMetadata(Parameter2Name))
+            .WithGetParameterValueFunc(() => Parameter2)
+            .Attach();
+        using var parameterScopeContainer = new ParameterScopeContainer(parameter1State, parameter2State);
+
+        // Act
+        await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
+
+        // Assert
+        parameterScopeContainer.Count(scopeContainer => scopeContainer.HasHandler).Should().Be(0);
     }
 
     [Test]
@@ -363,8 +399,33 @@ public class ParameterScopeContainerTests
             .WithParameterChangedHandler(OnParameterChange)
             .Attach();
         var parameterScopeContainer = new ParameterScopeContainer(parameterState1, parameterState2, parameterState3);
-        void OnParameterChange()
+        void OnParameterChange(ParameterChangedContext parameterChangedContext)
         {
+            parameterChangedContext.ParameterStates.Count.Should().Be(3);
+            var parameter1 = parameterChangedContext.ParameterStates[ParameterName1];
+            var parameter2 = parameterChangedContext.ParameterStates[ParameterName2];
+            var parameter3 = parameterChangedContext.ParameterStates[ParameterName3];
+
+            parameter1.Should().NotBeNull();
+            parameter2.Should().NotBeNull();
+            parameter3.Should().NotBeNull();
+            parameter1.Name.Should().Be(ParameterName1);
+            parameter1.LastValue.Should().Be(1);
+            parameter1.Value.Should().Be(2);
+
+            parameter2.Name.Should().Be(ParameterName2);
+            parameter2.LastValue.Should().Be(2);
+            parameter2.Value.Should().Be(3);
+
+            parameter3.Name.Should().Be(ParameterName3);
+            parameter3.LastValue.Should().Be(3);
+            parameter3.Value.Should().Be(4);
+
+            FluentActions
+                .Invoking(() => parameterChangedContext.ParameterStates["NonExistentParameter"])
+                .Should().Throw<KeyNotFoundException>()
+                .WithMessage("The parameter 'NonExistentParameter' was not found.");
+
             handlerFireCount++;
         }
 
@@ -373,6 +434,8 @@ public class ParameterScopeContainerTests
 
         // Assert
         handlerFireCount.Should().Be(1);
+        parameterScopeContainer.Count(scopeContainer => scopeContainer.HasHandler).Should().Be(3, "In total there are 3, but it's unique and shared among them");
+        parameterScopeContainer.All(scopeContainer => scopeContainer.Metadata.HandlerName == nameof(OnParameterChange)).Should().BeTrue();
     }
 
     [Test]
@@ -556,7 +619,7 @@ public class ParameterScopeContainerTests
         // Assert
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+            new ParameterChangedEventArgs<double>(parameterView, ParameterName, Parameter, ParameterNewValue)
         });
     }
 
@@ -622,7 +685,7 @@ public class ParameterScopeContainerTests
         await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+            new ParameterChangedEventArgs<double>(parameterView, ParameterName, Parameter, ParameterNewValue)
         }, because: "We swapped comparer.");
     }
 
@@ -655,7 +718,7 @@ public class ParameterScopeContainerTests
         await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double>(ParameterName, Parameter, ParameterNewValue)
+            new ParameterChangedEventArgs<double>(parameterView, ParameterName, Parameter, ParameterNewValue)
         });
     }
 
@@ -687,8 +750,48 @@ public class ParameterScopeContainerTests
         await parameterScopeContainer.SetParametersAsync(_ => Task.CompletedTask, parameterView);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
-            new ParameterChangedEventArgs<double[]>(ParameterName, parameter, parameterNewValue)
+            new ParameterChangedEventArgs<double[]>(parameterView, ParameterName, parameter, parameterNewValue)
         });
+    }
+
+    [Test]
+    public void TryGetValue_WhenKeyExists_ShouldReturnTrue_AndSetOutParameter()
+    {
+        // Arrange
+        var parameterName = "SomeParameter";
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(parameterName))
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
+
+        // Act
+        var result = parameterScopeContainer.TryGetValue(parameterName, out var actual);
+
+        // Assert
+        result.Should().BeTrue();
+        actual.Should().BeSameAs(parameterState);
+    }
+
+    [Test]
+    public void TryGetValue_WhenKeyDoesNotExist_ShouldReturnFalse_AndSetOutParameterToNull()
+    {
+        // Arrange
+        var parameterName = "SomeParameter";
+        var parameterState = ParameterAttachBuilder
+            .Create<double>()
+            .WithMetadata(new ParameterMetadata(parameterName))
+            .WithGetParameterValueFunc(() => 0)
+            .Attach();
+        using var parameterScopeContainer = new ParameterScopeContainer(parameterState);
+
+        // Act
+        var result = parameterScopeContainer.TryGetValue("Random", out var actual);
+
+        // Assert
+        result.Should().BeFalse();
+        actual.Should().BeNull();
     }
 
     [Test]

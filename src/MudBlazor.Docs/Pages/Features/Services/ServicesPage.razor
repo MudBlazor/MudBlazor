@@ -1,0 +1,102 @@
+﻿@page "/features/services"
+@using MudBlazor.Services
+
+<DocsPage>
+    <DocsPageHeader Title="Services" SubTitle="MudBlazor provides several useful services."/>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="@nameof(BrowserViewportService)">
+                <Description>
+                    Provides functionality to get the current view port size, to monitor the browser viewport size for any changes and to get the current breakpoint.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Lambda-implementation"/>
+                    <SectionContent Code="@nameof(BrowserViewportServiceExampleLambda)">
+                        <BrowserViewportServiceExampleLambda/>
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Interface-implementation">
+                        <Description>
+                            This requires to inherit from
+                            <CodeInline>IBrowserViewportObserver</CodeInline>
+                            .
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(BrowserViewportServiceExampleInterface)">
+                        <BrowserViewportServiceExampleInterface/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="@nameof(ResizeObserver)">
+                <Description>
+                    The
+                    <CodeInline>ResizeObserver</CodeInline>
+                    is similar to
+                    <MudLink Href="features/services#ibrowserviewportservice">BrowserViewportService</MudLink>
+                    but for elements instead of the browser window.
+                    <MudAlert Severity="Severity.Warning">
+                        Don't inject the
+                        <CodeInline>IResizeObserver</CodeInline>
+                        directly. Always use the
+                        <CodeInline>IResizeObserverFactory</CodeInline>
+                        instead.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ResizeObserverExample)">
+                <ResizeObserverExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="@(nameof(ScrollManager))">
+                <Description>
+                    This service provides general scroll functionality for scrolling.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ScrollManagerExample)">
+                <ScrollManagerExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="@nameof(ScrollListener)">
+                <Description>
+                    Provides functionality to listen for scroll events for a specific element.
+                    <MudAlert Severity="Severity.Warning">
+                        Don't inject the
+                        <CodeInline>IScrollListener</CodeInline>
+                        directly. Always use the
+                        <CodeInline>IScrollListenerFactory</CodeInline>
+                        instead.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Basic implementation"/>
+                    <SectionContent Code="@nameof(ScrollListenerExampleSimple)">
+                        <ScrollListenerExampleSimple/>
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Advanced implementation">
+                        <Description>
+                            This example shows how
+                            <CodeInline>ScrollManager</CodeInline>
+                            and
+                            <CodeInline>ScrollListener</CodeInline>
+                            can be used in conjunction.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ScrollListenerExampleAdvanced)">
+                        <ScrollListenerExampleAdvanced/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

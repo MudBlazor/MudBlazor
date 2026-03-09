@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Pie" InputData="@data" @bind-SelectedIndex="Index" InputLabels="@labels" Width="300px" Height="300px" />
+    <MudChart ChartType="ChartType.Pie" ChartSeries="@data.AsChartDataSet()" @bind-SelectedIndex="Index" ChartLabels="@labels" Width="100%" Height="300px" />
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
@@ -24,7 +24,7 @@
     {
         var new_data = new double[dataSize];
         for (int i = 0; i < new_data.Length; i++)
-            new_data[i] = random.NextDouble() * 100;
+            new_data[i] = Math.Round(random.NextDouble() * 100, 2);
         data = new_data;
         StateHasChanged();
     }

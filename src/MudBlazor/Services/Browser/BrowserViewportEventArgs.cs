@@ -6,10 +6,12 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Provides data for the browser viewport event.
+/// Event payload emitted when the browser viewport size or breakpoint changes.
 /// </summary>
+/// <remarks>
+/// Consumers use this to adapt layouts or component behavior based on the current viewport without manually querying JS APIs.
+/// </remarks>
 public class BrowserViewportEventArgs : EventArgs
 {
     /// <summary>

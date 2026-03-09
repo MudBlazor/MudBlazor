@@ -1,0 +1,17 @@
+﻿<MudForm>
+    <MudTextField T="string" @bind-Value="Text" Validation="((Func<string, IEnumerable<string>>)(v => ValidateText(v)))" @bind-ErrorText="BoundErrorText"/>
+</MudForm>
+
+@code {
+    public string Text { get; set; } = "Lorem Ipsum.";
+    public string BoundErrorText { get; set; } = "Default value not changed by binding";
+
+    public IEnumerable<string> ValidateText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ["EmptyOrWhitespace!"];
+        }
+        return [];
+    }
+}

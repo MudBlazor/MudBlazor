@@ -1,0 +1,46 @@
+﻿@* Test component for hierarchy cleanup with ObservableCollection *@
+@using System.Collections.ObjectModel
+
+<MudDataGrid Items="@Items">
+    <Columns>
+        <HierarchyColumn T="Model" InitiallyExpandedFunc="@(x => x.InitiallyExpanded)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+    <ChildRowContent>
+        <tr>
+            <td colspan="3">Details for @context.Item.Name</td>
+        </tr>
+    </ChildRowContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Hierarchy expansions should be cleaned up when items are removed from an ObservableCollection.";
+
+    public MudDataGrid<Model>? DataGrid { get; set; }
+
+    public ObservableCollection<Model> Items { get; set; } =
+    [
+        new Model("Sam", 56, false),
+        new Model("Alicia", 54, false),
+        new Model("Ira", 27, true), // Initially expanded
+        new Model("John", 32, false)
+    ];
+
+    public void RemoveItem(Model item)
+    {
+        Items.Remove(item);
+    }
+
+    public void ClearItems()
+    {
+        Items.Clear();
+    }
+
+    public void AddItem(Model item)
+    {
+        Items.Add(item);
+    }
+
+    public record Model(string Name, int Age, bool InitiallyExpanded);
+}

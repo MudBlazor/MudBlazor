@@ -5,7 +5,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -59,6 +58,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>""</c>.
         /// </remarks>
+        [Obsolete("Prefer the AddIconClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string AddIconStyle { get; set; } = string.Empty;
@@ -79,6 +79,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>""</c>.
         /// </remarks>
+        [Obsolete("Prefer the CloseIconClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string CloseIconStyle { get; set; } = string.Empty;

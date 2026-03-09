@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
@@ -8,6 +9,7 @@ namespace MudBlazor;
 /// <remarks>
 /// Adornments can be placed at the start or end of a field, or not displayed at all.
 /// </remarks>
+[EnumExtensions]
 public enum Adornment
 {
     /// <summary>

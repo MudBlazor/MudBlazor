@@ -8,7 +8,7 @@
     </RowTemplate>
 </MudTable>
 
-<MudTextField @bind-Value="_searchString"></MudTextField>
+<MudTextField id="searchInput" @bind-Value="_searchString"></MudTextField>
 
 @code {
     public static string __description__ = "the selected items (check-box click or row click) should be represented in SelectedItems.";

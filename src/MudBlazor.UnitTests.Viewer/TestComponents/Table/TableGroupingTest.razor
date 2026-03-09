@@ -1,4 +1,4 @@
-﻿<MudTable Items="@_cars" Hover="true" @ref="TableInstance"
+﻿<MudTable Items="@_cars" Hover="true"
           GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
           GroupFooterStyle="background-color:var(--mud-palette-background-gray)"
           MultiSelection="true">
@@ -18,8 +18,6 @@
 
 @code {
     private IEnumerable<RacingCar> _cars = [];
-
-    public MudTable<RacingCar> TableInstance { get; private set; } = null!;
 
     protected override Task OnInitializedAsync()
     {

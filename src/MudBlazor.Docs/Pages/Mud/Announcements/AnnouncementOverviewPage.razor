@@ -8,24 +8,18 @@
         </SpecialHeaderContent>
     </DocsPageHeader>
     <DocsPageContent>
-        <DocsPageSection>
-            <MudGrid Spacing="0" Class="my-16">
-                <MudItem xs="12" md="6">
-                    
-                </MudItem>
-            </MudGrid>
-        </DocsPageSection>
-        <DocsPageSection>
-
-        </DocsPageSection>
         @if (_messages == null)
         {
             <MudProgressCircular Color="Color.Default" Indeterminate="true"/>
         }
+        else if (_messages.Count == 0)
+        {
+            <MudText Typo="Typo.h6">No announcements yet.</MudText>
+        }
         else
         {
             <MudGrid>
-                @foreach (var (message, isRead) in _messages)
+                @foreach (var (message, _) in _messages)
                 {
                     <MudItem xs="12" sm="6" md="4">
                         <a href="@($"/mud/announcements/{message.Id}")">
@@ -41,7 +35,7 @@
                                         @foreach (var author in message.Authors)
                                         {
                                             <MudAvatar>
-                                                <MudImage Src="@author.AvatarUrl" />
+                                                <MudImage Src="@author.AvatarUrl"/>
                                             </MudAvatar>
                                         }
                                     </MudAvatarGroup>
@@ -53,7 +47,7 @@
                                         }
                                         else
                                         {
-                                            <MudText Typo="Typo.subtitle2">@message.Authors.FirstOrDefault().DisplayName</MudText>
+                                            <MudText Typo="Typo.subtitle2">@message.Authors.FirstOrDefault()?.DisplayName</MudText>
                                             <MudText Typo="Typo.subtitle2" Class="mud-text-secondary">@message.PublishDate.ToString("MMM dd, yyyy")</MudText>
                                         }
                                     </div>

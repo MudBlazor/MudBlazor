@@ -6,10 +6,12 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Manages scroll behavior.
+/// Centralizes scroll operations that need JS interop (scrolling to elements, locking scroll, etc.).
 /// </summary>
+/// <remarks>
+/// Components use this service to perform consistent scroll behaviors across the library, keeping JS interop calls in one place and avoiding duplicate logic.
+/// </remarks>
 internal sealed class ScrollManager : IScrollManager
 {
     private readonly IJSRuntime _jSRuntime;
@@ -24,20 +26,20 @@ internal sealed class ScrollManager : IScrollManager
     }
 
     /// <inheritdoc />
-    public ValueTask ScrollToAsync(string? id, int left, int top, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToDescriptionString());
+    public ValueTask ScrollToAsync(string? id, int left, int top, ScrollBehavior scrollBehavior) =>
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, scrollBehavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollIntoViewAsync(string? selector, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToDescriptionString());
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollIntoView", selector, behavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToTopAsync(string? id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
         ScrollToAsync(id, 0, 0, scrollBehavior);
 
     /// <inheritdoc />
-    public ValueTask ScrollToBottomAsync(string id, ScrollBehavior behavior) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", id, behavior.ToDescriptionString());
+    public ValueTask ScrollToBottomAsync(string elementId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToBottom", elementId, scrollBehavior.ToStringFast(true));
 
     /// <inheritdoc />
     public ValueTask ScrollToYearAsync(string elementId) =>
@@ -56,4 +58,8 @@ internal sealed class ScrollManager : IScrollManager
     /// <inheritdoc />
     public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
         _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.unlockScroll", selector, cssClass);
+
+    /// <inheritdoc />
+    public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+        _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.scrollToVirtualizedItem", containerId, itemIndex, itemHeight, targetItemId, scrollBehavior.ToStringFast(true));
 }

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -156,7 +156,6 @@ namespace MudBlazor.UnitTests.Services
                 )
             )).ReturnsAsync(resolvedElements.Values.ToArray).Callback<string, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
-
             foreach (var item in resolvedElements)
             {
                 _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>(
@@ -220,7 +219,7 @@ namespace MudBlazor.UnitTests.Services
 
             Dictionary<ElementReference, BoundingClientRect> expectedRects = new(ElementReferenceComparer.Default);
 
-            for (var i = 0; i < resolvedElements.Count(); i++)
+            for (var i = 0; i < resolvedElements.Count; i++)
             {
                 var item = resolvedElements.ElementAt(i);
                 var correspondingId = ids[i];
@@ -267,7 +266,6 @@ namespace MudBlazor.UnitTests.Services
 
             _runtimeMock.Verify();
         }
-
 
         private static BoundingClientRect GetRandomRect(Random random)
         {

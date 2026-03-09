@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// An item as part of a <see cref="MudToggleGroup{T}"/>
@@ -24,7 +23,7 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-vertical", AssertedParent.Vertical)
             .AddClass("mud-toggle-item-delimiter", AssertedParent.Delimiters)
             .AddClass("mud-toggle-item-fixed", AssertedParent.CheckMark && AssertedParent.FixedContent)
-            .AddClass($"mud-toggle-item-size-{AssertedParent.Size.ToDescriptionString()}")
+            .AddClass($"mud-toggle-item-size-{AssertedParent.Size.ToStringFast(true)}")
             .AddClass("mud-ripple", AssertedParent.Ripple)
             .AddClass("mud-typography-input")
             .AddClass(Class)
