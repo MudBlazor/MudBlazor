@@ -1327,7 +1327,7 @@ namespace MudBlazor.UnitTests.Components
             await act.Should().NotThrowAsync();
         }
 
-        [Test]
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
         public async Task TreeView_NewItem_ShouldBeSelected()
         {
             var comp = Context.Render<TreeViewNewItemSelectTest>();
