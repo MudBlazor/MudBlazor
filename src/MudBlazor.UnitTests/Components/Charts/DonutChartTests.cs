@@ -1,11 +1,11 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -42,6 +42,24 @@ namespace MudBlazor.UnitTests.Charts
         {
             var comp = Context.Render<Donut<double>>();
             comp.Markup.Should().Contain("mud-chart-donut");
+        }
+
+        [Test]
+        public void DonutChartRendersWithIntData()
+        {
+            var data = new[] { 50, 25, 20, 5 };
+            string[] labels = ["Fossil", "Nuclear", "Solar", "Wind"];
+
+            var comp = Context.Render<MudChart<int>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Donut)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.Width, "300px")
+                .Add(p => p.ChartSeries, [data])
+                .Add(p => p.ChartLabels, labels));
+
+            comp.Markup.Should().Contain("class=\"mud-chart-donut mud-ltr\"");
+            comp.Markup.Should().Contain("class=\"mud-chart-serie\"");
+            comp.Markup.Should().Contain("mud-chart-legend-item");
         }
 
         [Test]

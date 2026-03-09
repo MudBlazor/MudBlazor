@@ -52,11 +52,11 @@ namespace MudBlazor
                 .WithChangeHandler(Update);
         }
 
-        private ParameterState<T?> _selectedValueState;
-        private ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
+        private readonly ParameterState<T?> _selectedValueState;
+        private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
-        private HashSet<MudListItem<T>> _items = new();
-        private HashSet<MudList<T>> _childLists = new();
+        private readonly HashSet<MudListItem<T>> _items = new();
+        private readonly HashSet<MudList<T>> _childLists = new();
         private HashSet<T> _selection = new();
         internal MudList<T> TopLevelList { get; private set; }
 

@@ -804,7 +804,11 @@ public class ApiDocumentationBuilder
             {
                 // Yes.   Move up to the type  (i.e. "MudBlazor.___")
                 start += 13;
-                var end = start == -1 ? -1 : globalProperty.Value.Summary.IndexOf('\"', start);
+                var end = globalProperty.Value.Summary.IndexOf('\"', start);
+                if (end == -1)
+                {
+                    continue;
+                }
                 var typeName = globalProperty.Value.Summary.Substring(start, end - start);
 
                 // Does the mentioned type exist?

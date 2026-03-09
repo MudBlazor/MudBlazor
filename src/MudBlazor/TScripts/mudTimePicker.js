@@ -27,7 +27,7 @@ window.mudTimePicker = {
             // Set the selected value to the stick that the pointer went down on.
             if (event.target.classList.contains('mud-hour') || event.target.classList.contains('mud-minute')) {
                 const attributeValue = event.target.getAttribute('data-stick-value');
-                const stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
+                const stickValue = attributeValue ? Number.parseInt(attributeValue, 10) : -1; // Ensure an integer.
 
                 dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue, false);
             }
@@ -45,7 +45,7 @@ window.mudTimePicker = {
 
             if (event.target.classList.contains('mud-hour') || event.target.classList.contains('mud-minute')) {
                 const attributeValue = event.target.getAttribute('data-stick-value');
-                const stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
+                const stickValue = attributeValue ? Number.parseInt(attributeValue, 10) : -1; // Ensure an integer.
 
                 dotNetHelper.invokeMethodAsync('OnStickClick', stickValue);
             }
@@ -60,7 +60,7 @@ window.mudTimePicker = {
             }
 
             const attributeValue = event.target.getAttribute('data-stick-value');
-            const stickValue = attributeValue ? parseInt(attributeValue) : -1; // Ensure an integer.
+            const stickValue = attributeValue ? Number.parseInt(attributeValue, 10) : -1; // Ensure an integer.
 
             dotNetHelper.invokeMethodAsync('SelectTimeFromStick', stickValue, true);
 

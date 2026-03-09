@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Justification.StackedBars;
@@ -83,7 +82,7 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeStackedUnitsAndNumberOfLines(out lowestHorizontalLine, out gridYUnits, out numHorizontalLines, out var numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
 
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
@@ -177,7 +176,7 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1), 1);
 
             _barWidthStroke = _barWidth = Math.Max(MinBarWidth, barWidth * ChartOptions!.BarWidthRatio);
 
@@ -257,7 +256,7 @@ namespace MudBlazor.Charts
                     if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues)
                         continue;
 
-                    var segmentHeight = (dataValue / T.CreateSaturating(gridYUnits)) * T.CreateSaturating(verticalSpace);
+                    var segmentHeight = dataValue / T.CreateSaturating(gridYUnits) * T.CreateSaturating(verticalSpace);
                     var isNegative = dataValue < T.Zero;
 
                     var yStart = isNegative ? negativeStack : positiveStack;
@@ -312,7 +311,7 @@ namespace MudBlazor.Charts
             return (int)Math.Max(0, spaceBetweenBars);
         }
 
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
 

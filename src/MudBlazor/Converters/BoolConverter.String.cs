@@ -29,6 +29,6 @@ internal partial class BoolConverter
                 _ => null
             };
 
-        public static readonly StringConverter Instance = new();
+        public static StringConverter Instance { get; } = new();
     }
 }

@@ -13,7 +13,7 @@ internal class FlexEndStrategy : IStackedBarPositionStrategy
         var start = ctx.HorizontalSpace + ctx.HorizontalEndSpace - totalWidth + (ctx.BarWidth / 2);
 
         for (var i = 0; i < ctx.MaxColumns; i++)
-            positions[i] = start + i * (ctx.SpaceBetweenBars + ctx.BarWidth);
+            positions[i] = start + (i * (ctx.SpaceBetweenBars + ctx.BarWidth));
 
         return positions;
     }

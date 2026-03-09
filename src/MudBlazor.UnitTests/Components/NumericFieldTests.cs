@@ -184,7 +184,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 var result = Validate(arg);
                 if (result.IsValid)
+                {
                     return Array.Empty<string>();
+                }
+
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 
@@ -600,6 +603,88 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.FieldNotImmediate.ReadValue.Should().Be(7000.99));
         }
 
+        [Test]
+        public async Task NumericField_Immediate_Should_Reformat_Repeated_Input_With_F3()
+        {
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "F3"));
+
+            var input = comp.Find("input");
+
+            await input.InputAsync("3.14514515415414515");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+            input.GetAttribute("value").Should().Be("3.145");
+
+            await input.InputAsync("3.145145154154145159");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.145145154154145159d));
+            input.GetAttribute("value").Should().Be("3.145");
+        }
+
+        [Test]
+        public async Task NumericField_Should_Reformat_On_Blur_With_Custom_Format_When_Not_Immediate()
+        {
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, false)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "#.###"));
+
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("3.14514515415414515");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+            input.GetAttribute("value").Should().Be("3.145");
+
+            await input.BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+            input.GetAttribute("value").Should().Be("3.145");
+        }
+
+        [Test]
+        public async Task NumericField_NotImmediate_Should_Reformat_When_Blur_Fires_Before_Change()
+        {
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, false)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "#.###"));
+
+            var input = comp.Find("input");
+
+            await input.BlurAsync();
+            await input.ChangeAsync("3.14514515415414515");
+
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+            input.GetAttribute("value").Should().Be("3.145");
+        }
+
+        [Test]
+        public async Task NumericField_NotImmediate_Should_Reformat_Consistently_Across_Repeated_Blurs()
+        {
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, false)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "#.###"));
+
+            var input = comp.Find("input");
+            const string rawText = "3.14514515415414515";
+
+            for (var i = 0; i < 5; i++)
+            {
+                await input.ChangeAsync(rawText);
+                await input.BlurAsync();
+
+                await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
+                await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+                input.GetAttribute("value").Should().Be("3.145");
+            }
+        }
+
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Validation<T>(T value)
         {
@@ -714,9 +799,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("");
 
             if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
+            {
                 value = Num.To<T>(0);
+            }
             else
+            {
                 value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
+            }
 
             await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.ReadValue.Should().Be(value);
