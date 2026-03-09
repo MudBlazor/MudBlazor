@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
@@ -11,8 +12,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Docs.Shared;
 
 #nullable enable
-public partial class Appbar
+public partial class Appbar : IDisposable
 {
+    private DocsBasePage _activePage;
     private bool _searchDialogOpen;
     private bool _searchDialogAutocompleteOpen;
     private int _searchDialogReturnedItemsCount;
@@ -48,6 +50,13 @@ public partial class Appbar
     [Parameter]
     public bool DisplaySearchBar { get; set; } = true;
 
+    protected override void OnInitialized()
+    {
+        UpdateActivePage(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+        base.OnInitialized();
+    }
+
     private async Task OnSearchResult(ApiLinkServiceEntry? entry)
     {
         if (entry is null)
@@ -70,7 +79,27 @@ public partial class Appbar
 
     private string GetActiveClass(DocsBasePage page)
     {
-        return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
+        return page == _activePage ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        if (UpdateActivePage(args.Location))
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private bool UpdateActivePage(string location)
+    {
+        var activePage = LayoutService.GetDocsBasePage(location);
+        if (_activePage == activePage)
+        {
+            return false;
+        }
+
+        _activePage = activePage;
+        return true;
     }
 
     private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken token)
@@ -95,5 +124,10 @@ public partial class Appbar
         }
 
         OpenSearchDialog();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
