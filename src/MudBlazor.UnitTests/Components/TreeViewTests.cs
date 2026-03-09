@@ -1326,5 +1326,16 @@ namespace MudBlazor.UnitTests.Components
             var act = () => l2.ClickAsync();
             await act.Should().NotThrowAsync();
         }
+
+        [Test]
+        public async Task TreeView_NewItem_ShouldBeSelected()
+        {
+            var comp = Context.Render<TreeViewNewItemSelectTest>();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("2");
+            await comp.Find("#add_item").ClickAsync();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("4");
+        }
     }
 }

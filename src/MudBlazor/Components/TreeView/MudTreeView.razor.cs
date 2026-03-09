@@ -430,7 +430,9 @@ namespace MudBlazor
         public async Task ExpandAllAsync()
         {
             foreach (var item in _childItems)
+            {
                 await item.ExpandAllAsync();
+            }
         }
 
         /// <summary>
@@ -439,7 +441,9 @@ namespace MudBlazor
         public async Task CollapseAllAsync()
         {
             foreach (var item in _childItems)
+            {
                 await item.CollapseAllAsync();
+            }
         }
 
         /// <summary>
@@ -543,9 +547,13 @@ namespace MudBlazor
                 {
                     var parentSelected = parentItem.ChildItems.Select(x => x.GetValue()).Where(x => x is not null).All(x => _selection.Contains(x!));
                     if (parentSelected)
+                    {
                         _selection.Add(parentValue);
+                    }
                     else
+                    {
                         _selection.Remove(parentValue);
+                    }
                 }
                 parentItem = parentItem.Parent;
             }
@@ -608,7 +616,7 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValueAsync(T? value)
         {
-            var isValid = value != null && GetChildValuesRecursive().Contains(value);
+            var isValid = value != null && GetSelectableValues().Contains(value);
             // note: if there is no item that corresponds to the value, the value is reset to default!
             await _selectedValueState.SetValueAsync(isValid ? value : default);
             await UpdateItemsAsync();
@@ -620,7 +628,7 @@ namespace MudBlazor
         ///  </summary>
         private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
         {
-            var allChildValues = GetChildValuesRecursive();
+            var allChildValues = GetSelectableValues();
             var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
             if (_selection.SetEquals(newSelection))
             {
@@ -662,6 +670,37 @@ namespace MudBlazor
             return selection;
         }
 
+        private HashSet<T> GetSelectableValues()
+        {
+            if (ItemTemplate is not null && Items is not null)
+            {
+                return GetItemValuesRecursive(Items);
+            }
+
+            return GetChildValuesRecursive();
+        }
+
+        // TODO: speed this up with caching
+        private HashSet<T> GetItemValuesRecursive(IEnumerable<ITreeItemData<T>> items, HashSet<T>? values = null)
+        {
+            values ??= new HashSet<T>(Comparer);
+
+            foreach (var item in items)
+            {
+                if (item.Value is not null)
+                {
+                    values.Add(item.Value);
+                }
+
+                if (item.Children is not null && item.Children.Count > 0)
+                {
+                    GetItemValuesRecursive(item.Children, values);
+                }
+            }
+
+            return values;
+        }
+
         // TODO: speed this up with caching
         private HashSet<T> GetChildValuesRecursive(IEnumerable<MudTreeViewItem<T>>? children = null, HashSet<T>? values = null)
         {
@@ -675,6 +714,7 @@ namespace MudBlazor
                 {
                     values.Add(value);
                 }
+
                 if (item.ChildItems.Count > 0)
                 {
                     GetChildValuesRecursive(item.ChildItems, values);
@@ -683,6 +723,5 @@ namespace MudBlazor
 
             return values;
         }
-
     }
 }
