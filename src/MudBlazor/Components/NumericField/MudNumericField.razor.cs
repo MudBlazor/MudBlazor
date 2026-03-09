@@ -247,7 +247,17 @@ namespace MudBlazor
                 return (T)(object)Convert.ToInt64(FromInt64(ReadValue) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
-            return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
+            var rawResult = Num.From(ReadValue) + (Num.From(Step) * factor);
+            // Use the greater precision of Step and current value to avoid
+            // truncating legitimate digits (e.g. Value=1234.56, Step=0.5 → 2 places, not 1)
+            var places = Math.Max(GetDecimalPlaces(Step), GetDecimalPlaces(ReadValue));
+            if (places > 0 && rawResult.HasValue)
+            {
+                var maxPlaces = (typeof(T) == typeof(float) || typeof(T) == typeof(float?)) ? FloatMaxDecimalPlaces : DoubleMaxDecimalPlaces;
+                rawResult = Math.Round(rawResult.GetValueOrDefault(), Math.Min(places, maxPlaces));
+            }
+
+            return Num.To<T>(rawResult);
         }
 
         /// <summary>
@@ -475,11 +485,33 @@ namespace MudBlazor
         //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
         private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
+        // Maximum meaningful decimal places per type, used to clamp Math.Round precision.
+        // float: ~7 significant digits; double: Math.Round() accepts 0–15.
+        private const int FloatMaxDecimalPlaces = 7;
+        private const int DoubleMaxDecimalPlaces = 15;
+
         private static string? FormatParam(T? value)
         {
             if (value is IFormattable f)
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
             return null;
+        }
+
+        /// <summary>
+        /// Returns the number of decimal places in the given step value by converting it to a string
+        /// using <see cref="TagFormat"/> (which avoids scientific notation) and counting digits after the decimal point.
+        /// </summary>
+        private static int GetDecimalPlaces(T? step)
+        {
+            var stepString = FormatParam(step);
+            if (stepString is null)
+                return 0;
+
+            var dotIndex = stepString.IndexOf('.');
+            if (dotIndex < 0)
+                return 0;
+
+            return stepString.Length - dotIndex - 1;
         }
 
         private static decimal FromDecimal(T? v) => Convert.ToDecimal((decimal?)(object?)v);
