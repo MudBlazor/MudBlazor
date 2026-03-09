@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
-internal sealed class DelegateHelper
+internal static class DelegateHelper
 {
     public static Delegate CreateForwardDelegate<TIn, TOut>(Type specificType, object converter)
         => CreateDelegate(
