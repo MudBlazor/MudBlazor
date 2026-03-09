@@ -511,7 +511,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 // add observer to inner and outer tab container to detect size changes
-                // specifically for when the browser is resized, we need the inner
+                // specifically for when the browser is resized, we need the inner 
                 // observed since the content is width: 100% it'll bubble size changes to parent
                 var items = new HashSet<ElementReference>(ResizeObserver.ElementReferenceComparer.Default)
                 {
@@ -525,7 +525,7 @@ namespace MudBlazor
 
                 // fix ActivePanelIndex on initial render
                 // https://github.com/MudBlazor/MudBlazor/issues/11519
-                // must have an active panel to set scroll states
+                // must have an active panel to set scroll states                
 
                 var startingIndex = _activePanelIndexState.Value;
                 var index = FindNearestValidPanelIndex(startingIndex);
@@ -699,7 +699,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided index.
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided index. 
         /// An invalid index is discarded and no changes are made.
         /// </summary>
         /// <param name="index">The index of the panel to activate.</param>
@@ -713,7 +713,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided unique id.
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided unique id. 
         /// An invalid id is discarded and no changes are made.
         /// </summary>
         /// <param name="id">The unique ID of the panel to activate.</param>
@@ -727,7 +727,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided panel.
+        /// Sets the active panel and <see cref="ActivePanelIndex"/> property to match the provided panel. 
         /// A <c>null</c> panel deactivates all panels.
         /// </summary>
         /// <param name="panel">The panel to activate. <c>null</c> to deactivate.</param>
@@ -952,7 +952,7 @@ namespace MudBlazor
         /// Determines the visual state of the component after rendering.
         /// </summary>
         /// <remarks>
-        /// Used to update scroll position, scrollability states (scrollprevious and scrollnext buttons),
+        /// Used to update scroll position, scrollability states (scrollprevious and scrollnext buttons), 
         /// and slider state.
         /// </remarks>
         private Task UpdateVisualStateAsync()
