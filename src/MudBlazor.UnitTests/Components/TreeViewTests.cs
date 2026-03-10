@@ -1382,5 +1382,16 @@ namespace MudBlazor.UnitTests.Components
             var act = () => l2.ClickAsync();
             await act.Should().NotThrowAsync();
         }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
+        public async Task TreeView_NewItem_ShouldBeSelected()
+        {
+            var comp = Context.Render<TreeViewNewItemSelectTest>();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("2");
+            await comp.Find("#add_item").ClickAsync();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("4");
+        }
     }
 }
