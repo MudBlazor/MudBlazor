@@ -1058,6 +1058,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tiny step regression: a very small double step (places > DoubleMaxDecimalPlaces)
+        /// must not be rounded to zero — the places &lt;= maxPlaces guard skips Math.Round.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Double_TinyStep_NotRoundedToZero()
+        {
+            const double tinyStep = 0.0000000000000001; // 1e-16, places=16 > DoubleMaxDecimalPlaces(15)
+            var comp = Context.Render<MudNumericField<double>>();
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Value, 0.0)
+                .Add(x => x.Step, tinyStep));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            comp.Instance.ReadValue.Should().BeApproximately(tinyStep, tinyStep / 10,
+                "increment by a tiny step should produce a value close to that step");
+
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
+            comp.Instance.ReadValue.Should().BeApproximately(0.0, tinyStep,
+                "decrementing back should return close to zero");
+        }
+
+        /// <summary>
+        /// Tiny step regression: a very small float step (places > FloatMaxDecimalPlaces)
+        /// must not be rounded to zero — the places &lt;= maxPlaces guard skips Math.Round.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Float_TinyStep_NotRoundedToZero()
+        {
+            const float tinyStep = 0.00000001f; // 1e-8, places=8 > FloatMaxDecimalPlaces(7)
+            var comp = Context.Render<MudNumericField<float>>();
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Value, 0f)
+                .Add(x => x.Step, tinyStep));
+            await comp.InvokeAsync(() => comp.Instance.Increment());
+            comp.Instance.ReadValue.Should().BeApproximately(tinyStep, tinyStep / 10,
+                "increment by a tiny step should produce a value close to that step");
+
+            await comp.InvokeAsync(() => comp.Instance.Decrement());
+            comp.Instance.ReadValue.Should().BeApproximately(0f, tinyStep,
+                "decrementing back should return close to zero");
+        }
+
+        /// <summary>
         /// NumericField with min/max set and nullable int can be cleared
         /// </summary>
         [TestCase(10, 20, 15)]

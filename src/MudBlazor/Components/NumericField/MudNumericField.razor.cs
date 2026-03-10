@@ -268,13 +268,17 @@ namespace MudBlazor
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
             var rawResult = Num.From(ReadValue) + (Num.From(Step) * factor);
-            // Use the greater precision of Step and current value to avoid
-            // truncating legitimate digits (e.g. Value=1234.56, Step=0.5 → 2 places, not 1)
-            var places = Math.Max(GetDecimalPlaces(Step), GetDecimalPlaces(ReadValue));
-            if (places > 0 && rawResult.HasValue)
+            // Only floating-point types need decimal-place rounding; avoid the overhead for integral types.
+            if (rawResult.HasValue &&
+                (typeof(T) == typeof(float) || typeof(T) == typeof(float?) ||
+                 typeof(T) == typeof(double) || typeof(T) == typeof(double?)))
             {
+                // Use the greater precision of Step and current value to avoid
+                // truncating legitimate digits (e.g. Value=1234.56, Step=0.5 → 2 places, not 1)
+                var places = Math.Max(GetDecimalPlaces(Step), GetDecimalPlaces(ReadValue));
                 var maxPlaces = (typeof(T) == typeof(float) || typeof(T) == typeof(float?)) ? FloatMaxDecimalPlaces : DoubleMaxDecimalPlaces;
-                rawResult = Math.Round(rawResult.GetValueOrDefault(), Math.Min(places, maxPlaces));
+                if (places > 0 && places <= maxPlaces)
+                    rawResult = Math.Round(rawResult.GetValueOrDefault(), places);
             }
 
             return Num.To<T>(rawResult);
@@ -530,20 +534,20 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Returns the number of decimal places in the given step value by converting it to a string
+        /// Returns the number of decimal places in the given numeric value by converting it to a string
         /// using <see cref="TagFormat"/> (which avoids scientific notation) and counting digits after the decimal point.
         /// </summary>
-        private static int GetDecimalPlaces(T? step)
+        private static int GetDecimalPlaces(T? value)
         {
-            var stepString = FormatParam(step);
-            if (stepString is null)
+            var formattedValue = FormatParam(value);
+            if (formattedValue is null)
                 return 0;
 
-            var dotIndex = stepString.IndexOf('.');
+            var dotIndex = formattedValue.IndexOf('.');
             if (dotIndex < 0)
                 return 0;
 
-            return stepString.Length - dotIndex - 1;
+            return formattedValue.Length - dotIndex - 1;
         }
 
         private static decimal FromDecimal(T? v) => Convert.ToDecimal((decimal?)(object?)v);
