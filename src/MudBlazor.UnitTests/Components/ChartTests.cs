@@ -742,5 +742,62 @@ namespace MudBlazor.UnitTests.Components
             yaxis.Should().NotBeNull();
             yaxis[0].Children[0].InnerHtml.Trim().Should().Be(testCase.ExpectedValue);
         }
+
+        [Test]
+        public void RadarChart_FillOpacity_Should_RenderInvariant_InDifferentCultures()
+        {
+            var originalCulture = CultureInfo.CurrentCulture;
+            var originalUiCulture = CultureInfo.CurrentUICulture;
+
+            try
+            {
+                var noNbCulture = new CultureInfo("nb-NO");
+                CultureInfo.CurrentCulture = noNbCulture;
+                CultureInfo.CurrentUICulture = noNbCulture;
+
+                var noNbComp = Context.Render<MudChart<double>>(parameters => parameters
+                    .Add(p => p.ChartType, ChartType.Radar)
+                    .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                    {
+                        new() { Name = "Series 1", Data = new([10, 20, 30]) }
+                    })
+                    .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+                    .Add(p => p.ChartOptions, new RadarChartOptions
+                    {
+                        FillOpacity = 0.4,
+                        AggregationOption = AggregationOption.GroupByDataSet
+                    })
+                );
+
+                var noNbOpacity = noNbComp.Find("path.mud-chart-serie").GetAttribute("fill-opacity");
+
+                CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+                CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+
+                var invariantComp = Context.Render<MudChart<double>>(parameters => parameters
+                    .Add(p => p.ChartType, ChartType.Radar)
+                    .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                    {
+                        new() { Name = "Series 1", Data = new([10, 20, 30]) }
+                    })
+                    .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+                    .Add(p => p.ChartOptions, new RadarChartOptions
+                    {
+                        FillOpacity = 0.4,
+                        AggregationOption = AggregationOption.GroupByDataSet
+                    })
+                );
+
+                var invariantOpacity = invariantComp.Find("path.mud-chart-serie").GetAttribute("fill-opacity");
+
+                noNbOpacity.Should().Be("0.4");
+                invariantOpacity.Should().Be("0.4");
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = originalCulture;
+                CultureInfo.CurrentUICulture = originalUiCulture;
+            }
+        }
     }
 }
