@@ -472,7 +472,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudFab_DirectionClasses_ShouldBeApplied()
+        public void MudFabMenu_DirectionClasses_ShouldBeApplied()
         {
             foreach (var direction in Enum.GetValues<Direction>())
             {
@@ -482,7 +482,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudFab_AnchorClasses_ShouldBeApplied_WhenFixed()
+        public void MudFabMenu_AnchorClasses_ShouldBeApplied_WhenFixed()
         {
             foreach (var anchor in Enum.GetValues<Origin>())
             {

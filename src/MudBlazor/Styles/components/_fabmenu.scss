@@ -92,6 +92,10 @@
       align-items: center;
       height: 100%;
 
+      [dir='rtl'] & {
+        flex-direction: row;
+      }
+
       .mud-fab-menu-item {
         transform: translateX(20px);
       }
@@ -102,6 +106,10 @@
       flex-direction: row;
       align-items: center;
       height: 100%;
+
+      [dir='rtl'] & {
+        flex-direction: row-reverse;
+      }
 
       .mud-fab-menu-item {
         transform: translateX(-20px);
