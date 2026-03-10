@@ -4,6 +4,7 @@
 
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.VisualBasic;
 using MudBlazor.State;
 
@@ -56,7 +57,7 @@ namespace MudBlazor
                 SetTextAsync(ConvertSet(_value), false).CatchAndLog();
             }
         }
-        private string _dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        private string _dateTimeFormat = "dd/MM/yyyy HH:mm:ss";
 
         /// <inheritdoc />
         protected override IConverter<DateTime?, string?> GetDefaultConverter()
@@ -401,6 +402,12 @@ namespace MudBlazor
         {
             SetDateTimeAsync(null, close).CatchAndLog();
             await base.ClearAsync(close);
+        }
+
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
+        {
+            await base.OnHandleKeyDownAsync(obj);
+            StateHasChanged();
         }
     }
 }
