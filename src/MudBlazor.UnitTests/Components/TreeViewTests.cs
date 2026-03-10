@@ -42,9 +42,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TreeView_ClickMultiSelectionWhileDisabled_DoesNotChangeSelection()
+        public async Task TreeView_MultiSelectionClickCheckboxWhenDisabled_DoesNotChangeSelection()
         {
-            var comp = Context.Render<DisabledTreeViewMultiSelectionTest>(parameters => parameters.Add(x => x.Disabled, true));
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.Disabled, true)
+                    .Add(x => x.ReadOnly, false));
             await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
             var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
             GetSelectedValue().Should().Be(0);
@@ -54,9 +55,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TreeView_ClickMultiSelectionWhileActive_DoesChangeSelection()
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnly_DoesNotChangeSelection()
         {
-            var comp = Context.Render<DisabledTreeViewMultiSelectionTest>(self => self.Add(x => x.Disabled, false));
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnlyAndDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, true));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_ClickMultiSelectionCheckboxWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(self => self.Add(x => x.Disabled, false)
+                    .Add(x => x.ReadOnly, false));
             await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
             var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
             GetSelectedValue().Should().Be(4);
