@@ -5,18 +5,20 @@
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <CascadingValue Value="@MudTreeRoot" IsFixed="true">
-        @if (ItemTemplate != null && Items != null)
-        {
-            @foreach (var item in Items)
+        <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
+            @if (ItemTemplate != null && Items != null)
             {
-                <MudRender @key="GetItemIdentityKey(item)">
-                    @ItemTemplate(item)
-                </MudRender>
+                @foreach (var item in Items)
+                {
+                    <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="item" IsFixed="true">
+                        @ItemTemplate(item)
+                    </CascadingValue>
+                }
             }
-        }
-        else if (ChildContent != null)
-        {
-            @ChildContent
-        }
+            else if (ChildContent != null)
+            {
+                @ChildContent
+            }
+        </CascadingValue>
     </CascadingValue>
 </ul>

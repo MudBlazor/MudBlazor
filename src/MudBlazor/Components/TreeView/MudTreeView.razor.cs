@@ -51,6 +51,7 @@ namespace MudBlazor
 
         private HashSet<T> _selection;
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly ConditionalWeakTable<ITreeItemData<T>, ServerDataState> _serverDataStates = new();
         private bool _isFirstRender = true;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
@@ -71,15 +72,6 @@ namespace MudBlazor
                 .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
                 .AddStyle(Style)
                 .Build();
-
-        private static ReferenceKey GetItemIdentityKey(ITreeItemData<T> item) => new(item);
-
-        private readonly record struct ReferenceKey(ITreeItemData<T> Item)
-        {
-            public bool Equals(ReferenceKey other) => ReferenceEquals(Item, other.Item);
-
-            public override int GetHashCode() => RuntimeHelpers.GetHashCode(Item);
-        }
 
         [CascadingParameter]
         private MudTreeView<T> MudTreeRoot { get; set; }
@@ -732,6 +724,16 @@ namespace MudBlazor
             }
 
             return values;
+        }
+
+
+        internal bool GetServerDataLoaded(ITreeItemData<T> item) => _serverDataStates.GetOrCreateValue(item).IsLoaded;
+
+        internal void SetServerDataLoaded(ITreeItemData<T> item, bool isLoaded) => _serverDataStates.GetOrCreateValue(item).IsLoaded = isLoaded;
+
+        private sealed class ServerDataState
+        {
+            public bool IsLoaded { get; set; }
         }
     }
 }

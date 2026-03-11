@@ -67,6 +67,9 @@ namespace MudBlazor
         [CascadingParameter]
         internal MudTreeViewItem<T>? Parent { get; set; }
 
+        [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
+        private ITreeItemData<T>? CurrentItemData { get; set; }
+
         /// <summary>
         /// The value associated with this item.
         /// </summary>
@@ -367,7 +370,7 @@ namespace MudBlazor
         {
             return ChildContent != null
                 || (MudTreeRoot != null && GetItems().Count != 0)
-                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && GetItems().Count == 0);
+                || (MudTreeRoot?.ServerData != null && CanExpand && !GetServerDataLoaded() && GetItems().Count == 0);
         }
 
         private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
@@ -391,6 +394,27 @@ namespace MudBlazor
         private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
+
+        private bool GetServerDataLoaded()
+        {
+            if (CurrentItemData is not null && MudTreeRoot is not null)
+            {
+                return MudTreeRoot.GetServerDataLoaded(CurrentItemData);
+            }
+
+            return _isServerLoaded;
+        }
+
+        private void SetServerDataLoaded(bool isLoaded)
+        {
+            if (CurrentItemData is not null && MudTreeRoot is not null)
+            {
+                MudTreeRoot.SetServerDataLoaded(CurrentItemData, isLoaded);
+                return;
+            }
+
+            _isServerLoaded = isLoaded;
+        }
 
         private bool? GetCheckBoxStateTriState()
         {
@@ -422,7 +446,9 @@ namespace MudBlazor
                 StateHasChanged();
             }
             foreach (var item in _childItems)
+            {
                 await item.ExpandAllAsync();
+            }
         }
 
         /// <summary>
@@ -436,7 +462,9 @@ namespace MudBlazor
                 StateHasChanged();
             }
             foreach (var item in _childItems)
+            {
                 await item.CollapseAllAsync();
+            }
         }
 
         /// <inheritdoc />
@@ -560,6 +588,8 @@ namespace MudBlazor
         /// </summary>
         public async Task ReloadAsync()
         {
+            SetServerDataLoaded(false);
+
             if (_itemsState.Value is not null)
             {
                 await _itemsState.SetValueAsync(Array.Empty<ITreeItemData<T>>());
@@ -608,15 +638,17 @@ namespace MudBlazor
                 return;
             _loading = true;
             StateHasChanged();
+            var loaded = false;
             try
             {
                 var items = await MudTreeRoot.ServerData(GetValue());
                 await _itemsState.SetValueAsync(items);
+                loaded = true;
             }
             finally
             {
                 _loading = false;
-                _isServerLoaded = true;
+                SetServerDataLoaded(loaded);
 
                 StateHasChanged();
             }
