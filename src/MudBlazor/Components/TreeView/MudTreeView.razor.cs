@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -50,6 +51,9 @@ namespace MudBlazor
 
         private HashSet<T> _selection;
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        // ServerData load state belongs to the backing node object, not the rendered component instance.
+        // When the parent replaces Items with new node objects, the old entries can disappear with them.
+        private readonly ConditionalWeakTable<ITreeItemData<T>, ServerDataState> _serverDataStates = new();
         private bool _isFirstRender = true;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
@@ -722,6 +726,16 @@ namespace MudBlazor
             }
 
             return values;
+        }
+
+
+        internal bool GetServerDataLoaded(ITreeItemData<T> item) => _serverDataStates.GetOrCreateValue(item).IsLoaded;
+
+        internal void SetServerDataLoaded(ITreeItemData<T> item, bool isLoaded) => _serverDataStates.GetOrCreateValue(item).IsLoaded = isLoaded;
+
+        private sealed class ServerDataState
+        {
+            public bool IsLoaded { get; set; }
         }
     }
 }
