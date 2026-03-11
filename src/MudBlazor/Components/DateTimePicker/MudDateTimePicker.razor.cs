@@ -403,11 +403,5 @@ namespace MudBlazor
             SetDateTimeAsync(null, close).CatchAndLog();
             await base.ClearAsync(close);
         }
-
-        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
-        {
-            await base.OnHandleKeyDownAsync(obj);
-            StateHasChanged();
-        }
     }
 }
