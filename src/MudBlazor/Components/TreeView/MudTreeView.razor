@@ -5,6 +5,8 @@
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+        @* Expose the current data node to ItemTemplate-created MudTreeViewItem instances so
+           per-node server-loading state can live on the tree root instead of the component instance. *@
         <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
             @if (ItemTemplate != null && Items != null)
             {

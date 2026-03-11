@@ -51,6 +51,8 @@ namespace MudBlazor
 
         private HashSet<T> _selection;
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        // ServerData load state belongs to the backing node object, not the rendered component instance.
+        // When the parent replaces Items with new node objects, the old entries can disappear with them.
         private readonly ConditionalWeakTable<ITreeItemData<T>, ServerDataState> _serverDataStates = new();
         private bool _isFirstRender = true;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;

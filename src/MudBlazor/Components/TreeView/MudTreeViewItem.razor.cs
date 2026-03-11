@@ -22,7 +22,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
-        private readonly IConverter<T?, string?> _converter = new DefaultConverter<T?>();
+        private readonly DefaultConverter<T?> _converter = new();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
         public MudTreeViewItem()
@@ -67,6 +67,7 @@ namespace MudBlazor
         [CascadingParameter]
         internal MudTreeViewItem<T>? Parent { get; set; }
 
+        // When the item comes from ItemTemplate, this links the component instance to its backing node object.
         [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
         private ITreeItemData<T>? CurrentItemData { get; set; }
 
