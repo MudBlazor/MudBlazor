@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Justification.StackedBars;
@@ -83,7 +82,7 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeStackedUnitsAndNumberOfLines(out lowestHorizontalLine, out gridYUnits, out numHorizontalLines, out var numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
 
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);

@@ -27,7 +27,7 @@ public class ChartSizingTests : BunitTest
 
         // Manually invoke OnElementSizeChanged with a specific width
         const double MeasuredWidth = 800.0;
-        const double MeasuredHeight = 350.0;
+        const double MeasuredHeight = 400.0;
 
         await comp.InvokeAsync(() => axisChartBase.OnElementSizeChanged(new ElementSize { Width = MeasuredWidth, Height = MeasuredHeight, Timestamp = DateTime.Now.Ticks }));
 
@@ -54,7 +54,7 @@ public class ChartSizingTests : BunitTest
 
         // Manually invoke OnElementSizeChanged with a specific width
         const double MeasuredWidth = 900.0;
-        const double MeasuredHeight = 350.0;
+        const double MeasuredHeight = 500.0;
 
         await comp.InvokeAsync(() => axisChartBase.OnElementSizeChanged(new ElementSize { Width = MeasuredWidth, Height = MeasuredHeight, Timestamp = DateTime.Now.Ticks }));
 
@@ -91,6 +91,9 @@ public class ChartSizingTests : BunitTest
         var dWithTitle = gridWithTitle.GetAttribute("d")!;
         var xWithTitle = double.Parse(dWithTitle.Split(' ')[1]);
 
+        // xWithTitle should be larger than xWithoutTitle if space was allocated
+        // Note: Since labels might be small, they both might fall into the 30px minimum.
+        // But we added 20px, so it should definitely exceed 30px if the original was 30px.
         xWithTitle.Should().BeGreaterThan(xWithoutTitle);
 
         // Also check that the title is at X=0
@@ -137,7 +140,7 @@ public class ChartSizingTests : BunitTest
         await Task.Delay(300);
 
         svg = comp.Find("svg");
-        svg.GetAttribute("viewBox").Should().Be("0 0 700 350");
+        svg.GetAttribute("viewBox").Should().Be("0 0 700 400");
     }
 
     [Test]

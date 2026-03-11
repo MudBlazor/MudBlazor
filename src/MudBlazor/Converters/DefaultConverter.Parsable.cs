@@ -10,11 +10,16 @@ namespace MudBlazor;
 
 internal partial class DefaultConverter
 {
-    internal sealed class ParsableConverter<TParsable>(Func<CultureInfo> culture)
+    internal sealed class ParsableConverter<TParsable>(Func<CultureInfo> culture, Func<string?> format)
         : IReversibleConverter<TParsable?, string?>
         where TParsable : IParsable<TParsable>
     {
-        public string? Convert(TParsable? input) => input is null ? null : input.ToString();
+        public string? Convert(TParsable? input) => input switch
+        {
+            null => null,
+            IFormattable formattable => formattable.ToString(format.Invoke(), culture.Invoke()),
+            _ => input.ToString()
+        };
 
         public TParsable? ConvertBack(string? input)
         {
@@ -32,11 +37,16 @@ internal partial class DefaultConverter
         }
     }
 
-    internal sealed class NullableParsableConverter<TParsable>(Func<CultureInfo> culture)
+    internal sealed class NullableParsableConverter<TParsable>(Func<CultureInfo> culture, Func<string> format)
         : IReversibleConverter<TParsable?, string?>
         where TParsable : struct, IParsable<TParsable>
     {
-        public string? Convert(TParsable? input) => input?.ToString();
+        public string? Convert(TParsable? input) => input switch
+        {
+            null => null,
+            IFormattable formattable => formattable.ToString(format.Invoke(), culture.Invoke()),
+            _ => input.ToString()
+        };
 
         public TParsable? ConvertBack(string? input)
         {
