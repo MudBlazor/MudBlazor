@@ -5,7 +5,7 @@
     <MudFileUpload T="IReadOnlyList<IBrowserFile>?" For="@(() => Model.Files)" @bind-Files="Model.Files" />
 </MudForm>
 
-<MudButton OnClick="() => Form.Validate()">Submit</MudButton>
+<MudButton OnClick="() => Form.ValidateAsync()">Submit</MudButton>
 
 @code {
     public static string __description__ = "Tests MudForm validation behavior for single and multiple file upload bindings.";

@@ -118,14 +118,22 @@
 
     <Message Importance="High" Text="Building MudBlazor web assets (outer build)" />
 
-    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="$(BunToolRestore)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
   <Target Name="BuildWebAssetsInner" BeforeTargets="ResolveProjectStaticWebAssets" Condition="'$(IsCrossTargetingBuild)' != 'true'&#xA;                AND '$(DesignTimeBuild)' != 'true'&#xA;                AND '$(_IsFirstTfm)' == 'true'&#xA;                AND '$(SkipBunCompile)' != 'true'" Inputs="@(WebAssetInputs)" Outputs="@(WebAssetOutputs)">
 
     <Message Importance="High" Text="Building MudBlazor web assets (inner build, TFM: $(TargetFramework))" />
 
-    <Exec Command="$(BunWrapper) run build.mjs" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="$(BunToolRestore)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <Exec Command="$(BunWrapper) run build.mjs"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
   <Target Name="RegisterGeneratedAssets" BeforeTargets="ResolveProjectStaticWebAssets" Condition="'$(IsCrossTargetingBuild)' != 'true'&#xA;                AND '$(DesignTimeBuild)' != 'true'&#xA;                AND '$(SkipBunCompile)' != 'true'">

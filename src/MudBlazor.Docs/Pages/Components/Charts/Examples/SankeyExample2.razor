@@ -13,29 +13,29 @@
 </MudStack>
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Sankey" ChartSeries="@_series" Width="@($"{_width}px")" Height="@($"{_height}px")" ChartOptions="@_options" />
+    <MudChart ChartType="ChartType.Sankey" ChartSeries="@_series" Width="@($"{_width}px")" Height="@($"{_height}px")" ChartOptions="@_options"/>
 </MudPaper>
 
 <MudGrid>
     <MudItem xs="12" Class="d-flex justify-center">
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" Class="pt-4">
             <MudTooltip Text="Show edge values">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.ShortText" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowEdgeLabels" />
+                <MudToggleIconButton Icon="@Icons.Material.Filled.ShortText" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowEdgeLabels"/>
             </MudTooltip>
             <MudTooltip Text="Show labels">
                 <MudToggleIconButton Icon="@Icons.Material.Filled.Textsms" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowLabels"/>
             </MudTooltip>
             <MudTooltip Text="Show node values">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.Money" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowNodeValues" />
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Money" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.ShowNodeValues"/>
             </MudTooltip>
             <MudTooltip Text="Highlight on hover">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.Highlight" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HighlightOnHover" />
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Highlight" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HighlightOnHover"/>
             </MudTooltip>
             <MudTooltip Text="Hide nodes with no edges">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.DisabledVisible" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HideNodesWithNoEdges" />
+                <MudToggleIconButton Icon="@Icons.Material.Filled.DisabledVisible" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.HideNodesWithNoEdges"/>
             </MudTooltip>
             <MudTooltip Text="Order nodes by value">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.Sort" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.OrderNodesByValue" />
+                <MudToggleIconButton Icon="@Icons.Material.Filled.Sort" Color="@Color.Dark" ToggledColor="@Color.Primary" @bind-Toggled="_options.OrderNodesByValue"/>
             </MudTooltip>
         </MudButtonGroup>
     </MudItem>
@@ -55,10 +55,10 @@
         <MudSlider @bind-Value="_height" ValueLabel="true" Max="2000">Chart height</MudSlider>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudColorPicker Label="Highlighting color" @bind-Text="@_options.HighlightColor" />
+        <MudColorPicker Label="Highlighting color" @bind-Text="@_options.HighlightColor"/>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudNumericField @bind-Value="_options.HideNodesSmallerThan" Label="Hide nodes smaller than" />
+        <MudNumericField @bind-Value="_options.HideNodesSmallerThan" Label="Hide nodes smaller than"/>
     </MudItem>
     <MudItem xs="12" md="6">
         <MudSelect @bind-Value="_options.LabelFontSize" Label="Label font size">
@@ -72,7 +72,7 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudNumericField @bind-Value="_options.LabelPadding" Label="Label padding" />
+        <MudNumericField @bind-Value="_options.LabelPadding" Label="Label padding"/>
     </MudItem>
 </MudGrid>
 
@@ -80,6 +80,7 @@
     private List<SankeyNode> _nodes = [];
     private List<SankeyEdge<double>> _edges = [];
     private List<ChartSeries<double>> _series = [];
+
     private readonly SankeyChartOptions _options = new()
     {
         NodeWidth = 5,
@@ -90,8 +91,8 @@
         HideNodesSmallerThan = 1
     };
 
-    private int _width = 650;
-    private int _height = 650;
+    private int _width = 1000;
+    private int _height = 550;
     private int _nodeCount = 50;
     private int _columnCount = 3;
 

@@ -54,7 +54,7 @@
         await base.OnParametersSetAsync();
         if (firstRender)
         {
-            await _form.Validate();
+            await _form.ValidateAsync();
             _form.ResetTouched();
         }
     }

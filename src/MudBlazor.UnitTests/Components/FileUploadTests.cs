@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FileUploadFormValidationTest>();
 
             var form = comp.Instance.Form;
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
 
             form.IsValid.Should().BeFalse(); //form is invalid to start
 
@@ -243,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
             var singleInput = single.FindComponent<InputFile>();
             singleInput.UploadFiles(fileContent[0]); //upload first file
 
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
 
             single.Instance.GetState(x => x.ErrorText).Should().BeNull();
             single.Markup.Should().NotContain("'File' must not be empty.");
@@ -253,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
             var multipleInput = multiple.FindComponent<InputFile>();
             multipleInput.UploadFiles(fileContent); //upload second files
 
-            await comp.InvokeAsync(() => form.Validate());
+            await comp.InvokeAsync(() => form.ValidateAsync());
 
             single.Instance.GetState(x => x.ErrorText).Should().BeNull();
             single.Markup.Should().NotContain("'Files' must not be empty.");
@@ -569,6 +569,44 @@ namespace MudBlazor.UnitTests.Components
             // Re-render and verify
             comp.Render();
             comp.Markup.Should().Contain("Selected files: 2");
+        }
+
+        /// <summary>
+        /// The wrapper must apply spacing class "mt-1" 
+        /// if and only if no SelectedTemplate is provided.
+        /// </summary>
+        [Test]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void FileUpload_FilesContainer_TopSpacing_Should_Depend_On_SelectedTemplate(
+            bool hasSelectedTemplate,
+            bool expectedMt1)
+        {
+            // Arrange
+            IReadOnlyList<IBrowserFile> files =
+            [
+                new DummyBrowserFile("a.txt", DateTimeOffset.Now, 0, "text/plain", [])
+            ];
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
+            {
+                parameters.Add(x => x.Files, files);
+
+                if (hasSelectedTemplate)
+                {
+                    parameters.Add(x => x.SelectedTemplate, context => builder =>
+                    {
+                        builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
+                    });
+                }
+            });
+
+            // Act
+            var wrapper = comp.Find(".mud-file-upload-files");
+            var hasMt1 = wrapper.ClassList.Contains("mt-1");
+
+            // Assert
+            hasMt1.Should().Be(expectedMt1);
         }
 
         /// <summary>

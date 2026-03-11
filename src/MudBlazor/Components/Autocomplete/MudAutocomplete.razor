@@ -84,7 +84,7 @@
                         <MudList T="T" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate is not null)
                             {
-                                <div class="mud-autocomplete-before-items pa-1">
+                                <div class="mud-autocomplete-before-items">
                                     @BeforeItemsTemplate
                                 </div>
                             }
@@ -117,13 +117,13 @@
                             }
                             @if (MoreItemsTemplate is not null && _returnedItemsCount > MaxItems)
                             {
-                                <div class="mud-autocomplete-more-items pa-1">
+                                <div class="mud-autocomplete-more-items">
                                     @MoreItemsTemplate
                                 </div>
                             }
                             @if (AfterItemsTemplate is not null)
                             {
-                                <div class="mud-autocomplete-after-items pa-1">
+                                <div class="mud-autocomplete-after-items">
                                     @AfterItemsTemplate
                                 </div>
                             }
@@ -131,7 +131,7 @@
                     }
                     else if (NoItemsTemplate is not null)
                     {
-                        <div class="mud-autocomplete-no-items pa-1">
+                        <div class="mud-autocomplete-no-items">
                             @NoItemsTemplate
                         </div>
                     }

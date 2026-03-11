@@ -22,6 +22,7 @@ static async Task Run()
     var assetBuildScript = Path.Combine(mudblazorProjectDirectory, "build.mjs");
     var buildPropsFile = Path.Combine(srcDirectory, "Directory.Build.props");
     var versions = GetVersions(buildPropsFile);
+    await RestoreTools(repositoryRoot);
 
     using var docsProcess = new Process()
     {
@@ -57,9 +58,8 @@ static async Task Run()
     string[] assetsProcessArgs =
     [
         "tool",
-        "exec",
-        $"BunDotNet.Cli@{versions.BunDotNetVersion}",
-        "--yes",
+        "run",
+        "bun",
         "--",
         "wrapper",
         "--version",
@@ -123,8 +123,46 @@ static Versions GetVersions(string buildPropsFile)
     return new Versions
     {
         BunVersion = doc.Descendants(nameof(Versions.BunVersion)).First().Value,
-        BunDotNetVersion = doc.Descendants(nameof(Versions.BunDotNetVersion)).First().Value,
     };
+}
+
+static async Task RestoreTools(string repositoryRoot)
+{
+    using var process = new Process
+    {
+        StartInfo = new ProcessStartInfo
+        {
+            FileName = "dotnet",
+            Arguments = "tool restore",
+            WorkingDirectory = repositoryRoot,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        },
+    };
+
+    process.Start();
+    var outputTask = process.StandardOutput.ReadToEndAsync();
+    var errorTask = process.StandardError.ReadToEndAsync();
+    await Task.WhenAll(outputTask, errorTask, process.WaitForExitAsync());
+    var output = await outputTask;
+    var error = await errorTask;
+
+    if (!string.IsNullOrWhiteSpace(output))
+    {
+        Console.WriteLine(output.TrimEnd());
+    }
+
+    if (!string.IsNullOrWhiteSpace(error))
+    {
+        Console.Error.WriteLine(error.TrimEnd());
+    }
+
+    if (process.ExitCode != 0)
+    {
+        throw new InvalidOperationException($"Failed to restore dotnet tools. Exit code: {process.ExitCode}");
+    }
 }
 
 static async Task RedirectStreams(Process process, string prefix)
@@ -153,5 +191,4 @@ static async Task RedirectStreams(Process process, string prefix)
 class Versions
 {
     public required string BunVersion { get; init; }
-    public required string BunDotNetVersion { get; init; }
 }

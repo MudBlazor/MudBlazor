@@ -904,15 +904,24 @@ namespace MudBlazor.UnitTests.Components
                     (x, y) =>
                     {
                         if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
                             return true;
+                        }
+
                         if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
                             return false;
+                        }
+
                         return x[0] == y[0];
                     },
                     obj =>
                     {
                         if (string.IsNullOrEmpty(obj))
+                        {
                             return 0;
+                        }
+
                         return obj[0].GetHashCode();
                     }
                 )
@@ -939,15 +948,24 @@ namespace MudBlazor.UnitTests.Components
                     (x, y) =>
                     {
                         if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
                             return true;
+                        }
+
                         if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
                             return false;
+                        }
+
                         return x[0] == y[0];
                     },
                     obj =>
                     {
                         if (string.IsNullOrEmpty(obj))
+                        {
                             return 0;
+                        }
+
                         return obj[0].GetHashCode();
                     }
                 )
@@ -1307,6 +1325,17 @@ namespace MudBlazor.UnitTests.Components
             var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
             var act = () => l2.ClickAsync();
             await act.Should().NotThrowAsync();
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
+        public async Task TreeView_NewItem_ShouldBeSelected()
+        {
+            var comp = Context.Render<TreeViewNewItemSelectTest>();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("2");
+            await comp.Find("#add_item").ClickAsync();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("4");
         }
     }
 }

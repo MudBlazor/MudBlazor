@@ -12,6 +12,13 @@
     </MudPaper>
 
     <MudPaper Outlined="true" Class="pa-4">
+        <MudText>Blank FileUpload with empty SelectedTemplate</MudText>
+        <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="true">
+            <SelectedTemplate />
+        </MudFileUpload>
+    </MudPaper>
+
+    <MudPaper Outlined="true" Class="pa-4">
         <MudText>Blank FileUpload Drag True</MudText>
         <MudFileUpload T="IReadOnlyList<IBrowserFile>"
                        Style="height: 300px;width: 300px;"

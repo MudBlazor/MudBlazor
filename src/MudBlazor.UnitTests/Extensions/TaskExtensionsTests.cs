@@ -53,7 +53,9 @@ namespace MudBlazor.UnitTests.Extensions
             {
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
+                {
                     Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                }
             }
             errorMessage.Should().Be("Something bad is about to happen ...");
         }
@@ -70,7 +72,9 @@ namespace MudBlazor.UnitTests.Extensions
             {
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
+                {
                     Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                }
             }
             errorMessage.Should().Be("Something bad is about to happen ...");
         }
@@ -87,7 +91,9 @@ namespace MudBlazor.UnitTests.Extensions
             {
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
+                {
                     Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                }
             }
             errorMessage.Should().Be("Something bad is about to happen ...");
         }
@@ -103,7 +109,9 @@ namespace MudBlazor.UnitTests.Extensions
             {
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
+                {
                     Assert.Fail("The test task did not end in time, this should not happen!");
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ namespace MudBlazor
     // Note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
     /// <summary>
-    /// A sortable, filterable table with multiselection and pagination.
+    /// A sortable, filterable table with multiselection, pagination, responsive layout, and child rows.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
@@ -256,19 +256,19 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
             catch (Exception)
             {
                 /*ignore*/
             }
 
-            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
+            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -279,19 +279,19 @@ namespace MudBlazor
 
         internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
 
-        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
             catch (Exception)
             {
                 /*ignore*/
             }
 
-            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -302,19 +302,19 @@ namespace MudBlazor
 
         internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
 
-        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
             catch (Exception)
             {
                 /*ignore*/
             }
 
-            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -600,7 +600,11 @@ namespace MudBlazor
                     var filteredItemCount = GetFilteredItemsCount();
                     var lastPageNo = filteredItemCount == 0
                         ? 0
-                        : filteredItemCount / RowsPerPage - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                        : (filteredItemCount / RowsPerPage);
+                    if (filteredItemCount > 0 && filteredItemCount % RowsPerPage == 0)
+                    {
+                        lastPageNo -= 1;
+                    }
                     CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
                 }
 
