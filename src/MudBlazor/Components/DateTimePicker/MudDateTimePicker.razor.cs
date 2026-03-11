@@ -354,8 +354,8 @@ namespace MudBlazor
                 date = System.DateTime.SpecifyKind(date.Value, _value.Value.Kind);
             }
 
-            _datePicked = date?.Date;
-            _timePicked = date?.TimeOfDay;
+            DateSelected(date?.Date);
+            TimeSelected(date?.TimeOfDay);
 
             if (_value != date)
             {
@@ -377,7 +377,7 @@ namespace MudBlazor
 
         private void SubmitAndClose()
         {
-            if (AutoClose && PickerVariant is not PickerVariant.Static && _datePickedChanged && _timePickedChanged)
+            if (Open && AutoClose && PickerVariant is not PickerVariant.Static && _datePickedChanged && _timePickedChanged)
             {
                 CloseAsync().CatchAndLog();
             }

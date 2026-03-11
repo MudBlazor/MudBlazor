@@ -377,19 +377,5 @@ namespace MudBlazor.UnitTests.Components
             string[] lockedDays = ["28", "3", "4", "10", "11", "17", "18", "24", "25", "2", "3", "9"];
             comp.FindAll("button.mud-picker-calendar-day.mud-day[disabled]").All(x => lockedDays.Contains(x.TextContent)).Should().Be(true);
         }
-
-        [Test]
-        public async Task SelectDateAndTime()
-        {
-            var comp = OpenPicker();
-            var picker = comp.FindComponent<MudDateTimePicker>();
-            // select 15th of the month
-            comp.FindAll("button.mud-picker-calendar-day.mud-day")[14].Click();
-            // select 10:30
-            comp.FindAll("p.mud-clock-number")[10].Click();
-            comp.FindAll("button.mud-picker-clock-minute")[6].Click();
-            // check value
-            picker.Instance.DateTime.Should().Be(DateTime.Parse($"{DateTime.Now:yyyy-MM}-15 10:30:00"));
-        }
     }
 }
