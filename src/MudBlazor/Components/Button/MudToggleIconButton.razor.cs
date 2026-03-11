@@ -81,11 +81,11 @@ public partial class MudToggleIconButton : MudComponentBase
     /// The display variation to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Variant.Text"/>.
+    /// Defaults to <see cref="Variant.Filled"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Button.Appearance)]
-    public Variant Variant { get; set; } = Variant.Text;
+    public Variant Variant { get; set; } = Variant.Filled;
 
     /// <summary>
     /// An alternative variant to use in the toggled state.

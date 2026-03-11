@@ -13,7 +13,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
     /// <summary>
     /// A form component that lets users upload one or more files.
     /// </summary>
@@ -228,6 +227,33 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary>
+        /// To override the <c>multiple</c> attribute on the <c>InputFile</c> component.
+        /// </summary>
+        /// <remarks>SLG property</remarks>
+        [Parameter]
+        public bool? Multiple { get; set; }
+
+        // SLG
+        private string? GetMultiple()
+        {
+            switch (Multiple)
+            {
+                case true:
+                    return "";
+
+                case false:
+                    return null;
+            }
+
+            if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
+            {
+                return "";
+            }
+
+            return null;
+        }
+
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
 
@@ -247,6 +273,7 @@ namespace MudBlazor
             {
                 return [];
             }
+
             return _filesState.Value switch
             {
                 IBrowserFile singleFile => [singleFile.Name],
@@ -293,9 +320,11 @@ namespace MudBlazor
         }
 
         private int _numberOfActiveFileInputs = 1;
+
         private string? GetInputClass(int fileInputIndex) => fileInputIndex == _numberOfActiveFileInputs
             ? InputClasses
             : $"{InputClasses} d-none";
+
         private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
 
@@ -455,6 +484,8 @@ namespace MudBlazor
         {
             T? value;
 
+            await ResetValidationAsync(); // SLG
+
             if (args.FileCount > MaximumFileCount)
             {
                 // Notify the consumer about the exceeded file count
@@ -541,11 +572,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override IConverter<T?, string?> GetDefaultConverter()
         {
-            return new DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
+            return new DefaultConverter<T> { Culture = GetCulture, Format = GetFormat };
         }
 
         protected internal override T? ReadValue => _filesState.Value;

@@ -51,7 +51,8 @@ namespace MudBlazor
         /// https://github.com/MudBlazor/MudBlazor/issues/2189
         /// Code stolen from https://github.com/MudBlazor/MudBlazor/issues/2189#issuecomment-877056336
         /// </remarks>
-        Dictionary<string, object> preventPressEnterAttributes = new Dictionary<string, object> { { "onkeydown", "var event = (arguments[0] || window.event); if(event.keyCode === 13){ event.stopPropagation(); return false; }" } };
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly Dictionary<string, object> _preventPressEnterAttributes = new() { { "onkeydown", "var event = (arguments[0] || window.event); if(event.keyCode === 13){ event.stopPropagation(); return false; }" } };
 
         protected string Classname =>
             new CssBuilder("mud-select")

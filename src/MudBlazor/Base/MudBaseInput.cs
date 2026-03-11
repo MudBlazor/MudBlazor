@@ -221,11 +221,11 @@ namespace MudBlazor
         /// The appearance variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Outlined"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Variant.Outlined;
 
         /// <summary>
         /// The amount of vertical spacing for this input.

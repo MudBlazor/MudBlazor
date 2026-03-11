@@ -118,11 +118,11 @@ namespace MudBlazor
         /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Filled"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
         /// Expands the button to 100% of the container width.

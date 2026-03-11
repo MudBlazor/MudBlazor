@@ -16,10 +16,10 @@
     {
         <div class="@HelperContainer">
             <div class="d-flex @HelperClass">
-                @if (Error)
+                @if (Error && ErrorText is not null)
                 {
                     <div class="me-auto" id="@ErrorId">
-                        @ErrorText
+                        @((MarkupString)ErrorText)
                     </div>
                 }
                 else if (!string.IsNullOrEmpty(HelperText))

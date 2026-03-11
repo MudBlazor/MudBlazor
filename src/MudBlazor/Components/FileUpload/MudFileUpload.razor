@@ -16,7 +16,7 @@
                        class="@GetInputClass(localIndex)"
                        style="@InputStyle"
                        hidden="@(Hidden && !_draggingState.Value ? "" : null)"
-                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                       multiple="@(GetMultiple())"
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        @attributes="UserAttributes"

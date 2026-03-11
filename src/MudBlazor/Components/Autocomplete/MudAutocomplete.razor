@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation @attributes="preventPressEnterAttributes">
+    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation @attributes="_preventPressEnterAttributes">
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"

@@ -316,11 +316,11 @@ namespace MudBlazor
         /// The display variant of the text input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Outlined"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = Variant.Outlined;
 
         /// <summary>
         /// The location of the <see cref="AdornmentIcon"/> for the input.
