@@ -6,7 +6,7 @@ on:
 
 jobs:
   triage_pr:
-    if: ${{ github.repository_owner == 'MudBlazor' }}
+    if: ${{ github.repository_owner == 'MudBlazor' && (github.event.action != 'opened' || !github.event.pull_request.draft) }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate app token

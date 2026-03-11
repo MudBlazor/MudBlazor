@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MudBlazor.Resources;
+﻿using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
@@ -96,18 +95,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
             ArgumentNullException.ThrowIfNull(specificType);
             ArgumentNullException.ThrowIfNull(converter);
 
-            var convType = converter.GetType();
-
-            var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            if (!convertMethodInterface.IsAssignableFrom(convType))
-            {
-                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
-            }
-
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            // Cannot be null since we already verified the interface is implemented
-            var forwardDelegate = convertMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+            var forwardDelegate = DelegateHelper.CreateForwardDelegate<TIn, TOut>(specificType, converter);
 
             AddHandler(specificType, forwardDelegate);
 
