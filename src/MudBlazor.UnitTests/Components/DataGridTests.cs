@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGirdWithServerDataAndVirtualize()
+        public void DataGridWithServerDataAndVirtualize()
         {
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
