@@ -206,7 +206,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public RenderFragment<MudTreeViewItem<T?>>? BodyContent { get; set; }
+        public RenderFragment<MudTreeViewItem<T>>? BodyContent { get; set; }
 
         /// <summary>
         /// The child items underneath this item.

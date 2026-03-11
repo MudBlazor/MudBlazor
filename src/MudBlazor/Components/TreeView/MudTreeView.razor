@@ -9,7 +9,9 @@
         {
             @foreach (var item in Items)
             {
-                @ItemTemplate(item)
+                <MudRender @key="GetItemIdentityKey(item)">
+                    @ItemTemplate(item)
+                </MudRender>
             }
         }
         else if (ChildContent != null)

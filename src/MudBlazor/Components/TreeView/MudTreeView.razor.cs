@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using System.Runtime.CompilerServices;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -70,6 +71,15 @@ namespace MudBlazor
                 .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
                 .AddStyle(Style)
                 .Build();
+
+        private static ReferenceKey GetItemIdentityKey(ITreeItemData<T> item) => new(item);
+
+        private readonly record struct ReferenceKey(ITreeItemData<T> Item)
+        {
+            public bool Equals(ReferenceKey other) => ReferenceEquals(Item, other.Item);
+
+            public override int GetHashCode() => RuntimeHelpers.GetHashCode(Item);
+        }
 
         [CascadingParameter]
         private MudTreeView<T> MudTreeRoot { get; set; }
