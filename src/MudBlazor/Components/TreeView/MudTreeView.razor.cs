@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
-using System.Runtime.CompilerServices;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
