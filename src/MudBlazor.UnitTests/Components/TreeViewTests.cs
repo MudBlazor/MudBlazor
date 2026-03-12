@@ -42,6 +42,62 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.Disabled, true)
+                    .Add(x => x.ReadOnly, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnly_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnlyAndDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, true));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_ClickMultiSelectionCheckboxWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(self => self.Add(x => x.Disabled, false)
+                    .Add(x => x.ReadOnly, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(4);
+
+            // To reset
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(4);
+        }
+
+        [Test]
         [TestCase("item1")]
         [TestCase("item1.1")]
         [TestCase("item1.2")]
@@ -1235,7 +1291,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
         {
             var exception = Assert.Throws<InvalidOperationException>(() =>
             {
@@ -1336,6 +1392,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("#add_item").ClickAsync();
             comp.Instance.SelectedValue.Should().NotBeNull();
             comp.Instance.SelectedValue!.Name.Should().Be("4");
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12849")]
+        public async Task TreeView_ServerData_Reset()
+        {
+            var comp = Context.Render<TreeViewServerDataResetTest>();
+            var arrows = () => comp.FindAll("button.mud-treeview-item-expand-button");
+            var itemContents = () => comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent);
+
+            arrows().Count.Should().Be(4);
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (1)"));
+            await comp.Find("#btn_reset").ClickAsync();
+            comp.WaitForAssertion(() =>
+            {
+                arrows().Count.Should().Be(4);
+                itemContents().Should().NotContain("More Spam (1)");
+            });
+
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
         }
     }
 }
