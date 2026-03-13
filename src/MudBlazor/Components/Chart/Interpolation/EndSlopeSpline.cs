@@ -17,7 +17,7 @@ namespace MudBlazor.Interpolation
             b = new double[n];
             c = new double[n];
             d = new double[n];
-            h = new double[n];
+            h = new double[n - 1];
 
             CalcParameters(firstSlopeDegrees, lastSlopeDegrees);
             Interpolate();
@@ -82,7 +82,7 @@ namespace MudBlazor.Interpolation
                 c[i] = xValues[i];
             }
 
-            for (var i = 0; i < n; i++)
+            for (var i = 0; i < n - 1; i++)
             {
                 if (h[i] != 0.0)
                 {

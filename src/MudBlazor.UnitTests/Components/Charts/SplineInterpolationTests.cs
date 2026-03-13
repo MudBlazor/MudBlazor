@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries<double>() { Name = "Series 1", Data = new double[] { 10 } }
+                new() { Name = "Series 1", Data = new double[] { 10 } }
             };
 
             var action = () => Context.Render<MudChart<double>>(parameters => parameters
@@ -36,7 +36,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries<double>() { Name = "Series 1", Data = new double[] { 10, 20 } }
+                new() { Name = "Series 1", Data = new double[] { 10, 20 } }
             };
 
             var action = () => Context.Render<MudChart<double>>(parameters => parameters
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries<double>() { Name = "Series 1", Data = new double[] { 10, 20, 15 } }
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 15 } }
             };
 
             var action = () => Context.Render<MudChart<double>>(parameters => parameters
@@ -78,7 +78,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries<double>() { Name = "Series 1", Data = data }
+                new() { Name = "Series 1", Data = data }
             };
 
             var action = () => Context.Render<MudChart<double>>(parameters => parameters
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void SplineInterpolation_ShouldClampToZero_WhenAllValuesAreNonNegative()
+        public void SplineInterpolation_ShouldNotClampToZero_InBaseInterpolator()
         {
             // [1, 0, 0, 1] for natural spline will typically dip below zero between indices 1 and 2
             var xs = new double[] { 0, 1, 2, 3 };
@@ -119,7 +119,20 @@ namespace MudBlazor.UnitTests.Charts
 
             var spline = new Interpolation.NaturalSpline(xs, ys, resolution: 100);
 
-            spline.InterpolatedYs.Should().OnlyContain(y => y >= 0, "All interpolated values should be non-negative when input values are non-negative");
+            spline.InterpolatedYs.Should().Contain(y => y < 0, "Base interpolator should NOT clamp, it should be done at the chart level");
+        }
+
+        [Test]
+        public void TridiagonalSolver_ShouldThrow_WhenSingular()
+        {
+            // A singular system: b=0
+            var a = new double[] { 0, 1, 1 };
+            var b = new double[] { 0, 2, 2 };
+            var c = new double[] { 1, 1, 0 };
+            var d = new double[] { 1, 2, 3 };
+
+            var action = () => Interpolation.TridiagonalSolver.Solve(a, b, c, d);
+            action.Should().Throw<InvalidOperationException>().WithMessage("*zero or near-zero*");
         }
     }
 }

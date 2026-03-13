@@ -9,6 +9,7 @@
             <MudRadio Value="@(InterpolationOption.Straight)" Color="Color.Primary">Straight</MudRadio>
         </MudRadioGroup>
 
+        <MudSwitch @bind-Value="Clamp" Color="Color.Primary" Label="Clamp To Zero" />
 
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GenerateData">Generate</MudButton>
         <MudPaper Height="560px" Elevation="0">
@@ -36,6 +37,7 @@
 
 @code {
     private readonly Random _rng = new();
+    public bool Clamp { get; set; } = false;
     public InterpolationOption SelectedOption { get; set; }
     private bool _isLoading = true;
     private int _days = 14;
@@ -44,7 +46,8 @@
 
     private LineChartOptions _options => new()
     {
-        InterpolationOption = SelectedOption
+        InterpolationOption = SelectedOption,
+        ClampToZero = Clamp
     };
 
     protected override async Task OnInitializedAsync()
