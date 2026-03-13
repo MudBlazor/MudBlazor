@@ -149,11 +149,20 @@ namespace MudBlazor.Charts
             for (var i = 0; i < numVerticalLines; i++)
             {
                 var x = barGroupPositions.Length == 0 ? 0 : barGroupPositions[i];
-                var line = new SvgPath { Index = i, Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}" };
+                var line = new SvgPath
+                {
+                    Index = i,
+                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                };
                 VerticalLines.Add(line);
 
                 var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
-                var lineValue = new SvgText { X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift, Y = _boundHeight - 10, Value = xLabels };
+                var lineValue = new SvgText
+                {
+                    X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift,
+                    Y = _boundHeight - 10,
+                    Value = xLabels
+                };
                 VerticalValues.Add(lineValue);
             }
         }
@@ -258,17 +267,33 @@ namespace MudBlazor.Charts
         private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
+            OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+            {
+                MouseIsOver = true,
+                Index = bar.Index,
+                XLabel = bar.LabelXValue,
+                YLabel = bar.LabelYValue,
+            }).CatchAndLog();
 
-            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-                chart.StateHasChanged();
+            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart) chart.StateHasChanged();
         }
 
         private void OnBarMouseOut()
         {
+            if (_hoveredBar != null)
+            {
+                OnDataPointMouseOver.InvokeAsync(new ChartHoverEventArgs<T>
+                {
+                    MouseIsOver = false,
+                    Index = _hoveredBar.Index,
+                    XLabel = _hoveredBar.LabelXValue,
+                    YLabel = _hoveredBar.LabelYValue,
+                }).CatchAndLog();
+            }
+
             _hoveredBar = null;
 
-            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-                chart.StateHasChanged();
+            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart) chart.StateHasChanged();
         }
     }
 }

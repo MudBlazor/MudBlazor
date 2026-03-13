@@ -13,23 +13,23 @@ namespace MudBlazor.UnitTests.Charts
     public class DonutChartTests : BunitTest
     {
         private readonly string[] _baseChartPalette =
-        {
+        [
             "#2979FF", "#1DE9B6", "#FFC400", "#FF9100", "#651FFF", "#00E676", "#00B0FF", "#26A69A", "#FFCA28",
             "#FFA726", "#EF5350", "#EF5350", "#7E57C2", "#66BB6A", "#29B6F6", "#FFA000", "#F57C00", "#D32F2F",
             "#512DA8", "#616161"
-        };
+        ];
 
         private readonly string[] _modifiedPalette =
-        {
+        [
             "#264653", "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51"
-        };
+        ];
 
         private readonly string[] _customPalette =
-        {
+        [
             "#015482", "#CC1512", "#FFE135", "#087830", "#D70040", "#B20931", "#202E54", "#F535AA", "#017B92",
             "#FA4224", "#062A78", "#56B4BE", "#207000", "#FF43A4", "#FB8989", "#5E9B8A", "#FFB7CE", "#C02B18",
             "#01153E", "#2EE8BB", "#EBDDE2"
-        };
+        ];
 
         [SetUp]
         public void Init()
@@ -67,9 +67,12 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase(new double[] { 50, 25, 20, 5, 12 })]
         public async Task DonutChartExampleData(double[] data)
         {
-            string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+            string[] labels =
+            [
+                "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
-                "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
+                "Coal", "Gas", "Biomass", "Hydro", "Geothermal"
+            ];
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
@@ -118,9 +121,12 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase(new double[] { 50, 25, 20, 5, 12 })]
         public void DonutCirclePosition(double[] data)
         {
-            string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+            string[] labels =
+            [
+                "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
                 "Hydro", "Geothermal", "Fossil", "Nuclear", "Solar", "Wind", "Oil",
-                "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
+                "Coal", "Gas", "Biomass", "Hydro", "Geothermal"
+            ];
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
@@ -149,13 +155,13 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public async Task DonutChartColoring()
         {
-            double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
+            double[] data = [50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12];
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
-                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = new string[] { "#1E9AB0" } })
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = ["#1E9AB0"] })
                 .Add(p => p.ChartSeries, [data]));
 
             var circles1 = comp.FindAll("path");
@@ -186,7 +192,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void DonutChart100Percent()
         {
-            double[] data = { 50, 0, 0 };
+            double[] data = [50, 0, 0];
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
@@ -196,10 +202,42 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public async Task OnDataPointMouseOver()
+        {
+            double[] data = [50, 25, 20, 5];
+            string[] labels = ["Fossil", "Nuclear", "Solar", "Wind"];
+            ChartHoverEventArgs<double> receivedArgs = null;
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Donut)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.Width, "300px")
+                .Add(p => p.ChartSeries, [data])
+                .Add(p => p.ChartLabels, labels)
+                .Add(p => p.OnDataPointMouseOver, args => receivedArgs = args));
+
+            await comp.Find("path.mud-chart-serie").MouseOverAsync();
+            receivedArgs.Should().NotBeNull("the callback should fire on mouseover");
+            receivedArgs.MouseIsOver.Should().BeTrue("pointer entered the segment");
+            receivedArgs.Index.Should().Be(0, "first segment has index 0");
+            receivedArgs.XLabel.Should().Be("50", "XLabel carries the formatted data value");
+            receivedArgs.YLabel.Should().Be("Fossil", "YLabel carries the segment label");
+            receivedArgs.Value.Should().Be(50.0, "Value carries the raw aggregated data value");
+
+            await comp.Find("path.mud-chart-serie").MouseOutAsync();
+            receivedArgs.Should().NotBeNull("the callback should fire on mouseout");
+            receivedArgs.MouseIsOver.Should().BeFalse("pointer left the segment");
+            receivedArgs.Index.Should().Be(0, "leave event identifies the same segment as enter");
+            receivedArgs.XLabel.Should().Be("50", "XLabel is preserved from the hovered segment");
+            receivedArgs.YLabel.Should().Be("Fossil", "YLabel is preserved from the hovered segment");
+            receivedArgs.Value.Should().Be(50.0, "Value is preserved from the hovered segment");
+        }
+
+        [Test]
         public async Task DonutChart_CanHideSeries()
         {
             var chartData = new double[] { 25, 35, 15, 25 };
-            string[] chartLabels = { "Area A", "Area B", "Area C", "Area D" };
+            string[] chartLabels = ["Area A", "Area B", "Area C", "Area D"];
             var chartSeries = new List<ChartSeries<double>>() { new() { Data = chartData } };
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters

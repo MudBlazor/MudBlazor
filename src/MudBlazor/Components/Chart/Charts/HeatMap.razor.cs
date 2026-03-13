@@ -437,8 +437,7 @@ namespace MudBlazor.Charts
 
         private string FormatValueForDisplay(T? value)
         {
-            if (value == null)
-                return string.Empty;
+            if (value == null) return string.Empty;
 
             var formatString = _options?.ValueFormatString ?? "G";
             // Format the value and truncate to 5 characters or fewer
@@ -532,13 +531,11 @@ namespace MudBlazor.Charts
         [JSInvokable]
         public void OnElementSizeChanged(ElementSize elementSize)
         {
-            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp)
-                return;
+            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp) return;
 
             _elementSize = elementSize;
 
-            if (!MatchBoundsToSize)
-                return;
+            if (!MatchBoundsToSize) return;
 
             if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
                 Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)
@@ -560,12 +557,32 @@ namespace MudBlazor.Charts
         private void OnCellMouseOver(HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
+            if (cell is not null)
+            {
+                OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(cell, true)).CatchAndLog();
+            }
         }
 
         private void OnCellMouseOut()
         {
+            if (_hoveredCell != null)
+            {
+                OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(_hoveredCell, false)).CatchAndLog();
+            }
+
             _hoveredCell = null;
         }
+
+        private ChartHoverEventArgs<T> BuildHoverArgs(HeatMapCell<T> cell, bool mouseIsOver) => new()
+        {
+            MouseIsOver = mouseIsOver,
+            Index = (cell.Row * SeriesLength) + cell.Column,
+            XLabel = ChartLabels.Length > cell.Column ? ChartLabels[cell.Column] : null,
+            YLabel = _series.Count > cell.Row ? _series[cell.Row].Name : null,
+            Value = cell.Value,
+            Row = cell.Row,
+            Column = cell.Column,
+        };
 
         private void OnLegendMouseOver((T value, string color) legend, PointF position)
         {

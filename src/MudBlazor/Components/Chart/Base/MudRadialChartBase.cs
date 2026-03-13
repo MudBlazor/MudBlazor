@@ -66,6 +66,11 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     internal SvgPath? _hoveredSegment;
 
     /// <summary>
+    /// The aggregated series data computed during the last RebuildChart call.
+    /// </summary>
+    private T[] _aggregatedData = [];
+
+    /// <summary>
     /// The indices of hidden data series.
     /// </summary>
     protected HashSet<int> HiddenIndices { get; set; } = [];
@@ -145,8 +150,8 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         }
 
         var maxCategoryLength = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
-                ? GetMaxCategoryLengthForLabelGrouping()
-                : ChartSeries.Count;
+            ? GetMaxCategoryLengthForLabelGrouping()
+            : ChartSeries.Count;
 
         var aggregated = new T[maxCategoryLength];
 
@@ -163,7 +168,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         return ChartLabels.Length > 0
             ? ChartLabels.Length
             : ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                          .Max(x => x?.Data?.Values.Count ?? 0);
+                .Max(x => x?.Data?.Values.Count ?? 0);
     }
 
     private T[] AggregateByLabel(T[] aggregated)
@@ -256,9 +261,9 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 _boundHeight = _elementSize.Height;
             }
             else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
-                && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                     && Height.EndsWith("px")
+                     && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
+                     && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;
@@ -276,10 +281,12 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
             return [];
         }
 
-        var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-        var total = double.CreateSaturating(data.SumGeneric());
+        _aggregatedData = AggregateSeriesData(ChartOptions!.AggregationOption);
+        var total = double.CreateSaturating(_aggregatedData.SumGeneric());
 
-        return total == 0.0 ? (new double[data.Length]) : data.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
+        return total == 0.0
+            ? (new double[_aggregatedData.Length])
+            : _aggregatedData.Select(x => double.CreateSaturating(T.Abs(x)) / total).ToArray();
     }
 
     /// <summary>
@@ -345,12 +352,38 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     /// </summary>
     /// <param name="args">The mouse event arguments.</param>
     /// <param name="segment">The hovered segment path.</param>
-    internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
+    internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment)
+    {
+        _hoveredSegment = segment;
+        OnDataPointMouseOver.InvokeAsync(BuildHoverArgs(segment, mouseIsOver: true)).CatchAndLog();
+    }
 
     /// <summary>
     /// Handles the mouse out event for a segment.
     /// </summary>
-    internal virtual void OnSegmentMouseOut() => _hoveredSegment = null;
+    internal virtual void OnSegmentMouseOut()
+    {
+        var hoverArgs = _hoveredSegment != null
+            ? BuildHoverArgs(_hoveredSegment, mouseIsOver: false)
+            : new ChartHoverEventArgs<T>();
+        _hoveredSegment = null;
+        OnDataPointMouseOver.InvokeAsync(hoverArgs).CatchAndLog();
+    }
+
+    private ChartHoverEventArgs<T> BuildHoverArgs(SvgPath segment, bool mouseIsOver)
+    {
+        var value = segment.Index >= 0 && segment.Index < _aggregatedData.Length
+            ? (T?)_aggregatedData[segment.Index]
+            : null;
+        return new ChartHoverEventArgs<T>
+        {
+            MouseIsOver = mouseIsOver,
+            Index = segment.Index,
+            XLabel = segment.LabelXValue,
+            YLabel = segment.LabelYValue,
+            Value = value,
+        };
+    }
 
     /// <summary>
     /// Called when the element size changes.

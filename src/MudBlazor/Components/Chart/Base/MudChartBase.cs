@@ -153,6 +153,16 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     public EventCallback<int> SelectedIndexChanged { get; set; }
 
     /// <summary>
+    /// Occurs when the mouse pointer enters or leaves a data point.
+    /// </summary>
+    /// <remarks>
+    /// Check <see cref="ChartHoverEventArgs{T}.MouseIsOver"/> to distinguish enter from leave.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback<ChartHoverEventArgs<T>> OnDataPointMouseOver { get; set; }
+
+    /// <summary>
     /// Allows series to be hidden 
     /// </summary>
     /// <remarks>
