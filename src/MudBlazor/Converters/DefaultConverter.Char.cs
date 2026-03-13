@@ -29,6 +29,6 @@ internal partial class DefaultConverter
             return ConvertBack(input);
         }
 
-        public static readonly CharConverter Instance = new();
+        public static CharConverter Instance { get; } = new();
     }
 }
