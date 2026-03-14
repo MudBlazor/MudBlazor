@@ -123,6 +123,43 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void SplineInterpolation_ClampToZero_ShouldIncludeZeroOnYAxis_ForPositiveOnlyData()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new() { Name = "Series 1", Data = new double[] { 30, 21, 21, 30 } }
+            };
+            var chartLabels = new[] { "A", "B", "C", "D" };
+
+            var unclampedComp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, chartLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    InterpolationOption = InterpolationOption.NaturalSpline,
+                    YAxisTicks = 10
+                }));
+
+            var unclampedYAxisLabels = unclampedComp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent.Trim()).ToList();
+            unclampedYAxisLabels.Should().NotContain("0");
+
+            var clampedComp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, chartLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ClampToZero = true,
+                    InterpolationOption = InterpolationOption.NaturalSpline,
+                    YAxisTicks = 10
+                }));
+
+            var clampedYAxisLabels = clampedComp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent.Trim()).ToList();
+            clampedYAxisLabels.Should().Contain("0");
+        }
+
+        [Test]
         public void TridiagonalSolver_ShouldThrow_WhenSingular()
         {
             // A singular system: b=0
