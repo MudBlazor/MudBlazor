@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.FindComponents<MudTextField<string>>();
 
             await comp.Find("#username").InputAsync(new ChangeEventArgs { Value = "username" });
-            await comp.Find("#password").InputAsync(new ChangeEventArgs { Value = "password" });
+            await comp.Find("#password").ChangeAsync(new ChangeEventArgs { Value = "password" });
 
             textField[0].Instance.ReadText.Should().Be("username");
             textField[1].Instance.ReadText.Should().Be("password");
@@ -242,8 +242,8 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.Instance.Model.Should().Be("username");
-                comp.Instance.Model.Should().Be("password");
+                comp.Instance.Model.Username.Should().Be("username");
+                comp.Instance.Model.Password.Should().Be("password");
                 comp.Instance.ResultText.Should().Be("succeeded");
                 form.IsValid.Should().BeTrue();
                 textField[0].Instance.ReadValue.Should().Be("username");
