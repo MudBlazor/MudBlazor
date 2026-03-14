@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using AwesomeAssertions;
 using Bunit;
 using NUnit.Framework;
@@ -14,83 +15,54 @@ public class SplineInterpolationTests : BunitTest
     [TestCase(InterpolationOption.NaturalSpline)]
     [TestCase(InterpolationOption.EndSlope)]
     [TestCase(InterpolationOption.Periodic)]
-    public void SplineInterpolation_ShouldNotThrow_WithOnePoint(InterpolationOption option)
+    public void SplineInterpolator_ShouldReturnOriginalPoint_ForSinglePoint(InterpolationOption option)
     {
-        var chartSeries = new List<ChartSeries<double>>()
-        {
-            new() { Name = "Series 1", Data = new double[] { 10 } }
-        };
+        var spline = CreateInterpolator(option, [0], [10]);
 
-        var action = () => Context.Render<MudChart<double>>(parameters => parameters
-            .Add(p => p.ChartType, ChartType.Line)
-            .Add(p => p.ChartSeries, chartSeries)
-            .Add(p => p.ChartOptions, new LineChartOptions { InterpolationOption = option }));
-
-        action.Should().NotThrow();
+        spline.InterpolatedXs.Should().Equal([0]);
+        spline.InterpolatedYs.Should().Equal([10]);
     }
 
     [TestCase(InterpolationOption.NaturalSpline)]
     [TestCase(InterpolationOption.EndSlope)]
     [TestCase(InterpolationOption.Periodic)]
-    public void SplineInterpolation_ShouldNotThrow_WithTwoPoints(InterpolationOption option)
+    public void SplineInterpolator_ShouldPreserveEndpoints_ForTwoPoints(InterpolationOption option)
     {
-        var chartSeries = new List<ChartSeries<double>>()
-        {
-            new() { Name = "Series 1", Data = new double[] { 10, 20 } }
-        };
+        var spline = CreateInterpolator(option, [0, 1], [10, 20]);
 
-        var action = () => Context.Render<MudChart<double>>(parameters => parameters
-            .Add(p => p.ChartType, ChartType.Line)
-            .Add(p => p.ChartSeries, chartSeries)
-            .Add(p => p.ChartOptions, new LineChartOptions { InterpolationOption = option }));
+        spline.InterpolatedXs.Should().HaveCount(11);
+        spline.InterpolatedYs.Should().HaveCount(11);
+        spline.InterpolatedXs[0].Should().Be(0);
+        spline.InterpolatedXs[^1].Should().Be(1);
+        spline.InterpolatedYs[0].Should().Be(10);
+        spline.InterpolatedYs[^1].Should().Be(20);
 
-        action.Should().NotThrow();
+        AssertFinite(spline.InterpolatedXs);
+        AssertFinite(spline.InterpolatedYs);
     }
 
     [TestCase(InterpolationOption.NaturalSpline)]
     [TestCase(InterpolationOption.EndSlope)]
     [TestCase(InterpolationOption.Periodic)]
-    public void SplineInterpolation_ShouldNotThrow_WithThreePoints(InterpolationOption option)
+    public void SplineInterpolator_ShouldReturnFiniteValues_ForThreePoints(InterpolationOption option)
     {
-        var chartSeries = new List<ChartSeries<double>>()
-        {
-            new() { Name = "Series 1", Data = new double[] { 10, 20, 15 } }
-        };
+        var spline = CreateInterpolator(option, [0, 1, 2], [10, 20, 15]);
 
-        var action = () => Context.Render<MudChart<double>>(parameters => parameters
-            .Add(p => p.ChartType, ChartType.Line)
-            .Add(p => p.ChartSeries, chartSeries)
-            .Add(p => p.ChartOptions, new LineChartOptions { InterpolationOption = option }));
+        spline.InterpolatedXs.Should().HaveCount(21);
+        spline.InterpolatedYs.Should().HaveCount(21);
+        spline.InterpolatedXs[0].Should().Be(0);
+        spline.InterpolatedXs[^1].Should().Be(2);
+        spline.InterpolatedYs[0].Should().Be(10);
+        spline.InterpolatedYs[^1].Should().Be(15);
 
-        action.Should().NotThrow();
+        AssertFinite(spline.InterpolatedXs);
+        AssertFinite(spline.InterpolatedYs);
     }
 
     [TestCase(InterpolationOption.NaturalSpline)]
     [TestCase(InterpolationOption.EndSlope)]
     [TestCase(InterpolationOption.Periodic)]
-    public void SplineInterpolation_ShouldNotThrow_WithManyPoints(InterpolationOption option)
-    {
-        var data = new double[600];
-        for (var i = 0; i < 600; i++)
-        {
-            data[i] = Math.Sin(i * 0.1);
-        }
-
-        var chartSeries = new List<ChartSeries<double>>()
-        {
-            new() { Name = "Series 1", Data = data }
-        };
-
-        var action = () => Context.Render<MudChart<double>>(parameters => parameters
-            .Add(p => p.ChartType, ChartType.Line)
-            .Add(p => p.ChartSeries, chartSeries)
-            .Add(p => p.ChartOptions, new LineChartOptions { InterpolationOption = option }));
-
-        action.Should().NotThrow();
-    }
-
-    [Test]
-    public void NaturalSpline_LargeData_ShouldBeStable()
+    public void SplineInterpolator_LargeData_ShouldRemainFinite(InterpolationOption option)
     {
         var n = 1000;
         var xs = new double[n];
@@ -101,13 +73,17 @@ public class SplineInterpolationTests : BunitTest
             ys[i] = i % 2 == 0 ? 0 : 100;
         }
 
-        var action = () => new Interpolation.NaturalSpline(xs, ys);
-        action.Should().NotThrow();
+        var spline = CreateInterpolator(option, xs, ys);
 
-        var spline = new Interpolation.NaturalSpline(xs, ys);
-        spline.InterpolatedYs.Should().NotContain(double.NaN);
-        spline.InterpolatedYs.Should().NotContain(double.PositiveInfinity);
-        spline.InterpolatedYs.Should().NotContain(double.NegativeInfinity);
+        spline.InterpolatedXs.Should().HaveCount(9991);
+        spline.InterpolatedYs.Should().HaveCount(9991);
+        spline.InterpolatedXs[0].Should().Be(0);
+        spline.InterpolatedXs[^1].Should().Be(n - 1);
+        spline.InterpolatedYs[0].Should().Be(0);
+        spline.InterpolatedYs[^1].Should().Be(100);
+
+        AssertFinite(spline.InterpolatedXs);
+        AssertFinite(spline.InterpolatedYs);
     }
 
     [Test]
@@ -138,11 +114,12 @@ public class SplineInterpolationTests : BunitTest
             .Add(p => p.ChartOptions, new LineChartOptions
             {
                 InterpolationOption = InterpolationOption.NaturalSpline,
-                YAxisTicks = 10
+                YAxisTicks = 10,
+                YAxisToStringFunc = value => value.ToString("F0", CultureInfo.InvariantCulture)
             }));
 
         var unclampedYAxisLabels = unclampedComp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent.Trim()).ToList();
-        unclampedYAxisLabels.Should().NotContain("0");
+        unclampedYAxisLabels.Should().NotContain(label => label == "0");
 
         var clampedComp = Context.Render<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Line)
@@ -152,11 +129,12 @@ public class SplineInterpolationTests : BunitTest
             {
                 ClampToZero = true,
                 InterpolationOption = InterpolationOption.NaturalSpline,
-                YAxisTicks = 10
+                YAxisTicks = 10,
+                YAxisToStringFunc = value => value.ToString("F0", CultureInfo.InvariantCulture)
             }));
 
         var clampedYAxisLabels = clampedComp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent.Trim()).ToList();
-        clampedYAxisLabels.Should().Contain("0");
+        clampedYAxisLabels.Should().Contain(label => label == "0");
     }
 
     [Test]
@@ -170,5 +148,21 @@ public class SplineInterpolationTests : BunitTest
 
         var action = () => Interpolation.TridiagonalSolver.Solve(a, b, c, d);
         action.Should().Throw<InvalidOperationException>().WithMessage("*zero or near-zero*");
+    }
+
+    private static Interpolation.ILineInterpolator CreateInterpolator(InterpolationOption option, double[] xs, double[] ys, int resolution = 10)
+    {
+        return option switch
+        {
+            InterpolationOption.NaturalSpline => new Interpolation.NaturalSpline(xs, ys, resolution),
+            InterpolationOption.EndSlope => new Interpolation.EndSlopeSpline(xs, ys, resolution),
+            InterpolationOption.Periodic => new Interpolation.PeriodicSpline(xs, ys, resolution),
+            _ => throw new ArgumentOutOfRangeException(nameof(option), option, "Unsupported spline interpolation option")
+        };
+    }
+
+    private static void AssertFinite(IEnumerable<double> values)
+    {
+        values.Should().OnlyContain(value => !double.IsNaN(value) && !double.IsInfinity(value));
     }
 }
