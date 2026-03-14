@@ -299,5 +299,13 @@ namespace MudBlazor
         }
 
         private string Width => CalculatePosition().ToString(CultureInfo.InvariantCulture);
+
+        private string ValueLabelPositionStyle => RightToLeft ? $"right:{Width}%;" : $"left:{Width}%;";
+
+        /// <summary>
+        /// Displays content in right-to-left order.
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
     }
 }

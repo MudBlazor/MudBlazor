@@ -35,7 +35,7 @@ internal class PopoverJsInterop
         return _jsRuntime.InvokeAsyncWithErrorHandling<int>("mudpopoverHelper.countProviders", cancellationToken);
     }
 
-    public ValueTask Dispose(CancellationToken cancellationToken = default)
+    public ValueTask DisposeAsync(CancellationToken cancellationToken = default)
     {
         return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudPopover.dispose", cancellationToken);
     }

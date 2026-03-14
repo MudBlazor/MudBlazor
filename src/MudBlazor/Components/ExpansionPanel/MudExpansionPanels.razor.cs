@@ -10,7 +10,7 @@ namespace MudBlazor
     /// <seealso cref="MudCollapse"/>
     public partial class MudExpansionPanels : MudComponentBase
     {
-        private List<MudExpansionPanel> _panels = new();
+        private readonly List<MudExpansionPanel> _panels = new();
 
         protected string Classname =>
             new CssBuilder("mud-expansion-panels")
