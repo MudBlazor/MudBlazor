@@ -235,8 +235,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("#password").ChangeAsync(new ChangeEventArgs { Value = "password" });
 
             textField[0].Instance.ReadText.Should().Be("username");
+            textField[0].Instance.ReadValue.Should().BeNull();
+            comp.Instance.Model.Username.Should().BeNull();
             textField[1].Instance.ReadText.Should().Be("password");
-            form.IsValid.Should().BeFalse();
+            textField[1].Instance.ReadValue.Should().Be("password");
+            comp.Instance.Model.Password.Should().Be("password");
+            form.IsValid.Should().BeTrue();
 
             await comp.Find("#validate-button").ClickAsync();
 
