@@ -104,8 +104,19 @@
         <DocsPageSection>
             <SectionHeader Title="Value presentation">
                 <Description>
-                    Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
-                    but the value that has been set is not in the list, it will also be displayed as text.
+                    Both the <CodeInline>ChildContent</CodeInline> (Render Fragment) and <CodeInline>ToStringFunc</CodeInline> can control how values are displayed.
+                    <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                        <div class="pl-2">
+                            When used on their own, either one determines how items appear in the dropdown list and how the selected value is displayed in the <CodeInline>MudSelect</CodeInline> input.
+                        </div>
+                    </MudBadge>
+                    <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                        <div class="pl-2">
+                            When both are used, <CodeInline>ChildContent</CodeInline> controls how items are rendered in the dropdown list, while <CodeInline>ToStringFunc</CodeInline> controls how the selected value is displayed.
+                        </div>
+                    </MudBadge>
+                    <br /><br />
+                    If neither is specified, the value’s default string representation is used.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(SelectPresentationExample)">
