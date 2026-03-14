@@ -1773,6 +1773,22 @@ namespace MudBlazor.UnitTests.Components
             select.ClassList.Should().NotContain("mud-width-content");
         }
 
+        [Test]
+        public void SelectFitContent_InitiallyEnabled()
+        {
+            var comp = Context.Render<SelectFitContentTest>(parameters => parameters
+                .Add(x => x.FitContent, true));
+
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            var select = comp.Find(".mud-select");
+            select.ClassList.Should().Contain("mud-width-content");
+
+            var filler = comp.Find(".mud-select-filler");
+            filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
+        }
+
         [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
         [Test]
         public async Task Select_HandleMouseDown(MouseEventArgs args)

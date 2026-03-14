@@ -25,6 +25,7 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
+        private bool _needsFitContentRefresh;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -789,11 +790,12 @@ namespace MudBlazor
             }
         }
 
-        private void OnFitContentChanged(ParameterChangedEventArgs<bool> args)
+        internal void UpdateFitContent()
         {
-            if (args.Value)
+            if (FitContent)
             {
                 var longestItemLength = 0;
+                var longestItem = default(MudSelectItem<T>);
                 foreach (var item in _context.ShadowItems)
                 {
                     var value = item.Value;
@@ -802,17 +804,42 @@ namespace MudBlazor
 
                     if (length > longestItemLength)
                     {
-                        _longestItem = item;
+                        longestItem = item;
                         longestItemLength = length;
                     }
                 }
 
+                if (ReferenceEquals(_longestItem, longestItem))
+                {
+                    return;
+                }
+
+                _longestItem = longestItem;
                 StateHasChanged();
+                return;
             }
-            else
+
+            _longestItem = null;
+        }
+
+        internal void InvalidateFitContent()
+        {
+            if (FitContent)
             {
-                _longestItem = null;
+                _needsFitContentRefresh = true;
             }
+        }
+
+        private void OnFitContentChanged(ParameterChangedEventArgs<bool> args)
+        {
+            if (args.Value)
+            {
+                UpdateFitContent();
+                return;
+            }
+
+            _needsFitContentRefresh = false;
+            _longestItem = null;
         }
 
         private void UpdateIcon()
@@ -1345,7 +1372,14 @@ namespace MudBlazor
 
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender)
+            var needsFitContentRefresh = _needsFitContentRefresh;
+            _needsFitContentRefresh = false;
+
+            if (needsFitContentRefresh)
+            {
+                UpdateFitContent();
+            }
+            else if (firstRender)
             {
                 // we need to render the initial Value which is not possible without the items
                 // which supply the RenderFragment. So in this case, a second render is necessary
