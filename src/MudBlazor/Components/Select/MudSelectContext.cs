@@ -106,7 +106,7 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup[item.Value] = item;
-        _select.UpdateFitContent();
+        _select.InvalidateFitContent();
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup.Remove(item.Value);
-        _select.UpdateFitContent();
+        _select.InvalidateFitContent();
     }
 
     /// <summary>

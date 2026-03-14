@@ -25,6 +25,7 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
+        private bool _needsFitContentRefresh;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -780,12 +781,25 @@ namespace MudBlazor
                     }
                 }
 
+                if (ReferenceEquals(_longestItem, longestItem))
+                {
+                    return;
+                }
+
                 _longestItem = longestItem;
                 StateHasChanged();
                 return;
             }
 
             _longestItem = null;
+        }
+
+        internal void InvalidateFitContent()
+        {
+            if (FitContent)
+            {
+                _needsFitContentRefresh = true;
+            }
         }
 
         private void OnFitContentChanged(ParameterChangedEventArgs<bool> args)
@@ -796,6 +810,7 @@ namespace MudBlazor
                 return;
             }
 
+            _needsFitContentRefresh = false;
             _longestItem = null;
         }
 
@@ -1279,7 +1294,14 @@ namespace MudBlazor
 
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender)
+            var needsFitContentRefresh = _needsFitContentRefresh;
+            _needsFitContentRefresh = false;
+
+            if (needsFitContentRefresh)
+            {
+                UpdateFitContent();
+            }
+            else if (firstRender)
             {
                 // we need to render the initial Value which is not possible without the items
                 // which supply the RenderFragment. So in this case, a second render is necessary
