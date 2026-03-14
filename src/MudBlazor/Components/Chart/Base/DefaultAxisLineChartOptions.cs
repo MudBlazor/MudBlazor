@@ -38,7 +38,6 @@ public abstract class DefaultAxisLineChartOptions : DefaultAxisChartOptions, IAx
     /// </remarks>
     public bool ClampToZero { get; set; }
 
-
     /// <summary>
     /// The style of line to use for the chart <see cref="LineDisplayType.Line"/> or <see cref="LineDisplayType.Area"/>
     /// </summary>

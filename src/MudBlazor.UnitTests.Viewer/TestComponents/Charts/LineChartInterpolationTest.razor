@@ -12,6 +12,7 @@
         <MudSwitch @bind-Value="Clamp" Color="Color.Primary" Label="Clamp To Zero" />
 
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GenerateData">Generate</MudButton>
+        
         <MudPaper Height="560px" Elevation="0">
             @if (_isLoading)
             {
@@ -22,6 +23,7 @@
                 <MudChart T="double" ChartType="ChartType.Line" ChartLabels="_labels" ChartSeries="_datasets" ChartOptions="@_options" Width="800px" Height="500px" />
             }
         </MudPaper>
+        
         @foreach (ChartSeries<double> chart in _datasets)
         {
             <MudText>
@@ -73,7 +75,7 @@
         _isLoading = false;
     }
 
-    double[] MakeSeries(int days)
+    private double[] MakeSeries(int days)
     {
         double[] result = new double[days];
         for (int i = 0; i < days; i++)
