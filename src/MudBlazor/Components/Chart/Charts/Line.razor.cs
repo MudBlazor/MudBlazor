@@ -100,7 +100,8 @@ namespace MudBlazor.Charts
                     : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), values.Max());
 
                 var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
-                var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
+                var clampToZeroCanApply = ChartOptions?.ClampToZero is true && values.All(v => v >= T.Zero);
+                var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay || clampToZeroCanApply;
 
                 if (includeYAxisZeroPoint)
                 {

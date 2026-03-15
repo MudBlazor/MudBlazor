@@ -446,7 +446,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Font size should be calculated based on cell dimensions
             fontSize.Should().NotBeNull();
-            double.Parse(fontSize).Should().BeGreaterThan(0);
+            double.Parse(fontSize, CultureInfo.InvariantCulture).Should().BeGreaterThan(0);
         }
 
         [Test]

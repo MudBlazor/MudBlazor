@@ -1291,7 +1291,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
         {
             var exception = Assert.Throws<InvalidOperationException>(() =>
             {
@@ -1392,6 +1392,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("#add_item").ClickAsync();
             comp.Instance.SelectedValue.Should().NotBeNull();
             comp.Instance.SelectedValue!.Name.Should().Be("4");
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12849")]
+        public async Task TreeView_ServerData_Reset()
+        {
+            var comp = Context.Render<TreeViewServerDataResetTest>();
+            var arrows = () => comp.FindAll("button.mud-treeview-item-expand-button");
+            var itemContents = () => comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent);
+
+            arrows().Count.Should().Be(4);
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (1)"));
+            await comp.Find("#btn_reset").ClickAsync();
+            comp.WaitForAssertion(() =>
+            {
+                arrows().Count.Should().Be(4);
+                itemContents().Should().NotContain("More Spam (1)");
+            });
+
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
         }
     }
 }
