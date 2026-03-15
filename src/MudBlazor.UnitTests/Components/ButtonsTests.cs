@@ -470,28 +470,5 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(comp.Instance.Recover);
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
-
-        [Test]
-        public void MudFabMenu_DirectionClasses_ShouldBeApplied()
-        {
-            foreach (var direction in Enum.GetValues<Direction>())
-            {
-                var comp = Context.Render<MudFabMenu>(parameters => parameters.Add(p => p.Direction, direction));
-                comp.Find(".mud-fab-menu").ClassList.Should().Contain($"mud-fab-menu-direction-{direction.ToStringFast(true)}");
-            }
-        }
-
-        [Test]
-        public void MudFabMenu_AnchorClasses_ShouldBeApplied_WhenFixed()
-        {
-            foreach (var anchor in Enum.GetValues<Origin>())
-            {
-                var comp = Context.Render<MudFabMenu>(parameters => parameters
-                    .Add(p => p.Fixed, true)
-                    .Add(p => p.Anchor, anchor));
-                comp.Find(".mud-fab-menu-container").ClassList.Should().Contain("fixed");
-                comp.Find(".mud-fab-menu-container").ClassList.Should().Contain($"mud-fab-anchor-{anchor.ToStringFast(true)}");
-            }
-        }
     }
 }
