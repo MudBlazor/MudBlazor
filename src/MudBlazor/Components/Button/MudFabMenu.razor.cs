@@ -23,6 +23,7 @@ public partial class MudFabMenu : MudFab
         .AddClass("mud-fab-menu-dampen", DampenItemsBackgroundColor)
         .AddClass($"mud-fab-menu-direction-{Direction.ToStringFast(true)}")
         .AddClass($"align-{AlignItems.ToStringFast(true)}")
+        .AddClass($"mud-fab-menu-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
         .AddClass(MenuClass)
         .Build();
 
