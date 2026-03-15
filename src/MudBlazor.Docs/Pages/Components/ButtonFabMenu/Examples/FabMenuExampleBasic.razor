@@ -1,42 +1,19 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudStack Row="true" Style="height: 200px; width: 300px;" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+<MudStack Row="true" Style="width: 300px;" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
     <MudStack Spacing="0">
         <MudSwitch @bind-Value="_open" Label="@(_open ? "Opened" : "Closed")" Color="Color.Primary"/>
         <MudSwitch @bind-Value="_fixed" Label="@(_fixed ? "Fixed" : "Relative")" Color="Color.Primary"/>
     </MudStack>
-    <MudFabMenu StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" @bind-Open="@_open" 
-                Fixed="@_fixed" Anchor="@_anchor" Direction="GetDirection()">
-        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Slack" Color="Color.Secondary"/>
-        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Discord" Color="Color.Secondary" />
-        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Gmail" Color="Color.Secondary" />
+    <MudFabMenu StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" @bind-Open="@_open" Fixed="@_fixed">
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Slack"/>
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Discord"/>
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Gmail"/>
     </MudFabMenu>
-    <div class="@(_fixed ? "" : "d-none")">
-        <MudStack>
-            <MudToggleGroup T="Origin" @bind-Value="_anchor" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Vertical CheckMark FixedContent>
-                <MudToggleItem Value="@Origin.TopLeft" Text="Top Left" />
-                <MudToggleItem Value="@Origin.TopRight" Text="Top Right" />
-                <MudToggleItem Value="@Origin.BottomRight" Text="Bottom Right" />
-                <MudToggleItem Value="@Origin.BottomLeft" Text="Bottom Left" />
-            </MudToggleGroup>
-        </MudStack>
-    </div>
-
 </MudStack>
 
 @code
 {
     private bool _open;
     private bool _fixed;
-    private Origin _anchor = Origin.BottomRight;
-
-    private Direction GetDirection()
-    {
-        return _anchor switch
-        {
-            Origin.TopLeft or Origin.TopRight => Direction.Bottom,
-            Origin.BottomLeft or Origin.BottomRight => Direction.Top,
-            _ => Direction.Top
-        };
-    }
 }
