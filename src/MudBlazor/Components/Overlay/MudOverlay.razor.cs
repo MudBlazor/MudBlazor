@@ -52,8 +52,8 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     [Inject]
     private IPointerEventsNoneService PointerEventsNoneService { get; set; } = null!;
 
-    [CascadingParameter]
-    private MudOverlayAutoCloseContext? AutoCloseContext { get; set; }
+    [CascadingParameter(Name = "MudOverlayAutoCloseExcludeElementIds")]
+    private string[]? AutoCloseExcludeElementIds { get; set; }
 
     /// <summary>
     /// Child content of the component.
@@ -341,7 +341,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             await PointerEventsNoneService.SubscribeAsync(this, new()
             {
                 SubscribeDown = true,
-                ExcludeElementIds = AutoCloseContext?.ExcludeElementIds
+                ExcludeElementIds = AutoCloseExcludeElementIds
             });
         }
     }
