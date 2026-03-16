@@ -3950,6 +3950,89 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterTemplateRendersInSimpleMode()
+        {
+            var comp = Context.Render<DataGridFilterTemplateSimpleModeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterTemplateSimpleModeTest.Model>>();
+
+            // Initially should show all 4 rows
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Department");
+
+            // Add filter for Department column programmatically
+            await comp.InvokeAsync(async () =>
+            {
+                await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+                {
+                    Column = departmentColumn,
+                    Operator = FilterOperator.String.Equal,
+                    Value = "Engineering"
+                });
+            });
+
+            // Should show only Engineering employees (Sam and Ira)
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2);
+
+            // Open filter panel by clicking the filter icon in the header
+            await comp.Find(".mud-button-root.filter-button").ClickAsync();
+
+            // The filter panel should now be visible
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            // The FilterTemplate should be rendered in Simple mode - verify the custom filter class is present
+            var departmentFilterSelects = comp.FindAll(".filters-panel .department-filter");
+            departmentFilterSelects.Count.Should().Be(1, "FilterTemplate should render the custom department filter with 'department-filter' class in Simple mode");
+        }
+
+        [Test]
+        public async Task DataGridFilterTemplateFiltersDataInSimpleMode()
+        {
+            var comp = Context.Render<DataGridFilterTemplateSimpleModeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterTemplateSimpleModeTest.Model>>();
+
+            // Initially should show all 4 rows
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Department");
+
+            // Add filter for Marketing
+            await comp.InvokeAsync(async () =>
+            {
+                await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+                {
+                    Column = departmentColumn,
+                    Operator = FilterOperator.String.Equal,
+                    Value = "Marketing"
+                });
+            });
+
+            // Should show only Marketing employee (Alicia)
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+
+            // Change filter value to Sales
+            var filterDefinition = dataGrid.Instance.FilterDefinitions.First();
+            await comp.InvokeAsync(() =>
+            {
+                filterDefinition.Value = "Sales";
+            });
+            dataGrid.Render();
+
+            // Should show only Sales employee (John)
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+
+            // Change to Engineering
+            await comp.InvokeAsync(() =>
+            {
+                filterDefinition.Value = "Engineering";
+            });
+            dataGrid.Render();
+
+            // Should show Engineering employees (Sam and Ira)
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2);
+        }
+
+        [Test]
         public async Task DataGridShowFilterIcon()
         {
             var comp = Context.Render<DataGridCustomFilteringTest>();

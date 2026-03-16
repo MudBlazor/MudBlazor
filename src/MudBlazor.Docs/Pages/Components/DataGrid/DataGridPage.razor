@@ -251,6 +251,25 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Filter Template in Simple Mode">
+                <Description>
+                    For <CodeInline>DataGridFilterMode.Simple</CodeInline>, you can customize the filter UI for individual columns using the <CodeInline>&lt;FilterTemplate></CodeInline>.
+                    This is particularly useful when you want to provide a more user-friendly filter experience, such as using a dropdown instead of a text input.
+                    <br><br>
+                    The template receives a <CodeInline>FilterContext&lt;T></CodeInline> context that provides access to the <CodeInline>FilterDefinition</CodeInline> property containing the filter's operator, value, column, and field type.
+                    You can customize the operator selection and value input controls while the filtering logic is automatically handled.
+                    <br><br>
+                    Note: The same <CodeInline>&lt;FilterTemplate></CodeInline> works in all filter modes: <CodeInline>Simple</CodeInline>, <CodeInline>ColumnFilterRow</CodeInline>, and <CodeInline>ColumnFilterMenu</CodeInline>.
+                    <br><br>
+                    In the example below, the Category column uses a dropdown to select from available categories instead of typing text.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridSimpleFilterTemplateExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridSimpleFilterTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Row Selection">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> component supports both single and multi-row selection.<br><br>
