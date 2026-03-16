@@ -46,7 +46,10 @@ namespace MudBlazor.Charts
         public override void RebuildChart()
         {
             // shared plot points should be initialized before generating overlay charts
-            if (IsOverlayChart && SharedData is null) return;
+            if (IsOverlayChart && SharedData is null)
+            {
+                return;
+            }
 
             Series = ChartContainer != null && ChartReference is MudChart<T>
                 ? ChartContainer.ChartSeries
@@ -105,8 +108,8 @@ namespace MudBlazor.Charts
                     ? allValues.Max()
                     : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), allValues.Max());
 
-                lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
-                var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
+                lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
+                var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // Safeguard against too many gridlines
@@ -115,8 +118,8 @@ namespace MudBlazor.Charts
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= T.CreateSaturating(2);
-                    lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
-                    highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
+                    lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
+                    highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
 
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
@@ -177,7 +180,7 @@ namespace MudBlazor.Charts
                     var gridValueX = groupStartX + (i * (_barWidth + _barGap)) + (_barWidth / 2);
 
                     var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
-                    var barHeight = (double.CreateSaturating(dataValue / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+                    var barHeight = ((double.CreateSaturating(dataValue) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = _boundHeight - VerticalStartSpace - double.CreateSaturating(barHeight);
 
                     var bar = new SvgPath
@@ -198,7 +201,10 @@ namespace MudBlazor.Charts
         {
             var dataSetCount = Series.Count;
 
-            if (dataSetCount == 0) return [];
+            if (dataSetCount == 0)
+            {
+                return [];
+            }
 
             var context = new BarGroupContext
             {
@@ -221,7 +227,10 @@ namespace MudBlazor.Charts
 
         private int CalculateSpaceWidth(double horizontalSpace, int groupCount)
         {
-            if (groupCount <= 1) return 0;
+            if (groupCount <= 1)
+            {
+                return 0;
+            }
 
             var spaceCount = groupCount - 1;
             var remainingWidth = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - ((_barGroupWidth + (_barWidth / 2)) * groupCount);
@@ -260,7 +269,9 @@ namespace MudBlazor.Charts
             _hoveredBar = bar;
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            {
                 chart.StateHasChanged();
+            }
         }
 
         private void OnBarMouseOut()
@@ -268,7 +279,9 @@ namespace MudBlazor.Charts
             _hoveredBar = null;
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            {
                 chart.StateHasChanged();
+            }
         }
     }
 }

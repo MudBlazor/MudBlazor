@@ -34,7 +34,10 @@ namespace MudBlazor.Charts
 
         public override void RebuildChart()
         {
-            if (IsOverlayChart && SharedData is null) return;
+            if (IsOverlayChart && SharedData is null)
+            {
+                return;
+            }
 
             Series = (ChartContainer != null && ChartReference is MudChart<T>)
                 ? ChartContainer.ChartSeries
@@ -75,7 +78,10 @@ namespace MudBlazor.Charts
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
 
             // If this is an overlay chart, we do not generate the grid lines
-            if (IsOverlayChart) return;
+            if (IsOverlayChart)
+            {
+                return;
+            }
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, 0, horizontalSpace);
@@ -85,9 +91,13 @@ namespace MudBlazor.Charts
         {
             var yAxisTicks = ChartOptions?.YAxisTicks;
             if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
+            {
                 gridYUnits = T.CreateSaturating(yAxisTicks.Value);
+            }
             else
+            {
                 gridYUnits = T.CreateSaturating(20);
+            }
 
             var visibleSeries = Series.Where(series => series.Visible).ToArray();
             var values = visibleSeries.SelectMany(series => series.Data.Values);
@@ -109,8 +119,8 @@ namespace MudBlazor.Charts
                     maxY = T.Max(maxY, T.Zero); // we want to include the 0 in the grid
                 }
 
-                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
-                var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
+                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits));
+                var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits));
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
@@ -118,8 +128,8 @@ namespace MudBlazor.Charts
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= T.CreateSaturating(2);
-                    lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
-                    highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
+                    lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits));
+                    highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits));
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
@@ -140,7 +150,7 @@ namespace MudBlazor.Charts
 
         protected override TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex)
         {
-            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.Values[dataPointIndex], typeof(T));
+            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.Values[dataPointIndex], typeof(TReturn));
         }
 
         protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
@@ -152,7 +162,7 @@ namespace MudBlazor.Charts
         {
             var data = Series[seriesIndex].Data;
             var x = HorizontalStartSpace + (dataPointIndex * horizontalSpace);
-            var gridValue = (double.CreateSaturating(data[dataPointIndex].Y / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+            var gridValue = ((double.CreateSaturating(data[dataPointIndex].Y) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
             var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
             return (x, y);
         }
