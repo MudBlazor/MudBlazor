@@ -150,10 +150,11 @@ the auto close feature and call CloseMenu in OnClosed. Pointerdown is used for
 ordering, and clicks on the select activator are excluded from overlay auto-close
 so the select can handle activator toggling directly.
 -->
-<MudOverlay Visible="_openState.Value"
-            @onpointerdown="@(() => CloseMenu(false))"
-            AutoCloseIgnoreElementIds="@(new[] { ElementId })"
-            LockScroll="@LockScroll"
-            AutoClose="@(!GetModal())"
-            Modal="@GetModal()"
-            OnClosed="@(() => CloseMenu(false))"/>
+<CascadingValue Value="@(new MudOverlayAutoCloseContext(new[] { ElementId }))">
+    <MudOverlay Visible="_openState.Value"
+                @onpointerdown="@(() => CloseMenu(false))"
+                LockScroll="@LockScroll"
+                AutoClose="@(!GetModal())"
+                Modal="@GetModal()"
+                OnClosed="@(() => CloseMenu(false))"/>
+</CascadingValue>

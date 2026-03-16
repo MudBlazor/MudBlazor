@@ -52,6 +52,9 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     [Inject]
     private IPointerEventsNoneService PointerEventsNoneService { get; set; } = null!;
 
+    [CascadingParameter]
+    private MudOverlayAutoCloseContext? AutoCloseContext { get; set; }
+
     /// <summary>
     /// Child content of the component.
     /// </summary>
@@ -91,17 +94,6 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     [Parameter]
     [Category(CategoryTypes.Overlay.ClickAction)]
     public bool AutoClose { get; set; }
-
-    /// <summary>
-    /// Element IDs that should not trigger modeless auto-close pointer handling.
-    /// This property is not intended for public use and may be removed entirely in a future version.
-    /// </summary>
-    /// <remarks>
-    /// Useful when clicking an activator should be handled by the component itself instead of overlay auto-close.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Overlay.ClickAction)]
-    public string[]? AutoCloseIgnoreElementIds { get; set; }
 
     /// <summary>
     /// Occurs when <see cref="AutoClose"/> changes.
@@ -349,7 +341,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             await PointerEventsNoneService.SubscribeAsync(this, new()
             {
                 SubscribeDown = true,
-                ExcludeElementIds = AutoCloseIgnoreElementIds
+                ExcludeElementIds = AutoCloseContext?.ExcludeElementIds
             });
         }
     }

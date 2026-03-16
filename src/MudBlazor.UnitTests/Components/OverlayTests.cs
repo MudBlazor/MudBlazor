@@ -299,10 +299,10 @@ public class OverlayTests : BunitTest
 
         var ignoredIds = new[] { "activator-1", "activator-2" };
         Context.Render<MudOverlay>(parameters => parameters
+            .AddCascadingValue(new MudOverlayAutoCloseContext(ignoredIds))
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, true)
-            .Add(p => p.Modal, false)
-            .Add(p => p.AutoCloseIgnoreElementIds, ignoredIds));
+            .Add(p => p.Modal, false));
 
         serviceMock.Verify(s => s.SubscribeAsync(
             It.IsAny<IPointerEventsNoneObserver>(),

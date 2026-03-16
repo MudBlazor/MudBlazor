@@ -141,9 +141,10 @@
     </div>
 </CascadingValue>
 
-<MudOverlay AutoClose
-            Visible="Open"
-            AutoCloseIgnoreElementIds="@(new[] { _componentId })"
-            OnClosed="OnOverlayClosedAsync"
-            LockScroll="@LockScroll"
-            Modal="@GetModal()" />
+<CascadingValue Value="@(new MudOverlayAutoCloseContext(new[] { _componentId }))">
+    <MudOverlay AutoClose
+                Visible="Open"
+                OnClosed="OnOverlayClosedAsync"
+                LockScroll="@LockScroll"
+                Modal="@GetModal()" />
+</CascadingValue>
