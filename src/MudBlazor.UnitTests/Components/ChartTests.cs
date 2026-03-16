@@ -799,5 +799,93 @@ namespace MudBlazor.UnitTests.Components
                 CultureInfo.CurrentUICulture = originalUiCulture;
             }
         }
+
+        [Test]
+        public void BarChart_LongValues_ShouldNotRoundDown()
+        {
+            var chartSeries = new List<ChartSeries<long>>()
+            {
+                new() { Name = "A", Data = new long[] { 3 } },
+                new() { Name = "B", Data = new long[] { 324 } },
+            };
+            string[] xAxisLabels = { "DataPoint" };
+
+            var comp = Context.Render<MudChart<long>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.Height, "550px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new BarChartOptions
+                {
+                    YAxisTicks = 10,
+                    YAxisLines = true,
+                    MaxNumYAxisTicks = 50
+                })
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(2);
+
+            var barA = bars[0];
+            var dA = barA.GetAttribute("d").Split(' ');
+
+            dA[2].Should().NotBe(dA[5], "Bar A should have a non-zero height for value 3");
+
+            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
+            yAxisLabels.Select(x => x.TextContent).Should().Contain("330", "Y-axis should extend to 330 for value 324 with ticks of 10");
+        }
+
+        [Test]
+        public void LineChart_LongValues_ShouldNotRoundDown()
+        {
+            var chartSeries = new List<ChartSeries<long>>()
+            {
+                new() { Name = "A", Data = new long[] { 3, 324 } },
+            };
+            string[] xAxisLabels = { "D1", "D2" };
+
+            var comp = Context.Render<MudChart<long>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "550px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    YAxisTicks = 10,
+                    MaxNumYAxisTicks = 50
+                })
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
+            yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
+
+            var circles = comp.FindAll("circle.mud-chart-line-point");
+        }
+
+        [Test]
+        public void StackedBarChart_LongValues_ShouldNotRoundDown()
+        {
+            var chartSeries = new List<ChartSeries<long>>()
+            {
+                new() { Name = "A", Data = new long[] { 3 } },
+                new() { Name = "B", Data = new long[] { 324 } },
+            };
+            string[] xAxisLabels = { "DataPoint" };
+
+            var comp = Context.Render<MudChart<long>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.Height, "550px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new StackedBarChartOptions
+                {
+                    YAxisTicks = 10,
+                    MaxNumYAxisTicks = 50
+                })
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
+            yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
+        }
     }
 }
