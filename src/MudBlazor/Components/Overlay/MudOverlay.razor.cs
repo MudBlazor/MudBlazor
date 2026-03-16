@@ -94,11 +94,13 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
 
     /// <summary>
     /// Element IDs that should not trigger modeless auto-close pointer handling.
+    /// This property is not intended for public use and may be removed entirely in a future version.
     /// </summary>
     /// <remarks>
     /// Useful when clicking an activator should be handled by the component itself instead of overlay auto-close.
     /// </remarks>
     [Parameter]
+    [Obsolete("This property is not intended for public use and may be removed entirely in a future version.")]
     [Category(CategoryTypes.Overlay.ClickAction)]
     public string[]? AutoCloseIgnoreElementIds { get; set; }
 
