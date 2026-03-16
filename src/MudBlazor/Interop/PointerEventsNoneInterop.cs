@@ -21,9 +21,10 @@ internal class PointerEventsNoneInterop
         DotNetObjectReference<T> dotNetObjectReference,
         string elementId,
         PointerEventsNoneOptions options,
+        string[]? excludeElementIds = null,
         CancellationToken cancellationToken = default) where T : class
     {
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPointerEventsNone.listenForPointerEvents", cancellationToken, dotNetObjectReference, elementId, options);
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPointerEventsNone.listenForPointerEvents", cancellationToken, dotNetObjectReference, elementId, options, excludeElementIds);
     }
 
     public ValueTask<bool> CancelListenerAsync(string elementId, CancellationToken cancellationToken = default)

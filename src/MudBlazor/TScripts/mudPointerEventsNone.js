@@ -19,7 +19,7 @@ class MudPointerEventsNone {
     /**
      * Starts global pointer listeners for an element configured with pointer-events-none behavior.
      */
-    listenForPointerEvents(dotNetReference, elementId, options) {
+    listenForPointerEvents(dotNetReference, elementId, options, excludeElementIds) {
         if (!options) {
             this.logger("options object is required but was not provided");
             return;
@@ -54,7 +54,7 @@ class MudPointerEventsNone {
 
         if (options.subscribeDown) {
             this.logger("Subscribing to 'pointerdown' for element:", elementId);
-            this.pointerDownMap.set(elementId, options);
+            this.pointerDownMap.set(elementId, { options, excludeElementIds });
 
             if (!this.pointerDownHandlerRef) {
                 this.logger("Registering global 'pointerdown' event listener");
@@ -65,7 +65,7 @@ class MudPointerEventsNone {
 
         if (options.subscribeUp) {
             this.logger("Subscribing to 'pointerup' events for element:", elementId);
-            this.pointerUpMap.set(elementId, options);
+            this.pointerUpMap.set(elementId, { options, excludeElementIds });
 
             if (!this.pointerUpHandlerRef) {
                 this.logger("Registering global 'pointerup' event listener");
@@ -129,8 +129,8 @@ class MudPointerEventsNone {
                 break;
             }
 
-            const options = map.get(element.id);
-            if (this._isEventExcluded(event, options?.excludeElementIds)) {
+            const configuration = map.get(element.id);
+            if (this._isEventExcluded(event, configuration?.excludeElementIds)) {
                 continue;
             }
 

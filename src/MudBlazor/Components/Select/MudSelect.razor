@@ -152,7 +152,7 @@ so the select can handle activator toggling directly.
 -->
 <MudOverlay Visible="_openState.Value"
             @onpointerdown="@(() => CloseMenu(false))"
-            AutoCloseIgnoreElementIds="@(new[] { ElementId })"
+            data-mud-auto-close-ignore-element-ids="@ElementId"
             LockScroll="@LockScroll"
             AutoClose="@(!GetModal())"
             Modal="@GetModal()"
