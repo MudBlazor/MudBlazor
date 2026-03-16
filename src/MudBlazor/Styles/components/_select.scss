@@ -105,6 +105,15 @@
   margin-top: -21px;
 }
 
+.mud-autocomplete-before-items,
+.mud-autocomplete-after-items,
+.mud-autocomplete-more-items,
+.mud-autocomplete-no-items {
+  &:not(:empty) {
+    padding: 4px;
+  }
+}
+
 .mud-select-all {
   margin-top: 10px;
   border-bottom: 1px solid lightgray;

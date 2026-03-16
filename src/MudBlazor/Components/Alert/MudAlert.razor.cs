@@ -23,7 +23,7 @@ namespace MudBlazor
             .Build();
 
         protected string ClassPosition => new CssBuilder("mud-alert-position")
-            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToStringFast(true)}")
+            .AddClass($"justify-{ConvertHorizontalAlignment(ContentAlignment).ToStringFast(true)}")
             .Build();
 
         /// <summary>

@@ -58,7 +58,7 @@ Add to `MainLayout.razor` or `App.razor`:
 Add to HTML `head` section (`index.html`/`_Layout.cshtml`/`_Host.cshtml`/`App.razor`):
 
 ```razor
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 ```
 

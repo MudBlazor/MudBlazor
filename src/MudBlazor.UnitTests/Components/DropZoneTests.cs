@@ -1288,5 +1288,102 @@ namespace MudBlazor.UnitTests.Components
             var containerComponent = comp.FindComponent<MudDropContainer<DropzoneBasicTest.SimpleDropItem>>();
             containerComponent.Instance.GetTransactionOriginZoneIdentifier().Should().Be("Column 1");
         }
+
+        [Test]
+        public async Task DropZone_DragHandle()
+        {
+            var comp = Context.Render<DropzoneDragHandleTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            var firstDropZone = container.Children[0];
+            var dropItem = firstDropZone.Children[0];
+
+            // Outer item should NOT be draggable when a handle is present
+            dropItem.GetAttribute("draggable").Should().Be("false");
+
+            var dragHandle = dropItem.QuerySelector(".mud-drag-handle");
+            dragHandle.Should().NotBeNull();
+
+            // Handle SHOULD be draggable
+            dragHandle.GetAttribute("draggable").Should().Be("true");
+
+            // Dragging the handle should start the transaction
+            await dragHandle.DragStartAsync(new DragEventArgs());
+
+            var containerComponent = comp.FindComponent<MudDropContainer<DropzoneDragHandleTest.SimpleDropItem>>();
+            containerComponent.Instance.TransactionInProgress().Should().BeTrue();
+
+            var secondDropZone = container.Children[1];
+            await secondDropZone.DropAsync(new DragEventArgs());
+
+            containerComponent.Instance.TransactionInProgress().Should().BeFalse();
+
+            // Verify item moved
+            firstDropZone = comp.Find(".first-drop-zone");
+            secondDropZone = comp.Find(".second-drop-zone");
+
+            firstDropZone.Children.Should().BeEmpty();
+            secondDropZone.Children.Should().HaveCount(1);
+        }
+
+        [Test]
+        public void DropZone_MultipleDragHandles()
+        {
+            var comp = Context.Render<DropzoneMultipleDragHandleTest>();
+
+            var dropItem = comp.Find(".mud-drop-item");
+            dropItem.GetAttribute("draggable").Should().Be("false");
+
+            var handle1 = dropItem.QuerySelector(".handle-1");
+            var handle2 = dropItem.QuerySelector(".handle-2");
+
+            handle1.Should().NotBeNull();
+            handle2.Should().NotBeNull();
+
+            handle1!.GetAttribute("draggable").Should().Be("true");
+            handle2!.GetAttribute("draggable").Should().Be("true");
+
+            // Remove one handle
+            comp.Instance.SetHandles(false, true);
+
+            dropItem = comp.Find(".mud-drop-item");
+            // Still has one handle, so item should not be draggable
+            dropItem.GetAttribute("draggable").Should().Be("false");
+
+            handle1 = dropItem.QuerySelector(".handle-1");
+            handle2 = dropItem.QuerySelector(".handle-2");
+            handle1.Should().BeNull();
+            handle2.Should().NotBeNull();
+
+            // Remove the second handle
+            comp.Instance.SetHandles(false, false);
+
+            dropItem = comp.Find(".mud-drop-item");
+            // No handles left, item should be draggable again
+            dropItem.GetAttribute("draggable").Should().Be("true");
+        }
+
+        [Test]
+        public async Task DropZone_DragHandle_Touch()
+        {
+            var comp = Context.Render<DropzoneDragHandleTest>();
+
+            var container = comp.Find(".mud-drop-container");
+            var firstDropZone = container.Children[0];
+            var dropItem = firstDropZone.Children[0];
+
+            var dragHandle = dropItem.QuerySelector(".mud-drag-handle");
+            dragHandle.Should().NotBeNull();
+
+            var containerComponent = comp.FindComponent<MudDropContainer<DropzoneDragHandleTest.SimpleDropItem>>();
+
+            // Touching the parent item should NOT start the transaction
+            await dropItem.TouchStartAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 0, ClientY = 0 }] });
+            containerComponent.Instance.TransactionInProgress().Should().BeFalse();
+
+            // Touching the handle SHOULD start the transaction
+            await dragHandle!.TouchStartAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 0, ClientY = 0 }] });
+            containerComponent.Instance.TransactionInProgress().Should().BeTrue();
+        }
     }
 }

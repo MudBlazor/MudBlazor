@@ -179,6 +179,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Switch_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Switch_Uses_Default_TabIndex_When_Enabled()
+        {
+            var comp = Context.Render<MudSwitch<bool>>();
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public void Switch_Uses_Default_TabIndex_When_Disabled()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Switch_Respects_Custom_TabIndex_CaseInsensitive()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters.AddUnmatched("TabIndex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");

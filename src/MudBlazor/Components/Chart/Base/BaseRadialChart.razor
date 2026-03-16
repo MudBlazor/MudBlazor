@@ -21,7 +21,7 @@
         {
             <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
                   class="mud-chart-serie"
-                  fill-opacity="@ChartOptions.FillOpacity"
+                  fill-opacity="@ChartOptions.FillOpacity.ToStr()"
                   stroke="@GetColor(item.Index)"
                   stroke-width="@(ChartOptions is IHasDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
                   fill="@GetColor(item.Index)"
