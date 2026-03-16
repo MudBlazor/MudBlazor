@@ -299,7 +299,7 @@ public class OverlayTests : BunitTest
 
         var ignoredIds = new[] { "activator-1", "activator-2" };
         Context.Render<MudOverlay>(parameters => parameters
-            .AddCascadingValue("MudOverlayAutoCloseExcludeElementIds", ignoredIds)
+            .AddCascadingValue(new MudOverlayAutoCloseContext(ignoredIds))
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, true)
             .Add(p => p.Modal, false));
