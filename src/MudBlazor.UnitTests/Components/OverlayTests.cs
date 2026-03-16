@@ -273,7 +273,7 @@ public class OverlayTests : BunitTest
         Context.Services.Remove(ServiceDescriptor.Scoped<IPointerEventsNoneService, PointerEventsNoneService>());
         var serviceMock = new Mock<IPointerEventsNoneService>();
         serviceMock
-            .Setup(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>(), It.IsAny<string[]>()))
+            .Setup(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()))
             .Returns(Task.CompletedTask)
             .Verifiable();
         Context.Services.AddScoped(_ => serviceMock.Object);
@@ -284,16 +284,16 @@ public class OverlayTests : BunitTest
             .Add(p => p.Modal, modal)
         );
 
-        serviceMock.Verify(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>(), It.IsAny<string[]>()), callsStart ? Times.Once() : Times.Never());
+        serviceMock.Verify(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()), callsStart ? Times.Once() : Times.Never());
     }
 
     [Test]
-    public void ModelessAutoClose_PropagatesIgnoreElementIdsToPointerEventsService()
+    public void ModelessAutoClose_PropagatesIgnoreElementIdsToPointerEventsOptions()
     {
         Context.Services.Remove(ServiceDescriptor.Scoped<IPointerEventsNoneService, PointerEventsNoneService>());
         var serviceMock = new Mock<IPointerEventsNoneService>();
         serviceMock
-            .Setup(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>(), It.IsAny<string[]>()))
+            .Setup(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()))
             .Returns(Task.CompletedTask);
         Context.Services.AddScoped(_ => serviceMock.Object);
 
@@ -302,12 +302,14 @@ public class OverlayTests : BunitTest
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, true)
             .Add(p => p.Modal, false)
-            .AddUnmatched(MudOverlay.AutoCloseIgnoreElementIdsAttributeName, ignoredIds));
+            .Add(p => p.AutoCloseIgnoreElementIds, ignoredIds));
 
         serviceMock.Verify(s => s.SubscribeAsync(
             It.IsAny<IPointerEventsNoneObserver>(),
-            It.Is<PointerEventsNoneOptions>(o => o.SubscribeDown),
-            It.Is<string[]>(ids => ids != null && ids.SequenceEqual(ignoredIds))), Times.Once);
+            It.Is<PointerEventsNoneOptions>(o =>
+                o.SubscribeDown &&
+                o.ExcludeElementIds != null &&
+                o.ExcludeElementIds.SequenceEqual(ignoredIds))), Times.Once);
     }
 
     [Test]

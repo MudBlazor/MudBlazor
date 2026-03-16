@@ -27,4 +27,11 @@ public class PointerEventsNoneOptions
     /// </summary>
     public bool SubscribeUp { get; init; }
 
+    /// <summary>
+    /// Element IDs which should not trigger pointer notifications.
+    /// </summary>
+    /// <remarks>
+    /// Useful for modeless overlays where clicking an activator should toggle the component without auto-closing through overlay hit-testing.
+    /// </remarks>
+    public string[]? ExcludeElementIds { get; init; }
 }

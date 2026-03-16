@@ -143,7 +143,7 @@
 
 <MudOverlay AutoClose
             Visible="Open"
-            data-mud-auto-close-ignore-element-ids="@_componentId"
+            AutoCloseIgnoreElementIds="@(new[] { _componentId })"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
             Modal="@GetModal()" />

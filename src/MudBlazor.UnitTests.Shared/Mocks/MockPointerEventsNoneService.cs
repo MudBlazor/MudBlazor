@@ -12,11 +12,7 @@ public class MockPointerEventsNoneService : IPointerEventsNoneService
 
     public Task SubscribeAsync(IPointerEventsNoneObserver observer, PointerEventsNoneOptions options) => Task.CompletedTask;
 
-    public Task SubscribeAsync(IPointerEventsNoneObserver observer, PointerEventsNoneOptions options, string[]? excludeElementIds) => Task.CompletedTask;
-
     public Task SubscribeAsync(string elementId, PointerEventsNoneOptions options, IPointerDownObserver? pointerDown = null, IPointerUpObserver? pointerUp = null) => Task.CompletedTask;
-
-    public Task SubscribeAsync(string elementId, PointerEventsNoneOptions options, string[]? excludeElementIds, IPointerDownObserver? pointerDown = null, IPointerUpObserver? pointerUp = null) => Task.CompletedTask;
 
     public Task UnsubscribeAsync(IPointerEventsNoneObserver observer) => Task.CompletedTask;
 

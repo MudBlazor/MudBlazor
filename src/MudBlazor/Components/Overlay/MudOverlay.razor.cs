@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -16,8 +15,6 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
-    internal const string AutoCloseIgnoreElementIdsAttributeName = "data-mud-auto-close-ignore-element-ids";
-
     private int _lockCount;
     private bool _previousAbsolute;
     private bool _previousLockScroll;
@@ -94,6 +91,16 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     [Parameter]
     [Category(CategoryTypes.Overlay.ClickAction)]
     public bool AutoClose { get; set; }
+
+    /// <summary>
+    /// Element IDs that should not trigger modeless auto-close pointer handling.
+    /// </summary>
+    /// <remarks>
+    /// Useful when clicking an activator should be handled by the component itself instead of overlay auto-close.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.ClickAction)]
+    public string[]? AutoCloseIgnoreElementIds { get; set; }
 
     /// <summary>
     /// Occurs when <see cref="AutoClose"/> changes.
@@ -338,34 +345,12 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     {
         if (IsJSRuntimeAvailable)
         {
-            await PointerEventsNoneService.SubscribeAsync(this, new() { SubscribeDown = true }, GetAutoCloseIgnoreElementIds());
+            await PointerEventsNoneService.SubscribeAsync(this, new()
+            {
+                SubscribeDown = true,
+                ExcludeElementIds = AutoCloseIgnoreElementIds
+            });
         }
-    }
-
-    private string[]? GetAutoCloseIgnoreElementIds()
-    {
-        if (UserAttributes is null || !UserAttributes.TryGetValue(AutoCloseIgnoreElementIdsAttributeName, out var value) || value is null)
-        {
-            return null;
-        }
-
-        if (value is string ids)
-        {
-            return ids
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        }
-
-        if (value is IEnumerable enumerable)
-        {
-            return enumerable
-                .Cast<object?>()
-                .Select(x => x?.ToString())
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Cast<string>()
-                .ToArray();
-        }
-
-        return null;
     }
 
     /// <summary>

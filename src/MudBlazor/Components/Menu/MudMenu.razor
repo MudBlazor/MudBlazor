@@ -126,7 +126,7 @@
     {
         <MudOverlay Visible="_openState.Value && !_isTransient"
                     AutoClose
-                    data-mud-auto-close-ignore-element-ids="@_activatorElementId"
+                    AutoCloseIgnoreElementIds="@(new[] { _activatorElementId })"
                     OnClosed="CloseMenuAsync"
                     LockScroll="LockScroll"
                     Modal="@GetModal()" />

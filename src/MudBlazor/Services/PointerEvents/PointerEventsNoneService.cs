@@ -53,30 +53,18 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
     /// <inheritdoc />
     public async Task SubscribeAsync(IPointerEventsNoneObserver observer, PointerEventsNoneOptions options)
     {
-        await SubscribeAsync(observer, options, excludeElementIds: null);
-    }
-
-    /// <inheritdoc />
-    public async Task SubscribeAsync(IPointerEventsNoneObserver observer, PointerEventsNoneOptions options, string[]? excludeElementIds)
-    {
         ArgumentNullException.ThrowIfNull(observer);
 
         if (!_observerManager.TryGetOrAddSubscription(observer.ElementId, observer, out var newObserver))
         {
-            await _pointerEventsNoneInterop.ListenForPointerEventsAsync(_dotNetObjectReference.Value, newObserver.ElementId, options, excludeElementIds, _cancellationToken);
+            await _pointerEventsNoneInterop.ListenForPointerEventsAsync(_dotNetObjectReference.Value, newObserver.ElementId, options, _cancellationToken);
         }
     }
 
     /// <inheritdoc />
     public Task SubscribeAsync(string elementId, PointerEventsNoneOptions options, IPointerDownObserver? pointerDown = null, IPointerUpObserver? pointerUp = null)
     {
-        return SubscribeAsync(elementId, options, excludeElementIds: null, pointerDown, pointerUp);
-    }
-
-    /// <inheritdoc />
-    public Task SubscribeAsync(string elementId, PointerEventsNoneOptions options, string[]? excludeElementIds, IPointerDownObserver? pointerDown = null, IPointerUpObserver? pointerUp = null)
-    {
-        return SubscribeAsync(new PointerEventsNoneObserver(elementId, pointerDown, pointerUp), options, excludeElementIds);
+        return SubscribeAsync(new PointerEventsNoneObserver(elementId, pointerDown, pointerUp), options);
     }
 
     /// <inheritdoc />
