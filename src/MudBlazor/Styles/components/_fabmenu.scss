@@ -152,14 +152,14 @@
         z-index: 1;
       }
 
-        .mud-fab-menu-item::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: inherit;
-          filter: saturate(0.5) brightness(1.25);
-          z-index: -1;
-        }
+      .mud-fab-menu-item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: inherit;
+        filter: saturate(0.5) brightness(1.25);
+        z-index: -1;
+      }
     }
 
     .mud-fab-menu-item {
