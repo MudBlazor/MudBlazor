@@ -86,6 +86,19 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("California");
         }
 
+        [Test]
+        public async Task Autocomplete_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+
+            await autocompleteComponent.Find("input").InputAsync("Calif");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var overlay = comp.Find("div.mud-overlay");
+            overlay.GetAttribute("data-modeless-ignore-element-id").Should().Be(comp.Find("div.mud-autocomplete").Id);
+        }
+
         /// <summary>
         /// Popup should open when 3 characters are typed and close when below.
         /// </summary>

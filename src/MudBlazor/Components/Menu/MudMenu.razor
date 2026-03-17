@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes"
+<div id="@FieldId"
+     @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
@@ -123,6 +124,7 @@
     {
         <MudOverlay Visible="_openState.Value && !_isTransient"
                     AutoClose
+                    data-modeless-ignore-element-id="@FieldId"
                     OnClosed="CloseMenuAsync"
                     LockScroll="LockScroll"
                     Modal="@GetModal()" />
