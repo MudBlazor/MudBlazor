@@ -859,7 +859,15 @@ namespace MudBlazor.UnitTests.Components
             var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
             yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
 
-            var circles = comp.FindAll("circle.mud-chart-line-point");
+            var circles = comp.FindAll("circle.mud-chart-point");
+            circles.Count.Should().Be(2);
+
+            var cyValues = circles
+                .Select(c => double.Parse(c.GetAttribute("cy")!, CultureInfo.InvariantCulture))
+                .ToList();
+
+            cyValues[0].Should().NotBe(cyValues[1]);
+            cyValues[0].Should().BeGreaterThan(cyValues[1]);
         }
 
         [Test]
@@ -886,6 +894,28 @@ namespace MudBlazor.UnitTests.Components
 
             var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
             yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
+
+            var barPaths = comp.FindAll("path.mud-chart-bar");
+            barPaths.Should().NotBeEmpty("stacked bar chart should render bar paths");
+            var smallSegmentPath = barPaths.First();
+            var dAttribute = smallSegmentPath.GetAttribute("d");
+            dAttribute.Should().NotBeNullOrWhiteSpace("bar path should have a valid 'd' attribute");
+
+            var numericChars = dAttribute!
+                .Select(c => char.IsDigit(c) || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E' ? c : ' ')
+                .ToArray();
+            var numericParts = new string(numericChars)
+                .Split((char[])null!, StringSplitOptions.RemoveEmptyEntries);
+            var coordinates = numericParts
+                .Select(p => double.Parse(p, CultureInfo.InvariantCulture))
+                .ToList();
+            var yCoordinates = coordinates
+                .Skip(1)
+                .Where((_, index) => index % 2 == 0)
+                .ToList();
+
+            yCoordinates.Count.Should().BeGreaterThan(0, "bar path should contain Y coordinates");
+            yCoordinates.Distinct().Count().Should().BeGreaterThan(1, "small stacked segment should have non-zero height (different Y coordinates)");
         }
     }
 }
