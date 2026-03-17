@@ -5,9 +5,11 @@
 @typeparam T
 @typeparam TChartOptions
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" 
+     width="@(MatchBoundsToSize ? "100%" : Width)" height="@(MatchBoundsToSize ? "100%" : Height)" 
+     viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
      style="@HoveredStylename">
-    <Filters/>
+    <Filters />
 
     <g class="mud-charts-grid">
         @if (XAxisTitle is not null)

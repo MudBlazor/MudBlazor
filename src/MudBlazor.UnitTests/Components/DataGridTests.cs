@@ -849,6 +849,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridPaginationShouldUseGridCultureForFormatting()
+        {
+            // de-DE uses "." as a thousands separator, so 1000 is formatted as "1.000"
+            var comp = Context.Render<DataGridPaginationCultureTest>();
+
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 1.000");
+        }
+
+        [Test]
         public void DataGridPaginationPageSizeDropDown()
         {
             var comp = Context.Render<DataGridPaginationTest>(self => self.Add(x => x.PageSizeDropDown, false));

@@ -295,16 +295,24 @@ internal sealed class DebounceDispatcher : IDisposable
     public void Cancel()
     {
         CancellationTokenSource? ctsToCancel;
-        // ReSharper disable once MethodSupportsCancellation
-        _lock.Wait();
-        try
+        if (OperatingSystem.IsBrowser())
         {
             ctsToCancel = _cancellationTokenSource;
             _cancellationTokenSource = null;
         }
-        finally
+        else
         {
-            _lock.Release();
+            // ReSharper disable once MethodSupportsCancellation
+            _lock.Wait();
+            try
+            {
+                ctsToCancel = _cancellationTokenSource;
+                _cancellationTokenSource = null;
+            }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         CancelAndDispose(ctsToCancel);
@@ -397,21 +405,30 @@ internal sealed class DebounceDispatcher : IDisposable
 
         CancellationTokenSource? ctsToCancel;
         // ReSharper disable once MethodSupportsCancellation
-        _lock.Wait();
-        try
+        if (OperatingSystem.IsBrowser())
         {
-            if (_disposed)
-            {
-                return;
-            }
-
             _disposed = true;
             ctsToCancel = _cancellationTokenSource;
             _cancellationTokenSource = null;
         }
-        finally
+        else
         {
-            _lock.Release();
+            _lock.Wait();
+            try
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _disposed = true;
+                ctsToCancel = _cancellationTokenSource;
+                _cancellationTokenSource = null;
+            }
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         CancelAndDispose(ctsToCancel);

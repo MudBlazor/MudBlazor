@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.ExceptionServices;
-using MudBlazor.Resources;
+﻿using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
@@ -44,19 +42,25 @@ public static class ReversibleTypeDispatcher
 internal class ReversibleTypeDispatcher<TIn, TOut> :
     TypeDispatcher<TIn, TOut>, IReversibleConverter<TIn, TOut>
 {
-    private readonly Dictionary<Type, Delegate> _backwards;
+    private readonly Func<TOut, TIn>? _backward;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReversibleTypeDispatcher{TIn,TOut}"/> class.
     /// </summary>
-    /// <param name="forwards">A pre-populated map of concrete input <see cref="Type"/> to forward conversion delegates.</param>
-    /// <param name="backwards">A pre-populated map of concrete input <see cref="Type"/> to backward conversion delegates.</param>
-    protected ReversibleTypeDispatcher(
-        Dictionary<Type, Delegate> forwards,
-        Dictionary<Type, Delegate> backwards)
-        : base(forwards)
+    /// <param name="forward">The resolved forward delegate for <typeparamref name="TIn"/>, or <c>null</c> when no converter is registered.</param>
+    /// <param name="backward">The resolved backward delegate for <typeparamref name="TIn"/>, or <c>null</c> when no converter is registered.</param>
+    protected ReversibleTypeDispatcher(Func<TIn, TOut>? forward, Func<TOut, TIn>? backward)
+        : base(forward) => _backward = backward;
+
+    internal static Func<TOut, TIn>? ResolveBackwardHandler(Dictionary<Type, Delegate> reverseHandlers)
     {
-        _backwards = backwards;
+        var runtimeType = typeof(TIn);
+        if (reverseHandlers.TryGetValue(runtimeType, out var del))
+        {
+            return del as Func<TOut, TIn> ?? (input => (TIn)del.DynamicInvoke(input)!);
+        }
+
+        return null;
     }
 
     /// <inheritdoc />
@@ -66,19 +70,12 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
     /// </exception>
     public TIn ConvertBack(TOut input)
     {
-        var runtimeType = typeof(TIn);
-
-        if (_backwards.TryGetValue(runtimeType, out var del))
+        if (_backward is not null)
         {
-            try
-            {
-                return (TIn)del.DynamicInvoke(input)!;
-            }
-            catch (TargetInvocationException ex) when (ex.InnerException is not null)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-            }
+            return _backward(input);
         }
+
+        var runtimeType = typeof(TIn);
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
@@ -101,36 +98,62 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         }
 
         /// <inheritdoc />
+        public IReversibleDispatcherBuilder<TIn, TOut> AddForward<TSpecific>(IConverter<TSpecific, TOut> converter)
+        {
+            AddForwardHandler(
+                typeof(TSpecific),
+                new Func<TSpecific, TOut>(converter.Convert));
+
+            return this;
+        }
+
+        /// <inheritdoc />
         public IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object? converter)
         {
             ArgumentNullException.ThrowIfNull(specificType);
             ArgumentNullException.ThrowIfNull(converter);
 
-            var convType = converter.GetType();
-
-            var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            if (!convertMethodInterface.IsAssignableFrom(convType))
-            {
-                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
-            }
-
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            var convertBackMethodInterface = typeof(IReversibleConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            if (!convertBackMethodInterface.IsAssignableFrom(convType))
-            {
-                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement ConvertBack({typeof(TOut)})");
-            }
-
-            var convertBackMethod = convertBackMethodInterface.GetMethod(nameof(IReversibleConverter<TIn, TOut>.ConvertBack), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            // Cannot be null since we already verified the interface is implemented
-            var forwardDelegate = convertMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
-            var backwardDelegate = convertBackMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(typeof(TOut), specificType), converter);
+            var forwardDelegate = DelegateHelper.CreateForwardDelegate<TIn, TOut>(specificType, converter);
+            var backwardDelegate = DelegateHelper.CreateBackwardDelegate<TIn, TOut>(specificType, converter);
 
             AddHandlers(specificType, forwardDelegate, backwardDelegate);
 
             return this;
+        }
+
+        /// <inheritdoc />
+        public IReversibleDispatcherBuilder<TIn, TOut> AddDynamicForward(Type specificType, object? converter)
+        {
+            ArgumentNullException.ThrowIfNull(specificType);
+            ArgumentNullException.ThrowIfNull(converter);
+
+            var forwardDelegate = DelegateHelper.CreateForwardDelegate<TIn, TOut>(specificType, converter);
+
+            AddForwardHandler(specificType, forwardDelegate);
+
+            return this;
+        }
+
+        private void AddForwardHandler(Type specificType, Delegate forwardHandler)
+        {
+            switch (registrationPolicy)
+            {
+                case DispatcherRegistrationPolicy.LastWins:
+                    _handlers[specificType] = forwardHandler;
+                    return;
+                case DispatcherRegistrationPolicy.FirstWins:
+                    _handlers.TryAdd(specificType, forwardHandler);
+                    return;
+                case DispatcherRegistrationPolicy.Throw:
+                    if (!_handlers.TryAdd(specificType, forwardHandler))
+                    {
+                        throw new InvalidOperationException($"Converter already registered for {specificType}.");
+                    }
+
+                    return;
+                default:
+                    throw new InvalidOperationException($"Unsupported registration policy: {registrationPolicy}.");
+            }
         }
 
         private void AddHandlers(Type specificType, Delegate forwardHandler, Delegate backwardHandler)
@@ -160,6 +183,11 @@ internal class ReversibleTypeDispatcher<TIn, TOut> :
         }
 
         /// <inheritdoc />
-        public IReversibleConverter<TIn, TOut> Build() => new ReversibleTypeDispatcher<TIn, TOut>(_handlers, _reverseHandlers);
+        public IReversibleConverter<TIn, TOut> Build()
+        {
+            var forward = ResolveForwardHandler(_handlers);
+            var backward = ResolveBackwardHandler(_reverseHandlers);
+            return new ReversibleTypeDispatcher<TIn, TOut>(forward, backward);
+        }
     }
 }
