@@ -1412,6 +1412,9 @@ namespace MudBlazor.UnitTests.Components
 
             // DateRangeChanged should fire again when reselecting the same range after clearing
             changedRanges.Should().HaveCount(2);
+        }
+
+        [Test]
         public async Task StaticReadOnly_ShouldNotChangeDateRange()
         {
             var initialRange = new DateRange(new DateTime(2025, 6, 10), new DateTime(2025, 6, 20));
