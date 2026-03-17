@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -19,11 +20,9 @@ namespace MudBlazor
     /// <seealso cref="MudDateRangePicker"/>
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
-        private bool _amPm = false;
         private OpenTo _currentView;
         private string? _clockElementReferenceId;
         private readonly SetTime _timeSet = new();
-        private string _timeFormat = string.Empty;
         private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
 
         [Inject]
@@ -38,6 +37,13 @@ namespace MudBlazor
         {
             AdornmentIcon = Icons.Material.Filled.AccessTime;
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<bool>(nameof(AmPm))
+                .WithParameter(() => AmPm)
+                .WithChangeHandler(FormatChangedAsync);
+            registerScope.RegisterParameter<string?>(nameof(TimeFormat))
+                .WithParameter(() => TimeFormat)
+                .WithChangeHandler(FormatChangedAsync);
         }
 
         internal TimeSpan? TimeIntermediate { get; private set; }
@@ -103,24 +109,9 @@ namespace MudBlazor
         /// When <c>true</c>, hours 1-12 are displayed with an AM or PM marker.<br />
         /// When <c>false</c>, hours 0-23 are displayed.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool AmPm
-        {
-            get => _amPm;
-            set
-            {
-                if (value == _amPm)
-                {
-                    return;
-                }
-
-                _amPm = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public bool AmPm { get; set; }
 
         /// <summary>
         /// The format applied to time values.
@@ -134,24 +125,9 @@ namespace MudBlazor
         /// * <c>tt</c> for AM/PM markers.<br />
         /// For example: <c>h:mm tt</c> would display <c>6:32 PM</c>, and <c>HH:mm</c> would display <c>18:32</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string TimeFormat
-        {
-            get => _timeFormat;
-            set
-            {
-                if (_timeFormat == value)
-                {
-                    return;
-                }
-
-                _timeFormat = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public string TimeFormat { get; set; } = string.Empty;
 
         /// <summary>
         /// The currently selected time.
@@ -276,6 +252,8 @@ namespace MudBlazor
 
         private Task UpdateTimeAsync()
         {
+            if (GetReadOnlyState())
+                return Task.CompletedTask;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -637,25 +615,25 @@ namespace MudBlazor
             }
         }
 
-        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
 
-            await base.OnHandleKeyDownAsync(obj);
+            await base.OnHandleKeyDownAsync(args);
 
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "ArrowRight":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
@@ -679,11 +657,11 @@ namespace MudBlazor
                 case "ArrowLeft":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
@@ -709,11 +687,11 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.AltKey)
+                    else if (args.AltKey)
                     {
                         Open = false;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(5);
                     }
@@ -728,7 +706,7 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(-5);
                     }
@@ -827,6 +805,12 @@ namespace MudBlazor
             }
         }
 
+        private Task FormatChangedAsync()
+        {
+            Touched = true;
+            return SetTextAsync(ConvertSet(_value), false);
+        }
+
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
@@ -843,7 +827,7 @@ namespace MudBlazor
             }
         }
 
-        private record SetTime
+        private sealed record SetTime
         {
             public int Hour { get; set; }
 

@@ -60,7 +60,6 @@ namespace MudBlazor
 
         void IForm.Update(IFormComponent formControl)
         {
-            //Validate(formControl);
         }
 
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();

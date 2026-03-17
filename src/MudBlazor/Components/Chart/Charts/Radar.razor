@@ -15,6 +15,7 @@
                      ChartLabels="@ChartLabels"
                      ChartOptions="@ChartOptions"
                      ChartGrid="@RenderChartGrid()"
+                     ChartAxisLabels="@RenderAxisLabels()"
                      ChartDataPoints="@RenderChartDataPoints"
                      CustomGraphics="@CustomGraphics"
                      HoveredSegment="@_hoveredSegment"
@@ -32,24 +33,25 @@
 @code {
     private RenderFragment RenderChartGrid() => builder =>
     {
-        if (ChartOptions?.ShowGridLines is not true || _gridLines.Count == 0) return;
-
         var seq = 0;
 
-        // Grid lines group
-        builder.OpenElement(seq++, "g");
-        builder.AddAttribute(seq++, "class", "mud-chart-radar-grid");
-        foreach (var gridLine in _gridLines)
+        if (ChartOptions?.ShowGridLines is true && _gridLines.Count > 0) 
         {
-            builder.OpenElement(seq++, "path");
-            builder.AddAttribute(seq++, "class", "mud-chart-grid-line");
-            builder.AddAttribute(seq++, "d", gridLine.Data);
-            builder.AddAttribute(seq++, "fill", "none");
-            builder.AddAttribute(seq++, "stroke", ChartOptions.GridLineColor);
-            builder.AddAttribute(seq++, "stroke-width", ChartOptions.GridLineWidth);
-            builder.CloseElement();
+            // Grid lines group
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-chart-radar-grid");
+            foreach (var gridLine in _gridLines)
+            {
+                builder.OpenElement(seq++, "path");
+                builder.AddAttribute(seq++, "class", "mud-chart-grid-line");
+                builder.AddAttribute(seq++, "d", gridLine.Data);
+                builder.AddAttribute(seq++, "fill", "none");
+                builder.AddAttribute(seq++, "stroke", ChartOptions.GridLineColor);
+                builder.AddAttribute(seq++, "stroke-width", ChartOptions.GridLineWidth);
+                builder.CloseElement();
+            }
+            builder.CloseElement(); // </g>
         }
-        builder.CloseElement(); // </g>
 
         // Axis lines group
         builder.OpenElement(seq++, "g");
@@ -60,27 +62,57 @@
             builder.AddAttribute(seq++, "class", "mud-chart-axis-line");
             builder.AddAttribute(seq++, "d", axisLine.Data);
             builder.AddAttribute(seq++, "fill", "none");
-            builder.AddAttribute(seq++, "stroke", ChartOptions.AxisLineColor);
-            builder.AddAttribute(seq++, "stroke-width", ChartOptions.AxisLineWidth);
+            builder.AddAttribute(seq++, "stroke", ChartOptions?.AxisLineColor);
+            builder.AddAttribute(seq++, "stroke-width", ChartOptions?.AxisLineWidth);
             builder.CloseElement();
+        }
+        builder.CloseElement(); // </g>
+    };
 
-            if (ChartOptions.ShowAxisLabels)
+    private RenderFragment RenderAxisLabels() => builder =>
+    {
+        var seq = 0;
+
+        builder.OpenElement(seq++, "g");
+        builder.AddAttribute(seq++, "class", "mud-chart-radar-axis-labels");
+
+        if (ChartOptions?.ShowAxisLabels is true)
+        {
+            foreach (var axisLine in _axisLines)
             {
                 var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");
                 var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");
-                builder.AddMarkupContent(seq++,
-                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToStr()}' y='{axisLine.LabelY.ToStr()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}'>{axisLine.LabelYValue}</text>");
+
+                builder.OpenElement(seq++, "text");
+                builder.AddAttribute(seq++, "class", "mud-chart-axis-label");
+                builder.AddAttribute(seq++, "x", axisLine.LabelX.ToStr());
+                builder.AddAttribute(seq++, "y", axisLine.LabelY.ToStr());
+                builder.AddAttribute(seq++, "font-size", "12px");
+                builder.AddAttribute(seq++, "text-anchor", anchor);
+                builder.AddAttribute(seq++, "dominant-baseline", baseline);
+                builder.AddAttribute(seq++, "fill", "currentColor");
+                builder.AddContent(seq++, axisLine.LabelYValue);
+                builder.CloseElement();
             }
         }
-        builder.CloseElement(); // </g>
+        builder.CloseElement();
 
-        // Axis value labels group 
         builder.OpenElement(seq++, "g");
         builder.AddAttribute(seq++, "class", "mud-chart-radar-axis-values");
+        builder.AddAttribute(seq++, "transform", "translate(0,5)");
+
         foreach (var axisValue in _axisValues)
         {
-            builder.AddMarkupContent(seq++,
-                $"<text class='mud-chart-axis-value' x='{axisValue.LabelX.ToStr()}' y='{axisValue.LabelY.ToStr()}' font-size='10px' text-anchor='start' dominant-baseline='middle' fill='#666'>{axisValue.LabelYValue}</text>");
+            builder.OpenElement(seq++, "text");
+            builder.AddAttribute(seq++, "class", "mud-chart-axis-value");
+            builder.AddAttribute(seq++, "x", axisValue.LabelX.ToStr());
+            builder.AddAttribute(seq++, "y", axisValue.LabelY.ToStr());
+            builder.AddAttribute(seq++, "font-size", "10px");
+            builder.AddAttribute(seq++, "text-anchor", "start");
+            builder.AddAttribute(seq++, "dominant-baseline", "middle");
+            builder.AddAttribute(seq++, "fill", "currentColor");
+            builder.AddContent(seq++, axisValue.LabelYValue);
+            builder.CloseElement();
         }
         builder.CloseElement(); // </g>
     };

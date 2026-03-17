@@ -264,6 +264,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DatePicker_ShouldClearValidationError_WhenInvalidDateIsQuicklyErased()
+        {
+            var comp = Context.Render<MudDatePicker>();
+
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+
+            var invalid = "INVALID_DATE";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(invalid);
+
+            picker.GetState(x => x.Error).Should().BeTrue();
+            picker.ConversionError.Should().BeTrue();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, ""));
+
+            picker.GetState(x => x.Error).Should().BeFalse();
+            picker.ConversionError.Should().BeFalse();
+            picker.Date.Should().Be(null);
+        }
+
+        [Test]
         public void Check_Initial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);
@@ -541,7 +566,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.FixMonth, 1));
-            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count().Should().Be(0);
+            comp.FindAll("div.mud-picker-calendar-container > .mud-picker-calendar-header > .mud-picker-calendar-header-switch > .mud-button-month").Count.Should().Be(0);
             await comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").ClickAsync();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
             await comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year").First(x => x.TrimmedText().Contains("2022")).ClickAsync();
@@ -809,7 +834,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.FixDay, fixedDay));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[i] = true;
+            }
 
             comp.Instance.MinDate.Should().Be(minDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -831,7 +859,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.FixDay, fixedDay));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[11 - i] = true;
+            }
 
             comp.Instance.MaxDate.Should().Be(maxDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -851,7 +882,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.OpenTo, OpenTo.Month));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[i] = true;
+            }
 
             comp.Instance.MinDate.Should().Be(minDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -871,7 +905,10 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.OpenTo, OpenTo.Month));
 
             var expectedResult = new bool[12];
-            for (var i = 0; i < disabledOnes; ++i) expectedResult[11 - i] = true;
+            for (var i = 0; i < disabledOnes; ++i)
+            {
+                expectedResult[11 - i] = true;
+            }
 
             comp.Instance.MaxDate.Should().Be(maxDate);
             comp.FindAll("button.mud-picker-month").Select(button => ((IHtmlButtonElement)button).IsDisabled)
@@ -1081,6 +1118,23 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the date should remain the same because readonly is true
             picker.Date.Should().Be(now);
+        }
+
+        [Test]
+        public async Task StaticReadOnly_ShouldNotChangeDate()
+        {
+            var initialDate = new DateTime(2025, 6, 15);
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.Date, initialDate));
+            var picker = comp.Instance;
+
+            // Try to select a different day - should be blocked by ReadOnly
+            await comp.SelectDateAsync("10");
+
+            // Date should remain unchanged because ReadOnly is true
+            picker.Date.Should().Be(initialDate);
         }
 
         [Test]

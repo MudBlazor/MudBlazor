@@ -35,7 +35,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && ChartReference is { })
+        if (firstRender && ChartReference is not null)
         {
             StateHasChanged();
         }

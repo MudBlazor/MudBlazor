@@ -20,7 +20,7 @@ namespace MudBlazor
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;
-        private string _elementId = Identifier.Create("radio");
+        private readonly string _elementId = Identifier.Create("radio");
         private readonly string _ariaId = Identifier.Create("radio-aria-");
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")

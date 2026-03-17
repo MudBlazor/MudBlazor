@@ -198,6 +198,63 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Test Value"));
         }
 
+        [Test]
+        public async Task DebouncedTextField_ShouldStayInSyncWithBoundValueAfterAsyncInitialization()
+        {
+            var comp = Context.Render<DebouncedTextFieldAsyncInitializationSyncTest>();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var inputs = comp.FindAll("input");
+                inputs[0].GetAttribute("value").Should().Be("init value");
+                inputs[1].GetAttribute("value").Should().Be("init value");
+            });
+
+            var immediateInput = comp.FindAll("input")[1];
+            await immediateInput.ChangeAsync(new ChangeEventArgs { Value = "changed value" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var inputs = comp.FindAll("input");
+                inputs[0].GetAttribute("value").Should().Be("changed value");
+                inputs[1].GetAttribute("value").Should().Be("changed value");
+            });
+        }
+
+        [Test]
+        public async Task DebouncedTextField_Should_ValidatePendingValueImmediatelyWhenFormIsValidated()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            var comp = Context.Render<DebouncedTextFieldFormValidationSyncTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponents<MudTextField<string>>();
+
+            await comp.Find("#username").InputAsync(new ChangeEventArgs { Value = "username" });
+            await comp.Find("#password").ChangeAsync(new ChangeEventArgs { Value = "password" });
+
+            textField[0].Instance.ReadText.Should().Be("username");
+            textField[0].Instance.ReadValue.Should().BeNull();
+            comp.Instance.Model.Username.Should().BeNull();
+            textField[1].Instance.ReadText.Should().Be("password");
+            textField[1].Instance.ReadValue.Should().Be("password");
+            comp.Instance.Model.Password.Should().Be("password");
+            form.IsValid.Should().BeTrue();
+
+            await comp.Find("#validate-button").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Instance.Model.Username.Should().Be("username");
+                comp.Instance.Model.Password.Should().Be("password");
+                comp.Instance.ResultText.Should().Be("succeeded");
+                form.IsValid.Should().BeTrue();
+                textField[0].Instance.ReadValue.Should().Be("username");
+                textField[1].Instance.ReadValue.Should().Be("password");
+            });
+        }
+
         /// <summary>
         /// Label and placeholder should not overlap.
         /// When placeholder is set, label should shrink
@@ -244,7 +301,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 var result = Validate(arg);
                 if (result.IsValid)
+                {
                     return Array.Empty<string>();
+                }
+
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 
@@ -946,6 +1006,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync(55);
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task TextField_OnlyValidateIfDirty_WithNonDefaultInitialValue_ShouldNotValidateOnBlur()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Value, string.Empty)
+                .Add(p => p.Required, true)
+                .Add(p => p.OnlyValidateIfDirty, true));
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // blur without user interaction should not trigger validation
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // user types then clears — now dirty, validation should fire
+            await comp.Find("input").ChangeAsync("x");
+            await comp.Find("input").ChangeAsync("");
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
         }
 
         [Test]

@@ -34,7 +34,7 @@
             {
                 @if (PreviousButtonTemplate is null)
                 {
-                    <MudIconButton tabindex="1" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="Color.Inherit" />
+                    <MudIconButton tabindex="1" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="@(ArrowsColor ?? Color.Inherit)" />
                 }
                 else
                 {
@@ -72,7 +72,7 @@
             {
                 @if (NextButtonTemplate is null)
                 {
-                    <MudIconButton tabindex="2" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="Color.Inherit" />
+                    <MudIconButton tabindex="2" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="@(ArrowsColor ?? Color.Inherit)" />
                 }
                 else
                 {

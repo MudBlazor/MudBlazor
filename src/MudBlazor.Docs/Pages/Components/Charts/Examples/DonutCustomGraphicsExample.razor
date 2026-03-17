@@ -1,13 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@data.AsChartDataSet()" ChartLabels="@labels">
+<MudChart ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@Data.AsChartDataSet()" ChartLabels="@Labels">
 	<CustomGraphics>
-		<text class="donut-inner-text" x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="20">Total</text>
-		<text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="50">@data.Sum().ToString()</text>
+		<text class="mud-donut-text mud-typography-h3" x="50%" y="50%">@Data.Sum()</text>
 	</CustomGraphics>
 </MudChart>
 
 @code {
-    public double[] data = { 25, 77, 28, 5 };
-    public string[] labels = { "Oil", "Coal", "Gas", "Biomass" };
+    private static readonly int[] Data = [25, 77, 28, 5];
+    private static readonly string[] Labels = ["Oil", "Coal", "Gas", "Biomass"];
 }

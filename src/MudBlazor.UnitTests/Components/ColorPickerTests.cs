@@ -1262,6 +1262,18 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.Value).Should().Be(new MudColor("#180f6fff"));
         }
 
+        [Test]
+        public void ColorPickerShouldRenderInitialTextValueWhenBoundViaText()
+        {
+            const string initialText = "#180f6fff";
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(x => x.Editable, true)
+                .Add(x => x.Text, initialText));
+
+            var input = comp.Find("input").Should().BeAssignableTo<IHtmlInputElement>().Subject;
+            input.Value.Should().Be(initialText);
+        }
+
         /// <summary>
         /// A color picker with a label should auto-generate an id and use that id on the input element and the label's for attribute.
         /// </summary>

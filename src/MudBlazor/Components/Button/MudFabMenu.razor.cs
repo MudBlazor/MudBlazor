@@ -13,6 +13,7 @@ public partial class MudFabMenu : MudFab
 {
     private new string Classname => new CssBuilder("mud-fab-menu-container")
         .AddClass("fixed", Fixed)
+        .AddClass($"mud-fab-anchor-{Anchor.ToStringFast(true)}", Fixed)
         .AddClass($"align-{AlignItems.ToStringFast(true)}")
         .AddClass(Class)
         .Build();
@@ -20,6 +21,7 @@ public partial class MudFabMenu : MudFab
     private string ClassnameMenu => new CssBuilder("mud-fab-menu")
         .AddClass("mud-fab-menu-open", _openState.Value)
         .AddClass("mud-fab-menu-dampen", DampenItemsBackgroundColor)
+        .AddClass($"mud-fab-menu-direction-{Direction.ToStringFast(true)}")
         .AddClass($"align-{AlignItems.ToStringFast(true)}")
         .AddClass($"mud-fab-menu-{Size.ToString().ToLower()}", !string.IsNullOrEmpty(Label))
         .AddClass(MenuClass)
@@ -90,13 +92,31 @@ public partial class MudFabMenu : MudFab
     public EventCallback<bool> OpenChanged { get; set; }
 
     /// <summary>
-    /// Sets the menu to a fixed position in the bottom right corner of the screen with padding of 16 px towards each screen edge.
+    /// Sets the menu to a fixed position. Use <see cref="Anchor"/> to specify the position.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter, Category(CategoryTypes.Button.Behavior)]
     public bool Fixed { get; set; }
+
+    /// <summary>
+    /// The direction in which the menu should open.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Direction.Top"/>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.Button.Behavior)]
+    public Direction Direction { get; set; } = Direction.Top;
+
+    /// <summary>
+    /// The anchor position of the menu when <see cref="Fixed"/> is <c>true</c>.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Origin.BottomRight"/>.
+    /// </remarks>
+    [Parameter, Category(CategoryTypes.Button.Behavior)]
+    public Origin Anchor { get; set; } = Origin.BottomRight;
 
     /// <summary>
     /// Replaces the set icon with a close icon when the menu is open.

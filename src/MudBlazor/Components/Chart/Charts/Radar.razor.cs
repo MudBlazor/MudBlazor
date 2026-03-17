@@ -47,7 +47,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         BuildLegends([.. seriesData.Select(x => x.Name)]);
 
         var angleStep = 2 * Math.PI / numAxes;
-        var currentAngle = -Math.PI / 2 + (ChartOptions.AngleOffset * (Math.PI / 180)); // Convert offset to radians
+        var currentAngle = (-Math.PI / 2) + (ChartOptions.AngleOffset * (Math.PI / 180)); // Convert offset to radians
         var radius = CalculateRadius();
 
         var axisMaxValue = CalculateAxisMaxValue(
@@ -69,9 +69,8 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     }
 
     private bool HasValidData() =>
-        ChartSeries != null &&
-        ChartSeries.Count > 0 &&
-        ChartSeries.Any(s => s.Data != null && s.Data.Count > 0);
+        ChartSeries is { Count: > 0 } &&
+        ChartSeries.Any(s => s.Data is { Count: > 0 });
 
     private double CalculateRadius()
     {
@@ -85,7 +84,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         return Math.Min(Radius, maxR);
     }
 
-    private void GenerateSvgPaths(List<ChartSeries<T>> seriesData, T[] normalizedData, int numAxes,
+    private void GenerateSvgPaths(List<ChartSeries<T>> seriesData, double[] normalizedData, int numAxes,
                                   double angleStep, double currentAngle, double radius, T axisMaxValue)
     {
         Debug.Assert(ChartOptions is not null);
@@ -104,7 +103,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
                 Data = pathString,
                 Points = points,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                    ? ToS(Math.Round(double.CreateSaturating(normalizedData[seriesIndex]) * 100, 1)) + "%"
+                    ? ToS(Math.Round(normalizedData[seriesIndex] * 100, 1)) + "%"
                     : series.Data.Values.SumGeneric().ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = series.Name
             };
@@ -125,7 +124,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
             var scale = radius * (axisMaxValue == T.Zero ? 0 : double.CreateSaturating(value / axisMaxValue));
             scale = Math.Max(0, scale);
 
-            var angle = currentAngle + i * angleStep;
+            var angle = currentAngle + (i * angleStep);
             var x = Math.Cos(angle) * scale;
             var y = Math.Sin(angle) * scale;
 
@@ -151,8 +150,13 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     {
         Debug.Assert(ChartOptions is not null);
         var axisAngle = currentAngle;
-        var gridLevels = T.CreateSaturating(ChartOptions.GridLevels);
-        var stepValue = axisMaxValue / gridLevels;
+        var gridLevelsOption = ChartOptions.GridLevels;
+
+        if (gridLevelsOption <= 0)
+            return;
+
+        var gridLevels = T.CreateSaturating(gridLevelsOption);
+        var stepValue = T.Max(T.CreateSaturating(1), axisMaxValue / gridLevels);
 
         for (var i = T.One; i <= gridLevels; i++)
         {
@@ -174,7 +178,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     {
         for (var i = 0; i < numAxes; i++)
         {
-            var angle = currentAngle + i * angleStep;
+            var angle = currentAngle + (i * angleStep);
             var xOuter = Math.Cos(angle) * radius;
             var yOuter = Math.Sin(angle) * radius;
 
@@ -199,7 +203,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
             for (var j = 0; j < numAxes; j++)
             {
-                var angle = currentAngle + j * angleStep;
+                var angle = currentAngle + (j * angleStep);
                 var x = Math.Cos(angle) * gridRadius;
                 var y = Math.Sin(angle) * gridRadius;
                 pathStringBuilder.Append($"{ToS(x)} {ToS(y)} L ");

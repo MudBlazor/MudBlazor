@@ -3,6 +3,7 @@ using System.Reflection;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
@@ -259,7 +260,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp).Should().BeApproximately(2.0 / 6.0 * 100.0, 0.01);
         }
 
         [Test]
@@ -293,7 +294,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateY(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp, "top").Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp, "top").Should().BeApproximately(2.0 / 6.0 * 100.0, 0.01);
         }
 
         [Test]
@@ -333,7 +334,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslations[i].ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().BeApproximately((i / 6.0) * 100.0, 0.01);
+                GetSliderValue(comp).Should().BeApproximately(i / 6.0 * 100.0, 0.01);
             }
         }
 
@@ -472,7 +473,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().BeApproximately((5.0 / 6.0) * 100.0, 0.01);
+                GetSliderValue(comp).Should().BeApproximately(5.0 / 6.0 * 100.0, 0.01);
             }
         }
 
@@ -495,12 +496,12 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp).Should().BeApproximately(1.0 / 6.0 * 100.0, 0.01);
 
             observer.UpdateTotalPanelSize(200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeFalse(); // fits 2 tabs, on the 2nd tab centered so both show
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp).Should().BeApproximately(1.0 / 6.0 * 100.0, 0.01);
         }
 
         [Test]
@@ -679,13 +680,13 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp).Should().BeApproximately(1.0 / 6.0 * 100.0, 0.01);
 
             observer.UpdatePanelSize(0, 200.0); // updates tab size not panel size
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
             // 1/6 of the tabs is the exact center of the slider 
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp).Should().BeApproximately(1.0 / 6.0 * 100.0, 0.01);
         }
 
         [Test]
@@ -705,12 +706,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.Instance.SetPanelActiveAsync(4);
 
             await comp.WaitForAssertionAsync(() =>
-                GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01));
+                GetSliderValue(comp).Should().BeApproximately(4.0 / 6.0 * 100.0, 0.01));
 
             await comp.Instance.AddPanelAsync();
 
             await comp.WaitForAssertionAsync(() =>
-                GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01));
+                GetSliderValue(comp).Should().BeApproximately(4.0 / 7.0 * 100.0, 0.01));
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -744,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Instance.SetPanelActiveAsync(2);
 
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
+            GetSliderValue(comp).Should().BeApproximately(2.0 / 6.0 * 100.0, 0.01);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             // panels 2, 3, 4 should be shown since panel 3 is selected
@@ -762,7 +763,7 @@ namespace MudBlazor.UnitTests.Components
             styleAttr.Should().Be($"transform:translateX(-0px);");
 
             var sliderValue = GetSliderValue(comp);
-            sliderValue.Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
+            sliderValue.Should().BeApproximately(1.0 / 5.0 * 100.0, 0.00001);
         }
 
         [Test]
@@ -790,7 +791,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
+                GetSliderValue(comp).Should().BeApproximately(2.0 / 6.0 * 100.0, 0.01);
             }
 
             await comp.Instance.RemovePanelAsync(5);
@@ -803,8 +804,29 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().BeApproximately((2.0 / 5.0) * 100.0, 0.00001);
+                GetSliderValue(comp).Should().BeApproximately(2.0 / 5.0 * 100.0, 0.00001);
             }
+        }
+
+        [Test]
+        public async Task ScrollableTabButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<ScrollableTabsTest>();
+            var button = comp.Find("button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Scroll tabs left");
+        }
+
+        [Test]
+        public async Task ScrollableTabButtonVertical_ShowAriaLabel()
+        {
+            var comp = Context.Render<ScrollableTabsTest>();
+            var switchInput = comp.Find("input[type='checkbox'].mud-switch-input");
+
+            await switchInput.ChangeAsync(new ChangeEventArgs { Value = true });
+
+            var button = comp.Find("button.mud-icon-button");
+            button.GetAttribute("aria-label").Should().Be("Scroll tabs up");
         }
 
         [Test]
@@ -1303,6 +1325,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TabPanel_DynamicTabButton_ShowAriaLabel()
+        {
+            var comp = Context.Render<DynamicTabsSimpleTest>();
+            var buttons = comp.FindAll("button.mud-icon-button");
+            var buttonClose = buttons[0];
+            var buttonAdd = buttons[2];
+
+            buttonClose.GetAttribute("aria-label").Should().Be("Close tab");
+            buttonAdd.GetAttribute("aria-label").Should().Be("Add tab");
+        }
+
+        [Test]
         public async Task Tabs_HaveRipple_WhenRippleIsTrue()
         {
             var comp = Context.Render<TabsRippleTest>(parameters => parameters.Add(p => p.Ripple, true));
@@ -1514,7 +1548,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ActivatePanelDragAndDropTest>();
             var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // no drop container
-            comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
+            comp.FindAll("div.mud-drop-container").Count.Should().Be(0);
             // all tabs should show
             divs.Count.Should().Be(4);
             divs[0].InnerHtml.Should().Be("One");
@@ -1550,7 +1584,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ActivatePanelDragAndDropTest>();
             var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             // no drop container
-            comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
+            comp.FindAll("div.mud-drop-container").Count.Should().Be(0);
             // all tabs should show
             divs.Count.Should().Be(4);
             divs[0].InnerHtml.Should().Be("One");

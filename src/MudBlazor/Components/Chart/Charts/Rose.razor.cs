@@ -5,7 +5,6 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text;
-using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
 
@@ -27,18 +26,18 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
 
         var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
         var normalizedData = GetNormalizedData();
-        var nonZeroCount = normalizedData.Count(d => d > T.Zero);
+        var nonZeroCount = normalizedData.Count(d => d > 0.0);
         if (nonZeroCount == 0) return;
 
         var angleStep = 2 * Math.PI / nonZeroCount;
         var currentAngle = ChartOptions.AngleOffset * (Math.PI / 180);
         var chartLabels = GetChartLabels();
-        var maxValue = normalizedData.Length > 0 ? normalizedData.Max() : T.Zero;
-        var sum = normalizedData.SumGeneric();
+        var maxValue = normalizedData.Length > 0 ? normalizedData.Max() : 0.0;
+        var sum = normalizedData.Sum();
 
         for (var i = 0; i < normalizedData.Length; i++)
         {
-            if (normalizedData[i] == T.Zero)
+            if (normalizedData[i] == 0.0)
                 continue;
 
             var value = T.Max(T.Zero, chartData[i]);
@@ -48,7 +47,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
             var coords = GetSegmentCoordinates(currentAngle, angleStep, nonZeroCount);
             var arc = BuildRadialPath(coords, radius, nonZeroCount);
 
-            var midAngle = currentAngle + angleStep / 2;
+            var midAngle = currentAngle + (angleStep / 2);
             var (x, y) = GetRadialLabelPosition(midAngle, radius, nonZeroCount);
 
             _paths.Add(new SvgPetal
@@ -60,7 +59,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
                 LabelX = x,
                 LabelY = y,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                    ? $"{ToS(Math.Round(double.CreateSaturating(data / sum) * 100, 1))}%"
+                    ? $"{ToS(Math.Round(data / sum * 100, 1))}%"
                     : value.ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
             });
@@ -71,9 +70,9 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
         BuildLegends(chartLabels);
     }
 
-    private double CalculateScaledRadius(T value, T max)
+    private double CalculateScaledRadius(double value, double max)
     {
-        return Math.Max(0, Radius * (max == T.Zero ? 0 : double.CreateSaturating(value / max)) * ChartOptions!.ScaleFactor);
+        return Math.Max(0, Radius * (max == 0.0 ? 0 : value / max) * ChartOptions!.ScaleFactor);
     }
 
     private static SegmentCoordinates GetSegmentCoordinates(double angle, double step, int count) => new()
@@ -82,7 +81,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
         StartY = Math.Sin(angle),
         EndX = Math.Cos(angle + step),
         EndY = Math.Sin(angle + step),
-        LargeArcFlag = (count == 1 || step > Math.PI) ? 1 : 0
+        LargeArcFlag = count == 1 || step > Math.PI ? 1 : 0
     };
 
     private static string BuildRadialPath(SegmentCoordinates coords, double radius, int count)

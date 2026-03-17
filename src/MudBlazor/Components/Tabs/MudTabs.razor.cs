@@ -7,6 +7,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interop;
+using MudBlazor.Resources;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -558,17 +559,22 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Releases resources used by this component.
+        /// Called to dispose this instance.
         /// </summary>
-        public async ValueTask DisposeAsync()
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             if (_isDisposed)
+            {
                 return;
+            }
+
             _isDisposed = true;
+
             if (_throttleDispatcher.IsValueCreated)
             {
                 _throttleDispatcher.Value.Dispose();
             }
+
             if (_resizeObserver is not null)
             {
                 _resizeObserver.OnResized -= OnResized;
@@ -577,10 +583,20 @@ namespace MudBlazor
                     await _resizeObserver.DisposeAsync();
                 }
             }
+
             if (IsJSRuntimeAvailable)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
+        }
+
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -794,7 +810,7 @@ namespace MudBlazor
                 .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
                 .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
                 .AddClass($"mud-tabs-vertical", _isVerticalTabs)
-                .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
+                .AddClass($"mud-tabs-vertical-reverse", (Position == Position.Right && !RightToLeft) || ((Position == Position.Left) && RightToLeft) || Position == Position.End)
                 .AddClass(InternalClassName)
                 .AddClass(Class)
                 .Build();
@@ -838,7 +854,7 @@ namespace MudBlazor
                 .AddClass($"mud-tab-slider-horizontal", Position is Position.Top or Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical", _isVerticalTabs)
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-                .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+                .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || (Position == Position.Start && RightToLeft) || (Position == Position.End && !RightToLeft))
                 .Build();
 
         protected string DropZoneClassnames =>
@@ -918,9 +934,17 @@ namespace MudBlazor
 
         private Color GetPanelIconColor(MudTabPanel panel)
         {
-            var iconColor = panel.Disabled ? Color.Inherit : panel.IconColor != default ? panel.IconColor : IconColor;
+            if (panel.Disabled)
+            {
+                return Color.Inherit;
+            }
 
-            return iconColor;
+            if (panel.IconColor != default)
+            {
+                return panel.IconColor;
+            }
+
+            return IconColor;
         }
 
         #endregion
@@ -969,8 +993,8 @@ namespace MudBlazor
             {
                 return;
             }
-            _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
-            _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
+            _sliderPositionPercentage = GetLengthOfPanelItems(ActivePanel) / _allTabsSize * 100;
+            _sliderSizePercentage = GetPanelLength(ActivePanel) / _allTabsSize * 100;
             _isSliderPositionDetermined =
                 (_activePanelIndexState.Value > 0 && _sliderPositionPercentage > 0)
                 || IsFirstVisiblePanel(ActivePanel);
@@ -1364,6 +1388,32 @@ namespace MudBlazor
         internal string GetTabListId()
         {
             return _tabListId!;
+        }
+
+        /// <summary>
+        /// Generates a string with the relevant aria label information.
+        /// </summary>
+        internal string GetPrevAriaLabel()
+        {
+            if (_isVerticalTabs)
+                return Localizer[LanguageResource.MudTabs_ScrollUp];
+
+            return RightToLeft
+                ? Localizer[LanguageResource.MudTabs_ScrollRight]
+                : Localizer[LanguageResource.MudTabs_ScrollLeft];
+        }
+
+        /// <summary>
+        /// Generates a string with the relevant aria label information.
+        /// </summary>
+        internal string GetNextAriaLabel()
+        {
+            if (_isVerticalTabs)
+                return Localizer[LanguageResource.MudTabs_ScrollDown];
+
+            return RightToLeft
+                ? Localizer[LanguageResource.MudTabs_ScrollLeft]
+                : Localizer[LanguageResource.MudTabs_ScrollRight];
         }
     }
 }

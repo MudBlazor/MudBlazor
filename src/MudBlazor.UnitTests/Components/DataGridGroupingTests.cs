@@ -5,6 +5,7 @@
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using NUnit.Framework;
 
@@ -139,6 +140,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
+        }
+
+        [Test]
+        public async Task DataGrid_GroupingRow_ShowAriaLabel()
+        {
+            var comp = Context.Render<DataGridGroupCollapseAllTest>();
+            var button = comp.Find("button.mud-table-row-expander");
+
+            button.GetAttribute("aria-label").Should().Be("Expand group");
+
+            await button.ClickAsync();
+
+            button.GetAttribute("aria-label").Should().Be("Collapse group");
         }
 
         [Test]

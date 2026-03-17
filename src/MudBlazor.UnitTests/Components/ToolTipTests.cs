@@ -1,6 +1,9 @@
-﻿using AngleSharp.Html.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Tooltip;
@@ -389,6 +392,67 @@ namespace MudBlazor.UnitTests.Components
             {
                 await div.PointerLeaveAsync(new PointerEventArgs());
                 tooltip.GetState(x => x.Visible).Should().Be(!showOnHover);
+            }
+        }
+
+        [Test]
+        public async Task Tooltip_ShouldNotRerenderChildContent_WhenVisibleChangesInternally()
+        {
+            var complexData = new object();
+            var comp = Context.Render<MudTooltip>(parameters => parameters
+                .Add(p => p.Text, "Tooltip")
+                .AddChildContent<ComplexComponent>(child => child.Add(c => c.Data, complexData))
+            );
+
+            var complexComp = comp.FindComponent<ComplexComponent>().Instance;
+            var initialCount = complexComp.RenderCount;
+            initialCount.Should().Be(1);
+
+            // Simulate hover via bUnit's event trigger
+            var div = comp.Find(".mud-tooltip-root");
+            await div.PointerEnterAsync(new PointerEventArgs());
+
+            // Verify that the tooltip is now visible
+            comp.Instance.GetState(x => x.Visible).Should().BeTrue();
+
+            // Check if ChildContent re-rendered
+            complexComp.RenderCount.Should().Be(initialCount);
+        }
+
+        [Test]
+        public async Task Tooltip_ShouldRerenderChildContent_WhenParentRerenders()
+        {
+            var complexData = new object();
+            var comp = Context.Render<MudTooltip>(parameters => parameters
+                .Add(p => p.Text, "Tooltip")
+                .AddChildContent<ComplexComponent>(child => child.Add(c => c.Data, complexData))
+            );
+
+            var complexComp = comp.FindComponent<ComplexComponent>().Instance;
+            var initialCount = complexComp.RenderCount;
+            initialCount.Should().Be(1);
+
+            // Simulate parent re-render by setting a parameter again
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Text, "Updated Tooltip")
+            );
+
+            // Should re-render because it should behave as if not encapsulated
+            complexComp.RenderCount.Should().Be(initialCount + 1);
+        }
+
+        private class ComplexComponent : ComponentBase
+        {
+            [Parameter]
+            public object Data { get; set; }
+
+            public int RenderCount { get; private set; }
+
+            protected override void BuildRenderTree(RenderTreeBuilder builder)
+            {
+                base.BuildRenderTree(builder);
+                RenderCount++;
+                builder.AddContent(0, "Complex Component Content");
             }
         }
     }

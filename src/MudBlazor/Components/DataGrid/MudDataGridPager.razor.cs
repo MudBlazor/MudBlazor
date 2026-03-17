@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -99,19 +100,20 @@ namespace MudBlazor
                 if (DataGrid == null)
                     return "DataGrid==null";
                 Debug.Assert(DataGrid is not null);
-                var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
+                var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : (DataGrid.CurrentPage * DataGrid.RowsPerPage) + 1;
                 var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
-                var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
+                var allItems = DataGrid.GetFilteredItemsCount();
+                var culture = DataGrid.Culture ?? CultureInfo.InvariantCulture;
 
                 if (string.IsNullOrEmpty(InfoFormat))
                 {
-                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, $"{firstItem:N0}", $"{lastItem:N0}", $"{allItems:N0}"];
+                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem.ToString("N0", culture), lastItem.ToString("N0", culture), allItems.ToString("N0", culture)];
                 }
 
                 return InfoFormat
-                    .Replace("{first_item}", $"{firstItem:N0}")
-                    .Replace("{last_item}", $"{lastItem:N0}")
-                    .Replace("{all_items}", $"{allItems:N0}");
+                    .Replace("{first_item}", firstItem.ToString("N0", culture))
+                    .Replace("{last_item}", lastItem.ToString("N0", culture))
+                    .Replace("{all_items}", allItems.ToString("N0", culture));
             }
         }
 
@@ -164,6 +166,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (DataGrid != null)
             {
                 DataGrid.PagerStateHasChangedEvent -= StateHasChanged;

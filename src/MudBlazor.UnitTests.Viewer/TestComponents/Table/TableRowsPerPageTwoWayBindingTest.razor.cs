@@ -22,7 +22,10 @@ namespace MudBlazor.UnitTests.TestComponents.Table
             set
             {
                 if (_rowsPerPage == value)
+                {
                     return;
+                }
+
                 _rowsPerPage = value;
                 RowsPerPageChanged.InvokeAsync(value);
             }

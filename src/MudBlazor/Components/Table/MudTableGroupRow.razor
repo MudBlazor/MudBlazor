@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor
 @implements IDisposable
 @inherits MudComponentBase
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 @typeparam T
 
 @*HEADER:*@
@@ -13,7 +15,8 @@
             <div class="d-flex">
                 @if (GroupDefinition?.Expandable ?? false)
                 {
-                    <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"/>
+                    <MudIconButton Class="mud-table-row-expander" Icon="@(Expanded ? ExpandIcon : CollapseIcon)" OnClick="@(() => Expanded = !Expanded)"
+                                       aria-label="@(Expanded? Localizer[LanguageResource.MudTable_CollapseGroup] : Localizer[LanguageResource.MudTable_ExpandGroup])" />
                 }
                 else
                 {

@@ -12,8 +12,8 @@ window.mudInputSizing = {
      */
     init: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
-        const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
-        const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
+        const lineHeight = Number.parseFloat(compStyle.getPropertyValue('line-height'));
+        const paddingTop = Number.parseFloat(compStyle.getPropertyValue('padding-top'));
 
         let maxHeight = 0;
 
@@ -32,7 +32,7 @@ window.mudInputSizing = {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
             const scrollTops = [];
             let curElem = elem;
-            while (curElem && curElem.parentNode && curElem.parentNode instanceof Element) {
+            while (curElem?.parentNode instanceof Element) {
                 if (curElem.parentNode.scrollTop) {
                     scrollTops.push([curElem.parentNode, curElem.parentNode.scrollTop]);
                 }

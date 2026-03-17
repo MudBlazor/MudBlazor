@@ -27,7 +27,7 @@ class MudJsEventFactory {
      */
     disconnect(elementId) {
         const element = document.getElementById(elementId);
-        if (!element || !element.mudJsEvent)
+        if (!element?.mudJsEvent)
             return;
         element.mudJsEvent.disconnect();
     }
@@ -52,7 +52,7 @@ class MudJsEventFactory {
      */
     unsubscribe(elementId, eventName) {
         const element = document.getElementById(elementId);
-        if (!element || !element.mudJsEvent)
+        if (!element?.mudJsEvent)
             return;
         element.mudJsEvent.unsubscribe(element, eventName);
     }
@@ -155,7 +155,7 @@ class MudJsEvent {
             this.logger('[MudBlazor | JsEvent] attaching event ' + eventName, child);
             child.addEventListener(eventName, this.eventHandler);
         }
-        if(this._observedChildren.indexOf(child) < 0)
+        if (!this._observedChildren.includes(child))
             this._observedChildren.push(child);
     }
 
@@ -190,13 +190,13 @@ class MudJsEvent {
         for (const mutation of mutationsList) {
             //self.logger('[MudBlazor | JsEvent] Subtree mutation: ', { mutation });
             for (const element of mutation.addedNodes) {
-                if (element.classList && element.classList.contains(targetClass)) {
+                if (element.classList?.contains(targetClass)) {
                     if (!self._options.TagName || element.tagName == self._options.TagName)
                         self.attachHandlers(element);
                 }
             }
             for (const element of mutation.removedNodes) {
-                if (element.classList && element.classList.contains(targetClass)) {
+                if (element.classList?.contains(targetClass)) {
                     if (!self._options.tagName || element.tagName == self._options.tagName)
                          self.detachHandlers(element);
                 }

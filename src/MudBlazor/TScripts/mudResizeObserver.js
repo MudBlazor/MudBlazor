@@ -62,7 +62,7 @@ class MudResizeObserver {
         this.options = options;
         this._dotNetRef = dotNetRef;
 
-        const delay = (this.options || {}).reportRate || 200;
+        const delay = this.options?.reportRate || 200;
 
         this.throttleResizeHandlerId = -1;
 

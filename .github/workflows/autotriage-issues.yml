@@ -4,6 +4,9 @@ on:
   issues:
     types: [opened]
 
+permissions:
+  contents: read
+
 jobs:
   triage_issue:
     if: ${{ github.repository_owner == 'MudBlazor' }}
@@ -17,22 +20,21 @@ jobs:
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
 
       - uses: actions/checkout@v6
-      
+
       - name: AutoTriage - triage issue
-        uses: danielchalmers/AutoTriage@main
+        uses: danielchalmers/AutoTriage@v3
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issues: ${{ github.event.issue.number }}
           prompt-path: .github/AutoTriage.prompt
-          model-fast: '' # skip fast pass
-          model-pro: gemini-3-pro-preview
-          model-pro-temperature: 1.0
+          model-fast: "" # skip fast pass
+          model-pro: gemini-3.1-pro-preview
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: triage-artifacts-issue-${{ github.event.issue.number }}
           path: |

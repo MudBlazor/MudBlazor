@@ -153,14 +153,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGirdWithServerDataAndVirtualize()
+        public void DataGridVirtualizeSpacerElementsAreTableRows()
         {
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+            // Virtualize spacer elements must be <tr>, not <div>, so that CSS table layout respects
+            // their height. A <div> inside <tbody> has its height ignored, causing scroll-position jumping.
+            var tbody = dataGrid.Find("tbody");
+            tbody.QuerySelectorAll(":scope > div").Should().BeEmpty(because: "Virtualize spacers that are direct children of <tbody> must be <tr> elements, not <div>s");
+
+            // Virtualize renders one before-spacer and one after-spacer <tr>; neither has the mud-table-row class.
+            var spacerTrs = tbody.QuerySelectorAll("tr:not(.mud-table-row)").ToList();
+            spacerTrs.Should().HaveCount(2, because: "Virtualize renders exactly one before-spacer and one after-spacer <tr>");
+        }
+
+        [Test]
+        public void DataGridWithServerDataAndVirtualize()
+        {
+            var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(5, because: "5 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
@@ -178,9 +194,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridSortableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(7, because: "7 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
@@ -374,8 +390,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFilterableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().Be(4, because: "four data rows");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
@@ -712,7 +728,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditableWithSelectColumnTest.Item>>();
 
             // test that all rows, header and footer have cell with a checkbox
-            dataGrid.FindAll("input.mud-checkbox-input").Count().Should().Be(dataGrid.Instance.Items.Count() + 2);
+            dataGrid.FindAll("input.mud-checkbox-input").Count.Should().Be(dataGrid.Instance.Items.Count() + 2);
 
             //test that changing header sets all items selected
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
@@ -846,6 +862,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridPaginationCustomFormatTest>();
 
             comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("Total: 1,000");
+        }
+
+        [Test]
+        public void DataGridPaginationShouldUseGridCultureForFormatting()
+        {
+            // de-DE uses "." as a thousands separator, so 1000 is formatted as "1.000"
+            var comp = Context.Render<DataGridPaginationCultureTest>();
+
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 1.000");
         }
 
         [Test]
@@ -3418,6 +3443,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_HierarchyColumn_ShowAriaLabel()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnTest>();
+            var button = comp.Find("tbody tr button.mud-icon-button");
+
+            button.GetAttribute("aria-label").Should().Be("Expand group");
+
+            await button.ClickAsync(new MouseEventArgs());
+
+            button.GetAttribute("aria-label").Should().Be("Collapse group");
+        }
+
+        [Test]
         public void DataGridChildRowContent()
         {
             var comp = Context.Render<DataGridChildRowContentTest>();
@@ -5145,7 +5183,7 @@ namespace MudBlazor.UnitTests.Components
 
             // two way binding should have updated
             selectedItems.Should().Contain(5);
-            selectedItems.Count().Should().Be(1);
+            selectedItems.Count.Should().Be(1);
             selectedItem.Should().Be(5);
 
             // in multi selection toggle selection using row click method
@@ -5156,7 +5194,7 @@ namespace MudBlazor.UnitTests.Components
             // two way binding should have updated
             selectedItems.Should().Contain(4);
             selectedItems.Should().Contain(5);
-            selectedItems.Count().Should().Be(2);
+            selectedItems.Count.Should().Be(2);
             selectedItem.Should().Be(4);
         }
 
