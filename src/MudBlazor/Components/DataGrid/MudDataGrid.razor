@@ -520,11 +520,6 @@
                     }
                 </MudGrid>
             }
-            else if (column.FilterTemplate != null)
-            {
-                column.FilterContext.FilterDefinition = filterDefinition;
-                @column.FilterTemplate(column.FilterContext)
-            }
             else
             {
                 <MudGrid Spacing="0">
