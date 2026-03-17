@@ -92,6 +92,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
+        {
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var overlay = comp.Find("div.mud-overlay");
+            overlay.GetAttribute("data-modeless-ignore-element-id").Should().Be(select.Instance.ElementId);
+        }
+
+        [Test]
         public async Task SelectTestCustomToString()
         {
             var comp = Context.Render<SelectCustomToStringTest>();
@@ -1773,6 +1786,22 @@ namespace MudBlazor.UnitTests.Components
             select.ClassList.Should().NotContain("mud-width-content");
         }
 
+        [Test]
+        public void SelectFitContent_InitiallyEnabled()
+        {
+            var comp = Context.Render<SelectFitContentTest>(parameters => parameters
+                .Add(x => x.FitContent, true));
+
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            var select = comp.Find(".mud-select");
+            select.ClassList.Should().Contain("mud-width-content");
+
+            var filler = comp.Find(".mud-select-filler");
+            filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
+        }
+
         [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
         [Test]
         public async Task Select_HandleMouseDown(MouseEventArgs args)
@@ -1890,6 +1919,68 @@ namespace MudBlazor.UnitTests.Components
             // Verify that the component is using the global defaults
             // Modal should be null (using PopoverOptions defaults)
             select.Instance.Modal.Should().BeNull();
+        }
+
+        [Test]
+        public async Task Select_ToStringFunc_ShouldTakePrecedenceOverChildContent()
+        {
+            var comp = Context.Render<SelectPrecedenceTest>();
+            var selectComponent = comp.FindComponent<MudSelect<string>>();
+            var select = selectComponent.Instance;
+
+            // 1. Initially item1 is selected. ToStringFunc returns null for item1.
+            // Should fall back to RenderFragment.
+            var displaySlots = comp.FindAll("div.mud-input-slot");
+            var displaySlot = displaySlots.FirstOrDefault(x => x.GetAttribute("style")?.Contains("display:inline") == true || x.GetAttribute("style")?.Contains("display: inline") == true);
+            displaySlot.Should().NotBeNull("initially it should fall back to RenderFragment");
+            displaySlot.InnerHtml.Should().Contain("custom-render");
+            displaySlot.TextContent.Trim().Should().Be("Item 1 Rendered");
+
+            // 2. Select item2. ToStringFunc returns "ITEM2" (not null).
+            // Should use ToStringFunc and NOT RenderFragment.
+            await comp.InvokeAsync(() => select!.SelectOption("item2"));
+            comp.Render();
+
+            displaySlots = comp.FindAll("div.mud-input-slot");
+            displaySlot = displaySlots.FirstOrDefault(x => x.GetAttribute("style")?.Contains("display:inline") == true || x.GetAttribute("style")?.Contains("display: inline") == true);
+            displaySlot.Should().BeNull("because ToStringFunc should take precedence over RenderFragment when it returns a non-null value");
+
+            var input = comp.Find("input");
+            input.GetAttribute("value").Should().Be("ITEM2");
+        }
+
+        [Test]
+        public async Task Select_FitContent_ShouldPrioritizeToStringFunc()
+        {
+            var comp = Context.Render<SelectPrecedenceTest>();
+            var selectComponent = comp.FindComponent<MudSelect<string>>();
+
+            // Remove label to avoid it being the longest
+            await selectComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.FitContent, true)
+                .Add(x => x.Label, null)
+                .Add(x => x.ToStringFunc, new Func<string?, string?>(x => x == "item2" ? "VERY LONG ITEM 2" : null)));
+
+            // item1 -> null -> "Item 1 Rendered" (15 chars)
+            // item2 -> "VERY LONG ITEM 2" (16 chars)
+
+            // item2 is longest. ToStringFunc is NOT null for item2.
+            // filler should use "VERY LONG ITEM 2" and NOT RenderFragment.
+
+            var filler = comp.Find(".mud-select-filler");
+            filler.TextContent.Should().Contain("VERY LONG ITEM 2");
+            filler.InnerHtml.Should().NotContain("custom-render");
+
+            // Now make item1 longest via ToStringFunc
+            await selectComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ToStringFunc, new Func<string?, string?>(x => x == "item1" ? "EXTREMELY LONG ITEM 1" : "ITEM 2")));
+
+            // Trigger recalculation of _longestItem by toggling FitContent
+            await selectComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.FitContent, false));
+            await selectComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.FitContent, true));
+
+            filler = comp.Find(".mud-select-filler");
+            filler.TextContent.Should().Contain("EXTREMELY LONG ITEM 1");
+            filler.InnerHtml.Should().NotContain("custom-render");
         }
     }
 }

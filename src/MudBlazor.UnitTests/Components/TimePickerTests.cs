@@ -380,5 +380,23 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
+
+        [Test]
+        public async Task StaticReadOnly_ShouldNotChangeTime()
+        {
+            var initialTime = new TimeSpan(10, 30, 0);
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.Time, initialTime));
+            var picker = comp.Instance;
+
+            // Simulate clock stick interaction (as invoked from JS)
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
+
+            // Time should remain unchanged because ReadOnly is true
+            picker.Time.Should().Be(initialTime);
+            picker.TimeIntermediate.Should().Be(initialTime);
+        }
     }
 }

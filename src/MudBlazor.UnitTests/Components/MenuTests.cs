@@ -112,6 +112,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Menu_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
+        {
+            var comp = Context.Render<MenuTest1>();
+
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            var menuRoot = comp.Find("div.mud-menu");
+            var overlay = comp.Find("div.mud-overlay");
+            overlay.GetAttribute("data-modeless-ignore-element-id").Should().Be(menuRoot.Id);
+            menuRoot.Id.Should().NotBeNullOrEmpty();
+        }
+
+        [Test]
         public async Task IsOpen_CheckState()
         {
             var comp = Context.Render<MenuTest1>();

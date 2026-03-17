@@ -59,10 +59,11 @@ namespace MudBlazor.Docs.Components
         {
             base.OnInitialized();
             RenderQueue.Clear();
-            var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-            if (relativePath.Contains('#'))
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var anchor = uri.Fragment.TrimStart('#');
+            if (!string.IsNullOrEmpty(anchor))
             {
-                _anchor = relativePath.Split(new[] { "#" }, StringSplitOptions.RemoveEmptyEntries)[1];
+                _anchor = anchor;
             }
         }
 
