@@ -234,13 +234,13 @@
         <DocsPageSection>
             <SectionHeader Title="Advanced Filtering">
                 <Description>
-                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
+                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate&gt;</CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
                     as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
                     <br><br>
-                    Inside the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the
+                    Inside the <CodeInline>&lt;FilterTemplate&gt;</CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the
                     data grid's FilterDefinitions to allow for customizing the filtering behavior.
                     <br><br>
-                    When using the <CodeInline>&lt;FilterTemplate></CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
+                    When using the <CodeInline>&lt;FilterTemplate&gt;</CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
                     which gives access to several helpful properties and actions. For example, the current <CodeInline>FilterDefinition</CodeInline> related to the column is available as well
                     as several actions to make it easier to implement custom filter behavior such as <CodeInline>ApplyFilter</CodeInline> and <CodeInline>ClearFilter</CodeInline>.
                 </Description>
@@ -253,7 +253,7 @@
         <DocsPageSection>
             <SectionHeader Title="Filter Template in Simple Mode">
                 <Description>
-                    For <CodeInline>DataGridFilterMode.Simple</CodeInline>, you can customize the filter UI for individual columns using the <CodeInline>&lt;FilterTemplate></CodeInline>.
+                    For <CodeInline>DataGridFilterMode.Simple</CodeInline>, you can customize the filter UI for individual columns using the <CodeInline>&lt;FilterTemplate&gt;</CodeInline>.
                     This is particularly useful when you want to provide a more user-friendly filter experience, such as using a dropdown instead of a text input.
                     <br><br>
                     The template receives a <CodeInline>FilterContext&lt;T></CodeInline> context that provides access to the <CodeInline>FilterDefinition</CodeInline> property containing the filter's operator, value, column, and field type.
@@ -261,7 +261,7 @@
                     <br><br>
                     The context also provides <CodeInline>Actions</CodeInline> such as <CodeInline>ApplyFilterAsync</CodeInline> and <CodeInline>ClearFilterAsync</CodeInline> to programmatically trigger filter updates.
                     <br><br>
-                    Note: The same <CodeInline>&lt;FilterTemplate></CodeInline> works in all filter modes: <CodeInline>Simple</CodeInline>, <CodeInline>ColumnFilterRow</CodeInline>, and <CodeInline>ColumnFilterMenu</CodeInline>.
+                    Note: The same <CodeInline>&lt;FilterTemplate&gt;</CodeInline> works in all filter modes: <CodeInline>Simple</CodeInline>, <CodeInline>ColumnFilterRow</CodeInline>, and <CodeInline>ColumnFilterMenu</CodeInline>.
                     <br><br>
                     In the example below, the Category column uses a custom multi-select dropdown. The example demonstrates:
                     <ul class="mt-2">
