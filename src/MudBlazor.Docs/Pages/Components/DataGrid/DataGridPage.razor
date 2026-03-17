@@ -257,15 +257,23 @@
                     This is particularly useful when you want to provide a more user-friendly filter experience, such as using a dropdown instead of a text input.
                     <br><br>
                     The template receives a <CodeInline>FilterContext&lt;T></CodeInline> context that provides access to the <CodeInline>FilterDefinition</CodeInline> property containing the filter's operator, value, column, and field type.
-                    You can customize the operator selection and value input controls while the filtering logic is automatically handled.
+                    Each filter row gets its own independent <CodeInline>FilterContext</CodeInline>, so multiple filters on the same column work independently.
+                    <br><br>
+                    The context also provides <CodeInline>Actions</CodeInline> such as <CodeInline>ApplyFilterAsync</CodeInline> and <CodeInline>ClearFilterAsync</CodeInline> to programmatically trigger filter updates.
                     <br><br>
                     Note: The same <CodeInline>&lt;FilterTemplate></CodeInline> works in all filter modes: <CodeInline>Simple</CodeInline>, <CodeInline>ColumnFilterRow</CodeInline>, and <CodeInline>ColumnFilterMenu</CodeInline>.
                     <br><br>
-                    In the example below, the Category column uses a dropdown to select from available categories instead of typing text.
+                    In the example below, the Category column uses a custom multi-select dropdown. The example demonstrates:
+                    <ul class="mt-2">
+                        <li><strong>Standard operator selector</strong> - Uses the column's built-in filter operators</li>
+                        <li><strong>Custom value input</strong> - Replaces the text input with a multi-select dropdown</li>
+                        <li><strong>Custom filter logic</strong> - Sets a <CodeInline>FilterFunction</CodeInline> to handle multi-value filtering (since this isn't supported by standard operators)</li>
+                        <li><strong>Context actions</strong> - Calls <CodeInline>context.Actions.ApplyFilterAsync</CodeInline> to apply the filter</li>
+                    </ul>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridSimpleFilterTemplateExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridSimpleFilterTemplateExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilterTemplateSimpleModeExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridFilterTemplateSimpleModeExample />
             </SectionContent>
         </DocsPageSection>
 

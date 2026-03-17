@@ -1751,6 +1751,24 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Creates a <see cref="FilterContext{T}"/> for a specific <see cref="IFilterDefinition{T}"/>,
+        /// allowing each filter row to have its own independent context instance.
+        /// </summary>
+        /// <param name="column">The column associated with the filter.</param>
+        /// <param name="filterDefinition">The filter definition for this context.</param>
+        /// <returns>A new <see cref="FilterContext{T}"/> bound to the specified filter definition.</returns>
+        internal FilterContext<T> CreateFilterContext(Column<T> column, IFilterDefinition<T> filterDefinition)
+        {
+            var context = new FilterContext<T>(this)
+            {
+                FilterDefinition = filterDefinition,
+                HeaderCell = column.FilterContext.HeaderCell
+            };
+
+            return context;
+        }
+
+        /// <summary>
         /// Specifies the default <see cref="IFilterDefinition{T}"/> to be used by <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/>.
         /// </summary>
         public void SetDefaultFilterDefinition<TFilterDefinition>() where TFilterDefinition : IFilterDefinition<T>, new()

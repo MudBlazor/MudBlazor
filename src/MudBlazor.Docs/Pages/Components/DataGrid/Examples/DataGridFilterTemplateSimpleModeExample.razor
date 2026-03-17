@@ -12,7 +12,10 @@
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
         <PropertyColumn Property="x => x.Group" Title="Category">
             <FilterTemplate>
+                @* Custom filter template for the Category column *@
+                @* Each filter gets its own FilterContext with independent FilterDefinition *@
                 <MudStack Row Spacing="1" Style="width: 100%">
+                    @* Operator selector - uses standard operators from the column *@
                     <MudSelect @bind-Value="context.FilterDefinition!.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense" 
                                Class="filter-operator" Label="Operator">
                         @foreach (var value in context.FilterDefinition.Column!.GetFilterOperators(context.FilterDefinition.FieldType))
@@ -20,9 +23,11 @@
                             <MudSelectItem Value="@value">@value</MudSelectItem>
                         }
                     </MudSelect>
+                    @* Custom multi-select dropdown instead of text input *@
+                    @* Uses custom FilterFunction for multi-value filtering logic *@
                     <MudSelect T="string" MultiSelection="true" 
                                SelectedValues="@GetFilterValues(context.FilterDefinition)" 
-                               SelectedValuesChanged="@(values => SetFilterValues(context.FilterDefinition, values))" 
+                               SelectedValuesChanged="@(values => SetFilterValues(context, values))" 
                                FullWidth="true" Dense="true" Margin="@Margin.Dense" 
                                Class="filter-input category-filter" 
                                Label="Value" Clearable="true" Placeholder="Select categories">
@@ -50,18 +55,20 @@
         _categories.AddRange(_elements.Select(x => x.Group).Distinct().OrderBy(x => x).ToList());
     }
 
-    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Element> context)
+    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Element> filterDefinition)
     {
-        return context.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
+        return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
     }
 
-    private void SetFilterValues(IFilterDefinition<Element> context, IEnumerable<string> values)
+    private async Task SetFilterValues(FilterContext<Element> context, IEnumerable<string> values)
     {
+        var filterDefinition = context.FilterDefinition!;
         var selectedValues = values?.ToList() ?? [];
-        context.Value = selectedValues.Count > 0 ? selectedValues : null;
+        filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
 
         // Set custom FilterFunction to handle multiple values
-        if (context is FilterDefinition<Element> filterDef)
+        // This overrides the standard operator-based filtering for this column
+        if (filterDefinition is FilterDefinition<Element> filterDef)
         {
             if (selectedValues.Count > 0)
             {
@@ -72,5 +79,9 @@
                 filterDef.FilterFunction = null;
             }
         }
+
+        // Use the context's Apply action to trigger the filter
+        // This is the same action available in other filter modes
+        await context.Actions.ApplyFilterAsync(filterDefinition);
     }
 }

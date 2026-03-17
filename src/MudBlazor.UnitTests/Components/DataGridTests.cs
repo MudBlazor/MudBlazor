@@ -4033,6 +4033,71 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterTemplateInSimpleMode_ShouldKeepMultipleFiltersForSameColumnIndependent()
+        {
+            var comp = Context.Render<DataGridFilterTemplateSimpleModeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterTemplateSimpleModeTest.Model>>();
+
+            // Initially should show all 4 rows
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Department");
+
+            // Add first filter for Department column
+            await comp.InvokeAsync(async () =>
+            {
+                await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+                {
+                    Column = departmentColumn,
+                    Operator = FilterOperator.String.Equal,
+                    Value = "Engineering"
+                });
+            });
+
+            // Add second filter for the same Department column
+            await comp.InvokeAsync(async () =>
+            {
+                await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+                {
+                    Column = departmentColumn,
+                    Operator = FilterOperator.String.NotEqual,
+                    Value = "Sales"
+                });
+            });
+
+            // Open filter panel
+            await comp.Find(".mud-button-root.filter-button").ClickAsync();
+
+            // Verify we have two filter definitions for the same column
+            var departmentFilters = dataGrid.Instance.FilterDefinitions
+                .Where(x => x.Column?.PropertyName == "Department")
+                .ToList();
+
+            departmentFilters.Count.Should().Be(2);
+            departmentFilters[0].Value.Should().Be("Engineering");
+            departmentFilters[1].Value.Should().Be("Sales");
+
+            // Both custom filter templates should be rendered (one per filter definition)
+            var departmentFilterSelects = comp.FindAll(".filters-panel .department-filter");
+            departmentFilterSelects.Count.Should().Be(2, "Each filter definition should have its own independent FilterTemplate rendered");
+
+            // Modify the first filter's value directly via its FilterDefinition
+            // This should NOT affect the second filter's value
+            var firstFilter = departmentFilters[0];
+            var secondFilter = departmentFilters[1];
+
+            await comp.InvokeAsync(() =>
+            {
+                firstFilter.Value = "Marketing";
+            });
+            dataGrid.Render();
+
+            // Verify both filters remain independent
+            departmentFilters[0].Value.Should().Be("Marketing", "First filter should have the updated value");
+            departmentFilters[1].Value.Should().Be("Sales", "Second filter should retain its original value");
+        }
+
+        [Test]
         public async Task DataGridShowFilterIcon()
         {
             var comp = Context.Render<DataGridCustomFilteringTest>();

@@ -449,9 +449,9 @@
                     </MudItem>
                     @if (filterDefinition.Column?.FilterTemplate != null)
                     {
-                        filterDefinition.Column.FilterContext.FilterDefinition = filterDefinition;
+                        var filterContext = CreateFilterContext(filterDefinition.Column, filterDefinition);
                         <MudItem xs="7">
-                            @filterDefinition.Column.FilterTemplate(filterDefinition.Column.FilterContext)
+                            @filterDefinition.Column.FilterTemplate(filterContext)
                         </MudItem>
                     }
                     else

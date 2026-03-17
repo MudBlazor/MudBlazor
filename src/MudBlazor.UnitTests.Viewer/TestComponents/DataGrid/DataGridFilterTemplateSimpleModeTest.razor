@@ -6,6 +6,7 @@
         <PropertyColumn Property="x => x.Age" />
         <PropertyColumn Property="x => x.Department">
             <FilterTemplate>
+                @* Custom filter template - each filter gets its own independent FilterContext *@
                 <MudStack Row Spacing="1" Style="width: 100%">
                     <MudSelect @bind-Value="context.FilterDefinition!.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense" 
                                Class="filter-operator" Label="Operator">
@@ -16,7 +17,7 @@
                     </MudSelect>
                     <MudSelect T="string" MultiSelection="true" 
                                SelectedValues="@GetFilterValues(context.FilterDefinition)" 
-                               SelectedValuesChanged="@(values => SetFilterValues(context.FilterDefinition, values))" 
+                               SelectedValuesChanged="@(values => SetFilterValues(context, values))" 
                                FullWidth="true" Dense="true" Margin="@Margin.Dense" 
                                Class="filter-input department-filter" 
                                Label="Value" Clearable="true">
@@ -44,18 +45,19 @@
 
     private readonly List<string> _departments = new() { "Engineering", "Marketing", "Sales" };
 
-    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Model> context)
+    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Model> filterDefinition)
     {
-        return context.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
+        return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
     }
 
-    private void SetFilterValues(IFilterDefinition<Model> context, IEnumerable<string> values)
+    private async Task SetFilterValues(FilterContext<Model> context, IEnumerable<string> values)
     {
+        var filterDefinition = context.FilterDefinition!;
         var selectedValues = values?.ToList() ?? [];
-        context.Value = selectedValues.Count > 0 ? selectedValues : null;
+        filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
 
         // Set custom FilterFunction to handle multiple values
-        if (context is FilterDefinition<Model> filterDef)
+        if (filterDefinition is FilterDefinition<Model> filterDef)
         {
             if (selectedValues.Count > 0)
             {
@@ -66,5 +68,8 @@
                 filterDef.FilterFunction = null;
             }
         }
+
+        // Use the context's Apply action to trigger the filter
+        await context.Actions.ApplyFilterAsync(filterDefinition);
     }
 }
