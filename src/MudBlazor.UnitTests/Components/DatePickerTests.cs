@@ -1121,6 +1121,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task StaticReadOnly_ShouldNotChangeDate()
+        {
+            var initialDate = new DateTime(2025, 6, 15);
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.Date, initialDate));
+            var picker = comp.Instance;
+
+            // Try to select a different day - should be blocked by ReadOnly
+            await comp.SelectDateAsync("10");
+
+            // Date should remain unchanged because ReadOnly is true
+            picker.Date.Should().Be(initialDate);
+        }
+
+        [Test]
         public async Task CheckDateTimeMinValue()
         {
             // Get access to the datepicker of the instance

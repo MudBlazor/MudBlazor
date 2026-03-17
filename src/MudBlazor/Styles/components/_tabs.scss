@@ -214,6 +214,16 @@
   margin-inline-end: unset;
 }
 
+.mud-tab-slider.mud-default {
+  background: var(--mud-palette-action-default);
+}
+
+@each $color in $mud-palette-colors {
+  .mud-tab-slider.mud-#{$color} {
+    background: var(--mud-palette-#{$color});
+  }
+}
+
 @each $color in $mud-palette-colors {
   .mud-tabs-tabbar-#{$color} {
     background-color: var(--mud-palette-#{$color});

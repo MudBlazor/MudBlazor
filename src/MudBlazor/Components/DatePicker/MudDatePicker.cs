@@ -132,6 +132,8 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
@@ -152,6 +154,8 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected override async Task OnMonthSelectedAsync(DateTime month)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             PickerMonth = month;
             var nextView = GetNextView();
@@ -191,6 +195,8 @@ namespace MudBlazor
         /// <param name="year"></param>
         protected override async Task OnYearClickedAsync(int year)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             var current = GetMonthStart(0);
             var culture = GetCulture();

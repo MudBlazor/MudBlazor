@@ -23,6 +23,18 @@ public interface IReversibleDispatcherBuilder<TIn, TOut>
     IReversibleDispatcherBuilder<TIn, TOut> Add<TSpecific>(IReversibleConverter<TSpecific, TOut> converter);
 
     /// <summary>
+    /// Register a forward-only converter that handles conversions for the specific concrete input type <typeparamref name="TSpecific"/>.
+    /// </summary>
+    /// <typeparam name="TSpecific">The concrete input type this converter handles.</typeparam>
+    /// <param name="converter">An <see cref="IConverter{TSpecific,TOut}"/> implementation used for forward conversions of <typeparamref name="TSpecific"/>.</param>
+    /// <returns>The same builder instance to allow fluent registrations.</returns>
+    /// <remarks>
+    /// This method registers only the forward conversion (<c>Convert</c>). It does not register a reverse conversion,
+    /// so <c>ConvertBack</c> remains unresolved for <typeparamref name="TSpecific"/>.
+    /// </remarks>
+    IReversibleDispatcherBuilder<TIn, TOut> AddForward<TSpecific>(IConverter<TSpecific, TOut> converter);
+
+    /// <summary>
     /// Register a reversible converter instance for a concrete input type that is known only at runtime.
     /// </summary>
     /// <param name="specificType">The concrete input <see cref="System.Type"/> the supplied converter handles.</param>
@@ -41,6 +53,24 @@ public interface IReversibleDispatcherBuilder<TIn, TOut>
     /// If the instance is incompatible a runtime exception may be thrown by the builder implementation.
     /// </remarks>
     IReversibleDispatcherBuilder<TIn, TOut> AddDynamic(Type specificType, object? converter);
+
+    /// <summary>
+    /// Register a forward-only converter instance for a concrete input type that is known only at runtime.
+    /// </summary>
+    /// <param name="specificType">The concrete input <see cref="System.Type"/> the supplied converter handles.</param>
+    /// <param name="converter">
+    /// A converter instance implementing <c>IConverter&lt;TSpecific,TOut&gt;</c> for the supplied <paramref name="specificType"/>.
+    /// </param>
+    /// <returns>
+    /// A builder typed to <see cref="IReversibleConverter{TIn,TOut}"/> to continue registrations.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="specificType"/> or <paramref name="converter"/> is <c>null</c>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the supplied <paramref name="converter"/> does not provide a compatible <c>Convert</c> method for <paramref name="specificType"/>.</exception>
+    /// <remarks>
+    /// This method registers only the forward conversion (<c>Convert</c>). It does not register a reverse conversion,
+    /// so <c>ConvertBack</c> remains unresolved for the supplied <paramref name="specificType"/>.
+    /// </remarks>
+    IReversibleDispatcherBuilder<TIn, TOut> AddDynamicForward(Type specificType, object? converter);
 
     /// <summary>
     /// Builds the reversible dispatcher that routes forward and backward conversions to the registered per-type reversible converters.
