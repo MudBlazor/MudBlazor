@@ -153,14 +153,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGirdWithServerDataAndVirtualize()
+        public void DataGridVirtualizeSpacerElementsAreTableRows()
         {
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+            // Virtualize spacer elements must be <tr>, not <div>, so that CSS table layout respects
+            // their height. A <div> inside <tbody> has its height ignored, causing scroll-position jumping.
+            var tbody = dataGrid.Find("tbody");
+            tbody.QuerySelectorAll(":scope > div").Should().BeEmpty(because: "Virtualize spacers that are direct children of <tbody> must be <tr> elements, not <div>s");
+
+            // Virtualize renders one before-spacer and one after-spacer <tr>; neither has the mud-table-row class.
+            var spacerTrs = tbody.QuerySelectorAll("tr:not(.mud-table-row)").ToList();
+            spacerTrs.Should().HaveCount(2, because: "Virtualize renders exactly one before-spacer and one after-spacer <tr>");
+        }
+
+        [Test]
+        public void DataGridWithServerDataAndVirtualize()
+        {
+            var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(5, because: "5 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
@@ -178,9 +194,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridSortableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(7, because: "7 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
@@ -374,8 +390,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFilterableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().Be(4, because: "four data rows");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
