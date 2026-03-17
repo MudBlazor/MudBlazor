@@ -141,7 +141,7 @@
     </div>
 </CascadingValue>
 
-<CascadingValue Value="@(new MudOverlayAutoCloseContext(new[] { _componentId }))">
+<CascadingValue Value="@_overlayAutoCloseContext" IsFixed="true">
     <MudOverlay AutoClose
                 Visible="Open"
                 OnClosed="OnOverlayClosedAsync"

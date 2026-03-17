@@ -16,6 +16,7 @@ namespace MudBlazor
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private readonly MudOverlayAutoCloseContext _overlayAutoCloseContext;
 
         private bool _isCleared;
         private bool _isClearing;
@@ -42,6 +43,11 @@ namespace MudBlazor
 
         [Inject]
         private TimeProvider TimeProvider { get; set; } = null!;
+
+        public MudAutocomplete()
+        {
+            _overlayAutoCloseContext = new([_componentId]);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-select")

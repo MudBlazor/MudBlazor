@@ -35,6 +35,7 @@ namespace MudBlazor
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
         private readonly string _activatorElementId = Identifier.Create("menu-activator");
+        private readonly MudOverlayAutoCloseContext _overlayAutoCloseContext;
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
@@ -49,6 +50,7 @@ namespace MudBlazor
 
         public MudMenu()
         {
+            _overlayAutoCloseContext = new([_activatorElementId]);
             _menuContext = new MenuContext(this);
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))

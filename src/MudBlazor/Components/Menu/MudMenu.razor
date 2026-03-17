@@ -124,7 +124,7 @@
     </MudPopover>
     @if (ParentMenu is null)
     {
-        <CascadingValue Value="@(new MudOverlayAutoCloseContext(new[] { _activatorElementId }))">
+        <CascadingValue Value="@_overlayAutoCloseContext" IsFixed="true">
             <MudOverlay Visible="_openState.Value && !_isTransient"
                         AutoClose
                         OnClosed="CloseMenuAsync"

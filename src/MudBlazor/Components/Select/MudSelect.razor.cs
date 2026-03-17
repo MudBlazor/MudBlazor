@@ -34,6 +34,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
+        private readonly MudOverlayAutoCloseContext _overlayAutoCloseContext;
 
         internal string ElementId { get; } = Identifier.Create("select");
 
@@ -45,6 +46,7 @@ namespace MudBlazor
 
         public MudSelect()
         {
+            _overlayAutoCloseContext = new([ElementId]);
             _context = new MudSelectContext<T>(this);
             Adornment = Adornment.End;
             IconSize = Size.Medium;
