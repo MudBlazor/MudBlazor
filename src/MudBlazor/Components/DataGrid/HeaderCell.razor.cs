@@ -580,11 +580,22 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
-            _filtersMenuVisible = false;
-            DataGrid.DropContainerHasChanged();
+            ApplyFilterUiState(autoClose: true);
         }
 
+        /// <summary>
+        /// Applies the specified filter definition and closes the filter UI.
+        /// </summary>
+        /// <param name="filterDefinition">The filter definition to apply.</param>
         internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition)
+            => await ApplyFilterAsync(filterDefinition, autoClose: true);
+
+        /// <summary>
+        /// Applies the specified filter definition and optionally closes the filter UI.
+        /// </summary>
+        /// <param name="filterDefinition">The filter definition to apply.</param>
+        /// <param name="autoClose">When <c>true</c>, closes the filter UI after applying the filter; when <c>false</c>, leaves it open.</param>
+        internal async Task ApplyFilterAsync(IFilterDefinition<T> filterDefinition, bool autoClose)
         {
             Debug.Assert(DataGrid is not null);
             if (DataGrid.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -599,8 +610,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
-            _filtersMenuVisible = false;
-            DataGrid.DropContainerHasChanged();
+            ApplyFilterUiState(autoClose);
         }
 
         internal async Task ApplyFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
@@ -629,18 +639,28 @@ namespace MudBlazor
             await DataGrid.RemoveFilterAsync(Column.FilterContext.FilterDefinition.Id);
             if (!DataGrid.HasServerData)
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
-            _filtersMenuVisible = false;
-            DataGrid.DropContainerHasChanged();
+            ApplyFilterUiState(autoClose: true);
         }
 
+        /// <summary>
+        /// Clears the specified filter definition and closes the filter UI.
+        /// </summary>
+        /// <param name="filterDefinition">The filter definition to clear.</param>
         internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition)
+            => await ClearFilterAsync(filterDefinition, autoClose: true);
+
+        /// <summary>
+        /// Clears the specified filter definition and optionally closes the filter UI.
+        /// </summary>
+        /// <param name="filterDefinition">The filter definition to clear.</param>
+        /// <param name="autoClose">When <c>true</c>, closes the filter UI after clearing the filter; when <c>false</c>, leaves it open.</param>
+        internal async Task ClearFilterAsync(IFilterDefinition<T> filterDefinition, bool autoClose)
         {
             Debug.Assert(DataGrid is not null);
             await DataGrid.RemoveFilterAsync(filterDefinition.Id);
             if (!DataGrid.HasServerData)
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
-            _filtersMenuVisible = false;
-            DataGrid.DropContainerHasChanged();
+            ApplyFilterUiState(autoClose);
         }
 
         internal async Task ClearFiltersAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
@@ -656,6 +676,16 @@ namespace MudBlazor
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
             _filtersMenuVisible = false;
+            DataGrid.DropContainerHasChanged();
+        }
+
+        private void ApplyFilterUiState(bool autoClose)
+        {
+            if (autoClose)
+            {
+                _filtersMenuVisible = false;
+            }
+
             DataGrid.DropContainerHasChanged();
         }
 

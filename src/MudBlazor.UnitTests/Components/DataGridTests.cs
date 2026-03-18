@@ -4121,6 +4121,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnFilterMenuApplyFilterOverrideShouldLeaveMenuOpen()
+        {
+            var comp = Context.Render<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridServerDataColumnFilterMenuTest.Model>>().First();
+
+            await comp.Find(".filter-button").ClickAsync();
+            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
+
+            await comp.InvokeAsync(async () =>
+            {
+                headerCell.Instance.Column!.FilterContext.FilterDefinition!.Value = "Sam";
+                await headerCell.Instance.ApplyFilterAsync(headerCell.Instance.Column.FilterContext.FilterDefinition, autoClose: false);
+            });
+
+            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DataGridColumnFilterMenuClearFilterOverrideShouldLeaveMenuOpen()
+        {
+            var comp = Context.Render<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridServerDataColumnFilterMenuTest.Model>>().First();
+
+            await comp.Find(".filter-button").ClickAsync();
+
+            await comp.InvokeAsync(async () =>
+            {
+                headerCell.Instance.Column!.FilterContext.FilterDefinition!.Value = "Sam";
+                await headerCell.Instance.ApplyFilterAsync(headerCell.Instance.Column.FilterContext.FilterDefinition, autoClose: false);
+            });
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
+
+            await comp.InvokeAsync(async () =>
+            {
+                await headerCell.Instance.ClearFilterAsync(headerCell.Instance.Column!.FilterContext.FilterDefinition!, autoClose: false);
+            });
+
+            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+        }
+
+        [Test]
         public async Task DataGrid_ColumnFilterMenu_OpensAtCursorPosition()
         {
             // https://github.com/MudBlazor/MudBlazor/issues/11518
