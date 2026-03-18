@@ -21,12 +21,16 @@ internal partial class DefaultConverter
         public BigInteger ConvertBack(string? input)
         {
             if (string.IsNullOrEmpty(input))
+            {
                 return BigInteger.Zero;
+            }
 
             var currentCulture = culture.Invoke();
 
             if (BigInteger.TryParse(input, NumberStyles.Any, currentCulture, out var result))
+            {
                 return result;
+            }
 
             throw new ConversionException(LanguageResource.Converter_InvalidNumber);
         }

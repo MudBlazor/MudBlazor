@@ -135,6 +135,21 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
+        protected Dictionary<string, object?> GetInputAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["tabindex"] = GetDisabledState() ? -1 : 0
+            };
+
+            foreach (var userAttribute in UserAttributes)
+            {
+                attributes[userAttribute.Key] = userAttribute.Value;
+            }
+
+            return attributes;
+        }
+
         protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)
         {
             if (markAsTouched is true)

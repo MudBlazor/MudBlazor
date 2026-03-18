@@ -31,6 +31,14 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     public bool YAxisRequireZeroPoint { get; set; }
 
     /// <summary>
+    /// Prevent negative overshoots if all Y values are non-negative
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>
+    /// </remarks>
+    public bool ClampToZero { get; set; }
+
+    /// <summary>
     /// The style of line to use for the chart <see cref="LineDisplayType.Line"/> or <see cref="LineDisplayType.Area"/>
     /// </summary>
     public LineDisplayType LineDisplayType { get; set; }

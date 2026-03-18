@@ -40,6 +40,9 @@ on:
         required: false
         default: gemini-3-flash-preview
 
+permissions:
+  contents: read
+
 concurrency:
   group: autotriage-backlog
   cancel-in-progress: true

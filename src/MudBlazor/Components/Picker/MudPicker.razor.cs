@@ -217,7 +217,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// Custom clear icon when <see cref="Clearable"/> is enabled.
@@ -268,7 +268,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Editable { get; set; } = false;
+        public bool Editable { get; set; }
 
         /// <summary>
         /// The ID of the input element.

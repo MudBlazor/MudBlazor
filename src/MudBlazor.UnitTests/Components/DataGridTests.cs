@@ -153,14 +153,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGirdWithServerDataAndVirtualize()
+        public void DataGridVirtualizeSpacerElementsAreTableRows()
         {
             var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+            // Virtualize spacer elements must be <tr>, not <div>, so that CSS table layout respects
+            // their height. A <div> inside <tbody> has its height ignored, causing scroll-position jumping.
+            var tbody = dataGrid.Find("tbody");
+            tbody.QuerySelectorAll(":scope > div").Should().BeEmpty(because: "Virtualize spacers that are direct children of <tbody> must be <tr> elements, not <div>s");
+
+            // Virtualize renders one before-spacer and one after-spacer <tr>; neither has the mud-table-row class.
+            var spacerTrs = tbody.QuerySelectorAll("tr:not(.mud-table-row)").ToList();
+            spacerTrs.Should().HaveCount(2, because: "Virtualize renders exactly one before-spacer and one after-spacer <tr>");
+        }
+
+        [Test]
+        public void DataGridWithServerDataAndVirtualize()
+        {
+            var comp = Context.Render<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(5, because: "5 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
@@ -178,9 +194,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridSortableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(9, because: "1 header row + 7 data rows + 1 footer row");
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            var dataRows = dataGrid.FindAll("tbody tr.mud-table-row");
+            dataRows.Count.Should().Be(7, because: "7 data rows");
 
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
@@ -374,8 +390,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFilterableVirtualizeServerDataTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterableVirtualizeServerDataTest.Item>>();
 
-            // Count the number of rows including header.
-            dataGrid.FindAll("tr").Count.Should().Be(6, because: "header row + four rows + footer row");
+            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
+            dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().Be(4, because: "four data rows");
 
             // Check the values of rows
             dataGrid.FindAll("td")[0].TextContent.Trim().Should().Be("B");
@@ -846,6 +862,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridPaginationCustomFormatTest>();
 
             comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("Total: 1,000");
+        }
+
+        [Test]
+        public void DataGridPaginationShouldUseGridCultureForFormatting()
+        {
+            // de-DE uses "." as a thousands separator, so 1000 is formatted as "1.000"
+            var comp = Context.Render<DataGridPaginationCultureTest>();
+
+            comp.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 1.000");
         }
 
         [Test]
@@ -6236,6 +6261,80 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
                 dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DataGridFilterDefinitionsPreloadTest()
+        {
+            var comp = Context.Render<DataGridFilterDefinitionsPreloadTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterDefinitionsPreloadTest.Model>>();
+
+            // Wait for the filter to be applied after OnAfterRenderAsync
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance.FilterDefinitions.Count.Should().Be(1));
+
+            // Check that the filter definition has the correct column and value
+            var filterDef = dataGrid.Instance.FilterDefinitions.First();
+            filterDef.Column.Should().NotBeNull("Filter definition should have a column reference");
+            filterDef.Value.Should().Be("Sam", "Filter definition should have the correct value");
+
+            // Get the Name column
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            nameColumn.Should().NotBeNull("Name column should exist");
+
+            // Verify that the filter's column matches the name column
+            filterDef.Column.Should().BeSameAs(nameColumn, "Filter definition's column should be the same instance as the Name column");
+
+            // Access FilterContext to verify it picks up the existing filter
+            var filterContext = nameColumn!.FilterContext;
+            filterContext.Should().NotBeNull("FilterContext should not be null");
+            filterContext.FilterDefinition.Should().NotBeNull("FilterContext.FilterDefinition should not be null");
+
+            // This is the key test - the FilterContext should have found the existing filter definition
+            filterContext.FilterDefinition.Should().BeSameAs(filterDef, "FilterContext should reference the same filter definition that was added");
+            filterContext.FilterDefinition!.Value.Should().Be("Sam", "FilterContext's filter definition should have the correct value");
+            filterContext.FilterDefinition.Operator.Should().Be(FilterOperator.String.Contains);
+        }
+
+        [Test]
+        public async Task DataGridFilterDefinitionsPreloadColumnFilterRowTest()
+        {
+            var comp = Context.Render<DataGridFilterDefinitionsPreloadColumnFilterRowTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterDefinitionsPreloadColumnFilterRowTest.Model>>();
+
+            // Wait for the filter to be applied after OnAfterRenderAsync
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance.FilterDefinitions.Count.Should().Be(1));
+
+            // Check that the filter definition has the correct column and value
+            var filterDef = dataGrid.Instance.FilterDefinitions.First();
+            filterDef.Column.Should().NotBeNull("Filter definition should have a column reference");
+            filterDef.Value.Should().Be("C", "Filter definition should have the correct value as reported in issue #8060");
+
+            // Get the Name column
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            nameColumn.Should().NotBeNull("Name column should exist");
+
+            // Verify that the filter's column matches the name column
+            filterDef.Column.Should().BeSameAs(nameColumn, "Filter definition's column should be the same instance as the Name column");
+
+            // Access FilterContext to verify it picks up the existing filter - this is what was broken in #8060
+            var filterContext = nameColumn!.FilterContext;
+            filterContext.Should().NotBeNull("FilterContext should not be null");
+            filterContext.FilterDefinition.Should().NotBeNull("FilterContext.FilterDefinition should not be null");
+
+            // The key fix - the FilterContext should reference the programmatically added filter
+            filterContext.FilterDefinition.Should().BeSameAs(filterDef, "FilterContext should reference the same filter definition that was added");
+            filterContext.FilterDefinition!.Value.Should().Be("C", "FilterContext should show the filter value 'C' in the UI");
+            filterContext.FilterDefinition.Operator.Should().Be(FilterOperator.String.Contains, "FilterContext should show the correct operator");
+
+            // Verify the user can now modify the filter
+            filterContext.FilterDefinition.Value = "A";
+            filterContext.FilterDefinition.Value.Should().Be("A", "User should be able to modify the filter value");
+
+            // Verify the filter can be removed
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0, "Filter should be removable");
         }
 
         #endregion

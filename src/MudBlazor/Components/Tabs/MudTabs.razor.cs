@@ -559,17 +559,22 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Releases resources used by this component.
+        /// Called to dispose this instance.
         /// </summary>
-        public async ValueTask DisposeAsync()
+        protected virtual async ValueTask DisposeAsyncCore()
         {
             if (_isDisposed)
+            {
                 return;
+            }
+
             _isDisposed = true;
+
             if (_throttleDispatcher.IsValueCreated)
             {
                 _throttleDispatcher.Value.Dispose();
             }
+
             if (_resizeObserver is not null)
             {
                 _resizeObserver.OnResized -= OnResized;
@@ -578,10 +583,20 @@ namespace MudBlazor
                     await _resizeObserver.DisposeAsync();
                 }
             }
+
             if (IsJSRuntimeAvailable)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
+        }
+
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
 
         #endregion

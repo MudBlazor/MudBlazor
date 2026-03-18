@@ -77,6 +77,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        protected override async Task ValidateValue()
+        {
+            if (await SynchronizePendingValueForValidationAsync())
+            {
+                return;
+            }
+
+            await base.ValidateValue();
+        }
+
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -113,6 +124,29 @@ namespace MudBlazor
                     await _debouncer.UpdateIntervalAsync(TimeSpan.FromMilliseconds(args.Value));
                 }
             }
+        }
+
+        private async Task<bool> SynchronizePendingValueForValidationAsync()
+        {
+            if (DebounceInterval <= 0 || _debouncer is null || !_debouncer.IsPending)
+            {
+                return false;
+            }
+
+            var pendingValue = ConvertGet(ReadText);
+            var pendingValueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, pendingValue);
+
+            await _debouncer.CancelAsync();
+
+            if (!pendingValueChanged)
+            {
+                return false;
+            }
+
+            // SetValueAndUpdateTextAsync already triggers FieldChanged and BeginValidateAsync,
+            // so the synced validation happens there and this call can stop.
+            await SetValueAndUpdateTextAsync(pendingValue, updateText: false);
+            return true;
         }
 
         private Task OnDebouncedUpdate()

@@ -25,6 +25,7 @@ namespace MudBlazor
         private string? _multiSelectionText;
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
+        private bool _needsFitContentRefresh;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -476,9 +477,20 @@ namespace MudBlazor
             get
             {
                 if (MultiSelection)
+                {
                     return false;
+                }
+
+                if (ToStringFunc is not null && !string.IsNullOrEmpty(ToStringFunc(ReadValue)))
+                {
+                    return false;
+                }
+
                 if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
+                {
                     return false;
+                }
+
                 return item.ChildContent != null;
             }
         }
@@ -516,9 +528,13 @@ namespace MudBlazor
             if (index < 0 || index >= Items.Count)
             {
                 if (!MultiSelection)
+                {
                     await CloseMenu();
+                }
+
                 return;
             }
+
             await SelectOption(Items[index].Value);
         }
 
@@ -605,11 +621,18 @@ namespace MudBlazor
         public async Task ToggleMenu()
         {
             if (GetDisabledState() || GetReadOnlyState())
+            {
                 return;
+            }
+
             if (_openState.Value)
+            {
                 await CloseMenu(true);
+            }
             else
+            {
                 await OpenMenu();
+            }
         }
 
         /// <summary>
@@ -621,7 +644,9 @@ namespace MudBlazor
         public async Task OpenMenu()
         {
             if (GetDisabledState() || GetReadOnlyState())
+            {
                 return;
+            }
 
             await _openState.SetValueAsync(true);
             _needsHighlightAfterRender = true;
@@ -638,6 +663,7 @@ namespace MudBlazor
                     await ScrollToItemAsync(item);
                 }
             }
+
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
@@ -757,15 +783,19 @@ namespace MudBlazor
             {
                 FieldChanged(_selectedValues);
             }
+
             if (MultiSelection && typeof(T) == typeof(string))
+            {
                 await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
+            }
         }
 
-        private void OnFitContentChanged(ParameterChangedEventArgs<bool> args)
+        internal void UpdateFitContent()
         {
-            if (args.Value)
+            if (FitContent)
             {
                 var longestItemLength = 0;
+                var longestItem = default(MudSelectItem<T>);
                 foreach (var item in _context.ShadowItems)
                 {
                     var value = item.Value;
@@ -774,16 +804,42 @@ namespace MudBlazor
 
                     if (length > longestItemLength)
                     {
-                        _longestItem = item;
+                        longestItem = item;
                         longestItemLength = length;
                     }
                 }
+
+                if (ReferenceEquals(_longestItem, longestItem))
+                {
+                    return;
+                }
+
+                _longestItem = longestItem;
                 StateHasChanged();
+                return;
             }
-            else
+
+            _longestItem = null;
+        }
+
+        internal void InvalidateFitContent()
+        {
+            if (FitContent)
             {
-                _longestItem = null;
+                _needsFitContentRefresh = true;
             }
+        }
+
+        private void OnFitContentChanged(ParameterChangedEventArgs<bool> args)
+        {
+            if (args.Value)
+            {
+                UpdateFitContent();
+                return;
+            }
+
+            _needsFitContentRefresh = false;
+            _longestItem = null;
         }
 
         private void UpdateIcon()
@@ -832,24 +888,39 @@ namespace MudBlazor
         {
             // Manage the fake tri-state of a checkbox
             if (!_selectAllChecked.HasValue)
+            {
                 _selectAllChecked = true;
+            }
             else if (_selectAllChecked.Value)
+            {
                 _selectAllChecked = false;
+            }
             else
+            {
                 _selectAllChecked = true;
+            }
+
             // Define the items selection
             if (_selectAllChecked.Value)
+            {
                 await SelectAllItems();
+            }
             else
+            {
                 await ClearAsync();
+            }
         }
 
         private async Task SelectAllItems()
         {
             if (!MultiSelection)
+            {
                 return;
+            }
+
             var selectedValues = new HashSet<T?>(Items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), Comparer);
             _selectedValues = new HashSet<T?>(selectedValues, Comparer);
+
             if (MultiSelectionTextFunc != null)
             {
                 await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
@@ -860,13 +931,17 @@ namespace MudBlazor
             {
                 await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
             }
+
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
             await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
             FieldChanged(_selectedValues);
+
             if (MultiSelection && typeof(T) == typeof(string))
+            {
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
+            }
         }
 
         private async Task OnFocusOutAsync()
@@ -886,21 +961,36 @@ namespace MudBlazor
         private async Task SelectAdjacentItem(int direction)
         {
             if (Items.Count == 0)
+            {
                 return;
+            }
+
             var index = Items.FindIndex(x => x.ItemId == _activeItemId);
             if (direction < 0 && index < 0)
+            {
                 index = 0;
+            }
+
             MudSelectItem<T>? item = null;
             // the loop allows us to jump over disabled items until we reach the next non-disabled one
             for (var i = 0; i < Items.Count; i++)
             {
                 index += direction;
                 if (index < 0)
+                {
                     index = 0;
+                }
+
                 if (index >= Items.Count)
+                {
                     index = Items.Count - 1;
+                }
+
                 if (Items[index].Disabled)
+                {
                     continue;
+                }
+
                 item = Items[index];
                 if (!MultiSelection)
                 {
@@ -922,6 +1012,7 @@ namespace MudBlazor
                 await HighlightItemAsync(item);
                 break;
             }
+
             await _elementReference.SetText(ReadText);
             await ScrollToItemAsync(item);
         }
@@ -1076,10 +1167,16 @@ namespace MudBlazor
         private async Task SelectLastItem()
         {
             if (Items.Count == 0)
+            {
                 return;
+            }
+
             var item = Items.LastOrDefault(x => !x.Disabled);
             if (item == null)
+            {
                 return;
+            }
+
             if (!MultiSelection)
             {
                 _selectedValues.Clear();
@@ -1095,7 +1192,10 @@ namespace MudBlazor
         internal Task HandleMouseDown(MouseEventArgs args)
         {
             if (args.Button != 0) // if it wasn't left click drop out
+            {
                 return Task.CompletedTask;
+            }
+
             return ToggleMenu();
         }
 
@@ -1191,15 +1291,21 @@ namespace MudBlazor
         private async Task HandleCharacterSearchAsync(KeyboardEventArgs args)
         {
             if (args.CtrlKey || args.ShiftKey || args.AltKey || args.MetaKey)
+            {
                 return;
+            }
 
             var key = args.Key;
             if (string.IsNullOrWhiteSpace(key))
+            {
                 return;
+            }
 
             key = key.ToLowerInvariant();
             if (key.Length != 1)
+            {
                 return;
+            }
 
             await SelectFirstItem(key);
             await FocusAsync();
@@ -1266,7 +1372,14 @@ namespace MudBlazor
 
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender)
+            var needsFitContentRefresh = _needsFitContentRefresh;
+            _needsFitContentRefresh = false;
+
+            if (needsFitContentRefresh)
+            {
+                UpdateFitContent();
+            }
+            else if (firstRender)
             {
                 // we need to render the initial Value which is not possible without the items
                 // which supply the RenderFragment. So in this case, a second render is necessary
@@ -1302,7 +1415,10 @@ namespace MudBlazor
         protected RenderFragment? GetSelectedValuePresenter()
         {
             if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
+            {
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+            }
+
             return item.ChildContent;
         }
 
@@ -1338,9 +1454,14 @@ namespace MudBlazor
             {
                 _multiSelectionText = text;
                 if (!string.IsNullOrWhiteSpace(_multiSelectionText))
+                {
                     Touched = true;
+                }
+
                 if (updateValue)
+                {
                     await UpdateValuePropertyAsync(false);
+                }
             }
         }
 
@@ -1359,7 +1480,10 @@ namespace MudBlazor
         {
             // For MultiSelection of non-string T's we don't update the Value!!!
             if (typeof(T) == typeof(string) || !MultiSelection)
+            {
                 base.UpdateValuePropertyAsync(updateText);
+            }
+
             return Task.CompletedTask;
         }
 
