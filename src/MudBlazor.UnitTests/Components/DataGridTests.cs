@@ -3872,6 +3872,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnFilterIconShouldIgnoreEmptyValueRequiredFilters()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            var nameColumn = dataGrid.Instance.RenderedColumns.First(x => x.PropertyName == nameof(DataGridColumnPopupFilteringTest.Model.Name));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnPopupFilteringTest.Model>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = null
+            }));
+
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridColumnPopupFilteringTest.Model>>()
+                .First(x => x.Instance.Column?.PropertyName == nameof(DataGridColumnPopupFilteringTest.Model.Name));
+
+            headerCell.Instance.hasFilter.Should().BeFalse();
+        }
+
+        [Test]
         public async Task DataGridFilterableFalse()
         {
             var comp = Context.Render<DataGridFilterableFalseTest>();
@@ -6086,7 +6106,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Check filter buttons when filter applied
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
-            await comp.Find("button.filter-button").ClickAsync();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterIconsTest.Model>
+            {
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam"
+            }));
 
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
