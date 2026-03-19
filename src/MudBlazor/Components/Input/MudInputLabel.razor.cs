@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -12,8 +11,8 @@ namespace MudBlazor
         protected string Classname => new CssBuilder()
             .AddClass("mud-input-label")
             .AddClass("mud-input-label-animated")
-            .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-input-label-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+            .AddClass($"mud-input-label-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-input-label-margin-{Margin.ToStringFast(true)}", when: () => Margin != Margin.None)
             .AddClass("mud-disabled", Disabled)
             .AddClass("mud-input-error", Error)
             .AddClass(Class)

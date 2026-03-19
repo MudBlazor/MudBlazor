@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Specifies the scroll behavior for scrolling operations.
 /// </summary>
+[EnumExtensions]
 public enum ScrollBehavior
 {
     /// <summary>

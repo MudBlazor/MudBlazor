@@ -61,8 +61,8 @@
     protected string InputClassname =>
         new CssBuilder("mud-input-slot")
             .AddClass("mud-input-root")
-            .AddClass($"mud-input-root-{Variant.Outlined.ToDescriptionString()}")
-            .AddClass($"mud-input-root-adorned-{Adornment.End.ToDescriptionString()}")
-            .AddClass($"mud-input-root-margin-{Margin.Normal.ToDescriptionString()}")
+            .AddClass($"mud-input-root-{Variant.Outlined.ToStringFast(true)}")
+            .AddClass($"mud-input-root-adorned-{Adornment.End.ToStringFast(true)}")
+            .AddClass($"mud-input-root-margin-{Margin.Normal.ToStringFast(true)}")
             .Build();
 }

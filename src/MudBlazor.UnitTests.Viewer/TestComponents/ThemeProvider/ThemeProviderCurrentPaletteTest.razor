@@ -1,0 +1,21 @@
+@using MudBlazor
+
+<MudThemeProvider @bind-IsDarkMode="_isDarkMode" @bind-CurrentPalette="_currentPalette" />
+
+<MudText>Dark Mode: @_isDarkMode</MudText>
+<MudText>Current Palette Type: @_currentPalette?.GetType().Name</MudText>
+<MudText>Primary Color: @_currentPalette?.Primary</MudText>
+
+<MudButton OnClick="ToggleDarkMode">Toggle Dark Mode</MudButton>
+
+@code {
+    private bool _isDarkMode;
+    private Palette? _currentPalette;
+
+    private void ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+    public Palette? GetCurrentPalette() => _currentPalette;
+}

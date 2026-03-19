@@ -12,7 +12,7 @@
 
     public int ChangeCount { get; private set; }
 
-    private void FruitChanged(IEnumerable<string>? fruits)
+    private void FruitChanged(IReadOnlyCollection<string>? fruits)
     {
         ChangeCount++;
     }

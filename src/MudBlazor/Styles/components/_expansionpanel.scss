@@ -75,10 +75,15 @@
     line-height: 1;
     min-height: 48px;
     outline: none;
-    padding: 16px 24px;
+    padding: 16px 0px;
     position: relative;
     transition: min-height .3s cubic-bezier(.25,.8,.5,1);
     user-select: none;
+
+    &.mud-expand-panel-header-gutters {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
 
     &:hover {
       cursor: pointer;

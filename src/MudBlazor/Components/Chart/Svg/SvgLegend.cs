@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>

@@ -7,10 +7,12 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Manages scroll spying behavior for specified elements.
+    /// Tracks which section is centered in a scroll container and exposes it to components.
     /// </summary>
+    /// <remarks>
+    /// This service wires up the JS scroll spy behavior so components like navigation or table-of-contents can react when the active section changes.
+    /// </remarks>
     internal sealed class ScrollSpy : IScrollSpy
     {
         private bool _disposed;

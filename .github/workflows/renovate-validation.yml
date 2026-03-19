@@ -1,0 +1,25 @@
+name: Renovate Validation
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    paths:
+      - '.github/renovate.json'
+  workflow_dispatch: null
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+
+      - name: Validate Renovate Configuration
+        run: npx --yes --package renovate -- renovate-config-validator

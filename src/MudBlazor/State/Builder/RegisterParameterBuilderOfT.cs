@@ -8,7 +8,6 @@ using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
-#nullable enable
 /// <summary>
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
@@ -99,9 +98,31 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithChangeHandler(Func<ParameterChangedContext, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    {
+        return WithChangeHandler(new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler), handlerName);
+    }
+
+    /// <summary>
+    /// Sets the parameter changed handler for the parameter.
+    /// </summary>
+    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithChangeHandler(Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         return WithChangeHandler(new ParameterChangedLambdaTaskHandler<T>(parameterChangedHandler), handlerName);
+    }
+
+    /// <summary>
+    /// Sets the parameter changed handler for the parameter.
+    /// </summary>
+    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithChangeHandler(Action<ParameterChangedContext> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    {
+        return WithChangeHandler(new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler), handlerName);
     }
 
     /// <summary>
@@ -179,10 +200,11 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     private ParameterStateInternal<T> CreateParameterState()
     {
         ArgumentNullException.ThrowIfNull(_parameterName);
+        ArgumentNullException.ThrowIfNull(_getParameterValueFunc);
 
         var parameterState = ParameterStateInternal<T>.Attach(
             new ParameterMetadata(_parameterName, _handlerName, _comparerParameterName),
-            _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
+            _getParameterValueFunc,
             _eventCallbackFunc,
             _parameterChangedHandler,
             _comparer);

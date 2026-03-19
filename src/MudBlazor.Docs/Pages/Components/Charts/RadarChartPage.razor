@@ -1,0 +1,43 @@
+﻿@page "/components/radarchart"
+@page "/components/chart-types/radarchart"
+@page "/components/radar"
+
+
+<DocsPage>
+    <DocsPageHeader Title="Radar Chart" Component="@nameof(MudBlazor.Charts.Radar<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Radar Chart">
+                <Description>
+                    Radar charts (also known as spider charts) display multivariate data in the form of a two-dimensional chart of three or more quantitative variables represented on axes starting from the same point.
+                    This example shows a basic Radar chart with a single data series and demonstrates selection.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(RadarChartExample1)" ShowCode="false" Block="true">
+                <RadarChartExample1 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customized Radar Chart">
+                <Description>
+                    This example showcases more customization options for the Radar chart:
+                    <ul>
+                        <li><CodeInline>ShowGridLines</CodeInline>, <CodeInline>GridLevels</CodeInline>, <CodeInline>GridLineColor</CodeInline>: Control the appearance of the grid.</li>
+                        <li><CodeInline>ShowAxisLabels</CodeInline>, <CodeInline>AxisLineColor</CodeInline>, <CodeInline>AxisLineWidth</CodeInline>: Customize the axes.</li>
+                        <li><CodeInline>FillOpacity</CodeInline>, <CodeInline>StrokeWidth</CodeInline>: Adjust the appearance of the data series.</li>
+                        <li><CodeInline>ShowDataMarkers</CodeInline>, <CodeInline>DataPointRadius</CodeInline>: Display markers for each data point.</li>
+                        <li><CodeInline>AngleOffset</CodeInline>: Rotates the entire chart.</li>
+                        <li><CodeInline>ChartPalette</CodeInline>: Custom colors for different series.</li>
+                    </ul>
+                    It displays multiple data series for comparison.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(RadarChartExample2)" ShowCode="false" Block="true">
+                <RadarChartExample2 />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

@@ -13,5 +13,6 @@ namespace MudBlazor.Docs.Models
         public string Avatar => $"https://github.com/{GitHub}.png?size=56";
         public string LinkedIn { get; set; }
         public string Bio { get; set; }
+        public Team Team { get; set; }
     }
 }

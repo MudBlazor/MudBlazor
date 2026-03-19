@@ -8,12 +8,16 @@ using Microsoft.JSInterop;
 namespace MudBlazor.Services
 {
     /// <summary>
-    /// Subscribes to JavaScript events of any HTML element by its ID.
+    /// Bridges DOM events from a specific element id into .NET callbacks.
     /// </summary>
+    /// <remarks>
+    /// This service is used by components that need lightweight event subscriptions like paste,
+    /// selection, or caret movement without building their own JS interop layer.
+    /// </remarks>
     internal sealed class JsEvent : IJsEvent
     {
         private bool _disposed;
-        private string _elementId;
+        private string? _elementId;
         private bool _isObserving;
         private readonly IJSRuntime _jsRuntime;
         private readonly DotNetObjectReference<JsEvent> _dotNetRef;

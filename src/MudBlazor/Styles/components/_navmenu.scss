@@ -157,7 +157,7 @@
     }
   }
 
-  &:focus:not(.mud-nav-link-disabled) {
+  &:focus-visible:not(.mud-nav-link-disabled) {
     background-color: var(--mud-palette-action-default-hover);
   }
 

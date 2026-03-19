@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Defines filter definition features for a column.

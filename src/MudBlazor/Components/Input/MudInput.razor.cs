@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -15,7 +14,9 @@ namespace MudBlazor
     {
         private string? _internalText;
         private string? _oldText = null;
-        private bool _shouldInitAutoGrow;
+        private bool _shouldInitSizing;
+        private bool _shouldUpdateSizingParams;
+        private bool _shouldAdjustSizingAfterRender;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -29,11 +30,11 @@ namespace MudBlazor
             new CssBuilder(
                     MudInputCssHelper.GetClassname(this,
                         () => HasNativeHtmlPlaceholder() ||
-                              !string.IsNullOrEmpty(Text) ||
+                              !string.IsNullOrEmpty(ReadText) ||
                               Adornment == Adornment.Start ||
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
-                .AddClass("mud-input-auto-grow", () => AutoGrow)
+                .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
                 .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
@@ -49,9 +50,9 @@ namespace MudBlazor
                 .AddClass("mud-no-activator")
                 .Build();
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
 
         [Parameter] public string? InputStyle { get; set; }
 
@@ -157,16 +158,16 @@ namespace MudBlazor
         public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
         /// <summary>
-        /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
+        /// Defines the resizing behavior of this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <see cref="InputSizing.Fixed"/>.
         /// </remarks>
         [Parameter]
-        public bool AutoGrow { get; set; }
+        public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="AutoGrow"/> is <c>true</c>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
@@ -174,22 +175,26 @@ namespace MudBlazor
         [Parameter]
         public int MaxLines { get; set; }
 
-        protected Task OnInput(ChangeEventArgs? args)
+        /// <summary>
+        /// Indicates whether the input should use a textarea element for dynamic sizing.
+        /// </summary>
+        private bool ShouldUseTextArea => Sizing != InputSizing.Fixed || Lines > 1;
+
+        private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
+
+        protected async Task OnInput(string? args)
         {
-            if (!Immediate)
-                return Task.CompletedTask;
             _isFocused = true;
-            return SetTextAsync(args?.Value as string);
+            _internalText = args;
+            await OnInternalInputChanged.InvokeAsync(args);
+            await SetTextAndUpdateValueAsync(args);
         }
 
-        protected async Task OnChange(ChangeEventArgs? args)
+        protected async Task OnChange(string? args)
         {
-            _internalText = args?.Value as string;
+            _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
-            if (!Immediate)
-            {
-                await SetTextAsync(args?.Value as string);
-            }
+            await SetTextAndUpdateValueAsync(args);
         }
 
         /// <summary>
@@ -258,67 +263,89 @@ namespace MudBlazor
                 return false;
             }
 
-            if (Value is string stringValue)
+            if (ReadValue is string stringValue)
             {
                 return !string.IsNullOrWhiteSpace(stringValue);
             }
 
-            return Value is not string and not null;
+            return ReadValue is not string and not null;
         }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        private readonly record struct AutoSizingVisualState(
+            Variant Variant,
+            Margin Margin,
+            Typo Typo,
+            Adornment Adornment,
+            string? Class,
+            string? Style,
+            bool Disabled);
+
+        private AutoSizingVisualState CaptureAutoSizingVisualState()
+            => new(Variant, Margin, Typo, Adornment, Class, Style, GetDisabledState());
+
+        private void ResetAutoSizingFlags()
+        {
+            _shouldInitSizing = false;
+            _shouldUpdateSizingParams = false;
+            _shouldAdjustSizingAfterRender = false;
+        }
+
+        private void SyncAutoSizingTextSnapshot()
+        {
+            _oldText = _internalText;
         }
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+            // Visual/style-affecting changes.
+            var oldVisualState = CaptureAutoSizingVisualState();
+
+            // Handled separately because they drive different lifecycle actions.
             var oldLines = Lines;
             var oldMaxLines = MaxLines;
-            var oldAutoGrow = AutoGrow;
+            var oldSizing = Sizing;
 
             await base.SetParametersAsync(parameters);
 
-            //if (!_isFocused || _forceTextUpdate)
-            //    _internalText = Text;
-            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+            var newSizing = Sizing;
+            var hasAutoSizingVisualChange = oldVisualState != CaptureAutoSizingVisualState();
+            var hasAutoSizingParameterChange = oldLines != Lines || oldMaxLines != MaxLines || oldSizing != newSizing;
+
+            // Always update internal text (TextUpdateSuppression removed)
+            _internalText = ReadText;
+
+            if (oldSizing == InputSizing.Fixed && newSizing != InputSizing.Fixed)
             {
-                // Text update suppression, only in BSS (not in WASM).
-                // This is a fix for #1012
-                if (!_isFocused || _forceTextUpdate)
-                    _internalText = Text;
-            }
-            else
-            {
-                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
-                _internalText = Text;
+                _shouldInitSizing = true;
             }
 
-            // Flag AutoGrow to be initialized on the next render.
-            if (!oldAutoGrow && AutoGrow)
+            if (newSizing != InputSizing.Fixed && !_shouldInitSizing && hasAutoSizingVisualChange)
             {
-                _shouldInitAutoGrow = true;
+                // Re-measure after style/class-related updates because runtime classes and computed styles can affect textarea metrics.
+                _shouldAdjustSizingAfterRender = true;
             }
 
-            if (IsJSRuntimeAvailable)
+            if (oldSizing != InputSizing.Fixed && newSizing == InputSizing.Fixed)
             {
-                if (oldAutoGrow && !AutoGrow)
+                // Disable dynamic sizing.
+                ResetAutoSizingFlags();
+                if (IsJSRuntimeAvailable)
                 {
-                    // Disable AutoGrow.
-                    _shouldInitAutoGrow = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
-                else if (oldLines != Lines || oldMaxLines != MaxLines)
-                {
-                    if (AutoGrow && !_shouldInitAutoGrow)
-                    {
-                        // Update AutoGrow parameters (if it was already enabled).
-                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
-                    }
-                }
+            }
+            else if (newSizing != InputSizing.Fixed && !_shouldInitSizing && hasAutoSizingParameterChange)
+            {
+                // Defer until OnAfterRender so measurements use the latest DOM/classes.
+                _shouldUpdateSizingParams = true;
             }
         }
 
@@ -327,18 +354,26 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (AutoGrow)
+            if (Sizing != InputSizing.Fixed)
             {
-                if (firstRender || _shouldInitAutoGrow)
+                if (firstRender || _shouldInitSizing)
                 {
-                    _shouldInitAutoGrow = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
-                    _oldText = _internalText;
+                    ResetAutoSizingFlags();
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.init", ElementReference, MaxLines);
+                    SyncAutoSizingTextSnapshot();
                 }
-                else if (_oldText != _internalText)
+                else if (_shouldUpdateSizingParams)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
-                    _oldText = _internalText;
+                    _shouldUpdateSizingParams = false;
+                    _shouldAdjustSizingAfterRender = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines);
+                    SyncAutoSizingTextSnapshot();
+                }
+                else if (_shouldAdjustSizingAfterRender || _oldText != _internalText)
+                {
+                    _shouldAdjustSizingAfterRender = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.adjustHeight", ElementReference);
+                    SyncAutoSizingTextSnapshot();
                 }
             }
             if (firstRender)
@@ -357,8 +392,13 @@ namespace MudBlazor
         /// <param name="text">The new value.</param>
         public Task SetText(string? text)
         {
+            return SetText(text, updateValue: true);
+        }
+
+        internal Task SetText(string? text, bool updateValue)
+        {
             _internalText = text;
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text, updateValue);
         }
 
         // Certain HTML5 inputs (dates and color) have a native placeholder
@@ -379,9 +419,9 @@ namespace MudBlazor
             if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference);
-                if (AutoGrow)
+                if (Sizing != InputSizing.Fixed)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
             }
 

@@ -10,6 +10,24 @@ namespace MudBlazor.Docs.Compiler
             var success = true;
             try
             {
+                // Early exit: if Snippets.generated.cs exists and is newer than all example files, skip generation
+                if (File.Exists(Paths.SnippetsFilePath))
+                {
+                    var snippetsLastWrite = File.GetLastWriteTimeUtc(Paths.SnippetsFilePath);
+                    var exampleFiles = Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
+                        .Where(f => Path.GetFileNameWithoutExtension(f).Contains(Paths.ExampleDiscriminator));
+                    var newestExampleTime = exampleFiles
+                        .Select(f => File.GetLastWriteTimeUtc(f))
+                        .DefaultIfEmpty(DateTime.MinValue)
+                        .Max();
+
+                    if (snippetsLastWrite > newestExampleTime)
+                    {
+                        Console.WriteLine("CodeSnippets: Snippets.generated.cs is up-to-date, skipping generation.");
+                        return true;
+                    }
+                }
+
                 var currentCode = string.Empty;
                 if (File.Exists(Paths.SnippetsFilePath))
                 {
@@ -44,6 +62,13 @@ namespace MudBlazor.Docs.Compiler
                 if (currentCode != cb.ToString())
                 {
                     File.WriteAllText(Paths.SnippetsFilePath, cb.ToString());
+                    Console.WriteLine("CodeSnippets: Updated Snippets.generated.cs");
+                }
+                else
+                {
+                    // Touch the file to update its timestamp so future checks skip regeneration
+                    File.SetLastWriteTimeUtc(Paths.SnippetsFilePath, DateTime.UtcNow);
+                    Console.WriteLine("CodeSnippets: Snippets.generated.cs content unchanged, touched timestamp.");
                 }
             }
             catch (Exception e)

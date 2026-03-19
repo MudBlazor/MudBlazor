@@ -1,5 +1,5 @@
 ﻿<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
-    <MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true" ExpandSingleRow="@ExpandSingleRow">
+    <MudDataGrid @ref="_dataGrid" Items="@_filteredItems" Filterable="true" ExpandSingleRow="@ExpandSingleRow">
         <Columns>
             <HierarchyColumn EnableHeaderToggle="@EnableHeaderToggle" ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders")" />
             <PropertyColumn Property="x => x.Name" />
@@ -27,6 +27,11 @@
 
     [Parameter]
     public bool ExpandSingleRow { get; set; }
+
+    [Parameter]
+    public bool LimitRowsToOne { get; set; }
+
+    private IEnumerable<Model> _filteredItems => _items.Take(LimitRowsToOne ? 1 : _items.Count());
 
     private MudDataGrid<Model> _dataGrid = null!;
     private readonly IEnumerable<Model> _items = new List<Model>

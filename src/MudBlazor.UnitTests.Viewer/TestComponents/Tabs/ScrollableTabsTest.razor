@@ -1,11 +1,20 @@
-﻿<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
-@foreach (var tab in _tabs)
-{
-    <MudTabPanel @key="tab" Text="@tab">
-        <MudText>@tab</MudText>
-    </MudTabPanel>
-}
+﻿<MudTabs Elevation="1" @ref="_tabElement" MaxHeight="@_maxHeight" AlwaysShowScrollButtons="AlwaysShowScrollButtons" Position="Position">
+    @foreach (var tab in _tabs)
+    {
+        <MudTabPanel @key="tab" Text="@tab">
+            <MudText>@tab</MudText>
+        </MudTabPanel>
+    }
 </MudTabs>
+
+<MudSwitch T="bool" Label="Vertical" Value="@IsVertical" ValueChanged="@ChangePositionAsync" />
+<MudNumericField T="int" Label="Max Height" @bind-Value="_maxHeight" @bind-Value:after="StateHasChanged" Min="100" Max="800" Step="100" />
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => AddPanelAsync())">
+    Add Tab
+</MudButton>&nbsp;
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => RemovePanelAsync(_tabs.Count - 1))">
+    Remove Tab
+</MudButton>
 
 @code
 {
@@ -13,25 +22,36 @@
 
     private MudTabs _tabElement = null!;
     private readonly List<string> _tabs = ["1", "2", "3", "4", "5", "6"];
+    private bool IsVertical => Position is not (Position.Top or Position.Bottom);
+    private int _maxHeight = 600;
 
-    [Parameter]
-    public Position Position { get; set; } = Position.Top;
+    private Position Position { get; set; } = Position.Top;
 
     [Parameter]
     public bool AlwaysShowScrollButtons { get; set; } = true;
 
-    public void SetPanelActive(int index)
+    public Task ChangePositionAsync(bool isVertical)
     {
-        InvokeAsync(() => _tabElement.ActivatePanel(index));
+        var pos = isVertical ? Position.Left : Position.Top;
+        if (pos != Position)
+        {
+            Position = pos;
+        }
+        return InvokeAsync(StateHasChanged);
     }
 
-    public Task AddPanel()
+    public Task SetPanelActiveAsync(int index)
+    {
+        return InvokeAsync(() => _tabElement.ActivatePanelAsync(index));
+    }
+
+    public Task AddPanelAsync()
     {
         _tabs.Add("new item");
         return InvokeAsync(StateHasChanged);
     }
 
-    public Task RemovePanel(int index)
+    public Task RemovePanelAsync(int index)
     {
         _tabs.RemoveAt(index);
         return InvokeAsync(StateHasChanged);

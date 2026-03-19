@@ -7,10 +7,10 @@ using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a collection of multiple <see cref="ParameterScopeContainer"/> instances combined into a union.
 /// </summary>
@@ -21,6 +21,12 @@ internal class ParameterContainer : IParameterContainer
 {
     private readonly Lazy<bool> _lazyVerify;
     private readonly List<IParameterScopeContainer> _parameterScopeContainers = new();
+
+    // Flattened dictionary for O(1) parameter lookups (created lazily on first TryGetValue call)
+    private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _flattenedParameters;
+
+    // Cache handler count for fast path optimization
+    private int _handlerCount = -1;  // -1 means not computed yet
 
     /// <summary>
     /// Gets or sets a value indicating whether the container should automatically verify for duplicates.
@@ -44,6 +50,7 @@ internal class ParameterContainer : IParameterContainer
     public ParameterContainer()
     {
         _lazyVerify = new Lazy<bool>(VerifyInternal);
+        _flattenedParameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(CreateFlattenedDictionary);
     }
 
     /// <summary>
@@ -77,26 +84,55 @@ internal class ParameterContainer : IParameterContainer
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's  <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
         if (Count == 0)
         {
-            await baseSetParametersAsync(parameters);
-            return;
+            return baseSetParametersAsync(parameters);
         }
 
         VerifyOnAuto();
 
-        var parametersHandlerShouldFire = _parameterScopeContainers.SelectMany(parameter => parameter)
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
-
-        await baseSetParametersAsync(parameters);
-
-        foreach (var parameterHandlerShouldFire in parametersHandlerShouldFire)
+        // Fast path: if no parameters have change handlers, skip handler detection entirely
+        if (GetHandlerCount() == 0)
         {
-            await parameterHandlerShouldFire.ParameterChangeHandleAsync();
+            return baseSetParametersAsync(parameters);
+
         }
+
+        // IMPORTANT: Do not inline the async implementation here.
+        // Avoid async state machine allocation on the common path by returning the Task directly.
+        // The async state machine is only used when parameter change handlers must be invoked.
+        return SetParametersWithHandlersAsync(baseSetParametersAsync, parameters);
+    }
+
+    private async Task SetParametersWithHandlersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    {
+        var handlerCollection = CollectChangedHandlers(parameters);
+
+        await baseSetParametersAsync(parameters).ConfigureAwait(false);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection).ConfigureAwait(false);
+    }
+
+    private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
+    {
+        List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
+        List<ParameterStateValue>? parameterStateValues = null;
+
+        foreach (var scopeContainer in _parameterScopeContainers)
+        {
+            foreach (var parameter in scopeContainer)
+            {
+                if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
+                {
+                    parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
+                    parameterStateValues ??= new List<ParameterStateValue>();
+                    ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot(), parameterStateValues);
+                }
+            }
+        }
+
+        return ParameterChangeHandlerUtility.CreateHandlerCollection(parametersHandlerShouldFire, parameterStateValues, parameters);
     }
 
     /// <inheritdoc/>
@@ -104,17 +140,8 @@ internal class ParameterContainer : IParameterContainer
     {
         VerifyOnAuto();
 
-        foreach (var parameterSet in _parameterScopeContainers)
-        {
-            if (parameterSet.TryGetValue(parameterName, out parameterComponentLifeCycle))
-            {
-                return true;
-            }
-        }
-
-        parameterComponentLifeCycle = null;
-
-        return false;
+        // Optimized: Use flattened dictionary for O(1) lookup instead of O(scopes) iteration
+        return _flattenedParameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
     /// <summary>
@@ -157,8 +184,56 @@ internal class ParameterContainer : IParameterContainer
         }
     }
 
+    /// <summary>
+    /// Creates a flattened dictionary from all parameter scope containers for O(1) lookups.
+    /// This is called lazily on first TryGetValue call.
+    /// </summary>
+    private FrozenDictionary<string, IParameterComponentLifeCycle> CreateFlattenedDictionary()
+    {
+        return _parameterScopeContainers
+            .SelectMany(scope => scope)
+            .ToFrozenDictionary(
+                parameter => parameter.Metadata.ParameterName,
+                parameter => parameter,
+                StringComparer.Ordinal);  // Parameter names are case-sensitive
+    }
+
+    /// <summary>
+    /// Gets the total count of parameters with change handlers.
+    /// This is computed once and cached for the fast path optimization.
+    /// </summary>
+    private int GetHandlerCount()
+    {
+        if (_handlerCount == -1)
+        {
+            _handlerCount = 0;
+            foreach (var scopeContainer in _parameterScopeContainers)
+            {
+                foreach (var parameter in scopeContainer)
+                {
+                    if (parameter.HasHandler)
+                    {
+                        _handlerCount++;
+                    }
+                }
+            }
+        }
+
+        return _handlerCount;
+    }
+
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator()
+    {
+        // If flattened dictionary is already created, use it for better performance
+        if (_flattenedParameters.IsValueCreated)
+        {
+            return ((IEnumerable<IParameterComponentLifeCycle>)_flattenedParameters.Value.Values).GetEnumerator();
+        }
+
+        // Otherwise, iterate through scope containers (avoid forcing dictionary creation)
+        return _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
+    }
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

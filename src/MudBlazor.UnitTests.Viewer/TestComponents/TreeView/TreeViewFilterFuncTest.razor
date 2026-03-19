@@ -10,7 +10,7 @@
     public string? SearchPhrase { get; set; }
 
     [Parameter]
-    public Func<TreeItemData<string>, Task<bool>>? FilterFunc { get; set; }
+    public Func<ITreeItemData<string>, Task<bool>>? FilterFunc { get; set; }
 
     [Parameter]
     public bool AreItemsPopulated { get; set; } = true;

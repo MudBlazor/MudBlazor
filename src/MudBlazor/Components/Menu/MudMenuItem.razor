@@ -4,13 +4,15 @@
 <MudElement HtmlTag="@GetHtmlTag()"
             Class="@Classname"
             Style="@Style"
-            tabindex="0"
             href="@Href"
             target="@Target"
             PreventDefault="GetDisabled()"
             ClickPropagation="false"
             @attributes="UserAttributes"
-            @onclick="OnClickHandlerAsync">
+            @onclick="OnClickHandlerAsync"
+            @bind-Ref="ElementReference"
+            tabindex="@(!GetDisabled() ? "0" : "-1")"
+            aria-disabled="@(GetDisabled() ? "true" : "false")">
 
     @if (!string.IsNullOrWhiteSpace(Icon))
     {
@@ -32,10 +34,10 @@
         }
     </MudText>
 
-    @if (ActivatesSubMenu)
+    @if (ActivatesSubMenu && !HideSubMenuArrow)
     {
         <MudIcon Class="mud-menu-submenu-icon"
-                 Icon="@Icons.Material.Filled.ArrowRight"
+                 Icon="@(RightToLeft ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowRight)"
                  Disabled="GetDisabled()" />
     }
 </MudElement>

@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the sorting mode for a <see cref="MudDataGrid{T}"/>.
 /// </summary>
+[EnumExtensions]
 public enum SortMode
 {
     /// <summary>

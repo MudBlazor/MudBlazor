@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 

@@ -2,97 +2,27 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Docs.Shared;
 
 #nullable enable
-public partial class Appbar
+public partial class Appbar : IDisposable
 {
+    private DocsBasePage _activePage;
     private bool _searchDialogOpen;
     private bool _searchDialogAutocompleteOpen;
     private int _searchDialogReturnedItemsCount;
-    private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
-    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
-    private DropdownSettings _dropdownBehavior = new() { Fixed = true, OverflowBehavior = OverflowBehavior.FlipOnOpen };
-    private readonly List<ApiLinkServiceEntry> _apiLinkServiceEntries =
-    [
-        new ApiLinkServiceEntry
-        {
-            Title = "Installation",
-            Link = "getting-started/installation",
-            SubTitle = "Get started with MudBlazor fast and easy."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Wireframes",
-            Link = "getting-started/wireframes",
-            SubTitle = "These small templates can be copied directly or just be used for inspiration."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Table",
-            Link = "components/table",
-            ComponentType = typeof(MudTable<T>),
-            SubTitle = "A sortable, filterable table with multiselection and pagination."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Grid",
-            Link = "components/grid",
-            ComponentType = typeof(MudGrid),
-            SubTitle = "The grid component helps keeping layout consistent across various screen resolutions and sizes."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Button",
-            Link = "components/button",
-            ComponentType = typeof(MudGrid),
-            SubTitle = "A Material Design button for triggering an action or navigating to a link."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Card",
-            Link = "components/card",
-            ComponentType = typeof(MudCard),
-            SubTitle = "Cards can contain actions, text, or media like images or graphics."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Dialog",
-            Link = "components/dialog",
-            ComponentType = typeof(MudDialog),
-            SubTitle = "A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "App Bar",
-            Link = "components/appbar",
-            ComponentType = typeof(MudAppBar),
-            SubTitle = "App bar is used to display actions, branding, navigation and screen titles."
-        },
-
-        new ApiLinkServiceEntry
-        {
-            Title = "Navigation Menu",
-            Link = "components/navmenu",
-            ComponentType = typeof(MudNavMenu),
-            SubTitle = "Nav menu provides a tree-like menu linking to the content on your site."
-        }
-    ];
+    private MudAutocomplete<ApiLinkServiceEntry>? _searchBarAutocomplete;
+    private MudAutocomplete<ApiLinkServiceEntry>? _searchDialogAutocomplete;
+    private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true, CloseOnEscapeKey = true };
+    private static readonly JsKeyModifier[] CtrlLeftKeyModifiers = [JsKeyModifier.ControlLeft];
+    private static readonly JsKeyModifier[] CtrlRightKeyModifiers = [JsKeyModifier.ControlRight];
 
     public bool IsSearchDialogOpen
     {
@@ -120,7 +50,14 @@ public partial class Appbar
     [Parameter]
     public bool DisplaySearchBar { get; set; } = true;
 
-    private async void OnSearchResult(ApiLinkServiceEntry? entry)
+    protected override void OnInitialized()
+    {
+        UpdateActivePage(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+        base.OnInitialized();
+    }
+
+    private async Task OnSearchResult(ApiLinkServiceEntry? entry)
     {
         if (entry is null)
         {
@@ -129,12 +66,40 @@ public partial class Appbar
 
         NavigationManager.NavigateTo(entry.Link);
         await Task.Delay(1000);
-        await _searchAutocomplete.ClearAsync();
+        if (_searchBarAutocomplete is not null)
+        {
+            await _searchBarAutocomplete.ClearAsync();
+        }
+
+        if (_searchDialogAutocomplete is not null)
+        {
+            await _searchDialogAutocomplete.ClearAsync();
+        }
     }
 
     private string GetActiveClass(DocsBasePage page)
     {
-        return page == LayoutService.GetDocsBasePage(NavigationManager.Uri) ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
+        return page == _activePage ? "mud-chip-text mud-chip-color-primary mx-1 px-3" : "mx-1 px-3";
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        if (UpdateActivePage(args.Location))
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private bool UpdateActivePage(string location)
+    {
+        var activePage = LayoutService.GetDocsBasePage(location);
+        if (_activePage == activePage)
+        {
+            return false;
+        }
+
+        _activePage = activePage;
+        return true;
     }
 
     private Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken token)
@@ -142,11 +107,27 @@ public partial class Appbar
         if (string.IsNullOrWhiteSpace(text))
         {
             // The user just opened the popover so show the most popular pages according to our analytics data as search results.
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_apiLinkServiceEntries);
+            return Task.FromResult(ApiLinkService.GetFeaturedEntries());
         }
 
         return ApiLinkService.Search(text);
     }
 
     private void OpenSearchDialog() => IsSearchDialogOpen = true;
+
+    private async Task HandleSearchHotkeyAsync()
+    {
+        if (DisplaySearchBar && _searchBarAutocomplete is not null)
+        {
+            await _searchBarAutocomplete.FocusAsync();
+            return;
+        }
+
+        OpenSearchDialog();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
 }

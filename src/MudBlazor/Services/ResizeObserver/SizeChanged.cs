@@ -7,7 +7,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services;
 
-#nullable enable
 /// <summary>
 /// Delegate for handling size change events.
 /// </summary>

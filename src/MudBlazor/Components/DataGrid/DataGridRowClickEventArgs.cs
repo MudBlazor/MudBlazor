@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Represents the information related to a <see cref="MudDataGrid{T}.RowClick"/> event.

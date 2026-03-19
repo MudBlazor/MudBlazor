@@ -45,7 +45,7 @@
         }
         else
         {
-            result = await DialogService.ShowMessageBox(
+            result = await DialogService.ShowMessageBoxAsync(
                         "Warning",
                         (MarkupString)"Deleting can <b><i>not</i></b> be undone!",
                         yesText: "Delete!", cancelText: "Cancel", options: options);

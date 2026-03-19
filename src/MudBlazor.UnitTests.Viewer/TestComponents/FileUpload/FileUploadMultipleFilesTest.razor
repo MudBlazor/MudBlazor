@@ -7,6 +7,8 @@
 </MudFileUpload>
 
 @code {
+    public static string __description__ = "Tests binding multiple uploaded files with max file count and optional size limit.";
+
     public IReadOnlyList<IBrowserFile>? Files { get; private set; }
 
     [Parameter]

@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation @attributes="preventPressEnterAttributes">
+    <div id="@_componentId" class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation @attributes="_preventPressEnterAttributes">
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -15,7 +15,7 @@
                          Style="@Style"
                          Error="@HasErrors"
                          ErrorText="@GetErrorText()"
-                         ErrorId="@ErrorId"
+                         ErrorId="@ErrorIdState.Value"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
                          @onmousedown="@OnInputClickedAsync"
@@ -27,12 +27,11 @@
                           Variant="@Variant"
                           Typo="@Typo"
                           Label="@Label"
-                          TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" Underline="@Underline"
+                          Value="@ReadText" Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="@GetReadOnlyState()"
-                          Error="@Error"
-                          ErrorId="@ErrorId"
+                          Error="@ErrorState.Value"
+                          ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
                           AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
@@ -75,8 +74,7 @@
                             RelativeWidth="@RelativeWidth"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Fixed="@DropdownSettings.Fixed"
-                            OverflowBehavior="@DropdownSettings.OverflowBehavior">
+                            Fixed="@PopoverFixed">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
@@ -86,7 +84,7 @@
                         <MudList T="T" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate is not null)
                             {
-                                <div class="mud-autocomplete-before-items pa-1">
+                                <div class="mud-autocomplete-before-items">
                                     @BeforeItemsTemplate
                                 </div>
                             }
@@ -119,13 +117,13 @@
                             }
                             @if (MoreItemsTemplate is not null && _returnedItemsCount > MaxItems)
                             {
-                                <div class="mud-autocomplete-more-items pa-1">
+                                <div class="mud-autocomplete-more-items">
                                     @MoreItemsTemplate
                                 </div>
                             }
                             @if (AfterItemsTemplate is not null)
                             {
-                                <div class="mud-autocomplete-after-items pa-1">
+                                <div class="mud-autocomplete-after-items">
                                     @AfterItemsTemplate
                                 </div>
                             }
@@ -133,7 +131,7 @@
                     }
                     else if (NoItemsTemplate is not null)
                     {
-                        <div class="mud-autocomplete-no-items pa-1">
+                        <div class="mud-autocomplete-no-items">
                             @NoItemsTemplate
                         </div>
                     }
@@ -145,6 +143,7 @@
 
 <MudOverlay AutoClose
             Visible="Open"
+            data-modeless-ignore-element-id="@_componentId"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
-            Modal="@Modal" />
+            Modal="@GetModal()" />

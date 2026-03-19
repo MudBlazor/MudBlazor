@@ -2,6 +2,7 @@
     <MudDatePicker Label="Date" Required @bind-Date="@_date" Editable></MudDatePicker>
     <MudTextField Label="Name" T="string" Required Immediate @bind-Value="@_name" />
     <MudNumericField Label="Age" T="int?" Required Immediate @bind-Value="@_age"></MudNumericField>
+	<MudDateRangePicker Label="Date Range" @bind-DateRange="@_dateRange" />
 </MudForm>
 <br><br>
 <span>Date: @_date</span>
@@ -16,6 +17,7 @@
     private int? _age;
     private string? _name;
     private DateTime? _date;
+	private DateRange? _dateRange;
     private MudForm _form = null!;
 
     private async Task ResetFormAsync()

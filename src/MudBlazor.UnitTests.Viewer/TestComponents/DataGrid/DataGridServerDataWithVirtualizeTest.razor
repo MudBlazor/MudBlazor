@@ -13,7 +13,7 @@
         .Select(i => new Item($"Value_{i}"))
         .ToList();
 
-    private Task<GridData<Item>> ServerData(GridState<Item> arg)
+    private Task<GridData<Item>> ServerData(GridState<Item> arg, CancellationToken token)
     {
         return Task.FromResult(new GridData<Item>
         {

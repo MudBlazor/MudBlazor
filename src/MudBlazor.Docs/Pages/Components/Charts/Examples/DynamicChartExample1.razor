@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container mx-8">
+    <MudToolBar>
+        <MudMenu Modal="false" Variant="Variant.Outlined" EndIcon="@_menuIcons[_chartType]" IconColor="Color.Primary" Label="Chart Type">
+            <MudMenuItem Icon="@_menuIcons[ChartType.Bar]" Label="Bar" OnClick="() => _chartType = ChartType.Bar" Disabled="@(_chartType == ChartType.Bar)"/>
+            <MudMenuItem Icon="@_menuIcons[ChartType.StackedBar]" Label="Stacked Bar" OnClick="() => _chartType = ChartType.StackedBar" Disabled="@(_chartType == ChartType.StackedBar)" />
+            <MudMenuItem Icon="@_menuIcons[ChartType.Line]" Label="Line" OnClick="() => _chartType = ChartType.Line" Disabled="@(_chartType == ChartType.Line)" />
+            <MudMenuItem Icon="@_menuIcons[ChartType.Pie]" Label="Pie" OnClick="() => _chartType = ChartType.Pie" Disabled="@(_chartType == ChartType.Pie)" />
+            <MudMenuItem Icon="@_menuIcons[ChartType.Donut]" Label="Donut" OnClick="() => _chartType = ChartType.Donut" Disabled="@(_chartType == ChartType.Donut)" />
+            <MudMenuItem Icon="@_menuIcons[ChartType.Rose]" Label="Rose" OnClick="() => _chartType = ChartType.Rose" Disabled="@(_chartType == ChartType.Rose)"/>
+            <MudMenuItem Icon="@_menuIcons[ChartType.Radar]" Label="Radar" OnClick="() => _chartType = ChartType.Radar" Disabled="@(_chartType == ChartType.Radar)"  />
+        </MudMenu>
+    </MudToolBar>
+
+    <MudChart ChartType="_chartType"
+              ChartSeries="_dataSet"
+              ChartLabels="@_labels"
+              Width="100%" Height="400px" CanHideSeries MatchBoundsToSize />
+</MudPaper>
+
+@code {
+    private Dictionary<ChartType, string> _menuIcons = new()
+    {
+        { ChartType.Bar, Icons.Material.Filled.BarChart },
+        { ChartType.StackedBar, Icons.Material.Filled.StackedBarChart },
+        { ChartType.Line, Icons.Material.Filled.ShowChart },
+        { ChartType.Pie, Icons.Material.Filled.PieChart },
+        { ChartType.Donut, Icons.Material.Filled.DonutLarge },
+        { ChartType.Rose, Icons.Material.Filled.DonutSmall },
+        { ChartType.Radar, Icons.Material.Filled.Hub },
+    };
+
+    private ChartType _chartType = ChartType.Bar;
+    private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    private List<ChartSeries<double>> _dataSet =>
+    [
+            new() { Name = "United Kingdom", Data = new([60, 54, 23, 42, 67, 31]) },
+            new() { Name = "United States",  Data = new([40, 12, 32, 58, 43, 65]) },
+            new() { Name = "Greenland",      Data = new([47, 30, 43, 25, 59, 63]) },
+            new() { Name = "Norway",         Data = new([14, 27, 65, 43, 21, 58]) },
+    ];
+}

@@ -89,7 +89,11 @@ function GenerateUtilities
                 }
             }
 
-            foreach($class in $classDictonary.GetEnumerator() | Where-Object {!$_.Name.StartsWith("mud-") } | Sort-Object -Property Name){
+            $sortedClasses = $classDictonary.GetEnumerator() |
+                Where-Object { -not $_.Name.StartsWith('mud-') } |
+                Sort-Object { $_.Name -replace '\d+', { '{0:D5}' -f [int]$args[0].Value } }
+            
+            foreach($class in $sortedClasses){
                 $razorOutput += "<tr><td>$($class.Name)</td><td>"
                 $propCount = 1
                 foreach ($property in $class.Value){

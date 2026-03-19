@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// An extensively customizable tree view component for displaying hierarchical data, featuring item selection, lazy-loading, and templating support.
     /// </summary>
@@ -50,7 +50,10 @@ namespace MudBlazor
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
         private HashSet<T> _selection;
-        private HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        // ServerData load state belongs to the backing node object, not the rendered component instance.
+        // When the parent replaces Items with new node objects, the old entries can disappear with them.
+        private readonly ConditionalWeakTable<ITreeItemData<T>, ServerDataState> _serverDataStates = new();
         private bool _isFirstRender = true;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
@@ -59,8 +62,8 @@ namespace MudBlazor
             new CssBuilder("mud-treeview")
                 .AddClass("mud-treeview-dense", Dense)
                 .AddClass("mud-treeview-hover", !Disabled && Hover && (!ReadOnly || ExpandOnClick))
-                .AddClass($"mud-treeview-selected-{Color.ToDescriptionString()}")
-                .AddClass($"mud-treeview-checked-{CheckBoxColor.ToDescriptionString()}")
+                .AddClass($"mud-treeview-selected-{Color.ToStringFast(true)}")
+                .AddClass($"mud-treeview-checked-{CheckBoxColor.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
@@ -225,7 +228,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public Func<TreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
+        public Func<ITreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
 
         /// <summary>
         /// Shows a ripple effect when an item is clicked.
@@ -242,7 +245,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public IReadOnlyCollection<TreeItemData<T>>? Items { get; set; } = Array.Empty<TreeItemData<T>>();
+        public IReadOnlyCollection<ITreeItemData<T>>? Items { get; set; } = Array.Empty<ITreeItemData<T>>();
 
         /// <summary>
         /// The currently selected value.
@@ -250,7 +253,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
 
@@ -266,7 +269,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
@@ -291,7 +294,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public RenderFragment<TreeItemData<T>>? ItemTemplate { get; set; }
+        public RenderFragment<ITreeItemData<T>>? ItemTemplate { get; set; }
 
         /// <summary>
         /// The comparer used to check if two items are equal.
@@ -309,7 +312,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
-        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T?>>>>? ServerData { get; set; }
+        public Func<T?, Task<IReadOnlyCollection<TreeItemData<T>>>>? ServerData { get; set; }
 
         /// <summary>
         /// Prevents selections from being changed.
@@ -389,7 +392,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="items">The hierarchical tree structure to traverse</param>
         /// <returns>A task to represent the asynchronous operation.</returns>
-        private async Task TraverseFilterAsync(IEnumerable<TreeItemData<T>> items)
+        private async Task TraverseFilterAsync(IEnumerable<ITreeItemData<T>> items)
         {
             foreach (var item in items)
             {
@@ -412,7 +415,7 @@ namespace MudBlazor
         /// Resets the filter, so that all <see cref="MudTreeViewItem{T}.Visible"/> are set to true and the entire tree is visible.
         /// </summary>
         /// <param name="items">The items to reset</param>
-        private static void ResetFilter(IEnumerable<TreeItemData<T>> items)
+        private static void ResetFilter(IEnumerable<ITreeItemData<T>> items)
         {
             foreach (var item in items)
             {
@@ -431,7 +434,9 @@ namespace MudBlazor
         public async Task ExpandAllAsync()
         {
             foreach (var item in _childItems)
+            {
                 await item.ExpandAllAsync();
+            }
         }
 
         /// <summary>
@@ -440,7 +445,9 @@ namespace MudBlazor
         public async Task CollapseAllAsync()
         {
             foreach (var item in _childItems)
+            {
                 await item.CollapseAllAsync();
+            }
         }
 
         /// <summary>
@@ -544,9 +551,13 @@ namespace MudBlazor
                 {
                     var parentSelected = parentItem.ChildItems.Select(x => x.GetValue()).Where(x => x is not null).All(x => _selection.Contains(x!));
                     if (parentSelected)
+                    {
                         _selection.Add(parentValue);
+                    }
                     else
+                    {
                         _selection.Remove(parentValue);
+                    }
                 }
                 parentItem = parentItem.Parent;
             }
@@ -609,7 +620,7 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValueAsync(T? value)
         {
-            var isValid = value != null && GetChildValuesRecursive().Contains(value);
+            var isValid = value != null && GetSelectableValues().Contains(value);
             // note: if there is no item that corresponds to the value, the value is reset to default!
             await _selectedValueState.SetValueAsync(isValid ? value : default);
             await UpdateItemsAsync();
@@ -621,7 +632,7 @@ namespace MudBlazor
         ///  </summary>
         private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
         {
-            var allChildValues = GetChildValuesRecursive();
+            var allChildValues = GetSelectableValues();
             var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
             if (_selection.SetEquals(newSelection))
             {
@@ -663,6 +674,37 @@ namespace MudBlazor
             return selection;
         }
 
+        private HashSet<T> GetSelectableValues()
+        {
+            if (ItemTemplate is not null && Items is not null)
+            {
+                return GetItemValuesRecursive(Items);
+            }
+
+            return GetChildValuesRecursive();
+        }
+
+        // TODO: speed this up with caching
+        private HashSet<T> GetItemValuesRecursive(IEnumerable<ITreeItemData<T>> items, HashSet<T>? values = null)
+        {
+            values ??= new HashSet<T>(Comparer);
+
+            foreach (var item in items)
+            {
+                if (item.Value is not null)
+                {
+                    values.Add(item.Value);
+                }
+
+                if (item.Children is not null && item.Children.Count > 0)
+                {
+                    GetItemValuesRecursive(item.Children, values);
+                }
+            }
+
+            return values;
+        }
+
         // TODO: speed this up with caching
         private HashSet<T> GetChildValuesRecursive(IEnumerable<MudTreeViewItem<T>>? children = null, HashSet<T>? values = null)
         {
@@ -676,6 +718,7 @@ namespace MudBlazor
                 {
                     values.Add(value);
                 }
+
                 if (item.ChildItems.Count > 0)
                 {
                     GetChildValuesRecursive(item.ChildItems, values);
@@ -685,5 +728,14 @@ namespace MudBlazor
             return values;
         }
 
+
+        internal bool GetServerDataLoaded(ITreeItemData<T> item) => _serverDataStates.GetOrCreateValue(item).IsLoaded;
+
+        internal void SetServerDataLoaded(ITreeItemData<T> item, bool isLoaded) => _serverDataStates.GetOrCreateValue(item).IsLoaded = isLoaded;
+
+        private sealed class ServerDataState
+        {
+            public bool IsLoaded { get; set; }
+        }
     }
 }

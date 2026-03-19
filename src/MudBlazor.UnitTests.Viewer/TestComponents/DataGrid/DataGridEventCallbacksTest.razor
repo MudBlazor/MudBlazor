@@ -52,9 +52,10 @@
         SelectedItemsChanged = true;
     }
 
-    private void OnCommittedItemChanges(Item item)
+    private Task<DataGridEditFormAction> OnCommittedItemChanges(Item item)
     {
         CommittedItemChanges = true;
+        return Task.FromResult(DataGridEditFormAction.Close);
     }
 
     private void OnStartedEditingItem(Item item)

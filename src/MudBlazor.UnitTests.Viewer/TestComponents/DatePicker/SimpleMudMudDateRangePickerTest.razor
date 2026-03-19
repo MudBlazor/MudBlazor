@@ -8,8 +8,9 @@
                         @bind-PickerMonth="PickerMonth"
                         OpenTo="@OpenTo"
                         StartMonth="@StartMonth"
-                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" 
-                        AllowDisabledDatesInRange="@AllowDisabledDatesInRange"/>
+                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
+                        AllowDisabledDatesInRange="@AllowDisabledDatesInRange"
+                        InputId="@InputId"/>
 }
 else
 {
@@ -18,7 +19,8 @@ else
                         @bind-PickerMonth="PickerMonth"
                         OpenTo="@OpenTo"
                         StartMonth="@StartMonth"
-                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
+                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
+                        InputId="@InputId" />
 }
 @code {
     private MudDateRangePicker _picker = null!;
@@ -43,6 +45,9 @@ else
 
     [Parameter]
     public bool AllowDisabledDatesInRange { get; set; }
+
+    [Parameter]
+    public string? InputId { get; set; }
 
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
 

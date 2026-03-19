@@ -30,6 +30,26 @@
     </MudSelectItem>
 </MudSelect>
 
+<MudSelect @bind-Value="country" Label="ToStringFunc Precedence" Variant="Variant.Outlined" ToStringFunc="@GetCountryCode">
+    <MudSelectItem Value="@("Austria")">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg" height="14" class="mr-1" /> Austria
+    </MudSelectItem>
+    <MudSelectItem Value="@("Hungary")">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Hungary.png" height="14" class="mr-1" /> Hungary
+    </MudSelectItem>
+    <MudSelectItem Value="@("Sweden")">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Flag_of_Sweden_fixed.svg" height="14" class="mr-1" /> Sweden
+    </MudSelectItem>
+</MudSelect>
+
 @code {
     string country="Austria";
+
+    private string GetCountryCode(string name) => name switch
+    {
+        "Austria" => "AUT",
+        "Hungary" => "HUN",
+        "Sweden" => "SWE",
+        _ => name
+    };
 }

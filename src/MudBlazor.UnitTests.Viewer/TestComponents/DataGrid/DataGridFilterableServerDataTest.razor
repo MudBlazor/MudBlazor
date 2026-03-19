@@ -15,7 +15,7 @@
         new Item("C")
     };
 
-    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState, CancellationToken token)
     {
         await Task.CompletedTask;
         var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());

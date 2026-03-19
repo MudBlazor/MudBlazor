@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_GeneralStructure()
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.Fluid, true);
                 p.Add(x => x.Src, "https://myimgsource.com/image.png");
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_ObjectFitToClassMapping(ObjectFit fit, string expectedClass)
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.ObjectFit, fit);
             });
@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
         public void Image_ObjectPositionToClassMapping(ObjectPosition position, string expectedClass)
         {
 
-            var comp = Context.RenderComponent<MudImage>(p =>
+            var comp = Context.Render<MudImage>(p =>
             {
                 p.Add(x => x.ObjectPosition, position);
             });
@@ -95,18 +95,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SwitchesToFallbackSrcOnError()
+        public async Task SwitchesToFallbackSrcOnError()
         {
             var initialSrc = "primary-image.jpg";
             var fallbackSrc = "fallback-image.jpg";
 
-            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+            var comp = Context.Render<MudImage>(parameters => parameters
                 .Add(p => p.Src, initialSrc)
                 .Add(p => p.FallbackSrc, fallbackSrc)
             );
 
             // Trigger the `onerror` event
-            comp.Find("img").TriggerEvent("onerror", EventArgs.Empty);
+            await comp.Find("img").ErrorAsync();
 
             var img = comp.Find("img");
 
@@ -114,16 +114,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void FallbackMissingOnError()
+        public async Task FallbackMissingOnError()
         {
             var initialSrc = "primary-image.jpg";
 
-            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+            var comp = Context.Render<MudImage>(parameters => parameters
                 .Add(p => p.Src, initialSrc)
             );
 
             // Trigger the `onerror` event
-            comp.Find("img").TriggerEvent("onerror", EventArgs.Empty);
+            await comp.Find("img").ErrorAsync();
 
             var img = comp.Find("img");
 

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
@@ -29,7 +28,7 @@ namespace MudBlazor
         /// <summary>
         /// The items to filter.
         /// </summary>
-        public IEnumerable<T> Items => _dataGrid.Items;
+        public IEnumerable<T>? Items => _dataGrid.Items;
 
         /// <summary>
         /// The definitions of all filters in the grid.

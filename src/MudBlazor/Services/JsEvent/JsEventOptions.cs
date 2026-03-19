@@ -4,18 +4,24 @@
 
 namespace MudBlazor.Services
 {
+    /// <summary>
+    /// Options for subscribing to DOM events through <see cref="IJsEvent"/>.
+    /// </summary>
+    /// <remarks>
+    /// Use these settings to target specific elements and enable optional logging while debugging event subscriptions.
+    /// </remarks>
     public class JsEventOptions
     {
         /// <summary>
         /// <para>Class of the target node which should be observed for keyboard events</para>
         /// <para>Note: this must be a single class</para>
         /// </summary>
-        public string TargetClass { get; set; }
+        public string? TargetClass { get; set; }
 
         /// <summary>
         /// The tag name of the element to register events with. Must be all uppercase, like "INPUT"
         /// </summary>
-        public string TagName { get; set; }
+        public string? TagName { get; set; }
 
         /// <summary>
         /// Report resize events in the browser's console.

@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Specifies the alignment of each item's dot relative to its text in a <see cref="MudTimeline"/>.
 /// </summary>
+[EnumExtensions]
 public enum TimelineAlign
 {
     /// <summary>

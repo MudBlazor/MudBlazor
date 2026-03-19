@@ -10,7 +10,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A navigation link as part of a <see cref="MudNavMenu"/>.

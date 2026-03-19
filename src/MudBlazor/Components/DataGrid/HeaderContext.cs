@@ -3,10 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the current state of a header in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
@@ -32,6 +32,11 @@ namespace MudBlazor
         /// The behaviors which are allowed for this header.
         /// </summary>
         public HeaderActions Actions { get; }
+
+        /// <summary>
+        /// Indicates whether the data grid supports multiple selection.
+        /// </summary>
+        public bool IsMultiSelection => _dataGrid.MultiSelection;
 
         /// <summary>
         /// Indicates whether all items are currently selected.

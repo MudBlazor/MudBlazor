@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a set of buttons displayed as part of a <see cref="MudCard"/>.
     /// </summary>
@@ -14,8 +13,12 @@ namespace MudBlazor
     public partial class MudCardActions : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-actions")
+            .AddClass("mud-card-actions-padding", ParentCard?.ContentPadding ?? true)
             .AddClass(Class)
             .Build();
+
+        [CascadingParameter]
+        private MudCard? ParentCard { get; set; }
 
         /// <summary>
         /// The content within this component.

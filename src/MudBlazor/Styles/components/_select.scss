@@ -8,6 +8,14 @@
 
     & .mud-select-input {
       cursor: text;
+
+      &.mud-readonly {
+        cursor: default;
+
+        & .mud-input-adornment {
+          cursor: default;
+        }
+      }
     }
 
     & .mud-input-adornment {
@@ -24,8 +32,9 @@
       padding-right: 4.5rem !important;
     }
 
-    // If autocomplete has a progress indicator, the adornment should be hidden when loading
-    & .mud-select-input .mud-icon-button {
+    // hide only when the wrapper does NOT contain mud-input-adornment-start
+    // AND DOES contain .progress-indicator-circular somewhere inside
+    &:not(:has(.mud-input-adornment-start)):has(.progress-indicator-circular) .mud-select-input .mud-icon-button {
       display: none !important;
     }
 
@@ -51,6 +60,10 @@
 
   .mud-select-input {
     cursor: pointer;
+
+    &.mud-readonly {
+      cursor: default;
+    }
 
     & .mud-input-slot {
       overflow: hidden;
@@ -90,6 +103,15 @@
 
 .mud-select > .mud-form-helpertext {
   margin-top: -21px;
+}
+
+.mud-autocomplete-before-items,
+.mud-autocomplete-after-items,
+.mud-autocomplete-more-items,
+.mud-autocomplete-no-items {
+  &:not(:empty) {
+    padding: 4px;
+  }
 }
 
 .mud-select-all {

@@ -7,21 +7,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// A component for aligning child items horizontally or vertically.
+/// Manages layout of its child items along the vertical or horizontal axis with optional spacing.
 /// </summary>
 public partial class MudStack : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("d-flex")
             .AddClass(getFlexDirection())
-            .AddClass($"justify-{Justify?.ToDescriptionString()}", Justify is not null)
-            .AddClass($"align-{AlignItems?.ToDescriptionString()}", AlignItems is not null)
-            .AddClass($"flex-{Wrap?.ToDescriptionString()}", Wrap is not null)
+            .AddClass($"justify-{Justify?.ToStringFast(true)}", Justify is not null)
+            .AddClass($"align-{AlignItems?.ToStringFast(true)}", AlignItems is not null)
+            .AddClass($"flex-{Wrap?.ToStringFast(true)}", Wrap is not null)
             .AddClass($"gap-{Spacing}", Spacing >= 0)
-            .AddClass($"flex-grow-{StretchItems?.ToDescriptionString()}", StretchItems is not null and not MudBlazor.StretchItems.None)
+            .AddClass($"flex-grow-{StretchItems?.ToStringFast(true)}", StretchItems is not null and not MudBlazor.StretchItems.None)
             .AddClass(Class)
             .Build();
 
@@ -112,12 +111,12 @@ public partial class MudStack : MudComponentBase
     /// The gap between items in increments of <c>4px</c>.
     /// </summary>
     /// <remarks>
-    /// <para>Defaults to 3 in <see cref="MudGlobal.StackDefaults.Spacing"/>.</para>
+    /// <para>Defaults to 3.</para>
     /// <para>Maximum is 20 (<c>80px</c>).</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public int Spacing { get; set; } = MudGlobal.StackDefaults.Spacing;
+    public int Spacing { get; set; } = 3;
 
     /// <summary>
     /// Defines the distribution of child items.
