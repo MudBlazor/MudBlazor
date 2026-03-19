@@ -2354,15 +2354,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void OnFiltersPanelClosed()
-        {
-            CleanupIncompleteFilters();
-        }
+        private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
 
-        internal void CleanupIncompleteFilters()
-        {
-            FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
-        }
+        internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
 
         private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
             FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not

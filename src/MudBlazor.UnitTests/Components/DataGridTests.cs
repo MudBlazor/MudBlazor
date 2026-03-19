@@ -3853,7 +3853,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.CloseFilters());
+            await comp.InvokeAsync(() => dataGrid.Instance.CleanupIncompleteFilters());
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
         }
 

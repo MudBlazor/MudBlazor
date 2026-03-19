@@ -16,7 +16,7 @@
                         }
                     </MudSelect>
                     <MudSelect T="string" MultiSelection="true" 
-                               SelectedValues="@GetFilterValues(context.FilterDefinition)" 
+                               SelectedValues="@GetFilterValues(context.FilterDefinition!)" 
                                SelectedValuesChanged="@(values => SetFilterValues(context, values))" 
                                FullWidth="true" Dense="true" Margin="@Margin.Dense" 
                                Class="filter-input department-filter" 
