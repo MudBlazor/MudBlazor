@@ -114,17 +114,17 @@
 
   &.mud-stepper__horizontal {
 
-    .mud-stepper-nav {
+    > .mud-stepper-nav {
       display: flex;
     }
 
     &.mud-stepper__center-labels {
 
-      .mud-step {
+      > .mud-stepper-nav > .mud-step {
         flex-basis: 175px;
       }
 
-      .mud-step-label {
+      > .mud-stepper-nav > .mud-step > .mud-step-label {
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
@@ -139,13 +139,13 @@
         }
       }
 
-      .mud-stepper-nav-connector {
+      > .mud-stepper-nav > .mud-stepper-nav-connector {
         margin: 35px -67px 0;
         align-self: flex-start;
       }
     }
 
-    .mud-stepper-nav-connector {
+    > .mud-stepper-nav > .mud-stepper-nav-connector {
       align-self: center;
       margin: 0 -16px;
 
@@ -158,11 +158,12 @@
 
   &.mud-stepper__vertical {
 
-    .mud-stepper-nav {
+    > .mud-stepper-nav {
+      display: block;
       padding: 8px 0px;
     }
 
-    .mud-step {
+    > .mud-stepper-nav > .mud-step {
       padding: 0 16px;
 
       .mud-step-label {
@@ -170,17 +171,18 @@
       }
     }
 
-    .mud-stepper-nav-connector {
+    > .mud-stepper-nav > .mud-stepper-nav-connector {
       margin-inline-start: 28px;
       margin-inline-end: 0;
 
       .mud-stepper-nav-connector-line {
         border-inline-start: 1px solid rgb(189, 189, 189);
+        border-top: none;
         min-height: 24px;
       }
     }
 
-    .mud-stepper-content {
+    > .mud-stepper-content {
       margin-inline-start: 28px;
       margin-inline-end: 0;
       padding-inline-start: 20px;

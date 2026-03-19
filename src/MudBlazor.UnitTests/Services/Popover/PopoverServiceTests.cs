@@ -591,7 +591,7 @@ public class PopoverServiceTests
     [Ignore(reason:
         $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
         $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
-        $"since the {nameof(PopoverJsInterop.Dispose)} does it.")]
+        $"since the {nameof(PopoverJsInterop.DisposeAsync)} does it.")]
     public async Task DisposeAsync_ShouldClearActivePopoversAndFireOnBatchTimerElapsedAsync()
     {
         // Arrange

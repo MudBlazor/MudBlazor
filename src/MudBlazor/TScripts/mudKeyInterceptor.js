@@ -27,7 +27,7 @@ class MudKeyInterceptorFactory {
      */
     updatekey(elementId, option) {
         const element = document.getElementById(elementId);
-        if (!element || !element.mudKeyInterceptor)
+        if (!element?.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.updatekey(option);
     }
@@ -37,7 +37,7 @@ class MudKeyInterceptorFactory {
      */
     disconnect(elementId) {
         const element = document.getElementById(elementId);
-        if (!element || !element.mudKeyInterceptor)
+        if (!element?.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.disconnect();
     }
@@ -83,7 +83,7 @@ class MudKeyInterceptor {
         this._keyOptions = {};
         this._regexOptions = [];
         for (const keyOption of this._options.keys) {
-            if (!keyOption || !keyOption.key) {
+            if (!keyOption?.key) {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
                 continue;
             }
@@ -153,7 +153,7 @@ class MudKeyInterceptor {
      */
     attachHandlers(child) {
         this.logger('[MudBlazor | KeyInterceptor] attaching handlers ', { child });
-        if (this._observedChildren.indexOf(child) > -1) {
+        if (this._observedChildren.includes(child)) {
             //console.log("... already attached");
             return;
         }
@@ -183,11 +183,11 @@ class MudKeyInterceptor {
         for (const mutation of mutationsList) {
             //self.logger('[MudBlazor | KeyInterceptor] Subtree mutation: ', { mutation });
             for (const element of mutation.addedNodes) {
-                if (element.classList && element.classList.contains(targetClass))
+                if (element.classList?.contains(targetClass))
                     self.attachHandlers(element);
             }
             for (const element of mutation.removedNodes) {
-                if (element.classList && element.classList.contains(targetClass))
+                if (element.classList?.contains(targetClass))
                     self.detachHandlers(element);
             }
         }

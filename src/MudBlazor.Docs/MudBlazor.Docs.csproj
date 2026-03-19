@@ -62,6 +62,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.3" />
+    <PackageReference Include="Markdig" Version="1.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
   </ItemGroup>

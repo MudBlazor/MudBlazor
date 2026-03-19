@@ -186,7 +186,7 @@ namespace MudBlazor
             }
 
             if (_isFocused && Mask.Selection == null)
-                await SetCaretPositionAsync(Mask.CaretPos, _selection, render: false);
+                await SetCaretPositionAsync(Mask.CaretPos, _selection);
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -203,10 +203,10 @@ namespace MudBlazor
         {
             try
             {
-                if (e.CtrlKey && e.Key != "Backspace"
+                if ((e.CtrlKey && e.Key != "Backspace")
                     // on macOS, the copy-paste command is Cmd + V
                     // cmd is identified using the MetaKey property
-                    || e.MetaKey && e.Key != "Backspace"
+                    || (e.MetaKey && e.Key != "Backspace")
                     || e.AltKey
                     || GetReadOnlyState())
                     return;
@@ -404,7 +404,7 @@ namespace MudBlazor
             _isFocused = false;
         }
 
-        private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null, bool render = true)
+        private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null)
         {
             if (!_isFocused)
                 return;
@@ -462,7 +462,7 @@ namespace MudBlazor
             _mask = other;
         }
 
-        private async Task OnCutAsync(ClipboardEventArgs obj)
+        private async Task OnCutAsync()
         {
             if (GetReadOnlyState())
                 return;

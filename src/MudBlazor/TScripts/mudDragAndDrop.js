@@ -79,8 +79,8 @@ window.mudDragAndDrop = {
         const elem = document.getElementById(id);
 
         // Persist offsets on the element so each pointer move can stay incremental.
-        const tx = (parseFloat(elem.getAttribute('data-x')) || 0) + dx;
-        const ty = (parseFloat(elem.getAttribute('data-y')) || 0) + dy;
+        const tx = (Number.parseFloat(elem.getAttribute('data-x')) || 0) + dx;
+        const ty = (Number.parseFloat(elem.getAttribute('data-y')) || 0) + dy;
 
         // translate3d keeps drag movement smooth and avoids forcing layout recalculation.
         elem.style.webkitTransform =

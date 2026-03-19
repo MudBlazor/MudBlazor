@@ -554,6 +554,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task InitializeDateRange_WithMinValue_ShouldTreatAsNull()
+        {
+            var range = new DateRange(DateTime.MinValue, DateTime.MinValue);
+
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var picker = comp.FindComponent<MudDateRangePicker>();
+
+                picker.Instance.DateRange.Should().NotBeNull();
+                picker.Instance.DateRange.Start.Should().BeNull();
+                picker.Instance.DateRange.End.Should().BeNull();
+            });
+        }
+
+        [Test]
+        public async Task InitializeDateRange_WithMinValueStartOnly_ShouldNormalizeStart()
+        {
+            var range = new DateRange(DateTime.MinValue, DateTime.Today);
+
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var picker = comp.FindComponent<MudDateRangePicker>();
+
+                picker.Instance.DateRange.Should().NotBeNull();
+                picker.Instance.DateRange.Start.Should().BeNull();
+                picker.Instance.DateRange.End.Should().Be(DateTime.Today);
+            });
+        }
+
+        [Test]
+        public async Task InitializeDateRange_WithMinValueEndOnly_ShouldNormalizeEnd()
+        {
+            var range = new DateRange(DateTime.Today, DateTime.MinValue);
+
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.DateRange, range));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var picker = comp.FindComponent<MudDateRangePicker>();
+
+                picker.Instance.DateRange.Should().NotBeNull();
+                picker.Instance.DateRange.Start.Should().Be(DateTime.Today);
+                picker.Instance.DateRange.End.Should().BeNull();
+            });
+        }
+
+        [Test]
         public async Task InitializeDateRange_AllNullValues()
         {
             var range = new DateRange(null, null);
@@ -1308,6 +1362,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
 
+        [Test]
+        public async Task StaticReadOnly_ShouldNotChangeDateRange()
+        {
+            var initialRange = new DateRange(new DateTime(2025, 6, 10), new DateTime(2025, 6, 20));
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.DateRange, initialRange));
+            var picker = comp.Instance;
+
+            // Try to select different days - should be blocked by ReadOnly
+            await comp.SelectDateAsync("5", firstOccurrence: true);
+            await comp.SelectDateAsync("25", firstOccurrence: true);
+
+            // DateRange should remain unchanged because ReadOnly is true
+            picker.DateRange.Should().Be(initialRange);
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
@@ -1329,7 +1401,9 @@ namespace MudBlazor.UnitTests.Components
             Assert.That(matchingDays.Count != 0, $"Invalid day ({day}) selected");
 
             if (!firstOccurrence)
+            {
                 Assert.That(matchingDays.Count == 2, $"Only one instance of date ({day}) found");
+            }
 
             var selectedDate = matchingDays[firstOccurrence ? 0 : 1];
 

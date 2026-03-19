@@ -1,0 +1,20 @@
+﻿<MudPopoverProvider />
+
+<MudSelect MultiSelection="true" @bind-SelectedValues="@_selected">
+    @foreach (MyEnum item in Enum.GetValues(typeof(MyEnum)))
+    {
+        <MudSelectItem Value="@item">@item</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Multiselection with enums should not automatically show the default(T) as selected";
+
+    private IReadOnlyCollection<MyEnum> _selected = [];
+
+    public enum MyEnum
+    {
+        First,
+        Second,
+    }
+}

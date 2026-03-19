@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
+    <div id="@_componentId" class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -84,7 +84,7 @@
                         <MudList T="T" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate is not null)
                             {
-                                <div class="mud-autocomplete-before-items pa-1">
+                                <div class="mud-autocomplete-before-items">
                                     @BeforeItemsTemplate
                                 </div>
                             }
@@ -117,13 +117,13 @@
                             }
                             @if (MoreItemsTemplate is not null && _returnedItemsCount > MaxItems)
                             {
-                                <div class="mud-autocomplete-more-items pa-1">
+                                <div class="mud-autocomplete-more-items">
                                     @MoreItemsTemplate
                                 </div>
                             }
                             @if (AfterItemsTemplate is not null)
                             {
-                                <div class="mud-autocomplete-after-items pa-1">
+                                <div class="mud-autocomplete-after-items">
                                     @AfterItemsTemplate
                                 </div>
                             }
@@ -131,7 +131,7 @@
                     }
                     else if (NoItemsTemplate is not null)
                     {
-                        <div class="mud-autocomplete-no-items pa-1">
+                        <div class="mud-autocomplete-no-items">
                             @NoItemsTemplate
                         </div>
                     }
@@ -143,6 +143,7 @@
 
 <MudOverlay AutoClose
             Visible="Open"
+            data-modeless-ignore-element-id="@_componentId"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
             Modal="@GetModal()" />

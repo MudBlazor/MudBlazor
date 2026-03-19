@@ -22,6 +22,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudBreakpointProvider)); // just exposing a cascading value, no layout implications
             Exclude(typeof(MudPicker<>));       // Internal component, skip
             Exclude(typeof(MudRadioGroup<>));   // Wrapping component, skip
+            Exclude(typeof(MudDragHandle<>));   // Wrapping component, skip
             Exclude(typeof(MudOverlay));        // Sectioned component, skip
             Exclude(typeof(DataGridGroupRow<>));  // Internal component, skip
             Exclude(typeof(DataGridVirtualizeRow<>)); // Internal component, skip
@@ -58,7 +59,10 @@ namespace MudBlazor.UnitTests.UserAttributes
             foreach (var componentType in mudComponentTypes)
             {
                 if (excludedComponents.Contains(componentType.Name))
+                {
                     continue;
+                }
+
                 var component = componentFactory.Create(componentType, testContext);
                 component.Markup.Should()
                     .NotBeEmpty(because: $"the component {componentType.Name} should at least contain one element");

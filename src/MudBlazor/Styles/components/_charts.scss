@@ -35,6 +35,7 @@
       flex-direction: column;
       order: 3;
       min-width: fit-content;
+      margin-left: 10px;
     }
   }
 
@@ -45,18 +46,19 @@
       flex-direction: column;
       order: 1;
       min-width: fit-content;
+      margin-right: 10px;
     }
   }
 
-
-  & .mud-chart-donut, .mud-chart-pie, mud-chart-line, mud-chart-bar {
+  & .mud-chart-donut, .mud-chart-pie, .mud-chart-radar, .mud-chart-line, .mud-chart-bar {
     display: flex;
     margin: auto;
+    overflow: unset; // Workaround for clipped axis notations
   }
 
   & .mud-chart-legend {
     display: flex;
-    padding: 10px 0px;
+    padding: 10px 0;
     margin: auto;
     flex-wrap: wrap;
 
@@ -120,6 +122,12 @@
     -moz-transition: stroke .2s ease;
     -o-transition: stroke .2s ease;
     transition: stroke .2s ease;
+  }
+
+  & .mud-donut-text {
+    dominant-baseline: central;
+    text-anchor: middle;
+    fill: var(--mud-palette-text-primary);
   }
 }
 

@@ -13,7 +13,7 @@ namespace MudBlazor
     /// A grouping of values for a column in a <see cref="MudTable{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being grouped.</typeparam>
-    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
+    public partial class MudTableGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase, IDisposable
     {
         private bool? _checked = false;
         private IGrouping<object, T>? _items = null;
@@ -201,6 +201,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this group row.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             ((TableContext<T>?)Context)?.GroupRows.Remove(this);
         }
 

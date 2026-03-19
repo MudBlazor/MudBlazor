@@ -32,8 +32,6 @@ namespace MudBlazor
         [CascadingParameter]
         public MudDataGrid<T> DataGrid { get; set; } = null!;
 
-        //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
-
         /// <summary>
         /// The value stored in this column.
         /// </summary>
@@ -44,12 +42,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
-
-        //[Parameter] public bool Visible { get; set; } = true;
-
-        //[Parameter] public string Field { get; set; }
-
-        //[Parameter] public Type FieldType { get; set; }
 
         /// <summary>
         /// The display text for this column.
@@ -552,7 +544,7 @@ namespace MudBlazor
         {
             get
             {
-                return Sortable ?? DataGrid?.SortMode != SortMode.None;
+                return Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
         }
 
@@ -585,6 +577,9 @@ namespace MudBlazor
         private FilterContext<T> filterContext = null!;
         internal FooterContext<T> footerContext = null!;
 
+        // Cached filter definition to avoid repeated lookups during rendering
+        private IFilterDefinition<T>? _cachedFilterDefinition;
+
         /// <summary>
         /// The context used for filtering values in this column.
         /// </summary>
@@ -592,16 +587,34 @@ namespace MudBlazor
         {
             get
             {
-                // Make sure that when we access filterContext properties, they have been defined...
-                if (filterContext.FilterDefinition == null)
+                Debug.Assert(DataGrid is not null);
+
+                // Check if the cached filter definition is still valid in the grid's FilterDefinitions
+                var existingFilterDefinition = DataGrid.FilterDefinitions.FirstOrDefault(fd => fd.Column == this);
+
+                if (existingFilterDefinition != null)
                 {
-                    Debug.Assert(DataGrid is not null);
-                    var operators = GetFilterOperators(FieldType.Identify(PropertyType));
-                    var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
-                    filterDefinition.Title = Title;
-                    filterDefinition.Operator = operators.FirstOrDefault();
-                    filterDefinition.Column = this;
-                    filterContext.FilterDefinition = filterDefinition;
+                    // Use the existing filter definition from the grid
+                    if (_cachedFilterDefinition != existingFilterDefinition)
+                    {
+                        _cachedFilterDefinition = existingFilterDefinition;
+                        filterContext.FilterDefinition = existingFilterDefinition;
+                    }
+                }
+                else
+                {
+                    // No filter exists in the grid - check if we have a stale reference or need to create a new one
+                    if (_cachedFilterDefinition != null || filterContext.FilterDefinition == null)
+                    {
+                        // Clear the stale cached reference and create a new filter definition
+                        _cachedFilterDefinition = null;
+                        var operators = GetFilterOperators(FieldType.Identify(PropertyType));
+                        var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
+                        filterDefinition.Title = Title;
+                        filterDefinition.Operator = operators.FirstOrDefault();
+                        filterDefinition.Column = this;
+                        filterContext.FilterDefinition = filterDefinition;
+                    }
                 }
 
                 return filterContext;
@@ -655,21 +668,6 @@ namespace MudBlazor
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
-
-            // Add the FilterContext
-            //if (filterable)
-            //{
-            //    filterContext = new FilterContext<T>(DataGrid);
-            //    var operators = FilterOperator.GetOperatorByDataType(dataType);
-            //    filterContext.FilterDefinition = new FilterDefinition<T>()
-            //    {
-            //        DataGrid = this.DataGrid,
-            //        Field = PropertyName,
-            //        FieldType = dataType,
-            //        Title = Title,
-            //        Operator = operators.FirstOrDefault()
-            //    };
-            //}
 
             // Add the FilterContext
             filterContext = new FilterContext<T>(DataGrid);
@@ -770,6 +768,21 @@ namespace MudBlazor
         /// </summary>
         public virtual void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this column.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             if (DataGrid != null)
                 DataGrid.RemoveColumn(this);
         }
