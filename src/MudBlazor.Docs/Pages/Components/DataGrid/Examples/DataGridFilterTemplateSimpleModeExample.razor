@@ -1,27 +1,8 @@
-@using MudBlazor.Examples.Data.Models
+﻿@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 
-<MudDataGrid @ref="_dataGrid" T="Element" Items="@_elements" Filterable="true" FilterMode="DataGridFilterMode.Simple" RowsPerPage="5">
-    <FilterTemplate Context="grid">
-        @if (_useGridTemplate)
-        {
-            <MudStack Spacing="2" Class="pa-2">
-                <MudText Typo="Typo.subtitle2">Custom grid filter panel</MudText>
-                <MudTextField T="string" Value="@_nameFilter" ValueChanged="@(value => _nameFilter = value)" Label="Name contains" Clearable="true" Margin="@Margin.Dense" />
-                <MudSelect T="string" MultiSelection="true" SelectedValues="@_gridCategories" SelectedValuesChanged="@SetGridCategories"
-                           Label="Categories" Clearable="true" Margin="@Margin.Dense">
-                    @foreach (var category in _categories)
-                    {
-                        <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudStack Row="true" Justify="Justify.FlexEnd">
-                    <MudButton OnClick="@(async () => await ClearGridFiltersAsync(grid))">Clear</MudButton>
-                    <MudButton Color="@Color.Primary" OnClick="@(async () => await ApplyGridFiltersAsync(grid))">Apply</MudButton>
-                </MudStack>
-            </MudStack>
-        }
-    </FilterTemplate>
+<MudDataGrid @ref="_dataGrid" T="Element" Items="@_elements" Filterable="true" FilterMode="DataGridFilterMode.Simple" RowsPerPage="5"
+             FilterTemplate="@(_useCustomGridTemplate ? GridFilterTemplate : null)">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
         <PropertyColumn Property="x => x.Sign" />
@@ -30,20 +11,17 @@
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
         <PropertyColumn Property="x => x.Group" Title="Category">
             <FilterTemplate>
-                @if (!_useGridTemplate)
-                {
-                    <MudSelect T="string" MultiSelection="true"
-                               SelectedValues="@GetFilterValues(context.FilterDefinition!)"
-                               SelectedValuesChanged="@(values => SetColumnFilterValues(context, values))"
-                               FullWidth="true" Dense="true" Margin="@Margin.Dense"
-                               Class="filter-input category-filter"
-                               Label="Categories" Clearable="true" Placeholder="Select categories">
-                        @foreach (var category in _categories)
-                        {
-                            <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
-                        }
-                    </MudSelect>
-                }
+                <MudSelect T="string" MultiSelection="true"
+                            SelectedValues="@GetFilterValues(context.FilterDefinition!)"
+                            SelectedValuesChanged="@(values => SetColumnFilterValues(context, values))"
+                            FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                            Class="filter-input category-filter"
+                            Label="Categories" Clearable="true" Placeholder="Select categories">
+                    @foreach (var category in _categories)
+                    {
+                        <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
+                    }
+                </MudSelect>
             </FilterTemplate>
         </PropertyColumn>
     </Columns>
@@ -53,18 +31,40 @@
 </MudDataGrid>
 
 <div class="d-flex justify-start mt-4">
-    <MudRadioGroup T="bool" Value="@_useGridTemplate" ValueChanged="@TemplateModeChanged">
+    <MudRadioGroup T="bool" Value="@_useCustomGridTemplate" ValueChanged="@FilterTemplateModeChanged">
         <MudRadio Dense="true" Value="false" Color="Color.Primary">Column FilterTemplate</MudRadio>
         <MudRadio Dense="true" Value="true" Color="Color.Tertiary">MudDataGrid FilterTemplate</MudRadio>
     </MudRadioGroup>
 </div>
 
 @code {
+    private RenderFragment<MudDataGrid<Element>> GridFilterTemplate => grid => @<MudStack Spacing="2" Class="pa-2">
+        <MudText Typo="Typo.subtitle2">Custom Grid Filter Panel</MudText>
+        <MudTextField T="string" Label="Name Contains" Clearable="true" Margin="@Margin.Dense"
+                      @bind-Value="_nameFilter"
+                      @bind-Value:after="() => SyncGridFiltersAsync(grid)"
+                      Immediate="true" DebounceInterval="250" />
+        <MudSelect T="string" MultiSelection="true"
+                   SelectedValues="@_gridCategories"
+                   SelectedValuesChanged="@(values => SetGridCategoriesAsync(grid, values))"
+                   Label="Categories" Clearable="true" Margin="@Margin.Dense">
+            @foreach (var category in _categories)
+            {
+                <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
+            }
+        </MudSelect>
+        <MudStack Row="true" Justify="Justify.FlexEnd">
+            <MudButton OnClick="@(async () => await ClearGridFiltersAsync(grid))">Clear</MudButton>
+            <MudButton Color="@Color.Primary" OnClick="@(async () => await grid.CloseFilterUIAsync())">Close</MudButton>
+        </MudStack>
+    </MudStack>
+    ;
+
     private MudDataGrid<Element> _dataGrid = null!;
     private readonly List<Element> _elements = CreateElements();
-    private readonly List<string> _categories = new();
+    private readonly List<string> _categories = [];
     private HashSet<string> _gridCategories = [];
-    private bool _useGridTemplate;
+    private bool _useCustomGridTemplate;
     private string _nameFilter = string.Empty;
 
     protected override void OnInitialized()
@@ -72,66 +72,24 @@
         _categories.AddRange(_elements.Select(x => x.Group).Distinct().OrderBy(x => x).ToList());
     }
 
+    private Task FilterTemplateModeChanged(bool value)
+    {
+        // Example toggle: switches between the column-level template and the grid-level template.
+        _useCustomGridTemplate = value;
+        _nameFilter = string.Empty;
+        _gridCategories = [];
+        return _dataGrid.ClearFiltersAsync();
+    }
+
     private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Element> filterDefinition)
     {
+        // Column FilterTemplate: reads the current values from the built-in simple filter row.
         return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
     }
 
-    private async Task TemplateModeChanged(bool value)
+    private Task SetColumnFilterValues(FilterContext<Element> context, IEnumerable<string> values)
     {
-        _useGridTemplate = value;
-        _nameFilter = null;
-        _gridCategories.Clear();
-        if (_dataGrid is not null)
-        {
-            await _dataGrid.ClearFiltersAsync();
-        }
-    }
-
-    private void SetGridCategories(IEnumerable<string> values)
-    {
-        _gridCategories = values?.ToHashSet() ?? [];
-    }
-
-    private async Task ApplyGridFiltersAsync(MudDataGrid<Element> grid)
-    {
-        await grid.ClearFiltersAsync();
-
-        if (!string.IsNullOrWhiteSpace(_nameFilter))
-        {
-            var nameColumn = grid.RenderedColumns.First(x => x.PropertyName == nameof(Element.Name));
-            await grid.AddFilterAsync(new FilterDefinition<Element>
-            {
-                Column = nameColumn,
-                Operator = FilterOperator.String.Contains,
-                Title = nameColumn.Title,
-                Value = _nameFilter
-            });
-        }
-
-        if (_gridCategories.Count > 0)
-        {
-            var categoryColumn = grid.RenderedColumns.First(x => x.PropertyName == nameof(Element.Group));
-            await grid.AddFilterAsync(new FilterDefinition<Element>
-            {
-                Column = categoryColumn,
-                Operator = FilterOperator.String.Equal,
-                Title = categoryColumn.Title,
-                Value = _gridCategories.ToList(),
-                FilterFunction = item => item.Group is not null && _gridCategories.Contains(item.Group)
-            });
-        }
-    }
-
-    private async Task ClearGridFiltersAsync(MudDataGrid<Element> grid)
-    {
-        _nameFilter = null;
-        _gridCategories.Clear();
-        await grid.ClearFiltersAsync();
-    }
-
-    private async Task SetColumnFilterValues(FilterContext<Element> context, IEnumerable<string> values)
-    {
+        // Column FilterTemplate: maps selected values to the active filter row and custom predicate.
         var filterDefinition = context.FilterDefinition!;
         var selectedValues = values?.ToList() ?? [];
         filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
@@ -148,7 +106,59 @@
             }
         }
 
-        await context.Actions.ApplyFilterAsync(filterDefinition);
+        return context.Actions.ApplyFilterAsync(filterDefinition);
+    }
+
+    private Task SetGridCategoriesAsync(MudDataGrid<Element> grid, IEnumerable<string> values)
+    {
+        // MudDataGrid FilterTemplate: updates the selected categories and resyncs the curated filters.
+        _gridCategories = values?.ToHashSet() ?? [];
+        return SyncGridFiltersAsync(grid);
+    }
+
+    private async Task SyncGridFiltersAsync(MudDataGrid<Element> grid)
+    {
+        // MudDataGrid FilterTemplate: rebuilds the curated grid filters from the custom panel state.
+        await grid.ClearFiltersAsync();
+
+        if (!string.IsNullOrWhiteSpace(_nameFilter))
+        {
+            var nameColumn = GetRenderedColumn(grid, nameof(Element.Name));
+            await grid.AddFilterAsync(new FilterDefinition<Element>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Title = nameColumn.Title,
+                Value = _nameFilter
+            });
+        }
+
+        if (_gridCategories.Any())
+        {
+            var categoryColumn = GetRenderedColumn(grid, nameof(Element.Group));
+            await grid.AddFilterAsync(new FilterDefinition<Element>
+            {
+                Column = categoryColumn,
+                Operator = FilterOperator.String.Equal,
+                Title = categoryColumn.Title,
+                Value = _gridCategories.ToList(),
+                FilterFunction = item => item.Group is not null && _gridCategories.Contains(item.Group)
+            });
+        }
+    }
+
+    private static Column<Element> GetRenderedColumn(MudDataGrid<Element> grid, string propertyName)
+    {
+        // MudDataGrid FilterTemplate: resolves the rendered column used to create custom filter definitions.
+        return grid.RenderedColumns.First(x => x.PropertyName == propertyName);
+    }
+
+    private async Task ClearGridFiltersAsync(MudDataGrid<Element> grid)
+    {
+        // MudDataGrid FilterTemplate: clears the custom panel state and the grid filters together.
+        _nameFilter = string.Empty;
+        _gridCategories = [];
+        await grid.ClearFiltersAsync();
     }
 
     private static List<Element> CreateElements() =>

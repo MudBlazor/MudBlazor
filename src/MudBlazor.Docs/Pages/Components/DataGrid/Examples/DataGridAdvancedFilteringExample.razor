@@ -1,7 +1,7 @@
-@using MudBlazor.Examples.Data.Models
+﻿@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 
-<MudDataGrid T="Element" Items="@_elements" Filterable="true" FilterMode="@_filterMode" RowsPerPage="5">
+<MudDataGrid @ref="@_dataGrid" Items="@_elements" Filterable="true" FilterMode="@_filterMode" RowsPerPage="5">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
         <PropertyColumn Property="x => x.Sign" />
@@ -12,10 +12,10 @@
             <FilterTemplate>
                 <MudSelect T="string" MultiSelection="true"
                            SelectedValues="@GetFilterValues(context.FilterDefinition!)"
-                           SelectedValuesChanged="@(values => SetFilterValues(context, values))"
+                           SelectedValuesChanged="@(values => SetColumnFilterValues(context, values))"
                            FullWidth="true" Dense="true" Margin="@Margin.Dense"
                            Class="filter-input category-filter"
-                           Label="Categories" Clearable="true">
+                           PlaceHolder="Filter Categories" Clearable="true">
                     @foreach (var category in _categories)
                     {
                         <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
@@ -30,7 +30,7 @@
 </MudDataGrid>
 
 <div class="d-flex justify-start mt-4">
-    <MudRadioGroup T="DataGridFilterMode" @bind-Value="_filterMode">
+    <MudRadioGroup T="DataGridFilterMode" Value="@_filterMode" ValueChanged="@FilterModeChanged">
         <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow" Color="Color.Primary">Column Filter Row</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Filter Menu</MudRadio>
     </MudRadioGroup>
@@ -38,7 +38,8 @@
 
 @code {
     private readonly List<Element> _elements = CreateElements();
-    private readonly List<string> _categories = new();
+    private readonly List<string> _categories = [];
+    private MudDataGrid<Element> _dataGrid = default!;
     private DataGridFilterMode _filterMode = DataGridFilterMode.ColumnFilterRow;
 
     protected override void OnInitialized()
@@ -46,13 +47,22 @@
         _categories.AddRange(_elements.Select(x => x.Group).Distinct().OrderBy(x => x).ToList());
     }
 
+    private Task FilterModeChanged(DataGridFilterMode value)
+    {
+        // Example toggle: switches between the row and menu column filter modes.
+        _filterMode = value;
+        return _dataGrid.ClearFiltersAsync();
+    }
+
     private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Element> filterDefinition)
     {
+        // Column FilterTemplate: reads the current values from the active filter UI.
         return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
     }
 
-    private async Task SetFilterValues(FilterContext<Element> context, IEnumerable<string> values)
+    private Task SetColumnFilterValues(FilterContext<Element> context, IEnumerable<string> values)
     {
+        // Column FilterTemplate: maps selected values to the active filter definition and applies through the grid so the menu can stay open for multi-selection.
         var filterDefinition = context.FilterDefinition!;
         var selectedValues = values?.ToList() ?? [];
         filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
@@ -69,7 +79,18 @@
             }
         }
 
-        await context.Actions.ApplyFilterAsync(filterDefinition);
+        return ApplyColumnFilterWithoutClosingAsync(context, filterDefinition);
+    }
+
+    private Task ApplyColumnFilterWithoutClosingAsync(FilterContext<Element> context, IFilterDefinition<Element> filterDefinition)
+    {
+        // Column FilterTemplate: refreshes filtering through the grid instead of the menu action so the menu stays open while selections change.
+        if (context.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
+        {
+            context.FilterDefinitions.Add(filterDefinition);
+        }
+
+        return _dataGrid.AddFilterAsync(filterDefinition);
     }
 
     private static List<Element> CreateElements() =>
