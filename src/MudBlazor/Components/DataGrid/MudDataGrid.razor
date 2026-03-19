@@ -59,7 +59,7 @@
                                 </tr>
                                 @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                                 {
-                                    <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
+                                    <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@OnFiltersPanelClosed"></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0;overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover UserAttributes="@PositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"

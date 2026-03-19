@@ -1769,8 +1769,69 @@ namespace MudBlazor
                 FilterDefinition = filterDefinition,
                 HeaderCell = column.FilterContext.HeaderCell
             };
+            context.SetActions(new FilterContext<T>.FilterActions
+            {
+                ApplyFilterAsync = ApplyFilterFromSimpleModeAsync,
+                ApplyFiltersAsync = ApplyFiltersFromSimpleModeAsync,
+                ClearFilterAsync = ClearFilterFromSimpleModeAsync,
+                ClearFiltersAsync = ClearFiltersFromSimpleModeAsync,
+                CloseFilterUIAsync = CloseFilterUIAsync
+            });
 
             return context;
+        }
+
+        private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
+        {
+            if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
+            {
+                FilterDefinitions.Add(filterDefinition);
+            }
+
+            await InvokeServerLoadFunc();
+            GroupItems();
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task ApplyFiltersFromSimpleModeAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
+        {
+            var filterDefinitionsToApply = filterDefinitions.Where(x => FilterDefinitions.All(y => y.Id != x.Id)).ToArray();
+            FilterDefinitions.AddRange(filterDefinitionsToApply);
+
+            await InvokeServerLoadFunc();
+            GroupItems();
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task ClearFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
+        {
+            await RemoveFilterAsync(filterDefinition.Id);
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task ClearFiltersFromSimpleModeAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
+        {
+            FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
+
+            await InvokeServerLoadFunc();
+            GroupItems();
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -1809,6 +1870,20 @@ namespace MudBlazor
         {
             _filtersMenuVisible = false;
             return InvokeServerLoadFunc();
+        }
+
+        /// <summary>
+        /// Closes the filter UI owned by this data grid.
+        /// </summary>
+        /// <remarks>
+        /// This method closes the filter panel shown by <see cref="MudDataGrid{T}"/>, such as the panel used by <see cref="DataGridFilterMode.Simple"/>.
+        /// </remarks>
+        public Task CloseFilterUIAsync()
+        {
+            _filtersMenuVisible = false;
+            CleanupIncompleteFilters();
+            StateHasChanged();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -2279,7 +2354,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void CloseFilters()
+        private void OnFiltersPanelClosed()
+        {
+            CleanupIncompleteFilters();
+        }
+
+        internal void CleanupIncompleteFilters()
         {
             FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
         }

@@ -3867,7 +3867,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Operator = FilterOperator.String.Empty;
 
-            await comp.InvokeAsync(() => dataGrid.Instance.CloseFilters());
+            await comp.InvokeAsync(() => dataGrid.Instance.CleanupIncompleteFilters());
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
         }
 
@@ -4121,50 +4121,109 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridColumnFilterMenuApplyFilterOverrideShouldLeaveMenuOpen()
+        public async Task DataGridColumnFilterMenuCloseAction_ShouldCloseColumnFilterPopup()
         {
             var comp = Context.Render<DataGridServerDataColumnFilterMenuTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
             var headerCell = dataGrid.FindComponents<HeaderCell<DataGridServerDataColumnFilterMenuTest.Model>>().First();
 
             await comp.Find(".filter-button").ClickAsync();
-            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
+            comp.FindAll(".clear-filter-button").Count.Should().Be(1);
 
             await comp.InvokeAsync(async () =>
             {
-                headerCell.Instance.Column!.FilterContext.FilterDefinition!.Value = "Sam";
-                await headerCell.Instance.ApplyFilterAsync(headerCell.Instance.Column.FilterContext.FilterDefinition, autoClose: false);
+                await headerCell.Instance.Column!.FilterContext.Actions.CloseFilterUIAsync();
             });
 
-            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
-            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".clear-filter-button").Count.Should().Be(0));
         }
 
         [Test]
-        public async Task DataGridColumnFilterMenuClearFilterOverrideShouldLeaveMenuOpen()
+        public async Task DataGridFilterTemplateApplyActionInSimpleMode_ShouldKeepSimplePanelOpen()
         {
-            var comp = Context.Render<DataGridServerDataColumnFilterMenuTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
-            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridServerDataColumnFilterMenuTest.Model>>().First();
-
-            await comp.Find(".filter-button").ClickAsync();
+            var comp = Context.Render<DataGridFilterTemplateSimpleModeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterTemplateSimpleModeTest.Model>>();
+            var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Department");
 
             await comp.InvokeAsync(async () =>
             {
-                headerCell.Instance.Column!.FilterContext.FilterDefinition!.Value = "Sam";
-                await headerCell.Instance.ApplyFilterAsync(headerCell.Instance.Column.FilterContext.FilterDefinition, autoClose: false);
+                await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+                {
+                    Column = departmentColumn,
+                    Operator = FilterOperator.String.Equal,
+                    Value = null
+                });
             });
 
-            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
-            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
+            await comp.Find(".mud-button-root.filter-button").ClickAsync();
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            var departmentFilter = comp.FindComponents<MudSelect<string>>()
+                .First(x => x.Instance.Class == "filter-input department-filter");
+
+            await comp.InvokeAsync(async () => await departmentFilter.Instance.SelectedValuesChanged.InvokeAsync(new[] { "Engineering" }));
+
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridFilterTemplateClearActionInSimpleMode_ShouldKeepSimplePanelOpen()
+        {
+            var comp = Context.Render<DataGridFilterTemplateSimpleModeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterTemplateSimpleModeTest.Model>>();
+            var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Department");
+            var filterDefinition = new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+            {
+                Column = departmentColumn,
+                Operator = FilterOperator.String.Equal,
+                Value = "Engineering",
+                FilterFunction = item => item.Department == "Engineering"
+            };
+
+            await comp.InvokeAsync(async () => await dataGrid.Instance.AddFilterAsync(filterDefinition));
+            dataGrid.FindAll("tbody tr").Count.Should().Be(2);
+
+            await comp.Find(".mud-button-root.filter-button").ClickAsync();
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            var filterContext = dataGrid.Instance.CreateFilterContext(departmentColumn, filterDefinition);
 
             await comp.InvokeAsync(async () =>
             {
-                await headerCell.Instance.ClearFilterAsync(headerCell.Instance.Column!.FilterContext.FilterDefinition!, autoClose: false);
+                await filterContext.Actions.ClearFilterAsync(filterDefinition);
             });
 
-            comp.FindAll(".column-filter-popup").Count.Should().Be(1);
-            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridFilterTemplateCloseActionInSimpleMode_ShouldCloseSimplePanel()
+        {
+            var comp = Context.Render<DataGridFilterTemplateSimpleModeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterTemplateSimpleModeTest.Model>>();
+            var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Department");
+            var filterDefinition = new FilterDefinition<DataGridFilterTemplateSimpleModeTest.Model>
+            {
+                Column = departmentColumn,
+                Operator = FilterOperator.String.Equal,
+                Value = "Engineering",
+                FilterFunction = item => item.Department == "Engineering"
+            };
+
+            await comp.InvokeAsync(async () => await dataGrid.Instance.AddFilterAsync(filterDefinition));
+            await comp.Find(".mud-button-root.filter-button").ClickAsync();
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            var filterContext = dataGrid.Instance.CreateFilterContext(departmentColumn, filterDefinition);
+
+            await comp.InvokeAsync(async () =>
+            {
+                await filterContext.Actions.CloseFilterUIAsync();
+            });
+
+            comp.FindAll(".filters-panel").Count.Should().Be(0);
         }
 
         [Test]
