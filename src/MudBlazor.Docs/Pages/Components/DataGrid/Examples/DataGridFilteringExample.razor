@@ -1,7 +1,9 @@
-@using MudBlazor.Examples.Data.Models
+﻿@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 
-<MudDataGrid T="Element" Items="@_elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity" RowsPerPage="5">
+<MudDataGrid @ref="_dataGrid" Items="@_elements" Filterable="true" 
+             FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity" 
+             RowsPerPage="5">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
         <PropertyColumn Property="x => x.Sign" />
@@ -25,15 +27,20 @@
 
 <div class="d-flex flex-wrap mt-4">
     <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-Value="_caseSensitivity">
-        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary"><b>(Default)</b> Case Sensitivity</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
     </MudRadioGroup>
+</div>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudButton Variant="Variant.Filled" OnClick="ResetGridAndFilters" Color="Color.Default">Reset</MudButton>
 </div>
 
 @code {
     private readonly List<Element> _elements = CreateElements();
     private DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
     private DataGridFilterCaseSensitivity _caseSensitivity = DataGridFilterCaseSensitivity.Default;
+    private MudDataGrid<Element> _dataGrid = default!;
 
     private static List<Element> CreateElements() =>
     [
@@ -48,4 +55,18 @@
         new() { Number = 9, Sign = "F", Name = "Fluorine", Position = 17, Molar = 18.998, Group = "Halogen" },
         new() { Number = 10, Sign = "Ne", Name = "Neon", Position = 18, Molar = 20.180, Group = "Noble Gas" }
     ];
+
+    private async Task ResetGridAndFilters()
+    {
+        // reset external options
+        _filterMode = DataGridFilterMode.Simple;
+        _caseSensitivity = DataGridFilterCaseSensitivity.Default;
+        // reset all active filters and sorting
+        await _dataGrid.ClearFiltersAsync();        
+        foreach (var field in _dataGrid.SortDefinitions.Keys.ToList())
+        {
+            await _dataGrid.RemoveSortAsync(field);
+        }
+    }
+
 }

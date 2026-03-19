@@ -226,9 +226,8 @@
                     <br>
                     • <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> places the filtering UI inline in the data grid.
                     <br><br>
-                    It is possible to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.<br />
                     For backend data scenarios, see <MudLink Href="/components/datagrid#server-side-filtering-sorting-and-pagination">Server Side Filtering, Sorting and Pagination</MudLink>.
-                    <br />
+                    <br /><br/>
                     QuickFilter is shown in <MudLink Href="/components/datagrid#advanced-data-grid">Advanced Data Grid</MudLink>.
                 </Description>
             </SectionHeader>
@@ -236,7 +235,8 @@
             <DocsPageSection>
                 <SectionHeader Title="Basic">
                     <Description>
-                        This example shows the built-in filtering experience with the default data grid UI. You can switch among all filter modes and change string case sensitivity while keeping the same dataset and paging behavior.
+                        This example demonstrates the built-in filtering UI using the same items and paging setup. Use it to compare each <CodeInline>DataGridFilterMode</CodeInline> options and see how <CodeInline>FilterCaseSensitivity</CodeInline> affects string filtering.
+                        String filtering case sensitivity can be configured with <CodeInline>FilterCaseSensitivity</CodeInline> and has a default of Case Sensitive.<br />
                     </Description>
                 </SectionHeader>
                 <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
