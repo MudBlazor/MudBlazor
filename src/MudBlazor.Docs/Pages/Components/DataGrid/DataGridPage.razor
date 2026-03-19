@@ -218,63 +218,54 @@
         <DocsPageSection>
             <SectionHeader Title="Filtering">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline>s by setting the <CodeInline>FilterMode</CodeInline> property.
-                    <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
-                    set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for
-                    each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
+                    <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline> settings using the <CodeInline>FilterMode</CodeInline> parameter.
+                    <br>
+                    • <CodeInline>DataGridFilterMode.Simple</CodeInline> is the <b>default</b>. All filters are managed in one popover in the data grid, and you can set multiple filters at one time across multiple columns.
+                    <br>
+                    • <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> provides a dedicated popover for each column.
+                    <br>
+                    • <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> places the filtering UI inline in the data grid.
                     <br><br>
-                    Is it possible to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.
+                    It is possible to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.<br />
+                    For backend data scenarios, see <MudLink Href="/components/datagrid#server-side-filtering-sorting-and-pagination">Server Side Filtering, Sorting and Pagination</MudLink>.
+                    <br />
+                    QuickFilter is shown in <MudLink Href="/components/datagrid#advanced-data-grid">Advanced Data Grid</MudLink>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridFilteringExample />
-            </SectionContent>
-        </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Advanced Filtering">
-                <Description>
-                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate&gt;</CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
-                    as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
-                    <br><br>
-                    Inside the <CodeInline>&lt;FilterTemplate&gt;</CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the
-                    data grid's FilterDefinitions to allow for customizing the filtering behavior.
-                    <br><br>
-                    When using the <CodeInline>&lt;FilterTemplate&gt;</CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
-                    which gives access to several helpful properties and actions. For example, the current <CodeInline>FilterDefinition</CodeInline> related to the column is available as well
-                    as several actions to make it easier to implement custom filter behavior such as <CodeInline>ApplyFilter</CodeInline> and <CodeInline>ClearFilter</CodeInline>.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridAdvancedFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridAdvancedFilteringExample />
-            </SectionContent>
-        </DocsPageSection>
+            <DocsPageSection>
+                <SectionHeader Title="Basic">
+                    <Description>
+                        This example shows the built-in filtering experience with the default data grid UI. You can switch among all filter modes and change string case sensitivity while keeping the same dataset and paging behavior.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridFilteringExample />
+                </SectionContent>
+            </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Filter Template in Simple Mode">
-                <Description>
-                    For <CodeInline>DataGridFilterMode.Simple</CodeInline>, you can customize the filter UI for individual columns using the <CodeInline>&lt;FilterTemplate&gt;</CodeInline>.
-                    This is particularly useful when you want to provide a more user-friendly filter experience, such as using a dropdown instead of a text input.
-                    <br><br>
-                    The template receives a <CodeInline>FilterContext&lt;T></CodeInline> context that provides access to the <CodeInline>FilterDefinition</CodeInline> property containing the filter's operator, value, column, and field type.
-                    Each filter row gets its own independent <CodeInline>FilterContext</CodeInline>, so multiple filters on the same column work independently.
-                    <br><br>
-                    The context also provides <CodeInline>Actions</CodeInline> such as <CodeInline>ApplyFilterAsync</CodeInline> and <CodeInline>ClearFilterAsync</CodeInline> to programmatically trigger filter updates.
-                    <br><br>
-                    Note: The same <CodeInline>&lt;FilterTemplate&gt;</CodeInline> works in all filter modes: <CodeInline>Simple</CodeInline>, <CodeInline>ColumnFilterRow</CodeInline>, and <CodeInline>ColumnFilterMenu</CodeInline>.
-                    <br><br>
-                    In the example below, the Category column uses a custom multi-select dropdown. The example demonstrates:
-                    <ul class="mt-2">
-                        <li><strong>Standard operator selector</strong> - Uses the column's built-in filter operators</li>
-                        <li><strong>Custom value input</strong> - Replaces the text input with a multi-select dropdown</li>
-                        <li><strong>Custom filter logic</strong> - Sets a <CodeInline>FilterFunction</CodeInline> to handle multi-value filtering (since this isn't supported by standard operators)</li>
-                        <li><strong>Context actions</strong> - Calls <CodeInline>context.Actions.ApplyFilterAsync</CodeInline> to apply the filter</li>
-                    </ul>
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilterTemplateSimpleModeExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridFilterTemplateSimpleModeExample />
-            </SectionContent>
+            <DocsPageSection>
+                <SectionHeader Title="Simple Filter Template">
+                    <Description>
+                        In <CodeInline>DataGridFilterMode.Simple</CodeInline>, you can either keep the built-in filter panel and customize one column with <CodeInline>&lt;Column&gt;.&lt;FilterTemplate&gt;</CodeInline>, or replace the whole panel with <CodeInline>&lt;MudDataGrid&gt;.&lt;FilterTemplate&gt;</CodeInline>. This example uses a toggle to switch between those two approaches with the same grid and dataset.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilterTemplateSimpleModeExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridFilterTemplateSimpleModeExample />
+                </SectionContent>
+            </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Advanced/Other Templates">
+                    <Description>
+                        <CodeInline>&lt;Column&gt;.&lt;FilterTemplate&gt;</CodeInline> also works in <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> and <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline>. This example keeps the built-in filter behavior for most columns and overrides one column while you switch between the two modes.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridAdvancedFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridAdvancedFilteringExample />
+                </SectionContent>
+            </DocsPageSection>
+
         </DocsPageSection>
 
         <DocsPageSection>
