@@ -661,7 +661,7 @@ namespace MudBlazor
         {
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
-
+            var currentValue = ReadValue;
             await base.SetParametersAsync(parameters);
 
             // Refresh Text from Value if Value is present but Text is not
@@ -670,6 +670,14 @@ namespace MudBlazor
             // but we need to update Text even when Value is passed unchanged (for formatting)
             if (hasValue && !hasText)
             {
+                var valueChanged = !EqualityComparer<T?>.Default.Equals(currentValue, ReadValue);
+
+                // Preserve invalid user input across parent rerenders until Value actually changes.
+                if (ConversionError && !valueChanged && !_forceTextUpdate)
+                {
+                    return;
+                }
+
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
                 await UpdateTextPropertyAsync(false);
