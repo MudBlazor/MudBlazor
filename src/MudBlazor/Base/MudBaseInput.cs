@@ -672,8 +672,8 @@ namespace MudBlazor
             {
                 var valueChanged = !EqualityComparer<T?>.Default.Equals(currentValue, ReadValue);
 
-                // Preserve invalid user input across parent rerenders until Value actually changes.
-                if (ConversionError && !valueChanged && !_forceTextUpdate)
+                // Preserve in-progress user text across parent rerenders until Value actually changes.
+                if (_isFocused && !valueChanged && !_forceTextUpdate)
                 {
                     return;
                 }

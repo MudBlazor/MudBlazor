@@ -1630,6 +1630,29 @@ namespace MudBlazor.UnitTests.Components
             result.Count.Should().Be(2);
         }
 
+        [Test]
+        public async Task Autocomplete_Should_PreserveText_OnKeyRerender_WhenValueIsUnchanged()
+        {
+            var comp = Context.Render<AutocompleteKeyDownRerenderTextTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteKeyDownRerenderTextTest.User>>();
+
+            await autocompleteComponent.Find("input").InputAsync("U");
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocompleteComponent.Instance.ReadText.Should().Be("U");
+                autocompleteComponent.Find("input").GetAttribute("value").Should().Be("U");
+            });
+
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "s", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocompleteComponent.Instance.ReadText.Should().Be("U");
+                autocompleteComponent.Find("input").GetAttribute("value").Should().Be("U");
+            });
+        }
+
         /// <summary>
         /// Test case for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/6412"/>
         /// </summary>
