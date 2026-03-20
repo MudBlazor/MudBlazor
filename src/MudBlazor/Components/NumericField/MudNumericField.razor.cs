@@ -31,7 +31,7 @@ namespace MudBlazor
         private readonly string _elementId = Identifier.Create("numericField");
 
         private readonly Comparer<T> _comparer = Comparer<T>.Default;
-        
+
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
