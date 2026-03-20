@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
+    <div id="@_componentId" class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -143,6 +143,7 @@
 
 <MudOverlay AutoClose
             Visible="Open"
+            data-modeless-ignore-element-id="@_componentId"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
             Modal="@GetModal()" />

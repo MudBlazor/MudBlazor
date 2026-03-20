@@ -148,9 +148,10 @@ Applying the `question` label:
 - If a concrete proposal emerges, remove `question` and switch to a different primary label.
 
 For threads with the `question` label and no `stale` label:
-- Suggest GitHub Discussions and Discord as places to talk with the community.
-- If you have enough information and are confident in your answer, offer tips and things to try.
-  - Always phrase as tentative ideas (e.g., "It may help to try…", "You could consider…") rather than guarantees and emphasize information may be incorrect as you are an AI with limited knowledge.
+- Use this response structure in order:
+  1. Interpretation (1-3 sentences): summarize the user goal, what behavior is currently happening, and what outcome they appear to want. End with a short correction invitation (for example: "If this interpretation is off, please clarify...") so maintainers get clearer context.
+  2. Suggested next step(s): provide concrete, actionable guidance only when it is high-confidence. Never invent or guess API names, parameters, or behaviors. If confidence is not high, do not provide speculative fixes; ask one focused clarifying question.
+  3. Redirect: clearly state that the issue tracker is for bugs/features and that usage questions should go to GitHub Discussions or Discord.
 - When appropriate, help advance the conversation by asking relevant follow-up questions at the end of your answer or clarifying questions if more information is needed.
 - Do not reply if the comment you intend to answer has already been addressed by another user OR a maintainer has posted any comment after that question.
 
@@ -243,4 +244,4 @@ This pull request has been marked as stale due to inactivity.
 - Reproduction: "A link like https://try.mudblazor.com/snippet/XXXX or a minimal repo often helps confirm and debug."
 - Details: "Including MudBlazor version, .NET version, browser(s), and whether it worked in a prior version can help determine if it's a regression."
 - Visual issue: "A screenshot or short video can help confirm the layout/visual concern."
-- Usage redirect: "For similar topics or broader help, you're welcome to use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or our [Discord community](https://discord.gg/mudblazor)."
+- Usage redirect: "This issue tracker is for bugs and feature requests. For usage questions, please ask in [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or the [Discord community](https://discord.gg/mudblazor)."

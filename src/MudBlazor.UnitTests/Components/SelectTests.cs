@@ -92,6 +92,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
+        {
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var overlay = comp.Find("div.mud-overlay");
+            overlay.GetAttribute("data-modeless-ignore-element-id").Should().Be(select.Instance.ElementId);
+        }
+
+        [Test]
         public async Task SelectTestCustomToString()
         {
             var comp = Context.Render<SelectCustomToStringTest>();

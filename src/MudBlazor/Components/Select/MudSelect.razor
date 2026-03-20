@@ -151,6 +151,7 @@ feature relies on pointerdown event resulting in the same order of events.
 -->
 <MudOverlay Visible="_openState.Value"
             @onpointerdown="@(() => CloseMenu(false))"
+            data-modeless-ignore-element-id="@ElementId"
             LockScroll="@LockScroll"
             AutoClose="@(!GetModal())"
             Modal="@GetModal()"
