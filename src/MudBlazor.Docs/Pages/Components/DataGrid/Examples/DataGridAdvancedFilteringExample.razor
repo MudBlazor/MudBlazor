@@ -15,7 +15,7 @@
                            SelectedValuesChanged="@(values => SetColumnFilterValues(context, values))"
                            FullWidth="true" Dense="true" Margin="@Margin.Dense"
                            Class="filter-input category-filter"
-                           PlaceHolder="Filter Categories" Clearable="true">
+                           Placeholder="Filter Categories" Clearable="true">
                     @foreach (var category in _categories)
                     {
                         <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
