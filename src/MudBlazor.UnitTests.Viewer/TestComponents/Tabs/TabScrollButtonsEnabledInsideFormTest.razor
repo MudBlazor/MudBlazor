@@ -1,0 +1,27 @@
+﻿
+<MudContainer MaxWidth="MaxWidth.ExtraSmall">
+    <MudButton OnClick="@ToggleForm" Variant="Variant.Filled" Color="Color.Primary">Toggle Form Enable/Disable</MudButton>
+    <MudForm Disabled="@FormDisabled">
+        <MudTabs ActivePanelIndex="1">
+            <MudTabPanel Text="Tab One">
+                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" />
+            </MudTabPanel>
+            <MudTabPanel Text="Tab Two">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Does nothing</MudButton>
+            </MudTabPanel>
+            <MudTabPanel Text="Tab Three">
+                <MudText>Content Two</MudText>
+            </MudTabPanel>
+        </MudTabs>
+    </MudForm>
+</MudContainer>
+
+@code {
+    public static string __description__ = "Setting a form to disabled should not disable the individual tabs.";
+    public bool FormDisabled { get; set; }
+
+    void ToggleForm()
+    {
+        FormDisabled = !FormDisabled;
+    }
+}

@@ -1876,5 +1876,45 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tab").Count
                 .Should().Be(0);
         }
+
+        /// <summary>
+        /// Scroll buttons should remain enabled even when the parent form is disabled via CascadingValue ParentDisabled.
+        /// The tabs navigation should not be affected by the form's disabled state.
+        /// The tabs themselves may be disabled, but scroll buttons should always be interactive for navigation.
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/12366
+        /// </summary>
+        [Test]
+        public async Task ScrollButtons_RemainEnabled_WhenParentFormDisabled()
+        {
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 100.0,
+                PanelTotalSize = 200,
+            };
+
+            var factory = new MockResizeObserverFactory(observer);
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
+
+            var comp = Context.Render<TabScrollButtonsEnabledInsideFormTest>();
+
+            var scrollButtons = comp.FindComponents<MudIconButton>();
+            scrollButtons.Should().HaveCount(2);
+
+            scrollButtons.First().Instance.Disabled.Should().BeFalse("scroll button should be enabled initially");
+            scrollButtons.Last().Instance.Disabled.Should().BeFalse("scroll button should be enabled initially");
+
+            var toggleFormDisabledButton = comp.Find("button.mud-button-root:not(.mud-icon-button)");
+            await toggleFormDisabledButton.ClickAsync();
+
+            scrollButtons = comp.FindComponents<MudIconButton>();
+            scrollButtons.First().Instance.Disabled.Should().BeFalse("scroll button should remain enabled even when form is disabled");
+            scrollButtons.Last().Instance.Disabled.Should().BeFalse("scroll button should remain enabled even when form is disabled");
+
+            await toggleFormDisabledButton.ClickAsync();
+
+            scrollButtons = comp.FindComponents<MudIconButton>();
+            scrollButtons.First().Instance.Disabled.Should().BeFalse("scroll button should be enabled when form is re-enabled");
+            scrollButtons.Last().Instance.Disabled.Should().BeFalse("scroll button should be enabled when form is re-enabled");
+        }
     }
 }
