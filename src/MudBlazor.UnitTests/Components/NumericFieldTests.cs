@@ -845,132 +845,42 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be(comp.Instance.Min);
         }
 
+        // Parameterized precision increment cases for GitHub issue #6762.
+        // Covers double, float, and decimal types with various step values.
+        static object[] PrecisionIncrementCases =
+        {
+            // double cases
+            new object[] { 0.0d, 0.05d, 1, 0.05d, "0.05" },
+            new object[] { 0.0d, 0.1d, 10, 1.0d, "1" },
+            new object[] { 0.0d, 0.05d, 20, 1.0d, "1" },
+            new object[] { 0.0d, 0.1d, 3, 0.3d, "0.3" },
+            new object[] { 0.0d, 0.001d, 10, 0.01d, "0.01" },
+            new object[] { 0.0d, 1.1d, 10, 11.0d, "11" },
+            new object[] { 5.0d, 0.1d, 5, 5.5d, "5.5" },
+            // float cases
+            new object[] { 0.0f, 0.05f, 1, 0.05f, "0.05" },
+            new object[] { 0.0f, 0.1f, 10, 1.0f, "1" },
+            new object[] { 0.0f, 0.05f, 20, 1.0f, "1" },
+            // decimal preserves scale: 1.00m.ToString() == "1.00", unlike double where 1.0d.ToString() == "1"
+            new object[] { 0.0m, 0.05m, 20, 1.0m, "1.00" },
+        };
+
         /// <summary>
         /// Reproduction test for GitHub issue #6762:
         /// Floating-point precision issues when using double/float with decimal Step.
+        /// Verifies both ReadValue and ReadText after N increments.
         /// </summary>
-        [Test]
-        public async Task NumericField_Double_SingleStep_Precision()
+        [TestCaseSource(nameof(PrecisionIncrementCases))]
+        public async Task NumericField_Increment_Precision<T>(T startValue, T step, int iterations, T expectedValue, string expectedText)
         {
-            var comp = Context.Render<MudNumericField<double>>();
+            var comp = Context.Render<MudNumericField<T>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 0.05));
-            await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadValue.Should().Be(0.05, "double: 0.0 + Step 0.05 should equal 0.05");
-        }
-
-        [Test]
-        public async Task NumericField_Double_AccumulatedStep_Precision()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 0.1));
-            for (var i = 0; i < 10; i++)
+                .Add(x => x.Value, startValue)
+                .Add(x => x.Step, step));
+            for (var i = 0; i < iterations; i++)
                 await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadValue.Should().Be(1.0, "double: 10 increments of 0.1 should equal 1.0");
-        }
-
-        [Test]
-        public async Task NumericField_Double_Step005_MultipleIncrements()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 0.05));
-            for (var i = 0; i < 20; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadValue.Should().Be(1.0, "double: 20 increments of 0.05 should equal 1.0");
-        }
-
-        [Test]
-        public async Task NumericField_Float_SingleStep_Precision()
-        {
-            var comp = Context.Render<MudNumericField<float>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0f)
-                .Add(x => x.Step, 0.05f));
-            await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadValue.Should().Be(0.05f, "float: 0.0 + Step 0.05 should equal 0.05");
-        }
-
-        [Test]
-        public async Task NumericField_Float_AccumulatedStep_Precision()
-        {
-            var comp = Context.Render<MudNumericField<float>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0f)
-                .Add(x => x.Step, 0.1f));
-            for (var i = 0; i < 10; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadValue.Should().Be(1.0f, "float: 10 increments of 0.1 should equal 1.0");
-        }
-
-        [Test]
-        public async Task NumericField_Decimal_Precision_NoIssue()
-        {
-            var comp = Context.Render<MudNumericField<decimal>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0m)
-                .Add(x => x.Step, 0.05m));
-            for (var i = 0; i < 20; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadValue.Should().Be(1.0m, "decimal: 20 increments of 0.05 should equal 1.0");
-        }
-
-        /// <summary>
-        /// Issue #6762 core reproduction: verify displayed TEXT after step.
-        /// The original issue reports that the displayed text shows "0.05000000000000001".
-        /// </summary>
-        [Test]
-        public async Task NumericField_Double_DisplayText_Precision()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 0.05));
-            await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadText.Should().Be("0.05", "display text after 0.0 + Step 0.05 should be '0.05'");
-        }
-
-        [Test]
-        public async Task NumericField_Double_DisplayText_AccumulatedStep()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 0.1));
-            for (var i = 0; i < 3; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadText.Should().Be("0.3", "display text after 3 increments of 0.1 should be '0.3'");
-        }
-
-        [Test]
-        public async Task NumericField_Float_DisplayText_Precision()
-        {
-            var comp = Context.Render<MudNumericField<float>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0f)
-                .Add(x => x.Step, 0.05f));
-            await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadText.Should().Be("0.05", "display text after 0.0 + Step 0.05 should be '0.05'");
-        }
-
-        /// <summary>
-        /// Edge case: Step=0.001 (many decimal places)
-        /// </summary>
-        [Test]
-        public async Task NumericField_Double_DisplayText_Step001()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 0.001));
-            for (var i = 0; i < 10; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadText.Should().Be("0.01", "10 increments of 0.001 should display '0.01'");
-            comp.Instance.ReadValue.Should().Be(0.01, "10 increments of 0.001 should equal 0.01");
+            comp.Instance.ReadValue.Should().Be(expectedValue);
+            comp.Instance.ReadText.Should().Be(expectedText);
         }
 
         /// <summary>
@@ -991,21 +901,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Instance.Increment());
             comp.Instance.ReadText.Should().Be("0.9", "3 increments of 0.3 should display '0.9'");
-        }
-
-        /// <summary>
-        /// Edge case: Step=1.1 (step greater than 1 with decimal part)
-        /// </summary>
-        [Test]
-        public async Task NumericField_Double_DisplayText_Step1_1()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 0.0)
-                .Add(x => x.Step, 1.1));
-            for (var i = 0; i < 10; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadText.Should().Be("11", "10 increments of 1.1 should display '11'");
         }
 
         /// <summary>
@@ -1040,21 +935,6 @@ namespace MudBlazor.UnitTests.Components
                 await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.ReadText.Should().Be("0", "10 up + 10 down with Step 0.05 should return to '0'");
             comp.Instance.ReadValue.Should().Be(0.0, "10 up + 10 down with Step 0.05 should return to 0.0");
-        }
-
-        /// <summary>
-        /// Non-zero start: start from 5.0 with decimal step
-        /// </summary>
-        [Test]
-        public async Task NumericField_Double_NonZeroStart_Precision()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 5.0)
-                .Add(x => x.Step, 0.1));
-            for (var i = 0; i < 5; i++)
-                await comp.InvokeAsync(() => comp.Instance.Increment());
-            comp.Instance.ReadText.Should().Be("5.5", "5.0 + 5 increments of 0.1 should display '5.5'");
         }
 
         /// <summary>

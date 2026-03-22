@@ -27,6 +27,7 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
+        private int _stepDecimalPlaces; // Cached decimal places of Step, updated in setter. Default 0 matches all integer _stepDefault values.
         private MudInput<string> _elementReference = null!;
         private readonly string _elementId = Identifier.Create("numericField");
 
@@ -275,7 +276,7 @@ namespace MudBlazor
             {
                 // Use the greater precision of Step and current value to avoid
                 // truncating legitimate digits (e.g. Value=1234.56, Step=0.5 → 2 places, not 1)
-                var places = Math.Max(GetDecimalPlaces(Step), GetDecimalPlaces(ReadValue));
+                var places = Math.Max(_stepDecimalPlaces, GetDecimalPlaces(ReadValue));
                 var maxPlaces = (typeof(T) == typeof(float) || typeof(T) == typeof(float?)) ? FloatMaxDecimalPlaces : DoubleMaxDecimalPlaces;
                 if (places > 0 && places <= maxPlaces)
                     rawResult = Math.Round(rawResult.GetValueOrDefault(), places);
@@ -462,6 +463,7 @@ namespace MudBlazor
             {
                 _stepHasValue = value != null;
                 _step = value;
+                _stepDecimalPlaces = GetDecimalPlaces(value);
             }
         }
 
