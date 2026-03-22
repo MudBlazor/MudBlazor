@@ -358,7 +358,9 @@ namespace MudBlazor
         {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            var isAdjacentMonthDay = IsAdjacentMonthDay(month, day);
+            b.AddClass("mud-adjacent-month", isAdjacentMonthDay);
+            if (isAdjacentMonthDay && !ShowAdjacentMonthDays)
             {
                 return b.AddClass("mud-hidden").Build();
             }

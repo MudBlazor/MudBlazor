@@ -173,6 +173,16 @@ namespace MudBlazor
         public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
+        /// Shows the days from the previous and next month when they appear in the current calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowAdjacentMonthDays { get; set; }
+
+        /// <summary>
         /// The format of the selected date in the title.
         /// </summary>
         /// <remarks>
@@ -467,6 +477,11 @@ namespace MudBlazor
             return date < MinDate ||
                    date > MaxDate ||
                    IsDateDisabledFunc(date);
+        }
+
+        protected bool IsAdjacentMonthDay(int month, DateTime day)
+        {
+            return day < GetMonthStart(month) || day > GetMonthEnd(month);
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);

@@ -38,7 +38,7 @@
   margin-bottom: 8px;
   justify-content: space-between;
 
-  & > .mud-icon-button {
+  &>.mud-icon-button {
     z-index: 1;
     padding: 8px;
     margin: 6px;
@@ -149,7 +149,7 @@
   position: relative;
 }
 
-.mud-picker-slide-transition > * {
+.mud-picker-slide-transition>* {
   top: 0;
   left: 0;
   right: 0;
@@ -233,7 +233,9 @@
     .mud-picker-calendar-header-5,
     .mud-picker-calendar-header-8,
     .mud-picker-calendar-header-11 {
-      .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
+
+      .mud-picker-nav-button-next,
+      .mud-picker-nav-button-prev {
         visibility: hidden;
       }
     }
@@ -262,7 +264,9 @@
 }
 
 .mud-picker-hidden {
-  .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
+
+  .mud-picker-nav-button-next,
+  .mud-picker-nav-button-prev {
     visibility: hidden !important;
   }
 }
@@ -291,6 +295,10 @@
       &:hover {
         background-color: var(--mud-palette-action-default-hover);
       }
+    }
+
+    &.mud-adjacent-month {
+      color: var(--mud-palette-text-secondary);
     }
 
     &.mud-hidden {

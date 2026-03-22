@@ -1380,6 +1380,23 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().Be(initialRange);
         }
 
+        [Test]
+        public void DateRangePicker_ShowAdjacentMonthDays_ShowsAdjacentDays()
+        {
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.StartMonth, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+
+            var adjacentDays = comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.ClassList.Contains("mud-adjacent-month"))
+                .ToList();
+
+            adjacentDays.Should().NotBeEmpty();
+            adjacentDays.Should().OnlyContain(x => !x.ClassList.Contains("mud-hidden"));
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
