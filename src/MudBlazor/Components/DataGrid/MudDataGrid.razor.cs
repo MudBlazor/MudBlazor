@@ -10,6 +10,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using MudBlazor.DataGrid;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -216,6 +217,12 @@ namespace MudBlazor
 
         internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
+        private static void Move<TItem>(List<TItem> list, int fromIndex, int toIndex)
+        {
+            var item = list[fromIndex];
+            list.RemoveAt(fromIndex);
+            list.Insert(toIndex, item);
+        }
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
             (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
@@ -233,7 +240,16 @@ namespace MudBlazor
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                switch (ColumnReorderMode)
+                {
+                    case DataGridDragAndDropColumnReorderMode.Insert:
+                        Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                        break;
+                    case DataGridDragAndDropColumnReorderMode.Swap:
+                    default:
+                        Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                        break;
+                }
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
@@ -1324,6 +1340,12 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
 
+        /// <summary>
+        /// The behavior of the grid when the user reorders columns via drag and drop.
+        /// </summary>
+        /// <remarks>Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c></remarks>
+        [Parameter]
+        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; }
         #endregion
 
         /// <summary>
