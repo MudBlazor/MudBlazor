@@ -1,7 +1,8 @@
-﻿
+﻿@using MudBlazor.DataGrid
+
 <MudPopoverProvider></MudPopoverProvider>
 
-<MudDataGrid Items="@_items" DragDropColumnReordering="true" DragIndicatorIcon="@Icons.Material.Filled.DragIndicator">
+<MudDataGrid Items="@_items" DragDropColumnReordering="true" DragIndicatorIcon="@Icons.Material.Filled.DragIndicator" ColumnReorderMode="DataGridDragAndDropColumnReorderMode.Insert">
     <Columns>
         <PropertyColumn DragAndDropEnabled="false" Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />

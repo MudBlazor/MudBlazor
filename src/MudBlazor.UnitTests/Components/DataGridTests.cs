@@ -4753,10 +4753,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridDragAndDrop()
+        public async Task DataGridDragAndDrop_SwapMode()
         {
-            var comp = Context.Render<DataGridDragAndDropTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
+            var comp = Context.Render<DataGridDragAndDropTest_SwapMode>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_SwapMode.Model>>();
             dataGrid.Instance.DropContainerHasChanged();
 
             var headerValues = dataGrid.FindAll(".sortable-column-header");
@@ -4793,6 +4793,50 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
 
         }
+
+        [Test]
+        public async Task DataGridDragAndDrop_InsertMode()
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            var firstDropZone = zone[4];
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone[1];
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("HiredOn");
+            newHeaderValues[2].InnerHtml.Should().Be("Age");
+            newHeaderValues[3].InnerHtml.Should().Be("Status");
+            newHeaderValues[4].InnerHtml.Should().Be("Hired");
+            
+
+        }
+
         [Test]
         public async Task DataGridEditFormDialogIsCustomizable()
         {
