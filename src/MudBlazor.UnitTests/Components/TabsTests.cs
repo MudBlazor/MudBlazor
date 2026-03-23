@@ -1897,24 +1897,36 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<TabScrollButtonsEnabledInsideFormTest>();
 
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindComponents<MudIconButton>().Should().HaveCount(2);
+            });
+
             var scrollButtons = comp.FindComponents<MudIconButton>();
-            scrollButtons.Should().HaveCount(2);
+            var initialPreviousDisabled = scrollButtons.First().Instance.Disabled;
+            var initialNextDisabled = scrollButtons.Last().Instance.Disabled;
 
-            scrollButtons.First().Instance.Disabled.Should().BeFalse("scroll button should be enabled initially");
-            scrollButtons.Last().Instance.Disabled.Should().BeFalse("scroll button should be enabled initially");
+            await comp.Find("button.mud-button-root:not(.mud-icon-button)").ClickAsync();
 
-            var toggleFormDisabledButton = comp.Find("button.mud-button-root:not(.mud-icon-button)");
-            await toggleFormDisabledButton.ClickAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var currentScrollButtons = comp.FindComponents<MudIconButton>();
+                currentScrollButtons.First().Instance.Disabled.Should().Be(initialPreviousDisabled,
+                    "scroll button disabled state should not change when the parent form becomes disabled");
+                currentScrollButtons.Last().Instance.Disabled.Should().Be(initialNextDisabled,
+                    "scroll button disabled state should not change when the parent form becomes disabled");
+            });
 
-            scrollButtons = comp.FindComponents<MudIconButton>();
-            scrollButtons.First().Instance.Disabled.Should().BeFalse("scroll button should remain enabled even when form is disabled");
-            scrollButtons.Last().Instance.Disabled.Should().BeFalse("scroll button should remain enabled even when form is disabled");
+            await comp.Find("button.mud-button-root:not(.mud-icon-button)").ClickAsync();
 
-            await toggleFormDisabledButton.ClickAsync();
-
-            scrollButtons = comp.FindComponents<MudIconButton>();
-            scrollButtons.First().Instance.Disabled.Should().BeFalse("scroll button should be enabled when form is re-enabled");
-            scrollButtons.Last().Instance.Disabled.Should().BeFalse("scroll button should be enabled when form is re-enabled");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var currentScrollButtons = comp.FindComponents<MudIconButton>();
+                currentScrollButtons.First().Instance.Disabled.Should().Be(initialPreviousDisabled,
+                    "scroll button disabled state should remain unchanged when the parent form is re-enabled");
+                currentScrollButtons.Last().Instance.Disabled.Should().Be(initialNextDisabled,
+                    "scroll button disabled state should remain unchanged when the parent form is re-enabled");
+            });
         }
     }
 }
