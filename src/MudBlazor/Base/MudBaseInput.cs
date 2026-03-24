@@ -565,9 +565,12 @@ namespace MudBlazor
             }
 
             // Notify the form that the field has changed and trigger re-validation
-            // This ensures validation errors are re-evaluated when the value is changed programmatically
-            FieldChanged(arg.Value);
-            await BeginValidateAsync();
+            // Only do this for parent-driven changes once the field has been interacted with
+            if (!arg.IsChildOriginatedChange && _isDirty)
+            {
+                FieldChanged(arg.Value);
+                await BeginValidateAsync();
+            }
         }
 
         /// <summary>
