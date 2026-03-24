@@ -221,6 +221,40 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        [Test]
+        public async Task DebouncedTextField_Should_ValidatePendingValueImmediatelyWhenFormIsValidated()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            var comp = Context.Render<DebouncedTextFieldFormValidationSyncTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponents<MudTextField<string>>();
+
+            await comp.Find("#username").InputAsync(new ChangeEventArgs { Value = "username" });
+            await comp.Find("#password").ChangeAsync(new ChangeEventArgs { Value = "password" });
+
+            textField[0].Instance.ReadText.Should().Be("username");
+            textField[0].Instance.ReadValue.Should().BeNull();
+            comp.Instance.Model.Username.Should().BeNull();
+            textField[1].Instance.ReadText.Should().Be("password");
+            textField[1].Instance.ReadValue.Should().Be("password");
+            comp.Instance.Model.Password.Should().Be("password");
+            form.IsValid.Should().BeTrue();
+
+            await comp.Find("#validate-button").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Instance.Model.Username.Should().Be("username");
+                comp.Instance.Model.Password.Should().Be("password");
+                comp.Instance.ResultText.Should().Be("succeeded");
+                form.IsValid.Should().BeTrue();
+                textField[0].Instance.ReadValue.Should().Be("username");
+                textField[1].Instance.ReadValue.Should().Be("password");
+            });
+        }
+
         /// <summary>
         /// Label and placeholder should not overlap.
         /// When placeholder is set, label should shrink

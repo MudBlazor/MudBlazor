@@ -4,6 +4,9 @@ on:
   issues:
     types: [opened]
 
+permissions:
+  contents: read
+
 jobs:
   triage_issue:
     if: ${{ github.repository_owner == 'MudBlazor' }}
