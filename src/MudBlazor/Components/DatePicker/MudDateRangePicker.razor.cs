@@ -179,7 +179,7 @@ namespace MudBlazor
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).CatchAndLog();
+                SetDateRangeAsync(value is null ? null : ParseDateRangeValue(value.Start, value.End), false).CatchAndLog();
             }
         }
 
@@ -483,11 +483,11 @@ namespace MudBlazor
 
         protected override Task ResetValueAsync() => ClearAsync();
 
-        public override Task ClearAsync(bool close = true)
+        public override async Task ClearAsync(bool close = true)
         {
-            DateRange = null;
+            await SetDateRangeAsync(null, true);
             _firstDate = _secondDate = null;
-            return base.ClearAsync(close);
+            await base.ClearAsync(close);
         }
 
         protected override string GetTitleDateString()
