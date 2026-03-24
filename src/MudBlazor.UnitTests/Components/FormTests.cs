@@ -2132,10 +2132,10 @@ namespace MudBlazor.UnitTests.Components
             await textFieldComp.Find("input").BlurAsync();
             await comp.WaitForAssertionAsync(() =>
             {
+                form.IsValid.Should().BeFalse();
                 textField.GetState(x => x.Error).Should().BeTrue();
                 textField.GetState(x => x.ErrorText).Should().Be("This field is required");
             });
-            form.IsValid.Should().BeFalse();
 
             // Now set a valid value programmatically through parameter binding
             await textFieldComp.SetParametersAndRenderAsync(parameters =>
@@ -2144,10 +2144,10 @@ namespace MudBlazor.UnitTests.Components
             // The validation error should be cleared because the value is now valid
             await comp.WaitForAssertionAsync(() =>
             {
+                form.IsValid.Should().BeTrue();
                 textField.GetState(x => x.Error).Should().BeFalse();
                 textField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             });
-            form.IsValid.Should().BeTrue();
 
             // Clear the value programmatically through parameter binding
             await textFieldComp.SetParametersAndRenderAsync(parameters =>
@@ -2156,11 +2156,10 @@ namespace MudBlazor.UnitTests.Components
             // The validation error should reappear because the value is now invalid
             await comp.WaitForAssertionAsync(() =>
             {
+                form.IsValid.Should().BeFalse();
                 textField.GetState(x => x.Error).Should().BeTrue();
                 textField.GetState(x => x.ErrorText).Should().Be("This field is required");
             });
-            form.IsValid.Should().BeFalse();
         }
     }
 }
-
