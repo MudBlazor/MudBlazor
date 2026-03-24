@@ -9,8 +9,8 @@
     </MudCardContent>
 </MudForm>
 
-<MudButton OnClick="@(async () => await SetName())">Set Name to Valid Value</MudButton>
-<MudButton OnClick="@(async () => await ClearName())">Clear Name</MudButton>
+<MudButton OnClick="SetName">Set Name to Valid Value</MudButton>
+<MudButton OnClick="ClearName">Clear Name</MudButton>
 
 @code {
     public static string __description__ = "When form has validation error and value is updated through code, validation should be re-evaluated.";
@@ -42,13 +42,13 @@
         };
     }
 
-    private async Task SetName()
+    private void SetName()
     {
         model.Name = "Valid Name";
         StateHasChanged();
     }
 
-    private async Task ClearName()
+    private void ClearName()
     {
         model.Name = string.Empty;
         StateHasChanged();
