@@ -1,0 +1,56 @@
+﻿@using FluentValidation
+
+<MudForm Model="@model" @ref="@form" Validation="@(orderValidator.ValidateValue)" ValidationDelay="0">
+    <MudCardContent>
+        <MudTextField @bind-Value="model.Name"                              
+                      For="@(() => model.Name)"
+                      Immediate="true"
+                      Label="Name" />
+    </MudCardContent>
+</MudForm>
+
+<MudButton OnClick="@(async () => await SetName())">Set Name to Valid Value</MudButton>
+<MudButton OnClick="@(async () => await ClearName())">Clear Name</MudButton>
+
+@code {
+    public static string __description__ = "When form has validation error and value is updated through code, validation should be re-evaluated.";
+
+    MudForm? form;
+    OrderModel model = new OrderModel();
+    OrderModelFluentValidator orderValidator = new OrderModelFluentValidator();
+
+    public class OrderModel
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
+    public class OrderModelFluentValidator : AbstractValidator<OrderModel>
+    {
+        public OrderModelFluentValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .Length(1, 100);
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions((OrderModel)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+
+    private async Task SetName()
+    {
+        model.Name = "Valid Name";
+        StateHasChanged();
+    }
+
+    private async Task ClearName()
+    {
+        model.Name = string.Empty;
+        StateHasChanged();
+    }
+}

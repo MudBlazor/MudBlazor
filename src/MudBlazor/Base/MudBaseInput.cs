@@ -563,6 +563,11 @@ namespace MudBlazor
                 _forceTextUpdate = false;
                 await UpdateTextPropertyAsync(false);
             }
+
+            // Notify the form that the field has changed and trigger re-validation
+            // This ensures validation errors are re-evaluated when the value is changed programmatically
+            FieldChanged(arg.Value);
+            await BeginValidateAsync();
         }
 
         /// <summary>
