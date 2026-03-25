@@ -1,5 +1,9 @@
-﻿<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6" 
-         EnableDragAndDrop="true" OnItemDropped="@ItemDroppedFired">
+﻿<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@TogglePosition">
+    Toggle Position (@_currentPosition)
+</MudButton>
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6"
+         EnableDragAndDrop="true" OnItemDropped="@ItemDroppedFired" Position="@_currentPosition">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -16,7 +20,21 @@
 
 @code {
     public static string __description__ = "Viewer for MudTabs. Drag and drop tabs to reorder them.";
+    private Position _currentPosition;
+
+    [Parameter]
+    public Position Position { get; set; } = Position.Top;
 
     [Parameter]
     public EventCallback<MudItemDropInfo<MudTabPanel>> ItemDroppedFired { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        _currentPosition = Position;
+    }
+
+    private void TogglePosition()
+    {
+        _currentPosition = _currentPosition == Position.Top ? Position.Left : Position.Top;
+    }
 }
