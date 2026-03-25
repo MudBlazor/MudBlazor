@@ -116,9 +116,8 @@ window.mudGetSvgBBox = (svgElement) => {
  * either via explicit height or constrained layout context.
  */
 window.hasDefinedParentHeight = (element) => {
-    console.log('element:', element);
     const parent = element?.parentElement;
-    console.log('parent:', parent);
+
     if (!parent) return false;
 
     const style = window.getComputedStyle(parent);
