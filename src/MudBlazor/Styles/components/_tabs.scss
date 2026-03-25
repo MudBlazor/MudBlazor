@@ -128,6 +128,20 @@
   }
 }
 
+.mud-tabs-dropzone-horizontal {
+  > .mud-drop-item-preview-start {
+    width: 20px;
+    height: 100%;
+  }
+}
+
+.mud-tabs-dropzone-vertical {
+  > .mud-drop-item-preview-start {
+    width: 100%;
+    height: 20px;
+  }
+}
+
 .mud-tab {
   width: 100%;
   display: inline-flex;
