@@ -11,8 +11,7 @@
 }
 
 <svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" 
-     width="@(MatchBoundsToSize ? "100%" : Width)" height="@(MatchBoundsToSize ? "100%" : Height)"
-     viewBox="0 0 @_boundWidth.ToStr() @_boundHeight.ToStr()"
+     width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToStr() @_boundHeight.ToStr()"
      style="@HoveredStylename">
     @if (_options is { EnableSmoothGradient: true })
     {
