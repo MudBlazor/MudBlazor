@@ -686,6 +686,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When T is a complex type and Text is explicitly set without a Value,
+        /// the initial Text should be preserved and not overwritten.
+        /// </summary>
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12900")]
+        public void Autocomplete_ComplexType_Should_Preserve_Initial_Text()
+        {
+            var comp = Context.Render<AutocompleteInitialTextComplexTypeTest>();
+            comp.Find("input").GetAttribute("value").Should().Be("InitialValue");
+        }
+
+        /// <summary>
         /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1415"/>
         /// </summary>
         [Test]

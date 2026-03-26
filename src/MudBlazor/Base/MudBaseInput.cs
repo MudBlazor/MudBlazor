@@ -627,7 +627,7 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            if (typeof(T) != typeof(string))
+            if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
                 await UpdateTextPropertyAsync(false);
             }
