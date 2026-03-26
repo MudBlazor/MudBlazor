@@ -9,7 +9,7 @@
     <div @attributes="UserAttributes" class="mud-chart-legend">
         @foreach (var item in Data)        
         {
-            <div class="mud-chart-legend-item" 
+            <div class="@($"mud-chart-legend-item {(CanHideSeries ? "" : "pa-1")}")"
                  @onclick:stopPropagation=@(ChartContainer!=null)
                  @onclick=@(async () => { if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); }})>
                 @if(!CanHideSeries)
@@ -21,7 +21,7 @@
                 {   
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
                         <MudCheckBox Value="@item.Visible" ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense/>
-                        <MudText Typo="Typo.body2" Class="ml-n2 align-self-end" HtmlTag="span">@item.Labels</MudText>
+                        <MudText Typo="Typo.body2" Class="ml-n2 align-self-center" HtmlTag="span">@item.Labels</MudText>
                     </div> 
                 }                 
             </div>
