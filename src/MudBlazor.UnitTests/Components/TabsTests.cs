@@ -1403,6 +1403,30 @@ namespace MudBlazor.UnitTests.Components
 #nullable disable
 
         [Test]
+        public void TabsDragAndDrop_Horizontal_AddsHorizontalDropZoneClass()
+        {
+            var comp = Context.Render<TabsDragAndDropTest>(parameters => parameters.Add(p => p.Position, Position.Top));
+
+            var dropZone = comp.Find("div.mud-tabs-dropzone");
+
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone");
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone-horizontal");
+            dropZone.ClassList.Should().NotContain("mud-tabs-dropzone-vertical");
+        }
+
+        [Test]
+        public void TabsDragAndDrop_Vertical_AddsVerticalDropZoneClass()
+        {
+            var comp = Context.Render<TabsDragAndDropTest>(parameters => parameters.Add(p => p.Position, Position.Left));
+
+            var dropZone = comp.Find("div.mud-tabs-dropzone");
+
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone");
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone-vertical");
+            dropZone.ClassList.Should().NotContain("mud-tabs-dropzone-horizontal");
+        }
+
+        [Test]
         public void LabelSorting_NaturalOrderIfSortingUnspecified()
         {
             // all parameters unspecified
