@@ -1087,6 +1087,29 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        [Test]
+        public async Task DataGridFormEditBackdropDismissalInvokesCanceledEditingItem()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.EditMode, DataGridEditMode.Form)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            await dataGrid.FindAll("tbody tr")[0].ClickAsync();
+            provider.Find("div.mud-dialog-container").Should().NotBeNull();
+
+            await provider.Find("div.mud-overlay").ClickAsync();
+
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindAll("div.mud-dialog-container").Should().BeEmpty();
+                comp.Instance.CanceledEditingItem.Should().Be(true);
+            });
+        }
+
         [Theory]
         [TestCase(12, true)]
         [TestCase(-12, false)]
