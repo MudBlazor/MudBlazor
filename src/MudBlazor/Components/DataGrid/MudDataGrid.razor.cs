@@ -355,6 +355,8 @@ namespace MudBlazor
         /// <remarks>
         /// This event is invoked after <see cref="CommittedItemChanges"/> completes and after
         /// values are copied to the source item in <see cref="DataGridEditMode.Form"/>.
+        /// In <see cref="DataGridEditMode.Cell"/>, the item is already updated before commit,
+        /// and this callback is invoked after <see cref="CommittedItemChanges"/> completes.
         /// </remarks>
         [Parameter]
         public EventCallback<T> CommittedItemChanged { get; set; }
