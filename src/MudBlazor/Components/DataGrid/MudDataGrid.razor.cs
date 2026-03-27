@@ -316,7 +316,9 @@ namespace MudBlazor
         /// Occurs when edit mode begins for an item.
         /// </summary>
         /// <remarks>
-        /// If changes are committed, the <see cref="CommittedItemChanges"/> delegate is called. If editing is canceled, the <see cref="CanceledEditingItem"/> occurs.
+        /// Use this event to react when editing starts. For form field changes, use <see cref="FormFieldChanged"/>.
+        /// For save and cancel notifications, use <see cref="CommittedItemChanges"/>, <see cref="CommittedItemChanged"/>,
+        /// or <see cref="CanceledEditingItem"/>.
         /// </remarks>
         [Parameter]
         public EventCallback<T> StartedEditingItem { get; set; }
@@ -324,27 +326,21 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when editing of an item has been canceled.
         /// </summary>
+        /// <remarks>
+        /// This event is raised instead of <see cref="CommittedItemChanges"/> and <see cref="CommittedItemChanged"/>
+        /// when the edit operation is canceled.
+        /// </remarks>
         [Parameter]
         public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// Invoked when the user saves changes to an item, allowing for validation, 
-        /// persistence, or other processing.
+        /// Invoked when the user saves changes to an item, allowing validation, persistence, or other pre-commit work.
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// The callback receives a separate instance of the item with the committed values, 
-        /// preventing changes from being applied to the underlying data source before 
-        /// validation or processing completes.
-        /// </para>
-        /// <para>
-        /// Return a <see cref="DataGridEditFormAction"/> value to control the edit form behavior. 
-        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>:
-        /// </para>
-        /// <list type="bullet">
-        /// <item><see cref="DataGridEditFormAction.Close"/> - Accepts changes and closes the form</item>
-        /// <item><see cref="DataGridEditFormAction.KeepOpen"/> - Rejects changes and keeps the form open for corrections</item>
-        /// </list>
+        /// In <see cref="DataGridEditMode.Form"/>, this callback receives the edited copy before values are applied to
+        /// the source item. Return <see cref="DataGridEditFormAction.Close"/> to continue or
+        /// <see cref="DataGridEditFormAction.KeepOpen"/> to leave the form open for corrections.
+        /// Use <see cref="CommittedItemChanged"/> to react after the source item has been updated.
         /// </remarks>
         [Parameter]
         public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
@@ -353,10 +349,10 @@ namespace MudBlazor
         /// Occurs after committed changes have been applied to the underlying item.
         /// </summary>
         /// <remarks>
-        /// This event is invoked after <see cref="CommittedItemChanges"/> completes and after
-        /// values are copied to the source item in <see cref="DataGridEditMode.Form"/>.
-        /// In <see cref="DataGridEditMode.Cell"/>, the item is already updated before commit,
-        /// and this callback is invoked after <see cref="CommittedItemChanges"/> completes.
+        /// Use this callback for post-commit logic. In <see cref="DataGridEditMode.Form"/>, it runs after
+        /// <see cref="CommittedItemChanges"/> completes and after values are copied to the source item.
+        /// In <see cref="DataGridEditMode.Cell"/>, it runs after <see cref="CommittedItemChanges"/> completes,
+        /// with the already-updated item.
         /// </remarks>
         [Parameter]
         public EventCallback<T> CommittedItemChanged { get; set; }
@@ -365,7 +361,7 @@ namespace MudBlazor
         /// Occurs when a field changes in the edit dialog.
         /// </summary>
         /// <remarks>
-        /// This event only occurs when <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>.
+        /// This event only occurs in <see cref="DataGridEditMode.Form"/> and fires for individual field changes before save.
         /// </remarks>
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
