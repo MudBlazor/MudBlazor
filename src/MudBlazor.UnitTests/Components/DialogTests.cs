@@ -971,6 +971,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ShowAsyncWithParametersOnly_ShouldPassParameters()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error }
+            };
+            IDialogReference dialogReference = null!;
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithParameters>(parameters));
+            dialogReference.Should().NotBe(null);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.ReadText.Should().Be("test");
+            ((DialogWithParameters)dialogReference.Dialog).ColorTest.Should().Be(Color.Error);
+        }
+
+        [Test]
         public async Task ShowGeneric_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
