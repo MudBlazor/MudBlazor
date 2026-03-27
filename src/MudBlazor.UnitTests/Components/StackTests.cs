@@ -18,6 +18,7 @@ namespace MudBlazor.UnitTests.Components
             stack.Justify.Should().BeNull();
             stack.AlignItems.Should().BeNull();
             stack.StretchItems.Should().BeNull();
+            stack.HtmlTag.Should().Be("div");
         }
 
         [Test]
@@ -259,8 +260,20 @@ namespace MudBlazor.UnitTests.Components
         public void HtmlTagSetToUlRendersUlElement()
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.HtmlTag, "ul"));
+            var stackElement = stack.Find("ul.d-flex");
 
-            stack.Find("ul.d-flex").Should().NotBeNull();
+            stackElement.Should().NotBeNull();
+            stackElement.HasAttribute("role").Should().BeFalse();
+        }
+
+        [Test]
+        public void DefaultStackRendersDivElementWithGroupRole()
+        {
+            var stack = Context.Render<MudStack>();
+            var stackElement = stack.Find("div.d-flex");
+
+            stackElement.Should().NotBeNull();
+            stackElement.GetAttribute("role").Should().Be("group");
         }
     }
 }
