@@ -1,0 +1,34 @@
+﻿
+<MudContainer MaxWidth="MaxWidth.ExtraSmall">
+    <MudButton OnClick="@ToggleForm" Variant="Variant.Filled" Color="Color.Primary">Toggle Form Enable/Disable</MudButton>
+    <MudForm Disabled="@FormDisabled">
+        <MudTabs ActivePanelIndex="9" AlwaysShowScrollButtons="true">
+            <MudTabPanel Text="Tab One">
+                <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" />
+            </MudTabPanel>
+            <MudTabPanel Text="Tab Two">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary">Does nothing</MudButton>
+            </MudTabPanel>
+            <MudTabPanel Text="Three" />
+            <MudTabPanel Text="Four" />
+            <MudTabPanel Text="Five" />
+            <MudTabPanel Text="Six" />
+            <MudTabPanel Text="Seven" />
+            <MudTabPanel Text="Eight" />
+            <MudTabPanel Text="Nine" />
+            <MudTabPanel Text="Ten" />
+            <MudTabPanel Text="Eleven" />
+            <MudTabPanel Text="Thirteen" />
+        </MudTabs>
+    </MudForm>
+</MudContainer>
+
+@code {
+    public static string __description__ = "Tab scroll buttons should remain interactive even when the containing form is disabled.";
+    public bool FormDisabled { get; set; }
+
+    void ToggleForm()
+    {
+        FormDisabled = !FormDisabled;
+    }
+}

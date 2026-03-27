@@ -860,6 +860,8 @@ namespace MudBlazor
         protected string DropZoneClassnames =>
             new CssBuilder("mud-tabs-dropzone")
                 .AddClass("d-flex", !_isVerticalTabs)
+                .AddClass("mud-tabs-dropzone-horizontal", !_isVerticalTabs)
+                .AddClass("mud-tabs-dropzone-vertical", _isVerticalTabs)
                 .AddClass($"mud-tabs-vertical", _isVerticalTabs)
                 .AddClass("flex-grow-1")
                 .Build();
