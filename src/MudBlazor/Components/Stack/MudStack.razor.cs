@@ -171,4 +171,14 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// The HTML tag rendered for this component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>div</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public string HtmlTag { get; set; } = "div";
 }

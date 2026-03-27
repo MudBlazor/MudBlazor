@@ -254,6 +254,13 @@ namespace MudBlazor.UnitTests.Components
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"flex-{expectedClass}", "gap-3" });
         }
+
+        [Test]
+        public void CheckCustomHtmlTag()
+        {
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.HtmlTag, "ul"));
+
+            stack.Find("ul.d-flex").Should().NotBeNull();
+        }
     }
 }
-
