@@ -13,6 +13,11 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudStack : MudComponentBase
 {
+    private string? Role =>
+        string.Equals(HtmlTag, "div", StringComparison.OrdinalIgnoreCase)
+            ? "group"
+            : null;
+
     protected string Classname =>
         new CssBuilder("d-flex")
             .AddClass(getFlexDirection())

@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckCustomHtmlTag()
+        public void HtmlTagSetToUlRendersUlElement()
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.HtmlTag, "ul"));
 
