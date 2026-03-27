@@ -275,5 +275,25 @@ namespace MudBlazor.UnitTests.Components
             stackElement.Should().NotBeNull();
             stackElement.GetAttribute("role").Should().Be("group");
         }
+
+        [Test]
+        public void UserSuppliedRoleOverridesDefaultRoleForDiv()
+        {
+            var divStack = Context.Render<MudStack>(parameters => parameters
+                .AddUnmatched("role", "list"));
+            var divElement = divStack.Find("div.d-flex");
+
+            divElement.GetAttribute("role").Should().Be("list");
+        }
+
+        [Test]
+        public void SemanticTagDoesNotRenderRoleAttribute()
+        {
+            var semanticStack = Context.Render<MudStack>(parameters => parameters
+                .Add(c => c.HtmlTag, "ul"));
+            var semanticElement = semanticStack.Find("ul.d-flex");
+
+            semanticElement.HasAttribute("role").Should().BeFalse();
+        }
     }
 }
