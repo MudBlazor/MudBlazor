@@ -1775,7 +1775,7 @@ namespace MudBlazor
                 ApplyFiltersAsync = ApplyFiltersFromSimpleModeAsync,
                 ClearFilterAsync = ClearFilterFromSimpleModeAsync,
                 ClearFiltersAsync = ClearFiltersFromSimpleModeAsync,
-                CloseFilterUIAsync = CloseFilterUIAsync
+                CloseFilterAsync = CloseFilterAsync
             });
 
             return context;
@@ -1879,7 +1879,7 @@ namespace MudBlazor
         /// This method closes the filter panel shown by <see cref="MudDataGrid{T}"/>, such as the panel used by <see cref="DataGridFilterMode.Simple"/>.
         /// Incomplete filters which still require a value are removed as part of closing the panel.
         /// </remarks>
-        public Task CloseFilterUIAsync()
+        public Task CloseFilterAsync()
         {
             _filtersMenuVisible = false;
             CleanupIncompleteFilters();

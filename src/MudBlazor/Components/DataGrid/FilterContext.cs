@@ -63,7 +63,7 @@ namespace MudBlazor
                 ApplyFiltersAsync = async x => await (HeaderCell?.ApplyFiltersAsync(x) ?? Task.CompletedTask),
                 ClearFilterAsync = async x => await (HeaderCell?.ClearFilterAsync(x) ?? Task.CompletedTask),
                 ClearFiltersAsync = async x => await (HeaderCell?.ClearFiltersAsync(x) ?? Task.CompletedTask),
-                CloseFilterUIAsync = async () => await (HeaderCell?.CloseFilterUIAsync() ?? Task.CompletedTask),
+                CloseFilterAsync = async () => await (HeaderCell?.CloseFilterAsync() ?? Task.CompletedTask),
             };
         }
 
@@ -99,7 +99,7 @@ namespace MudBlazor
             /// In <see cref="DataGridFilterMode.Simple"/>, this closes the data grid filter panel.
             /// In <see cref="DataGridFilterMode.ColumnFilterMenu"/>, this closes the column filter popover.
             /// </remarks>
-            public required Func<Task> CloseFilterUIAsync { get; init; }
+            public required Func<Task> CloseFilterAsync { get; init; }
         }
     }
 }

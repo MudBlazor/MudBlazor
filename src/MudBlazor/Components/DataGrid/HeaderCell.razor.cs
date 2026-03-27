@@ -671,7 +671,7 @@ namespace MudBlazor
         /// <remarks>
         /// This method closes the column filter popover used by <see cref="DataGridFilterMode.ColumnFilterMenu"/>.
         /// </remarks>
-        internal Task CloseFilterUIAsync()
+        internal Task CloseFilterAsync()
         {
             _filtersMenuVisible = false;
             StateHasChanged();

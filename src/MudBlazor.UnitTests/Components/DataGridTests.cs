@@ -4152,7 +4152,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(async () =>
             {
-                await headerCell.Instance.Column!.FilterContext.Actions.CloseFilterUIAsync();
+                await headerCell.Instance.Column!.FilterContext.Actions.CloseFilterAsync();
             });
 
             await comp.WaitForAssertionAsync(() => comp.FindAll(".clear-filter-button").Count.Should().Be(0));
@@ -4240,7 +4240,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(async () =>
             {
-                await filterContext.Actions.CloseFilterUIAsync();
+                await filterContext.Actions.CloseFilterAsync();
             });
 
             comp.FindAll(".filters-panel").Count.Should().Be(0);

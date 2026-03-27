@@ -55,7 +55,7 @@
         </MudSelect>
         <MudStack Row="true" Justify="Justify.FlexEnd">
             <MudButton OnClick="@(async () => await ClearGridFiltersAsync(grid))">Clear</MudButton>
-            <MudButton Color="@Color.Primary" OnClick="@(async () => await grid.CloseFilterUIAsync())">Close</MudButton>
+            <MudButton Color="@Color.Primary" OnClick="@(async () => await grid.CloseFilterAsync())">Close</MudButton>
         </MudStack>
     </MudStack>
     ;
