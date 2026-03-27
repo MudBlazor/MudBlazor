@@ -105,9 +105,11 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
 
     private Dictionary<string, object?> GetSelectAllAttributes()
     {
-        var label = string.IsNullOrWhiteSpace(SelectAllAriaLabel)
-            ? Localizer[LanguageResource.MudDataGrid_SelectAllRows].Value
-            : SelectAllAriaLabel!;
+        var label = SelectAllAriaLabel;
+        if (string.IsNullOrWhiteSpace(label) && string.IsNullOrWhiteSpace(SelectAllAriaLabelledBy))
+        {
+            label = Localizer[LanguageResource.MudDataGrid_SelectAllRows].Value;
+        }
 
         return BuildAriaAttributes(label, SelectAllAriaLabelledBy);
     }
@@ -115,12 +117,12 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     private Dictionary<string, object?> GetRowCheckboxAttributes(CellContext<T> context)
     {
         var label = RowCheckboxAriaLabelFunc?.Invoke(context.Item, context.RowIndex);
-        if (string.IsNullOrWhiteSpace(label))
+        var labelledBy = RowCheckboxAriaLabelledByFunc?.Invoke(context.Item, context.RowIndex);
+
+        if (string.IsNullOrWhiteSpace(label) && string.IsNullOrWhiteSpace(labelledBy))
         {
             label = GetDefaultRowAriaLabel(context.RowIndex);
         }
-
-        var labelledBy = RowCheckboxAriaLabelledByFunc?.Invoke(context.Item, context.RowIndex);
 
         return BuildAriaAttributes(label, labelledBy);
     }
@@ -132,12 +134,14 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
             : Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
     }
 
-    private static Dictionary<string, object?> BuildAriaAttributes(string label, string? labelledBy)
+    private static Dictionary<string, object?> BuildAriaAttributes(string? label, string? labelledBy)
     {
-        var attributes = new Dictionary<string, object?>(2)
+        var attributes = new Dictionary<string, object?>(2);
+
+        if (!string.IsNullOrWhiteSpace(label))
         {
-            ["aria-label"] = label
-        };
+            attributes["aria-label"] = label;
+        }
 
         if (!string.IsNullOrWhiteSpace(labelledBy))
         {

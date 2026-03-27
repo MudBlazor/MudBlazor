@@ -5243,6 +5243,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void SelectColumn_CustomAriaLabelledBy_ReplacesDefaultLabels()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.RowCheckboxAriaLabelledByFunc), (Func<TestDataItem, int, string>)((item, index) => $"row-label-{index}-{item.Id}"));
+                    builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.SelectAllAriaLabelledBy), "header-label");
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(3);
+                    builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var headerCheckbox = comp.Find("thead .mud-checkbox input");
+            headerCheckbox.GetAttribute("aria-labelledby").Should().Be("header-label");
+            headerCheckbox.HasAttribute("aria-label").Should().BeFalse();
+
+            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
+            rowCheckboxes[0].GetAttribute("aria-labelledby").Should().Be("row-label-0-1");
+            rowCheckboxes[0].HasAttribute("aria-label").Should().BeFalse();
+            rowCheckboxes[1].GetAttribute("aria-labelledby").Should().Be("row-label-1-2");
+            rowCheckboxes[1].HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        [Test]
         public async Task SelectColumn_SetsAriaSelectedOnRows()
         {
             var items = new List<int> { 1, 2 };
