@@ -101,14 +101,15 @@
 @code {
     private Dictionary<string, object?>? GetRowAttributes(T item)
     {
-        if (!DataGrid.HasSelectColumn || DataGrid.IsSelectionDisabled(item))
+        var rowSelectionState = DataGrid.GetRowSelectionState(item);
+        if (rowSelectionState is null)
         {
             return null;
         }
 
         return new Dictionary<string, object?>(1)
         {
-            ["aria-selected"] = DataGrid.Selection.Contains(item).ToString().ToLowerInvariant()
+            ["aria-selected"] = rowSelectionState.Value.ToString().ToLowerInvariant()
         };
     }
 }

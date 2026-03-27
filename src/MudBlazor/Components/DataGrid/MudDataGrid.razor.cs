@@ -255,8 +255,6 @@ namespace MudBlazor
         /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
 
-        internal bool HasSelectColumn => RenderedColumns.OfType<SelectColumn<T>>().Any();
-
         internal T? _editingItem;
 
         internal T? _editingSourceItem;
@@ -1931,7 +1929,7 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
-            if (IsSelectionDisabled(item))
+            if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
             if (value)
@@ -1999,12 +1997,8 @@ namespace MudBlazor
             if (value) // Logic for selecting all
             {
                 var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
-
-                if (HasSelectionDisabledItems())
-                {
-                    // Filter out disabled items before adding to selection
-                    itemsToSelect = itemsToSelect.Where(item => !IsSelectionDisabled(item));
-                }
+                var selectColumn = GetSelectColumn();
+                itemsToSelect = itemsToSelect.Where(item => !IsRowSelectionDisabled(item, selectColumn));
 
                 Selection.UnionWith(itemsToSelect);
             }
@@ -2017,14 +2011,30 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
-        internal bool IsSelectionDisabled(T item)
+        private SelectColumn<T>? GetSelectColumn()
         {
-            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault()?.DisabledFunc?.Invoke(item) is true;
+            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
         }
 
-        internal bool HasSelectionDisabledItems()
+        internal bool? GetRowSelectionState(T item)
         {
-            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault()?.DisabledFunc is not null;
+            var selectColumn = GetSelectColumn();
+            if (selectColumn is null || IsRowSelectionDisabled(item, selectColumn))
+            {
+                return null;
+            }
+
+            return Selection.Contains(item);
+        }
+
+        private static bool IsRowSelectionDisabled(T item, SelectColumn<T>? selectColumn)
+        {
+            return selectColumn?.DisabledFunc?.Invoke(item) is true;
+        }
+
+        internal bool IsRowSelectionDisabled(T item)
+        {
+            return IsRowSelectionDisabled(item, GetSelectColumn());
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)

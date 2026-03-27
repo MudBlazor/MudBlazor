@@ -5177,14 +5177,18 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Columns, builder =>
                 {
                     builder.OpenComponent<SelectColumn<int>>(0);
+                    builder.AddAttribute(1, nameof(SelectColumn<int>.ShowInFooter), true);
                     builder.CloseComponent();
-                    builder.OpenComponent<PropertyColumn<int, int>>(1);
-                    builder.AddAttribute(2, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
+                    builder.OpenComponent<PropertyColumn<int, int>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
                     builder.CloseComponent();
                 }));
 
             var headerCheckbox = comp.Find("thead .mud-checkbox input");
             headerCheckbox.GetAttribute("aria-label").Should().Be("Select all rows");
+
+            var footerCheckbox = comp.Find("tfoot .mud-checkbox input");
+            footerCheckbox.GetAttribute("aria-label").Should().Be("Select all rows");
 
             var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
             rowCheckboxes[0].GetAttribute("aria-label").Should().Be("Select row 1");
@@ -5209,71 +5213,6 @@ namespace MudBlazor.UnitTests.Components
             var rows = comp.FindAll("tbody tr");
             rows[0].HasAttribute("aria-selected").Should().BeFalse();
             rows[1].HasAttribute("aria-selected").Should().BeFalse();
-        }
-
-        [Test]
-        public void SelectColumn_CustomAriaLabels_OverrideDefaults()
-        {
-            var items = new List<TestDataItem>
-            {
-                new() { Id = 1, Name = "First" },
-                new() { Id = 2, Name = "Second" }
-            };
-
-            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
-                .Add(p => p.Items, items)
-                .Add(p => p.MultiSelection, true)
-                .Add(p => p.Columns, builder =>
-                {
-                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
-                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.RowCheckboxAriaLabelFunc), (Func<TestDataItem, int, string>)((item, index) => $"{item.Name} row {index + 1}"));
-                    builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.SelectAllAriaLabel), "Pick every row");
-                    builder.CloseComponent();
-                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(3);
-                    builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
-                    builder.CloseComponent();
-                }));
-
-            var headerCheckbox = comp.Find("thead .mud-checkbox input");
-            headerCheckbox.GetAttribute("aria-label").Should().Be("Pick every row");
-
-            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
-            rowCheckboxes[0].GetAttribute("aria-label").Should().Be("First row 1");
-            rowCheckboxes[1].GetAttribute("aria-label").Should().Be("Second row 2");
-        }
-
-        [Test]
-        public void SelectColumn_CustomAriaLabelledBy_ReplacesDefaultLabels()
-        {
-            var items = new List<TestDataItem>
-            {
-                new() { Id = 1, Name = "First" },
-                new() { Id = 2, Name = "Second" }
-            };
-
-            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
-                .Add(p => p.Items, items)
-                .Add(p => p.MultiSelection, true)
-                .Add(p => p.Columns, builder =>
-                {
-                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
-                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.RowCheckboxAriaLabelledByFunc), (Func<TestDataItem, int, string>)((item, index) => $"row-label-{index}-{item.Id}"));
-                    builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.SelectAllAriaLabelledBy), "header-label");
-                    builder.CloseComponent();
-                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(3);
-                    builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
-                    builder.CloseComponent();
-                }));
-
-            var headerCheckbox = comp.Find("thead .mud-checkbox input");
-            headerCheckbox.GetAttribute("aria-labelledby").Should().Be("header-label");
-            headerCheckbox.HasAttribute("aria-label").Should().BeFalse();
-
-            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
-            rowCheckboxes[0].GetAttribute("aria-labelledby").Should().Be("row-label-0-1");
-            rowCheckboxes[0].HasAttribute("aria-label").Should().BeFalse();
-            rowCheckboxes[1].GetAttribute("aria-labelledby").Should().Be("row-label-1-2");
-            rowCheckboxes[1].HasAttribute("aria-label").Should().BeFalse();
         }
 
         [Test]

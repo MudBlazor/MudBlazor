@@ -36,10 +36,7 @@ namespace MudBlazor
         /// </summary>
         public bool Open => OpenHierarchies.Contains(Item);
 
-        /// <summary>
-        /// The zero-based index of the row displayed in the grid, or <c>-1</c> when unavailable.
-        /// </summary>
-        public int RowIndex { get; private set; } = -1;
+        internal int RowIndex { get; } = -1;
 
         /// <summary>
         /// Creates a new instance.
@@ -61,13 +58,7 @@ namespace MudBlazor
             };
         }
 
-        /// <summary>
-        /// Creates a new instance with an explicit row index.
-        /// </summary>
-        /// <param name="dataGrid">The data grid which owns this context.</param>
-        /// <param name="item">The item displayed in the cell.</param>
-        /// <param name="rowIndex">The zero-based row index.</param>
-        public CellContext(MudDataGrid<T> dataGrid, T item, int rowIndex)
+        internal CellContext(MudDataGrid<T> dataGrid, T item, int rowIndex)
             : this(dataGrid, item)
         {
             RowIndex = rowIndex;
