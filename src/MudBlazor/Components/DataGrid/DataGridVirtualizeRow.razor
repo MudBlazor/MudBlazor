@@ -101,7 +101,7 @@
 @code {
     private Dictionary<string, object?>? GetRowAttributes(T item)
     {
-        if (!DataGrid.HasSelectColumn)
+        if (!DataGrid.HasSelectColumn || DataGrid.IsSelectionDisabled(item))
         {
             return null;
         }

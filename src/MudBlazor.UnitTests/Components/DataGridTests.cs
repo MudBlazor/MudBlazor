@@ -5317,6 +5317,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void SelectColumn_DoesNotRenderAriaSelected_ForDisabledRows()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Disabled", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc));
+
+            var rows = comp.FindAll("tbody tr");
+            rows[0].GetAttribute("aria-selected").Should().Be("false");
+            rows[1].HasAttribute("aria-selected").Should().BeFalse();
+        }
+
+        [Test]
         public async Task FilterDefinitionTestHasFilterProperty()
         {
             var comp = Context.Render<DataGridFiltersTest>();

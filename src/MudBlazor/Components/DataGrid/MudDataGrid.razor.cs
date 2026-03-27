@@ -1931,9 +1931,7 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
-            var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-
-            if (selectColumn?.DisabledFunc?.Invoke(item) is true)
+            if (IsSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
             if (value)
@@ -2002,11 +2000,10 @@ namespace MudBlazor
             {
                 var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
 
-                var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-                if (selectColumn?.DisabledFunc != null)
+                if (HasSelectionDisabledItems())
                 {
                     // Filter out disabled items before adding to selection
-                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.DisabledFunc(item));
+                    itemsToSelect = itemsToSelect.Where(item => !IsSelectionDisabled(item));
                 }
 
                 Selection.UnionWith(itemsToSelect);
@@ -2018,6 +2015,16 @@ namespace MudBlazor
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        internal bool IsSelectionDisabled(T item)
+        {
+            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault()?.DisabledFunc?.Invoke(item) is true;
+        }
+
+        internal bool HasSelectionDisabledItems()
+        {
+            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault()?.DisabledFunc is not null;
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
