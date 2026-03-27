@@ -5294,23 +5294,23 @@ namespace MudBlazor.UnitTests.Components
                 }));
 
             List<IElement> Rows() => comp.FindAll("tbody tr").ToList();
+            List<IElement> RowCheckboxes() => comp.FindAll("tbody .mud-checkbox input").ToList();
+            IElement HeaderCheckbox() => comp.Find("thead .mud-checkbox input");
 
             Rows()[0].GetAttribute("aria-selected").Should().Be("false");
             Rows()[1].GetAttribute("aria-selected").Should().Be("false");
 
-            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
-            await rowCheckboxes[0].ChangeAsync(true);
+            await RowCheckboxes()[0].ChangeAsync(true);
 
             Rows()[0].GetAttribute("aria-selected").Should().Be("true");
             Rows()[1].GetAttribute("aria-selected").Should().Be("false");
 
-            var headerCheckbox = comp.Find("thead .mud-checkbox input");
-            await headerCheckbox.ChangeAsync(true);
+            await HeaderCheckbox().ChangeAsync(true);
 
             Rows()[0].GetAttribute("aria-selected").Should().Be("true");
             Rows()[1].GetAttribute("aria-selected").Should().Be("true");
 
-            await headerCheckbox.ChangeAsync(false);
+            await HeaderCheckbox().ChangeAsync(false);
 
             Rows()[0].GetAttribute("aria-selected").Should().Be("false");
             Rows()[1].GetAttribute("aria-selected").Should().Be("false");
