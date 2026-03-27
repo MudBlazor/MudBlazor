@@ -54,6 +54,16 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     [Parameter]
     public Func<T, bool>? DisabledFunc { get; set; }
 
+    /// <summary>
+    /// Provides a custom <c>aria-label</c> for a row selection checkbox.
+    /// </summary>
+    /// <remarks>
+    /// This function is evaluated for each row item.  When the returned value is <c>null</c>, empty, or whitespace,
+    /// the checkbox falls back to the default <c>aria-labelledby</c> behavior, which derives its accessible name from the row content.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string?>? AriaLabelFunc { get; set; }
+
     public override RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => ShowInHeader ? GetSelectHeaderTemplate() : null;
     public override RenderFragment<CellContext<T>> GetCellTemplate() => GetSelectCellTemplate();
     public override RenderFragment<FooterContext<T>>? GetFooterTemplate() => ShowInFooter ? GetSelectFooterTemplate() : null;
@@ -79,11 +89,31 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
 
     private Dictionary<string, object> GetRowCheckboxAttributes(CellContext<T> context)
     {
+        var ariaLabel = GetCustomAriaLabel(context.Item);
+        if (!string.IsNullOrWhiteSpace(ariaLabel))
+        {
+            return new Dictionary<string, object>(1)
+            {
+                ["aria-label"] = ariaLabel
+            };
+        }
+
+        if (!string.IsNullOrWhiteSpace(context.RowCheckboxLabelledBy))
+        {
+            return new Dictionary<string, object>(1)
+            {
+                ["aria-labelledby"] = context.RowCheckboxLabelledBy
+            };
+        }
+
         return new Dictionary<string, object>(1)
         {
-            ["aria-label"] = context.RowIndex >= 0
-                ? Localizer[LanguageResource.MudDataGrid_SelectRowWithIndex, context.RowIndex + 1].Value
-                : Localizer[LanguageResource.MudDataGrid_SelectRow].Value
+            ["aria-label"] = Localizer[LanguageResource.MudDataGrid_SelectRow].Value
         };
+    }
+
+    private string? GetCustomAriaLabel(T item)
+    {
+        return AriaLabelFunc?.Invoke(item);
     }
 }

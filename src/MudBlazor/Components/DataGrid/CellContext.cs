@@ -36,7 +36,9 @@ namespace MudBlazor
         /// </summary>
         public bool Open => OpenHierarchies.Contains(Item);
 
-        internal int RowIndex { get; } = -1;
+        internal string? RowCheckboxLabelledBy { get; }
+
+        internal string? RowCheckboxPrefixId { get; }
 
         /// <summary>
         /// Creates a new instance.
@@ -58,10 +60,11 @@ namespace MudBlazor
             };
         }
 
-        internal CellContext(MudDataGrid<T> dataGrid, T item, int rowIndex)
+        internal CellContext(MudDataGrid<T> dataGrid, T item, string? rowCheckboxLabelledBy, string? rowCheckboxPrefixId)
             : this(dataGrid, item)
         {
-            RowIndex = rowIndex;
+            RowCheckboxLabelledBy = rowCheckboxLabelledBy;
+            RowCheckboxPrefixId = rowCheckboxPrefixId;
         }
 
         /// <summary>

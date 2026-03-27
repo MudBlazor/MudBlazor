@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits TemplateColumn<T>
 @typeparam T
+@using MudBlazor.Resources
 
 @code {
     public RenderFragment<HeaderContext<T>>? GetSelectHeaderTemplate() => context =>
@@ -23,7 +24,12 @@
                       Value="@context.Selected"
                       ValueChanged="@context.Actions.SetSelectedItemAsync"
                       Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)"
-                      UserAttributes="@GetRowCheckboxAttributes(context)" />;
+                      UserAttributes="@GetRowCheckboxAttributes(context)">
+            @if (string.IsNullOrWhiteSpace(GetCustomAriaLabel(context.Item)) && !string.IsNullOrWhiteSpace(context.RowCheckboxPrefixId))
+            {
+                <span id="@context.RowCheckboxPrefixId" class="mud-sr-only">@Localizer[LanguageResource.MudDataGrid_SelectRow]</span>
+            }
+        </MudCheckBox>;
 
     private RenderFragment<FooterContext<T>>? GetSelectFooterTemplate() => context =>
     {

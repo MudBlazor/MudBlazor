@@ -47,11 +47,11 @@ namespace MudBlazor
         #endregion
 
         public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item)
-            : this(dataGrid, column, item, -1)
+            : this(dataGrid, column, item, null, null)
         {
         }
 
-        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, int rowIndex)
+        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, string? rowCheckboxLabelledBy, string? rowCheckboxPrefixId)
         {
             _dataGrid = dataGrid;
             _column = column;
@@ -60,7 +60,9 @@ namespace MudBlazor
             OnStartedEditingItem();
 
             // Create the CellContext
-            _cellContext = rowIndex >= 0 ? new CellContext<T>(_dataGrid, _item, rowIndex) : new CellContext<T>(_dataGrid, _item);
+            _cellContext = rowCheckboxLabelledBy is not null || rowCheckboxPrefixId is not null
+                ? new CellContext<T>(_dataGrid, _item, rowCheckboxLabelledBy, rowCheckboxPrefixId)
+                : new CellContext<T>(_dataGrid, _item);
         }
 
         public async Task StringValueChangedAsync(string? value)

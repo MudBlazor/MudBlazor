@@ -426,9 +426,6 @@
   <data name="MudDataGrid_SelectRow" xml:space="preserve">
     <value>Select row</value>
   </data>
-  <data name="MudDataGrid_SelectRowWithIndex" xml:space="preserve">
-    <value>Select row {0}</value>
-  </data>
   <data name="MudDataGrid_SelectAllRows" xml:space="preserve">
     <value>Select all rows</value>
   </data>

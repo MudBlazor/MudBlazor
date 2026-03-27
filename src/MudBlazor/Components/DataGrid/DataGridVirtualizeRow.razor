@@ -3,6 +3,7 @@
 @typeparam T
 @using MudBlazor.Utilities
 @using MudBlazor.Resources
+@using MudBlazor.Extensions
 @inject InternalMudLocalizer Localizer
 
 @{
@@ -55,6 +56,11 @@
                 .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
                 .Build();
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+            var primaryRowLabelColumn = DataGrid.RenderedColumns.FirstOrDefault(column => !column.HiddenState.Value && column is not SelectColumn<T> && column.Tag?.ToString() != "hierarchy-column")
+                ?? DataGrid.RenderedColumns.FirstOrDefault(column => !column.HiddenState.Value && column is not SelectColumn<T>);
+            var rowCheckboxPrefixId = Identifier.Create("datagrid-select-row-");
+            var rowLabelId = Identifier.Create("datagrid-row-label-");
+            var rowCheckboxLabelledBy = primaryRowLabelColumn is null ? null : $"{rowCheckboxPrefixId} {rowLabelId}";
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
             @attributes="GetRowAttributes(itemBag.Item)"
@@ -66,7 +72,7 @@
                 {
                     if (!column.HiddenState.Value)
                     {
-                        @DataGrid.Cell(column, itemBag.Item, itemBag.Index)
+                        @DataGrid.Cell(column, itemBag.Item, primaryRowLabelColumn, rowCheckboxLabelledBy, rowCheckboxPrefixId, rowLabelId)
                     }
                 }
             </CascadingValue>
@@ -75,13 +81,13 @@
         {
             @if (DataGrid.ChildRowRenderer != null)
             {
-                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Index))
+                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item))
             }
             @if (DataGrid.ChildRowContent != null)
             {
                 <tr class="mud-table-row">
                     <td class="mud-table-cell mud-table-child-content" colspan="1000">
-                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Index))
+                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
                     </td>
                 </tr>
             }
