@@ -2898,6 +2898,7 @@ namespace MudBlazor.UnitTests.Components
 
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+            comp.Find(".filters-panel").ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
 
             // click again on the filter button
             await FilterButton().ClickAsync();
