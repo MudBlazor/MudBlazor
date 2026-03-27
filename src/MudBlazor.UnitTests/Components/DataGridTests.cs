@@ -5192,6 +5192,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_WithoutSelectColumn_DoesNotRenderAriaSelected()
+        {
+            var items = new List<int> { 1, 2 };
+
+            var comp = Context.Render<MudDataGrid<int>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<int, int>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
+                    builder.CloseComponent();
+                }));
+
+            var rows = comp.FindAll("tbody tr");
+            rows[0].HasAttribute("aria-selected").Should().BeFalse();
+            rows[1].HasAttribute("aria-selected").Should().BeFalse();
+        }
+
+        [Test]
         public void SelectColumn_CustomAriaLabels_OverrideDefaults()
         {
             var items = new List<TestDataItem>

@@ -255,6 +255,8 @@ namespace MudBlazor
         /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
 
+        internal bool HasSelectColumn => RenderedColumns.OfType<SelectColumn<T>>().Any();
+
         internal T? _editingItem;
 
         internal T? _editingSourceItem;

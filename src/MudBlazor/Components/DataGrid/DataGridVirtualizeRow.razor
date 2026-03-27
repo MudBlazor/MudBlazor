@@ -57,7 +57,7 @@
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
-            aria-selected="@GetAriaSelected(itemBag.Item)"
+            @attributes="GetRowAttributes(itemBag.Item)"
             @onclick="@((args) => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
@@ -99,5 +99,16 @@
 </MudVirtualize>
 
 @code {
-    private string GetAriaSelected(T item) => DataGrid.Selection.Contains(item).ToString().ToLowerInvariant();
+    private Dictionary<string, object?>? GetRowAttributes(T item)
+    {
+        if (!DataGrid.HasSelectColumn)
+        {
+            return null;
+        }
+
+        return new Dictionary<string, object?>(1)
+        {
+            ["aria-selected"] = DataGrid.Selection.Contains(item).ToString().ToLowerInvariant()
+        };
+    }
 }
