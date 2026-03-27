@@ -97,6 +97,8 @@
                         <li><CodeInline>DataGridEditFormAction.Close</CodeInline> - Accepts the changes and closes the edit form</li>
                         <li><CodeInline>DataGridEditFormAction.KeepOpen</CodeInline> - Rejects the changes and keeps the form open (useful for validation failures)</li>
                     </ul>
+                    After accepted changes are copied to the bound row item, <CodeInline>CommittedItemChanged</CodeInline>
+                    is invoked so you can react to the final updated object.
                     In the example below, the form remains open when Molar mass is negative, allowing the user to correct the error.
                     <br /><br />
 

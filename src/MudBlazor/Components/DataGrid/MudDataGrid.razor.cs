@@ -350,6 +350,16 @@ namespace MudBlazor
         public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
 
         /// <summary>
+        /// Occurs after committed changes have been applied to the underlying item.
+        /// </summary>
+        /// <remarks>
+        /// This event is invoked after <see cref="CommittedItemChanges"/> completes and after
+        /// values are copied to the source item in <see cref="DataGridEditMode.Form"/>.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<T> CommittedItemChanged { get; set; }
+
+        /// <summary>
         /// Occurs when a field changes in the edit dialog.
         /// </summary>
         /// <remarks>
@@ -1966,6 +1976,8 @@ namespace MudBlazor
             // Here, we need to validate at the cellular level...
             if (CommittedItemChanges != null)
                 _ = await CommittedItemChanges(item); // ignore return value in cell edit mode
+
+            await CommittedItemChanged.InvokeAsync(item);
         }
 
         /// <summary>
@@ -1996,6 +2008,8 @@ namespace MudBlazor
 
                 foreach (var property in _properties.Where(p => p.CanWrite))
                     property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+
+                await CommittedItemChanged.InvokeAsync(_editingSourceItem);
 
                 ClearEditingItem();
                 _isEditFormOpen = false;

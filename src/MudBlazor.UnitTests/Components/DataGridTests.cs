@@ -1346,6 +1346,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCommittedItemChangedOccursAfterSourceItemUpdateInFormEdit()
+        {
+            var comp = Context.Render<DataGridCommittedItemChangedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCommittedItemChangedTest.Model>>();
+
+            await dataGrid.FindAll("tbody tr")[1].ClickAsync();
+
+            await comp.FindAll("div input")[0].ChangeAsync("Galadriel");
+            await comp.FindAll("div input")[1].ChangeAsync(12);
+            await comp.Find(".mud-dialog-actions .mud-button-filled-primary").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Instance.EditedCopyNameWhenCommittedItemChanges.Should().Be("Galadriel");
+                comp.Instance.SourceNameWhenCommittedItemChanges.Should().Be("Johanna");
+                comp.Instance.CommittedItemChangedCalled.Should().BeTrue();
+                comp.Instance.SourceNameWhenCommittedItemChanged.Should().Be("Galadriel");
+                dataGrid.FindAll("td")[2].TextContent.Trim().Should().Be("Galadriel");
+                dataGrid.FindAll("td")[3].TextContent.Trim().Should().Be("12");
+            });
+        }
+
+        [Test]
         public async Task DataGridEditComplexPropertyExpression()
         {
             var comp = Context.Render<DataGridEditComplexPropertyExpressionTest>();
