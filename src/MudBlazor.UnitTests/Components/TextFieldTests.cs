@@ -126,6 +126,28 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
+        [Test]
+        public async Task TextField_Should_PreserveInvalidTextOnKeyRerender()
+        {
+            var comp = Context.Render<TextFieldConversionErrorKeyRerenderTest>();
+
+            await comp.Find("input").InputAsync("123456");
+
+            var textField = comp.FindComponent<MudTextField<TextFieldConversionErrorKeyRerenderTest.Pod>>().Instance;
+            textField.ReadValue.Should().BeNull();
+            textField.ReadText.Should().Be("123456");
+            textField.ConversionError.Should().BeTrue();
+            textField.ConversionErrorMessage.Should().Be("Error message");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "6", Type = "keydown" });
+
+            textField = comp.FindComponent<MudTextField<TextFieldConversionErrorKeyRerenderTest.Pod>>().Instance;
+            textField.ReadValue.Should().BeNull();
+            textField.ReadText.Should().Be("123456");
+            textField.ConversionError.Should().BeTrue();
+            comp.Find("input").GetAttribute("value").Should().Be("123456");
+        }
+
         /// <summary>
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>

@@ -686,6 +686,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When T is a complex type and Text is explicitly set without a Value,
+        /// the initial Text should be preserved and not overwritten.
+        /// </summary>
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12900")]
+        public void Autocomplete_ComplexType_Should_Preserve_Initial_Text()
+        {
+            var comp = Context.Render<AutocompleteInitialTextComplexTypeTest>();
+            comp.Find("input").GetAttribute("value").Should().Be("InitialValue");
+        }
+
+        /// <summary>
         /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1415"/>
         /// </summary>
         [Test]
@@ -1628,6 +1639,29 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find("input").KeyUp("a");
             //Assert
             result.Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_PreserveText_OnKeyRerender_WhenValueIsUnchanged()
+        {
+            var comp = Context.Render<AutocompleteKeyDownRerenderTextTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteKeyDownRerenderTextTest.User>>();
+
+            await autocompleteComponent.Find("input").InputAsync("U");
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocompleteComponent.Instance.ReadText.Should().Be("U");
+                autocompleteComponent.Find("input").GetAttribute("value").Should().Be("U");
+            });
+
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "s", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocompleteComponent.Instance.ReadText.Should().Be("U");
+                autocompleteComponent.Find("input").GetAttribute("value").Should().Be("U");
+            });
         }
 
         /// <summary>

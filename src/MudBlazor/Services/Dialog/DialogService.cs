@@ -81,6 +81,12 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
         public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogParameters parameters) where T : IComponent
         {
             return ShowAsync<T>(title, parameters, DialogOptions.Default);
