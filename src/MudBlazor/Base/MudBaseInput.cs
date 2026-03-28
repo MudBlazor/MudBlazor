@@ -565,8 +565,8 @@ namespace MudBlazor
             }
 
             // Notify the form that the field has changed and trigger re-validation
-            // Only do this for parent-driven changes after the field has been touched.
-            if (!arg.IsChildOriginatedChange && wasTouched)
+            // Only do this after the field has been touched.
+            if (wasTouched)
             {
                 FieldChanged(arg.Value);
                 await BeginValidateAsync();
