@@ -1,0 +1,54 @@
+// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using MudBlazor.Charts;
+
+namespace MudBlazor;
+
+/// <summary>
+/// Options specific to scatter plot charts, extending <see cref="DefaultAxisLineChartOptions"/>.
+/// </summary>
+public class ScatterPlotChartOptions : DefaultAxisLineChartOptions, IAxisLineChartOptions
+{
+    /// <summary>
+    /// The radius of each data point marker, in pixels.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>5</c>.
+    /// </remarks>
+    public double PointRadius { get; set; } = 5;
+
+    /// <summary>
+    /// The spacing between tick marks on the X axis.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>20</c>.
+    /// </remarks>
+    public int XAxisTicks { get; set; } = 20;
+
+    /// <summary>
+    /// The maximum number of X-axis tick marks allowed.
+    /// </summary>
+    /// <remarks>
+    /// If the number of ticks calculated exceeds this value, the tick marks will automatically be thinned out.
+    /// Defaults to <c>20</c>.
+    /// </remarks>
+    public int MaxNumXAxisTicks { get; set; } = 20;
+
+    /// <summary>
+    /// The format applied to numbers on the horizontal axis.
+    /// </summary>
+    public string? XAxisFormat { get; set; }
+
+    public override string TooltipTitleFormat { get; set; } = "{{X_VALUE}}, {{Y_VALUE}}";
+
+    public static implicit operator ScatterPlotChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
+}

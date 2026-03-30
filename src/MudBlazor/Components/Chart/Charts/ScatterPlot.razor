@@ -1,0 +1,144 @@
+@namespace MudBlazor.Charts
+
+@inherits MudAxisLineChartBase<T, ScatterPlotChartOptions>
+
+@typeparam T
+
+<div @attributes="UserAttributes" class="@Classname">
+    <BaseAxisChart T="T"
+                   TChartOptions="ScatterPlotChartOptions"
+                   AxisChanged="AxisChanged"
+                   ElementRefChanged="SetElementReference"
+                   Width="@Width"
+                   Height="@Height"
+                   ViewBoxWidth="_boundWidth"
+                   ViewBoxHeight="_boundHeight"
+                   MatchBoundsToSize="@MatchBoundsToSize"
+                   ChartClass="mud-chart-scatter"
+                   ChartSeries="@ChartSeries"
+                   ChartLabels="@ChartLabels"
+                   ChartOptions="@ChartOptions"
+                   XAxisTitle="@ChartOptions?.XAxisTitle"
+                   YAxisTitle="@ChartOptions?.YAxisTitle"
+                   ChartType="@ChartType"
+                   SeriesContent="@RenderScatterPoints()"
+                   TooltipContent="@RenderTooltip()"
+                   CustomGraphics="@CustomGraphics"
+                   HoveredSegment="@HoveredDataPointPath"
+                   HorizontalLines="@HorizontalLines"
+                   VerticalLines="@VerticalLines"
+                   HorizontalValues="@HorizontalValues"
+                   VerticalValues="@VerticalValues"
+                   UserAttributes="@UserAttributes" />
+
+    <Legend T="T" Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+            ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+</div>
+
+@code {
+    private const double DataPointStroke = 1.5d;
+    private double PointRadius => ChartOptions?.PointRadius ?? 5;
+    private double PointHoverRadius => PointRadius + 2;
+    private double DataPointLabelOffset => PointHoverRadius + (DataPointStroke / 2d);
+
+    private RenderFragment RenderScatterPoints() => builder =>
+    {
+        var seq = 0;
+
+        foreach (var seriesEntry in ChartDataPoints)
+        {
+            var index = seriesEntry.Key;
+            if (index < 0 || index >= Series.Count) continue;
+
+            var color = ChartOptions!.ChartPalette?.Length > 0
+                ? ChartOptions.ChartPalette[index % ChartOptions.ChartPalette.Length]
+                : string.Empty;
+
+            foreach (var item in seriesEntry.Value)
+            {
+                var isHovered = item.Equals(HoveredDataPointPath);
+
+                // Always-visible data point marker
+                if (!isHovered)
+                {
+                    builder.OpenElement(seq++, "circle");
+                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                    builder.AddAttribute(seq++, "fill", color);
+                    builder.AddAttribute(seq++, "stroke", color);
+                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
+                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                    builder.AddAttribute(seq++, "r", PointRadius.ToStr());
+                    builder.CloseElement();
+                }
+
+                // Hoverable target (larger, shows on hover, carries mouse events)
+                builder.OpenElement(seq++, "circle");
+                builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "fill", isHovered ? color : string.Empty);
+                builder.AddAttribute(seq++, "stroke", color);
+                builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
+                builder.AddAttribute(seq++, "opacity", isHovered ? 1 : 0);
+                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                builder.AddAttribute(seq++, "r", PointHoverRadius.ToStr());
+                builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
+                builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                builder.CloseElement();
+            }
+        }
+    };
+
+    private RenderFragment RenderTooltip() => builder =>
+    {
+        if (HoveredDataPointPath is null || ChartDataPoints is null)
+            return;
+
+        var dataPoint = ChartDataPoints.FirstOrDefault(x => x.Value.Contains(HoveredDataPointPath));
+        if (dataPoint.Value is null)
+            return;
+
+        var seq = 0;
+        var seriesIndex = dataPoint.Key;
+        var color = ChartOptions!.ChartPalette?.Length > 0
+            ? ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+            : string.Empty;
+
+        var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(HoveredDataPointPath) is { } pos
+            ? (pos.X, pos.Y)
+            : (HoveredDataPointPath.LabelX, HoveredDataPointPath.LabelY - DataPointLabelOffset);
+
+        if (TooltipTemplate is not null)
+        {
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-chart-tooltip");
+            builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToStr()},{tooltipY.ToStr()})");
+            builder.AddContent(seq++, TooltipTemplate.Invoke((HoveredDataPointPath, color)));
+            builder.CloseElement();
+        }
+        else
+        {
+            if (seriesIndex < 0 || seriesIndex >= Series.Count) return;
+
+            var series = Series[seriesIndex];
+            var tooltipTitleFormat = series.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
+            var tooltipSubtitleFormat = series.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
+
+            if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
+            {
+                var tooltipTitle = FormatTooltipText(tooltipTitleFormat, series, HoveredDataPointPath);
+                var tooltipSubtitle = FormatTooltipText(tooltipSubtitleFormat, series, HoveredDataPointPath);
+
+                builder.OpenComponent<ChartTooltip>(seq++);
+                builder.AddAttribute(seq++, "Title", tooltipTitle);
+                builder.AddAttribute(seq++, "Subtitle", tooltipSubtitle);
+                builder.AddAttribute(seq++, "Color", color);
+                builder.AddAttribute(seq++, "X", tooltipX);
+                builder.AddAttribute(seq++, "Y", tooltipY);
+                builder.CloseComponent();
+            }
+        }
+    };
+}
