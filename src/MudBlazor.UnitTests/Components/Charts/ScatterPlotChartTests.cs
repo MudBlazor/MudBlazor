@@ -839,11 +839,10 @@ namespace MudBlazor.UnitTests.Charts
                     ShowToolTips = true,
                 }));
 
-            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
-            await hoverCircle.MouseOverAsync();
+            await comp.FindAll("circle.mud-chart-point").Last().MouseOverAsync();
             comp.FindAll("g.svg-tooltip").Count.Should().Be(1);
 
-            await hoverCircle.MouseOutAsync();
+            await comp.FindAll("circle.mud-chart-point").Last().MouseOutAsync();
             comp.FindAll("g.svg-tooltip").Count.Should().Be(0);
         }
 
@@ -889,12 +888,11 @@ namespace MudBlazor.UnitTests.Charts
                     TooltipTitleFormat = "Y: {{Y_VALUE}}",
                 }));
 
-            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
-            await hoverCircle.MouseOverAsync();
+            await comp.FindAll("circle.mud-chart-point").Last().MouseOverAsync();
 
-            var tooltip = comp.Find("g.svg-tooltip");
-            tooltip.InnerHtml.Should().Contain("Y: 20");
-            tooltip.InnerHtml.Should().NotContain("10");
+            var tooltipText = comp.Find("g.svg-tooltip tspan").TextContent;
+            tooltipText.Should().Be("Y: 20");
+            tooltipText.Should().NotContain("10");
         }
 
         [Test]
