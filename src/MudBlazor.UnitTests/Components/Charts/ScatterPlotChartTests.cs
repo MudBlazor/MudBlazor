@@ -455,6 +455,114 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void ScatterPlotShowDataLabelsRendersTextElements()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20), (30, 40)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                    ShowDataLabels = true,
+                }));
+
+            // One text label per data point
+            var labels = comp.FindAll("text.mud-chart-data-label");
+            labels.Count.Should().Be(2, because: "one label per data point");
+        }
+
+        [Test]
+        public void ScatterPlotShowDataLabelsContainsXAndYValues()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                    ShowDataLabels = true,
+                }));
+
+            var label = comp.Find("text.mud-chart-data-label");
+            label.TextContent.Should().Be("20");
+            label.TextContent.Should().NotContain("10");
+        }
+
+        [Test]
+        public void ScatterPlotShowDataLabelsFalseRendersNoTextElements()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20), (30, 40)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ShowToolTips = true,
+                    ShowDataLabels = false,
+                }));
+
+            comp.FindAll("text.mud-chart-data-label").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void ScatterPlotShowDataLabelsRequiresShowToolTips()
+        {
+            // ShowDataLabels iterates ChartDataPoints which is only populated when ShowToolTips is true
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20), (30, 40)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ShowToolTips = false,
+                    ShowDataLabels = true,
+                }));
+
+            comp.FindAll("text.mud-chart-data-label").Count.Should().Be(0,
+                because: "data label entries are only generated when ShowToolTips is true");
+        }
+
+        [Test]
+        public void ScatterPlotShowDataLabelsNotRenderedForLineSeries()
+        {
+            var lineSeries = new ChartSeries<double> { Name = "Trend", Data = Points((0, 0), (10, 10)) };
+            var series = new List<ChartSeries<double>> { lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                    ShowDataLabels = true,
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                    }
+                }));
+
+            // Line series is skipped in the scatter/label rendering pass
+            comp.FindAll("text.mud-chart-data-label").Count.Should().Be(0,
+                because: "line series does not produce scatter data labels");
+        }
+
+        [Test]
         public void ScatterPlotDefaultSeriesTypeIsPoints()
         {
             // Without any SeriesDisplayOverride, all series render as scatter circles

@@ -81,6 +81,20 @@
                     builder.CloseElement();
                 }
 
+                // Optional data label
+                if (ChartOptions?.ShowDataLabels is true)
+                {
+                    builder.OpenElement(seq++, "text");
+                    builder.AddAttribute(seq++, "class", "mud-chart-data-label");
+                    builder.AddAttribute(seq++, "x", (item.LabelX + DataPointLabelOffset).ToStr());
+                    builder.AddAttribute(seq++, "y", item.LabelY.ToStr());
+                    builder.AddAttribute(seq++, "font-size", "9");
+                    builder.AddAttribute(seq++, "fill", color);
+                    builder.AddAttribute(seq++, "dominant-baseline", "middle");
+                    builder.AddContent(seq++, item.LabelYValue);
+                    builder.CloseElement();
+                }
+
                 // Hoverable target (larger, shows on hover, carries mouse events)
                 builder.OpenElement(seq++, "circle");
                 builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");

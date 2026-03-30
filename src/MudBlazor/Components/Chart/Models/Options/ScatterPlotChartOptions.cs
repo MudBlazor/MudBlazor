@@ -41,6 +41,14 @@ public class ScatterPlotChartOptions : DefaultAxisLineChartOptions, IAxisLineCha
     /// </summary>
     public string? XAxisFormat { get; set; }
 
+    /// <summary>
+    /// When <c>true</c>, renders a text label next to each scatter data point showing its X and Y values.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool ShowDataLabels { get; set; }
+
     public override string TooltipTitleFormat { get; set; } = "{{X_VALUE}}, {{Y_VALUE}}";
 
     public static implicit operator ScatterPlotChartOptions(ChartOptions options) => new()
