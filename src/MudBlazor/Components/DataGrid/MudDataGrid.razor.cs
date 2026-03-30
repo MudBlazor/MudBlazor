@@ -219,8 +219,18 @@ namespace MudBlazor
 
         private static void Move<TItem>(List<TItem> list, int fromIndex, int toIndex)
         {
+            if (fromIndex == toIndex)
+            {
+                return;
+            }
+
             var item = list[fromIndex];
             list.RemoveAt(fromIndex);
+
+            if (fromIndex < toIndex)
+            {
+                toIndex--;
+            }
             list.Insert(toIndex, item);
         }
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
