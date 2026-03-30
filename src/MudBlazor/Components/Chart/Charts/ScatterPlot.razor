@@ -41,14 +41,22 @@
     private double PointHoverRadius => PointRadius + 2;
     private double DataPointLabelOffset => PointHoverRadius + (DataPointStroke / 2d);
 
+    private double LineStrokeWidth => ChartOptions?.LineStrokeWidth ?? 3;
+
+    private bool IsLineSeries(int seriesIndex) =>
+        seriesIndex >= 0 && seriesIndex < Series.Count &&
+        GetSeriesDisplayOverride(Series[seriesIndex])?.ScatterSeriesType == ScatterSeriesType.Line;
+
     private RenderFragment RenderScatterPoints() => builder =>
     {
         var seq = 0;
 
+        // Render scatter point series
         foreach (var seriesEntry in ChartDataPoints)
         {
             var index = seriesEntry.Key;
             if (index < 0 || index >= Series.Count) continue;
+            if (IsLineSeries(index)) continue;
 
             var color = ChartOptions!.ChartPalette?.Length > 0
                 ? ChartOptions.ChartPalette[index % ChartOptions.ChartPalette.Length]
@@ -88,6 +96,33 @@
                 builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
                 builder.CloseElement();
             }
+        }
+
+        // Render line series (e.g. regression lines)
+        foreach (var chartLine in ChartLines)
+        {
+            var index = chartLine.Index;
+            if (!IsLineSeries(index)) continue;
+
+            var color = ChartOptions!.ChartPalette?.Length > 0
+                ? ChartOptions.ChartPalette[index % ChartOptions.ChartPalette.Length]
+                : string.Empty;
+
+            var overrideSettings = GetSeriesDisplayOverride(Series[index]);
+            var isHovered = HoveredDataPointPath?.Index == index;
+            var lineClass = isHovered
+                ? "mud-chart-serie mud-chart-line mud-chart-serie-hovered"
+                : "mud-chart-serie mud-chart-line";
+
+            builder.OpenElement(seq++, "path");
+            builder.AddAttribute(seq++, "class", lineClass);
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+            builder.AddAttribute(seq++, "fill", "none");
+            builder.AddAttribute(seq++, "stroke", color);
+            builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
+            builder.AddAttribute(seq++, "stroke-width", LineStrokeWidth.ToStr());
+            builder.AddAttribute(seq++, "d", chartLine.Data);
+            builder.CloseElement();
         }
     };
 

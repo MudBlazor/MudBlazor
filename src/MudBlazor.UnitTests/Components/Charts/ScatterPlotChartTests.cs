@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -308,6 +308,170 @@ namespace MudBlazor.UnitTests.Charts
             // F1 format adds a decimal digit; the separator is locale-specific ("." or ",")
             var xAxisHtml = comp.Find(".mud-charts-xaxis").InnerHtml;
             (xAxisHtml.Contains(".0") || xAxisHtml.Contains(",0")).Should().BeTrue("F1 format should produce a decimal in the X axis labels");
+        }
+
+        [Test]
+        public void ScatterPlotLineSeriesRendersPathNotCircles()
+        {
+            var scatterSeries = new ChartSeries<double> { Name = "Data", Data = Points((1, 2), (3, 4), (5, 6)) };
+            var lineSeries = new ChartSeries<double> { Name = "Regression", Data = Points((1, 1.5), (5, 6.5)) };
+
+            var series = new List<ChartSeries<double>> { scatterSeries, lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                    }
+                }));
+
+            // Only scatter series produces circles: 3 points × 2 circles each = 6
+            comp.FindAll("circle.mud-chart-point").Count.Should().Be(6, because: "line series produces no scatter circles");
+
+            // The line series produces an SVG path
+            comp.FindAll("path.mud-chart-line").Count.Should().Be(1, because: "regression series renders as a line path");
+        }
+
+        [Test]
+        public void ScatterPlotLineSeriesUsesCorrectPaletteColor()
+        {
+            var scatterSeries = new ChartSeries<double> { Name = "Data", Data = Points((1, 2)) };
+            var lineSeries = new ChartSeries<double> { Name = "Regression", Data = Points((0, 0), (10, 10)) };
+
+            var series = new List<ChartSeries<double>> { scatterSeries, lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                    }
+                }));
+
+            // lineSeries is index 1 → _palette[1]
+            var linePath = comp.Find("path.mud-chart-line");
+            linePath.GetAttribute("stroke").Should().Be(_palette[1]);
+        }
+
+        [Test]
+        public void ScatterPlotLineSeriesAppliesStrokeOpacityOverride()
+        {
+            var lineSeries = new ChartSeries<double> { Name = "Trend", Data = Points((0, 0), (10, 10)) };
+            var series = new List<ChartSeries<double>> { lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride
+                        {
+                            ScatterSeriesType = ScatterSeriesType.Line,
+                            StrokeOpacity = 0.5
+                        }
+                    }
+                }));
+
+            var linePath = comp.Find("path.mud-chart-line");
+            linePath.GetAttribute("stroke-opacity").Should().Be("0.5");
+        }
+
+        [Test]
+        public void ScatterPlotLineSeriesAppliesLineStrokeWidth()
+        {
+            var lineSeries = new ChartSeries<double> { Name = "Trend", Data = Points((0, 0), (10, 10)) };
+            var series = new List<ChartSeries<double>> { lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    LineStrokeWidth = 2,
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                    }
+                }));
+
+            var linePath = comp.Find("path.mud-chart-line");
+            linePath.GetAttribute("stroke-width").Should().Be("2");
+        }
+
+        [Test]
+        public void ScatterPlotLineSeriesParticipatesInAxisScaling()
+        {
+            // Scatter data: x in [10, 50], line data extends x to 80 — axes must cover up to 80
+            var scatterSeries = new ChartSeries<double> { Name = "Data", Data = Points((10, 5), (50, 5)) };
+            var lineSeries = new ChartSeries<double> { Name = "Trend", Data = Points((10, 3), (80, 9)) };
+
+            var series = new List<ChartSeries<double>> { scatterSeries, lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    XAxisTicks = 20,
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                    }
+                }));
+
+            // X axis must contain 80 (from line series)
+            comp.Find(".mud-charts-xaxis").InnerHtml.Should().Contain(">80<");
+        }
+
+        [Test]
+        public void ScatterPlotLineSeriesAppearsInLegend()
+        {
+            var scatterSeries = new ChartSeries<double> { Name = "Data Points", Data = Points((1, 2)) };
+            var lineSeries = new ChartSeries<double> { Name = "Regression Line", Data = Points((0, 0), (5, 5)) };
+
+            var series = new List<ChartSeries<double>> { scatterSeries, lineSeries };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+                    {
+                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                    }
+                }));
+
+            comp.Markup.Should().Contain("Data Points");
+            comp.Markup.Should().Contain("Regression Line");
+        }
+
+        [Test]
+        public void ScatterPlotDefaultSeriesTypeIsPoints()
+        {
+            // Without any SeriesDisplayOverride, all series render as scatter circles
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 1), (2, 2)) },
+                new() { Name = "S2", Data = Points((3, 3)) },
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions { ShowToolTips = true }));
+
+            // No line paths rendered
+            comp.FindAll("path.mud-chart-line").Count.Should().Be(0);
+            // All points render as circles: (2+1) × 2 = 6
+            comp.FindAll("circle.mud-chart-point").Count.Should().Be(6);
         }
     }
 }
