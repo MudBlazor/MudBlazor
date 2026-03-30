@@ -5169,18 +5169,22 @@ namespace MudBlazor.UnitTests.Components
         [SetUICulture("")]
         public void SelectColumn_DefaultAriaLabels_AreApplied()
         {
-            var items = new List<int> { 1, 2 };
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
 
-            var comp = Context.Render<MudDataGrid<int>>(parameters => parameters
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.MultiSelection, true)
                 .Add(p => p.Columns, builder =>
                 {
-                    builder.OpenComponent<SelectColumn<int>>(0);
-                    builder.AddAttribute(1, nameof(SelectColumn<int>.ShowInFooter), true);
+                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.ShowInFooter), true);
                     builder.CloseComponent();
-                    builder.OpenComponent<PropertyColumn<int, int>>(2);
-                    builder.AddAttribute(3, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
                     builder.CloseComponent();
                 }));
 
@@ -5191,15 +5195,10 @@ namespace MudBlazor.UnitTests.Components
             footerCheckbox.GetAttribute("aria-label").Should().Be("Select all rows");
 
             var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
-            var firstRowLabelledBy = rowCheckboxes[0].GetAttribute("aria-labelledby").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var secondRowLabelledBy = rowCheckboxes[1].GetAttribute("aria-labelledby").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            firstRowLabelledBy.Should().HaveCount(2);
-            secondRowLabelledBy.Should().HaveCount(2);
-            comp.Find($"#{firstRowLabelledBy[0]}").TextContent.Should().Be("Select row");
-            comp.Find($"#{firstRowLabelledBy[1]}").TextContent.Trim().Should().Be("1");
-            comp.Find($"#{secondRowLabelledBy[0]}").TextContent.Should().Be("Select row");
-            comp.Find($"#{secondRowLabelledBy[1]}").TextContent.Trim().Should().Be("2");
+            var firstRowLabelId = rowCheckboxes[0].GetAttribute("aria-labelledby");
+            var secondRowLabelId = rowCheckboxes[1].GetAttribute("aria-labelledby");
+            comp.Find($"#{firstRowLabelId}").TextContent.Should().Be("Select row First");
+            comp.Find($"#{secondRowLabelId}").TextContent.Should().Be("Select row Second");
             rowCheckboxes[0].HasAttribute("aria-label").Should().BeFalse();
             rowCheckboxes[1].HasAttribute("aria-label").Should().BeFalse();
         }
@@ -5306,10 +5305,10 @@ namespace MudBlazor.UnitTests.Components
                 }));
 
             var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
-            rowCheckboxes[0].GetAttribute("aria-label").Should().Be("Select First");
-            rowCheckboxes[0].HasAttribute("aria-labelledby").Should().BeFalse();
-            rowCheckboxes[1].GetAttribute("aria-label").Should().Be("Select Second");
-            rowCheckboxes[1].HasAttribute("aria-labelledby").Should().BeFalse();
+            comp.Find($"#{rowCheckboxes[0].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select First");
+            comp.Find($"#{rowCheckboxes[1].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select Second");
+            rowCheckboxes[0].HasAttribute("aria-label").Should().BeFalse();
+            rowCheckboxes[1].HasAttribute("aria-label").Should().BeFalse();
         }
 
         [Test]
@@ -5335,11 +5334,38 @@ namespace MudBlazor.UnitTests.Components
                 }));
 
             var rowCheckbox = comp.Find("tbody .mud-checkbox input");
-            var labelledBy = rowCheckbox.GetAttribute("aria-labelledby").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            labelledBy.Should().HaveCount(2);
-            comp.Find($"#{labelledBy[0]}").TextContent.Should().Be("Select row");
-            comp.Find($"#{labelledBy[1]}").TextContent.Trim().Should().Be("First");
+            comp.Find($"#{rowCheckbox.GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select row First");
             rowCheckbox.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        [Test]
+        [SetCulture("")]
+        [SetUICulture("")]
+        public void SelectColumn_DefaultAriaLabels_DisambiguateDuplicateVisibleLabels()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "B" },
+                new() { Id = 2, Name = "B" },
+                new() { Id = 3, Name = "C" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
+            comp.Find($"#{rowCheckboxes[0].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select row B-1");
+            comp.Find($"#{rowCheckboxes[1].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select row B-2");
+            comp.Find($"#{rowCheckboxes[2].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select row C");
         }
 
         [Test]

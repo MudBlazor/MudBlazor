@@ -3,7 +3,6 @@
 @typeparam T
 @using MudBlazor.Utilities
 @using MudBlazor.Resources
-@using MudBlazor.Extensions
 @inject InternalMudLocalizer Localizer
 
 @{
@@ -24,6 +23,10 @@
     {
         resolvedItems = DataGrid.CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
     }
+
+    var primaryRowLabelColumn = DataGrid.RenderedColumns.FirstOrDefault(column => !column.HiddenState.Value && column is not SelectColumn<T> && column.Tag?.ToString() != "hierarchy-column")
+        ?? DataGrid.RenderedColumns.FirstOrDefault(column => !column.HiddenState.Value && column is not SelectColumn<T>);
+    var rowCheckboxAriaLabels = GetRowCheckboxAriaLabels(resolvedItems, primaryRowLabelColumn);
 }
 
 <MudVirtualize @ref="DataGrid._mudVirtualize"
@@ -56,11 +59,7 @@
                 .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
                 .Build();
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
-            var primaryRowLabelColumn = DataGrid.RenderedColumns.FirstOrDefault(column => !column.HiddenState.Value && column is not SelectColumn<T> && column.Tag?.ToString() != "hierarchy-column")
-                ?? DataGrid.RenderedColumns.FirstOrDefault(column => !column.HiddenState.Value && column is not SelectColumn<T>);
-            var rowCheckboxPrefixId = Identifier.Create("datagrid-select-row-");
-            var rowLabelId = Identifier.Create("datagrid-row-label-");
-            var rowCheckboxLabelledBy = primaryRowLabelColumn is null ? null : $"{rowCheckboxPrefixId} {rowLabelId}";
+            rowCheckboxAriaLabels.TryGetValue(itemBag.Index, out var rowCheckboxAriaLabel);
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
             @attributes="GetRowAttributes(itemBag.Item)"
@@ -72,7 +71,7 @@
                 {
                     if (!column.HiddenState.Value)
                     {
-                        @DataGrid.Cell(column, itemBag.Item, primaryRowLabelColumn, rowCheckboxLabelledBy, rowCheckboxPrefixId, rowLabelId)
+                        @DataGrid.Cell(column, itemBag.Item, rowCheckboxAriaLabel)
                     }
                 }
             </CascadingValue>
@@ -105,6 +104,61 @@
 </MudVirtualize>
 
 @code {
+    private Dictionary<int, string> GetRowCheckboxAriaLabels(IReadOnlyList<IndexBag<T>> items, Column<T>? primaryRowLabelColumn)
+    {
+        var labels = new Dictionary<int, string>(items.Count);
+        var baseLabels = new Dictionary<int, string>(items.Count);
+        var duplicateCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var item in items)
+        {
+            var baseLabel = GetRowLabel(primaryRowLabelColumn, item.Item);
+            baseLabels[item.Index] = baseLabel;
+
+            if (string.IsNullOrWhiteSpace(baseLabel))
+            {
+                continue;
+            }
+
+            duplicateCounts.TryGetValue(baseLabel, out var count);
+            duplicateCounts[baseLabel] = count + 1;
+        }
+
+        var duplicateIndexes = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var item in items)
+        {
+            var baseLabel = baseLabels[item.Index];
+            labels[item.Index] = BuildRowCheckboxAriaLabel(baseLabel, duplicateCounts, duplicateIndexes);
+        }
+
+        return labels;
+    }
+
+    private string BuildRowCheckboxAriaLabel(string baseLabel, IReadOnlyDictionary<string, int> duplicateCounts, IDictionary<string, int> duplicateIndexes)
+    {
+        var selectRow = Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
+        if (string.IsNullOrWhiteSpace(baseLabel))
+        {
+            return selectRow;
+        }
+
+        if (duplicateCounts.TryGetValue(baseLabel, out var count) && count > 1)
+        {
+            duplicateIndexes.TryGetValue(baseLabel, out var index);
+            index++;
+            duplicateIndexes[baseLabel] = index;
+            return $"{selectRow} {baseLabel}-{index}";
+        }
+
+        return $"{selectRow} {baseLabel}";
+    }
+
+    private static string GetRowLabel(Column<T>? primaryRowLabelColumn, T item)
+    {
+        return primaryRowLabelColumn?.CellContent(item)?.ToString()?.Trim() ?? string.Empty;
+    }
+
     private Dictionary<string, object?>? GetRowAttributes(T item)
     {
         var rowSelectionState = DataGrid.GetRowSelectionState(item);
