@@ -563,6 +563,417 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void ChartDataSinglePointConstructorCreatesSinglePoint()
+        {
+            var data = new ChartData<double>((3.0, 7.5));
+
+            data.Points.Count.Should().Be(1);
+            data.Points[0].X.Should().Be(3.0);
+            data.Points[0].Y.Should().Be(7.5);
+        }
+
+        [Test]
+        public void ChartDataSinglePointConstructorImplicitConversionFromArray()
+        {
+            ChartData<double> data = new (double, double)[] { (1.0, 2.0), (3.0, 4.0) };
+
+            data.Points.Count.Should().Be(2);
+            data.Points[0].X.Should().Be(1.0);
+            data.Points[1].Y.Should().Be(4.0);
+        }
+
+        [Test]
+        public void ChartDataSinglePointConstructorImplicitConversionFromList()
+        {
+            ChartData<double> data = new List<(double, double)> { (5.0, 6.0), (7.0, 8.0) };
+
+            data.Points.Count.Should().Be(2);
+            data.Points[0].X.Should().Be(5.0);
+            data.Points[1].Y.Should().Be(8.0);
+        }
+
+        [Test]
+        public void ScatterPlotChartOptionsDefaults()
+        {
+            var options = new ScatterPlotChartOptions();
+
+            options.PointRadius.Should().Be(5);
+            options.XAxisTicks.Should().Be(20);
+            options.MaxNumXAxisTicks.Should().Be(20);
+            options.XAxisFormat.Should().BeNull();
+            options.ShowDataLabels.Should().BeFalse();
+            options.TooltipTitleFormat.Should().Be("{{X_VALUE}}, {{Y_VALUE}}");
+        }
+
+        [Test]
+        public void ScatterPlotChartOptionsImplicitConversionFromChartOptions()
+        {
+            var source = new ChartOptions
+            {
+                ShowLegend = true,
+                ShowToolTips = true,
+                TooltipTitleFormat = "X: {{X_VALUE}}",
+                TooltipSubtitleFormat = "Y: {{Y_VALUE}}",
+                ChartPalette = _palette,
+            };
+
+            ScatterPlotChartOptions options = source;
+
+            options.ShowLegend.Should().BeTrue();
+            options.ShowToolTips.Should().BeTrue();
+            options.TooltipTitleFormat.Should().Be("X: {{X_VALUE}}");
+            options.TooltipSubtitleFormat.Should().Be("Y: {{Y_VALUE}}");
+            options.ChartPalette.Should().BeEquivalentTo(_palette);
+        }
+
+        // ── Y-axis scale ────────────────────────────────────────────────────────
+
+        [Test]
+        public void ScatterPlotYAxisTicksControlsGridInterval()
+        {
+            // Y range 0–40, YAxisTicks=10 → grid lines at 0,10,20,30,40
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 0), (2, 40)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions { YAxisTicks = 10 }));
+
+            var yAxis = comp.Find(".mud-charts-yaxis").InnerHtml;
+            yAxis.Should().Contain(">10<");
+            yAxis.Should().Contain(">20<");
+            yAxis.Should().Contain(">30<");
+            yAxis.Should().Contain(">40<");
+        }
+
+        [Test]
+        public void ScatterPlotYAxisSuggestedMaxExtendsAxisWhenDataIsBelow()
+        {
+            // Data max Y=30, SuggestedMax=60 → axis must reach 60
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 10), (2, 30)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    YAxisTicks = 20,
+                    YAxisSuggestedMax = 60
+                }));
+
+            comp.Find(".mud-charts-yaxis").InnerHtml.Should().Contain(">60<");
+        }
+
+        [Test]
+        public void ScatterPlotYAxisSuggestedMaxIgnoredWhenDataExceedsIt()
+        {
+            // Data max Y=80 exceeds SuggestedMax=60 → axis reaches 80, not capped at 60
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 10), (2, 80)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    YAxisTicks = 20,
+                    YAxisSuggestedMax = 60
+                }));
+
+            comp.Find(".mud-charts-yaxis").InnerHtml.Should().Contain(">80<");
+        }
+
+        [Test]
+        public void ScatterPlotYAxisRequireZeroPointIncludesZeroWhenDataIsAllPositive()
+        {
+            // Data Y: 10–40, zero not in range → YAxisRequireZeroPoint adds it
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 10), (2, 40)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    YAxisTicks = 10,
+                    YAxisRequireZeroPoint = true
+                }));
+
+            comp.Find(".mud-charts-yaxis").InnerHtml.Should().Contain(">0<");
+        }
+
+        [Test]
+        public void ScatterPlotYAxisRequireZeroPointIncludesZeroWhenDataIsAllNegative()
+        {
+            // Data Y: -40 to -10, zero not in range → YAxisRequireZeroPoint adds it as max
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, -40), (2, -10)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    YAxisTicks = 10,
+                    YAxisRequireZeroPoint = true
+                }));
+
+            comp.Find(".mud-charts-yaxis").InnerHtml.Should().Contain(">0<");
+        }
+
+        [Test]
+        public void ScatterPlotMaxNumYAxisTicksThinsOutGridWhenExceeded()
+        {
+            // Y range 0–100, YAxisTicks=1 → 101 lines normally
+            // MaxNumYAxisTicks=5 forces gridYUnits to keep doubling until ≤5 lines fit
+            // gridYUnits doubles: 1→2→4→8→16→32 until lines ≤5 → grid at multiples of 32
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 0), (2, 100)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    YAxisTicks = 1,
+                    MaxNumYAxisTicks = 5
+                }));
+
+            // With thinning, intermediate values like 1,2,3... must NOT all appear
+            var yAxisHtml = comp.Find(".mud-charts-yaxis").InnerHtml;
+            var tickCount = System.Text.RegularExpressions.Regex.Matches(yAxisHtml, @">\d+<").Count;
+            tickCount.Should().BeLessThan(6);
+        }
+
+        // ── X-axis scale ────────────────────────────────────────────────────────
+
+        [Test]
+        public void ScatterPlotXAxisTicksControlsGridInterval()
+        {
+            // X range 0–40, XAxisTicks=10 → grid lines at 0,10,20,30,40
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((0, 1), (40, 2)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions { XAxisTicks = 10 }));
+
+            var xAxis = comp.Find(".mud-charts-xaxis").InnerHtml;
+            xAxis.Should().Contain(">10<");
+            xAxis.Should().Contain(">20<");
+            xAxis.Should().Contain(">30<");
+            xAxis.Should().Contain(">40<");
+        }
+
+        [Test]
+        public void ScatterPlotMaxNumXAxisTicksThinsOutGridWhenExceeded()
+        {
+            // X range 0–100, XAxisTicks=1 → 101 lines normally
+            // MaxNumXAxisTicks=5 forces gridXUnits to keep doubling until ≤5 lines fit
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((0, 1), (100, 2)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    XAxisTicks = 1,
+                    MaxNumXAxisTicks = 5
+                }));
+
+            var xAxisHtml = comp.Find(".mud-charts-xaxis").InnerHtml;
+            var tickCount = System.Text.RegularExpressions.Regex.Matches(xAxisHtml, @">\d+<").Count;
+            tickCount.Should().BeLessThan(6);
+        }
+
+        // ── Tooltips ─────────────────────────────────────────────────────────────
+
+        [Test]
+        public async Task ScatterPlotTooltipAppearsOnHover()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                }));
+
+            // Hoverable circle is the last circle rendered per point
+            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
+            await hoverCircle.MouseOverAsync();
+
+            comp.Find("g.svg-tooltip").Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task ScatterPlotTooltipDisappearsOnMouseOut()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                }));
+
+            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
+            await hoverCircle.MouseOverAsync();
+            comp.FindAll("g.svg-tooltip").Count.Should().Be(1);
+
+            await hoverCircle.MouseOutAsync();
+            comp.FindAll("g.svg-tooltip").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task ScatterPlotTooltipShowsYValueByDefault()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                }));
+
+            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
+            await hoverCircle.MouseOverAsync();
+
+            // Default TooltipTitleFormat is "{{X_VALUE}}, {{Y_VALUE}}"
+            var tooltip = comp.Find("g.svg-tooltip");
+            tooltip.InnerHtml.Should().Contain("10");
+            tooltip.InnerHtml.Should().Contain("20");
+        }
+
+        [Test]
+        public async Task ScatterPlotTooltipRespectsCustomTitleFormat()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                    TooltipTitleFormat = "Y: {{Y_VALUE}}",
+                }));
+
+            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
+            await hoverCircle.MouseOverAsync();
+
+            var tooltip = comp.Find("g.svg-tooltip");
+            tooltip.InnerHtml.Should().Contain("Y: 20");
+            tooltip.InnerHtml.Should().NotContain("10");
+        }
+
+        [Test]
+        public async Task ScatterPlotTooltipNotRenderedWhenHoveredPointNotFoundInChartDataPoints()
+        {
+            // This test covers the second null guard in RenderTooltip:
+            //   if (dataPoint.Value is null) return;
+            // Both HoveredDataPointPath (set via hover) and ChartDataPoints (populated by ShowToolTips)
+            // are non-null, but after hovering the series is replaced with a completely different
+            // dataset, so the stale HoveredDataPointPath no longer matches any entry in ChartDataPoints.
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 2)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                }));
+
+            // Hover to populate HoveredDataPointPath
+            var hoverCircle = comp.FindAll("circle.mud-chart-point").Last();
+            await hoverCircle.MouseOverAsync();
+            comp.FindAll("g.svg-tooltip").Count.Should().Be(1, because: "tooltip is visible after hover");
+
+            // Replace the series with entirely different data — ChartDataPoints is rebuilt
+            // with new SvgCircle instances that won't match the stale HoveredDataPointPath
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "S1", Data = Points((99, 99)) }
+                }));
+
+            comp.FindAll("g.svg-tooltip").Count.Should().Be(0,
+                because: "stale HoveredDataPointPath is no longer present in the rebuilt ChartDataPoints");
+        }
+
+        [Test]
+        public void ScatterPlotNoTooltipWhenShowToolTipsFalse()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ShowToolTips = false,
+                }));
+
+            comp.FindAll("g.svg-tooltip").Count.Should().Be(0);
+            // No hoverable circles are rendered when ShowToolTips is false
+            comp.FindAll("circle.mud-chart-point").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void ScatterPlotCreateInterpolatorThrowsNotSupportedException()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((1, 1), (2, 2), (3, 3)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions()));
+
+            var chart = comp.Instance;
+            var act = () => chart.CreateInterpolator(0, 0, 1.0, 10.0, 10.0);
+
+            act.Should().Throw<NotSupportedException>();
+        }
+
+        [Test]
         public void ScatterPlotDefaultSeriesTypeIsPoints()
         {
             // Without any SeriesDisplayOverride, all series render as scatter circles
