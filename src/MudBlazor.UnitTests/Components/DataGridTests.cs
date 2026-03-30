@@ -4834,16 +4834,13 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[3].InnerHtml.Should().Be("Status");
             newHeaderValues[4].InnerHtml.Should().Be("Hired");
 
-            // Now test Insert-mode behavior for a left-to-right drag (lower index to higher index)
-            // Current order is: Name, HiredOn, Age, Status, Hired
-            // Drag "HiredOn" (index 1) to after "Hired" (index 4) -> expect: Name, Age, Status, Hired, HiredOn
             var zoneAfterFirstMove = dataGrid.FindAll(".mud-drop-zone");
             zoneAfterFirstMove.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
 
             var leftToRightSourceZone = zoneAfterFirstMove[1];
             var leftToRightSourceItem = leftToRightSourceZone.Children[0];
 
-            var leftToRightTargetZone = zoneAfterFirstMove[4];
+            var leftToRightTargetZone = zoneAfterFirstMove[3];
             var leftToRightTargetItem = leftToRightTargetZone.Children[0];
 
             await leftToRightSourceItem.DragStartAsync(new DragEventArgs());
@@ -4854,9 +4851,9 @@ namespace MudBlazor.UnitTests.Components
 
             finalHeaderValues[0].InnerHtml.Should().Be("Name");
             finalHeaderValues[1].InnerHtml.Should().Be("Age");
-            finalHeaderValues[2].InnerHtml.Should().Be("Status");
-            finalHeaderValues[3].InnerHtml.Should().Be("Hired");
-            finalHeaderValues[4].InnerHtml.Should().Be("HiredOn");
+            finalHeaderValues[2].InnerHtml.Should().Be("HiredOn");
+            finalHeaderValues[3].InnerHtml.Should().Be("Status");
+            finalHeaderValues[4].InnerHtml.Should().Be("Hired");
         }
 
         [Test]

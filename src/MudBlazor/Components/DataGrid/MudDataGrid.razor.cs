@@ -10,7 +10,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.DataGrid;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
