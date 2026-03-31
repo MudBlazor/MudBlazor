@@ -1641,7 +1641,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectWithSelectedValue_Should_ApplyAriaAttributesToFocusableDisplayElement()
+        public void SelectWithSelectedValue_AppliesAriaAttributesToFocusableDisplayElement()
         {
             var expectedAriaLabel = "Select drink";
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
