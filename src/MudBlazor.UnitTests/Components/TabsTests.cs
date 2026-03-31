@@ -985,6 +985,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TabsDisabled_DisablesAllPanelsAndPreventsActivation()
+        {
+            var comp = Context.Render<TabsDisabledTest>();
+
+            IReadOnlyList<IElement> Panels() => comp.FindAll(".test-tab-button");
+
+            Panels().Should().HaveCount(2);
+            Panels()[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+            Panels()[0].ClassList.Contains("mud-disabled").Should().BeTrue();
+            Panels()[1].ClassList.Contains("mud-disabled").Should().BeTrue();
+
+            await Panels()[1].ClickAsync();
+
+            Panels()[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+            Panels()[1].ClassList.Contains("mud-tab-active").Should().BeFalse();
+        }
+
+        [Test]
         public void SelectedIndex_Binding()
         {
             //starting with index 1:
@@ -1140,6 +1158,17 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TabPanelIconColorTest>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DisableTab, true));
+            await comp.SetParametersAndRenderAsync(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+
+            var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
+            iconRef.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
+        public async Task TabPanelIconColorOverridesTabIconColorExceptWhenTabsDisabled()
+        {
+            var comp = Context.Render<TabPanelIconColorTest>();
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DisableTabs, true));
             await comp.SetParametersAndRenderAsync(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
 
             var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
