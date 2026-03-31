@@ -12,6 +12,24 @@ namespace MudBlazor
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudInput<T> : MudBaseInput<T>
     {
+        private static readonly HashSet<string> HiddenInputContentExcludedAttributes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "id",
+            "type",
+            "value",
+            "name",
+            "required",
+            "disabled",
+            "readonly",
+            "maxlength",
+            "pattern",
+            "placeholder",
+            "inputmode",
+            "aria-describedby",
+            "aria-invalid",
+            "aria-required"
+        };
+
         private string? _internalText;
         private string? _oldText = null;
         private bool _shouldInitSizing;
@@ -53,6 +71,30 @@ namespace MudBlazor
         protected internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToStringFast(true);
+
+        private Dictionary<string, object?>? HiddenInputContentAttributes
+        {
+            get
+            {
+                if (InputType != InputType.Hidden || ChildContent is null || UserAttributes is null || UserAttributes.Count == 0)
+                {
+                    return null;
+                }
+
+                var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+                foreach (var attribute in UserAttributes)
+                {
+                    if (HiddenInputContentExcludedAttributes.Contains(attribute.Key))
+                    {
+                        continue;
+                    }
+
+                    attributes[attribute.Key] = attribute.Value;
+                }
+
+                return attributes.Count == 0 ? null : attributes;
+            }
+        }
 
         /// <summary>
         /// The type of input collected by this component.

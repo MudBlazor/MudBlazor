@@ -1640,6 +1640,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
 
+        [Test]
+        public void SelectWithSelectedValue_Should_ApplyAriaAttributesToFocusableDisplayElement()
+        {
+            var expectedAriaLabel = "Select drink";
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.Value, "HotWater")
+                .Add(p => p.UserAttributes, new Dictionary<string, object>
+                {
+                    ["aria-label"] = expectedAriaLabel
+                })
+                .AddChildContent<MudSelectItem<string>>(item => item
+                    .Add(p => p.Value, "HotWater")
+                    .AddChildContent("HotWater")));
+
+            var focusableDisplayElement = comp.Find("div.mud-select-input[tabindex='0']");
+            focusableDisplayElement.GetAttribute("aria-label").Should().Be(expectedAriaLabel);
+        }
+
         /// <summary>
         /// Optional Select should not have required attribute and aria-required should be false.
         /// </summary>
