@@ -407,6 +407,12 @@ namespace MudBlazor
         public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
 
         /// <summary>
+        /// The icon used for column options menus in header cells.
+        /// </summary>
+        [Parameter]
+        public string ColumnOptionsIcon { get; set; } = Icons.Material.Filled.MoreVert;
+
+        /// <summary>
         /// The size of the icon displayed when hovering over a draggable column.
         /// </summary>
         /// <remarks>
@@ -615,6 +621,48 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
+
+        /// <summary>
+        /// The remove filter icon shown in the simple filter panel.
+        /// </summary>
+        [Parameter]
+        public string FilterRemoveIcon { get; set; } = Icons.Material.Filled.Close;
+
+        /// <summary>
+        /// The icon shown in the data grid toolbar menu.
+        /// </summary>
+        [Parameter]
+        public string ToolbarMenuIcon { get; set; } = Icons.Material.Outlined.Settings;
+
+        /// <summary>
+        /// The icon shown in the columns panel search field.
+        /// </summary>
+        [Parameter]
+        public string ColumnsPanelSearchIcon { get; set; } = Icons.Material.Filled.Search;
+
+        /// <summary>
+        /// The icon shown for moving a column up in the columns panel.
+        /// </summary>
+        [Parameter]
+        public string ColumnsPanelMoveUpIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+
+        /// <summary>
+        /// The icon shown for moving a column down in the columns panel.
+        /// </summary>
+        [Parameter]
+        public string ColumnsPanelMoveDownIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+
+        /// <summary>
+        /// The icon shown for grouping a column in the columns panel.
+        /// </summary>
+        [Parameter]
+        public string ColumnsPanelGroupIcon { get; set; } = Icons.Material.Filled.TableRows;
+
+        /// <summary>
+        /// The icon shown for ungrouping a column in the columns panel.
+        /// </summary>
+        [Parameter]
+        public string ColumnsPanelUngroupIcon { get; set; } = Icons.Material.Filled.AccountTree;
 
         /// <summary>
         /// The way that this grid filters data.

@@ -1,5 +1,10 @@
-﻿<MudDataGrid T="Model" Items="@_items" Filterable="true" FilterMode="FilterMode"
-             FilterIconEmpty="@Icons.Material.Filled.Battery0Bar" FilterIconFilled="@Icons.Material.Filled.BatteryFull" FilterIconClear="@Icons.Material.Filled.BatteryAlert">
+<MudDataGrid T="Model" Items="@_items" Filterable="true" FilterMode="FilterMode"
+             FilterIconEmpty="@Icons.Material.Filled.Battery0Bar" FilterIconFilled="@Icons.Material.Filled.BatteryFull" FilterIconClear="@Icons.Material.Filled.BatteryAlert"
+             FilterRemoveIcon="test_remove_filter_icon" ColumnOptionsIcon="test_column_options_icon"
+             ToolbarMenuIcon="test_toolbar_menu_icon" ColumnsPanelSearchIcon="test_columns_panel_search_icon"
+             ColumnsPanelMoveUpIcon="test_columns_panel_move_up_icon" ColumnsPanelMoveDownIcon="test_columns_panel_move_down_icon"
+             ColumnsPanelGroupIcon="test_columns_panel_group_icon" ColumnsPanelUngroupIcon="test_columns_panel_ungroup_icon"
+             ShowMenuIcon="@ShowMenuIcon" ShowColumnOptions="@ShowColumnOptions" ColumnsPanelReordering="true" Groupable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -11,6 +16,12 @@
 
     [Parameter]
     public DataGridFilterMode FilterMode { get; set; } = DataGridFilterMode.Simple;
+
+    [Parameter]
+    public bool ShowMenuIcon { get; set; }
+
+    [Parameter]
+    public bool ShowColumnOptions { get; set; } = true;
 
     private readonly IEnumerable<Model> _items = new List<Model>()
     {

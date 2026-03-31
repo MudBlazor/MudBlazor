@@ -6153,6 +6153,27 @@ namespace MudBlazor.UnitTests.Components
 
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
+
+            // Check additional customizable icons
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.FilterMode, DataGridFilterMode.Simple)
+                .Add(p => p.ShowMenuIcon, true));
+
+            var dataGridComponent = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
+            await comp.InvokeAsync(() => dataGridComponent.Instance.ShowColumnsPanel());
+
+            dataGridComponent.Instance.FilterRemoveIcon.Should().Be("test_remove_filter_icon");
+            dataGridComponent.Instance.ColumnOptionsIcon.Should().Be("test_column_options_icon");
+            dataGridComponent.Instance.ToolbarMenuIcon.Should().Be("test_toolbar_menu_icon");
+            dataGridComponent.Instance.ColumnsPanelSearchIcon.Should().Be("test_columns_panel_search_icon");
+            dataGridComponent.Instance.ColumnsPanelMoveUpIcon.Should().Be("test_columns_panel_move_up_icon");
+            dataGridComponent.Instance.ColumnsPanelMoveDownIcon.Should().Be("test_columns_panel_move_down_icon");
+            dataGridComponent.Instance.ColumnsPanelGroupIcon.Should().Be("test_columns_panel_group_icon");
+            dataGridComponent.Instance.ColumnsPanelUngroupIcon.Should().Be("test_columns_panel_ungroup_icon");
+
+            comp.Markup.Should().Contain("test_toolbar_menu_icon");
+            comp.Markup.Should().Contain("test_column_options_icon");
+
         }
 
         #region Selection Cleanup Tests (ObservableCollection)
