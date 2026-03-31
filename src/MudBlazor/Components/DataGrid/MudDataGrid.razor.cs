@@ -460,8 +460,11 @@ namespace MudBlazor
         /// <summary>
         /// The icon shown when a column is sortable.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>. Can be overridden for individual columns via <see cref="Column{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        public string? SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
         /// Allows filtering of data in this grid.

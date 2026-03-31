@@ -20,6 +20,17 @@ namespace MudBlazor
     /// <seealso cref="MudDataGrid{T}"/>
     public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
+        /// <summary>
+        /// Resolves the icon for this column, falling back to the parent data grid icon when needed.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="string.Empty"/> when no icon is configured so icon-rendering components always receive a non-null value.
+        /// </remarks>
+        /// <param name="columnIcon">The icon configured on this column.</param>
+        /// <param name="dataGridIcon">The icon configured on the parent data grid.</param>
+        /// <returns>The resolved icon: uses <paramref name="columnIcon"/> when not <c>null</c>; otherwise <paramref name="dataGridIcon"/> when not <c>null</c>; otherwise <see cref="string.Empty"/>.</returns>
+        private static string ResolveIcon(string? columnIcon, string? dataGridIcon) => columnIcon ?? dataGridIcon ?? string.Empty;
+
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }
         internal ParameterState<bool> GroupingState { get; }
@@ -612,53 +623,17 @@ namespace MudBlazor
             }
         }
 
-        internal string sortIcon
-        {
-            get
-            {
-                return SortIcon ?? DataGrid?.SortIcon ?? string.Empty;
-            }
-        }
+        internal string ResolvedSortIcon => ResolveIcon(SortIcon, DataGrid?.SortIcon);
 
-        internal string filterIconEmpty
-        {
-            get
-            {
-                return FilterIconEmpty ?? DataGrid?.FilterIconEmpty ?? string.Empty;
-            }
-        }
+        internal string ResolvedFilterIconEmpty => ResolveIcon(FilterIconEmpty, DataGrid?.FilterIconEmpty);
 
-        internal string filterIconFilled
-        {
-            get
-            {
-                return FilterIconFilled ?? DataGrid?.FilterIconFilled ?? string.Empty;
-            }
-        }
+        internal string ResolvedFilterIconFilled => ResolveIcon(FilterIconFilled, DataGrid?.FilterIconFilled);
 
-        internal string filterIconClear
-        {
-            get
-            {
-                return FilterIconClear ?? DataGrid?.FilterIconClear ?? string.Empty;
-            }
-        }
+        internal string ResolvedFilterIconClear => ResolveIcon(FilterIconClear, DataGrid?.FilterIconClear);
 
-        internal string columnOptionsIcon
-        {
-            get
-            {
-                return ColumnOptionsIcon ?? DataGrid?.ColumnOptionsIcon ?? string.Empty;
-            }
-        }
+        internal string ResolvedColumnOptionsIcon => ResolveIcon(ColumnOptionsIcon, DataGrid?.ColumnOptionsIcon);
 
-        internal string dragIndicatorIcon
-        {
-            get
-            {
-                return DragIndicatorIcon ?? DataGrid?.DragIndicatorIcon ?? string.Empty;
-            }
-        }
+        internal string ResolvedDragIndicatorIcon => ResolveIcon(DragIndicatorIcon, DataGrid?.DragIndicatorIcon);
 
         #endregion
 
