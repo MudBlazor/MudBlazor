@@ -1,3 +1,5 @@
+<MudPopoverProvider />
+
 <MudDataGrid T="Model" Items="@_items" Filterable="true" FilterMode="FilterMode"
              FilterIconEmpty="@Icons.Material.Filled.Battery0Bar" FilterIconFilled="@Icons.Material.Filled.BatteryFull" FilterIconClear="@Icons.Material.Filled.BatteryAlert"
              FilterRemoveIcon="test_remove_filter_icon" ColumnOptionsIcon="test_column_options_icon"
@@ -6,7 +8,7 @@
              ColumnsPanelGroupIcon="test_columns_panel_group_icon" ColumnsPanelUngroupIcon="test_columns_panel_ungroup_icon"
              ShowMenuIcon="@ShowMenuIcon" ShowColumnOptions="@ShowColumnOptions" ColumnsPanelReordering="true" Groupable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Name" Grouping="true" />
         <PropertyColumn Property="x => x.Age" />
     </Columns>
 </MudDataGrid>

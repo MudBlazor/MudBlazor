@@ -6116,7 +6116,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DataGridFilterIconsTest>();
             MudIconButton FirstFilterButton() =>
-                comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
+                comp.FindComponents<MudIconButton>()
+                    .FirstOrDefault(x => x.Markup.Contains("filter-button") && !x.Markup.Contains("remove-filter-button"))?.Instance;
 
             // Check filter buttons when no filter applied
             var mudIconButton = FirstFilterButton();
@@ -6171,8 +6172,19 @@ namespace MudBlazor.UnitTests.Components
             dataGridComponent.Instance.ColumnsPanelGroupIcon.Should().Be("test_columns_panel_group_icon");
             dataGridComponent.Instance.ColumnsPanelUngroupIcon.Should().Be("test_columns_panel_ungroup_icon");
 
-            comp.Markup.Should().Contain("test_toolbar_menu_icon");
-            comp.Markup.Should().Contain("test_column_options_icon");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_toolbar_menu_icon");
+                comp.Markup.Should().Contain("test_column_options_icon");
+                comp.Markup.Should().Contain("test_columns_panel_search_icon");
+                comp.Markup.Should().Contain("test_columns_panel_move_up_icon");
+                comp.Markup.Should().Contain("test_columns_panel_move_down_icon");
+                comp.Markup.Should().Contain("test_columns_panel_group_icon");
+                comp.Markup.Should().Contain("test_columns_panel_ungroup_icon");
+            });
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("test_remove_filter_icon"));
 
         }
 
