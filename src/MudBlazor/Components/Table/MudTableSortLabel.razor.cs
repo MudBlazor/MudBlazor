@@ -58,6 +58,15 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// The sort direction applied when this label is unsorted and clicked for the first time.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.Ascending"/>.
+        /// </remarks>
+        [Parameter]
+        public SortDirection InitialSortDirection { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
         /// Allows sorting by this column.
         /// </summary>
         /// <remarks>
@@ -146,7 +155,7 @@ namespace MudBlazor
 
             return SortDirection switch
             {
-                SortDirection.None => UpdateSortDirectionAsync(SortDirection.Ascending),
+                SortDirection.None => UpdateSortDirectionAsync(InitialSortDirection == SortDirection.None ? SortDirection.Ascending : InitialSortDirection),
                 SortDirection.Ascending => UpdateSortDirectionAsync(SortDirection.Descending),
                 SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted ?? false
                     ? SortDirection.None
