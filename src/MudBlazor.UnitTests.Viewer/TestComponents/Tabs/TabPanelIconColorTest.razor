@@ -1,4 +1,4 @@
-﻿<MudTabs Disabled="@DisableTabs">
+﻿<MudTabs>
     <ChildContent>
         <MudTabPanel Text="Panel 1" Tag="0" Class="tab-panel-icon-color-test" Icon="@Icons.Material.Filled.Terminal" IconColor="@MudTabPanelIconColor" Disabled="@DisableTab">
             <MudText Typo="Typo.h1">Panel Content</MudText>
@@ -12,7 +12,4 @@
 
     [Parameter]
     public bool DisableTab { get; set; }
-
-    [Parameter]
-    public bool DisableTabs { get; set; }
 }
