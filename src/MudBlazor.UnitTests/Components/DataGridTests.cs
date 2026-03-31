@@ -6121,12 +6121,12 @@ namespace MudBlazor.UnitTests.Components
 
             // Check filter buttons when no filter applied
             var mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+            mudIconButton.Icon.Should().Be("test_column_filter_empty_icon");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
             mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+            mudIconButton.Icon.Should().Be("test_column_filter_empty_icon");
 
             // Check filter buttons when filter applied
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
@@ -6139,21 +6139,21 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            mudIconButton.Icon.Should().Be("test_column_filter_filled_icon");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
             mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            mudIconButton.Icon.Should().Be("test_column_filter_filled_icon");
 
             // Check filter buttons when FilterMode is ColumnFilterRow
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
 
             var mudMenu = comp.FindComponents<MudMenu>().FirstOrDefault(x => x.Markup.Contains("column-filter-menu"))?.Instance;
-            mudMenu.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            mudMenu.Icon.Should().Be("test_column_filter_filled_icon");
 
             mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
+            mudIconButton.Icon.Should().Be("test_column_filter_clear_icon");
 
             // Check additional customizable icons
             await comp.SetParametersAndRenderAsync(parameters => parameters
@@ -6164,6 +6164,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGridComponent.Instance.ShowColumnsPanel());
 
             dataGridComponent.Instance.FilterRemoveIcon.Should().Be("test_remove_filter_icon");
+            dataGridComponent.Instance.SortIcon.Should().Be(Icons.Material.Filled.ArrowUpward);
             dataGridComponent.Instance.ColumnOptionsIcon.Should().Be("test_column_options_icon");
             dataGridComponent.Instance.ToolbarMenuIcon.Should().Be("test_toolbar_menu_icon");
             dataGridComponent.Instance.ColumnsPanelSearchIcon.Should().Be("test_columns_panel_search_icon");
@@ -6176,13 +6177,25 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Markup.Should().Contain("test_toolbar_menu_icon");
                 comp.Markup.Should().Contain("test_column_options_icon");
+                comp.Markup.Should().Contain("test_column_column_options_icon");
+                comp.Markup.Should().Contain("test_column_sort_icon");
+                comp.Markup.Should().Contain("test_column_filter_filled_icon");
                 comp.Markup.Should().Contain("test_columns_panel_search_icon");
                 comp.Markup.Should().Contain("test_columns_panel_move_up_icon");
                 comp.Markup.Should().Contain("test_columns_panel_move_down_icon");
                 comp.Markup.Should().Contain("test_columns_panel_group_icon");
                 comp.Markup.Should().Contain("test_columns_panel_ungroup_icon");
+                comp.Markup.Should().Contain("test_column_drag_indicator_icon");
             });
 
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_column_filter_filled_icon");
+                comp.Markup.Should().Contain("test_column_filter_clear_icon");
+            });
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
             await comp.Find(".filter-button").ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("test_remove_filter_icon"));
 

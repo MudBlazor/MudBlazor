@@ -212,6 +212,16 @@ namespace MudBlazor
             }
         }
 
+        private string SortIcon => Column?.sortIcon ?? string.Empty;
+
+        private string FilterIconEmpty => Column?.filterIconEmpty ?? string.Empty;
+
+        private string FilterIconFilled => Column?.filterIconFilled ?? string.Empty;
+
+        private string ColumnOptionsIcon => Column?.columnOptionsIcon ?? string.Empty;
+
+        private string DragIndicatorIcon => Column?.dragIndicatorIcon ?? string.Empty;
+
         internal bool hasFilter
         {
             get

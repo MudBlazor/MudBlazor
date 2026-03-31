@@ -305,8 +305,56 @@ namespace MudBlazor
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        public string? SortIcon { get; set; }
+
+        /// <summary>
+        /// The empty filter icon shown when no filters are applied to this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconEmpty"/>.
+        /// </remarks>
+        [Parameter]
+        public string? FilterIconEmpty { get; set; }
+
+        /// <summary>
+        /// The filled filter icon shown when filters are applied to this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconFilled"/>.
+        /// </remarks>
+        [Parameter]
+        public string? FilterIconFilled { get; set; }
+
+        /// <summary>
+        /// The clear filter icon shown to remove this column's filter.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconClear"/>.
+        /// </remarks>
+        [Parameter]
+        public string? FilterIconClear { get; set; }
+
+        /// <summary>
+        /// The icon used for this column's options menu.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.ColumnOptionsIcon"/>.
+        /// </remarks>
+        [Parameter]
+        public string? ColumnOptionsIcon { get; set; }
+
+        /// <summary>
+        /// The icon shown when this column is draggable.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.DragIndicatorIcon"/>.
+        /// </remarks>
+        [Parameter]
+        public string? DragIndicatorIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -561,6 +609,54 @@ namespace MudBlazor
             get
             {
                 return Filterable ?? DataGrid?.Filterable ?? false;
+            }
+        }
+
+        internal string sortIcon
+        {
+            get
+            {
+                return SortIcon ?? DataGrid?.SortIcon ?? string.Empty;
+            }
+        }
+
+        internal string filterIconEmpty
+        {
+            get
+            {
+                return FilterIconEmpty ?? DataGrid?.FilterIconEmpty ?? string.Empty;
+            }
+        }
+
+        internal string filterIconFilled
+        {
+            get
+            {
+                return FilterIconFilled ?? DataGrid?.FilterIconFilled ?? string.Empty;
+            }
+        }
+
+        internal string filterIconClear
+        {
+            get
+            {
+                return FilterIconClear ?? DataGrid?.FilterIconClear ?? string.Empty;
+            }
+        }
+
+        internal string columnOptionsIcon
+        {
+            get
+            {
+                return ColumnOptionsIcon ?? DataGrid?.ColumnOptionsIcon ?? string.Empty;
+            }
+        }
+
+        internal string dragIndicatorIcon
+        {
+            get
+            {
+                return DragIndicatorIcon ?? DataGrid?.DragIndicatorIcon ?? string.Empty;
             }
         }
 

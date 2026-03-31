@@ -458,6 +458,12 @@ namespace MudBlazor
         public SortMode SortMode { get; set; } = SortMode.Multiple;
 
         /// <summary>
+        /// The icon shown when a column is sortable.
+        /// </summary>
+        [Parameter]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+
+        /// <summary>
         /// Allows filtering of data in this grid.
         /// </summary>
         /// <remarks>
