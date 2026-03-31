@@ -27,6 +27,7 @@ namespace MudBlazor.UnitTests.Components
             slider.Vertical.Should().BeFalse();
             slider.Disabled.Should().BeFalse();
             slider.Immediate.Should().BeTrue();
+            slider.Ripple.Should().BeTrue();
             slider.TickMarkLabels.Should().BeNull();
 
             slider.Color.Should().Be(Color.Primary);
@@ -97,6 +98,25 @@ namespace MudBlazor.UnitTests.Components
 
             IElement Slider() => comp.Find(".mud-slider");
             Slider().ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", $"mud-slider-{expectedColorClass}" });
+        }
+
+        [Test]
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public void HasRippleClass(bool ripple, bool hasClass)
+        {
+            var comp = Context.Render<MudSlider<int>>(x => x.Add(p => p.Ripple, ripple));
+
+            IElement slider() => comp.Find(".mud-slider");
+
+            if (hasClass)
+            {
+                slider().ClassList.Should().Contain("mud-ripple");
+            }
+            else
+            {
+                slider().ClassList.Should().NotContain("mud-ripple");
+            }
         }
 
         [Test]

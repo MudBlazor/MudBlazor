@@ -34,6 +34,7 @@ namespace MudBlazor
             new CssBuilder("mud-slider")
                 .AddClass($"mud-slider-{Size.ToStringFast(true)}")
                 .AddClass($"mud-slider-{Color.ToStringFast(true)}")
+                .AddClass("mud-ripple", Ripple)
                 .AddClass("mud-slider-vertical", Vertical)
                 .AddClass(Class)
                 .Build();
@@ -141,6 +142,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
         public bool Immediate { get; set; } = true;
+
+        /// <summary>
+        /// Shows a ripple effect when interacting with the slider.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Appearance)]
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// Displays this slider vertically.
