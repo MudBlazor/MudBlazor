@@ -212,16 +212,6 @@ namespace MudBlazor
             }
         }
 
-        private string ResolvedSortIcon => Column?.ResolvedSortIcon ?? string.Empty;
-
-        private string ResolvedFilterIconEmpty => Column?.ResolvedFilterIconEmpty ?? string.Empty;
-
-        private string ResolvedFilterIconFilled => Column?.ResolvedFilterIconFilled ?? string.Empty;
-
-        private string ResolvedColumnOptionsIcon => Column?.ResolvedColumnOptionsIcon ?? string.Empty;
-
-        private string ResolvedDragIndicatorIcon => Column?.ResolvedDragIndicatorIcon ?? string.Empty;
-
         internal bool hasFilter
         {
             get
