@@ -294,7 +294,7 @@ namespace MudBlazor
                 // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
-                    await BeginValidateAsync();
+                    await ValidateValue();
                 }
             };
 

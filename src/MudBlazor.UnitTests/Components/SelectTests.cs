@@ -307,6 +307,77 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        [Test]
+        public async Task MultiSelect_ChildlessEnumItems_ShouldUpdateCheckboxImmediately()
+        {
+            const string uncheckedIcon =
+                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            const string checkedIcon =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+
+            var comp = Context.Render<MultiSelectChildlessEnumToStringFuncTest>();
+            var select = comp.FindComponent<MudSelect<MultiSelectChildlessEnumToStringFuncTest.Pizza>>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(4));
+
+            IReadOnlyList<IElement> Items() => comp.FindAll("div.mud-list-item");
+
+            await comp.WaitForAssertionAsync(() => GetCheckboxPath(Items()[0]).Should().Be(uncheckedIcon));
+
+            await Items()[1].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("Diavolo"));
+            await comp.WaitForAssertionAsync(() => GetCheckboxPath(Items()[1]).Should().Be(checkedIcon));
+            await comp.WaitForAssertionAsync(() => GetCheckboxPath(Items()[0]).Should().Be(uncheckedIcon));
+        }
+
+        [Test]
+        public async Task MultiSelect_ChildlessStringItems_ShouldUpdateCheckboxImmediately()
+        {
+            const string uncheckedIcon =
+                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            const string checkedIcon =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+
+            var comp = Context.Render<MultiSelectChildlessStringTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(4));
+
+            IReadOnlyList<IElement> Items() => comp.FindAll("div.mud-list-item");
+
+            await comp.WaitForAssertionAsync(() => GetCheckboxPath(Items()[2]).Should().Be(uncheckedIcon));
+
+            await Items()[2].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("Margarita"));
+            await comp.WaitForAssertionAsync(() => GetCheckboxPath(Items()[2]).Should().Be(checkedIcon));
+            await comp.WaitForAssertionAsync(() => GetCheckboxPath(Items()[0]).Should().Be(uncheckedIcon));
+        }
+
+        [Test]
+        public async Task MultiSelect_SelectAll_ShouldUpdateChildlessItemCheckboxesImmediately()
+        {
+            const string checkedIcon =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+
+            var comp = Context.Render<MultiSelectChildlessSelectAllTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(5));
+
+            IReadOnlyList<IElement> Items() => comp.FindAll("div.mud-list-item");
+
+            await Items()[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(4));
+            await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("Cardinale, Diavolo, Margarita, Spinaci"));
+            await comp.WaitForAssertionAsync(() => Items().Skip(1).Should().AllSatisfy(item => GetCheckboxPath(item).Should().Be(checkedIcon)));
+        }
+
         /// <summary>
         /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
         /// </summary>
@@ -1981,6 +2052,11 @@ namespace MudBlazor.UnitTests.Components
             filler = comp.Find(".mud-select-filler");
             filler.TextContent.Should().Contain("EXTREMELY LONG ITEM 1");
             filler.InnerHtml.Should().NotContain("custom-render");
+        }
+
+        private static string GetCheckboxPath(IElement item)
+        {
+            return item.QuerySelectorAll("path").Last().GetAttribute("d")!;
         }
     }
 }
