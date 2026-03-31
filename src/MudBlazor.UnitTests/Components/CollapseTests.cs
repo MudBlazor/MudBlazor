@@ -54,5 +54,24 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("#animation_end_count").TextContent.Should().Be("0");
         }
+
+        [Test]
+        public async Task Collapse_OnAnimationEnd_ShouldFireForExitingAndEnteringTransitionEnds()
+        {
+            var comp = Context.Render<CollapseAnimationEndTransitionCoverageTest>();
+            var collapse = comp.FindComponent<MudCollapse>();
+            comp.Find("#animation_end_count").TextContent.Should().Be("0");
+
+            await comp.Find("#toggle").ClickAsync();
+            await collapse.Find(".mud-collapse-container").TriggerEventAsync("ontransitionend", EventArgs.Empty);
+            collapse.Markup.Should().Contain("invisible");
+            comp.Find("#animation_end_count").TextContent.Should().Be("1");
+
+            await comp.Find("#toggle").ClickAsync();
+            await collapse.Find(".mud-collapse-container").TriggerEventAsync("ontransitionend", EventArgs.Empty);
+
+            collapse.Markup.Should().Contain("mud-collapse-entered");
+            comp.Find("#animation_end_count").TextContent.Should().Be("2");
+        }
     }
 }
