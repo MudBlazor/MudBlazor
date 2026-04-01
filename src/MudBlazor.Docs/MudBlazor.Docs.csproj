@@ -59,9 +59,9 @@
     <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.5" />
     <PackageReference Include="Markdig" Version="1.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
