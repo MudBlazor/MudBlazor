@@ -66,7 +66,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
             return;
         }
 
-        if (firstRender && IsHeightPercentage())
+        if (firstRender && HasPercentageHeight())
         {
             _hasFixedParent = await JsRuntime.InvokeAsync<bool>("hasDefinedParentHeight", _containerRef);
 
@@ -77,7 +77,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
         }
     }
 
-    private bool IsHeightPercentage() => Height.AsSpan().Trim().EndsWith("%", StringComparison.Ordinal);
+    private bool HasPercentageHeight() => Height.AsSpan().Trim().EndsWith("%", StringComparison.Ordinal);
 
     private IChartOptions GetChartTypeOptions(ChartOptions options) => ChartType switch
     {

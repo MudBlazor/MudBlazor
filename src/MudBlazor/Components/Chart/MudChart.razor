@@ -15,7 +15,7 @@
     }
     else
     {
-        <div style="height:@(IsHeightPercentage() ? FallbackHeight : Height); width: @Width;">
+        <div style="height:@(HasPercentageHeight() ? FallbackHeight : Height); width: @(MatchBoundsToSize ? "100%" : Width);">
             @ChartContainer
         </div>
     }
