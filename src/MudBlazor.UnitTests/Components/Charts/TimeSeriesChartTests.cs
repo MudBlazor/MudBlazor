@@ -80,6 +80,67 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void TimeSeriesChartRendersWithIntData()
+        {
+            var mockYAxisLabelSize = new ElementSize
+            {
+                Width = 27.5,
+                Height = 14.8,
+            };
+            var mockXAxisLabelSize = new ElementSize
+            {
+                Width = 670.5,
+                Height = 14.8,
+            };
+
+            var counter = 1;
+
+            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
+            {
+                if (counter % 2 == 0)
+                {
+                    counter++;
+                    return true;
+                }
+
+                return false;
+            }).SetResult(mockXAxisLabelSize);
+
+            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
+            {
+                if (counter % 2 == 1)
+                {
+                    counter++;
+                    return true;
+                }
+
+                return false;
+            }).SetResult(mockYAxisLabelSize);
+
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<int>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, [
+                    new ()
+                    {
+                        Name = "Series 1",
+                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeValue<int>(time.AddHours(x), 1000)).ToList(),
+                        Visible = true,
+                    }
+                ])
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
+
+            // check the line path
+            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 30 320 L 243.3333 320 L 456.6667 320 L 670 320\"></path>");
+
+            // check the axis
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 30 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='20' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='30' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 30 340)'>23:00</text><text x='243.3333' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 243.3333 340)'>00:00</text><text x='456.6667' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 456.6667 340)'>01:00</text><text x='670' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 340)'>02:00</text></g>");
+        }
+
+        [Test]
         public void TimeSeriesChartMatchBounds()
         {
             var mockYAxisLabelSize = new ElementSize
