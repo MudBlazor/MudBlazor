@@ -38,6 +38,9 @@ namespace MudBlazor
         [CascadingParameter]
         internal IMudDialogInstance? DialogInstance { get; set; }
 
+        [CascadingParameter]
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
+
         /// <summary>
         /// The title of this message box.
         /// </summary>
@@ -184,6 +187,8 @@ namespace MudBlazor
 
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
+
+        private bool ReverseButtonOrderValue => DialogInstance?.Options.ReverseButtonOrder ?? GlobalDialogOptions.ReverseButtonOrder ?? false;
 
         /// <summary>
         /// Shows this message box.

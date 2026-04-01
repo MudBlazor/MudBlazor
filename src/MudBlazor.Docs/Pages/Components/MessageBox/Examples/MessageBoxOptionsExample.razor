@@ -6,6 +6,7 @@
 <MudButton OnClick="@(() => OpenDialogAsync(_backdropClick))" Color="Color.Tertiary">Disable Backdrop dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_fullScreen))" Color="Color.Info">Full Screen dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_topCenter))" Color="Color.Success">Top Center dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_reverseButtonOrder))" Color="Color.Warning">Reverse button order dialog</MudButton>
 <br />
 <MudSwitch @bind-Value="_isInline" Label="Inline" LabelPlacement="Placement.End" Color="Color.Primary" />
 <MudChip T="string">@_state</MudChip>
@@ -35,6 +36,7 @@
     private readonly DialogOptions _backdropClick = new() { BackdropClick = false };
     private readonly DialogOptions _fullScreen = new() { FullScreen = true, CloseButton = true };
     private readonly DialogOptions _topCenter = new() { Position = DialogPosition.TopCenter };
+    private readonly DialogOptions _reverseButtonOrder = new() { ReverseButtonOrder = true };
 
     private async Task OpenDialogAsync(DialogOptions options)
     {

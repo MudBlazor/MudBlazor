@@ -434,6 +434,7 @@ public class ServiceCollectionExtensionsTests
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
+        var dialogConfiguration = serviceProvider.GetService<DialogOptions>();
 
         // Assert
         timeProvider.Should().NotBeNull();
@@ -455,6 +456,7 @@ public class ServiceCollectionExtensionsTests
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
+        dialogConfiguration.Should().NotBeNull();
     }
 
     [Test]
@@ -512,6 +514,7 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
             options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
             options.PopoverOptions.Duration = TimeSpan.FromSeconds(2);
+            options.DialogConfiguration.ReverseButtonOrder = true;
 
             expectedOptions = options;
         });
@@ -535,6 +538,7 @@ public class ServiceCollectionExtensionsTests
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
+        var dialogConfiguration = serviceProvider.GetRequiredService<DialogOptions>();
         var snackBarOptions = serviceProvider.GetRequiredService<IOptions<SnackbarConfiguration>>();
         var resizeOptions = serviceProvider.GetRequiredService<IOptions<ResizeOptions>>();
         var resizeObserverOptions = serviceProvider.GetRequiredService<IOptions<ResizeObserverOptions>>();
@@ -564,6 +568,7 @@ public class ServiceCollectionExtensionsTests
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
+        dialogConfiguration.Should().NotBeNull();
 
         // We can't check reference here, instead we need to check each value
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
@@ -604,5 +609,6 @@ public class ServiceCollectionExtensionsTests
         actualSnackBarOptions.SuccessIcon.Should().Be(expectedOptions.SnackbarConfiguration.SuccessIcon);
         actualSnackBarOptions.WarningIcon.Should().Be(expectedOptions.SnackbarConfiguration.WarningIcon);
         actualSnackBarOptions.ErrorIcon.Should().Be(expectedOptions.SnackbarConfiguration.ErrorIcon);
+        dialogConfiguration.ReverseButtonOrder.Should().Be(expectedOptions.DialogConfiguration.ReverseButtonOrder);
     }
 }

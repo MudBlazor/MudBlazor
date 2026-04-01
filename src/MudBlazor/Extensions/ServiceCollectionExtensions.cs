@@ -19,6 +19,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorDialog(this IServiceCollection services)
         {
             services.TryAddScoped<IDialogService, DialogService>();
+            services.TryAddSingleton(new DialogOptions());
 
             return services;
         }
@@ -405,7 +406,8 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudBlazorPointerEventsNoneService()
-                .AddMudLocalization();
+                .AddMudLocalization()
+                .AddSingleton(options.DialogConfiguration);
         }
 
         private static IServiceCollection AddCommonServices(this IServiceCollection service)

@@ -32,6 +32,9 @@ namespace MudBlazor
         [Inject]
         private NavigationManager NavigationManager { get; set; } = null!;
 
+        [Inject]
+        private DialogOptions DialogConfiguration { get; set; } = DialogOptions.Default;
+
         /// <summary>
         /// Hides headers for all dialogs by default.
         /// </summary>
@@ -119,6 +122,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus? DefaultFocus { get; set; }
 
+        /// <summary>
+        /// Reverses the button order in all <see cref="MudMessageBox"/> dialogs by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool? ReverseButtonOrder { get; set; }
+
         protected override void OnInitialized()
         {
             DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
@@ -127,15 +140,30 @@ namespace MudBlazor
 
             var newOptions = _globalDialogOptions with
             {
-                BackdropClick = BackdropClick,
-                CloseOnEscapeKey = CloseOnEscapeKey,
-                CloseButton = CloseButton,
-                NoHeader = NoHeader,
-                Position = Position,
-                FullWidth = FullWidth,
-                MaxWidth = MaxWidth,
-                BackgroundClass = BackgroundClass,
-                DefaultFocus = DefaultFocus
+                BackdropClick = DialogConfiguration.BackdropClick,
+                CloseOnEscapeKey = DialogConfiguration.CloseOnEscapeKey,
+                CloseButton = DialogConfiguration.CloseButton,
+                NoHeader = DialogConfiguration.NoHeader,
+                Position = DialogConfiguration.Position,
+                FullWidth = DialogConfiguration.FullWidth,
+                MaxWidth = DialogConfiguration.MaxWidth,
+                BackgroundClass = DialogConfiguration.BackgroundClass,
+                DefaultFocus = DialogConfiguration.DefaultFocus,
+                ReverseButtonOrder = DialogConfiguration.ReverseButtonOrder
+            };
+
+            newOptions = newOptions with
+            {
+                BackdropClick = BackdropClick ?? newOptions.BackdropClick,
+                CloseOnEscapeKey = CloseOnEscapeKey ?? newOptions.CloseOnEscapeKey,
+                CloseButton = CloseButton ?? newOptions.CloseButton,
+                NoHeader = NoHeader ?? newOptions.NoHeader,
+                Position = Position ?? newOptions.Position,
+                FullWidth = FullWidth ?? newOptions.FullWidth,
+                MaxWidth = MaxWidth ?? newOptions.MaxWidth,
+                BackgroundClass = BackgroundClass ?? newOptions.BackgroundClass,
+                DefaultFocus = DefaultFocus ?? newOptions.DefaultFocus,
+                ReverseButtonOrder = ReverseButtonOrder ?? newOptions.ReverseButtonOrder
             };
 
             _globalDialogOptions = newOptions;
