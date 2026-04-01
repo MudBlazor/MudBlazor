@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 
@@ -359,13 +360,13 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
-        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat);
+        var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
+        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat, CultureInfo.CurrentCulture);
     }
 
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
+        var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
         return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "G");
     }
 
@@ -391,4 +392,4 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 /// <summary>
 /// Represents a data point in a time series chart, containing a DateTime and a value.
 /// </summary>
-public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>;
+public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>, IFormattable;
