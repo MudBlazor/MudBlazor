@@ -2,7 +2,11 @@
   flex-grow: 0;
 
   > .mud-input-control-input-container {
-    display: initial !important;
+    display: contents;
+  }
+
+  > .mud-input-control-input-container > .mud-file-upload-custom-content {
+    display: contents;
   }
 
   .mud-file-upload-dragover {

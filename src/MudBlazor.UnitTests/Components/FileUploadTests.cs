@@ -54,6 +54,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies custom content is wrapped in the dedicated CSS hook class.
+        /// </summary>
+        [Test]
+        public void FileUpload_CustomContent_HasWrapperClass()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.CustomContent, _ => builder =>
+                {
+                    builder.OpenElement(0, "button");
+                    builder.AddAttribute(1, "id", "custom-upload-button");
+                    builder.AddContent(2, "Upload");
+                    builder.CloseElement();
+                }));
+
+            var wrapper = comp.Find(".mud-input-control-input-container > .mud-file-upload-custom-content");
+            wrapper.Find("#custom-upload-button").TextContent.Should().Be("Upload");
+        }
+
+        /// <summary>
         /// Ensures the underlying input receives the multiple attribute
         /// </summary>
         [Test]
