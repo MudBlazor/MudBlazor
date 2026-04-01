@@ -506,9 +506,6 @@ namespace MudBlazor
             return date.StartOfMonth(GetCulture());
         }
 
-        /// <summary>
-        /// User clicked on a year.
-        /// </summary>
         protected override async Task OnYearClickedAsync(int year)
         {
             await base.OnYearClickedAsync(year);
