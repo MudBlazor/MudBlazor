@@ -15,6 +15,13 @@ namespace MudBlazor
     /// <seealso cref="MudDialog" />
     public partial class MudMessageBox : MudComponentBase
     {
+        private enum MessageBoxButtonKind
+        {
+            Cancel,
+            No,
+            Yes
+        }
+
         private readonly ParameterState<bool> _visibleState;
         private IDialogReference? _reference;
         private ActivatableCallback? _yesCallback, _cancelCallback, _noCallback;

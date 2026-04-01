@@ -29,70 +29,48 @@
     <DialogActions>
         <div tabindex="-1" class="d-contents">
             <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
-                @if (ReverseButtonOrderValue)
+                @foreach (var buttonKind in ReverseButtonOrderValue
+                    ? new[] { MessageBoxButtonKind.Yes, MessageBoxButtonKind.No, MessageBoxButtonKind.Cancel }
+                    : new[] { MessageBoxButtonKind.Cancel, MessageBoxButtonKind.No, MessageBoxButtonKind.Yes })
                 {
-                    @if (YesButton is not null)
+                    @if (buttonKind == MessageBoxButtonKind.Cancel)
                     {
-                        <CascadingValue Value="@_yesCallback">
-                            @YesButton
-                        </CascadingValue>
+                        @if (CancelButton is not null)
+                        {
+                            <CascadingValue Value="@_cancelCallback">
+                                @CancelButton
+                            </CascadingValue>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(CancelText))
+                        {
+                            <MudButton Class="mud-message-box__cancel-button" OnClick="OnCancelClicked">@CancelText</MudButton>
+                        }
                     }
-                    else if (!string.IsNullOrWhiteSpace(YesText))
+                    else if (buttonKind == MessageBoxButtonKind.No)
                     {
-                        <MudButton Class="mud-message-box__yes-button" Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+                        @if (NoButton is not null)
+                        {
+                            <CascadingValue Value="@_noCallback">
+                                @NoButton
+                            </CascadingValue>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(NoText))
+                        {
+                            <MudButton Class="mud-message-box__no-button" OnClick="OnNoClicked">@NoText</MudButton>
+                        }
                     }
-                    @if (NoButton is not null)
+                    else if (buttonKind == MessageBoxButtonKind.Yes)
                     {
-                        <CascadingValue Value="@_noCallback">
-                            @NoButton
-                        </CascadingValue>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(NoText))
-                    {
-                        <MudButton Class="mud-message-box__no-button" OnClick="OnNoClicked">@NoText</MudButton>
-                    }
-                    @if (CancelButton is not null)
-                    {
-                        <CascadingValue Value="@_cancelCallback">
-                            @CancelButton
-                        </CascadingValue>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(CancelText))
-                    {
-                        <MudButton Class="mud-message-box__cancel-button" OnClick="OnCancelClicked">@CancelText</MudButton>
-                    }
-                }
-                else
-                {
-                    @if (CancelButton is not null)
-                    {
-                        <CascadingValue Value="@_cancelCallback">
-                            @CancelButton
-                        </CascadingValue>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(CancelText))
-                    {
-                        <MudButton Class="mud-message-box__cancel-button" OnClick="OnCancelClicked">@CancelText</MudButton>
-                    }
-                    @if (NoButton is not null)
-                    {
-                        <CascadingValue Value="@_noCallback">
-                            @NoButton
-                        </CascadingValue>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(NoText))
-                    {
-                        <MudButton Class="mud-message-box__no-button" OnClick="OnNoClicked">@NoText</MudButton>
-                    }
-                    @if (YesButton is not null)
-                    {
-                        <CascadingValue Value="@_yesCallback">
-                            @YesButton
-                        </CascadingValue>
-                    }
-                    else if (!string.IsNullOrWhiteSpace(YesText))
-                    {
-                        <MudButton Class="mud-message-box__yes-button" Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+                        @if (YesButton is not null)
+                        {
+                            <CascadingValue Value="@_yesCallback">
+                                @YesButton
+                            </CascadingValue>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(YesText))
+                        {
+                            <MudButton Class="mud-message-box__yes-button" Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+                        }
                     }
                 }
             </MudFocusTrap>

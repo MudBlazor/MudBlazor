@@ -1,8 +1,9 @@
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.UnitTests.Shared.Extensions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -158,28 +159,37 @@ namespace MudBlazor.UnitTests.Components
         [Test, CancelAfter(3000)]
         public async Task MessageBox_Should_ReverseButtonOrder_WhenDialogConfigurationSet()
         {
-            var dialogConfiguration = Context.Services.GetRequiredService<DialogOptions>();
+            var testContext = new BunitContext();
+            testContext.AddTestServices();
+            var dialogConfiguration = testContext.Services.GetRequiredService<DialogOptions>();
             dialogConfiguration.ReverseButtonOrder = true;
 
-            var comp = Context.Render<MudDialogProvider>();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-
-            Task<bool?> resultTask = null;
-            await comp.InvokeAsync(() =>
+            try
             {
-                resultTask = service?.ShowMessageBoxAsync(
-                    "Boom!",
-                    "I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!");
-            });
+                var comp = testContext.Render<MudDialogProvider>();
+                var service = testContext.Services.GetService<IDialogService>() as DialogService;
+                service.Should().NotBe(null);
 
-            AssertReversedButtonOrder(comp);
+                Task<bool?> resultTask = null;
+                await comp.InvokeAsync(() =>
+                {
+                    resultTask = service?.ShowMessageBoxAsync(
+                        "Boom!",
+                        "I'm a pickle. What do you make of that?",
+                        "Great",
+                        "Whatever",
+                        "Go away!");
+                });
 
-            await comp.FindAll(".mud-dialog-actions button")[0].ClickAsync();
-            resultTask!.Result.Should().BeTrue();
+                AssertReversedButtonOrder(comp);
+
+                await comp.FindAll(".mud-dialog-actions button")[0].ClickAsync();
+                resultTask!.Result.Should().BeTrue();
+            }
+            finally
+            {
+                await testContext.DisposeAsync();
+            }
         }
 
         [Test]

@@ -407,7 +407,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization()
-                .AddSingleton(options.DialogConfiguration);
+                .Replace(ServiceDescriptor.Singleton(options.DialogConfiguration));
         }
 
         private static IServiceCollection AddCommonServices(this IServiceCollection service)
