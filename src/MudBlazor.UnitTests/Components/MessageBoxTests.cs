@@ -2,8 +2,6 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.Shared.Extensions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -11,20 +9,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MessageBoxTests : BunitTest
     {
-        private static void AssertDefaultButtonOrder(IRenderedComponent<MudDialogProvider> comp)
+        [Test, CancelAfter(3000)]
+        public async Task MessageBox_Should_ReverseOrder_WhenReverseMessageBoxButtonOrderIsTrue()
         {
-            var buttons = comp.FindAll(".mud-dialog-actions button");
-            buttons.Count.Should().Be(3);
-            buttons[0].TrimmedText().Should().Be("Go away!");
-            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
-            buttons[1].TrimmedText().Should().Be("Whatever");
-            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
-            buttons[2].TrimmedText().Should().Be("Great");
-            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
-        }
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
 
-        private static void AssertReversedButtonOrder(IRenderedComponent<MudDialogProvider> comp)
-        {
+            Task<bool?> resultTask = null;
+            await comp.InvokeAsync(() =>
+            {
+                resultTask = service?.ShowMessageBoxAsync(
+                    "Boom!",
+                    "I'm a pickle. What do you make of that?",
+                    "Great",
+                    "Whatever",
+                    "Go away!",
+                    new DialogOptions { ReverseMessageBoxButtonOrder = true });
+            });
+
             var buttons = comp.FindAll(".mud-dialog-actions button");
             buttons.Count.Should().Be(3);
             buttons[0].TrimmedText().Should().Be("Great");
@@ -33,6 +36,9 @@ namespace MudBlazor.UnitTests.Components
             buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
             buttons[2].TrimmedText().Should().Be("Go away!");
             buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
+
+            await comp.FindAll(".mud-dialog-actions button")[0].ClickAsync();
+            resultTask!.Result.Should().BeTrue();
         }
 
         [Test, CancelAfter(3000)]
@@ -63,7 +69,17 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
 
-            AssertDefaultButtonOrder(comp);
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
             await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
@@ -99,97 +115,22 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
 
-            AssertDefaultButtonOrder(comp);
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
             await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
-        }
-
-        [Test, CancelAfter(3000)]
-        public async Task MessageBox_Should_ReverseButtonOrder_WhenDialogOptionsSet()
-        {
-            var comp = Context.Render<MudDialogProvider>();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-
-            Task<bool?> resultTask = null;
-            await comp.InvokeAsync(() =>
-            {
-                resultTask = service?.ShowMessageBoxAsync(
-                    "Boom!",
-                    "I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!",
-                    new DialogOptions { ReverseButtonOrder = true });
-            });
-
-            AssertReversedButtonOrder(comp);
-
-            await comp.FindAll(".mud-dialog-actions button")[0].ClickAsync();
-            resultTask!.Result.Should().BeTrue();
-        }
-
-        [Test, CancelAfter(3000)]
-        public async Task MessageBox_Should_ReverseButtonOrder_WhenMudDialogProviderSettingSet()
-        {
-            var comp = Context.Render<MudDialogProvider>(builder => builder.Add(x => x.ReverseButtonOrder, true));
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-
-            Task<bool?> resultTask = null;
-            await comp.InvokeAsync(() =>
-            {
-                resultTask = service?.ShowMessageBoxAsync(
-                    "Boom!",
-                    "I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!");
-            });
-
-            AssertReversedButtonOrder(comp);
-
-            await comp.FindAll(".mud-dialog-actions button")[0].ClickAsync();
-            resultTask!.Result.Should().BeTrue();
-        }
-
-        [Test, CancelAfter(3000)]
-        public async Task MessageBox_Should_ReverseButtonOrder_WhenDialogConfigurationSet()
-        {
-            var testContext = new BunitContext();
-            testContext.AddTestServices();
-            var dialogConfiguration = testContext.Services.GetRequiredService<DialogOptions>();
-            dialogConfiguration.ReverseButtonOrder = true;
-
-            try
-            {
-                var comp = testContext.Render<MudDialogProvider>();
-                var service = testContext.Services.GetService<IDialogService>() as DialogService;
-                service.Should().NotBe(null);
-
-                Task<bool?> resultTask = null;
-                await comp.InvokeAsync(() =>
-                {
-                    resultTask = service?.ShowMessageBoxAsync(
-                        "Boom!",
-                        "I'm a pickle. What do you make of that?",
-                        "Great",
-                        "Whatever",
-                        "Go away!");
-                });
-
-                AssertReversedButtonOrder(comp);
-
-                await comp.FindAll(".mud-dialog-actions button")[0].ClickAsync();
-                resultTask!.Result.Should().BeTrue();
-            }
-            finally
-            {
-                await testContext.DisposeAsync();
-            }
         }
 
         [Test]

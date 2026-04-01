@@ -114,6 +114,6 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>. When <c>null</c>, the default order is used.
         /// </remarks>
-        public bool? ReverseButtonOrder { get; set; }
+        public bool? ReverseMessageBoxButtonOrder { get; set; }
     }
 }

@@ -32,9 +32,6 @@ namespace MudBlazor
         [Inject]
         private NavigationManager NavigationManager { get; set; } = null!;
 
-        [Inject]
-        private DialogOptions DialogConfiguration { get; set; } = DialogOptions.Default;
-
         /// <summary>
         /// Hides headers for all dialogs by default.
         /// </summary>
@@ -122,16 +119,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus? DefaultFocus { get; set; }
 
-        /// <summary>
-        /// Reverses the button order in all <see cref="MudMessageBox"/> dialogs by default.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Dialog.Behavior)]
-        public bool? ReverseButtonOrder { get; set; }
-
         protected override void OnInitialized()
         {
             DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
@@ -148,8 +135,7 @@ namespace MudBlazor
                 FullWidth = FullWidth,
                 MaxWidth = MaxWidth,
                 BackgroundClass = BackgroundClass,
-                DefaultFocus = DefaultFocus,
-                ReverseButtonOrder = ReverseButtonOrder ?? DialogConfiguration.ReverseButtonOrder
+                DefaultFocus = DefaultFocus
             };
 
             _globalDialogOptions = newOptions;
