@@ -9,15 +9,15 @@
 @attribute [CascadingTypeParameter(nameof(T))]
 
 <CascadingValue Value="@this" IsFixed="true">
-    @if (_hasFixedParent)
-    {
-        @ChartContainer
-    }
-    else
+    @if (_hasFixedParent is false)
     {
         <div style="height:@(HasPercentageHeight() ? FallbackHeight : Height); width: @(MatchBoundsToSize ? "100%" : Width);">
             @ChartContainer
         </div>
+    }
+    else
+    {
+        @ChartContainer
     }
 
     @if (ChartReference is not null)
@@ -32,7 +32,7 @@
     private RenderFragment ChartContainer => @<div @ref="_containerRef"
                                                    @attributes="UserAttributes"
                                                    class="@Classname"
-                                                   style="@($"{Style}; width: {(MatchBoundsToSize ? "100%" : @Width)}; height: {@Height};")"
+                                                   style="@($"{Style}; width: {(MatchBoundsToSize ? "100%" : @Width)}; height: {(MatchBoundsToSize ? "100%" : Height)};")"
                                                    dir="ltr">
         @ChartContent
     </div>;

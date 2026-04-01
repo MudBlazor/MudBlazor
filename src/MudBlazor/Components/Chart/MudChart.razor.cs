@@ -17,7 +17,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-    private bool _hasFixedParent = true;
+    private bool? _hasFixedParent;
 
     private ChartType? _chartType;
     private IChartOptions? _chartOptions;
@@ -61,20 +61,19 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (!MatchBoundsToSize)
+        if (_hasFixedParent is not null)
         {
             return;
         }
 
-        if (firstRender && HasPercentageHeight())
+        _hasFixedParent = true;
+
+        if (MatchBoundsToSize && firstRender && HasPercentageHeight())
         {
             _hasFixedParent = await JsRuntime.InvokeAsync<bool>("hasDefinedParentHeight", _containerRef);
-
-            if (!_hasFixedParent)
-            {
-                StateHasChanged();
-            }
         }
+
+        StateHasChanged();
     }
 
     private bool HasPercentageHeight() => Height.AsSpan().Trim().EndsWith("%", StringComparison.Ordinal);
