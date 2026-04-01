@@ -765,13 +765,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_SpinButtons_Should_PreventMouseDownFocusSteal_And_StillIncrement()
+        public async Task NumericFieldSpinButtonsPreventMouseDownFocusStealAndIncrement()
         {
+            var blurCount = 0;
             var comp = Context.Render<MudNumericField<int>>(parameters => parameters
                 .Add(x => x.Value, 5)
                 .Add(x => x.Step, 1)
                 .Add(x => x.Min, 0)
-                .Add(x => x.Max, 10));
+                .Add(x => x.Max, 10)
+                .Add(x => x.OnBlur, EventCallback.Factory.Create<FocusEventArgs>(this, _ => blurCount++)));
 
             var spinButtons = comp.FindAll(".mud-input-numeric-spin .mud-button-root");
             spinButtons.Count.Should().Be(2);
@@ -780,6 +782,7 @@ namespace MudBlazor.UnitTests.Components
 
             await spinButtons[0].ClickAsync(new MouseEventArgs());
 
+            blurCount.Should().Be(0);
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(6));
         }
 
