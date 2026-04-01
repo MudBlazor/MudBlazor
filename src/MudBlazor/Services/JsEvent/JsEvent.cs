@@ -237,11 +237,16 @@ namespace MudBlazor.Services
         /// </summary>
         /// <param name="caretPosition">The new caret position.</param>
         [JSInvokable]
-        public void OnCaretPositionChanged(int caretPosition)
+        public void OnCaretPositionChanged(int? caretPosition)
         {
+            if (caretPosition is null)
+            {
+                return;
+            }
+
             foreach (var handler in _caretPositionChangedHandlers)
             {
-                handler.Invoke(caretPosition);
+                handler.Invoke(caretPosition.Value);
             }
         }
 
