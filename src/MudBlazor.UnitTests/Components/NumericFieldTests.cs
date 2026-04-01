@@ -764,6 +764,25 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be(value);
         }
 
+        [Test]
+        public async Task NumericField_SpinButtons_Should_PreventMouseDownFocusSteal_And_StillIncrement()
+        {
+            var comp = Context.Render<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.Value, 5)
+                .Add(x => x.Step, 1)
+                .Add(x => x.Min, 0)
+                .Add(x => x.Max, 10));
+
+            var spinButtons = comp.FindAll(".mud-input-numeric-spin .mud-button-root");
+            spinButtons.Count.Should().Be(2);
+            spinButtons[0].GetAttribute("blazor:onmousedown:preventDefault").Should().NotBeNull();
+            spinButtons[1].GetAttribute("blazor:onmousedown:preventDefault").Should().NotBeNull();
+
+            await spinButtons[0].ClickAsync(new MouseEventArgs());
+
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(6));
+        }
+
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericFieldNullable_Increment_Decrement<T>(T value) where T : struct
         {
