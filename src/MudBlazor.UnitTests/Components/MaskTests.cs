@@ -53,6 +53,24 @@ namespace MudBlazor.UnitTests.Components
             maskField.ReadText.Should().Be(setValue);
         }
 
+        [TestCase(InputType.Email)]
+        [TestCase(InputType.Number)]
+        public async Task TextFieldWithMask_DoesNotInvokeSelectRange_ForUnsupportedInputTypes(InputType inputType)
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudTextField<string>>(parameters =>
+            {
+                parameters.Add(m => m.Mask, new PatternMask("000"));
+                parameters.Add(m => m.InputType, inputType);
+            });
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(maskField.ElementId, new KeyboardEventArgs() { Key = "1" }));
+            await comp.WaitForAssertionAsync(() => maskField.ReadValue.Should().Be("1"));
+            Context.JSInterop.VerifyNotInvoke("mudElementRef.selectRange");
+        }
+
         /// <summary>
         /// Test all IsMatch variants: letter, digit and symbols.
         /// </summary>
