@@ -83,9 +83,6 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when hierarchy visibility is toggled if used as a Hierarchy Column.
         /// </summary>
-        /// <remarks>
-        /// Used internally for Hierarchy Columns, setting this will have no effect.
-        /// </remarks>
         [Parameter]
         public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 

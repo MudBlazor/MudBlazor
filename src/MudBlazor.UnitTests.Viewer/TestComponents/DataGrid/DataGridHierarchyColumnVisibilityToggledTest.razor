@@ -16,14 +16,14 @@
 @code {
     public record Model(string Name, int Age);
 
-    public List<Model> Items = new()
+    public List<Model> Items { get; } = new()
     {
         new Model("John", 25),
         new Model("Jane", 30),
         new Model("Bob", 35)
     };
 
-    public List<DataGridHierarchyVisibilityToggledEventArgs<Model>> ToggledEvents = [];
+    public List<DataGridHierarchyVisibilityToggledEventArgs<Model>> ToggledEvents { get; } = [];
 
     private Task OnHierarchyVisibilityToggled(DataGridHierarchyVisibilityToggledEventArgs<Model> args)
     {
