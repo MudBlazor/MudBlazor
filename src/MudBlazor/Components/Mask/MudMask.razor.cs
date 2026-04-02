@@ -21,6 +21,7 @@ namespace MudBlazor
     {
         private int _caret;
         private bool _updating;
+        private bool _keyInterceptorSubscribed;
         private IJsEvent? _jsEvent;
         private bool _showClearable;
         private (int, int)? _selection;
@@ -142,6 +143,40 @@ namespace MudBlazor
             await base.OnInitializedAsync();
         }
 
+        private async Task EnsureKeyInterceptorAsync()
+        {
+            if (_keyInterceptorSubscribed)
+            {
+                return;
+            }
+
+            _keyInterceptorSubscribed = true;
+            var options = new KeyInterceptorOptions(
+                "mud-input-slot",
+                [
+                    // prevent scrolling page, toggle open/close
+                    new(" ", preventDown: "key+none"),
+                    // prevent scrolling page, instead increment
+                    new("ArrowUp", preventDown: "key+none"),
+                    // prevent scrolling page, instead decrement
+                    new("ArrowDown", preventDown: "key+none"),
+                    // prevent scrolling page
+                    new("PageUp", preventDown: "key+none"),
+                    // prevent scrolling page
+                    new("PageDown", preventDown: "key+none"),
+                    // prevent input of all other characters except allowed, like [0-9.,-+]
+                    new(@"/^.$/", preventDown: "key+none|key+shift"),
+                    // subscribe to all key down events
+                    new("/./", subscribeDown: true),
+                    // prevent backspace key
+                    new("Backspace", preventDown: "key+none"),
+                    // prevent delete key
+                    new("Delete", preventDown: "key+none")
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDown);
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -158,31 +193,6 @@ namespace MudBlazor
                 _jsEvent.CaretPositionChanged += OnCaretPositionChanged;
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
-
-                var options = new KeyInterceptorOptions(
-                    "mud-input-slot",
-                    [
-                        // prevent scrolling page, toggle open/close
-                        new(" ", preventDown: "key+none"),
-                        // prevent scrolling page, instead increment
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page, instead decrement
-                        new("ArrowDown", preventDown: "key+none"),
-                        // prevent scrolling page
-                        new("PageUp", preventDown: "key+none"),
-                        // prevent scrolling page
-                        new("PageDown", preventDown: "key+none"),
-                        // prevent input of all other characters except allowed, like [0-9.,-+]
-                        new(@"/^.$/", preventDown: "key+none|key+shift"),
-                        // subscribe to all key down events
-                        new("/./", subscribeDown: true),
-                        // prevent backspace key
-                        new("Backspace", preventDown: "key+none"),
-                        // prevent delete key
-                        new("Delete", preventDown: "key+none")
-                    ]);
-
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDown);
             }
 
             if (_isFocused && Mask.Selection == null)
@@ -397,6 +407,14 @@ namespace MudBlazor
         {
             _isFocused = true;
         }
+
+        internal async Task OnFocusedAsync(FocusEventArgs obj)
+        {
+            await EnsureKeyInterceptorAsync();
+            OnFocused(obj);
+        }
+
+        internal Task EnsureInterceptorForTestsAsync() => EnsureKeyInterceptorAsync();
 
         protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {

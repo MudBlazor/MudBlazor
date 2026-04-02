@@ -22,6 +22,7 @@ namespace MudBlazor
         private IMudRadioGroup? _parent;
         private readonly string _elementId = Identifier.Create("radio");
         private readonly string _ariaId = Identifier.Create("radio-aria-");
+        private bool _keyInterceptorSubscribed;
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
@@ -177,7 +178,16 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        {
+            await EnsureKeyInterceptorAsync();
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+        }
+
+        protected async Task OnFocusInAsync(FocusEventArgs _)
+        {
+            await EnsureKeyInterceptorAsync();
+        }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState() && !(MudRadioGroup?.GetReadOnlyState() ?? false);
 
@@ -200,28 +210,28 @@ namespace MudBlazor
             }
         }
 
-        /// <inheritdoc />
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        private async Task EnsureKeyInterceptorAsync()
         {
-            if (firstRender)
+            if (_keyInterceptorSubscribed)
             {
-                var options = new KeyInterceptorOptions(
-                    "mud-button-root",
-                    [
-                        // prevent scrolling page
-                        new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
-                    ]);
-
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)
-                        .OnKeyDown("Backspace", HandleBackspaceAsync)));
+                return;
             }
+            _keyInterceptorSubscribed = true;
 
-            await base.OnAfterRenderAsync(firstRender);
+            var options = new KeyInterceptorOptions(
+                "mud-button-root",
+                [
+                    // prevent scrolling page
+                    new(" ", preventDown: "key+none", preventUp: "key+none"),
+                    new("Enter", preventDown: "key+none"),
+                    new("NumpadEnter", preventDown: "key+none"),
+                    new("Backspace", preventDown: "key+none")
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)
+                    .OnKeyDown("Backspace", HandleBackspaceAsync)));
         }
 
         /// <inheritdoc />

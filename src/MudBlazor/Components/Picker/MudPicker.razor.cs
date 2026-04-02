@@ -684,13 +684,15 @@ namespace MudBlazor
             }
         }
 
+        private async Task OnFocusInAsync(FocusEventArgs _)
+        {
+            await EnsureKeyInterceptorAsync();
+        }
+
+        internal Task EnsureKeyInterceptorForTestsAsync() => EnsureKeyInterceptorAsync();
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                await EnsureKeyInterceptorAsync();
-            }
-
             await base.OnAfterRenderAsync(firstRender);
         }
 

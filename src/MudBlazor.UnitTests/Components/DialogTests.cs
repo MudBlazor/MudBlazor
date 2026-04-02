@@ -468,6 +468,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             var dialog1 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance1.EnsureKeyInterceptorForTestsAsync());
             comp.Markup.Trim().Should().NotBeEmpty();
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance1.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
@@ -477,6 +478,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             var dialog2 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance2 = dialog2.MudDialog.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance2.EnsureKeyInterceptorForTestsAsync());
             comp.Markup.Trim().Should().NotBeEmpty();
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance2.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();
@@ -496,6 +498,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             var dialog1 = ((DialogOkCancel)dialogReference.Dialog)!;
             var dialogInstance = dialog1.MudDialog.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance.EnsureKeyInterceptorForTestsAsync());
             dialog1.LastKeyDown.Should().Be(null);
             dialog1.LastKeyUp.Should().Be(null);
             comp.Markup.Trim().Should().NotBeEmpty();
@@ -866,6 +869,7 @@ namespace MudBlazor.UnitTests.Components
             var dialogReference = await dialogReferenceLazy.Value;
             var dialog1 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance1 = dialog1.MudDialog.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance1.EnsureKeyInterceptorForTestsAsync());
             comp.Markup.Trim().Should().NotBeEmpty();
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance1.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().BeEmpty();
@@ -876,6 +880,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             var dialog2 = (DialogOkCancel)dialogReference.Dialog!;
             var dialogInstance2 = dialog2.MudDialog.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance2.EnsureKeyInterceptorForTestsAsync());
             comp.Markup.Trim().Should().NotBeEmpty();
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance2.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
             comp.Markup.Trim().Should().NotBeEmpty();

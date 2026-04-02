@@ -15,6 +15,7 @@ namespace MudBlazor
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         private readonly string _ariaId = Identifier.Create("switch-aria-");
+        private bool _keyInterceptorSubscribed;
         internal string ElementId { get; } = Identifier.Create("switch");
 
         [Inject]
@@ -93,32 +94,41 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ThumbIconColor { get; set; } = Color.Default;
 
-        /// <inheritdoc />
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected async Task OnFocusInAsync(FocusEventArgs _)
         {
-            if (firstRender)
-            {
-                var options = new KeyInterceptorOptions(
-                    "mud-switch-base",
-                    [
-                        // prevent scrolling page, instead increment
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page, instead decrement
-                        new("ArrowDown", preventDown: "key+none"),
-                        new(" ", preventDown: "key+none", preventUp: "key+none")
-                    ]);
-
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDownAny(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
-                        .OnKeyDownAny(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
-                        .OnKeyDown(" ", () => SetBoolValueAsync(!BoolValue, true))));
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
+            await EnsureKeyInterceptorAsync();
         }
 
-        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, obj);
+        private async Task EnsureKeyInterceptorAsync()
+        {
+            if (_keyInterceptorSubscribed)
+            {
+                return;
+            }
+
+            _keyInterceptorSubscribed = true;
+            var options = new KeyInterceptorOptions(
+                "mud-switch-base",
+                [
+                    // prevent scrolling page, instead increment
+                    new("ArrowUp", preventDown: "key+none"),
+                    // prevent scrolling page, instead decrement
+                    new("ArrowDown", preventDown: "key+none"),
+                    new(" ", preventDown: "key+none", preventUp: "key+none")
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDownAny(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
+                    .OnKeyDownAny(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                    .OnKeyDown(" ", () => SetBoolValueAsync(!BoolValue, true))));
+        }
+
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        {
+            await EnsureKeyInterceptorAsync();
+            await KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, obj);
+        }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 

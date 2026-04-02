@@ -28,7 +28,7 @@
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
                   @onblur="@OnBlurredAsync"
-                  @onfocus="OnFocused"
+                  @onfocus="OnFocusedAsync"
                   @oncut="OnCutAsync"
                   @oncopy="OnCopyAsync"
                   @bind:get="@ReadText"
@@ -53,7 +53,7 @@
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"
                @onblur="@OnBlurredAsync"
-               @onfocus="OnFocused"
+               @onfocus="OnFocusedAsync"
                @oncut="OnCutAsync"
                @oncopy="OnCopyAsync"
                @bind:get="@ReadText"

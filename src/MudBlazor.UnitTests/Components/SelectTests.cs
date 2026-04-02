@@ -20,6 +20,7 @@ namespace MudBlazor.UnitTests.Components
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OnFocusInAsync(new FocusEventArgs()));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter" }));
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ListClass, "my-list-class"));
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-list-class"));
@@ -137,6 +138,7 @@ namespace MudBlazor.UnitTests.Components
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OnFocusInAsync(new FocusEventArgs()));
 
             //open menu on keydown
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -1002,6 +1004,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OnFocusInAsync(new FocusEventArgs()));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
 
@@ -1224,6 +1227,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OnFocusInAsync(new FocusEventArgs()));
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
@@ -1293,6 +1297,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OnFocusInAsync(new FocusEventArgs()));
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", AltKey = true, Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
@@ -1321,6 +1326,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OnFocusInAsync(new FocusEventArgs()));
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));

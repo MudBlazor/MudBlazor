@@ -27,6 +27,7 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
+        private bool _keyInterceptorSubscribed;
         private MudInput<string> _elementReference = null!;
         private readonly string _elementId = Identifier.Create("numericField");
 
@@ -305,34 +306,40 @@ namespace MudBlazor
             return (value, false);
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        private async Task EnsureKeyInterceptorAsync()
         {
-            if (firstRender)
+            if (_keyInterceptorSubscribed)
             {
-                var keyOptions = new List<KeyOptions>
-                {
-                    // prevent scrolling page, instead increment
-                    new("ArrowUp", preventDown: "key+none"),
-                    // prevent scrolling page, instead decrement
-                    new("ArrowDown", preventDown: "key+none"),
-                     // prevent dead keys like ^ ` ´ etc
-                    new("Dead", preventDown: "key+any"),
-                };
+                return;
+            }
+            _keyInterceptorSubscribed = true;
 
-                if (Pattern != null)
-                {
-                    //prevent inputs that do not match the pattern
-                    keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
-                }
+            var keyOptions = new List<KeyOptions>
+            {
+                // prevent scrolling page, instead increment
+                new("ArrowUp", preventDown: "key+none"),
+                // prevent scrolling page, instead decrement
+                new("ArrowDown", preventDown: "key+none"),
+                 // prevent dead keys like ^ ` ´ etc
+                new("Dead", preventDown: "key+any"),
+            };
 
-                var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
-
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("ArrowUp", Increment)
-                        .OnKeyDown("ArrowDown", Decrement)));
+            if (Pattern != null)
+            {
+                //prevent inputs that do not match the pattern
+                keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
             }
 
+            var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDown("ArrowUp", Increment)
+                    .OnKeyDown("ArrowDown", Decrement)));
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
             await base.OnAfterRenderAsync(firstRender);
 
             if (!firstRender)
@@ -353,6 +360,7 @@ namespace MudBlazor
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
+            await EnsureKeyInterceptorAsync();
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }

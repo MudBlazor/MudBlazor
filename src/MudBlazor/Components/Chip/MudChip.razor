@@ -6,7 +6,8 @@
 
 <div class="mud-chip-container"
      id="@_chipContainerId"
-     @onkeydown="@HandleKeyDownAsync">
+     @onkeydown="@HandleKeyDownAsync"
+     @onfocusin="@OnFocusInAsync">
     <MudElement HtmlTag="@GetHtmlTag()"
                 Class="@Classname"
                 Style="@Style"

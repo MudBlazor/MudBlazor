@@ -31,6 +31,7 @@ namespace MudBlazor
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
+        private bool _keyInterceptorSubscribed;
         private ElementReference _tabsContentSize;
         private ElementReference _tabsInnerSize;
         private double _sliderSizePercentage;
@@ -536,17 +537,6 @@ namespace MudBlazor
                     await _activePanelIndexState.SetValueAsync(index.Value);
                 }
 
-                var options = new KeyInterceptorOptions(
-                    "mud-tab",
-                    [
-                        // prevent scrolling page
-                        new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
-                    ]);
-
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
                 _redraw = true;
                 await InvokeAsync(StateHasChanged);
             }
@@ -1276,6 +1266,8 @@ namespace MudBlazor
         /// </summary>
         protected virtual async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
         {
+            await EnsureKeyInterceptorAsync();
+
             switch (e.Key)
             {
                 case "Enter":
@@ -1322,6 +1314,32 @@ namespace MudBlazor
             {
                 await HandleTabKeyDownAsync(e, focusedPanel);
             }
+        }
+
+        private async Task EnsureKeyInterceptorAsync()
+        {
+            if (_keyInterceptorSubscribed)
+            {
+                return;
+            }
+
+            _keyInterceptorSubscribed = true;
+            var options = new KeyInterceptorOptions(
+                "mud-tab",
+                [
+                    // prevent scrolling page
+                    new(" ", preventDown: "key+none", preventUp: "key+none"),
+                    new("Enter", preventDown: "key+none"),
+                    new("NumpadEnter", preventDown: "key+none"),
+                    new("Backspace", preventDown: "key+none")
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
+        }
+
+        private async Task OnFocusInAsync(FocusEventArgs _)
+        {
+            await EnsureKeyInterceptorAsync();
         }
 
         /// <summary>

@@ -149,6 +149,7 @@ namespace MudBlazor.UnitTests.Components
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
             var dialogInstance = dialog.DialogInstance.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance.EnsureKeyInterceptorForTestsAsync());
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -224,6 +225,7 @@ namespace MudBlazor.UnitTests.Components
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
             var dialogInstance = dialog.DialogInstance.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance.EnsureKeyInterceptorForTestsAsync());
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -294,6 +296,7 @@ namespace MudBlazor.UnitTests.Components
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
             var dialogInstance = dialog.DialogInstance.GetDialogContainer();
+            await comp.InvokeAsync(() => dialogInstance.EnsureKeyInterceptorForTestsAsync());
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);

@@ -18,6 +18,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
     private readonly string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+    private bool _keyInterceptorSubscribed;
 
     internal readonly ParameterState<bool> SelectedState;
 
@@ -410,30 +411,40 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async Task OnFocusInAsync(FocusEventArgs _)
     {
-        await base.OnAfterRenderAsync(firstRender);
+        await EnsureKeyInterceptorAsync();
+    }
 
-        if (firstRender)
+    private async Task EnsureKeyInterceptorAsync()
+    {
+        if (_keyInterceptorSubscribed)
         {
-            var options = new KeyInterceptorOptions(
-                "mud-chip",
-                [
-                    new(" ", preventDown: "key+none", preventUp: "key+none"),
-                    new("Backspace", preventDown: "key+none"),
-                    new("Delete", preventDown: "key+none")
-                ]);
-
-            await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
-                .When(CanHandleKeys, builder => builder
-                    .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
-                    .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
+            return;
         }
+
+        _keyInterceptorSubscribed = true;
+        var options = new KeyInterceptorOptions(
+            "mud-chip",
+            [
+                new(" ", preventDown: "key+none", preventUp: "key+none"),
+                new("Backspace", preventDown: "key+none"),
+                new("Delete", preventDown: "key+none")
+            ]);
+
+        await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
+            .When(CanHandleKeys, builder => builder
+                .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
+                .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
     }
 
     private bool CanHandleKeys() => !GetDisabled() && !GetReadOnly();
 
-    protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_chipContainerId, KeyEventKind.Down, obj);
+    protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+    {
+        await EnsureKeyInterceptorAsync();
+        await KeyInterceptorService.DispatchAsync(_chipContainerId, KeyEventKind.Down, obj);
+    }
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {

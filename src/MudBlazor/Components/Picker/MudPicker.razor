@@ -49,7 +49,7 @@
 
     protected virtual RenderFragment? Render =>
         @<CascadingValue Value="@this" IsFixed="true">
-            <div class="@PickerClassname" id="@ElementId">
+            <div class="@PickerClassname" id="@ElementId" @onfocusin="@OnFocusInAsync">
                 @if (PickerVariant != PickerVariant.Static)
                 {
                     <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">

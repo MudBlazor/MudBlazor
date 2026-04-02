@@ -26,6 +26,7 @@ namespace MudBlazor
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private bool _needsFitContentRefresh;
+        private bool _keyInterceptorSubscribed;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -1211,6 +1212,52 @@ namespace MudBlazor
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 
+        private async Task EnsureKeyInterceptorAsync()
+        {
+            if (_keyInterceptorSubscribed)
+            {
+                return;
+            }
+
+            _keyInterceptorSubscribed = true;
+            var options = new KeyInterceptorOptions(
+                "mud-input-control",
+                [
+                    // prevent scrolling page, toggle open/close
+                    new(" ", preventDown: "key+none"),
+                    // prevent scrolling page, instead highlight previous item
+                    new("ArrowUp", preventDown: "key+none"),
+                    // prevent scrolling page, instead highlight next item
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("Home", preventDown: "key+none"),
+                    new("End", preventDown: "key+none"),
+                    new("Escape"),
+                    new("Enter", preventDown: "key+none"),
+                    new("NumpadEnter", preventDown: "key+none"),
+                    // select all items instead of all page text
+                    new("a", preventDown: "key+ctrl"),
+                    // select all items instead of all page text
+                    new("A", preventDown: "key+ctrl"),
+                    // for our users
+                    new("/./", subscribeDown: true, subscribeUp: true)
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                .HookKeyUp(args => OnKeyUp.InvokeAsync(args))
+                .When(CanHandleKeys, builder => builder
+                    .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
+                    .OnKeyDown("Tab", () => CloseMenu(false))
+                    .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                    .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                    .OnKeyDown(" ", ToggleMenu)
+                    .OnKeyDown("Escape", () => CloseMenu(true))
+                    .OnKeyDown("Home", () => SelectFirstItem())
+                    .OnKeyDown("End", SelectLastItem)
+                    .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)
+                    .OnKeyDownAny(["a", "A"], HandleKeyAAsync)
+                    .OnKeyDown("/^[^ ]$/", HandleCharacterSearchAsync)));
+        }
+
         private async Task HandleArrowUpAsync(KeyboardEventArgs args)
         {
             if (args.AltKey)
@@ -1316,6 +1363,11 @@ namespace MudBlazor
             return base.OnBlur.InvokeAsync(obj);
         }
 
+        internal async Task OnFocusInAsync(FocusEventArgs _)
+        {
+            await EnsureKeyInterceptorAsync();
+        }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -1330,46 +1382,6 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                var options = new KeyInterceptorOptions(
-                    "mud-input-control",
-                    [
-                        // prevent scrolling page, toggle open/close
-                        new(" ", preventDown: "key+none"),
-                        // prevent scrolling page, instead highlight previous item
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page, instead highlight next item
-                        new("ArrowDown", preventDown: "key+none"),
-                        new("Home", preventDown: "key+none"),
-                        new("End", preventDown: "key+none"),
-                        new("Escape"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        // select all items instead of all page text
-                        new("a", preventDown: "key+ctrl"),
-                        // select all items instead of all page text
-                        new("A", preventDown: "key+ctrl"),
-                        // for our users
-                        new("/./", subscribeDown: true, subscribeUp: true)
-                    ]);
-
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
-                    .HookKeyUp(args => OnKeyUp.InvokeAsync(args))
-                    .When(CanHandleKeys, builder => builder
-                        .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
-                        .OnKeyDown("Tab", () => CloseMenu(false))
-                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                        .OnKeyDown(" ", ToggleMenu)
-                        .OnKeyDown("Escape", () => CloseMenu(true))
-                        .OnKeyDown("Home", () => SelectFirstItem())
-                        .OnKeyDown("End", SelectLastItem)
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)
-                        .OnKeyDownAny(["a", "A"], HandleKeyAAsync)
-                        .OnKeyDown("/^[^ ]$/", HandleCharacterSearchAsync)));
-            }
-
             await base.OnAfterRenderAsync(firstRender);
 
             var needsFitContentRefresh = _needsFitContentRefresh;

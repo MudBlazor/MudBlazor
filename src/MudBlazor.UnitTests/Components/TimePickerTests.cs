@@ -227,6 +227,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SimpleTimePickerTest>();
             var timePickerComponent = comp.FindComponent<MudTimePicker>();
             var timePicker = timePickerComponent.Instance;
+            await comp.InvokeAsync(() => timePicker.EnsureKeyInterceptorForTestsAsync());
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(timePicker.ElementId, new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));

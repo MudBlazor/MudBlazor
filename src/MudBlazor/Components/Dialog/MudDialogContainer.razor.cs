@@ -24,6 +24,7 @@ namespace MudBlazor
     public partial class MudDialogContainer : MudComponentBase, IMudDialogInstanceInternal, IAsyncDisposable
     {
         private bool _disposed;
+        private bool _keyInterceptorSubscribed;
         private MudDialog? _dialog;
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
@@ -128,22 +129,31 @@ namespace MudBlazor
                 .AddClass(GetDialogOptionsOrDefault.BackgroundClass)
                 .Build();
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        internal async Task OnFocusInAsync(FocusEventArgs _)
         {
-            if (firstRender)
-            {
-                var options = new KeyInterceptorOptions(
-                    "mud-dialog",
-                    [
-                        new("/./", subscribeDown: true, subscribeUp: true)
-                    ]);
+            await EnsureKeyInterceptorAsync();
+        }
 
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
-                    .OnKeyDown("Escape", HandleEscapeAsync)
-                    .OnKeyDown("/./", HandleAnyKeyDownAsync)
-                    .OnKeyUp("/./", HandleAnyKeyUpAsync));
+        internal Task EnsureKeyInterceptorForTestsAsync() => EnsureKeyInterceptorAsync();
+
+        private async Task EnsureKeyInterceptorAsync()
+        {
+            if (_keyInterceptorSubscribed)
+            {
+                return;
             }
-            await base.OnAfterRenderAsync(firstRender);
+            _keyInterceptorSubscribed = true;
+
+            var options = new KeyInterceptorOptions(
+                "mud-dialog",
+                [
+                    new("/./", subscribeDown: true, subscribeUp: true)
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                .OnKeyDown("Escape", HandleEscapeAsync)
+                .OnKeyDown("/./", HandleAnyKeyDownAsync)
+                .OnKeyUp("/./", HandleAnyKeyUpAsync));
         }
 
         private Task HandleEscapeAsync()
@@ -157,6 +167,8 @@ namespace MudBlazor
 
         private async Task HandleAnyKeyDownAsync(KeyboardEventArgs args)
         {
+            await EnsureKeyInterceptorAsync();
+
             // Don't invoke callback for Escape - it's handled separately
             if (args.Key == "Escape")
                 return;
@@ -172,6 +184,8 @@ namespace MudBlazor
 
         private async Task HandleAnyKeyUpAsync(KeyboardEventArgs args)
         {
+            await EnsureKeyInterceptorAsync();
+
             if (_dialog is not null && _dialog.OnKeyUp.HasDelegate)
             {
                 await _dialog.OnKeyUp.InvokeAsync(args);
