@@ -812,14 +812,20 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ReadOnlyMaskShouldTriggerOnBlur()
         {
-            var blurredType = string.Empty;
+            var calls = 0;
+            var blurEventType = string.Empty;
             var comp = Context.Render<MudMask>(parameters => parameters
                 .Add(p => p.ReadOnly, true)
-                .Add(p => p.OnBlur, x => blurredType = x.Type ?? string.Empty));
+                .Add(p => p.OnBlur, x =>
+                {
+                    calls++;
+                    blurEventType = x.Type ?? string.Empty;
+                }));
 
             await comp.Find("input").BlurAsync();
 
-            blurredType.Should().Contain(".additional");
+            calls.Should().Be(1);
+            blurEventType.Should().Contain(".additional");
         }
 
         [Test]

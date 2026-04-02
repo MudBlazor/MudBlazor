@@ -722,12 +722,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(p => p.ReadOnly, true));
             var select = comp.FindComponent<MudSelect<string>>();
-            var blurredType = string.Empty;
-            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.OnBlur, x => blurredType = x.Type ?? string.Empty));
+            var calls = 0;
+            var blurEventType = string.Empty;
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.OnBlur, x =>
+            {
+                calls++;
+                blurEventType = x.Type ?? string.Empty;
+            }));
 
             await comp.Find("input").BlurAsync();
 
-            blurredType.Should().Contain(".additional");
+            calls.Should().Be(1);
+            blurEventType.Should().Contain(".additional");
         }
 
         [Test]

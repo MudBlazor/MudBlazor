@@ -1356,19 +1356,19 @@ namespace MudBlazor.UnitTests.Components
         public async Task ReadOnlyNumericFieldShouldTriggerOnBlur()
         {
             var calls = 0;
-            var blurredType = string.Empty;
+            var blurEventType = string.Empty;
             var comp = Context.Render<MudNumericField<int>>(parameters => parameters
                 .Add(p => p.ReadOnly, true)
                 .Add(p => p.OnBlur, x =>
                 {
                     calls++;
-                    blurredType = x.Type ?? string.Empty;
+                    blurEventType = x.Type ?? string.Empty;
                 }));
 
             await comp.Find("input").BlurAsync();
 
             calls.Should().Be(1);
-            blurredType.Should().Contain(".additional");
+            blurEventType.Should().Contain(".additional");
         }
     }
 }
