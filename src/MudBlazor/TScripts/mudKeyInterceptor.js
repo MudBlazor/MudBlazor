@@ -3,43 +3,118 @@
 // See the LICENSE file in the project root for more information.
 
 /**
- * Factory that resolves elements and manages MudKeyInterceptor instances.
- * Exposes connect/update/disconnect entry points for .NET interop.
+ * Factory that resolves elements and manages delegated MudKeyInterceptor registrations.
+ * Exposes connect/update/disconnect entry points for .NET interop while keeping one global keydown/keyup listener pair.
  */
 class MudKeyInterceptorFactory {
+    constructor() {
+        this._registrationsById = new Map();
+        this._onKeyDown = this.onKeyDown.bind(this);
+        this._onKeyUp = this.onKeyUp.bind(this);
+        this._listenerCount = 0;
+    }
+
     /**
-     * Creates (or reuses) a key interceptor for an element and attaches handlers.
+     * Creates (or reuses) a key interceptor registration for an element.
      */
     connect(dotNetRef, elementId, options) {
-        //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });
         if (!elementId)
             throw "elementId: expected element id!";
         const element = document.getElementById(elementId);
         if (!element)
             throw "no element found for id: " + elementId;
-        if (!element.mudKeyInterceptor)
-            element.mudKeyInterceptor = new MudKeyInterceptor(dotNetRef, options);
-        element.mudKeyInterceptor.connect(element);
+        let registration = this._registrationsById.get(elementId);
+        if (!registration) {
+            registration = new MudKeyInterceptor(dotNetRef, options);
+            this._registrationsById.set(elementId, registration);
+            this.ensureGlobalListeners();
+        } else {
+            registration.configure(dotNetRef, options);
+        }
+        registration.connect(element);
     }
 
     /**
      * Updates the key option for an existing interceptor registration.
      */
     updatekey(elementId, option) {
-        const element = document.getElementById(elementId);
-        if (!element?.mudKeyInterceptor)
+        const registration = this._registrationsById.get(elementId);
+        if (!registration)
             return;
-        element.mudKeyInterceptor.updatekey(option);
+        registration.updatekey(option);
     }
 
     /**
-     * Detaches a key interceptor from an element.
+     * Detaches a key interceptor registration from an element.
      */
     disconnect(elementId) {
-        const element = document.getElementById(elementId);
-        if (!element?.mudKeyInterceptor)
+        const registration = this._registrationsById.get(elementId);
+        if (!registration)
             return;
-        element.mudKeyInterceptor.disconnect();
+        registration.disconnect();
+        this._registrationsById.delete(elementId);
+        this.releaseGlobalListeners();
+    }
+
+    ensureGlobalListeners() {
+        if (this._listenerCount > 0) {
+            this._listenerCount++;
+            return;
+        }
+        document.addEventListener('keydown', this._onKeyDown);
+        document.addEventListener('keyup', this._onKeyUp);
+        this._listenerCount = 1;
+    }
+
+    releaseGlobalListeners() {
+        if (this._listenerCount <= 0)
+            return;
+        this._listenerCount--;
+        if (this._listenerCount > 0)
+            return;
+        document.removeEventListener('keydown', this._onKeyDown);
+        document.removeEventListener('keyup', this._onKeyUp);
+    }
+
+    /**
+     * Handles keydown events for all matching registrations by walking up from event target.
+     */
+    onKeyDown(args) {
+        this.handleEvent(args, false);
+    }
+
+    /**
+     * Handles keyup events for all matching registrations by walking up from event target.
+     */
+    onKeyUp(args) {
+        this.handleEvent(args, true);
+    }
+
+    handleEvent(args, isKeyUp) {
+        if (!this._registrationsById.size)
+            return;
+        const chain = this.getEventElementChain(args);
+        for (const chainElement of chain) {
+            if (!chainElement.id)
+                continue;
+            const registration = this._registrationsById.get(chainElement.id);
+            if (!registration || !registration.matchesEventTarget(args.target))
+                continue;
+            registration.handle(args, isKeyUp);
+            if (args.cancelBubble)
+                return;
+        }
+    }
+
+    getEventElementChain(args) {
+        const chain = [];
+        let current = args.target;
+        while (current) {
+            if (current instanceof Element)
+                chain.push(current);
+            current = current.parentElement;
+        }
+        return chain;
     }
 }
 window.mudKeyInterceptor = new MudKeyInterceptorFactory();
@@ -50,39 +125,21 @@ window.mudKeyInterceptor = new MudKeyInterceptorFactory();
  */
 class MudKeyInterceptor {
     constructor(dotNetRef, options) {
-        this._dotNetRef = dotNetRef;
-        this._options = options;
-        this.logger = options.enableLogging ? console.log : () => { };
-        this.logger('[MudBlazor | KeyInterceptor] Interceptor initialized', { options });
+        this.configure(dotNetRef, options);
     }
 
     /**
-     * Starts key interception on the target element (or matching child elements).
+     * Replaces current options and callback target, then rebuilds normalized key maps.
      */
-    connect(element) {
-        if (!this._options)
-            return;
-        if (!this._options.keys)
-            throw "_options.keys: array of KeyOptions expected";
-        if (this._isConnected) {
-            // don't do double registration
-            return;
-        }
-        this._isConnected = true;
-        this._element = element;
-        const targetClass = this._options.targetClass;
-        // changes to the DOM subtree only require observation when targeting child elements for target class
-        if (targetClass) {
-            this.logger('[MudBlazor | KeyInterceptor] Start observing DOM of element for changes to child with class ', { element, targetClass });
-            this._observer = new MutationObserver(this.onDomChanged);
-            this._observer.mudKeyInterceptor = this;
-            this._observer.observe(this._element, { attributes: false, childList: true, subtree: true });
-        }
-        this._observedChildren = [];
-        // transform key options into a key lookup
+    configure(dotNetRef, options) {
+        this._dotNetRef = dotNetRef;
+        this._options = options;
+        this.logger = options?.enableLogging ? console.log : () => { };
         this._keyOptions = {};
         this._regexOptions = [];
-        for (const keyOption of this._options.keys) {
+        if (!options?.keys)
+            return;
+        for (const keyOption of options.keys) {
             if (!keyOption?.key) {
                 this.logger('[MudBlazor | KeyInterceptor] got invalid key options: ', keyOption);
                 continue;
@@ -90,16 +147,15 @@ class MudKeyInterceptor {
             this.setKeyOption(keyOption);
         }
         this.logger('[MudBlazor | KeyInterceptor] key options: ', this._keyOptions);
-        if (this._regexOptions.size > 0)
+        if (this._regexOptions.length > 0)
             this.logger('[MudBlazor | KeyInterceptor] regex options: ', this._regexOptions);
-        // register handlers
-        if (targetClass) {
-            for (const child of this._element.getElementsByClassName(targetClass)) {
-                this.attachHandlers(child);
-            }
-        } else {
-            this.attachHandlers(this._element);
-        }
+    }
+
+    /**
+     * Starts key interception on the target registration element.
+     */
+    connect(element) {
+        this._element = element;
     }
 
     /**
@@ -133,64 +189,40 @@ class MudKeyInterceptor {
     }
 
     /**
-     * Stops interception and detaches all listeners.
+     * Stops interception and detaches registration from its element.
      */
     disconnect() {
-        if (!this._isConnected)
-            return;
-        if (this._observer) {
-            this.logger('[MudBlazor | KeyInterceptor] disconnect mutation observer and event handlers');
-            this._observer.disconnect();
-            this._observer = null;
-        }
-        for (const child of this._observedChildren)
-            this.detachHandlers(child);
-        this._isConnected = false;
+        this._element = null;
     }
 
     /**
-     * Attaches keydown/keyup handlers to a target element.
+     * Returns true if the DOM event target matches this registration scope.
      */
-    attachHandlers(child) {
-        this.logger('[MudBlazor | KeyInterceptor] attaching handlers ', { child });
-        if (this._observedChildren.includes(child)) {
-            //console.log("... already attached");
-            return;
+    matchesEventTarget(eventTarget) {
+        if (!this._element || !(eventTarget instanceof Element))
+            return false;
+        if (!this._element.contains(eventTarget))
+            return false;
+        const targetClass = this._options?.targetClass;
+        if (!targetClass)
+            return true;
+        let current = eventTarget;
+        while (current && current !== this._element) {
+            if (current.classList?.contains(targetClass))
+                return true;
+            current = current.parentElement;
         }
-        child.mudKeyInterceptor = this;
-        child.addEventListener('keydown', this.onKeyDown);
-        child.addEventListener('keyup', this.onKeyUp);
-        this._observedChildren.push(child);
+        return false;
     }
 
     /**
-     * Detaches keydown/keyup handlers from a target element.
+     * Handles a key event for this registration.
      */
-    detachHandlers(child) {
-        this.logger('[MudBlazor | KeyInterceptor] detaching handlers ', { child });
-        child.removeEventListener('keydown', this.onKeyDown);
-        child.removeEventListener('keyup', this.onKeyUp);
-        this._observedChildren = this._observedChildren.filter(x=>x!==child);
-    }
-
-    /**
-     * Applies handler attachment/detachment for added/removed matching DOM nodes.
-     */
-    onDomChanged(mutationsList, _) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == _observer
-        //self.logger('[MudBlazor | KeyInterceptor] onDomChanged: ', { self });
-        const targetClass = self._options.targetClass;
-        for (const mutation of mutationsList) {
-            //self.logger('[MudBlazor | KeyInterceptor] Subtree mutation: ', { mutation });
-            for (const element of mutation.addedNodes) {
-                if (element.classList?.contains(targetClass))
-                    self.attachHandlers(element);
-            }
-            for (const element of mutation.removedNodes) {
-                if (element.classList?.contains(targetClass))
-                    self.detachHandlers(element);
-            }
-        }
+    handle(args, isKeyUp) {
+        if (isKeyUp)
+            this.onKeyUp(args);
+        else
+            this.onKeyDown(args);
     }
 
     /**
@@ -220,35 +252,34 @@ class MudKeyInterceptor {
      * Processes keydown behavior and invokes .NET when configured.
      */
     onKeyDown(args) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == child
         if (!args.key) {
-            self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
+            this.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
             return;
         }
 
         const key = args.key.toLowerCase();
-        self.logger('[MudBlazor | KeyInterceptor] down "' + key + '"', args);
+        this.logger('[MudBlazor | KeyInterceptor] down "' + key + '"', args);
         let invoke = false;
-        if (self._keyOptions.hasOwnProperty(key)) {
-            const keyOptions = self._keyOptions[key];
-            self.logger('[MudBlazor | KeyInterceptor] options for "' + key + '"', keyOptions);
-            self.processKeyDown(args, keyOptions);
-            if (self.shouldInvokeKeyDown(args, keyOptions))
+        if (Object.hasOwn(this._keyOptions, key)) {
+            const keyOptions = this._keyOptions[key];
+            this.logger('[MudBlazor | KeyInterceptor] options for "' + key + '"', keyOptions);
+            this.processKeyDown(args, keyOptions);
+            if (this.shouldInvokeKeyDown(args, keyOptions))
                 invoke = true;
         }
-        for (const keyOptions of self._regexOptions) {
+        for (const keyOptions of this._regexOptions) {
             // Regex options allow wildcard key rules without precomputing every key in JS.
             if (keyOptions.regex.test(key)) {
-                self.logger('[MudBlazor | KeyInterceptor] regex options for "' + key + '"', keyOptions);
-                self.processKeyDown(args, keyOptions);
-                if (self.shouldInvokeKeyDown(args, keyOptions))
+                this.logger('[MudBlazor | KeyInterceptor] regex options for "' + key + '"', keyOptions);
+                this.processKeyDown(args, keyOptions);
+                if (this.shouldInvokeKeyDown(args, keyOptions))
                     invoke = true;
             }
         }
-        if (invoke) {
-            const eventArgs = self.toKeyboardEventArgs(args);
+        if (invoke && this._element) {
+            const eventArgs = this.toKeyboardEventArgs(args);
             eventArgs.Type = "keydown";
-            self._dotNetRef.invokeMethodAsync('OnKeyDown', self._element.id, eventArgs);
+            this._dotNetRef.invokeMethodAsync('OnKeyDown', this._element.id, eventArgs);
         }
     }
 
@@ -273,32 +304,31 @@ class MudKeyInterceptor {
      * Processes keyup behavior and invokes .NET when configured.
      */
     onKeyUp(args) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == child
         if (!args.key) {
-            self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
+            this.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
             return;
         }
 
         const key = args.key.toLowerCase();
-        self.logger('[MudBlazor | KeyInterceptor] up "' + key + '"', args);
+        this.logger('[MudBlazor | KeyInterceptor] up "' + key + '"', args);
         let invoke = false;
-        if (self._keyOptions.hasOwnProperty(key)) {
-            const keyOptions = self._keyOptions[key];
-            self.processKeyUp(args, keyOptions);
+        if (Object.hasOwn(this._keyOptions, key)) {
+            const keyOptions = this._keyOptions[key];
+            this.processKeyUp(args, keyOptions);
             if (keyOptions.subscribeUp)
                 invoke = true;
         }
-        for (const keyOptions of self._regexOptions) {
+        for (const keyOptions of this._regexOptions) {
             if (keyOptions.regex.test(key)) {
-                self.processKeyUp(args, keyOptions);
+                this.processKeyUp(args, keyOptions);
                 if (keyOptions.subscribeUp)
                     invoke = true;
             }
         }
-        if (invoke) {
-            const eventArgs = self.toKeyboardEventArgs(args);
+        if (invoke && this._element) {
+            const eventArgs = this.toKeyboardEventArgs(args);
             eventArgs.Type = "keyup";
-            self._dotNetRef.invokeMethodAsync('OnKeyUp', self._element.id, eventArgs);
+            this._dotNetRef.invokeMethodAsync('OnKeyUp', this._element.id, eventArgs);
         }
     }
 
