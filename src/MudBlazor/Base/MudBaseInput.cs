@@ -472,6 +472,12 @@ namespace MudBlazor
 
             if (ReadOnly)
             {
+                if (OnBlur.HasDelegate)
+                {
+                    obj.Type += ".additional";
+                    await OnBlur.InvokeAsync(obj);
+                }
+
                 return;
             }
 
