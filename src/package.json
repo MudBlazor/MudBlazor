@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "eslint": "^10.0.0",
+    "jiti": "^2.6.1",
     "sass": "^1.97.2",
     "stylelint": "^17.6.0",
     "stylelint-config-recommended-scss": "^17.0.0"

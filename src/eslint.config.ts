@@ -18,6 +18,5 @@ export default defineConfig({
         }],
         "no-var": "error",
         "prefer-const": "error",
-        "semi": ["error", "always"],
     },
 });

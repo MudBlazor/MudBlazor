@@ -51,6 +51,7 @@ jobs:
         with:
           files: |
             src/**/*.js
+            src/**/*.mjs
 
       - name: Determine changed stylesheet files
         id: changed-style-files
