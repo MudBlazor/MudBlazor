@@ -412,8 +412,6 @@ namespace MudBlazor
             if (caret == 0)
                 _caret = 0;
             _selection = selection;
-            if (!SupportsTextSelection(InputType))
-                return;
             if (selection == null)
             {
                 await _elementReference.MudSelectRangeAsync(caret, caret);
@@ -424,9 +422,6 @@ namespace MudBlazor
                 await _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
             }
         }
-
-        private static bool SupportsTextSelection(InputType inputType)
-            => inputType is InputType.Text or InputType.Search or InputType.Telephone or InputType.Url or InputType.Password;
 
         // from JS event
         internal void OnCaretPositionChanged(int pos)
