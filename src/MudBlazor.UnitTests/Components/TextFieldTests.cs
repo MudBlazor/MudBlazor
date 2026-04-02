@@ -1103,11 +1103,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ReadOnlyTextFieldShouldNotValidate()
         {
+            var calls = 0;
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.ReadOnly, true)
-                .Add(p => p.Required, true));
+                .Add(p => p.Required, true)
+                .Add(p => p.OnBlur, _ => calls++));
 
             await comp.Find("input").BlurAsync();
+            calls.Should().Be(1);
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
 

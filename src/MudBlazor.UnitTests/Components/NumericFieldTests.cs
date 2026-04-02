@@ -1351,5 +1351,25 @@ namespace MudBlazor.UnitTests.Components
                 numericField.ConversionErrorMessage.Should().BeNull();
             });
         }
+
+        [Test]
+        public async Task ReadOnlyNumericFieldShouldTriggerOnBlur()
+        {
+            var calls = 0;
+            FocusEventArgs? args = null;
+            var comp = Context.Render<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OnBlur, x =>
+                {
+                    calls++;
+                    args = x;
+                }));
+
+            await comp.Find("input").BlurAsync();
+
+            calls.Should().Be(1);
+            args.Should().NotBeNull();
+            args!.Type.Should().Contain(".additional");
+        }
     }
 }

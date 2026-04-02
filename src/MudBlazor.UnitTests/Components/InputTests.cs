@@ -1,5 +1,6 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -30,5 +31,25 @@ public class InputTests : BunitTest
             .Add(p => p.Sizing, sizing));
 
         comp.Find("div.mud-input").ClassList.Should().Contain(expectedClass);
+    }
+
+    [Test]
+    public async Task ReadOnlyShouldTriggerOnBlur()
+    {
+        var calls = 0;
+        FocusEventArgs? args = null;
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(p => p.ReadOnly, true)
+            .Add(p => p.OnBlur, x =>
+            {
+                calls++;
+                args = x;
+            }));
+
+        await comp.Find("input").BlurAsync();
+
+        calls.Should().Be(1);
+        args.Should().NotBeNull();
+        args!.Type.Should().Contain(".additional");
     }
 }

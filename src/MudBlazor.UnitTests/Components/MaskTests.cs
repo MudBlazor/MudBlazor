@@ -810,6 +810,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ReadOnlyMaskShouldTriggerOnBlur()
+        {
+            FocusEventArgs? args = null;
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OnBlur, x => args = x));
+
+            await comp.InvokeAsync(() => comp.Instance.OnBlurredAsync(new FocusEventArgs()));
+
+            args.Should().NotBeNull();
+            args!.Type.Should().Contain(".additional");
+        }
+
+        [Test]
         public void DifferentMaskImplementationTests()
         {
             // arrange

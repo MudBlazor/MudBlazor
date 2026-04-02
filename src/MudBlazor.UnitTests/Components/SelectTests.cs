@@ -717,6 +717,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ReadOnlySelectShouldTriggerOnBlur()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            FocusEventArgs? args = null;
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.OnBlur, x => args = x));
+
+            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+
+            args.Should().NotBeNull();
+            args!.Type.Should().Contain(".additional");
+        }
+
+        [Test]
         public async Task Disabled_SelectItem_Should_Be_Respected()
         {
             var comp = Context.Render<SelectTest1>();
