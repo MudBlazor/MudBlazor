@@ -159,7 +159,7 @@ namespace MudBlazor
 
         protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
-        protected Task HandleFocusInAsync(FocusEventArgs args)
+        protected Task HandleFocusInAsync(FocusEventArgs _)
         {
             lock (_keyInterceptorSubscriptionLock)
             {
