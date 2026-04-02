@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -14,6 +15,11 @@ namespace MudBlazor
     {
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
+        private bool _keyInterceptorSubscribed;
+        private Task? _keyInterceptorSubscriptionTask;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass($"mud-disabled", GetDisabledState())
@@ -150,21 +156,48 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+
+        protected Task HandleFocusInAsync(FocusEventArgs args)
         {
-            if (!CanHandleKeys())
+            if (_keyInterceptorSubscribed)
             {
                 return Task.CompletedTask;
             }
 
-            return obj.Key switch
+            _keyInterceptorSubscriptionTask ??= SubscribeKeyInterceptorAsync();
+            return _keyInterceptorSubscriptionTask;
+        }
+
+        private async Task SubscribeKeyInterceptorAsync()
+        {
+            var options = new KeyInterceptorOptions(
+                "mud-button-root",
+                [
+                    // prevent scrolling page
+                    new(" ", preventDown: "key+none", preventUp: "key+none"),
+                    new("Enter", preventDown: "key+none"),
+                    new("NumpadEnter", preventDown: "key+none"),
+                    new("Backspace", preventDown: "key+none")
+                ]);
+
+            try
             {
-                "Delete" => SetBoolValueAsync(false, true),
-                "Enter" or "NumpadEnter" => SetBoolValueAsync(true, true),
-                "Backspace" => HandleBackspaceAsync(),
-                " " => HandleSpaceAsync(),
-                _ => Task.CompletedTask
-            };
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDown("Backspace", HandleBackspaceAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)));
+                _keyInterceptorSubscribed = true;
+            }
+            finally
+            {
+                if (!_keyInterceptorSubscribed)
+                {
+                    _keyInterceptorSubscriptionTask = null;
+                }
+            }
         }
 
         /// <summary>
@@ -203,6 +236,17 @@ namespace MudBlazor
         private Task HandleBackspaceAsync() => TriState
                 ? SetBoolValueAsync(null, true)
                 : Task.CompletedTask;
+
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            await base.DisposeAsyncCore();
+
+            if (IsJSRuntimeAvailable && _keyInterceptorSubscribed)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+            }
+        }
 
     }
 }
