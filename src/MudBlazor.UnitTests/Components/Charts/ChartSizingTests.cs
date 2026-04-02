@@ -200,9 +200,9 @@ public class ChartSizingTests : BunitTest
 
         await comp.WaitForAssertionAsync(() =>
         {
-            var fallbackDiv = comp.Find("div[style*='height:400px']");
+            var fallbackDiv = comp.Find("div[style*='height:350px']");
             fallbackDiv.Should().NotBeNull();
-            fallbackDiv.GetAttribute("style").Should().Contain("height:400px");
+            fallbackDiv.GetAttribute("style").Should().Contain("height:350px");
         });
     }
 

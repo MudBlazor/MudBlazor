@@ -27,7 +27,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
     /// The pixel height used for the fallback wrapper div when <see cref="MudChartBase{T,TOptions}.Height"/>
     /// is a percentage and no fixed-height ancestor is detected.
     /// </summary>
-    private const string FallbackHeight = "400px";
+    private const string FallbackHeight = "350px";
 
     protected override void OnParametersSet()
     {
@@ -68,12 +68,22 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
 
         _hasFixedParent = true;
 
-        if (MatchBoundsToSize && firstRender && HasPercentageHeight())
+        if (!MatchBoundsToSize || !HasPercentageHeight())
+        {
+            return;
+        }
+
+        var previousHasFixedParent = _hasFixedParent;
+
+        if (firstRender)
         {
             _hasFixedParent = await JsRuntime.InvokeAsync<bool>("hasDefinedParentHeight", _containerRef);
         }
 
-        StateHasChanged();
+        if (_hasFixedParent != previousHasFixedParent)
+        {
+            StateHasChanged();
+        }
     }
 
     private bool HasPercentageHeight() => Height.AsSpan().Trim().EndsWith("%", StringComparison.Ordinal);
