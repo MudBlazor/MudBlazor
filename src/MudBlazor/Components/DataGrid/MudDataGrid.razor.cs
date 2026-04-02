@@ -283,6 +283,12 @@ namespace MudBlazor
         #region EventCallbacks
 
         /// <summary>
+        /// Occurs when the <see cref="SortDefinitions"/> have changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<Dictionary<string, SortDefinition<T>>> SortChanged { get; set; }
+
+        /// <summary>
         /// Occurs when the <see cref="SelectedItem"/> has changed.
         /// </summary>
         /// <remarks>
@@ -2269,6 +2275,7 @@ namespace MudBlazor
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string>? removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
+            await SortChanged.InvokeAsync(new Dictionary<string, SortDefinition<T>>(activeSortDefinitions));
 
             if (_isFirstRendered)
             {
