@@ -15,6 +15,7 @@ namespace MudBlazor
     {
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
+        private readonly object _keyInterceptorSubscriptionLock = new();
         private bool _keyInterceptorSubscribed;
         private Task? _keyInterceptorSubscriptionTask;
 
@@ -160,13 +161,16 @@ namespace MudBlazor
 
         protected Task HandleFocusInAsync(FocusEventArgs args)
         {
-            if (_keyInterceptorSubscribed)
+            lock (_keyInterceptorSubscriptionLock)
             {
-                return Task.CompletedTask;
-            }
+                if (_keyInterceptorSubscribed)
+                {
+                    return Task.CompletedTask;
+                }
 
-            _keyInterceptorSubscriptionTask ??= SubscribeKeyInterceptorAsync();
-            return _keyInterceptorSubscriptionTask;
+                _keyInterceptorSubscriptionTask ??= SubscribeKeyInterceptorAsync();
+                return _keyInterceptorSubscriptionTask;
+            }
         }
 
         private async Task SubscribeKeyInterceptorAsync()
@@ -189,13 +193,19 @@ namespace MudBlazor
                         .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
                         .OnKeyDown("Backspace", HandleBackspaceAsync)
                         .OnKeyDown(" ", HandleSpaceAsync)));
-                _keyInterceptorSubscribed = true;
+                lock (_keyInterceptorSubscriptionLock)
+                {
+                    _keyInterceptorSubscribed = true;
+                }
             }
             finally
             {
-                if (!_keyInterceptorSubscribed)
+                lock (_keyInterceptorSubscriptionLock)
                 {
-                    _keyInterceptorSubscriptionTask = null;
+                    if (!_keyInterceptorSubscribed)
+                    {
+                        _keyInterceptorSubscriptionTask = null;
+                    }
                 }
             }
         }
