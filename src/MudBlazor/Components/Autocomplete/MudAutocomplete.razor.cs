@@ -653,13 +653,11 @@ namespace MudBlazor
         }
 
         private void OnDebounceComplete(object? stateInfo)
-        {
-            _ = InvokeAsync(async () =>
+            => InvokeAsync(async () =>
             {
                 await OnDebounceIntervalElapsed.InvokeAsync(ReadText);
                 await OpenMenuAsync();
             });
-        }
 
         private void CancelToken()
         {

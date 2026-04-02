@@ -374,6 +374,8 @@ namespace MudBlazor.UnitTests.Components
 
             debounceElapsedCount.Should().Be(0);
             await autocompleteComp.WaitForAssertionAsync(() => debounceElapsedCount.Should().Be(1), TimeSpan.FromSeconds(5));
+            await autocompleteComp.WaitForAssertionAsync(() => autocompleteComp.Instance.Open.Should().BeTrue(), TimeSpan.FromSeconds(5));
+            debounceElapsedCount.Should().Be(1);
             debouncedText.Should().Be("Al");
         }
 
