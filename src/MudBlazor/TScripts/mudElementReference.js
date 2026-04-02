@@ -12,6 +12,30 @@ class MudElementReference {
         this.eventListeners = {};
     }
 
+    _supportsTextSelection(element) {
+        if (!element) {
+            return false;
+        }
+
+        const tagName = element.tagName?.toUpperCase();
+        if (tagName === 'TEXTAREA') {
+            return true;
+        }
+
+        if (tagName !== 'INPUT') {
+            return typeof element.setSelectionRange === 'function'
+                || !!element.createTextRange
+                || typeof element.selectionStart === 'number';
+        }
+
+        const type = (element.type || 'text').toLowerCase();
+        return type === 'text'
+            || type === 'search'
+            || type === 'tel'
+            || type === 'url'
+            || type === 'password';
+    }
+
     /**
      * Moves focus to the provided element.
      */
@@ -93,6 +117,14 @@ class MudElementReference {
     selectRange(element, pos1, pos2) {
         if (element)
         {
+            // Some input types (e.g., "email" and "number") can surface caret APIs
+            // but still throw at runtime when selecting ranges. We intentionally no-op here
+            // so SelectRangeAsync stays safe across all components and browsers.
+            if (!this._supportsTextSelection(element)) {
+                element.focus();
+                return;
+            }
+
             if (element.createTextRange) {
                 const selRange = element.createTextRange();
                 selRange.collapse(true);
@@ -100,7 +132,12 @@ class MudElementReference {
                 selRange.moveEnd('character', pos2);
                 selRange.select();
             } else if (element.setSelectionRange) {
-                element.setSelectionRange(pos1, pos2);
+                try {
+                    element.setSelectionRange(pos1, pos2);
+                } catch {
+                    // Some browsers still throw for unsupported or transient input states.
+                    // Ignore to keep selection interop non-throwing.
+                }
             } else if (element.selectionStart) {
                 element.selectionStart = pos1;
                 element.selectionEnd = pos2;
