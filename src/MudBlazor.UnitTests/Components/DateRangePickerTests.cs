@@ -1043,6 +1043,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DateRangePickerToolbar_UpdatesYear_WhenNoDateRangeIsSelected()
+        {
+            var comp = await OpenPicker();
+            var currentYear = int.Parse(comp.Find("button.mud-button-year .mud-button-label").InnerHtml);
+            var targetYear = (currentYear - 1).ToString(CultureInfo.InvariantCulture);
+
+            await comp.Find("button.mud-button-month").ClickAsync();
+            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync();
+            await comp.FindAll("div.mud-picker-year")
+                .First(x => x.TrimmedText().Equals(targetYear))
+                .ClickAsync();
+
+            comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be(targetYear);
+        }
+
+        [Test]
         [SetCulture("en-US")]
         public async Task DateRangePicker_HighlightSelectedMonthOnly()
         {
