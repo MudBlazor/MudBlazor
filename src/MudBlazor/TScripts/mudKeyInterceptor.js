@@ -160,8 +160,8 @@ class MudKeyInterceptor {
      * Determines whether a delegated event should be handled by this interceptor.
      */
     shouldHandleEvent(args) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == _element
-        if (!self?._element)
+        const self = this.mudKeyInterceptor; // func is invoked with this == element that owns delegated handlers
+        if (!self?._isConnected || !self._element)
             return false;
         const targetClass = self._options.targetClass;
         if (!targetClass)
