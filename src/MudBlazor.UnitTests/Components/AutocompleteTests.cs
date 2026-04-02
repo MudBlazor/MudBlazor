@@ -719,14 +719,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_ReadOnlyShouldTriggerOnBlur()
         {
             var calls = 0;
-            FocusEventArgs? blurredArgs = null;
+            var blurredType = string.Empty;
             var comp = Context.Render<MudAutocomplete<string>>(a =>
             {
                 a.Add(x => x.ReadOnly, true);
                 a.Add(x => x.OnBlur, args =>
                 {
                     calls++;
-                    blurredArgs = args;
+                    blurredType = args.Type ?? string.Empty;
                 });
             });
             var input = comp.Find("input");
@@ -734,8 +734,7 @@ namespace MudBlazor.UnitTests.Components
             await input.BlurAsync();
 
             calls.Should().Be(1);
-            blurredArgs.Should().NotBeNull();
-            blurredArgs!.Type.Should().Contain(".additional");
+            blurredType.Should().Contain(".additional");
         }
 
         [Test]
