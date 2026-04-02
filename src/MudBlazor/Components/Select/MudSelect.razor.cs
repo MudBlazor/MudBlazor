@@ -1363,7 +1363,7 @@ namespace MudBlazor
             return base.OnBlur.InvokeAsync(obj);
         }
 
-        internal async Task OnFocusInAsync(FocusEventArgs _)
+        internal async Task OnFocusInAsync()
         {
             await EnsureKeyInterceptorAsync();
         }

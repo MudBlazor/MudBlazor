@@ -1337,7 +1337,7 @@ namespace MudBlazor
             await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
         }
 
-        private async Task OnFocusInAsync(FocusEventArgs _)
+        private async Task OnFocusInAsync()
         {
             await EnsureKeyInterceptorAsync();
         }

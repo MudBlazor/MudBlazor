@@ -627,7 +627,7 @@ namespace MudBlazor
                 Label = For.GetLabelString();
         }
 
-        private async Task EnsureKeyInterceptorAsync()
+        internal async Task EnsureKeyInterceptorAsync()
         {
             if (_keyInterceptorObserving)
             {
@@ -684,12 +684,10 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnFocusInAsync(FocusEventArgs _)
+        private async Task OnFocusInAsync()
         {
             await EnsureKeyInterceptorAsync();
         }
-
-        internal Task EnsureKeyInterceptorForTestsAsync() => EnsureKeyInterceptorAsync();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

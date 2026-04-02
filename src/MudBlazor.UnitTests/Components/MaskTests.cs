@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
             });
             var textField = comp.Instance;
             var maskField = comp.FindComponent<MudMask>().Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             // Assert : Initial state
 
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp;
-            await comp.InvokeAsync(() => maskField.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.Instance.EnsureKeyInterceptorAsync());
             await comp.WaitForAssertionAsync(() => maskField.Instance.ReadValue.Should().BeNullOrEmpty());
             //Unmatched keys should have no effect
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(maskField.Instance.ElementId, new KeyboardEventArgs() { Key = "1" }));
@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp;
-            await comp.InvokeAsync(() => maskField.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.Instance.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => maskField.Instance.OnFocused(new FocusEventArgs()));
             await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("abc120ac"));
@@ -243,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true }));
             var tf = comp.Instance;
             var maskField = comp.FindComponent<MudMask>();
-            await comp.InvokeAsync(() => maskField.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.Instance.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => maskField.Instance.OnCaretPositionChanged(1));
             await comp.WaitForAssertionAsync(() => tf.ReadValue.Should().Be(null));
@@ -286,7 +286,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp;
-            await comp.InvokeAsync(() => maskField.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.Instance.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => maskField.Instance.Mask.ToString().Should().Be("|"));
             // 1 is not accepted because first mask position wants a letter
@@ -322,7 +322,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp;
-            await comp.InvokeAsync(() => maskField.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.Instance.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(maskField.Instance.ElementId, new KeyboardEventArgs() { Key = "a" }));
             await comp.WaitForAssertionAsync(() => maskField.Instance.Mask.ToString().Should().Be("(a|__) ___-__"));
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components
             }
             }));
             var maskField = comp.Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs() { Key = "a" }));
             await comp.WaitForAssertionAsync(() => maskField.ReadText.Should().Be("(a_) __"));
@@ -389,7 +389,7 @@ namespace MudBlazor.UnitTests.Components
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<MudMask>();
             var maskField = comp.Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(async () => await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true })));
 
@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("(aaa) 000-aa") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp;
-            await comp.InvokeAsync(() => maskField.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.Instance.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => maskField.Instance.OnPasteAsync("abc"));
 
@@ -468,7 +468,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("0000 0000 000") { Placeholder = '_', CleanDelimiters = true }));
             var maskField = comp.Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => maskField.OnPasteAsync("1234567899"));
             await comp.WaitForAssertionAsync(() => maskField.Mask.ToString().Should().Be("1234 5678 99|_"));
@@ -532,7 +532,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MaskTwoWayBindingTest>();
             var maskField1 = comp.FindComponents<MudMask>().First();
             var maskField2 = comp.FindComponents<MudMask>().Last();
-            await comp.InvokeAsync(() => maskField1.Instance.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField1.Instance.EnsureKeyInterceptorAsync());
             await comp.WaitForAssertionAsync(() => maskField1.Instance.ReadValue.Should().Be(""));
 
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(maskField1.Instance.ElementId, new KeyboardEventArgs() { Key = "a" }));
@@ -602,7 +602,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, new PatternMask("00:00") { CleanDelimiters = false, }));
             var tf = comp.Instance;
             var maskField = comp.FindComponent<MudMask>().Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(maskField.ElementId, new KeyboardEventArgs() { Key = "1" }));
@@ -638,7 +638,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudMask>();
             var maskField = comp.Instance;
             var impl = maskField.Mask;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
             await comp.WaitForAssertionAsync(() => maskField.GetInputType().Should().Be(InputType.Text));
 
             await comp.InvokeAsync(() => maskField.OnCaretPositionChanged(2));
@@ -717,7 +717,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MaskedTextFieldTwoWayBindingTest>();
             var tfs = comp.FindComponents<MudTextField<string>>().Select(x => x.Instance).ToArray();
             var masks = comp.FindComponents<MudMask>().Select(x => x.Instance).ToArray();
-            await comp.InvokeAsync(() => masks[0].EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => masks[0].EnsureKeyInterceptorAsync());
             await comp.InvokeAsync(() => masks[0].OnPasteAsync("123456"));
             masks[0].Mask.ToString().Should().Be("123-456|");
             await comp.WaitForAssertionAsync(() => masks[1].Mask.ToString().Should().Be("12/34/56|"));
@@ -764,7 +764,7 @@ namespace MudBlazor.UnitTests.Components
             //ctrl+backspace
             await comp.InvokeAsync(() => form.ResetAsync());
             await comp.InvokeAsync(() => mask.OnPasteAsync("1234567890"));
-            await comp.InvokeAsync(() => mask.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => mask.EnsureKeyInterceptorAsync());
             await comp.WaitForAssertionAsync(() => mask.Mask.ToString().Should().Be("(123) 456-7890|"));
             await comp.WaitForAssertionAsync(() => textField.ReadText.Should().Be("(123) 456-7890"));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("(123) 456-7890"));
@@ -782,7 +782,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ReadonlyMaskedTextFieldTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var mask = comp.FindComponent<MudMask>().Instance;
-            await comp.InvokeAsync(() => mask.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => mask.EnsureKeyInterceptorAsync());
             var originalValue = textField.ReadText;
 
             originalValue.Should().Be("1234 1234 1234 1234");
@@ -975,7 +975,7 @@ namespace MudBlazor.UnitTests.Components
             // mask is now clearable but contains no text so, no clear button should show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
 
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
             await comp.InvokeAsync(async () => await maskField.FocusAsync());
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(maskField.ElementId, new KeyboardEventArgs() { Key = "1" }));
             await comp.WaitForAssertionAsync(() => maskField.ReadText.Should().Be("1__ ___"));
@@ -998,7 +998,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, RegexMask.Email()));
             var tf = comp.Instance;
             var maskField = comp.FindComponent<MudMask>().Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             // prep field
             await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
@@ -1053,7 +1053,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, RegexMask.Email()));
             var tf = comp.Instance;
             var maskField = comp.FindComponent<MudMask>().Instance;
-            await comp.InvokeAsync(() => maskField.EnsureInterceptorForTestsAsync());
+            await comp.InvokeAsync(() => maskField.EnsureKeyInterceptorAsync());
 
             // prep field
             await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));

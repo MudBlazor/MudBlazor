@@ -94,7 +94,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color ThumbIconColor { get; set; } = Color.Default;
 
-        protected async Task OnFocusInAsync(FocusEventArgs _)
+        protected async Task OnFocusInAsync()
         {
             await EnsureKeyInterceptorAsync();
         }

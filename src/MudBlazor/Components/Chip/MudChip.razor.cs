@@ -411,7 +411,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
     }
 
-    protected async Task OnFocusInAsync(FocusEventArgs _)
+    protected async Task OnFocusInAsync()
     {
         await EnsureKeyInterceptorAsync();
     }

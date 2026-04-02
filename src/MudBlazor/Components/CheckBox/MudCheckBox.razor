@@ -4,7 +4,7 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <label class="@LabelClassname" id="@_elementId" @onkeydown="HandleKeyDownAsync" @onfocusin="@OnFocusInAsync" @onclick:stopPropagation="@StopClickPropagation">
+        <label class="@LabelClassname" id="@_elementId" @onkeydown="HandleKeyDownAsync" @onfocusin="OnFocusInAsync" @onclick:stopPropagation="@StopClickPropagation">
             <span class="@IconClassname">
                 @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
                 <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />

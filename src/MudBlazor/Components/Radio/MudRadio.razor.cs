@@ -184,7 +184,7 @@ namespace MudBlazor
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
         }
 
-        protected async Task OnFocusInAsync(FocusEventArgs _)
+        protected async Task OnFocusInAsync()
         {
             await EnsureKeyInterceptorAsync();
         }

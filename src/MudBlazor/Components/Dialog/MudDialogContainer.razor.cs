@@ -129,14 +129,12 @@ namespace MudBlazor
                 .AddClass(GetDialogOptionsOrDefault.BackgroundClass)
                 .Build();
 
-        internal async Task OnFocusInAsync(FocusEventArgs _)
+        internal async Task OnFocusInAsync()
         {
             await EnsureKeyInterceptorAsync();
         }
 
-        internal Task EnsureKeyInterceptorForTestsAsync() => EnsureKeyInterceptorAsync();
-
-        private async Task EnsureKeyInterceptorAsync()
+        internal async Task EnsureKeyInterceptorAsync()
         {
             if (_keyInterceptorSubscribed)
             {

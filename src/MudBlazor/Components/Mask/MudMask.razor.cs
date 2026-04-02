@@ -143,7 +143,7 @@ namespace MudBlazor
             await base.OnInitializedAsync();
         }
 
-        private async Task EnsureKeyInterceptorAsync()
+        internal async Task EnsureKeyInterceptorAsync()
         {
             if (_keyInterceptorSubscribed)
             {
@@ -414,7 +414,6 @@ namespace MudBlazor
             OnFocused(obj);
         }
 
-        internal Task EnsureInterceptorForTestsAsync() => EnsureKeyInterceptorAsync();
 
         protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
