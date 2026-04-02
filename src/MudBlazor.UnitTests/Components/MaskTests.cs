@@ -817,7 +817,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ReadOnly, true)
                 .Add(p => p.OnBlur, x => args = x));
 
-            await comp.InvokeAsync(() => comp.Instance.OnBlurredAsync(new FocusEventArgs()));
+            await comp.Find("input").BlurAsync();
 
             args.Should().NotBeNull();
             args!.Type.Should().Contain(".additional");

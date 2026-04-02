@@ -1107,7 +1107,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.ReadOnly, true)
                 .Add(p => p.Required, true)
-                .Add(p => p.OnBlur, _ => calls++));
+                .Add(p => p.OnBlur, args => calls++));
 
             await comp.Find("input").BlurAsync();
             calls.Should().Be(1);

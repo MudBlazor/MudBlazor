@@ -725,7 +725,7 @@ namespace MudBlazor.UnitTests.Components
             FocusEventArgs? args = null;
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(s => s.OnBlur, x => args = x));
 
-            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+            await comp.Find("input").BlurAsync();
 
             args.Should().NotBeNull();
             args!.Type.Should().Contain(".additional");
