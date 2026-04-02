@@ -15,7 +15,6 @@ namespace MudBlazor
     public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         private readonly string _ariaId = Identifier.Create("switch-aria-");
-        private bool _keyInterceptorSubscribed;
         internal string ElementId { get; } = Identifier.Create("switch");
 
         [Inject]
@@ -101,12 +100,11 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(ElementId))
             {
                 return;
             }
 
-            _keyInterceptorSubscribed = true;
             var options = new KeyInterceptorOptions(
                 "mud-switch-base",
                 [

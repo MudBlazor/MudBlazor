@@ -102,6 +102,8 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
         };
     }
 
+    public bool IsSubscribed(string elementId) => _observerManager.IsSubscribed(elementId);
+
     /// <inheritdoc />
     public Task UpdateKeyAsync(IKeyInterceptorObserver observer, KeyOptions option) => UpdateKeyAsync(observer.ElementId, option);
 

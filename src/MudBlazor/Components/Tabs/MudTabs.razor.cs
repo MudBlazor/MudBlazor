@@ -31,7 +31,6 @@ namespace MudBlazor
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
-        private bool _keyInterceptorSubscribed;
         private ElementReference _tabsContentSize;
         private ElementReference _tabsInnerSize;
         private double _sliderSizePercentage;
@@ -1318,12 +1317,11 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(_elementId))
             {
                 return;
             }
 
-            _keyInterceptorSubscribed = true;
             var options = new KeyInterceptorOptions(
                 "mud-tab",
                 [

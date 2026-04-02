@@ -20,7 +20,6 @@ namespace MudBlazor
         private string? _text;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
-        private bool _keyInterceptorObserving;
 
         internal string ElementId { get; } = Identifier.Create("picker");
 
@@ -629,12 +628,11 @@ namespace MudBlazor
 
         internal async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorObserving)
+            if (KeyInterceptorService.IsSubscribed(ElementId))
             {
                 return;
             }
 
-            _keyInterceptorObserving = true;
             var options = new KeyInterceptorOptions(
                 "mud-input-slot",
                 [

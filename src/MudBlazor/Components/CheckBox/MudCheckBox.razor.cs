@@ -15,7 +15,6 @@ namespace MudBlazor
     {
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
-        private bool _keyInterceptorSubscribed;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -168,12 +167,10 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(_elementId))
             {
                 return;
             }
-
-            _keyInterceptorSubscribed = true;
 
             var options = new KeyInterceptorOptions(
                 "mud-button-root",

@@ -26,7 +26,6 @@ namespace MudBlazor
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private bool _needsFitContentRefresh;
-        private bool _keyInterceptorSubscribed;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -1214,12 +1213,11 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(ElementId))
             {
                 return;
             }
 
-            _keyInterceptorSubscribed = true;
             var options = new KeyInterceptorOptions(
                 "mud-input-control",
                 [

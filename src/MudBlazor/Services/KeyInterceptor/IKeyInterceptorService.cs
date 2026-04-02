@@ -67,6 +67,13 @@ public interface IKeyInterceptorService : IAsyncDisposable
     Task DispatchAsync(string elementId, KeyEventKind kind, KeyboardEventArgs args);
 
     /// <summary>
+    /// Indicates whether key interception is currently subscribed for the specified element.
+    /// </summary>
+    /// <param name="elementId">The unique identifier of the HTML element.</param>
+    /// <returns><c>true</c> when subscribed; otherwise, <c>false</c>.</returns>
+    bool IsSubscribed(string elementId);
+
+    /// <summary>
     /// Updates the key options for a specified element.
     /// </summary>
     /// <param name="observer">The observer.</param>

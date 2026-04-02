@@ -21,7 +21,6 @@ namespace MudBlazor
     {
         private int _caret;
         private bool _updating;
-        private bool _keyInterceptorSubscribed;
         private IJsEvent? _jsEvent;
         private bool _showClearable;
         private (int, int)? _selection;
@@ -145,12 +144,11 @@ namespace MudBlazor
 
         internal async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(ElementId))
             {
                 return;
             }
 
-            _keyInterceptorSubscribed = true;
             var options = new KeyInterceptorOptions(
                 "mud-input-slot",
                 [

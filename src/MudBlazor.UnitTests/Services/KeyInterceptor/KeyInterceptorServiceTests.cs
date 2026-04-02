@@ -33,6 +33,7 @@ public class KeyInterceptorServiceTests
         // Assert
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(1);
+        service.IsSubscribed(observer.ElementId).Should().BeTrue();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Once);
     }
 
@@ -170,6 +171,7 @@ public class KeyInterceptorServiceTests
 
         // Assert
         service.ObserversCount.Should().Be(0);
+        service.IsSubscribed(observer.ElementId).Should().BeFalse();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Once);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Once);
     }

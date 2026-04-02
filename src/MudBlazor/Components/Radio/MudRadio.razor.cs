@@ -22,7 +22,6 @@ namespace MudBlazor
         private IMudRadioGroup? _parent;
         private readonly string _elementId = Identifier.Create("radio");
         private readonly string _ariaId = Identifier.Create("radio-aria-");
-        private bool _keyInterceptorSubscribed;
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
@@ -212,11 +211,10 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(_elementId))
             {
                 return;
             }
-            _keyInterceptorSubscribed = true;
 
             var options = new KeyInterceptorOptions(
                 "mud-button-root",

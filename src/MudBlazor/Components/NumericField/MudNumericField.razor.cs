@@ -27,7 +27,6 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
-        private bool _keyInterceptorSubscribed;
         private MudInput<string> _elementReference = null!;
         private readonly string _elementId = Identifier.Create("numericField");
 
@@ -308,11 +307,10 @@ namespace MudBlazor
 
         private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(_elementId))
             {
                 return;
             }
-            _keyInterceptorSubscribed = true;
 
             var keyOptions = new List<KeyOptions>
             {

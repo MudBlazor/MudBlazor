@@ -24,7 +24,6 @@ namespace MudBlazor
     public partial class MudDialogContainer : MudComponentBase, IMudDialogInstanceInternal, IAsyncDisposable
     {
         private bool _disposed;
-        private bool _keyInterceptorSubscribed;
         private MudDialog? _dialog;
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
@@ -136,11 +135,10 @@ namespace MudBlazor
 
         internal async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(ElementId))
             {
                 return;
             }
-            _keyInterceptorSubscribed = true;
 
             var options = new KeyInterceptorOptions(
                 "mud-dialog",

@@ -34,7 +34,6 @@ namespace MudBlazor
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
-        private bool _keyInterceptorSubscribed;
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
@@ -516,7 +515,6 @@ namespace MudBlazor
                 try
                 {
                     await KeyInterceptorService.UnsubscribeAsync(_elementId);
-                    _keyInterceptorSubscribed = false;
                 }
                 catch (JSException)
                 {
@@ -1072,11 +1070,10 @@ namespace MudBlazor
         /// </summary>
         private Task SubscribeToMenuKeyInterceptorAsync()
         {
-            if (_keyInterceptorSubscribed)
+            if (KeyInterceptorService.IsSubscribed(_elementId))
             {
                 return Task.CompletedTask;
             }
-            _keyInterceptorSubscribed = true;
 
             // Subscribe key interceptor to prevent default scrolling
             var options = new KeyInterceptorOptions(

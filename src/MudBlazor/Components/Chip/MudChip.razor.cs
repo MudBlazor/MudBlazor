@@ -18,7 +18,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
     private readonly string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
-    private bool _keyInterceptorSubscribed;
 
     internal readonly ParameterState<bool> SelectedState;
 
@@ -418,12 +417,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private async Task EnsureKeyInterceptorAsync()
     {
-        if (_keyInterceptorSubscribed)
+        if (KeyInterceptorService.IsSubscribed(_chipContainerId))
         {
             return;
         }
 
-        _keyInterceptorSubscribed = true;
         var options = new KeyInterceptorOptions(
             "mud-chip",
             [
