@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "eslint": "^10.0.0",
-    "sass": "^1.97.2"
+    "sass": "^1.97.2",
+    "stylelint": "^17.6.0",
+    "stylelint-config-recommended-scss": "^17.0.0"
   },
   "trustedDependencies": ["sass"]
 }

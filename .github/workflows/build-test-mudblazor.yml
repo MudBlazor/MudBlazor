@@ -45,6 +45,21 @@ jobs:
           files: |
             src/**
 
+      - name: Determine changed JavaScript files
+        id: changed-js-files
+        uses: tj-actions/changed-files@v47
+        with:
+          files: |
+            src/**/*.js
+
+      - name: Determine changed stylesheet files
+        id: changed-style-files
+        uses: tj-actions/changed-files@v47
+        with:
+          files: |
+            src/**/*.css
+            src/**/*.scss
+
       - name: dotnet format
         run: |
           # Skip format check when nothing changed under src.
@@ -57,6 +72,23 @@ jobs:
             exit 0
           fi
           dotnet format src --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
+
+      - name: Frontend lint (JavaScript + CSS/SCSS)
+        working-directory: src
+        run: |
+          if [ "${{ steps.changed-js-files.outputs.any_changed }}" != "true" ] && [ "${{ steps.changed-style-files.outputs.any_changed }}" != "true" ]; then
+            exit 0
+          fi
+
+          dotnet tool restore
+
+          if [ "${{ steps.changed-js-files.outputs.any_changed }}" == "true" ]; then
+            dotnet tool run bun -- wrapper -- x eslint ${{ steps.changed-js-files.outputs.all_changed_files }}
+          fi
+
+          if [ "${{ steps.changed-style-files.outputs.any_changed }}" == "true" ]; then
+            dotnet tool run bun -- wrapper -- x stylelint ${{ steps.changed-style-files.outputs.all_changed_files }}
+          fi
 
   build-test:
     runs-on: ubuntu-latest
