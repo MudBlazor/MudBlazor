@@ -21,52 +21,78 @@
                      ForId="@InputElementId">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-                <MudInput T="string"
-                          @ref="@_elementReference"
-                          @attributes="@UserAttributes"
-                          InputType="@(!IsFormatted && IsNumberMode ? InputType.Number : InputType.Text)"
-                          Style="@Style"
-                          Variant="@Variant"
-                          Typo="@Typo"
-                          Label="@Label"
-                          Value="@ReadText"
-                          ValueChanged="@OnInputValueChanged"
-                          Placeholder="@Placeholder"
-                          Disabled="@GetDisabledState()"
-                          Underline="@Underline"
-                          ReadOnly="@GetReadOnlyState()"
-                          Adornment="@Adornment"
-                          AdornmentText="@AdornmentText"
-                          AdornmentIcon="@AdornmentIcon"
-                          AdornmentColor="@AdornmentColor"
-                          AdornmentAriaLabel="@AdornmentAriaLabel"
-                          IconSize="@IconSize"
-                          Error="@ErrorState.Value"
-                          ErrorId="@ErrorIdState.Value"
-                          HelperId="@GetHelperId()"
-                          HelperText="@HelperText"
-                          Immediate="@Immediate"
-                          Margin="@Margin"
-                          MaxLength="@MaxLength"
-                          HideSpinButtons="@HideSpinButtons"
-                          min="@(_minHasValue ? FormatParam(_min) : null)"
-                          max="@(_maxHasValue ? FormatParam(_max) : null)"
-                          step="@(_stepHasValue ? FormatParam(_step) : "any")"
-                          InputMode="@InputMode"
-                          Pattern="@(Pattern == null ? null : Pattern!.TrimEnd('*')+"*")"
-                          OnAdornmentClick="@OnAdornmentClick"
-                          OnBlur="@OnBlurredAsync"
-                          OnKeyDown="@HandleKeyDownAsync"
-                          OnKeyUp="@HandleKeyUpAsync"
-                          OnIncrement="@Increment"
-                          OnDecrement="@Decrement"
-                          OnMouseWheel="@OnMouseWheelAsync"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
-                          ClearIcon="@ClearIcon"
-                          ShrinkLabel="@ShrinkLabel"
-                          InputId="@InputElementId"
-                          Required="@Required" />
+                @InputField()
             </CascadingValue>
         </InputContent>
     </MudInputControl>
 </CascadingValue>
+
+@code {
+    private RenderFragment InputField() => builder =>
+    {
+        var seq = 0;
+        builder.OpenComponent<MudInput<string>>(seq++);
+        
+        builder.AddMultipleAttributes(seq++, (IEnumerable<KeyValuePair<string, object>>?)UserAttributes!);
+
+        builder.AddAttribute(seq++, "InputType", !IsFormatted && IsNumberMode ? InputType.Number : InputType.Text);
+        builder.AddAttribute(seq++, "InputMode", InputMode);
+        builder.AddAttribute(seq++, "Style", Style);
+        builder.AddAttribute(seq++, "Variant", Variant);
+        builder.AddAttribute(seq++, "Typo", Typo);
+        builder.AddAttribute(seq++, "Label", Label);
+        builder.AddAttribute(seq++, "Value", ReadText);
+        builder.AddAttribute(seq++, "ValueChanged", EventCallback.Factory.Create<string>(this, OnInputValueChanged));
+        builder.AddAttribute(seq++, "Placeholder", Placeholder);
+        builder.AddAttribute(seq++, "Disabled", GetDisabledState());
+        builder.AddAttribute(seq++, "Underline", Underline);
+        builder.AddAttribute(seq++, "ReadOnly", GetReadOnlyState());
+        builder.AddAttribute(seq++, "Adornment", Adornment);
+        builder.AddAttribute(seq++, "AdornmentText", AdornmentText);
+        builder.AddAttribute(seq++, "AdornmentIcon", AdornmentIcon);
+        builder.AddAttribute(seq++, "AdornmentColor", AdornmentColor);
+        builder.AddAttribute(seq++, "AdornmentAriaLabel", AdornmentAriaLabel);
+        builder.AddAttribute(seq++, "IconSize", IconSize);
+        builder.AddAttribute(seq++, "Error", ErrorState.Value);
+        builder.AddAttribute(seq++, "ErrorId", ErrorIdState.Value);
+        builder.AddAttribute(seq++, "HelperId", GetHelperId());
+        builder.AddAttribute(seq++, "HelperText", HelperText);
+        builder.AddAttribute(seq++, "Immediate", Immediate);
+        builder.AddAttribute(seq++, "Margin", Margin);
+        builder.AddAttribute(seq++, "MaxLength", MaxLength);
+        builder.AddAttribute(seq++, "HideSpinButtons", HideSpinButtons);
+        builder.AddAttribute(seq++, "DisableMouseWheel", HideSpinButtons);
+        builder.AddAttribute(seq++, "step", _stepHasValue ? FormatParam(_step) : "any");
+        builder.AddAttribute(seq++, "Pattern", IsFormatted ? (Pattern == null ? "[0-9,.\\-]" : Pattern.TrimEnd('*') + "*") : null);
+        builder.AddAttribute(seq++, "OnAdornmentClick", EventCallback.Factory.Create(this, OnAdornmentClick));
+        builder.AddAttribute(seq++, "OnBlur", EventCallback.Factory.Create<FocusEventArgs>(this, OnBlurredAsync));
+        builder.AddAttribute(seq++, "OnKeyDown", EventCallback.Factory.Create<KeyboardEventArgs>(this, HandleKeyDownAsync));
+        builder.AddAttribute(seq++, "OnKeyUp", EventCallback.Factory.Create<KeyboardEventArgs>(this, HandleKeyUpAsync));
+        builder.AddAttribute(seq++, "OnIncrement", EventCallback.Factory.Create(this, Increment));
+        builder.AddAttribute(seq++, "OnDecrement", EventCallback.Factory.Create(this, Decrement));
+        builder.AddAttribute(seq++, "Clearable", Clearable && !GetReadOnlyState());
+        builder.AddAttribute(seq++, "ClearIcon", ClearIcon);
+        builder.AddAttribute(seq++, "ShrinkLabel", ShrinkLabel);
+        builder.AddAttribute(seq++, "InputId", InputElementId);
+        builder.AddAttribute(seq++, "Required", Required);
+
+        if (!HideSpinButtons)
+        {
+            builder.AddAttribute(seq++, "OnMouseWheel", EventCallback.Factory.Create<WheelEventArgs>(this, OnMouseWheelAsync));
+        }
+        
+        if (_minHasValue)
+        {
+            builder.AddAttribute(seq++, "min", FormatParam(_min));
+        }
+        
+        if (_maxHasValue)
+        {
+            builder.AddAttribute(seq++, "max", FormatParam(_max));
+        }
+
+        builder.AddComponentReferenceCapture(seq++, r => _elementReference = (MudInput<string>)r);
+
+        builder.CloseComponent();
+    };
+}
