@@ -90,6 +90,13 @@
   }
 }
 
+.mud-chart-fill-bounds {
+  height: 100%;
+  width: 100%;
+  min-height: unset;
+  min-width: unset;
+}
+
 .mud-charts-yaxis {
   fill: var(--mud-palette-text-primary);
 }
