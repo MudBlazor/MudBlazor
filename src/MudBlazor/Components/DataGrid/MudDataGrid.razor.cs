@@ -372,6 +372,15 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 
+        /// <summary>
+        /// Occurs when the active filters have changed.
+        /// </summary>
+        /// <remarks>
+        /// This callback receives the current active filters after the change is applied.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<IReadOnlyCollection<IFilterDefinition<T>>> FilterChanged { get; set; }
+
         #endregion
 
         #region Parameters
@@ -1798,6 +1807,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1812,6 +1822,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1835,6 +1846,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1898,11 +1910,12 @@ namespace MudBlazor
         /// <summary>
         /// Removes all filters from all columns.
         /// </summary>
-        public Task ClearFiltersAsync()
+        public async Task ClearFiltersAsync()
         {
             FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
-            return InvokeServerLoadFunc();
+            await InvokeServerLoadFunc();
+            await NotifyFilterChangedAsync();
         }
 
         /// <summary>
@@ -1917,6 +1930,7 @@ namespace MudBlazor
             }
             _filtersMenuVisible = true;
             await InvokeServerLoadFunc();
+            await NotifyFilterChangedAsync();
             if (!HasServerData) StateHasChanged();
         }
 
@@ -1932,7 +1946,10 @@ namespace MudBlazor
             FilterDefinitions.RemoveAt(index);
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
         }
+
+        private Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {

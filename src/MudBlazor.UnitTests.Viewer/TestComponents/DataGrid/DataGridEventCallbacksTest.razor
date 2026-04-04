@@ -5,6 +5,7 @@
              RowContextMenuClick="@OnRowContextMenuClick"
              SelectedItemChanged="@OnSelectedItemChanged"
              SelectedItemsChanged="@OnSelectedItemsChanged"
+             FilterChanged="@OnFilterChanged"
              CommittedItemChanges="@OnCommittedItemChanges"
              StartedEditingItem="@OnStartedEditingItem"
              CanceledEditingItem="@OnCanceledEditingItem"
@@ -28,6 +29,8 @@
     public bool RowContextMenuClicked { get; set; }
     public bool SelectedItemChanged { get; set; }
     public bool SelectedItemsChanged { get; set; }
+    public bool FilterChanged { get; set; }
+    public int FilterChangedCallCount { get; set; }
     public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
     public bool CanceledEditingItem { get; set; }
@@ -50,6 +53,12 @@
     private void OnSelectedItemsChanged(HashSet<Item> items)
     {
         SelectedItemsChanged = true;
+    }
+
+    private void OnFilterChanged(IReadOnlyCollection<IFilterDefinition<Item>> _)
+    {
+        FilterChanged = true;
+        FilterChangedCallCount++;
     }
 
     private Task<DataGridEditFormAction> OnCommittedItemChanges(Item item)
