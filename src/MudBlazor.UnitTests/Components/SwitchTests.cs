@@ -211,6 +211,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Switch_Has_Switch_Role_And_AriaChecked_False_When_Unchecked()
+        {
+            var comp = Context.Render<MudSwitch<bool>>();
+            var input = comp.Find("input");
+
+            input.GetAttribute("role").Should().Be("switch");
+            input.GetAttribute("aria-checked").Should().Be("false");
+        }
+
+        [Test]
+        public void Switch_Has_AriaChecked_True_When_Checked()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters.Add(x => x.Value, true));
+            var input = comp.Find("input");
+
+            input.GetAttribute("aria-checked").Should().Be("true");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
