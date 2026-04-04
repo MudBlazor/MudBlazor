@@ -31,6 +31,7 @@
                Items="@resolvedItems"
                OverscanCount="@DataGrid.OverscanCount"
                ItemSize="@DataGrid.ItemSize"
+               SpacerElement="tr"
                Context="itemBag">
     <Placeholder>
         @if (DataGrid.RowLoadingContent != null)
@@ -49,7 +50,10 @@
 
     <ChildContent>
         @{
-            var rowClass = new CssBuilder(DataGrid.RowClass).AddClass(DataGrid.RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+            var rowClass = new CssBuilder(DataGrid.RowClass)
+                .AddClass(DataGrid.RowClassFunc?.Invoke(itemBag.Item, itemBag.Index))
+                .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
+                .Build();
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"

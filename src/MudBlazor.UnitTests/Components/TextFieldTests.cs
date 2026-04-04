@@ -126,6 +126,28 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
+        [Test]
+        public async Task TextField_Should_PreserveInvalidTextOnKeyRerender()
+        {
+            var comp = Context.Render<TextFieldConversionErrorKeyRerenderTest>();
+
+            await comp.Find("input").InputAsync("123456");
+
+            var textField = comp.FindComponent<MudTextField<TextFieldConversionErrorKeyRerenderTest.Pod>>().Instance;
+            textField.ReadValue.Should().BeNull();
+            textField.ReadText.Should().Be("123456");
+            textField.ConversionError.Should().BeTrue();
+            textField.ConversionErrorMessage.Should().Be("Error message");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "6", Type = "keydown" });
+
+            textField = comp.FindComponent<MudTextField<TextFieldConversionErrorKeyRerenderTest.Pod>>().Instance;
+            textField.ReadValue.Should().BeNull();
+            textField.ReadText.Should().Be("123456");
+            textField.ConversionError.Should().BeTrue();
+            comp.Find("input").GetAttribute("value").Should().Be("123456");
+        }
+
         /// <summary>
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
@@ -218,6 +240,40 @@ namespace MudBlazor.UnitTests.Components
                 var inputs = comp.FindAll("input");
                 inputs[0].GetAttribute("value").Should().Be("changed value");
                 inputs[1].GetAttribute("value").Should().Be("changed value");
+            });
+        }
+
+        [Test]
+        public async Task DebouncedTextField_Should_ValidatePendingValueImmediatelyWhenFormIsValidated()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            var comp = Context.Render<DebouncedTextFieldFormValidationSyncTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponents<MudTextField<string>>();
+
+            await comp.Find("#username").InputAsync(new ChangeEventArgs { Value = "username" });
+            await comp.Find("#password").ChangeAsync(new ChangeEventArgs { Value = "password" });
+
+            textField[0].Instance.ReadText.Should().Be("username");
+            textField[0].Instance.ReadValue.Should().BeNull();
+            comp.Instance.Model.Username.Should().BeNull();
+            textField[1].Instance.ReadText.Should().Be("password");
+            textField[1].Instance.ReadValue.Should().Be("password");
+            comp.Instance.Model.Password.Should().Be("password");
+            form.IsValid.Should().BeTrue();
+
+            await comp.Find("#validate-button").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Instance.Model.Username.Should().Be("username");
+                comp.Instance.Model.Password.Should().Be("password");
+                comp.Instance.ResultText.Should().Be("succeeded");
+                form.IsValid.Should().BeTrue();
+                textField[0].Instance.ReadValue.Should().Be("username");
+                textField[1].Instance.ReadValue.Should().Be("password");
             });
         }
 

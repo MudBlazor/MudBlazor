@@ -503,9 +503,7 @@ namespace MudBlazor.UnitTests.Components
                 parameters.Add(p => p.DateRange,
                     new DateRange(new DateTime(2020, 12, 26), null)));
             await comp.Find("input").ChangeAsync("");
-            comp.Instance.DateRange.End.Should().BeNull();
-            comp.Instance.DateRange.Start.Should().BeNull();
-
+            comp.Instance.DateRange.Should().BeNull();
         }
 
         [Test]
@@ -786,7 +784,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Find("button").ClickAsync(); //clear the input
 
-            picker.DateRange.Should().Be(new DateRange(null, null));
+            picker.DateRange.Should().BeNull();
         }
 
         [Test]
@@ -1042,6 +1040,22 @@ namespace MudBlazor.UnitTests.Components
             //toolbar should display 2025 and original range
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("2025");
             comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 10 Jan - Mon, 20 Jan");
+        }
+
+        [Test]
+        public async Task DateRangePickerToolbar_UpdatesYear_WhenNoDateRangeIsSelected()
+        {
+            var comp = await OpenPicker();
+            var currentYear = int.Parse(comp.Find("button.mud-button-year .mud-button-label").InnerHtml);
+            var targetYear = (currentYear - 1).ToString(CultureInfo.InvariantCulture);
+
+            await comp.Find("button.mud-button-month").ClickAsync();
+            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync();
+            await comp.FindAll("div.mud-picker-year")
+                .First(x => x.TrimmedText().Equals(targetYear))
+                .ClickAsync();
+
+            comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be(targetYear);
         }
 
         [Test]
@@ -1360,6 +1374,60 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
 
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
+        }
+
+        [Test]
+        public async Task DateRangePicker_ClearAndReselectSameDateRange_ShouldFireDateRangeChanged()
+        {
+            var initialRange = new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
+            var changedRanges = new List<DateRange>();
+
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.DateRange, initialRange)
+                .Add(p => p.DateRangeChanged, (DateRange range) => changedRanges.Add(range)));
+
+            var picker = comp.Instance;
+            picker.DateRange.Should().Be(initialRange);
+
+            // Clear the date range via the clearable X button
+            await comp.Find("button").ClickAsync();
+
+            // DateRangeChanged should fire on clear
+            changedRanges.Should().HaveCount(1);
+
+            // Reselect the exact same date range (simulating user reselecting after clearing)
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, initialRange));
+
+            // DateRangeChanged should fire again even when reselecting the same range after clearing
+            changedRanges.Should().HaveCount(2);
+        }
+
+        [Test]
+        public async Task DateRangePicker_ClearViaClearAsync_ShouldFireDateRangeChanged()
+        {
+            var initialRange = new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
+            var changedRanges = new List<DateRange>();
+
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.DateRange, initialRange)
+                .Add(p => p.DateRangeChanged, (DateRange range) => changedRanges.Add(range)));
+
+            var picker = comp.Instance;
+            picker.DateRange.Should().Be(initialRange);
+
+            // Clear the date range via ClearAsync
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            // DateRangeChanged should fire on clear
+            changedRanges.Should().HaveCount(1);
+
+            // Reselect the exact same date range after clearing via ClearAsync
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, initialRange));
+
+            // DateRangeChanged should fire again when reselecting the same range after clearing
+            changedRanges.Should().HaveCount(2);
         }
 
         [Test]

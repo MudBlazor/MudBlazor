@@ -9,9 +9,17 @@
 @attribute [CascadingTypeParameter(nameof(T))]
 
 <CascadingValue Value="@this" IsFixed="true">
-    <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
-        @ChartContent
-    </div>
+    @if (_hasFixedParent is false)
+    {
+        <div style="height:@(HasPercentageHeight() ? FallbackHeight : Height); width: @(MatchBoundsToSize ? "100%" : Width);">
+            @ChartContainer
+        </div>
+    }
+    else
+    {
+        @ChartContainer
+    }
+
     @if (ChartReference is not null)
     {
         <CascadingValue Value="@ChartReference" IsFixed="true">
@@ -21,6 +29,14 @@
 </CascadingValue>
 
 @code {
+    private RenderFragment ChartContainer => @<div @ref="_containerRef"
+                                                   @attributes="UserAttributes"
+                                                   class="@Classname"
+                                                   style="@($"{Style}; width: {(MatchBoundsToSize ? "100%" : @Width)}; height: {(MatchBoundsToSize ? "100%" : Height)};")"
+                                                   dir="ltr">
+        @ChartContent
+    </div>;
+
     private RenderFragment ChartContent => (_chartType, _chartOptions) switch
     {
         (ChartType.Donut, DonutChartOptions donutOptions) => @<Donut ChartSeries="@ChartSeries"

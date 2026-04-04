@@ -86,6 +86,19 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("California");
         }
 
+        [Test]
+        public async Task Autocomplete_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+
+            await autocompleteComponent.Find("input").InputAsync("Calif");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            var overlay = comp.Find("div.mud-overlay");
+            overlay.GetAttribute("data-modeless-ignore-element-id").Should().Be(comp.Find("div.mud-autocomplete").Id);
+        }
+
         /// <summary>
         /// Popup should open when 3 characters are typed and close when below.
         /// </summary>
@@ -670,6 +683,17 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<AutocompleteSetParametersInitialization>();
             // select elements needed for the test
             await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("One"));
+        }
+
+        /// <summary>
+        /// When T is a complex type and Text is explicitly set without a Value,
+        /// the initial Text should be preserved and not overwritten.
+        /// </summary>
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12900")]
+        public void Autocomplete_ComplexType_Should_Preserve_Initial_Text()
+        {
+            var comp = Context.Render<AutocompleteInitialTextComplexTypeTest>();
+            comp.Find("input").GetAttribute("value").Should().Be("InitialValue");
         }
 
         /// <summary>
@@ -1615,6 +1639,29 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComponent.Find("input").KeyUp("a");
             //Assert
             result.Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_PreserveText_OnKeyRerender_WhenValueIsUnchanged()
+        {
+            var comp = Context.Render<AutocompleteKeyDownRerenderTextTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteKeyDownRerenderTextTest.User>>();
+
+            await autocompleteComponent.Find("input").InputAsync("U");
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocompleteComponent.Instance.ReadText.Should().Be("U");
+                autocompleteComponent.Find("input").GetAttribute("value").Should().Be("U");
+            });
+
+            await autocompleteComponent.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "s", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocompleteComponent.Instance.ReadText.Should().Be("U");
+                autocompleteComponent.Find("input").GetAttribute("value").Should().Be("U");
+            });
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
-        private readonly IConverter<T?, string?> _converter = new DefaultConverter<T?>();
+        private readonly DefaultConverter<T?> _converter = new();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
         public MudTreeViewItem()
@@ -66,6 +66,10 @@ namespace MudBlazor
 
         [CascadingParameter]
         internal MudTreeViewItem<T>? Parent { get; set; }
+
+        // When the item comes from ItemTemplate, this links the component instance to its backing node object.
+        [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
+        private ITreeItemData<T>? CurrentItemData { get; set; }
 
         /// <summary>
         /// The value associated with this item.
@@ -206,7 +210,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
-        public RenderFragment<MudTreeViewItem<T?>>? BodyContent { get; set; }
+        public RenderFragment<MudTreeViewItem<T>>? BodyContent { get; set; }
 
         /// <summary>
         /// The child items underneath this item.
@@ -367,7 +371,7 @@ namespace MudBlazor
         {
             return ChildContent != null
                 || (MudTreeRoot != null && GetItems().Count != 0)
-                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && GetItems().Count == 0);
+                || (MudTreeRoot?.ServerData != null && CanExpand && !GetServerDataLoaded() && GetItems().Count == 0);
         }
 
         private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
@@ -391,6 +395,27 @@ namespace MudBlazor
         private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
+
+        private bool GetServerDataLoaded()
+        {
+            if (CurrentItemData is not null && MudTreeRoot is not null)
+            {
+                return MudTreeRoot.GetServerDataLoaded(CurrentItemData);
+            }
+
+            return _isServerLoaded;
+        }
+
+        private void SetServerDataLoaded(bool isLoaded)
+        {
+            if (CurrentItemData is not null && MudTreeRoot is not null)
+            {
+                MudTreeRoot.SetServerDataLoaded(CurrentItemData, isLoaded);
+                return;
+            }
+
+            _isServerLoaded = isLoaded;
+        }
 
         private bool? GetCheckBoxStateTriState()
         {
@@ -422,7 +447,9 @@ namespace MudBlazor
                 StateHasChanged();
             }
             foreach (var item in _childItems)
+            {
                 await item.ExpandAllAsync();
+            }
         }
 
         /// <summary>
@@ -436,7 +463,9 @@ namespace MudBlazor
                 StateHasChanged();
             }
             foreach (var item in _childItems)
+            {
                 await item.CollapseAllAsync();
+            }
         }
 
         /// <inheritdoc />
@@ -560,6 +589,8 @@ namespace MudBlazor
         /// </summary>
         public async Task ReloadAsync()
         {
+            SetServerDataLoaded(false);
+
             if (_itemsState.Value is not null)
             {
                 await _itemsState.SetValueAsync(Array.Empty<ITreeItemData<T>>());
@@ -608,15 +639,17 @@ namespace MudBlazor
                 return;
             _loading = true;
             StateHasChanged();
+            var loaded = false;
             try
             {
                 var items = await MudTreeRoot.ServerData(GetValue());
                 await _itemsState.SetValueAsync(items);
+                loaded = true;
             }
             finally
             {
                 _loading = false;
-                _isServerLoaded = true;
+                SetServerDataLoaded(loaded);
 
                 StateHasChanged();
             }

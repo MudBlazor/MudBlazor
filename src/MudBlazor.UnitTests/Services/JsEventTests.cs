@@ -71,6 +71,13 @@ namespace MudBlazor.UnitTests.Services
             caretPositionChangedCount.Should().Be(1);
             jsevent._subscribedEvents.Should().BeEmpty();
 
+            // null caret position is ignored
+            jsevent.CaretPositionChanged += caretPositionChangedHandler;
+            jsevent.OnCaretPositionChanged(null);
+            caretPositionChangedData.Should().Be(17);
+            caretPositionChangedCount.Should().Be(1);
+            jsevent.CaretPositionChanged -= caretPositionChangedHandler;
+
             // select
             var selectCount = 0;
             (int, int)? selectData = null;

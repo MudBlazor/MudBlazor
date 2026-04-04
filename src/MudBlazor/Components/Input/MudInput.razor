@@ -138,6 +138,7 @@
         <div class="mud-input-numeric-spin">
             <MudButton Variant="Variant.Text"
                        @onclick="OnIncrement"
+                       @onmousedown:preventDefault
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"
                        aria-label="@Localizer[LanguageResource.MudInput_Increment]">
@@ -146,6 +147,7 @@
 
             <MudButton Variant="Variant.Text"
                        @onclick="OnDecrement"
+                       @onmousedown:preventDefault
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"
                        aria-label="@Localizer[LanguageResource.MudInput_Decrement]">

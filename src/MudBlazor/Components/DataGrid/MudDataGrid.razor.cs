@@ -134,6 +134,11 @@ namespace MudBlazor
             new CssBuilder("mud-table-foot")
                 .AddClass(FooterClass).Build();
 
+        protected string BodyClassname =>
+            new CssBuilder("mud-table-body")
+                .AddClass("mud-table-body-virtualized", Virtualize)
+                .Build();
+
         protected string HeaderFooterStyle =>
             new StyleBuilder()
                 .AddStyle("position", "sticky", when: HasStickyColumns)
@@ -311,7 +316,9 @@ namespace MudBlazor
         /// Occurs when edit mode begins for an item.
         /// </summary>
         /// <remarks>
-        /// If changes are committed, the <see cref="CommittedItemChanges"/> delegate is called. If editing is canceled, the <see cref="CanceledEditingItem"/> occurs.
+        /// Use this event to react when editing starts. For form field changes, use <see cref="FormFieldChanged"/>.
+        /// For save and cancel notifications, use <see cref="CommittedItemChanges"/>, <see cref="CommittedItemChanged"/>,
+        /// or <see cref="CanceledEditingItem"/>.
         /// </remarks>
         [Parameter]
         public EventCallback<T> StartedEditingItem { get; set; }
@@ -319,36 +326,42 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when editing of an item has been canceled.
         /// </summary>
+        /// <remarks>
+        /// This event is raised instead of <see cref="CommittedItemChanges"/> and <see cref="CommittedItemChanged"/>
+        /// when the edit operation is canceled.
+        /// </remarks>
         [Parameter]
         public EventCallback<T> CanceledEditingItem { get; set; }
 
         /// <summary>
-        /// Invoked when the user saves changes to an item, allowing for validation, 
-        /// persistence, or other processing.
+        /// Invoked when the user saves changes to an item, allowing validation, persistence, or other pre-commit work.
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// The callback receives a separate instance of the item with the committed values, 
-        /// preventing changes from being applied to the underlying data source before 
-        /// validation or processing completes.
-        /// </para>
-        /// <para>
-        /// Return a <see cref="DataGridEditFormAction"/> value to control the edit form behavior. 
-        /// When <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>:
-        /// </para>
-        /// <list type="bullet">
-        /// <item><see cref="DataGridEditFormAction.Close"/> - Accepts changes and closes the form</item>
-        /// <item><see cref="DataGridEditFormAction.KeepOpen"/> - Rejects changes and keeps the form open for corrections</item>
-        /// </list>
+        /// In <see cref="DataGridEditMode.Form"/>, this callback receives the edited copy before values are applied to
+        /// the source item. Return <see cref="DataGridEditFormAction.Close"/> to continue or
+        /// <see cref="DataGridEditFormAction.KeepOpen"/> to leave the form open for corrections.
+        /// Use <see cref="CommittedItemChanged"/> to react after the source item has been updated.
         /// </remarks>
         [Parameter]
         public Func<T, Task<DataGridEditFormAction>>? CommittedItemChanges { get; set; }
 
         /// <summary>
+        /// Occurs after committed changes have been applied to the underlying item.
+        /// </summary>
+        /// <remarks>
+        /// Use this callback for post-commit logic. In <see cref="DataGridEditMode.Form"/>, it runs after
+        /// <see cref="CommittedItemChanges"/> completes and after values are copied to the source item.
+        /// In <see cref="DataGridEditMode.Cell"/>, it runs after <see cref="CommittedItemChanges"/> completes,
+        /// with the already-updated item.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<T> CommittedItemChanged { get; set; }
+
+        /// <summary>
         /// Occurs when a field changes in the edit dialog.
         /// </summary>
         /// <remarks>
-        /// This event only occurs when <see cref="EditMode"/> is <see cref="DataGridEditMode.Form"/>.
+        /// This event only occurs in <see cref="DataGridEditMode.Form"/> and fires for individual field changes before save.
         /// </remarks>
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
@@ -1751,6 +1764,85 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Creates a <see cref="FilterContext{T}"/> for a specific <see cref="IFilterDefinition{T}"/>,
+        /// allowing each filter row to have its own independent context instance.
+        /// </summary>
+        /// <param name="column">The column associated with the filter.</param>
+        /// <param name="filterDefinition">The filter definition for this context.</param>
+        /// <returns>A new <see cref="FilterContext{T}"/> bound to the specified filter definition.</returns>
+        internal FilterContext<T> CreateFilterContext(Column<T> column, IFilterDefinition<T> filterDefinition)
+        {
+            var context = new FilterContext<T>(this)
+            {
+                FilterDefinition = filterDefinition,
+                HeaderCell = column.FilterContext.HeaderCell
+            };
+            context.SetActions(new FilterContext<T>.FilterActions
+            {
+                ApplyFilterAsync = ApplyFilterFromSimpleModeAsync,
+                ApplyFiltersAsync = ApplyFiltersFromSimpleModeAsync,
+                ClearFilterAsync = ClearFilterFromSimpleModeAsync,
+                ClearFiltersAsync = ClearFiltersFromSimpleModeAsync,
+                CloseFilterAsync = CloseFilterAsync
+            });
+
+            return context;
+        }
+
+        private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
+        {
+            if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
+            {
+                FilterDefinitions.Add(filterDefinition);
+            }
+
+            await InvokeServerLoadFunc();
+            GroupItems();
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task ApplyFiltersFromSimpleModeAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
+        {
+            var filterDefinitionsToApply = filterDefinitions.Where(x => FilterDefinitions.All(y => y.Id != x.Id)).ToArray();
+            FilterDefinitions.AddRange(filterDefinitionsToApply);
+
+            await InvokeServerLoadFunc();
+            GroupItems();
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task ClearFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
+        {
+            await RemoveFilterAsync(filterDefinition.Id);
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private async Task ClearFiltersFromSimpleModeAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
+        {
+            FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
+
+            await InvokeServerLoadFunc();
+            GroupItems();
+
+            if (!HasServerData)
+            {
+                StateHasChanged();
+            }
+        }
+
+        /// <summary>
         /// Specifies the default <see cref="IFilterDefinition{T}"/> to be used by <see cref="AddFilter"/> and <see cref="Column{T}.FilterContext"/>.
         /// </summary>
         public void SetDefaultFilterDefinition<TFilterDefinition>() where TFilterDefinition : IFilterDefinition<T>, new()
@@ -1786,6 +1878,21 @@ namespace MudBlazor
         {
             _filtersMenuVisible = false;
             return InvokeServerLoadFunc();
+        }
+
+        /// <summary>
+        /// Closes the filter UI owned by this data grid.
+        /// </summary>
+        /// <remarks>
+        /// This method closes the filter panel shown by <see cref="MudDataGrid{T}"/>, such as the panel used by <see cref="DataGridFilterMode.Simple"/>.
+        /// Incomplete filters which still require a value are removed as part of closing the panel.
+        /// </remarks>
+        public Task CloseFilterAsync()
+        {
+            _filtersMenuVisible = false;
+            CleanupIncompleteFilters();
+            StateHasChanged();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -1961,6 +2068,8 @@ namespace MudBlazor
             // Here, we need to validate at the cellular level...
             if (CommittedItemChanges != null)
                 _ = await CommittedItemChanges(item); // ignore return value in cell edit mode
+
+            await CommittedItemChanged.InvokeAsync(item);
         }
 
         /// <summary>
@@ -1991,6 +2100,8 @@ namespace MudBlazor
 
                 foreach (var property in _properties.Where(p => p.CanWrite))
                     property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+
+                await CommittedItemChanged.InvokeAsync(_editingSourceItem);
 
                 ClearEditingItem();
                 _isEditFormOpen = false;
@@ -2256,10 +2367,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        internal void CloseFilters()
-        {
-            FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
-        }
+        private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
+
+        internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
 
         private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
             FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not

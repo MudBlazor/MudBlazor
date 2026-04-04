@@ -409,6 +409,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #12790: After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
+        /// </summary>
+        [Test]
+        public async Task EditFormOnFieldChanged_BlurWithoutValueChange_ShouldNotNotify()
+        {
+            var comp = Context.Render<EditFormOnFieldChangedTest>();
+            var chips = comp.FindAll("span.mud-chip-content");
+            chips.Count.Should().Be(3);
+
+            await comp.FindAll("input")[0].BlurAsync();
+
+            chips = comp.FindAll("span.mud-chip-content");
+            chips[0].TextContent.Trim().Should().EndWith("not changed");
+            chips[1].TextContent.Trim().Should().EndWith("not changed");
+            chips[2].TextContent.Trim().Should().EndWith("not changed");
+        }
+
+        /// <summary>
         /// After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
         /// </summary>
         /// <returns></returns>
@@ -2110,4 +2128,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-

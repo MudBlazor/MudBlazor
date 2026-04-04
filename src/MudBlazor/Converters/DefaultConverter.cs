@@ -5,7 +5,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities.Converter.Dispatcher;
 using static MudBlazor.DefaultConverter;
 
@@ -87,17 +86,15 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
 
         AddEnumConverters(builder);
         AddParsableConverters(builder);
+        // Make sure this is the last converter added, so it runs only if no other converter can handle the type.
+        // This ensures we don't accidentally bypass a more specific converter with FirstWins.
+        builder.AddForward(new ToStringFallbackConverter<T>());
 
         _dispatcher = builder.Build();
     }
 
     /// <inheritdoc />
-    public string? Convert(T? input)
-    {
-        var result = _dispatcher.TryConvert(input);
-        // If conversion failed, fallback to ToString() implementation of the T
-        return result.Success ? result.Value : input?.ToString();
-    }
+    public string? Convert(T? input) => _dispatcher.Convert(input);
 
     /// <inheritdoc />
     public T? ConvertBack(string? input) => _dispatcher.ConvertBack(input);

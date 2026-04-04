@@ -369,6 +369,7 @@
     }
 
     &.mud-input-root-margin-dense {
+      margin-top: 0;
       padding-top: 3px;
     }
 
@@ -483,6 +484,16 @@
       padding-inline-end: 0;
       padding-inline-start: 14px;
     }
+  }
+}
+
+.mud-input.mud-input-sizing-auto > textarea.mud-input-root.mud-input-root-text {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 0 7px;
+
+  &.mud-input-root-margin-dense {
+    padding-top: 3px;
   }
 }
 
