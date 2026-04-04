@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -93,7 +94,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta21" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
