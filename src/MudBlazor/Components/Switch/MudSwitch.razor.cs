@@ -54,7 +54,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The value of the <c>aria-checked</c> attribute based on the current <see cref="BoolValue"/>.
+        /// The value of the <c>aria-checked</c> attribute based on the current <c>BoolValue</c>.
         /// </summary>
         protected string AriaCheckedState => BoolValue == true ? "true" : BoolValue == false ? "false" : "mixed";
 
