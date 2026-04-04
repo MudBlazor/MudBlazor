@@ -15,9 +15,21 @@ namespace MudBlazor
     {
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
+        /// <summary>
+        /// The native checkbox input element used for synchronizing the DOM indeterminate property.
+        /// </summary>
         private ElementReference _inputReference;
+        /// <summary>
+        /// Tracks the current logical indeterminate state for change detection.
+        /// </summary>
         private bool? _isIndeterminate;
+        /// <summary>
+        /// Indicates whether native indeterminate synchronization should run after render.
+        /// </summary>
         private bool _indeterminateSyncPending;
+        /// <summary>
+        /// Stores the indeterminate value to apply to the native checkbox during synchronization.
+        /// </summary>
         private bool _pendingIndeterminateValue;
 
         [Inject]
@@ -160,6 +172,9 @@ namespace MudBlazor
 
         protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
+        /// <summary>
+        /// Tracks indeterminate state changes and schedules synchronization with the native checkbox property.
+        /// </summary>
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -240,12 +255,18 @@ namespace MudBlazor
                 ? SetBoolValueAsync(null, true)
                 : Task.CompletedTask;
 
+        /// <summary>
+        /// Returns the ARIA checked state for this checkbox as <c>true</c>, <c>false</c>, or <c>mixed</c>.
+        /// </summary>
         private string GetAriaCheckedState() => IsIndeterminateState()
             ? "mixed"
             : BoolValue == true
                 ? "true"
                 : "false";
 
+        /// <summary>
+        /// Indicates whether this checkbox is currently in the tri-state indeterminate (mixed) state.
+        /// </summary>
         private bool IsIndeterminateState() => TriState && BoolValue is null;
 
         /// <inheritdoc />

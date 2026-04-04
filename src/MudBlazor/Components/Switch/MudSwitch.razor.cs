@@ -122,6 +122,9 @@ namespace MudBlazor
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 
+        /// <summary>
+        /// Returns the ARIA checked state for this switch as <c>true</c> or <c>false</c>.
+        /// </summary>
         private string GetAriaCheckedState() => BoolValue == true ? "true" : "false";
 
         /// <inheritdoc />
