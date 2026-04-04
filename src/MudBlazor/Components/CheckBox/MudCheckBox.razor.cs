@@ -16,6 +16,7 @@ namespace MudBlazor
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
         private ElementReference _inputReference;
+        private bool? _isIndeterminate;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -159,7 +160,12 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await _inputReference.SetIndeterminateAsync(IsIndeterminateState());
+            var isIndeterminate = IsIndeterminateState();
+            if (_isIndeterminate != isIndeterminate)
+            {
+                _isIndeterminate = isIndeterminate;
+                await _inputReference.SetIndeterminateAsync(isIndeterminate);
+            }
 
             if (firstRender)
             {
