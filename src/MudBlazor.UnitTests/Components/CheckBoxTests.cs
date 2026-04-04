@@ -150,6 +150,26 @@ namespace MudBlazor.UnitTests.Components
             box.ReadValue.Should().Be(true);
         }
 
+        [Test]
+        public async Task TriStateCheckBox_Exposes_Mixed_AriaChecked()
+        {
+            var comp = Context.Render<MudCheckBox<bool?>>(parameters => parameters
+                .Add(x => x.TriState, true)
+                .Add(x => x.Value, null));
+
+            var input = comp.Find("input");
+            input.GetAttribute("aria-checked").Should().Be("mixed");
+
+            await input.ChangeAsync(true);
+            input.GetAttribute("aria-checked").Should().Be("true");
+
+            await input.ChangeAsync(false);
+            input.GetAttribute("aria-checked").Should().Be("false");
+
+            await input.ChangeAsync(false);
+            input.GetAttribute("aria-checked").Should().Be("mixed");
+        }
+
         /// <summary>
         /// Without clicking the required checkbox the form should not validate
         /// </summary>

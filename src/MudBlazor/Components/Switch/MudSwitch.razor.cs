@@ -122,6 +122,8 @@ namespace MudBlazor
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
 
+        private string GetAriaCheckedState() => BoolValue == true ? "true" : "false";
+
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {

@@ -85,6 +85,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Switch_Has_Switch_Role_And_AriaChecked()
+        {
+            var comp = Context.Render<MudSwitch<bool>>();
+            var input = comp.Find("input");
+
+            input.GetAttribute("role").Should().Be("switch");
+            input.GetAttribute("aria-checked").Should().Be("false");
+
+            await input.ChangeAsync(true);
+
+            input.GetAttribute("aria-checked").Should().Be("true");
+        }
+
+        [Test]
         [TestCase(Color.Default, Color.Primary)]
         [TestCase(Color.Primary, Color.Secondary)]
         [TestCase(Color.Secondary, Color.Info)]

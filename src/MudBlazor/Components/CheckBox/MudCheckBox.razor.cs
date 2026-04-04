@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -15,6 +15,7 @@ namespace MudBlazor
     {
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
+        private ElementReference _inputReference;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -158,6 +159,8 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await _inputReference.SetIndeterminateAsync(IsIndeterminateState());
+
             if (firstRender)
             {
                 var options = new KeyInterceptorOptions(
@@ -216,6 +219,14 @@ namespace MudBlazor
         private Task HandleBackspaceAsync() => TriState
                 ? SetBoolValueAsync(null, true)
                 : Task.CompletedTask;
+
+        private string GetAriaCheckedState() => IsIndeterminateState()
+            ? "mixed"
+            : BoolValue == true
+                ? "true"
+                : "false";
+
+        private bool IsIndeterminateState() => TriState && BoolValue is null;
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

@@ -175,6 +175,15 @@ class MudElementReference {
     }
 
     /**
+     * Sets the native indeterminate property on a checkbox input.
+     */
+    setIndeterminate(element, indeterminate) {
+        if (element) {
+            element.indeterminate = indeterminate;
+        }
+    }
+
+    /**
      * Removes a tracked event listener by event name and listener ID.
      */
     removeEventListener (element, event, eventId) {
