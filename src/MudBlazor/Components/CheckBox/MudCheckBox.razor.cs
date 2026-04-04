@@ -17,6 +17,8 @@ namespace MudBlazor
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
         private ElementReference _inputReference;
         private bool? _isIndeterminate;
+        private bool _indeterminateSyncPending;
+        private bool _pendingIndeterminateValue;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -158,13 +160,25 @@ namespace MudBlazor
 
         protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             var isIndeterminate = IsIndeterminateState();
             if (_isIndeterminate != isIndeterminate)
             {
                 _isIndeterminate = isIndeterminate;
-                await _inputReference.SetIndeterminateAsync(isIndeterminate);
+                _pendingIndeterminateValue = isIndeterminate;
+                _indeterminateSyncPending = true;
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (_indeterminateSyncPending)
+            {
+                _indeterminateSyncPending = false;
+                await _inputReference.SetIndeterminateAsync(_pendingIndeterminateValue);
             }
 
             if (firstRender)

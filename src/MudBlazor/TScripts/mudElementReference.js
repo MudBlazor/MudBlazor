@@ -176,6 +176,8 @@ class MudElementReference {
 
     /**
      * Sets the native indeterminate property on a checkbox input.
+     * @param {HTMLInputElement} element
+     * @param {boolean} indeterminate
      */
     setIndeterminate(element, indeterminate) {
         if (element) {
