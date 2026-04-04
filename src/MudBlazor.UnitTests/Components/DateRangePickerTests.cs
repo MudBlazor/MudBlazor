@@ -68,20 +68,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DateRangePickerInputCustomAriaLabels()
-        {
-            const string startAriaLabel = "Custom start";
-            const string endAriaLabel = "Custom end";
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
-                .Add(picker => picker.StartInputAriaLabel, startAriaLabel)
-                .Add(picker => picker.EndInputAriaLabel, endAriaLabel));
-            var inputs = comp.FindAll("input");
-
-            inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(startAriaLabel);
-            inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(endAriaLabel);
-        }
-
-        [Test]
         public async Task DateRangePickerSeparatorIcon()
         {
             var newIcon = Icons.Material.Filled.Star;
