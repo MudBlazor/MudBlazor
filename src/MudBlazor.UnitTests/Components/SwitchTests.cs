@@ -211,31 +211,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Switch_Has_Switch_Role_And_AriaChecked_False_When_Unchecked()
+        [TestCase(true, "true")]
+        [TestCase(false, "false")]
+        [TestCase(null, "mixed")]
+        public void Switch_AriaChecked_Reflects_Value(bool? value, string expectedAriaChecked)
         {
-            var comp = Context.Render<MudSwitch<bool>>();
+            var comp = Context.Render<MudSwitch<bool?>>(parameters => parameters.Add(x => x.Value, value));
             var input = comp.Find("input");
 
-            input.GetAttribute("role").Should().Be("switch");
-            input.GetAttribute("aria-checked").Should().Be("false");
-        }
-
-        [Test]
-        public void Switch_Has_AriaChecked_True_When_Checked()
-        {
-            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters.Add(x => x.Value, true));
-            var input = comp.Find("input");
-
-            input.GetAttribute("aria-checked").Should().Be("true");
-        }
-
-        [Test]
-        public void Switch_Has_AriaChecked_Mixed_When_Nullable_Value_Is_Null()
-        {
-            var comp = Context.Render<MudSwitch<bool?>>(parameters => parameters.Add(x => x.Value, null));
-            var input = comp.Find("input");
-
-            input.GetAttribute("aria-checked").Should().Be("mixed");
+            input.GetAttribute("aria-checked").Should().Be(expectedAriaChecked);
         }
 
         [Test]

@@ -53,6 +53,8 @@ namespace MudBlazor
             .AddClass($"mud-switch-span-{Size.ToStringFast(true)}")
             .Build();
 
+        protected string AriaCheckedState => BoolValue == true ? "true" : BoolValue == false ? "false" : "mixed";
+
         /// <summary>
         /// The color of this switch when in an unchecked state.
         /// </summary>
