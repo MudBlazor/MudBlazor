@@ -30,7 +30,34 @@ Build stunning, interactive web applications with MudBlazor — the open-source 
 
 ## 🚀 Getting Started
 
-See the [installation guide](https://mudblazor.com/getting-started/installation).
+See the [installation guide](https://mudblazor.com/getting-started/installation) to get started.
+
+### Example Usage
+
+```razor
+<MudText Typo="Typo.h6">
+    MudBlazor is @Text
+</MudText>
+
+<MudButton Variant="Variant.Filled" 
+           Color="Color.Primary" 
+           OnClick="ButtonOnClick">
+    @ButtonText
+</MudButton>
+
+@code {
+    string Text { get; set; } = "????";
+    string ButtonText { get; set; } = "Click Me";
+    int ClickCount { get; set; }
+
+    void ButtonOnClick()
+    {
+        ClickCount += 1;
+        Text = $"Awesome x {ClickCount}";
+        ButtonText = "Click Me Again";
+    }
+}
+```
 
 ## 🤝 Contributing
 
