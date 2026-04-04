@@ -1,5 +1,8 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
+@using MudBlazor.Internal
 @inherits MudBaseDatePicker
+@inject InternalMudLocalizer Localizer
 
 @Render
 
@@ -7,13 +10,14 @@
 
     protected override RenderFragment InputContent=>
         @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
-                          ErrorText="@ErrorTextState.Value" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
+                          ErrorText="@ErrorTextState.Value" ErrorId="@ErrorIdState.Value" HelperId="@GetRangeHelperId()"
+                          Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
                           @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
                <InputContent>
-                   <MudRangeInput @ref="_rangeInput"
-                                  @attributes="UserAttributes"
-                                  InputType="@InputType.Text"
-                                  Class="@PickerInputClassname"
+            <MudRangeInput @ref="_rangeInput"
+                                   @attributes="UserAttributes"
+                                   InputType="@InputType.Text"
+                                   Class="@PickerInputClassname"
                                   Style="@Style"
                                   Variant="@Variant"
                                   ReadOnly="@(!Editable)"
@@ -25,11 +29,14 @@
                                   AdornmentColor="@AdornmentColor"
                                   IconSize="@IconSize"
                                   OnAdornmentClick="ToggleStateAsync"
-                                  Required="@Required"
-                                  RequiredError="@RequiredError"
-                                  Error="@ErrorState.Value"
-                                  ErrorText="@ErrorTextState.Value"
-                                  Margin="@Margin"
+                                   Required="@Required"
+                                   RequiredError="@RequiredError"
+                                   Error="@ErrorState.Value"
+                                   ErrorId="@ErrorIdState.Value"
+                                   ErrorText="@ErrorTextState.Value"
+                                   HelperText="@HelperText"
+                                   HelperId="@GetRangeHelperId()"
+                                   Margin="@Margin"
                                    AdornmentAriaLabel="@AdornmentAriaLabel"
                                    StartInputAriaLabel="@Localizer[LanguageResource.MudDateRangePicker_Start]"
                                    EndInputAriaLabel="@Localizer[LanguageResource.MudDateRangePicker_End]"

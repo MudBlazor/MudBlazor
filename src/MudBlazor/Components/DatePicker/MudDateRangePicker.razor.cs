@@ -185,6 +185,18 @@ namespace MudBlazor
 
         private MudRangeInput<string> _rangeInput = null!;
 
+        private string? GetRangeHelperId()
+        {
+            if (ErrorState.Value)
+            {
+                return null;
+            }
+
+            return HelperText is null
+                ? null
+                : $"{FieldId}-helper-text";
+        }
+
         /// <summary>
         /// Focuses the start input.
         /// </summary>
