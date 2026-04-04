@@ -31,6 +31,18 @@ namespace MudBlazor
         /// Stores the indeterminate value to apply to the native checkbox during synchronization.
         /// </summary>
         private bool _pendingIndeterminateValue;
+        /// <summary>
+        /// Tracks the most recently observed tri-state setting for change detection.
+        /// </summary>
+        private bool _previousTriState;
+        /// <summary>
+        /// Tracks the most recently observed boolean value for change detection.
+        /// </summary>
+        private bool? _previousBoolValue;
+        /// <summary>
+        /// Tracks the last indeterminate value applied to the DOM.
+        /// </summary>
+        private bool? _lastSyncedIndeterminate;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -179,7 +191,16 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            var isIndeterminate = IsIndeterminateState();
+            var currentBoolValue = BoolValue;
+            if (_previousTriState == TriState && Nullable.Equals(_previousBoolValue, currentBoolValue))
+            {
+                return;
+            }
+
+            _previousTriState = TriState;
+            _previousBoolValue = currentBoolValue;
+
+            var isIndeterminate = TriState && currentBoolValue is null;
             if (_isIndeterminate != isIndeterminate)
             {
                 _isIndeterminate = isIndeterminate;
@@ -193,7 +214,12 @@ namespace MudBlazor
             if (_indeterminateSyncPending)
             {
                 _indeterminateSyncPending = false;
-                await _inputReference.SetIndeterminateAsync(_pendingIndeterminateValue);
+
+                if (_lastSyncedIndeterminate != (bool?)_pendingIndeterminateValue)
+                {
+                    await _inputReference.SetIndeterminateAsync(_pendingIndeterminateValue);
+                    _lastSyncedIndeterminate = _pendingIndeterminateValue;
+                }
             }
 
             if (firstRender)
