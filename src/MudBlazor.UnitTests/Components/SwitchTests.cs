@@ -230,6 +230,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Switch_Has_AriaChecked_Mixed_When_Nullable_Value_Is_Null()
+        {
+            var comp = Context.Render<MudSwitch<bool?>>(parameters => parameters.Add(x => x.Value, null));
+            var input = comp.Find("input");
+
+            input.GetAttribute("aria-checked").Should().Be("mixed");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
