@@ -139,7 +139,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 input.GetAttribute(item.Key).Should().Be(item.Value);
             }
-
         }
 
         [Test]
