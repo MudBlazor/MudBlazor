@@ -1002,12 +1002,12 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user does not change invalid input value but changes focus
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
@@ -1021,7 +1021,7 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user corrects input
