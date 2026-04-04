@@ -35,8 +35,8 @@
                                    AdornmentAriaLabel="@AdornmentAriaLabel"
                                    PlaceholderStart="@PlaceholderStart"
                                    PlaceholderEnd="@PlaceholderEnd"
-                                   StartInputAriaLabel="@StartInputAriaLabelValue"
-                                   EndInputAriaLabel="@EndInputAriaLabelValue"
+                                   StartInputAriaLabel="@((string?)StartInputAriaLabel ?? Localizer[LanguageResource.MudDateRangePicker_Start])"
+                                   EndInputAriaLabel="@((string?)EndInputAriaLabel ?? Localizer[LanguageResource.MudDateRangePicker_End])"
                                    SeparatorIcon="@SeparatorIcon"
                                    Clearable="@(Clearable && !GetReadOnlyState())"
                                   ClearIcon="@ClearIcon"
@@ -46,9 +46,4 @@
                </InputContent>
            </MudInputControl>;
 
-}
-
-@code{
-    private string StartInputAriaLabelValue => StartInputAriaLabel ?? Localizer[LanguageResource.MudDateRangePicker_Start];
-    private string EndInputAriaLabelValue => EndInputAriaLabel ?? Localizer[LanguageResource.MudDateRangePicker_End];
 }

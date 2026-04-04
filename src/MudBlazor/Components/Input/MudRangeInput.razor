@@ -42,7 +42,7 @@
             pattern="@Pattern"
             required="@Required"
             aria-required="@Required.ToString().ToLowerInvariant()"
-            aria-label="@StartInputAriaLabelValue" />
+            aria-label="@((string?)StartInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_Start])" />
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
     <input @ref="_elementReferenceEnd"
            @attributes="UserAttributes"
@@ -61,7 +61,7 @@
             @onkeyup="@InvokeKeyUpAsync"
             required="@Required"
             aria-required="@Required.ToString().ToLowerInvariant()"
-            aria-label="@EndInputAriaLabelValue" />
+            aria-label="@((string?)EndInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_End])" />
 
     @if (IsClearable() && !GetDisabledState())
     {
@@ -96,8 +96,3 @@
         </fieldset>
     }
 </div>
-
-@code{
-    private string StartInputAriaLabelValue => StartInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_Start];
-    private string EndInputAriaLabelValue => EndInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_End];
-}
