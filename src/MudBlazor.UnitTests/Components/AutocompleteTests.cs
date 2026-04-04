@@ -2001,6 +2001,30 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
+        [Test]
+        public async Task Autocomplete_Should_RenderPopupRelationshipAndActiveDescendantAriaAttributes()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+
+            var input = comp.Find("input");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            input.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+            input.GetAttribute("aria-autocomplete").Should().Be("list");
+            input.HasAttribute("aria-activedescendant").Should().BeFalse();
+
+            await autocompleteComponent.Find("input").InputAsync("a");
+            await comp.WaitForAssertionAsync(() =>
+                comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            input = comp.Find("input");
+            input.GetAttribute("aria-expanded").Should().Be("true");
+            var controlsId = input.GetAttribute("aria-controls");
+            controlsId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"#{controlsId}").Should().NotBeNull();
+            input.GetAttribute("aria-activedescendant").Should().NotBeNullOrWhiteSpace();
+        }
+
         /// <summary>
         /// Ensure selecting an option does not reopen the list.
         /// </summary>

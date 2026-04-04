@@ -1704,6 +1704,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
+        [Test]
+        public async Task DatePicker_Should_RenderPopupRelationshipAriaAttributes()
+        {
+            var comp = await OpenPicker();
+            var input = comp.Find("input");
+
+            input.GetAttribute("aria-haspopup").Should().Be("dialog");
+            input.GetAttribute("aria-expanded").Should().Be("true");
+            var controlsId = input.GetAttribute("aria-controls");
+            controlsId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"#{controlsId}").Should().NotBeNull();
+        }
+
         /// <summary>
         /// Test to check if the outlined dates class shows up correctly
         /// </summary>

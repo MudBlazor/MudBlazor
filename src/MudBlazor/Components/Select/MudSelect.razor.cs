@@ -120,10 +120,6 @@ namespace MudBlazor
             }
         }
 
-        protected Dictionary<string, object?> PopoverUserAttributes => new()
-        {
-            ["id"] = PopoverContentId
-        };
 
         [Inject]
         private TimeProvider TimeProvider { get; set; } = null!;

@@ -1308,6 +1308,26 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
         }
 
+        [Test]
+        public async Task ColorPicker_Should_RenderPopupRelationshipAriaAttributes()
+        {
+            var comp = Context.Render<SimpleColorPickerTest>(parameters => parameters
+                .Add(p => p.Variant, PickerVariant.Inline)
+                .Add(p => p.InputId, "color-picker-trigger"));
+
+            var input = comp.Find("#color-picker-trigger");
+            input.GetAttribute("aria-haspopup").Should().Be("dialog");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            input.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+
+            await comp.Find(".mud-input-adornment button").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            var controlsId = input.GetAttribute("aria-controls");
+            controlsId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"#{controlsId}").Should().NotBeNull();
+        }
+
         /// <summary>
         /// Optional RGB ColorPicker should not have required attribute and aria-required should be false.
         /// </summary>

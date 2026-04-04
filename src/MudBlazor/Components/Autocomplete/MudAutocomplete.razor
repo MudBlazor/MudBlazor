@@ -74,15 +74,14 @@
                             RelativeWidth="@RelativeWidth"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Fixed="@PopoverFixed"
-                            UserAttributes="@PopoverUserAttributes">
+                            Fixed="@PopoverFixed">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        <MudList T="T" Class="@ListClass" Dense="@Dense">
+                        <MudList T="T" id="@PopoverContentId" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate is not null)
                             {
                                 <div class="mud-autocomplete-before-items">

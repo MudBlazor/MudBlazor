@@ -865,6 +865,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DateRangePicker_Should_RenderPopupRelationshipAriaAttributes()
+        {
+            var comp = await OpenPicker();
+            var inputs = comp.FindAll("input");
+
+            inputs.Should().AllSatisfy(input =>
+            {
+                input.GetAttribute("aria-haspopup").Should().Be("dialog");
+                input.GetAttribute("aria-expanded").Should().Be("true");
+                var controlsId = input.GetAttribute("aria-controls");
+                controlsId.Should().NotBeNullOrWhiteSpace();
+                comp.Find($"#{controlsId}").Should().NotBeNull();
+            });
+        }
+
+        [Test]
         [SetCulture("en-US")]
         public void FormatFirst_Should_RenderCorrectly()
         {

@@ -92,6 +92,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_Should_RenderPopupRelationshipAriaAttributes()
+        {
+            var comp = Context.Render<SelectTest1>();
+
+            var input = comp.Find("input");
+            input.GetAttribute("aria-haspopup").Should().Be("listbox");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            input.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+            input.HasAttribute("aria-activedescendant").Should().BeFalse();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() =>
+                comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            input = comp.Find("input");
+            input.GetAttribute("aria-expanded").Should().Be("true");
+            var controlsId = input.GetAttribute("aria-controls");
+            controlsId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"#{controlsId}").Should().NotBeNull();
+        }
+
+        [Test]
         public async Task Select_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
         {
             var comp = Context.Render<SelectTest1>();

@@ -370,6 +370,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TimePicker_Should_RenderPopupRelationshipAriaAttributes()
+        {
+            var comp = Context.Render<SimpleTimePickerTest>();
+            var input = comp.Find("input");
+
+            input.GetAttribute("aria-haspopup").Should().Be("dialog");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            input.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+
+            await comp.Find("input").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            input = comp.Find("input");
+            input.GetAttribute("aria-expanded").Should().Be("true");
+            var controlsId = input.GetAttribute("aria-controls");
+            controlsId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"#{controlsId}").Should().NotBeNull();
+        }
+
+        [Test]
         public void TimePicker_CustomClearIcon_Should_BeRenderedInMarkup()
         {
             var comp = Context.Render<MudTimePicker>(parameters => parameters

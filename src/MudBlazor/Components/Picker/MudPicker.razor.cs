@@ -23,6 +23,7 @@ namespace MudBlazor
         private bool _keyInterceptorObserving;
 
         internal string ElementId { get; } = Identifier.Create("picker");
+        protected string PopoverContentId => $"popovercontent-{ElementId}";
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -82,6 +83,49 @@ namespace MudBlazor
                 // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
                 .AddClass($"mud-elevation-{Elevation ?? 8}")
                 .Build();
+
+        protected Dictionary<string, object?> InputUserAttributes
+        {
+            get
+            {
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+                {
+                    ["aria-expanded"] = Open.ToString().ToLowerInvariant(),
+                    ["aria-controls"] = PopoverContentId
+                };
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    attributes["aria-haspopup"] = PickerVariant == PickerVariant.Inline ? "dialog" : "dialog";
+                }
+                else
+                {
+                    attributes.Remove("aria-haspopup");
+                    attributes.Remove("aria-expanded");
+                    attributes.Remove("aria-controls");
+                }
+
+                return attributes;
+            }
+        }
+
+        protected Dictionary<string, object?> PopoverUserAttributes => new()
+        {
+            ["id"] = PopoverContentId
+        };
+
+        protected Dictionary<string, object?> PickerContentUserAttributes
+        {
+            get
+            {
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+                {
+                    ["id"] = PopoverContentId
+                };
+
+                return attributes;
+            }
+        }
 
         protected string ActionsClassname =>
             new CssBuilder("mud-picker-actions")

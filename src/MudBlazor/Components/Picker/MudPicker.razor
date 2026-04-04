@@ -8,7 +8,7 @@
         // note: Mask needs to remain before Text!
         @<MudTextField T="string"
                        @ref="_inputReference"
-                       @attributes="UserAttributes"
+                       @attributes="InputUserAttributes"
                        Style="@Style"
                        Label="@Label"
                        Mask="@_mask"
@@ -61,9 +61,9 @@
                 }
                 @if (PickerVariant == PickerVariant.Inline)
                 {
-                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" RelativeWidth="@(RelativeWidth)" Paper="false">
+                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" RelativeWidth="@(RelativeWidth)" Paper="false" UserAttributes="@PopoverUserAttributes">
                         <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
-                            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                            <MudPaper @attributes="PickerContentUserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                                 <div class="@PickerContainerClassname">
                                     @if (PickerContent != null)
                                     {
@@ -100,7 +100,7 @@
                 else if (Open && PickerVariant == PickerVariant.Dialog)
                 {
                     <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
-                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                        <MudPaper @attributes="PickerContentUserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                             <div class="@PickerContainerClassname">
                                 @if (PickerContent != null)
                                 {
