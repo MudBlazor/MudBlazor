@@ -81,6 +81,26 @@ namespace MudBlazor
         public string? PlaceholderEnd { get; set; }
 
         /// <summary>
+        /// The accessible name for the starting input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Start date</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? StartInputAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name for the ending input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>End date</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? EndInputAriaLabel { get; set; }
+
+        /// <summary>
         /// The icon displayed between start and end dates.
         /// </summary>
         /// <remarks>
