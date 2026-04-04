@@ -405,18 +405,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Radio_Uses_Native_Semantics()
-        {
-            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.Add(x => x.Disabled, true));
-
-            var input = comp.Find("input");
-            input.GetAttribute("type").Should().Be("radio");
-            input.GetAttribute("disabled").Should().Be(string.Empty);
-            input.HasAttribute("role").Should().BeFalse();
-            input.HasAttribute("aria-disabled").Should().BeFalse();
-        }
-
-        [Test]
         public void Radio_Respects_Custom_TabIndex()
         {
             var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));

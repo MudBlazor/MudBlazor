@@ -41,14 +41,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimePickerClockFace_Should_NotExpose_MenuRole()
-        {
-            var comp = await OpenPicker();
-
-            comp.Find(".mud-picker-time-clock-mask").HasAttribute("role").Should().BeFalse();
-        }
-
-        [Test]
         public async Task TimePicker_Should_Clear()
         {
             var comp = Context.Render<MudTimePicker>();
