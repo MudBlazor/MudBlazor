@@ -309,6 +309,18 @@
   <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
     <value>Next month {0}</value>
   </data>
+  <data name="MudRangeInput_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="MudRangeInput_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="MudDateRangePicker_Start" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="MudDateRangePicker_End" xml:space="preserve">
+    <value>End date</value>
+  </data>
   <data name="MudPagination_CurrentPage" xml:space="preserve">
     <value>Current page {0}</value>
   </data>

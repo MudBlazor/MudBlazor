@@ -1943,6 +1943,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
+        public async Task DatePicker_DayButtons_ShouldHaveFullDateAriaLabels()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.Date, new DateTime(2025, 12, 15)));
+
+            var button = comp.FindAll("button.mud-picker-calendar-day")
+                .First(x => x.TrimmedText().Equals("15"));
+
+            button.GetAttribute("aria-label").Should().Be("Monday, December 15, 2025");
+        }
+
+        [Test]
         public async Task DatePicker_NavigationButtons_ShouldNotThrowExceptionAtMinDate()
         {
             // Test that clicking previous month arrow at January 0001 doesn't throw exception

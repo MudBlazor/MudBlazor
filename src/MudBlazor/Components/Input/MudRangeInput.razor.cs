@@ -110,6 +110,26 @@ namespace MudBlazor
         public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
 
         /// <summary>
+        /// The accessible name for the starting input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized "Start" label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? StartInputAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name for the ending input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized "End" label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? EndInputAriaLabel { get; set; }
+
+        /// <summary>
         /// Moves the cursor to the starting input component.
         /// </summary>
         public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();

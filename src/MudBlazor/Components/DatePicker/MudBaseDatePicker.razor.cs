@@ -856,6 +856,11 @@ namespace MudBlazor
             return calendar.GetDayOfMonth(date);
         }
 
+        private string GetDayAriaLabel(DateTime date)
+        {
+            return date.ToString("D", GetCulture());
+        }
+
         /// <summary>
         /// Converts gregorian date into whatever year it is in the provided culture
         /// </summary>

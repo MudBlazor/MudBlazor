@@ -112,6 +112,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DateRangePickerInputs_ShouldHaveDistinctAccessibleNames()
+        {
+            var comp = Context.Render<MudDateRangePicker>();
+            var inputs = comp.FindAll("input");
+
+            inputs[0].GetAttribute("aria-label").Should().Be("Start date");
+            inputs[1].GetAttribute("aria-label").Should().Be("End date");
+        }
+
+        [Test]
+        public void DateRangePickerInputs_ShouldShareHelperDescribedByContext()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.InputId, "date-range")
+                .Add(x => x.HelperText, "Pick a date range"));
+            var inputs = comp.FindAll("input");
+            var startDescribedBy = inputs[0].GetAttribute("aria-describedby");
+            var endDescribedBy = inputs[1].GetAttribute("aria-describedby");
+
+            startDescribedBy.Should().NotBeNullOrWhiteSpace();
+            endDescribedBy.Should().NotBeNullOrWhiteSpace();
+            startDescribedBy.Should().Be(endDescribedBy);
+        }
+
+        [Test]
         public async Task SetPickerValue_CheckDateRange_SetPickerDate_CheckValue()
         {
             var comp = Context.Render<MudDateRangePicker>();
