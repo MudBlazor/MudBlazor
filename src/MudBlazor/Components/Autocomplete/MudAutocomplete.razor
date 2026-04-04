@@ -37,14 +37,14 @@
                           AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           OnAdornmentClick="@AdornmentClickHandlerAsync"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
-                          OnClearButtonClick="@HandleClearButtonAsync"
-                          ClearIcon="@ClearIcon"
-                          MaxLength="@MaxLength"
-                          autocomplete="@GetAutocomplete()"
-                          @attributes="UserAttributes"
-                          TextChanged="OnTextChangedAsync"
-                          @onfocus="@OnInputFocusedAsync"
+                           Clearable="@(Clearable && !GetReadOnlyState())"
+                           OnClearButtonClick="@HandleClearButtonAsync"
+                           ClearIcon="@ClearIcon"
+                           MaxLength="@MaxLength"
+                           autocomplete="@GetAutocomplete()"
+                           @attributes="InputUserAttributes"
+                           TextChanged="OnTextChangedAsync"
+                           @onfocus="@OnInputFocusedAsync"
                           OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
@@ -74,7 +74,8 @@
                             RelativeWidth="@RelativeWidth"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Fixed="@PopoverFixed">
+                            Fixed="@PopoverFixed"
+                            UserAttributes="@PopoverUserAttributes">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate

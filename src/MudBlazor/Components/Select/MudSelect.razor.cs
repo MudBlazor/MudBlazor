@@ -36,6 +36,8 @@ namespace MudBlazor
         private readonly MudSelectContext<T> _context;
 
         internal string ElementId { get; } = Identifier.Create("select");
+        private string PopoverContentId => $"popovercontent-{ElementId}";
+        private string? AriaActiveDescendant => _openState.Value && !string.IsNullOrWhiteSpace(_activeItemId) ? _activeItemId : null;
 
         /// <inheritdoc />
         object IMudSelect.SelectContext => _context;
@@ -93,6 +95,35 @@ namespace MudBlazor
                 .AddClass("mx-2", Variant == Variant.Text)
                 .AddClass("mx-4", Variant != Variant.Text)
                 .Build();
+
+        protected Dictionary<string, object?> InputUserAttributes
+        {
+            get
+            {
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+                {
+                    ["aria-haspopup"] = "listbox",
+                    ["aria-expanded"] = _openState.Value.ToString().ToLowerInvariant(),
+                    ["aria-controls"] = PopoverContentId
+                };
+
+                if (AriaActiveDescendant is not null)
+                {
+                    attributes["aria-activedescendant"] = AriaActiveDescendant;
+                }
+                else
+                {
+                    attributes.Remove("aria-activedescendant");
+                }
+
+                return attributes;
+            }
+        }
+
+        protected Dictionary<string, object?> PopoverUserAttributes => new()
+        {
+            ["id"] = PopoverContentId
+        };
 
         [Inject]
         private TimeProvider TimeProvider { get; set; } = null!;

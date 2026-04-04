@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
@@ -33,6 +33,10 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private bool _handleNextFocus;
+        private string PopoverContentId => $"popovercontent-{_componentId}";
+        private string? AriaActiveDescendant => Open && _items is { Length: > 0 } && _selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length
+            ? GetListItemId(_selectedListItemIndex)
+            : null;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -71,6 +75,35 @@ namespace MudBlazor
                 .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
                 .AddClass(ListItemClass)
                 .Build();
+
+        protected Dictionary<string, object?> InputUserAttributes
+        {
+            get
+            {
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+                {
+                    ["aria-expanded"] = Open.ToString().ToLowerInvariant(),
+                    ["aria-controls"] = PopoverContentId,
+                    ["aria-autocomplete"] = "list"
+                };
+
+                if (AriaActiveDescendant is not null)
+                {
+                    attributes["aria-activedescendant"] = AriaActiveDescendant;
+                }
+                else
+                {
+                    attributes.Remove("aria-activedescendant");
+                }
+
+                return attributes;
+            }
+        }
+
+        protected Dictionary<string, object?> PopoverUserAttributes => new()
+        {
+            ["id"] = PopoverContentId
+        };
 
         /// <summary>
         /// Input's classnames, separated by space.
