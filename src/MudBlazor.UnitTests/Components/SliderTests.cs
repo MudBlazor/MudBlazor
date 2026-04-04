@@ -130,10 +130,6 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedAttributes = new Dictionary<string, string>()
             {
-                { "aria-valuenow","120" },
-                { "aria-valuemin","100" },
-                { "aria-valuemax","200" },
-                { "role","slider" },
                 { "min","100" },
                 { "max","200" },
                 { "step","10" },
@@ -143,6 +139,11 @@ namespace MudBlazor.UnitTests.Components
             {
                 input.GetAttribute(item.Key).Should().Be(item.Value);
             }
+
+            input.HasAttribute("aria-valuenow").Should().BeFalse();
+            input.HasAttribute("aria-valuemin").Should().BeFalse();
+            input.HasAttribute("aria-valuemax").Should().BeFalse();
+            input.HasAttribute("role").Should().BeFalse();
         }
 
         [Test]
