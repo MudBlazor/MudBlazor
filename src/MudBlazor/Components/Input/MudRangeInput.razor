@@ -28,8 +28,8 @@
     <input @ref="_elementReferenceStart"
            @attributes="UserAttributes"
            id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-start")"
-            type="@InputTypeString"
-            class="@InputClassname"
+           type="@InputTypeString"
+           class="@InputClassname"
            @bind-value="@TextStart"
            @bind-value:event="@(Immediate ? "oninput" : "onchange")"
            placeholder="@PlaceholderStart"
@@ -38,18 +38,18 @@
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
            @onkeyup="@InvokeKeyUpAsync"
-            inputmode="@InputMode.ToStringFast(true)"
-            pattern="@Pattern"
-            required="@Required"
-            aria-required="@Required.ToString().ToLowerInvariant()"
-            aria-label="@(StartInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_Start])"
-            aria-describedby="@GetAriaDescribedByString()"
-            aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()" />
+           inputmode="@InputMode.ToStringFast(true)"
+           pattern="@Pattern"
+           required="@Required"
+           aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-label="@(StartInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_Start])"
+           aria-describedby="@GetAriaDescribedByString()"
+           aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()" />
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
     <input @ref="_elementReferenceEnd"
            @attributes="UserAttributes"
            id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-end")"
-            type="@InputTypeString"
+           type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextEnd"
            @bind-value:event="@(Immediate ? "oninput" : "onchange")"
@@ -60,12 +60,12 @@
            readonly="@GetReadOnlyState()"
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
-            @onkeyup="@InvokeKeyUpAsync"
-            required="@Required"
-            aria-required="@Required.ToString().ToLowerInvariant()"
-            aria-label="@(EndInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_End])"
-            aria-describedby="@GetAriaDescribedByString()"
-            aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()" />
+           @onkeyup="@InvokeKeyUpAsync"
+           required="@Required"
+           aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-label="@(EndInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_End])"
+           aria-describedby="@GetAriaDescribedByString()"
+           aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()" />
 
     @if (IsClearable() && !GetDisabledState())
     {
