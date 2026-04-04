@@ -96,7 +96,7 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    attributes["aria-haspopup"] = PickerVariant == PickerVariant.Inline ? "dialog" : "dialog";
+                    attributes["aria-haspopup"] = "dialog";
                 }
                 else
                 {
