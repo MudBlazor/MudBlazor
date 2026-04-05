@@ -1,111 +1,109 @@
-﻿@using System.Net.Http.Json
-@using MudBlazor.Examples.Data.Models
+﻿@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
-@inject HttpClient httpClient
 
-<MudDataGrid T="Element" Items="@Elements" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow">
+<MudDataGrid @ref="@_dataGrid" Items="@_elements" Filterable="true" FilterMode="@_filterMode" RowsPerPage="5">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
-        <PropertyColumn Property="x => x.Sign">
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" Filterable="false" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category">
             <FilterTemplate>
-                <MudIconButton OnClick="@OpenFilter" Icon="@_icon" Size="@Size.Small" />
-                <MudOverlay Visible="@_filterOpen" OnClick="@(() => _filterOpen = false)" />
-                <MudPopover Open="@_filterOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"
-                    Style="width:150px">
-		           <MudStack Spacing="0">
-                       <MudCheckBox T="bool" Label="Select All" Size="@Size.Small" Value="@_selectAll" ValueChanged="@SelectAll" />
-                       <MudStack Spacing="0" Style="overflow-y:auto;max-height:250px">
-                           @foreach (var item in context.Items)
-                           {
-                                <MudCheckBox T="bool" Label="@($"{item.Sign}")" Size="@Size.Small" Value="@(_selectedItems.Contains(item))"
-                                             ValueChanged="@((value) => SelectedChanged(value, item))" />
-                           }
-                       </MudStack>
-                       <MudStack Row="true">
-                            <MudButton OnClick="@(() => ClearFilterAsync(context))">Clear</MudButton>
-                            <MudButton Color="@Color.Primary" OnClick="@(() => ApplyFilterAsync(context))">Filter</MudButton>
-                       </MudStack>
-                   </MudStack>
-	            </MudPopover>
+                <MudSelect T="string" MultiSelection="true"
+                           SelectedValues="@GetFilterValues(context.FilterDefinition!)"
+                           SelectedValuesChanged="@(values => SetColumnFilterValues(context, values))"
+                           FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                           Class="filter-input category-filter"
+                           Placeholder="Filter Categories" Clearable="true">
+                    @foreach (var category in _categories)
+                    {
+                        <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
+                    }
+                </MudSelect>
             </FilterTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Position" />
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <PropertyColumn Property="x => x.Group" Title="Category" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Element" />
+        <MudDataGridPager T="Element" PageSizeOptions="new[] { 5 }" />
     </PagerContent>
 </MudDataGrid>
 
+<div class="d-flex justify-start mt-4">
+    <MudRadioGroup T="DataGridFilterMode" Value="@_filterMode" ValueChanged="@FilterModeChanged">
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow" Color="Color.Primary">Column Filter Row</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Filter Menu</MudRadio>
+    </MudRadioGroup>
+</div>
+
 @code {
-    IEnumerable<Element> Elements = new List<Element>();
-    HashSet<Element> _selectedItems = new();
-    HashSet<Element> _filterItems = new();
-    FilterDefinition<Element> _filterDefinition;
-    bool _selectAll = true;
-    string _icon = Icons.Material.Outlined.FilterAlt;
+    private readonly List<Element> _elements = CreateElements();
+    private readonly List<string> _categories = [];
+    private MudDataGrid<Element> _dataGrid = default!;
+    private DataGridFilterMode _filterMode = DataGridFilterMode.ColumnFilterRow;
 
-    bool _filterOpen = false;
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-        _selectedItems = Elements.ToHashSet();
-        _filterItems = Elements.ToHashSet();
-        _filterDefinition = new FilterDefinition<Element>
+        _categories.AddRange(_elements.Select(x => x.Group).Distinct().OrderBy(x => x).ToList());
+    }
+
+    private Task FilterModeChanged(DataGridFilterMode value)
+    {
+        // Example toggle: switches between the row and menu column filter modes.
+        _filterMode = value;
+        return _dataGrid.ClearFiltersAsync();
+    }
+
+    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Element> filterDefinition)
+    {
+        // Column FilterTemplate: reads the current values from the active filter UI.
+        return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
+    }
+
+    private Task SetColumnFilterValues(FilterContext<Element> context, IEnumerable<string> values)
+    {
+        // Column FilterTemplate: maps selected values to the active filter definition and applies through the grid so the menu can stay open for multi-selection.
+        var filterDefinition = context.FilterDefinition!;
+        var selectedValues = values?.ToList() ?? [];
+        filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
+
+        if (filterDefinition is FilterDefinition<Element> filterDef)
         {
-            FilterFunction = x => _filterItems.Contains(x)
-        };
-    }
-
-    void OpenFilter()
-    {
-        _filterOpen = true;
-    }
-
-    private void SelectedChanged(bool value, Element item)
-    {
-        if (value)
-            _selectedItems.Add(item);
-        else
-            _selectedItems.Remove(item);
-
-        if (_selectedItems.Count == Elements.Count())
-            _selectAll = true;
-        else
-            _selectAll = false;
-    }
-
-    private async Task ClearFilterAsync(FilterContext<Element> context)
-    {
-        _selectedItems = Elements.ToHashSet();
-        _filterItems = Elements.ToHashSet();
-        _icon = Icons.Material.Outlined.FilterAlt;
-        await context.Actions.ClearFilterAsync(_filterDefinition);
-        _filterOpen = false;
-    }
-
-    private async Task ApplyFilterAsync(FilterContext<Element> context)
-    {
-        _filterItems = _selectedItems.ToHashSet();
-        _icon = _filterItems.Count == Elements.Count() ? Icons.Material.Outlined.FilterAlt : Icons.Material.Filled.FilterAlt;
-        await context.Actions.ApplyFilterAsync(_filterDefinition);
-        _filterOpen = false;
-    }
-
-    private void SelectAll(bool value)
-    {
-        _selectAll = value;
-
-        if (value)
-        {
-            _selectedItems = Elements.ToHashSet();
+            if (selectedValues.Count > 0)
+            {
+                filterDef.FilterFunction = item => item.Group is not null && selectedValues.Contains(item.Group);
+            }
+            else
+            {
+                filterDef.FilterFunction = null;
+            }
         }
-        else
-        {
-            _selectedItems.Clear();
-        }
+
+        return ApplyColumnFilterWithoutClosingAsync(context, filterDefinition);
     }
+
+    private Task ApplyColumnFilterWithoutClosingAsync(FilterContext<Element> context, IFilterDefinition<Element> filterDefinition)
+    {
+        // Column FilterTemplate: refreshes filtering through the grid instead of the menu action so the menu stays open while selections change.
+        if (context.FilterDefinitions.All(x => x.Id != filterDefinition.Id))
+        {
+            context.FilterDefinitions.Add(filterDefinition);
+        }
+
+        return _dataGrid.AddFilterAsync(filterDefinition);
+    }
+
+    private static List<Element> CreateElements() =>
+    [
+        new() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 1, Molar = 1.008, Group = "Nonmetal" },
+        new() { Number = 2, Sign = "He", Name = "Helium", Position = 18, Molar = 4.0026, Group = "Noble Gas" },
+        new() { Number = 3, Sign = "Li", Name = "Lithium", Position = 1, Molar = 6.94, Group = "Alkali Metal" },
+        new() { Number = 4, Sign = "Be", Name = "Beryllium", Position = 2, Molar = 9.0122, Group = "Alkaline Earth Metal" },
+        new() { Number = 5, Sign = "B", Name = "Boron", Position = 13, Molar = 10.81, Group = "Metalloid" },
+        new() { Number = 6, Sign = "C", Name = "Carbon", Position = 14, Molar = 12.011, Group = "Nonmetal" },
+        new() { Number = 7, Sign = "N", Name = "Nitrogen", Position = 15, Molar = 14.007, Group = "Nonmetal" },
+        new() { Number = 8, Sign = "O", Name = "Oxygen", Position = 16, Molar = 15.999, Group = "Nonmetal" },
+        new() { Number = 9, Sign = "F", Name = "Fluorine", Position = 17, Molar = 18.998, Group = "Halogen" },
+        new() { Number = 10, Sign = "Ne", Name = "Neon", Position = 18, Molar = 20.180, Group = "Noble Gas" }
+    ];
 }

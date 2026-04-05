@@ -222,6 +222,9 @@ class MudJsEvent {
         const caretPosition = e.target.selectionStart;
         const invoke = self._subscribedEvents["keyup"];
         if (invoke) {
+            if (caretPosition === null || caretPosition === undefined) {
+                return;
+            }
             //self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
             self._dotNetRef.invokeMethodAsync('OnCaretPositionChanged', caretPosition);
         }
@@ -234,6 +237,9 @@ class MudJsEvent {
         const caretPosition = e.target.selectionStart;
         const invoke = self._subscribedEvents["click"];
         if (invoke) {
+            if (caretPosition === null || caretPosition === undefined) {
+                return;
+            }
             //self.logger('[MudBlazor | JsEvent] caret pos: ' + caretPosition);
             self._dotNetRef.invokeMethodAsync('OnCaretPositionChanged', caretPosition);
         }

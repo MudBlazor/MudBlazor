@@ -58,6 +58,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DateRangePickerInputDefaultAriaLabels()
+        {
+            var comp = Context.Render<MudDateRangePicker>();
+            var inputs = comp.FindAll("input");
+
+            inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Start date");
+            inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be("End date");
+        }
+
+        [Test]
         public async Task DateRangePickerSeparatorIcon()
         {
             var newIcon = Icons.Material.Filled.Star;
@@ -1040,6 +1050,22 @@ namespace MudBlazor.UnitTests.Components
             //toolbar should display 2025 and original range
             comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("2025");
             comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 10 Jan - Mon, 20 Jan");
+        }
+
+        [Test]
+        public async Task DateRangePickerToolbar_UpdatesYear_WhenNoDateRangeIsSelected()
+        {
+            var comp = await OpenPicker();
+            var currentYear = int.Parse(comp.Find("button.mud-button-year .mud-button-label").InnerHtml);
+            var targetYear = (currentYear - 1).ToString(CultureInfo.InvariantCulture);
+
+            await comp.Find("button.mud-button-month").ClickAsync();
+            await comp.Find("button.mud-picker-calendar-header-transition").ClickAsync();
+            await comp.FindAll("div.mud-picker-year")
+                .First(x => x.TrimmedText().Equals(targetYear))
+                .ClickAsync();
+
+            comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be(targetYear);
         }
 
         [Test]
