@@ -30,7 +30,7 @@
 
 ## Environment Requirements
 
-- A .NET 10.x SDK is required to restore, build, and test this repository.
+- The required .NET SDK is defined in `global.json`; use that version to restore, build, and test this repository.
 - The library targets `net8.0`, `net9.0`, and `net10.0`.
 - Verify the active SDK with `dotnet --version`.
 
