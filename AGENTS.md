@@ -78,6 +78,10 @@ dotnet tool restore --tool-manifest .config/dotnet-tools.json
 
 ### Default local loop for C# or Razor component changes
 
+- Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first so the full test project graph is compiled up front, including viewer and shared test dependencies.
+- Then run the narrowest relevant `dotnet test` command with `--no-build` so filtered test runs stay incremental and any hang diagnostics apply to test execution rather than a hidden build phase.
+- Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
+
 ```bash
 dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true --nologo
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
