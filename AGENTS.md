@@ -41,9 +41,9 @@ src/
 
 ## Environment Requirements
 
-- .NET 10.0 SDK (`10.0.100+`) is required for tests.
+- A .NET 10.x SDK is required to restore, build, and test this repository.
 - The library targets `net8.0`, `net9.0`, and `net10.0`.
-- Verify the SDK with `dotnet --version`.
+- Verify the active SDK with `dotnet --version`.
 
 ## Scoped Commands and Verification
 
@@ -74,7 +74,7 @@ Re-run `dotnet restore` if any of these change:
 
 ```bash
 dotnet build src/MudBlazor/MudBlazor.csproj --no-restore /p:SkipBunCompile=true --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-restore --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~ButtonsTests" --no-restore --nologo --blame-hang --blame-hang-timeout 30s
 ```
 
 ### Bun
