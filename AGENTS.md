@@ -74,7 +74,7 @@ Re-run `dotnet restore` if any of these change:
 
 ```bash
 dotnet build src/MudBlazor/MudBlazor.csproj --no-restore /p:SkipBunCompile=true --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-restore --nologo --blame-hang --blame-hang-timeout 30s
 ```
 
 ### Bun
