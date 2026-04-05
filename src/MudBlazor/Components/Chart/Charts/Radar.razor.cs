@@ -38,13 +38,13 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         SetBounds();
 
         if (!HasValidData())
+        {
             return;
+        }
 
         var normalizedData = GetNormalizedData();
         var (seriesData, labelData) = GroupDataSet(ChartLabels ?? [], ChartSeries, ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet);
         var numAxes = labelData.Length;
-
-        BuildLegends([.. seriesData.Select(x => x.Name)]);
 
         var angleStep = 2 * Math.PI / numAxes;
         var currentAngle = (-Math.PI / 2) + (ChartOptions.AngleOffset * (Math.PI / 180)); // Convert offset to radians
@@ -59,13 +59,19 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         );
 
         if (ChartOptions.ShowGridLines)
+        {
             GenerateGridLines(numAxes, angleStep, currentAngle, radius);
+        }
 
         if (ChartOptions.ShowAxisValues)
+        {
             GenerateAxisValues(currentAngle, axisMaxValue, radius);
+        }
 
         GenerateAxisLines(numAxes, angleStep, currentAngle, radius, labelData);
         GenerateSvgPaths(seriesData, normalizedData, numAxes, angleStep, currentAngle, radius, axisMaxValue);
+
+        BuildLegends([.. seriesData.Select(x => x.Name)]);
     }
 
     private bool HasValidData() =>
@@ -76,7 +82,9 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     {
         Debug.Assert(ChartOptions is not null);
         if (!ChartOptions.ShowAxisLabels)
+        {
             return Radius;
+        }
 
         var padding = MatchBoundsToSize ? 60 : 40;
         var maxR = Math.Min((_boundWidth - padding) / 2.0, (_boundHeight - padding) / 2.0);
@@ -93,7 +101,9 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
             var series = seriesData[seriesIndex];
 
             if (series.Data == null || series.Data.Count == 0 || !series.Visible || HiddenIndices.Contains(seriesIndex))
+            {
                 continue;
+            }
 
             var (pathString, points) = GeneratePolygonPath(series, seriesIndex, numAxes, angleStep, currentAngle, radius, axisMaxValue);
 
@@ -153,7 +163,9 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         var gridLevelsOption = ChartOptions.GridLevels;
 
         if (gridLevelsOption <= 0)
+        {
             return;
+        }
 
         var gridLevels = T.CreateSaturating(gridLevelsOption);
         var stepValue = T.Max(T.CreateSaturating(1), axisMaxValue / gridLevels);
@@ -234,7 +246,9 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
     private static (List<ChartSeries<T>> Series, string[] Labels) GroupDataSet(string[] labels, List<ChartSeries<T>> dataSet, bool groupByDataSet = false)
     {
         if (groupByDataSet)
+        {
             return (dataSet, labels);
+        }
 
         var groupedData = new List<ChartSeries<T>>();
         var dataLength = dataSet.Count != 0

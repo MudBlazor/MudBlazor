@@ -35,6 +35,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudBreadcrumbs_ShouldRenderNavWithBreadcrumbAriaLabel()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link 1", "link1"),
+                new("Link 2", "link2")
+            }));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Breadcrumb");
+        }
+
+        [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
