@@ -455,6 +455,27 @@ namespace MudBlazor.UnitTests.Components
             secondErrorId.Should().NotBe(firstErrorId);
         }
 
+        [Test]
+        public async Task RequiredTextField_Should_RestoreProvidedErrorIdAfterBecomingValid()
+        {
+            const string errorId = "provided-error-id";
+
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.ErrorId, errorId));
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(errorId);
+
+            await comp.Find("input").ChangeAsync("valid");
+            await comp.Find("input").BlurAsync();
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.Find("input").ChangeAsync(string.Empty);
+            await comp.Find("input").BlurAsync();
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(errorId);
+        }
+
         /// <summary>
         /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
