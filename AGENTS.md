@@ -65,16 +65,22 @@ dotnet tool restore --tool-manifest .config/dotnet-tools.json
 Re-run `dotnet restore` if any of these change:
 - `*.csproj`
 - `src/Directory.Build.*`
-- `src/.editorconfig`
-- `src/package.json`
-- `src/bun.lock`
-- `.config/dotnet-tools.json`
+- `Directory.Packages.props`, if added later
+- `NuGet.Config` or other NuGet restore configuration files, if added later
+
+- If `.config/dotnet-tools.json` changes, run:
+
+```bash
+dotnet tool restore --tool-manifest .config/dotnet-tools.json
+```
+
+- If `src/package.json` or `src/bun.lock` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 
 ```bash
-dotnet build src/MudBlazor/MudBlazor.csproj --no-restore /p:SkipBunCompile=true --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~ButtonsTests" --no-restore --nologo --blame-hang --blame-hang-timeout 30s
+dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true --nologo
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
 ```
 
 ### Bun
