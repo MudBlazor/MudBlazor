@@ -19,13 +19,24 @@
 ```text
 src/
 - MudBlazor/                      Core library (components, styles, TScripts)
+- MudBlazor.Benchmarks/           Benchmark suite
+- MudBlazor.DevWatcher/           Local development watcher tooling
 - MudBlazor.Docs/                 Documentation site
 - MudBlazor.Docs.Compiler/        Docs generator
+- MudBlazor.Docs.Server/          Docs server host
+- MudBlazor.Docs.Wasm/            Docs WebAssembly client
 - MudBlazor.Docs.WasmHost/        Docs preview host
+- MudBlazor.Examples.Data/        Shared sample data for docs/examples
 - MudBlazor.UnitTests/            bUnit tests
+- MudBlazor.UnitTests.Docs.Generator/ Docs test generator
+- MudBlazor.UnitTests.Docs/       Docs and API page tests
+- MudBlazor.UnitTests.Analyzers/  Analyzer and code-fix tests
 - MudBlazor.UnitTests.Viewer/     Visual test runner
 - MudBlazor.Analyzers/            Roslyn analyzers
-- MudBlazor.SourceGenerator/      Source generators
+- MudBlazor.Analyzers.CodeFixes/  Roslyn code fixes
+- MudBlazor.Analyzers.TestComponents/ Analyzer test assets
+- MudBlazor.SourceGenerator/      Source generator folder present in this checkout
+- MudBlazor.UnitTests.Shared/     Shared test utilities
 ```
 
 ## Environment Requirements
@@ -38,8 +49,9 @@ src/
 
 ### Project targets
 - Components: `src/MudBlazor/MudBlazor.csproj` and `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`
-- Docs: `src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj` and `src/MudBlazor.Docs/MudBlazor.Docs.csproj`
-- Analyzers: `src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj` or `src/MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj`
+- Docs: `src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj`, `src/MudBlazor.Docs/MudBlazor.Docs.csproj`, `src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj`, and `src/MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj`
+- Docs tests: `src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj`
+- Analyzers and code fixes: `src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj`, `src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj`, and `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`
 
 ### Restore
 Run restore when starting a session or after changing project or tooling configuration:
@@ -47,6 +59,7 @@ Run restore when starting a session or after changing project or tooling configu
 ```bash
 dotnet restore src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
 dotnet restore src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
+dotnet tool restore --tool-manifest .config/dotnet-tools.json
 ```
 
 Re-run `dotnet restore` if any of these change:
@@ -64,7 +77,9 @@ dotnet build src/MudBlazor/MudBlazor.csproj --no-restore /p:SkipBunCompile=true 
 dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MudButtonTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
 ```
 
-### `SkipBunCompile`
+### Bun
+- Frontend asset builds use the local `bundotnet.cli` tool from `.config/dotnet-tools.json`, not a separately installed global Bun.
+- If Bun-related commands fail after tool or config changes, re-run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 - `/p:SkipBunCompile=true` skips the Bun-driven frontend asset compilation steps that normally run during build.
 - Use it when the goal is to validate .NET, C#, or Razor changes and you do not need regenerated frontend assets as part of verification.
 - It is typically safe for C#-only changes, Razor logic or markup changes, test changes, and documentation-only changes.
@@ -79,11 +94,18 @@ Formatting is required for changed files:
 dotnet format <project.csproj> --no-restore --include <path/to/changed/files>
 ```
 
+- If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
+
+```bash
+dotnet format src --no-restore
+```
+
 ### Choose the smallest valid verification loop
 - For component `.cs` or `.razor` changes: build `src/MudBlazor/MudBlazor.csproj`, then run the narrowest relevant unit test filter.
 - For `TScripts` or `Styles`: run a normal scoped project build.
-- For docs changes: build the docs project. Avoid docs host run loops during agent verification.
-- For analyzers or source generators: build the target project and run only analyzer-related tests.
+- For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
+- For docs example or API-page changes that need parity with CI, run `dotnet test src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
+- For analyzer or code-fix changes: build the target analyzer project and run the narrowest relevant tests from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`.
 - Prefer the narrowest relevant test filter over running an entire test project.
 - Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
 
@@ -94,6 +116,7 @@ dotnet format <project.csproj> --no-restore --include <path/to/changed/files>
 - Do not overwrite component parameters directly. Use the backing `ParameterState<T>` and update through `.Value` or `SetValueAsync`.
 - Do not set other component parameters via `@ref` (`BL0005`). Use declarative binding instead.
 - Use `ParameterState<T>` for parameter updates and change handlers.
+- Parameters managed through the parameter-state framework should be annotated with `[Parameter, ParameterState]`.
 
 ### Styling and naming
 - Use `CssBuilder` for classes and styles.
@@ -180,7 +203,8 @@ private Task ToggleAsync()
 - Prefer minimal, focused examples that demonstrate one concept at a time.
 - Keep docs in sync with behavior and parameter changes.
 - Docs examples are exercised by generated tests, so they must render without exceptions.
-- Generated docs tests are created from examples during build. Generated files start with `_` and must not be edited by hand.
+- Generated docs tests are emitted as `Generated/*.generated.cs` files and must not be edited by hand.
+- `MudBlazor.UnitTests.Docs` does not generate docs tests in the default local build unless `GenerateDocsTests=true`.
 
 ## Breaking Changes and Compatibility
 
