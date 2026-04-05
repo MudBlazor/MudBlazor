@@ -22,6 +22,7 @@ public sealed class ApiMemberTableTests : BunitTest
     public void ApiMemberTable_RenderMissingType()
     {
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters.Add(x => x.Type, null));
+
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found");
     }
 
@@ -35,6 +36,7 @@ public sealed class ApiMemberTableTests : BunitTest
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudAlert)
             .Add(x => x.Mode, ApiMemberTableMode.None));
+
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found");
     }
 
@@ -50,8 +52,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudAlert)
             .Add(x => x.Mode, ApiMemberTableMode.Properties)
             .Add(x => x.ShowProtected, true));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+
         comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">", "The \"Classname\" protected property should be visible");
     }
 
@@ -67,8 +72,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudAlert)
             .Add(x => x.Mode, ApiMemberTableMode.Properties)
             .Add(x => x.ShowProtected, false));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+
         comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">", "The \"Classname\" protected property should NOT be visible");
     }
 
@@ -84,8 +92,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudAutocomplete)
             .Add(x => x.Mode, ApiMemberTableMode.Methods)
             .Add(x => x.ShowProtected, true));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+
         comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">", "The \"BeginValidateAsync\" protected method should be visible");
     }
 
@@ -101,8 +112,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudAutocomplete)
             .Add(x => x.Mode, ApiMemberTableMode.Methods)
             .Add(x => x.ShowProtected, false));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+
         comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">", "The \"BeginValidateAsync\" protected method should NOT be visible");
     }
 
@@ -118,8 +132,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudBaseDatePicker)
             .Add(x => x.Mode, ApiMemberTableMode.Fields)
             .Add(x => x.ShowProtected, true));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+
         comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">", "The \"CurrentView\" protected field should be visible");
     }
 
@@ -135,8 +152,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudBaseDatePicker)
             .Add(x => x.Mode, ApiMemberTableMode.Fields)
             .Add(x => x.ShowProtected, false));
+
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found  (since the protected field was the ONLY field)");
+
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+
         comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">", "The \"CurrentView\" protected field should NOT be visible");
     }
 
@@ -154,6 +174,7 @@ public sealed class ApiMemberTableTests : BunitTest
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudDataGrid)
             .Add(x => x.Mode, ApiMemberTableMode.Events));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
     }
 
@@ -171,6 +192,7 @@ public sealed class ApiMemberTableTests : BunitTest
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudMenu)
             .Add(x => x.Mode, ApiMemberTableMode.Globals));
+
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
     }
 
@@ -188,6 +210,7 @@ public sealed class ApiMemberTableTests : BunitTest
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudAlert)
             .Add(x => x.Mode, ApiMemberTableMode.Globals));
+
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found");
     }
 }
