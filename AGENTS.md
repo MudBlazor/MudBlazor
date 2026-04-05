@@ -258,8 +258,8 @@ private Task ToggleAsync()
 ## Change Checklist
 
 Before finishing, verify all of the following:
-- Formatting was run for changed files.
-- The target project builds cleanly with no new warnings.
+- Formatting was run for changed files when formatting-relevant files under `src/` changed.
+- The relevant target project builds cleanly with no new warnings when code, docs app, analyzer, or asset inputs changed.
 - Tests were updated and run when behavior changed.
-- Docs were updated when component logic changed.
+- Docs were updated when component behavior or public API changed.
 - No new dependencies were added without approval.
