@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Docs.Documentation;
 public sealed class ApiTypeLinkTests : BunitTest
 {
     /// <summary>
-    /// Ensures that booleans render properly.
+    /// Renders booleans.
     /// </summary>
     [Test]
     public void ApiTypeLink_Boolean()
@@ -25,7 +25,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that boolean arrays render properly.
+    /// Renders boolean arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_BooleanArray()
@@ -35,7 +35,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that integers render properly.
+    /// Renders integers.
     /// </summary>
     [Test]
     public void ApiTypeLink_Int32()
@@ -45,7 +45,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that int arrays render properly.
+    /// Renders int arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_Int32Array()
@@ -55,7 +55,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that longs render properly.
+    /// Renders longs.
     /// </summary>
     [Test]
     public void ApiTypeLink_Int64()
@@ -65,7 +65,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that long arrays render properly.
+    /// Renders long arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_Int64Array()
@@ -75,7 +75,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that strings render properly.
+    /// Renders strings.
     /// </summary>
     [Test]
     public void ApiTypeLink_String()
@@ -85,7 +85,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that string arrays render properly.
+    /// Renders string arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_StringArray()
@@ -95,7 +95,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that doubles render properly.
+    /// Renders doubles.
     /// </summary>
     [Test]
     public void ApiTypeLink_Double()
@@ -105,7 +105,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that double arrays render properly.
+    /// Renders double arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_DoubleArray()
@@ -115,7 +115,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that floats render properly.
+    /// Renders floats.
     /// </summary>
     [Test]
     public void ApiTypeLink_Single()
@@ -125,7 +125,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that float arrays render properly.
+    /// Renders float arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_SingleArray()
@@ -135,7 +135,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that objects render properly.
+    /// Renders objects.
     /// </summary>
     [Test]
     public void ApiTypeLink_Object()
@@ -145,7 +145,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that object arrays render properly.
+    /// Renders object arrays.
     /// </summary>
     [Test]
     public void ApiTypeLink_ObjectArray()
@@ -155,7 +155,7 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that void return types render properly.
+    /// Renders void return types.
     /// </summary>
     [Test]
     public void ApiTypeLink_Void()
@@ -165,51 +165,45 @@ public sealed class ApiTypeLinkTests : BunitTest
     }
 
     /// <summary>
-    /// Ensures that MudBlazor component links render properly.
+    /// Renders MudBlazor component links.
     /// </summary>
     [Test]
     public void ApiTypeLink_MudBlazor_Component()
     {
         var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.MudAlert"));
-        // There should be a link to MudAlert
-        comp.Markup.Should().Contain("<a href=\"/api/MudAlert\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudAlert</a>");
+        comp.Markup.Should().Contain("<a href=\"/api/MudAlert\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudAlert</a>", "There should be a link to MudAlert");
     }
 
     /// <summary>
-    /// Ensures that MudBlazor enum links render properly.
+    /// Renders MudBlazor enum links.
     /// </summary>
     [Test]
     public void ApiTypeLink_MudBlazor_Enums()
     {
         var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.Adornment"));
-        // There should be a link to Adornment
-        comp.Markup.Should().Contain("<a href=\"/api/Adornment\"");
-        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">Adornment</a>");
+        comp.Markup.Should().Contain("<a href=\"/api/Adornment\"", "There should be a link to Adornment");
+        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">Adornment</a>", "There should be a link to Adornment");
     }
 
     /// <summary>
-    /// Ensures that external types render properly.
+    /// Renders links to external Microsoft types.
     /// </summary>
     [Test]
     public void ApiTypeLink_External_MicrosoftType()
     {
         var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "Microsoft.AspNetCore.Components.RenderFragment"));
-        // There should be a link to Microsoft docs
-        comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/Microsoft.AspNetCore.Components.RenderFragment\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">");
-        // There should be a Link icon
-        comp.Markup.Should().Contain("<svg class=\"mud-icon-root mud-icon-default mud-svg-icon mud-icon-size-small\" style=\"position:relative;top:7px;\" focusable=\"false\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" role=\"img\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>");
+        comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/Microsoft.AspNetCore.Components.RenderFragment\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">", "There should be a link to Microsoft docs");
+        comp.Markup.Should().Contain("<svg class=\"mud-icon-root mud-icon-default mud-svg-icon mud-icon-size-small\" style=\"position:relative;top:7px;\" focusable=\"false\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" role=\"img\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>", "There should be a Link icon");
     }
 
     /// <summary>
-    /// Ensures that external types render properly.
+    /// Renders links to external system types.
     /// </summary>
     [Test]
     public void ApiTypeLink_External_SystemType()
     {
         var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "System.Guid"));
-        // There should be a link to Microsoft docs
-        comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/System.Guid\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">");
-        // There should be a Link icon
-        comp.Markup.Should().Contain("<svg class=\"mud-icon-root mud-icon-default mud-svg-icon mud-icon-size-small\" style=\"position:relative;top:7px;\" focusable=\"false\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" role=\"img\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>");
+        comp.Markup.Should().Contain("<a href=\"https://learn.microsoft.com/dotnet/api/System.Guid\" target=\"_external\" blazor:onclick=\"1\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">", "There should be a link to Microsoft docs");
+        comp.Markup.Should().Contain("<svg class=\"mud-icon-root mud-icon-default mud-svg-icon mud-icon-size-small\" style=\"position:relative;top:7px;\" focusable=\"false\" viewBox=\"0 0 24 24\" aria-hidden=\"true\" role=\"img\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z\"/></svg>", "There should be a Link icon");
     }
 }

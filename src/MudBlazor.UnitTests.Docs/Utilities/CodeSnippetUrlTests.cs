@@ -17,6 +17,7 @@ public class CodeSnippetUrlTests
         string base64CompressedCode;
         string snippet1;
         byte[] bytes;
+
         // compression
         using (var uncompressed = new MemoryStream(Encoding.UTF8.GetBytes(snippet)))
         using (var compressed = new MemoryStream())
@@ -28,6 +29,7 @@ public class CodeSnippetUrlTests
             base64CompressedCode = Convert.ToBase64String(bytes);
             urlEncodedBase64CompressedCode = Uri.EscapeDataString(base64CompressedCode);
         }
+
         // uncompress
         base64CompressedCode = Uri.UnescapeDataString(urlEncodedBase64CompressedCode);
         bytes = Convert.FromBase64String(base64CompressedCode);
@@ -37,10 +39,11 @@ public class CodeSnippetUrlTests
         {
             uncompressor.CopyTo(uncompressed);
             uncompressor.Close();
-            //uncompressed.Position = 0;
+
+            // uncompressed.Position = 0;
             snippet1 = Encoding.UTF8.GetString(uncompressed.ToArray());
         }
-        // compare
-        snippet1.Should().Be(snippet);
+
+        snippet1.Should().Be(snippet, "The roundtrip should preserve the snippet");
     }
 }
