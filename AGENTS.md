@@ -16,28 +16,14 @@
 
 ## Repository Layout
 
-```text
-src/
-- MudBlazor/                      Core library (components, styles, TScripts)
-- MudBlazor.Benchmarks/           Benchmark suite
-- MudBlazor.DevWatcher/           Local development watcher tooling
-- MudBlazor.Docs/                 Documentation site
-- MudBlazor.Docs.Compiler/        Docs generator
-- MudBlazor.Docs.Server/          Docs server host
-- MudBlazor.Docs.Wasm/            Docs WebAssembly client
-- MudBlazor.Docs.WasmHost/        Docs preview host
-- MudBlazor.Examples.Data/        Shared sample data for docs/examples
-- MudBlazor.UnitTests/            bUnit tests
-- MudBlazor.UnitTests.Docs.Generator/ Docs test generator
-- MudBlazor.UnitTests.Docs/       Docs and API page tests
-- MudBlazor.UnitTests.Analyzers/  Analyzer and code-fix tests
-- MudBlazor.UnitTests.Viewer/     Visual test runner
-- MudBlazor.Analyzers/            Roslyn analyzers
-- MudBlazor.Analyzers.CodeFixes/  Roslyn code fixes
-- MudBlazor.Analyzers.TestComponents/ Analyzer test assets
-- MudBlazor.SourceGenerator/      Source generator folder present in this checkout
-- MudBlazor.UnitTests.Shared/     Shared test utilities
-```
+- `src/` contains the product code and nearly all project work. Expect the main library, docs app, tests, analyzers, benchmarks, and related support projects to live here.
+- `src/MudBlazor/` is the core component library. Most component, utility, styling, `TScripts`, and `wwwroot` changes land here.
+- `src/MudBlazor.UnitTests*` contains test projects and test support code. Look here for component tests, shared test infrastructure, viewer-only helpers, and docs-related tests.
+- `src/MudBlazor.Docs*` contains the documentation site, examples, and docs build support. Update docs here when component behavior or public API changes.
+- `src/MudBlazor.Analyzers*` contains analyzer, code-fix, and analyzer-test projects.
+- Repo-wide build configuration is centered in `src/`, especially `src/Directory.Build.*` and `src/.editorconfig`.
+- Tooling and automation live primarily in `tools/`, `.config/`, and `.github/`.
+- Treat `bin/`, `obj/`, `TestResults/`, generated files, and similar outputs as build artifacts unless the task explicitly targets them.
 
 ## Environment Requirements
 
