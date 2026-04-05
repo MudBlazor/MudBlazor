@@ -63,6 +63,26 @@ namespace MudBlazor
         public string? PlaceholderEnd { get; set; }
 
         /// <summary>
+        /// The accessible name for the starting input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Start</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? StartInputAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name for the ending input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>End</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? EndInputAriaLabel { get; set; }
+
+        /// <summary>
         /// Occurs when the Clear button is clicked.
         /// </summary>
         /// <remarks>
