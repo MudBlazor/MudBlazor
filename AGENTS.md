@@ -13,6 +13,8 @@
 - Treat warnings as errors. Do not ignore analyzer warnings.
 - Do not run solution-wide build, test, or format commands unless explicitly requested.
 - Do not make `dotnet clean` part of the normal local loop. Use it only when incremental build state is clearly stale or corrupted.
+- Prefer one build-producing `dotnet` command per verification step. Use `dotnet test` when tests are needed, or `dotnet build` when compile validation is enough, but do not run both unless there is a clear reason.
+- Defer `dotnet format` until code has stabilized. Run it once near the end for the changed files instead of after each edit cycle.
 
 ## Repository Layout
 
@@ -40,7 +42,12 @@
 - Analyzers and code fixes: `src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj`, `src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj`, and `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`
 
 ### Restore
-Run restore when starting a session or after changing project or tooling configuration:
+Do not restore by default at session start. Restore only when one of these is true:
+- This is a fresh checkout or the relevant `obj/project.assets.json` files do not exist yet.
+- A build or test command fails because restore has not been run.
+- Project or tooling configuration changed.
+
+Common restore commands:
 
 ```bash
 dotnet restore src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
@@ -64,9 +71,17 @@ dotnet tool restore --tool-manifest .config/dotnet-tools.json
 
 ### Default local loop for C# or Razor component changes
 
-- Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first so the full test project graph is compiled up front, including viewer and shared test dependencies.
-- Then run the narrowest relevant `dotnet test` command with `--no-build` so filtered test runs stay incremental and any hang diagnostics apply to test execution rather than a hidden build phase.
+- Prefer a single filtered `dotnet test` command for the first verification run. This builds and tests in one `dotnet` invocation.
+- Switch to an explicit `dotnet build` followed by repeated `dotnet test --no-build` commands only when you plan to run multiple test filters against the same compiled output.
 - Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
+
+Single-command fast path:
+
+```bash
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-restore /p:SkipBunCompile=true --nologo --blame-hang --blame-hang-timeout 30s
+```
+
+Multi-filter path when several test runs are expected:
 
 ```bash
 dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true --nologo
@@ -97,12 +112,15 @@ dotnet format src --no-restore
 ```
 
 ### Choose the smallest valid verification loop
-- For component `.cs` or `.razor` changes: build `src/MudBlazor/MudBlazor.csproj`, then run the narrowest relevant unit test filter.
-- For `TScripts` or `Styles`: run a normal scoped project build.
-- For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
-- For docs example or API-page changes that need parity with CI, run `dotnet test src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
-- For analyzer or code-fix changes: build the target analyzer project and run the narrowest relevant tests from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`.
+- For component `.cs` or `.razor` changes: prefer one filtered `dotnet test` command against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`. Add a separate `dotnet build` only if there is no meaningful test to run or if you intend to reuse the build for several filtered test invocations.
+- For test-only changes: run the narrowest relevant `dotnet test` filter directly. Do not add a separate build step first.
+- For `TScripts` or `Styles`: run one normal scoped project build.
+- For docs changes: build only the relevant docs project. Avoid docs host run loops during agent verification.
+- For docs example or API-page changes that need parity with CI, run `dotnet test src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true` and avoid extra docs builds unless they cover different risk.
+- For analyzer or code-fix changes: prefer one filtered `dotnet test` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Use a separate analyzer project build only when compile-only validation is needed.
 - Prefer the narrowest relevant test filter over running an entire test project.
+- Batch edits, then verify once. Do not rebuild after every small file change.
+- After a successful build-producing command, reuse outputs with `--no-build --no-restore` for follow-up test runs.
 - Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
 
 ## Component Authoring Rules
@@ -239,7 +257,7 @@ private Task ToggleAsync()
 ## Change Checklist
 
 Before finishing, verify all of the following:
-- Formatting was run for changed files.
+- Formatting was run once for changed files after edits stabilized.
 - The target project builds cleanly with no new warnings.
 - Tests were updated and run when behavior changed.
 - Docs were updated when component logic changed.
