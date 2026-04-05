@@ -344,6 +344,42 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task OnTextChanged_WithDebounce_InvokesOnDebounceIntervalElapsed()
+        {
+            // Arrange
+
+            var debouncedText = string.Empty;
+            var debounceElapsedCount = 0;
+
+            var comp = Context.Render<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(p => p.DebounceInterval, 500);
+                parameters.Add(p => p.CoerceText, false);
+                parameters.Add(p => p.CoerceValue, true);
+                parameters.Add(p => p.Immediate, true);
+                parameters.Add(p => p.OnDebounceIntervalElapsed, value =>
+                {
+                    debouncedText = value;
+                    debounceElapsedCount++;
+                });
+            });
+
+            var autocompleteComp = comp.FindComponent<MudAutocomplete<string>>();
+
+            // Act
+
+            await comp.Find("input").InputAsync("Al");
+
+            // Assert
+
+            debounceElapsedCount.Should().Be(0);
+            await autocompleteComp.WaitForAssertionAsync(() => debounceElapsedCount.Should().Be(1), TimeSpan.FromSeconds(5));
+            await autocompleteComp.WaitForAssertionAsync(() => autocompleteComp.Instance.Open.Should().BeTrue(), TimeSpan.FromSeconds(5));
+            debounceElapsedCount.Should().Be(1);
+            debouncedText.Should().Be("Al");
+        }
+
+        [Test]
         public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
         {
             // Arrange

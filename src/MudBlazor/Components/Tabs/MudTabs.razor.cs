@@ -98,6 +98,16 @@ namespace MudBlazor
         public bool KeepPanelsAlive { get; set; }
 
         /// <summary>
+        /// Disables user interaction for all tab panels.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
         /// Uses rounded corners on the tab's edges.
         /// </summary>
         /// <remarks>
@@ -648,7 +658,7 @@ namespace MudBlazor
             _panels.RemoveAt(index);
 
             // no panels left that are visible and not disabled
-            if (!_panels.Any(x => x.Visible && !x.Disabled))
+            if (!_panels.Any(x => x.Visible && !IsPanelDisabled(x)))
             {
                 await _activePanelIndexState.SetValueAsync(-1);
             }
@@ -687,19 +697,19 @@ namespace MudBlazor
             // Clamp starting point
             startIndex = Math.Clamp(startIndex, 0, _panels.Count - 1);
             // If the provided index is good stop here.
-            if (_panels[startIndex] is { Visible: true, Disabled: false })
+            if (_panels[startIndex].Visible && !IsPanelDisabled(_panels[startIndex]))
                 return startIndex;
 
             // Search to the left
             for (int i = startIndex; i >= 0; i--)
             {
-                if (_panels[i].Visible && !_panels[i].Disabled)
+                if (_panels[i].Visible && !IsPanelDisabled(_panels[i]))
                     return i;
             }
             // Search to the right
             for (int i = startIndex + 1; i < _panels.Count; i++)
             {
-                if (_panels[i].Visible && !_panels[i].Disabled)
+                if (_panels[i].Visible && !IsPanelDisabled(_panels[i]))
                     return i;
             }
             return null;
@@ -753,7 +763,7 @@ namespace MudBlazor
             {
                 await _activePanelIndexState.SetValueAsync(-1);
             }
-            else if (panel.Visible && (!panel.Disabled || ignoreDisabledState))
+            else if (panel.Visible && (!IsPanelDisabled(panel) || ignoreDisabledState))
             {
                 var index = _panels.IndexOf(panel);
                 var previewArgs = new TabInteractionEventArgs
@@ -903,7 +913,7 @@ namespace MudBlazor
         {
             var tabClass = new CssBuilder("mud-tab")
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
-              .AddClass($"mud-disabled", panel.Disabled)
+              .AddClass($"mud-disabled", IsPanelDisabled(panel))
               .AddClass($"mud-ripple", Ripple)
               .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
               .AddClass(TabButtonsClass)
@@ -936,7 +946,7 @@ namespace MudBlazor
 
         private Color GetPanelIconColor(MudTabPanel panel)
         {
-            if (panel.Disabled)
+            if (IsPanelDisabled(panel))
             {
                 return Color.Inherit;
             }
@@ -948,6 +958,8 @@ namespace MudBlazor
 
             return IconColor;
         }
+
+        private bool IsPanelDisabled(MudTabPanel panel) => Disabled || panel.Disabled;
 
         #endregion
 
@@ -1329,7 +1341,7 @@ namespace MudBlazor
         /// </summary>
         private async Task MoveFocusToPreviousTab(MudTabPanel currentPanel)
         {
-            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            var enabledPanels = _panels.Where(p => !IsPanelDisabled(p)).ToList();
             if (enabledPanels.Count <= 1) return;
 
             var currentIndex = enabledPanels.IndexOf(currentPanel);
@@ -1344,7 +1356,7 @@ namespace MudBlazor
         /// </summary>
         private async Task MoveFocusToNextTab(MudTabPanel currentPanel)
         {
-            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            var enabledPanels = _panels.Where(p => !IsPanelDisabled(p)).ToList();
             if (enabledPanels.Count <= 1) return;
 
             var currentIndex = enabledPanels.IndexOf(currentPanel);

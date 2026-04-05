@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseDatePicker
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 
 @Render
 
@@ -33,6 +35,8 @@
                                   AdornmentAriaLabel="@AdornmentAriaLabel"
                                   PlaceholderStart="@PlaceholderStart"
                                   PlaceholderEnd="@PlaceholderEnd"
+                                  StartInputAriaLabel="@(Localizer[LanguageResource.MudDateRangePicker_Start])"
+                                  EndInputAriaLabel="@(Localizer[LanguageResource.MudDateRangePicker_End])"
                                   SeparatorIcon="@SeparatorIcon"
                                   Clearable="@(Clearable && !GetReadOnlyState())"
                                   ClearIcon="@ClearIcon"

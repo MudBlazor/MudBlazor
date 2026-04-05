@@ -1295,6 +1295,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SortChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
+            dataGrid.Instance.FilterChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.Should().NotBeNull();
             dataGrid.Instance.StartedEditingItem.HasDelegate.Should().Be(true);
             dataGrid.Instance.CanceledEditingItem.HasDelegate.Should().Be(true);
@@ -1321,6 +1322,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowContextMenuClicked.Should().Be(false);
             comp.Instance.SortChanged.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
+            comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
             comp.Instance.CanceledEditingItem.Should().Be(false);
@@ -1341,6 +1343,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowContextMenuClicked.Should().Be(true);
             comp.Instance.SortChanged.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
+            comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
 
@@ -1348,6 +1351,21 @@ namespace MudBlazor.UnitTests.Components
             // but we can brute force it by directly calling the CancelEditingItemAsync method on the datagrid
             await dataGrid.InvokeAsync(dataGrid.Instance.CancelEditingItemAsync);
             comp.Instance.CanceledEditingItem.Should().Be(true);
+
+            // Fire FilterChanged by adding and then clearing a filter
+            var nameColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == nameof(DataGridEventCallbacksTest.Item.Name));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridEventCallbacksTest.Item>
+            {
+                Id = Guid.NewGuid(),
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = "A"
+            }));
+            comp.Instance.FilterChanged.Should().Be(true);
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await dataGrid.InvokeAsync(dataGrid.Instance.ClearFiltersAsync);
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
         }
 
         [Test]
@@ -6062,6 +6080,19 @@ namespace MudBlazor.UnitTests.Components
             cells[0].TextContent.Should().Be("C");
             cells[3].TextContent.Should().Be("A");
             cells[6].TextContent.Should().Be("B");
+
+            comp = Context.Render<DataGridAllowUnsortedTest>(parameters => parameters
+                .Add(p => p.AllowUnsorted, false)
+                .Add(p => p.InitialSortDirection, SortDirection.Descending));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+            headerCell = dataGrid.FindComponents<HeaderCell<DataGridAllowUnsortedTest.Item>>()[0];
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("A");
         }
 
         [Test]

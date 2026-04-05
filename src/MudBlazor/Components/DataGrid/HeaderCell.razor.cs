@@ -496,13 +496,17 @@ namespace MudBlazor
                 return;
             }
 
+            var initialSortDirection = Column?.InitialSortDirection ?? SortDirection.Ascending;
+
             SortDirection = SortDirection switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
                 SortDirection.Descending => DataGrid.AllowUnsorted
                     ? SortDirection.None
                     : SortDirection.Ascending,
-                _ => SortDirection.Ascending
+                _ => initialSortDirection == SortDirection.None
+                    ? SortDirection.Ascending
+                    : initialSortDirection
             };
 
             if (SortDirection == SortDirection.None)

@@ -196,7 +196,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.MatchBoundsToSize, true));
 
             // check the size/bounds
-            comp.Markup.Should().ContainEquivalentOf("<svg class=\"mud-chart-line mud-ltr\" width=\"100%\" height=\"100%\" viewBox=\"0 0 1000 400\"");
+            comp.Markup.Should().ContainEquivalentOf("<svg class=\"mud-chart-line mud-ltr\" width=\"100%\" height=\"400px\" viewBox=\"0 0 1000 400\"");
         }
 
         [Test]
