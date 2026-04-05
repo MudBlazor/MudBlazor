@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using NUnit.Framework;
@@ -58,7 +57,8 @@ public class TextTests : BunitTest
             .Add(p => p.Align, align)
             .Add(p => p.RightToLeft, rightToLeft));
 
-        var alignmentClasses = comp.Find(".mud-typography")
+        var element = comp.Find(".mud-typography");
+        var alignmentClasses = element
             .ClassList
             .Where(x => x.StartsWith("mud-typography-align-"))
             .ToArray();
@@ -69,7 +69,8 @@ public class TextTests : BunitTest
         }
         else
         {
-            alignmentClasses.Should().BeEquivalentTo([expectedClass]);
+            alignmentClasses.Should().Contain(expectedClass);
+            alignmentClasses.Should().HaveCount(1);
         }
     }
 
@@ -84,7 +85,8 @@ public class TextTests : BunitTest
         var comp = Context.Render<MudText>(parameters => parameters
             .Add(p => p.Color, color));
 
-        var colorClasses = comp.Find(".mud-typography")
+        var element = comp.Find(".mud-typography");
+        var colorClasses = element
             .ClassList
             .Where(x => x.EndsWith("-text"))
             .ToArray();
@@ -95,7 +97,8 @@ public class TextTests : BunitTest
         }
         else
         {
-            colorClasses.Should().BeEquivalentTo([expectedClass]);
+            colorClasses.Should().Contain(expectedClass);
+            colorClasses.Should().HaveCount(1);
         }
     }
 
@@ -106,18 +109,15 @@ public class TextTests : BunitTest
         var comp = Context.Render<MudText>(parameters => parameters
             .Add(p => p.GutterBottom, gutterBottom));
 
-        var gutterBottomClasses = comp.Find(".mud-typography")
-            .ClassList
-            .Where(x => x == "mud-typography-gutterbottom")
-            .ToArray();
+        var element = comp.Find(".mud-typography");
 
         if (gutterBottom)
         {
-            gutterBottomClasses.Should().BeEquivalentTo(["mud-typography-gutterbottom"]);
+            element.ClassList.Should().Contain("mud-typography-gutterbottom");
         }
         else
         {
-            gutterBottomClasses.Should().BeEmpty();
+            element.ClassList.Should().NotContain("mud-typography-gutterbottom");
         }
     }
 
@@ -153,11 +153,12 @@ public class TextTests : BunitTest
         var element = comp.Find(".mud-typography");
         var typographyClasses = element
             .ClassList
-            .Where(x => x.StartsWith("mud-typography-") && x != "mud-typography")
+            .Where(x => x.StartsWith("mud-typography-"))
             .ToArray();
 
         element.TagName.Should().Be(expectedTag.ToUpperInvariant());
-        typographyClasses.Should().BeEquivalentTo([expectedClass]);
+        typographyClasses.Should().Contain(expectedClass);
+        typographyClasses.Should().HaveCount(1);
         element.TextContent.Should().Be("content");
     }
 
@@ -175,11 +176,12 @@ public class TextTests : BunitTest
         var element = comp.Find(".mud-typography");
         var typographyClasses = element
             .ClassList
-            .Where(x => x.StartsWith("mud-typography-") && x != "mud-typography")
+            .Where(x => x.StartsWith("mud-typography-"))
             .ToArray();
 
         element.TagName.Should().Be(expectedTag.ToUpperInvariant());
-        typographyClasses.Should().BeEquivalentTo([expectedClass]);
+        typographyClasses.Should().Contain(expectedClass);
+        typographyClasses.Should().HaveCount(1);
         element.TextContent.Should().Be("content");
     }
 
@@ -190,18 +192,15 @@ public class TextTests : BunitTest
         var comp = Context.Render<MudText>(parameters => parameters
             .Add(p => p.Inline, inline));
 
-        var displayClasses = comp.Find(".mud-typography")
-            .ClassList
-            .Where(x => x == "d-inline")
-            .ToArray();
+        var element = comp.Find(".mud-typography");
 
         if (inline)
         {
-            displayClasses.Should().BeEquivalentTo(["d-inline"]);
+            element.ClassList.Should().Contain("d-inline");
         }
         else
         {
-            displayClasses.Should().BeEmpty();
+            element.ClassList.Should().NotContain("d-inline");
         }
     }
 }
