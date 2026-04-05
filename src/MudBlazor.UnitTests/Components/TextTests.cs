@@ -63,7 +63,14 @@ public class TextTests : BunitTest
             .Where(x => x.StartsWith("mud-typography-align-"))
             .ToArray();
 
-        alignmentClasses.Should().BeEquivalentTo(expectedClass is null ? Enumerable.Empty<string>() : new[] { expectedClass });
+        if (expectedClass is null)
+        {
+            alignmentClasses.Should().BeEmpty();
+        }
+        else
+        {
+            alignmentClasses.Should().BeEquivalentTo([expectedClass]);
+        }
     }
 
     [TestCase(Color.Inherit, null)]
@@ -82,7 +89,14 @@ public class TextTests : BunitTest
             .Where(x => x.EndsWith("-text"))
             .ToArray();
 
-        colorClasses.Should().BeEquivalentTo(expectedClass is null ? Enumerable.Empty<string>() : new[] { expectedClass });
+        if (expectedClass is null)
+        {
+            colorClasses.Should().BeEmpty();
+        }
+        else
+        {
+            colorClasses.Should().BeEquivalentTo([expectedClass]);
+        }
     }
 
     [TestCase(true)]
@@ -97,7 +111,14 @@ public class TextTests : BunitTest
             .Where(x => x == "mud-typography-gutterbottom")
             .ToArray();
 
-        gutterBottomClasses.Should().BeEquivalentTo(gutterBottom ? new[] { "mud-typography-gutterbottom" } : Enumerable.Empty<string>());
+        if (gutterBottom)
+        {
+            gutterBottomClasses.Should().BeEquivalentTo(["mud-typography-gutterbottom"]);
+        }
+        else
+        {
+            gutterBottomClasses.Should().BeEmpty();
+        }
     }
 
     [Test]
@@ -136,7 +157,7 @@ public class TextTests : BunitTest
             .ToArray();
 
         element.TagName.Should().Be(expectedTag.ToUpperInvariant());
-        typographyClasses.Should().BeEquivalentTo(new[] { expectedClass });
+        typographyClasses.Should().BeEquivalentTo([expectedClass]);
         element.TextContent.Should().Be("content");
     }
 
@@ -158,7 +179,7 @@ public class TextTests : BunitTest
             .ToArray();
 
         element.TagName.Should().Be(expectedTag.ToUpperInvariant());
-        typographyClasses.Should().BeEquivalentTo(new[] { expectedClass });
+        typographyClasses.Should().BeEquivalentTo([expectedClass]);
         element.TextContent.Should().Be("content");
     }
 
@@ -174,6 +195,13 @@ public class TextTests : BunitTest
             .Where(x => x == "d-inline")
             .ToArray();
 
-        displayClasses.Should().BeEquivalentTo(inline ? new[] { "d-inline" } : Enumerable.Empty<string>());
+        if (inline)
+        {
+            displayClasses.Should().BeEquivalentTo(["d-inline"]);
+        }
+        else
+        {
+            displayClasses.Should().BeEmpty();
+        }
     }
 }
