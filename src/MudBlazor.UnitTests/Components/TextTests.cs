@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
