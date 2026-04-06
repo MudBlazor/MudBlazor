@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
@@ -136,6 +135,7 @@ namespace MudBlazor
         // In typical scenarios it is not null, as MudFormComponent sets a default culture and other components do not override it with null.
         // The annotation could be changed in the future, but doing so would introduce unnecessary null checks in other components.
         private bool IsFormatted =>
+            HideSpinButtons ||
             Pattern is not null ||
             GetFormat() is not null ||
             // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
@@ -367,21 +367,32 @@ namespace MudBlazor
 
         protected async Task OnMouseWheelAsync(WheelEventArgs obj)
         {
-            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
+            if (HideSpinButtons || !obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
+            {
                 return;
+            }
+
             if (obj.DeltaY < 0)
             {
                 if (InvertMouseWheel == false)
+                {
                     await Increment();
+                }
                 else
+                {
                     await Decrement();
+                }
             }
             else if (obj.DeltaY > 0)
             {
                 if (InvertMouseWheel == false)
+                {
                     await Decrement();
+                }
                 else
+                {
                     await Increment();
+                }
             }
         }
 

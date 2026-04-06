@@ -129,12 +129,6 @@ namespace MudBlazor
         public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether mouse wheel input is disabled for the component.
-        /// </summary>
-        [Parameter]
-        public bool DisableMouseWheel { get; set; }
-
-        /// <summary>
         /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
