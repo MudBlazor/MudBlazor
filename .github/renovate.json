@@ -7,6 +7,9 @@
         ":ignoreModulesAndTests",
         "mergeConfidence:all-badges"
     ],
+    "ignoreDeps": [
+        "dotnet-sdk"
+    ],
     "labels": [
         "dependency",
         "build"

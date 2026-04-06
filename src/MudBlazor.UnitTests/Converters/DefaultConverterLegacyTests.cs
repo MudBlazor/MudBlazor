@@ -13,6 +13,16 @@ namespace MudBlazor.UnitTests.Converters
     public class DefaultConverterLegacyTests
     {
         [Test]
+        public void DefaultConverter_ObjectFallback_ConvertBack_ReturnsDefault()
+        {
+            var converter = new DefaultConverter<LegacyObject>();
+
+            converter.Convert(new LegacyObject("Hydrogen")).Should().Be("Hydrogen");
+            converter.ConvertBack("Hydrogen").Should().BeNull();
+            converter.ConvertBack(null).Should().BeNull();
+        }
+
+        [Test]
         public void DefaultConverter_String_ValidCases()
         {
             var c1 = new DefaultConverter<string>();
@@ -39,6 +49,11 @@ namespace MudBlazor.UnitTests.Converters
             c2.ConvertBack("").Should().Be(null);
             c2.ConvertBack(null).Should().Be(null);
             c2.Convert(null).Should().Be(null);
+        }
+
+        private sealed class LegacyObject(string value)
+        {
+            public override string ToString() => value;
         }
 
         [Test]
