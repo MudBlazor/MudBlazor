@@ -59,7 +59,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This function is evaluated for each row item.  When the returned value is <c>null</c>, empty, or whitespace,
-        /// the checkbox falls back to the default computed <c>aria-label</c> derived from the row content.
+        /// the checkbox falls back to the default row selection label.
         /// </remarks>
         [Parameter]
         public Func<T, string?>? AriaLabelFunc { get; set; }
