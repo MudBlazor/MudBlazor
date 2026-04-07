@@ -6075,6 +6075,19 @@ namespace MudBlazor.UnitTests.Components
             cells[0].TextContent.Should().Be("C");
             cells[3].TextContent.Should().Be("A");
             cells[6].TextContent.Should().Be("B");
+
+            comp = Context.Render<DataGridAllowUnsortedTest>(parameters => parameters
+                .Add(p => p.AllowUnsorted, false)
+                .Add(p => p.InitialSortDirection, SortDirection.Descending));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+            headerCell = dataGrid.FindComponents<HeaderCell<DataGridAllowUnsortedTest.Item>>()[0];
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("A");
         }
 
         [Test]

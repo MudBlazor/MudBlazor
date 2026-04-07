@@ -88,7 +88,7 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
         AddParsableConverters(builder);
         // Make sure this is the last converter added, so it runs only if no other converter can handle the type.
         // This ensures we don't accidentally bypass a more specific converter with FirstWins.
-        builder.AddForward(new ToStringFallbackConverter<T>());
+        builder.Add(new ToStringFallbackConverter<T>());
 
         _dispatcher = builder.Build();
     }
