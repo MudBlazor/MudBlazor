@@ -427,6 +427,55 @@ namespace MudBlazor.UnitTests.Components
             textfield.GetState(x => x.ErrorText).Should().Be("Not a valid number");
         }
 
+        [Test]
+        public async Task RequiredTextField_Should_ReuseGeneratedErrorIdWhileInvalid()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.Required, true));
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+
+            var firstErrorId = comp.Find("input").GetAttribute("aria-describedby");
+            firstErrorId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"[id='{firstErrorId}']").TextContent.Should().Be("Required");
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(firstErrorId);
+
+            await comp.Find("input").ChangeAsync("valid");
+            await comp.Find("input").BlurAsync();
+
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.Find("input").ChangeAsync(string.Empty);
+            await comp.Find("input").BlurAsync();
+
+            var secondErrorId = comp.Find("input").GetAttribute("aria-describedby");
+            secondErrorId.Should().NotBeNullOrWhiteSpace();
+            secondErrorId.Should().NotBe(firstErrorId);
+        }
+
+        [Test]
+        public async Task RequiredTextField_Should_RestoreProvidedErrorIdAfterBecomingValid()
+        {
+            const string errorId = "provided-error-id";
+
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.ErrorId, errorId));
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(errorId);
+
+            await comp.Find("input").ChangeAsync("valid");
+            await comp.Find("input").BlurAsync();
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.Find("input").ChangeAsync(string.Empty);
+            await comp.Find("input").BlurAsync();
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(errorId);
+        }
+
         /// <summary>
         /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
@@ -1002,12 +1051,12 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user does not change invalid input value but changes focus
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
@@ -1021,7 +1070,7 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user corrects input
@@ -1739,6 +1788,8 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
             comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be("error-id");
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
         [TestCase(Adornment.Start, false, false)]
