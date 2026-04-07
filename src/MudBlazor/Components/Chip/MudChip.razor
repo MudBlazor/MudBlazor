@@ -27,21 +27,14 @@
             }
         }
         <span class="mud-chip-content">
-            <span class="mud-chip-content-text">@if (ChildContent is null)
-                {
-                    @if (Text is null)
-                    {
-                        @($"{Value}")
-                    }
-                    else
-                    {
-                        @Text
-                    }
-                }
-                else
-                {
-                    @ChildContent
-                }</span>
+            @if (ChildContent is null)
+            {
+                <span class="mud-chip-content-text">@(Text ?? $"{Value}")</span>
+            }
+            else
+            {
+                <span class="mud-chip-content-text">@ChildContent</span>
+            }
             @if (IsClosable)
             {
                 <MudIconButton Class="mud-chip-close-button"
