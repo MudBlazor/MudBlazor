@@ -396,7 +396,6 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
-        
         /// <summary>
         /// The aria-label for the HTML table element.
         /// </summary>
