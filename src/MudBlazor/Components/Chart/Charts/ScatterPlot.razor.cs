@@ -24,6 +24,8 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
 
     protected override bool ShouldInterpolate => false;
 
+    protected override bool ShouldAlwaysPopulateDataPoints => true;
+
     // X-axis scale information, computed during RebuildChart
     private T _gridXUnits;
     private int _lowestVerticalLine;
@@ -182,8 +184,8 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
         }
         else
         {
-            // Fallback: evenly distribute by index
-            screenX = HorizontalStartSpace + (dataPointIndex * horizontalSpace);
+            // Scatter plots require an X value of type T for every point; non-numeric or missing X values are not supported.
+            throw new InvalidOperationException($"Scatter plot data point at index {dataPointIndex} in series {seriesIndex} has a non-numeric or missing X value. Each data point must have an X value of type {typeof(T).Name}.");
         }
 
         return (screenX, screenY);

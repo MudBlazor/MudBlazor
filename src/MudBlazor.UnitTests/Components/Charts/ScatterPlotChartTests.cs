@@ -326,7 +326,7 @@ namespace MudBlazor.UnitTests.Charts
                     ShowToolTips = true,
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                        [lineSeries] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
                     }
                 }));
 
@@ -352,7 +352,7 @@ namespace MudBlazor.UnitTests.Charts
                     ChartPalette = _palette,
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                        [lineSeries] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
                     }
                 }));
 
@@ -374,7 +374,7 @@ namespace MudBlazor.UnitTests.Charts
                     ChartPalette = _palette,
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride
+                        [lineSeries] = new ScatterSeriesDisplayOverride
                         {
                             ScatterSeriesType = ScatterSeriesType.Line,
                             StrokeOpacity = 0.5
@@ -400,7 +400,7 @@ namespace MudBlazor.UnitTests.Charts
                     LineStrokeWidth = 2,
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                        [lineSeries] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
                     }
                 }));
 
@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Charts
                     XAxisTicks = 20,
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                        [lineSeries] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
                     }
                 }));
 
@@ -446,7 +446,7 @@ namespace MudBlazor.UnitTests.Charts
                 {
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                        [lineSeries] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
                     }
                 }));
 
@@ -494,8 +494,7 @@ namespace MudBlazor.UnitTests.Charts
                 }));
 
             var label = comp.Find("text.mud-chart-data-label");
-            label.TextContent.Should().Be("20");
-            label.TextContent.Should().NotContain("10");
+            label.TextContent.Should().Be("10, 20");
         }
 
         [Test]
@@ -518,9 +517,9 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void ScatterPlotShowDataLabelsRequiresShowToolTips()
+        public void ScatterPlotShowDataLabelsWorksWithoutShowToolTips()
         {
-            // ShowDataLabels iterates ChartDataPoints which is only populated when ShowToolTips is true
+            // ShowDataLabels and ShowToolTips are independent settings
             var series = new List<ChartSeries<double>>
             {
                 new() { Name = "S1", Data = Points((10, 20), (30, 40)) }
@@ -534,8 +533,8 @@ namespace MudBlazor.UnitTests.Charts
                     ShowDataLabels = true,
                 }));
 
-            comp.FindAll("text.mud-chart-data-label").Count.Should().Be(0,
-                because: "data label entries are only generated when ShowToolTips is true");
+            comp.FindAll("text.mud-chart-data-label").Count.Should().Be(2,
+                because: "data labels are independent of ShowToolTips");
         }
 
         [Test]
@@ -553,7 +552,7 @@ namespace MudBlazor.UnitTests.Charts
                     ShowDataLabels = true,
                     SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
                     {
-                        [lineSeries] = new SeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
+                        [lineSeries] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line }
                     }
                 }));
 
@@ -948,9 +947,10 @@ namespace MudBlazor.UnitTests.Charts
                     ShowToolTips = false,
                 }));
 
+            // No tooltip groups should be rendered when ShowToolTips is false
             comp.FindAll("g.svg-tooltip").Count.Should().Be(0);
-            // No hoverable circles are rendered when ShowToolTips is false
-            comp.FindAll("circle.mud-chart-point").Count.Should().Be(0);
+            // Data points should still render as circles even when tooltips are disabled
+            comp.FindAll("circle.mud-chart-point").Count.Should().Be(1);
         }
 
         [Test]

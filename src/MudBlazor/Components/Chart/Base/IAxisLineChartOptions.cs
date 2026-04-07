@@ -81,7 +81,10 @@ public record SeriesDisplayOverride
     /// The fill opacity for the series, used when the display type is 'Area'.
     /// </summary>
     public double FillOpacity { get; set; } = 0.4;
+}
 
+public record ScatterSeriesDisplayOverride : SeriesDisplayOverride
+{
     /// <summary>
     /// Determines how this series is rendered on a scatter plot chart.
     /// Defaults to <see cref="ScatterSeriesType.Points"/>.

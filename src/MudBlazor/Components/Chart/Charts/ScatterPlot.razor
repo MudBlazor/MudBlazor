@@ -36,16 +36,25 @@
 </div>
 
 @code {
-    private const double DataPointStroke = 1.5d;
-    private double PointRadius => ChartOptions?.PointRadius ?? 5;
-    private double PointHoverRadius => PointRadius + 2;
-    private double DataPointLabelOffset => PointHoverRadius + (DataPointStroke / 2d);
+  private const double DataPointStroke = 1.5d;
+  private double PointRadius => ChartOptions?.PointRadius ?? 5;
+  private double PointHoverRadius => PointRadius + 2;
+  private double DataPointLabelOffset => PointHoverRadius + (DataPointStroke / 2d);
 
-    private double LineStrokeWidth => ChartOptions?.LineStrokeWidth ?? 3;
+  private double LineStrokeWidth => ChartOptions?.LineStrokeWidth ?? 3;
 
-    private bool IsLineSeries(int seriesIndex) =>
-        seriesIndex >= 0 && seriesIndex < Series.Count &&
-        GetSeriesDisplayOverride(Series[seriesIndex])?.ScatterSeriesType == ScatterSeriesType.Line;
+    private bool IsLineSeries(int seriesIndex)
+    {
+        if ((seriesIndex >= 0) && (seriesIndex < Series.Count))
+        {
+            var seriesOverride = GetSeriesDisplayOverride(Series[seriesIndex]);
+            if (seriesOverride is ScatterSeriesDisplayOverride scatterOverride)
+            {
+                return scatterOverride.ScatterSeriesType == ScatterSeriesType.Line;
+            }
+        }
+        return false;
+    }
 
     private RenderFragment RenderScatterPoints() => builder =>
     {
@@ -74,7 +83,7 @@
                     builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
                     builder.AddAttribute(seq++, "fill", color);
                     builder.AddAttribute(seq++, "stroke", color);
-                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
+                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
                     builder.AddAttribute(seq++, "cx", item.CX.ToStr());
                     builder.AddAttribute(seq++, "cy", item.CY.ToStr());
                     builder.AddAttribute(seq++, "r", PointRadius.ToStr());
@@ -91,24 +100,27 @@
                     builder.AddAttribute(seq++, "font-size", "9");
                     builder.AddAttribute(seq++, "fill", color);
                     builder.AddAttribute(seq++, "dominant-baseline", "middle");
-                    builder.AddContent(seq++, item.LabelYValue);
+                    builder.AddContent(seq++, $"{item.LabelXValue}, {item.LabelYValue}");
                     builder.CloseElement();
                 }
 
                 // Hoverable target (larger, shows on hover, carries mouse events)
-                builder.OpenElement(seq++, "circle");
-                builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
-                builder.AddAttribute(seq++, "fill", isHovered ? color : string.Empty);
-                builder.AddAttribute(seq++, "stroke", color);
-                builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
-                builder.AddAttribute(seq++, "opacity", isHovered ? 1 : 0);
-                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                builder.AddAttribute(seq++, "r", PointHoverRadius.ToStr());
-                builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
-                builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
-                builder.CloseElement();
+                if (ChartOptions?.ShowToolTips is not false)
+                {
+                    builder.OpenElement(seq++, "circle");
+                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                    builder.AddAttribute(seq++, "fill", isHovered ? color : string.Empty);
+                    builder.AddAttribute(seq++, "stroke", color);
+                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
+                    builder.AddAttribute(seq++, "opacity", isHovered ? 1 : 0);
+                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                    builder.AddAttribute(seq++, "r", PointHoverRadius.ToStr());
+                    builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
+                    builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                    builder.CloseElement();
+                }
             }
         }
 

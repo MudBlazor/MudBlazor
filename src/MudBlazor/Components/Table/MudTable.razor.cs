@@ -473,10 +473,7 @@ namespace MudBlazor
             set
             {
                 _groupBy = value;
-                if (_groupBy != null)
-                {
-                    _groupBy.Context = Context;
-                }
+                _groupBy?.Context = Context;
             }
         }
 
