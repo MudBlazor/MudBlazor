@@ -2024,11 +2024,17 @@ namespace MudBlazor
                 return null;
             }
 
+            var selectColumn = GetSelectColumn();
+            if (selectColumn is null)
+            {
+                return null;
+            }
+
             var rowLabelColumns = GetDefaultRowLabelColumns();
             if (rowLabelColumns.Count == 0)
             {
                 // Without a value-bearing column to derive row text from, the checkbox falls back to
-                // MudCheckBox's default "Select row" label.
+                // return null so the selection column can use its own fallback "Select row" aria-label.
                 return null;
             }
 
