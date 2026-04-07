@@ -143,6 +143,10 @@
     display: inline-flex;
     height: 100%;
     max-width: 100%;
+
+    .mud-chip-content-text {
+      display: inline-block;
+    }
   }
 }
 
