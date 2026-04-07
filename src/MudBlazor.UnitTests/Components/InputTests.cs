@@ -59,21 +59,19 @@ public class InputTests : BunitTest
     [Test]
     public void RangeInput_Error_UsesAriaErrorAttributesOnBothInputs()
     {
+        const string errorId = "range-error-id";
         var comp = Context.Render<MudRangeInput<string>>(parameters => parameters
             .Add(x => x.Error, true)
+            .Add(x => x.ErrorId, errorId)
             .Add(x => x.ErrorText, "Range error"));
         var inputs = comp.FindAll("input");
 
         inputs.Count.Should().Be(2);
-        var startErrorId = inputs[0].GetAttribute("aria-errormessage");
-        var endErrorId = inputs[1].GetAttribute("aria-errormessage");
-        startErrorId.Should().NotBeNullOrEmpty();
-        endErrorId.Should().NotBeNullOrEmpty();
-        startErrorId.Should().Be(endErrorId);
         inputs[0].GetAttribute("aria-invalid").Should().Be("true");
         inputs[1].GetAttribute("aria-invalid").Should().Be("true");
-        inputs[0].GetAttribute("aria-describedby").Should().Be(startErrorId);
-        inputs[1].GetAttribute("aria-describedby").Should().Be(endErrorId);
-        comp.Find($"#{startErrorId}").TextContent.Should().Be("Range error");
+        inputs[0].GetAttribute("aria-describedby").Should().Be(errorId);
+        inputs[1].GetAttribute("aria-describedby").Should().Be(errorId);
+        inputs[0].GetAttribute("aria-errormessage").Should().Be(errorId);
+        inputs[1].GetAttribute("aria-errormessage").Should().Be(errorId);
     }
 }

@@ -394,15 +394,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroup_Error_UsesAriaErrorAttributes()
         {
+            const string errorId = "radio-error-id";
             var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
                 .Add(x => x.Error, true)
+                .Add(x => x.ErrorId, errorId)
                 .Add(x => x.ErrorText, "Radio error"));
             var radioGroup = comp.Find("div[role=\"radiogroup\"]");
-            var errorId = radioGroup.GetAttribute("aria-errormessage");
 
             radioGroup.GetAttribute("aria-invalid").Should().Be("true");
             radioGroup.GetAttribute("aria-describedby").Should().Be(errorId);
-            errorId.Should().NotBeNullOrEmpty();
+            radioGroup.GetAttribute("aria-errormessage").Should().Be(errorId);
             comp.Find($"#{errorId}").TextContent.Should().Be("Radio error");
         }
 

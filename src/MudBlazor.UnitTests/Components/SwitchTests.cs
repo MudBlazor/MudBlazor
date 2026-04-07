@@ -225,15 +225,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Switch_Error_UsesAriaErrorAttributes()
         {
+            const string errorId = "switch-error-id";
             var comp = Context.Render<MudSwitch<bool>>(parameters => parameters
                 .Add(x => x.Error, true)
+                .Add(x => x.ErrorId, errorId)
                 .Add(x => x.ErrorText, "Switch error"));
             var input = comp.Find("input");
-            var errorId = input.GetAttribute("aria-errormessage");
 
             input.GetAttribute("aria-invalid").Should().Be("true");
             input.GetAttribute("aria-describedby").Should().Be(errorId);
-            errorId.Should().NotBeNullOrEmpty();
+            input.GetAttribute("aria-errormessage").Should().Be(errorId);
             comp.Find($"#{errorId}").TextContent.Should().Be("Switch error");
         }
 
