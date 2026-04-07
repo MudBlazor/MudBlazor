@@ -122,7 +122,6 @@
   }
 
   &.utility-table {
-    max-height: 300px;
     overflow: auto;
 
     tbody tr {
@@ -166,6 +165,10 @@
       }
     }
   }
+}
+
+.utility-table-restricted .docs-class-table.utility-table {
+  max-height: 300px;
 }
 
 ol,
