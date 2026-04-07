@@ -1778,6 +1778,13 @@ namespace MudBlazor
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
+
+            if (column.Tag?.ToString() == "hierarchy-column")
+            {
+                _hierarchyColumnVisibilityToggled = default;
+                _initialExpandedFunc = null;
+                _buttonDisabledFunc = null;
+            }
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()

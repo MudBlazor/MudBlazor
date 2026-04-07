@@ -6214,6 +6214,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_RemovingColumnClearsCachedCallback()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+            testComponent.ToggledEvents.Should().HaveCount(1);
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowHierarchyColumn, false));
+            comp.FindAll("tbody tr button.mud-icon-button").Should().BeEmpty();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+            testComponent.ToggledEvents.Should().HaveCount(1);
+        }
+
+        [Test]
         public async Task DataGridFilterIcons()
         {
             var comp = Context.Render<DataGridFilterIconsTest>();

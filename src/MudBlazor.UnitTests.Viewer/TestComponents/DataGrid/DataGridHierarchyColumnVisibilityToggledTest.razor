@@ -4,7 +4,10 @@
 
 <MudDataGrid T="Model" Items="@Items" ExpandSingleRow="@ExpandSingleRow">
     <Columns>
-        <HierarchyColumn T="Model" HierarchyVisibilityToggled="OnHierarchyVisibilityToggled" />
+        @if (ShowHierarchyColumn)
+        {
+            <HierarchyColumn T="Model" HierarchyVisibilityToggled="OnHierarchyVisibilityToggled" />
+        }
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
     </Columns>
@@ -18,6 +21,9 @@
 
     [Parameter]
     public bool ExpandSingleRow { get; set; }
+
+    [Parameter]
+    public bool ShowHierarchyColumn { get; set; } = true;
 
     public List<Model> Items { get; } = new()
     {
