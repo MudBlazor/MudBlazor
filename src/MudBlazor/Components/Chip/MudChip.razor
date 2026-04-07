@@ -26,30 +26,29 @@
                 <MudIcon Disabled="@Disabled" Icon="@GetCheckedIcon()" Class="mud-chip-icon" Size="MudBlazor.Size.Small" />
             }
         }
-        <span class="mud-chip-content">
-            @if (ChildContent is null)
+        <span class="mud-chip-content">@if (ChildContent is null)
+        {
+            @if (Text is null)
             {
-                @if(Text is null) {
-                    @($"{Value}")
-                }
-                else {
-                    @Text
-                }
+                @($"{Value}")
             }
             else
             {
-                @ChildContent
+                @Text
             }
-            @if (IsClosable)
-            {
-                <MudIconButton Class="mud-chip-close-button"
-                               Icon="@GetCloseIcon()"
-                               OnClick="OnCloseAsync"
-                               Size="MudBlazor.Size.Small"
-                               Disabled="@Disabled"
-                               aria-label="@Localizer[LanguageResource.MudChip_Close]"
-                               tabindex="-1"/>
-            }
-        </span>
+        }
+        else
+        {
+            @ChildContent
+        }@if (IsClosable)
+        {
+            <MudIconButton Class="mud-chip-close-button"
+                           Icon="@GetCloseIcon()"
+                           OnClick="OnCloseAsync"
+                           Size="MudBlazor.Size.Small"
+                           Disabled="@Disabled"
+                           aria-label="@Localizer[LanguageResource.MudChip_Close]"
+                           tabindex="-1"/>
+        }</span>
     </MudElement>
 </div>
