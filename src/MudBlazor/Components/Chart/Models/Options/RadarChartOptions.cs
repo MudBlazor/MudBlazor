@@ -101,8 +101,8 @@ public class RadarChartOptions : DefaultRadialChartOptions, IRadialChartOptions,
     public string? AxisFormat { get; set; }
 
     /// <summary>
-    /// Custom formatting function for vertical axis values.
-    /// If set, this function will be used to convert Y-axis values to strings for display purposes.
+    /// Custom formatting function for radar axis values.
+    /// If set, this function will be used to convert radial axis values to strings for display purposes.
     /// If not provided, <see cref="AxisFormat"/> will be used instead.
     /// </summary>
     public Func<double, string>? AxisToStringFunc { get; set; }

@@ -1333,7 +1333,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Option_YAxisSuggestedMax()
+    public void RadarChart_Option_AxisSuggestedMax()
     {
         var seriesData = new double[] { 5, 5, 5 };
         var options = new RadarChartOptions { GridLevels = 1, ShowAxisValues = true, AxisSuggestedMax = 10 };
@@ -1348,7 +1348,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Option_YAxisFormat()
+    public void RadarChart_Option_AxisFormat()
     {
         var seriesData = new double[] { 5, 5, 5 };
         var options = new RadarChartOptions { GridLevels = 1, ShowAxisValues = true, AxisFormat = "N2" };
@@ -1364,7 +1364,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Option_YAxisToStringFunc()
+    public void RadarChart_Option_AxisToStringFunc()
     {
         var seriesData = new double[] { 5, 5, 5 };
         var options = new RadarChartOptions
@@ -1410,6 +1410,9 @@ public class RadarChartTests : BunitTest
         );
 
         var axisValues = comp.FindAll("text.mud-chart-axis-value");
+
+        axisValues.Count.Should().Be(options.GridLevels);
+
         foreach (var label in axisValues)
         {
             label.TextContent.Should().Be("0");
@@ -1445,6 +1448,9 @@ public class RadarChartTests : BunitTest
         );
 
         var axisValues = comp.FindAll("text.mud-chart-axis-value");
+
+        axisValues.Count.Should().Be(options.GridLevels);
+
         foreach (var label in axisValues)
         {
             label.TextContent.Should().Be("0");
