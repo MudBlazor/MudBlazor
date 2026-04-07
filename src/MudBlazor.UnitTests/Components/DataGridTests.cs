@@ -6727,6 +6727,20 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(0, "Filter should be removable");
         }
+        
+        [Test]
+        public async Task DataGridAriaLabel_RendersOnTable()
+        {
+            var comp = Context.Render<DataGridCellTemplateTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
 
         #endregion
     }
