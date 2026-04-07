@@ -75,6 +75,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsClosable => (OnClose.HasDelegate || ChipSet?.AllClosable == true) && !IsAnchor;
 
+    private string ChipDisplayText => Text ?? Value?.ToString() ?? string.Empty;
+
     protected string GetHtmlTag()
     {
         if (IsButton)
