@@ -100,6 +100,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
         ChartType.Rose => (RoseChartOptions)options,
         ChartType.Radar => (RadarChartOptions)options,
         ChartType.Sankey => (SankeyChartOptions)options,
+        ChartType.ScatterPlot => (ScatterPlotChartOptions)options,
         _ => ChartOptions!
     };
 
@@ -115,6 +116,7 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
         ChartType.Rose => new RoseChartOptions(),
         ChartType.Radar => new RadarChartOptions(),
         ChartType.Sankey => new SankeyChartOptions(),
+        ChartType.ScatterPlot => new ScatterPlotChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 

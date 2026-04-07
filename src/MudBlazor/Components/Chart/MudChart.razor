@@ -169,6 +169,19 @@
                                                                        @ref="ChartReference"
                                                                        @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                        @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.ScatterPlot, ScatterPlotChartOptions scatterOptions) => @<ScatterPlot ChartSeries="@ChartSeries"
+                                                                                         ChartLabels="@ChartLabels"
+                                                                                         ChartOptions="scatterOptions"
+                                                                                         CanHideSeries="@CanHideSeries"
+                                                                                         LegendPosition="@LegendPosition"
+                                                                                         TooltipTemplate="@TooltipTemplate"
+                                                                                         TooltipPositionFunc="@TooltipPositionFunc"
+                                                                                         MatchBoundsToSize="@MatchBoundsToSize"
+                                                                                         CustomGraphics="@CustomGraphics"
+                                                                                         Width="@Width" Height="@Height"
+                                                                                         @ref="ChartReference"
+                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                                         @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 }

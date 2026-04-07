@@ -67,16 +67,13 @@
 </MudCard>
 
 @code {
-    [Inject]
-    private ISnackbar Snackbar { get; set; } = null!;
-
     private MudForm _form = null!;
-
+    private readonly OrderModel _model = new();
     private readonly OrderModelFluentValidator _orderValidator = new();
-
     private readonly OrderDetailsModelFluentValidator _orderDetailsValidator = new();
 
-    private readonly OrderModel _model = new OrderModel();
+    [Inject]
+    protected ISnackbar Snackbar { get; set; } = null!;
 
     public class OrderModel
     {
@@ -141,7 +138,7 @@
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .EmailAddress()
-                .MustAsync(async (value, cancellationToken) => await IsUniqueAsync(value));
+                .MustAsync(async (value, _) => await IsUniqueAsync(value));
 
             RuleFor(x => x.CCNumber)
                 .NotEmpty()
@@ -164,9 +161,9 @@
                 .SetValidator(new OrderDetailsModelFluentValidator());
         }
 
-        private async Task<bool> IsUniqueAsync(string email)
+        private static async Task<bool> IsUniqueAsync(string email)
         {
-            // Simulates a long running http call
+            // Simulates a long-running http call
             await Task.Delay(2000);
             return email.ToLower() != "test@test.com";
         }
@@ -174,9 +171,7 @@
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {
             var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions((OrderModel)model, x => x.IncludeProperties(propertyName)));
-            if (result.IsValid)
-                return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
+            return result.IsValid ? [] : result.Errors.Select(e => e.ErrorMessage);
         };
     }
 
@@ -199,9 +194,7 @@
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {
             var result = await ValidateAsync(ValidationContext<OrderDetailsModel>.CreateWithOptions((OrderDetailsModel)model, x => x.IncludeProperties(propertyName)));
-            if (result.IsValid)
-                return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
+            return result.IsValid ? [] : result.Errors.Select(e => e.ErrorMessage);
         };
     }
 }

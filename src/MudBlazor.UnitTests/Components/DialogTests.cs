@@ -1325,6 +1325,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DialogWithTitleShouldLinkDialogToTitleForAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title"));
+
+            var dialog = comp.Find("div[role='dialog']");
+            var labelledBy = dialog.GetAttribute("aria-labelledby");
+            labelledBy.Should().NotBeNullOrWhiteSpace();
+
+            var title = comp.Find("div.mud-dialog-title");
+            title.GetAttribute("id").Should().Be(labelledBy);
+            title.TrimmedText().Should().Contain("Dialog title");
+        }
+
+        [Test]
+        public async Task DialogWithoutHeaderShouldNotRenderAriaLabelledBy()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-labelledby").Should().BeNull();
+            comp.FindAll("div.mud-dialog-title").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DialogWithNestedDialogOptionShouldNotReset()
         {
             var comp = Context.Render<MudDialogProvider>();

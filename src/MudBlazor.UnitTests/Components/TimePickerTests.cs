@@ -190,6 +190,7 @@ namespace MudBlazor.UnitTests.Components
             picker.TimeIntermediate.Should().BeNull();
             picker.ConversionError.Should().BeTrue();
             picker.ConversionErrorMessage.Should().Be("Not a valid time span");
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
             // invalid time (overflow, AmPm)
             await comp.Find("input").ChangeAsync("13:45 AM");
             picker.TimeIntermediate.Should().BeNull();
