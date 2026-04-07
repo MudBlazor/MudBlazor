@@ -60,3 +60,32 @@ public class ScatterPlotChartOptions : DefaultAxisLineChartOptions, IAxisLineCha
         ChartPalette = options.ChartPalette,
     };
 }
+
+public record ScatterSeriesDisplayOverride : SeriesDisplayOverride
+{
+    /// <summary>
+    /// Determines how this series is rendered on a scatter plot chart.
+    /// Defaults to <see cref="ScatterSeriesType.Points"/>.
+    /// </summary>
+    /// <remarks>
+    /// Set to <see cref="ScatterSeriesType.Line"/> to render this series as a line (e.g. a regression line)
+    /// overlaid on scatter point series.
+    /// </remarks>
+    public ScatterSeriesType ScatterSeriesType { get; set; } = ScatterSeriesType.Points;
+}
+
+/// <summary>
+/// Determines how a series is rendered on a <see cref="Charts.ScatterPlot{T}"/> chart.
+/// </summary>
+public enum ScatterSeriesType
+{
+    /// <summary>
+    /// Renders data as individual scatter point markers (default).
+    /// </summary>
+    Points,
+
+    /// <summary>
+    /// Renders data as a continuous line, useful for regression lines or trend overlays.
+    /// </summary>
+    Line
+}
