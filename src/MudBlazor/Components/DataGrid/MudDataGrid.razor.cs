@@ -2750,12 +2750,17 @@ namespace MudBlazor
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
             if (_expandSingleRowState.Value)
             {
+                var itemWasOpen = _openHierarchies.Contains(item);
                 foreach (var openedHierarchy in _openHierarchies.Where(x => x != null && !x.Equals(item)))
                 {
                     await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(item);
+                if (!itemWasOpen)
+                {
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, true));
+                }
                 await InvokeAsync(StateHasChanged);
                 return;
             }

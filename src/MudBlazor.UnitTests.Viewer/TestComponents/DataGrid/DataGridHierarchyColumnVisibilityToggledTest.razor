@@ -2,7 +2,7 @@
 @using System.Collections.Generic
 @using MudBlazor.Utilities
 
-<MudDataGrid T="Model" Items="@Items">
+<MudDataGrid T="Model" Items="@Items" ExpandSingleRow="@ExpandSingleRow">
     <Columns>
         <HierarchyColumn T="Model" HierarchyVisibilityToggled="OnHierarchyVisibilityToggled" />
         <PropertyColumn Property="x => x.Name" />
@@ -15,6 +15,9 @@
 
 @code {
     public record Model(string Name, int Age);
+
+    [Parameter]
+    public bool ExpandSingleRow { get; set; }
 
     public List<Model> Items { get; } = new()
     {
