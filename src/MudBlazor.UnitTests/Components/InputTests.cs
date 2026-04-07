@@ -55,4 +55,25 @@ public class InputTests : BunitTest
         inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(startAriaLabel);
         inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(endAriaLabel);
     }
+
+    [Test]
+    public void RangeInput_Error_UsesAriaErrorAttributesOnBothInputs()
+    {
+        var comp = Context.Render<MudRangeInput<string>>(parameters => parameters
+            .Add(x => x.Error, true)
+            .Add(x => x.ErrorText, "Range error"));
+        var inputs = comp.FindAll("input");
+
+        inputs.Count.Should().Be(2);
+        var startErrorId = inputs[0].GetAttribute("aria-errormessage");
+        var endErrorId = inputs[1].GetAttribute("aria-errormessage");
+        startErrorId.Should().NotBeNullOrEmpty();
+        endErrorId.Should().NotBeNullOrEmpty();
+        startErrorId.Should().Be(endErrorId);
+        inputs[0].GetAttribute("aria-invalid").Should().Be("true");
+        inputs[1].GetAttribute("aria-invalid").Should().Be("true");
+        inputs[0].GetAttribute("aria-describedby").Should().Be(startErrorId);
+        inputs[1].GetAttribute("aria-describedby").Should().Be(endErrorId);
+        comp.Find($"#{startErrorId}").TextContent.Should().Be("Range error");
+    }
 }

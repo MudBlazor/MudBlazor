@@ -223,6 +223,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Switch_Error_UsesAriaErrorAttributes()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters
+                .Add(x => x.Error, true)
+                .Add(x => x.ErrorText, "Switch error"));
+            var input = comp.Find("input");
+            var errorId = input.GetAttribute("aria-errormessage");
+
+            input.GetAttribute("aria-invalid").Should().Be("true");
+            input.GetAttribute("aria-describedby").Should().Be(errorId);
+            errorId.Should().NotBeNullOrEmpty();
+            comp.Find($"#{errorId}").TextContent.Should().Be("Switch error");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");

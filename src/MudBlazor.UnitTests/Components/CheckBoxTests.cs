@@ -245,6 +245,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Contains("blazor:onclick:stopPropagation").Should().BeTrue();
         }
 
+        [Test]
+        public void CheckBox_Error_UsesAriaErrorAttributes()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(x => x.Error, true)
+                .Add(x => x.ErrorText, "Checkbox error"));
+            var input = comp.Find("input");
+            var errorId = input.GetAttribute("aria-errormessage");
+
+            input.GetAttribute("aria-invalid").Should().Be("true");
+            input.GetAttribute("aria-describedby").Should().Be(errorId);
+            errorId.Should().NotBeNullOrEmpty();
+            comp.Find($"#{errorId}").TextContent.Should().Be("Checkbox error");
+        }
+
         /// <summary>
         /// Change state with several keys
         /// </summary>

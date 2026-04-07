@@ -14,7 +14,14 @@
             <CascadingValue TValue="IForm" Value="null">
                 <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
                     <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
-                        <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle" aria-required="@Required.ToString().ToLowerInvariant()">
+                        <div role="radiogroup"
+                             @attributes="UserAttributes"
+                             class="@GetInputClass()"
+                             style="@InputStyle"
+                             aria-required="@Required.ToString().ToLowerInvariant()"
+                             aria-describedby="@(HasErrors ? ErrorIdState.Value : null)"
+                             aria-errormessage="@(HasErrors ? ErrorIdState.Value : null)"
+                             aria-invalid="@HasErrors.ToString().ToLowerInvariant()">
                             @ChildContent
                         </div>
                     </CascadingValue>

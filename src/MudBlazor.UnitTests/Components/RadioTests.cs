@@ -392,6 +392,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RadioGroup_Error_UsesAriaErrorAttributes()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(x => x.Error, true)
+                .Add(x => x.ErrorText, "Radio error"));
+            var radioGroup = comp.Find("div[role=\"radiogroup\"]");
+            var errorId = radioGroup.GetAttribute("aria-errormessage");
+
+            radioGroup.GetAttribute("aria-invalid").Should().Be("true");
+            radioGroup.GetAttribute("aria-describedby").Should().Be(errorId);
+            errorId.Should().NotBeNullOrEmpty();
+            comp.Find($"#{errorId}").TextContent.Should().Be("Radio error");
+        }
+
+        [Test]
         public void Radio_Respects_Custom_TabIndex()
         {
             var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
