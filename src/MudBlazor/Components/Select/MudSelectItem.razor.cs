@@ -212,11 +212,6 @@ namespace MudBlazor
         /// </summary>
         private async Task OnClickHandleAsync()
         {
-            if (MultiSelection)
-            {
-                Selected = !Selected;
-            }
-
             if (MudSelect is not null)
             {
                 await MudSelect.SelectOption(Value);

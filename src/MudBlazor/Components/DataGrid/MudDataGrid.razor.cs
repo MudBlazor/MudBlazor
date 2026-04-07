@@ -35,6 +35,7 @@ namespace MudBlazor
         private readonly HashSet<T> _initialExpansions = [];
         private Func<T, bool>? _initialExpandedFunc = null;
         private Func<T, bool>? _buttonDisabledFunc = null;
+        private EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> _hierarchyColumnVisibilityToggled;
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>>? _dropContainer;
         private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
@@ -283,6 +284,17 @@ namespace MudBlazor
         #region EventCallbacks
 
         /// <summary>
+        /// Occurs when the <see cref="SortDefinitions"/> have changed.
+        /// </summary>
+        /// <remarks>
+        /// This callback is raised when the grid's sort state is updated.
+        /// When <see cref="ServerData"/> or <see cref="VirtualizeServerData"/> is used,
+        /// it is invoked before the data reload triggered by the new sort completes.
+        /// </remarks>        
+        [Parameter]
+        public EventCallback<Dictionary<string, SortDefinition<T>>> SortChanged { get; set; }
+
+        /// <summary>
         /// Occurs when the <see cref="SelectedItem"/> has changed.
         /// </summary>
         /// <remarks>
@@ -371,6 +383,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
+
+        /// <summary>
+        /// Occurs when the active filters have changed.
+        /// </summary>
+        /// <remarks>
+        /// This callback receives the current active filters after the change is applied.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<IReadOnlyCollection<IFilterDefinition<T>>> FilterChanged { get; set; }
 
         #endregion
 
@@ -1588,7 +1609,7 @@ namespace MudBlazor
                 var first = _openHierarchies.First();
                 foreach (var item in _openHierarchies.Skip(1))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(first);
@@ -1709,6 +1730,7 @@ namespace MudBlazor
                 {
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
+                    _hierarchyColumnVisibilityToggled = templateColumn.HierarchyVisibilityToggled;
                     // Apply expansion now if items or _serverData.Items is already set
                     if (Items is not null)
                     {
@@ -1756,6 +1778,13 @@ namespace MudBlazor
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
+
+            if (column.Tag?.ToString() == "hierarchy-column")
+            {
+                _hierarchyColumnVisibilityToggled = default;
+                _initialExpandedFunc = null;
+                _buttonDisabledFunc = null;
+            }
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
@@ -1798,6 +1827,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1812,6 +1842,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1835,6 +1866,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1898,11 +1930,12 @@ namespace MudBlazor
         /// <summary>
         /// Removes all filters from all columns.
         /// </summary>
-        public Task ClearFiltersAsync()
+        public async Task ClearFiltersAsync()
         {
             FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
-            return InvokeServerLoadFunc();
+            await InvokeServerLoadFunc();
+            await NotifyFilterChangedAsync();
         }
 
         /// <summary>
@@ -1917,6 +1950,7 @@ namespace MudBlazor
             }
             _filtersMenuVisible = true;
             await InvokeServerLoadFunc();
+            await NotifyFilterChangedAsync();
             if (!HasServerData) StateHasChanged();
         }
 
@@ -1932,7 +1966,10 @@ namespace MudBlazor
             FilterDefinitions.RemoveAt(index);
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
         }
+
+        private Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
@@ -2269,6 +2306,10 @@ namespace MudBlazor
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string>? removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
+            if (_isFirstRendered)
+            {
+                await SortChanged.InvokeAsync(new Dictionary<string, SortDefinition<T>>(activeSortDefinitions));
+            }
 
             if (_isFirstRendered)
             {
@@ -2703,7 +2744,7 @@ namespace MudBlazor
             var expandedItems = FilteredItems.Where(x => !_buttonDisabledFunc(x) && _openHierarchies.Add(x));
             foreach (var item in expandedItems)
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, true));
             }
             await InvokeAsync(StateHasChanged);
         }
@@ -2716,7 +2757,7 @@ namespace MudBlazor
             Debug.Assert(_buttonDisabledFunc is not null);
             foreach (var openedHierarchy in _openHierarchies.Where(x => !_buttonDisabledFunc(x)).ToList())
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
+                await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 _openHierarchies.Remove(openedHierarchy);
             }
             await InvokeAsync(StateHasChanged);
@@ -2731,12 +2772,17 @@ namespace MudBlazor
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
             if (_expandSingleRowState.Value)
             {
+                var itemWasOpen = _openHierarchies.Contains(item);
                 foreach (var openedHierarchy in _openHierarchies.Where(x => x != null && !x.Equals(item)))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
+                    await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(item);
+                if (!itemWasOpen)
+                {
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, true));
+                }
                 await InvokeAsync(StateHasChanged);
                 return;
             }
@@ -2745,14 +2791,20 @@ namespace MudBlazor
             if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, true));
             }
             else
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, false));
             }
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private async Task InvokeHierarchyVisibilityToggledAsync(DataGridHierarchyVisibilityToggledEventArgs<T> args)
+        {
+            await HierarchyVisibilityToggled.InvokeAsync(args);
+            await _hierarchyColumnVisibilityToggled.InvokeAsync(args);
         }
 
         #region Resize feature

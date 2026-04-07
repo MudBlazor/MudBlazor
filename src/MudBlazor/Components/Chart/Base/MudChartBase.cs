@@ -172,6 +172,7 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     /// </summary>
     protected string Classname => new CssBuilder("mud-chart")
         .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToStringFast(true)}")
+        .AddClass("mud-chart-fill-bounds", MatchBoundsToSize)
         .AddClass(Class)
         .Build();
 
