@@ -2024,17 +2024,11 @@ namespace MudBlazor
                 return null;
             }
 
-            var selectColumn = GetSelectColumn();
-            if (selectColumn?.AriaLabelFunc is not null)
-            {
-                return null;
-            }
-
             var rowLabelColumns = GetDefaultRowLabelColumns();
             if (rowLabelColumns.Count == 0)
             {
-                // Without a custom AriaLabelFunc or a value-bearing column to derive row text from,
-                // the checkbox falls back to MudCheckBox's default "Select row" label.
+                // Without a value-bearing column to derive row text from, the checkbox falls back to
+                // MudCheckBox's default "Select row" label.
                 return null;
             }
 
@@ -2091,22 +2085,9 @@ namespace MudBlazor
 
         private List<Column<T>> GetDefaultRowLabelColumns()
         {
-            var propertyColumns = RenderedColumns
-                .Where(column => !column.HiddenState.Value
-                    && IsPropertyColumn(column)
-                    && column.Tag?.ToString() != "hierarchy-column")
-                .ToList();
-
-            if (propertyColumns.Count != 0)
-            {
-                return propertyColumns;
-            }
-
             return RenderedColumns
                 .Where(column => !column.HiddenState.Value
-                    && column is not SelectColumn<T>
-                    && column is not TemplateColumn<T>
-                    && column.Tag?.ToString() == "hierarchy-column")
+                    && IsPropertyColumn(column))
                 .ToList();
         }
 
