@@ -2,9 +2,12 @@
 @using System.Collections.Generic
 @using MudBlazor.Utilities
 
-<MudDataGrid T="Model" Items="@Items" ExpandSingleRow="@ExpandSingleRow" HierarchyVisibilityToggled="@OnHierarchyVisibilityToggled">
+<MudDataGrid T="Model" Items="@Items" ExpandSingleRow="@ExpandSingleRow">
     <Columns>
-        <HierarchyColumn />
+        @if (ShowHierarchyColumn)
+        {
+            <HierarchyColumn T="Model" HierarchyVisibilityToggled="OnHierarchyVisibilityToggled" />
+        }
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
     </Columns>
@@ -19,14 +22,17 @@
     [Parameter]
     public bool ExpandSingleRow { get; set; }
 
-    public List<Model> Items = new()
+    [Parameter]
+    public bool ShowHierarchyColumn { get; set; } = true;
+
+    public List<Model> Items { get; } = new()
     {
         new Model("John", 25),
         new Model("Jane", 30),
         new Model("Bob", 35)
     };
 
-    public List<DataGridHierarchyVisibilityToggledEventArgs<Model>> ToggledEvents = [];
+    public List<DataGridHierarchyVisibilityToggledEventArgs<Model>> ToggledEvents { get; } = [];
 
     private Task OnHierarchyVisibilityToggled(DataGridHierarchyVisibilityToggledEventArgs<Model> args)
     {

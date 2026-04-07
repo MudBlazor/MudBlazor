@@ -6118,6 +6118,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_ExpandSingleRow_RaisesExpandForOpenedItem()
+        {
+            var comp = Context.Render<DataGridHierarchyVisibilityToggledTest>(p => p.Add(x => x.ExpandSingleRow, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+        }
+
+        [Test]
         public async Task DataGrid_HierarchyVisibilityToggled_CollapseAll()
         {
             var comp = Context.Render<DataGridHierarchyVisibilityToggledTest>();
@@ -6145,6 +6159,75 @@ namespace MudBlazor.UnitTests.Components
             testComponent.ToggledEvents.Should().HaveCount(3);
             testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
             testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_SingleRowToggle()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+
+            testComponent.ToggledEvents.Should().HaveCount(2);
+            testComponent.ToggledEvents[1].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[1].Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_ExpandSingleRow_RaisesExpandForOpenedItem()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>(p => p.Add(x => x.ExpandSingleRow, true));
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_ExpandAndCollapseAll()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded);
+
+            testComponent.ToggledEvents.Clear();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => !x.Expanded);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_RemovingColumnClearsCachedCallback()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+            testComponent.ToggledEvents.Should().HaveCount(1);
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowHierarchyColumn, false));
+            comp.FindAll("tbody tr button.mud-icon-button").Should().BeEmpty();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+            testComponent.ToggledEvents.Should().HaveCount(1);
         }
 
         [Test]

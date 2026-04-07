@@ -35,6 +35,7 @@ namespace MudBlazor
         private readonly HashSet<T> _initialExpansions = [];
         private Func<T, bool>? _initialExpandedFunc = null;
         private Func<T, bool>? _buttonDisabledFunc = null;
+        private EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> _hierarchyColumnVisibilityToggled;
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>>? _dropContainer;
         private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
@@ -1608,7 +1609,7 @@ namespace MudBlazor
                 var first = _openHierarchies.First();
                 foreach (var item in _openHierarchies.Skip(1))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(first);
@@ -1729,6 +1730,7 @@ namespace MudBlazor
                 {
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
+                    _hierarchyColumnVisibilityToggled = templateColumn.HierarchyVisibilityToggled;
                     // Apply expansion now if items or _serverData.Items is already set
                     if (Items is not null)
                     {
@@ -1776,6 +1778,13 @@ namespace MudBlazor
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
+
+            if (column.Tag?.ToString() == "hierarchy-column")
+            {
+                _hierarchyColumnVisibilityToggled = default;
+                _initialExpandedFunc = null;
+                _buttonDisabledFunc = null;
+            }
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
@@ -2735,7 +2744,7 @@ namespace MudBlazor
             var expandedItems = FilteredItems.Where(x => !_buttonDisabledFunc(x) && _openHierarchies.Add(x));
             foreach (var item in expandedItems)
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, true));
             }
             await InvokeAsync(StateHasChanged);
         }
@@ -2748,7 +2757,7 @@ namespace MudBlazor
             Debug.Assert(_buttonDisabledFunc is not null);
             foreach (var openedHierarchy in _openHierarchies.Where(x => !_buttonDisabledFunc(x)).ToList())
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
+                await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 _openHierarchies.Remove(openedHierarchy);
             }
             await InvokeAsync(StateHasChanged);
@@ -2763,12 +2772,17 @@ namespace MudBlazor
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
             if (_expandSingleRowState.Value)
             {
+                var itemWasOpen = _openHierarchies.Contains(item);
                 foreach (var openedHierarchy in _openHierarchies.Where(x => x != null && !x.Equals(item)))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
+                    await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(item);
+                if (!itemWasOpen)
+                {
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, true));
+                }
                 await InvokeAsync(StateHasChanged);
                 return;
             }
@@ -2777,14 +2791,20 @@ namespace MudBlazor
             if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, true));
             }
             else
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, false));
             }
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private async Task InvokeHierarchyVisibilityToggledAsync(DataGridHierarchyVisibilityToggledEventArgs<T> args)
+        {
+            await HierarchyVisibilityToggled.InvokeAsync(args);
+            await _hierarchyColumnVisibilityToggled.InvokeAsync(args);
         }
 
         #region Resize feature
