@@ -1293,6 +1293,7 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.SortChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.FilterChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.Should().NotBeNull();
@@ -1319,11 +1320,14 @@ namespace MudBlazor.UnitTests.Components
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
             comp.Instance.RowContextMenuClicked.Should().Be(false);
+            comp.Instance.SortChanged.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
             comp.Instance.CanceledEditingItem.Should().Be(false);
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetSortAsync(nameof(DataGridEventCallbacksTest.Item.Name), SortDirection.Ascending, x => x.Name));
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             await dataGrid.FindAll(".mud-table-body tr")[0].ClickAsync();
@@ -1337,6 +1341,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
             comp.Instance.RowContextMenuClicked.Should().Be(true);
+            comp.Instance.SortChanged.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(true);
