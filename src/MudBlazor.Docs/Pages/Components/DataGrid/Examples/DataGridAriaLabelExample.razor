@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid T="string" Items="@_items" AriaLabel="Fruits table" Hover="true" Breakpoint="Breakpoint.Sm">
+    <Columns>
+        <PropertyColumn Property="@(fruit => fruit)" Title="Fruit"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly string[] _items = new[] { "Apple", "Banana", "Cherry" };
+}

@@ -396,6 +396,16 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        
+        /// <summary>
+        /// The aria-label for the HTML table element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to null. When set, renders as the table's <c>aria-label</c> attribute for accessibility.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// Allows columns to be reordered via the columns panel.
