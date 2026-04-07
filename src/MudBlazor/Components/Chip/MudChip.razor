@@ -29,7 +29,7 @@
         <span class="mud-chip-content">
             @if (ChildContent is null)
             {
-                <span class="mud-chip-content-text">@(Text ?? $"{Value}")</span>
+                <span class="mud-chip-content-text">@(Text ?? Value?.ToString())</span>
             }
             else
             {
