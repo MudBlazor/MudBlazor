@@ -22,6 +22,7 @@ namespace MudBlazor
         private bool _isResizing;
         private double? _resizerHeight;
         private bool _filtersMenuVisible;
+        private (double Top, double Left) _filtersMenuPosition;
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
         private readonly string _id = Identifier.Create();
@@ -228,6 +229,12 @@ namespace MudBlazor
                          FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty));
             }
         }
+
+        private Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _filtersMenuPosition.Left.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+            { "data-pc-y", _filtersMenuPosition.Top.ToString(System.Globalization.CultureInfo.InvariantCulture) }
+        };
 
         #endregion
         protected override async Task OnParametersSetAsync()
@@ -543,14 +550,12 @@ namespace MudBlazor
                 {
                     DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
                 }
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
                 DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }
@@ -561,14 +566,12 @@ namespace MudBlazor
             Debug.Assert(DataGrid is not null);
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
                 DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }

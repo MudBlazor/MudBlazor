@@ -46,7 +46,8 @@ namespace MudBlazor
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
-        internal (double Top, double Left) _openPosition = (0, 0);
+        private (double Top, double Left) _filtersMenuPosition = (0, 0);
+        private (double Top, double Left) _columnsPanelPosition = (0, 0);
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -55,10 +56,16 @@ namespace MudBlazor
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
-        internal Dictionary<string, object> PositionAttributes => new()
+        internal Dictionary<string, object> FiltersPositionAttributes => new()
         {
-            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
-            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+            { "data-pc-x", _filtersMenuPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _filtersMenuPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
+
+        internal Dictionary<string, object> ColumnsPanelPositionAttributes => new()
+        {
+            { "data-pc-x", _columnsPanelPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _columnsPanelPosition.Top.ToString(CultureInfo.InvariantCulture) }
         };
 
         public MudDataGrid()
@@ -2411,6 +2418,10 @@ namespace MudBlazor
         private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
 
         internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
+        internal void SetFiltersMenuPosition(double top, double left)
+        {
+            _filtersMenuPosition = (top, left);
+        }
 
         private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
             FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not
@@ -2446,8 +2457,7 @@ namespace MudBlazor
         {
             if (args != null)
             {
-                _openPosition.Top = args.PageY;
-                _openPosition.Left = args.PageX;
+                _columnsPanelPosition = (args.PageY, args.PageX);
             }
             _columnsPanelVisible = true;
             StateHasChanged();

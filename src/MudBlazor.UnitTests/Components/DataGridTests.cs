@@ -2898,8 +2898,6 @@ namespace MudBlazor.UnitTests.Components
 
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
-            comp.Find(".filters-panel").ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
-
             // click again on the filter button
             await FilterButton().ClickAsync();
 
@@ -3691,6 +3689,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
+            comp.Find(".mud-data-grid-columns-panel").ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
@@ -3706,6 +3705,30 @@ namespace MudBlazor.UnitTests.Components
             {
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
             });
+        }
+
+        [Test]
+        public async Task DataGridShowMenuIconOpeningFilterDoesNotRepositionColumnsPanel()
+        {
+            var comp = Context.Render<DataGridShowMenuIconFilterPositionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridShowMenuIconFilterPositionTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel(new MouseEventArgs { PageX = 11, PageY = 22 }));
+
+            IElement columnsPanel = null!;
+            await comp.WaitForAssertionAsync(() =>
+            {
+                columnsPanel = comp.Find(".mud-data-grid-columns-panel");
+            });
+            columnsPanel.GetAttribute("data-pc-x").Should().Be("11");
+            columnsPanel.GetAttribute("data-pc-y").Should().Be("22");
+            columnsPanel.ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
+
+            await comp.Find(".mud-data-grid-columns-panel .filter-button").ClickAsync(new MouseEventArgs { PageX = 101, PageY = 202 });
+
+            comp.Find(".filters-panel").ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
+            comp.Find(".mud-data-grid-columns-panel").GetAttribute("data-pc-x").Should().Be("11");
+            comp.Find(".mud-data-grid-columns-panel").GetAttribute("data-pc-y").Should().Be("22");
         }
 
         [Test]
@@ -4309,7 +4332,12 @@ namespace MudBlazor.UnitTests.Components
                 PageX = openPosition.Left
             };
             comp.Find(".filter-button").Click(mouseArgs);
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var filterPopup = comp.Find(".column-filter-popup");
+                filterPopup.GetAttribute("data-pc-x").Should().Be(openPosition.Left.ToString(CultureInfo.InvariantCulture));
+                filterPopup.GetAttribute("data-pc-y").Should().Be(openPosition.Top.ToString(CultureInfo.InvariantCulture));
+            });
         }
 
         [Test]
