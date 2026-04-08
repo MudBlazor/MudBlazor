@@ -20,6 +20,8 @@ namespace MudBlazor
         private bool _closeOnPointerLeave;
         private bool _initial = true;
         private bool _keepInitialState;
+        private bool _isApplyingResponsiveStateChange;
+        private bool _explicitClosePreventsResponsiveAutoOpen;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
         /// <summary>
@@ -312,6 +314,11 @@ namespace MudBlazor
 
         private async Task OnOpenParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
         {
+            if (!_isApplyingResponsiveStateChange && HasRendered && IsResponsiveOrMini() && Breakpoint is not Breakpoint.None and not Breakpoint.Always)
+            {
+                _explicitClosePreventsResponsiveAutoOpen = !arg.Value;
+            }
+
             if (HasRendered && _initial && !_keepInitialState)
             {
                 _initial = false;
@@ -374,20 +381,21 @@ namespace MudBlazor
                 breakpoint = await BrowserViewportService.GetCurrentBreakpointAsync();
             }
 
+            var breakpointChanged = _lastUpdatedBreakpoint != breakpoint;
             var isStateChanged = false;
             if (ShouldCloseDrawer(breakpoint))
             {
-                await _openState.SetValueAsync(false);
+                await SetOpenFromResponsiveStateAsync(false);
                 isStateChanged = true;
             }
-            else if (ShouldOpenDrawer(breakpoint))
+            else if (ShouldOpenDrawer(breakpoint) && (Breakpoint == Breakpoint.Always || !_explicitClosePreventsResponsiveAutoOpen))
             {
-                await _openState.SetValueAsync(true);
+                await SetOpenFromResponsiveStateAsync(true);
                 isStateChanged = true;
             }
 
             _lastUpdatedBreakpoint = breakpoint;
-            if (isStateChanged)
+            if (isStateChanged || breakpointChanged)
             {
                 await InvokeAsync(StateHasChanged);
             }
@@ -402,6 +410,19 @@ namespace MudBlazor
         private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
         private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
+
+        private async Task SetOpenFromResponsiveStateAsync(bool open)
+        {
+            _isApplyingResponsiveStateChange = true;
+            try
+            {
+                await _openState.SetValueAsync(open);
+            }
+            finally
+            {
+                _isApplyingResponsiveStateChange = false;
+            }
+        }
 
         internal string GetPosition()
         {
@@ -462,10 +483,12 @@ namespace MudBlazor
 
                 if (HandleBreakpointNone())
                 {
+                    _explicitClosePreventsResponsiveAutoOpen = false;
                     await InitialOpenState(false);
                 }
                 else if (HandleBreakpointAlways())
                 {
+                    _explicitClosePreventsResponsiveAutoOpen = false;
                     await InitialOpenState(true);
                 }
                 else if (HandleBelowBreakpointAndOpenState())
@@ -490,7 +513,7 @@ namespace MudBlazor
             Task InitialOpenState(bool open)
             {
                 _keepInitialState = true;
-                return _openState.SetValueAsync(open);
+                return SetOpenFromResponsiveStateAsync(open);
             }
         }
 

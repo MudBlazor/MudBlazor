@@ -405,6 +405,46 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Verifies issue #11541: a responsive drawer explicitly closed on a large viewport must remain closed
+        /// after resizing below and back above its breakpoint.
+        /// </summary>
+        [Test]
+        public async Task Responsive_ExplicitlyClosedOnLarge_RemainsClosedAfterBreakpointRoundTrip()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>();
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance)!;
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(
+                new BrowserWindowSize { Height = 400, Width = 600 },
+                Breakpoint.Sm,
+                subscription.JavaScriptListenerId));
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(
+                new BrowserWindowSize { Height = 720, Width = 1280 },
+                Breakpoint.Lg,
+                subscription.JavaScriptListenerId));
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
         [Test]
         public async Task Responsive_AlwaysOpen_BreakpointAlways()
         {
