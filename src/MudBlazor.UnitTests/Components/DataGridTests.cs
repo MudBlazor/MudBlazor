@@ -6273,11 +6273,8 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.Markup.Should().Contain("test_column_sort_icon");
                 comp.Markup.Should().Contain("test_grid_sort_icon");
-                comp.Markup.Should().Contain("test_column_filter_empty_icon");
                 comp.Markup.Should().Contain("test_grid_filter_empty_icon");
-                comp.Markup.Should().Contain("test_column_column_options_icon");
                 comp.Markup.Should().Contain("test_grid_column_options_icon");
             });
 
@@ -6285,7 +6282,6 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.Markup.Should().Contain("test_column_filter_empty_icon");
                 comp.Markup.Should().Contain("test_grid_filter_empty_icon");
             });
 
@@ -6300,16 +6296,14 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.Markup.Should().Contain("test_column_filter_filled_icon");
-                comp.Markup.Should().Contain("test_grid_filter_empty_icon");
+                comp.Markup.Should().Contain("test_grid_filter_filled_icon");
             });
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.Markup.Should().Contain("test_column_filter_filled_icon");
-                comp.Markup.Should().Contain("test_grid_filter_empty_icon");
+                comp.Markup.Should().Contain("test_grid_filter_filled_icon");
             });
 
             // Check filter buttons when FilterMode is ColumnFilterRow
@@ -6317,9 +6311,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.Markup.Should().Contain("test_column_filter_filled_icon");
                 comp.Markup.Should().Contain("test_grid_filter_filled_icon");
-                comp.Markup.Should().Contain("test_column_filter_clear_icon");
                 comp.Markup.Should().Contain("test_grid_filter_clear_icon");
             });
         }

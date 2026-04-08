@@ -483,7 +483,7 @@ namespace MudBlazor
         /// The icon shown when a column is sortable.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>.  Can be overridden for individual columns via <see cref="Column{T}.SortIcon"/>.
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
@@ -661,7 +661,7 @@ namespace MudBlazor
         /// The icon used for column options menus in header cells.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.MoreVert"/>.  Can be overridden for individual columns via <see cref="Column{T}.ColumnOptionsIcon"/>.
+        /// Defaults to <see cref="Icons.Material.Filled.MoreVert"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
