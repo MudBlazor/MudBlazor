@@ -2128,9 +2128,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/12012.
         /// When a form has a validation error and the bound property is updated through code,
         /// the validation error should be cleared if the new value is valid, or updated if still invalid.
-        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/12012
         /// </summary>
         [Test]
         public async Task FormValidationErrorClearedOnProgrammaticValueChange()
@@ -2141,10 +2141,9 @@ namespace MudBlazor.UnitTests.Components
             var textField = textFieldComp.Instance;
 
             // Set validation that requires non-empty string
-            await textFieldComp.SetParametersAndRenderAsync(parameters =>
-                parameters
-                    .Add(x => x.Required, true)
-                    .Add(x => x.RequiredError, "This field is required"));
+            await textFieldComp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Required, true)
+                .Add(x => x.RequiredError, "This field is required"));
 
             // Simulate user interaction: Tab out of field to trigger validation error
             await textFieldComp.Find("input").BlurAsync();

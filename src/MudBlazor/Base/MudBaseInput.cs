@@ -554,6 +554,7 @@ namespace MudBlazor
         {
             _validated = false;
             var wasTouched = Touched;
+
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
             // Check ParameterView to see if Text is also present
