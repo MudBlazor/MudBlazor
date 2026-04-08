@@ -773,9 +773,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Step, 1));
 
             await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[0].TriggerEventAsync("onpointerdown", new PointerEventArgs());
-            await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[0].ClickAsync(new MouseEventArgs());
             await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[1].TriggerEventAsync("onpointerdown", new PointerEventArgs());
-            await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[1].ClickAsync(new MouseEventArgs());
 
             Context.JSInterop.Invocations
                 .Count(x => x.Identifier == "Blazor._internal.domWrapper.focus")

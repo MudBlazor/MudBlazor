@@ -276,7 +276,7 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
-        protected virtual async Task HandleSpinButtonPointerDownAsync(PointerEventArgs _)
+        protected virtual async Task HandleSpinButtonPointerDownAsync()
         {
             await ElementReference.FocusAsync();
         }
