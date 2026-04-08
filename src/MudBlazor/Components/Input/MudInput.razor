@@ -137,7 +137,7 @@
     {
         <div class="mud-input-numeric-spin">
             <MudButton Variant="Variant.Text"
-                       @onclick="OnIncrement"
+                       @onclick="HandleIncrementButtonAsync"
                        @onmousedown:preventDefault
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"
@@ -146,7 +146,7 @@
             </MudButton>
 
             <MudButton Variant="Variant.Text"
-                       @onclick="OnDecrement"
+                       @onclick="HandleDecrementButtonAsync"
                        @onmousedown:preventDefault
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"

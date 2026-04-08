@@ -276,6 +276,18 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        protected virtual async Task HandleIncrementButtonAsync(MouseEventArgs _)
+        {
+            await ElementReference.FocusAsync();
+            await OnIncrement.InvokeAsync();
+        }
+
+        protected virtual async Task HandleDecrementButtonAsync(MouseEventArgs _)
+        {
+            await ElementReference.FocusAsync();
+            await OnDecrement.InvokeAsync();
+        }
+
         private readonly record struct AutoSizingVisualState(
             Variant Variant,
             Margin Margin,
