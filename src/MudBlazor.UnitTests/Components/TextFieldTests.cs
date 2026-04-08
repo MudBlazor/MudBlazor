@@ -1342,9 +1342,11 @@ namespace MudBlazor.UnitTests.Components
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(expectedFinalDateTime);
-            textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            comp.WaitForAssertion(() =>
+            {
+                textField.ReadValue.Should().Be(expectedFinalDateTime);
+                textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            });
         }
 
         /// <summary>
