@@ -20,6 +20,7 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     where TChartOptions : IAxisChartOptions, new()
 {
     private const int AxisTitleOffset = 0;
+    private static readonly DoubleEpsilonEqualityComparer _epsilonComparer = new(0.01);
 
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -31,12 +32,28 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     /// <summary>
     /// The size of the Y-axis labels.
     /// </summary>
-    protected ElementSize? _yAxisLabelSize;
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public ElementSize? YAxisLabelSize { get; set; }
+
+    /// <summary>
+    /// The event callback for when the Y-axis label size changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ElementSize?> YAxisLabelSizeChanged { get; set; }
 
     /// <summary>
     /// The size of the X-axis labels.
     /// </summary>
-    protected ElementSize? _xAxisLabelSize;
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public ElementSize? XAxisLabelSize { get; set; }
+
+    /// <summary>
+    /// The event callback for when the X-axis label size changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ElementSize?> XAxisLabelSizeChanged { get; set; }
 
     /// <summary>
     /// The width of the chart.
@@ -228,27 +245,38 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         await base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
+        {
             await ElementRefChanged.InvokeAsync(_svgRef);
+        }
 
         var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
         var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
         var axisChanged = false;
-        var comparer = new DoubleEpsilonEqualityComparer(0.01);
 
-        if (yAxisLabelSize != null && (_yAxisLabelSize == null || !comparer.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
+        if (yAxisLabelSize != null && (YAxisLabelSize == null || !_epsilonComparer.Equals(yAxisLabelSize.Width, YAxisLabelSize.Width)))
         {
-            _yAxisLabelSize = yAxisLabelSize;
+            if (YAxisLabelSizeChanged.HasDelegate)
+            {
+                await YAxisLabelSizeChanged.InvokeAsync(yAxisLabelSize);
+            }
+
             axisChanged = true;
         }
 
-        if (xAxisLabelSize != null && (_xAxisLabelSize == null || !comparer.Equals(xAxisLabelSize.Height, _xAxisLabelSize.Height)))
+        if (xAxisLabelSize != null && (XAxisLabelSize == null || !_epsilonComparer.Equals(xAxisLabelSize.Height, XAxisLabelSize.Height)))
         {
-            _xAxisLabelSize = xAxisLabelSize;
+            if (XAxisLabelSizeChanged.HasDelegate)
+            {
+                await XAxisLabelSizeChanged.InvokeAsync(xAxisLabelSize);
+            }
+
             axisChanged = true;
         }
 
         if (axisChanged && AxisChanged.HasDelegate)
+        {
             await AxisChanged.InvokeAsync();
+        }
     }
 }
