@@ -621,6 +621,18 @@ namespace MudBlazor
             }
         }
 
+        internal string? ResolvedSortIcon => SortIcon ?? DataGrid?.SortIcon;
+
+        internal string? ResolvedFilterIconEmpty => FilterIconEmpty ?? DataGrid?.FilterIconEmpty;
+
+        internal string? ResolvedFilterIconFilled => FilterIconFilled ?? DataGrid?.FilterIconFilled;
+
+        internal string? ResolvedFilterIconClear => FilterIconClear ?? DataGrid?.FilterIconClear;
+
+        internal string? ResolvedColumnOptionsIcon => ColumnOptionsIcon ?? DataGrid?.ColumnOptionsIcon;
+
+        internal string? ResolvedDragIndicatorIcon => DragIndicatorIcon ?? DataGrid?.DragIndicatorIcon;
+
         #endregion
 
         internal int SortIndex { get; set; } = -1;
