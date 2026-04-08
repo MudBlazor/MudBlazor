@@ -480,6 +480,16 @@ namespace MudBlazor
         public SortMode SortMode { get; set; } = SortMode.Multiple;
 
         /// <summary>
+        /// The icon shown when a column is sortable.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>.  Can be overridden for individual columns via <see cref="Column{T}.SortIcon"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+
+        /// <summary>
         /// Allows filtering of data in this grid.
         /// </summary>
         /// <remarks>
@@ -630,19 +640,32 @@ namespace MudBlazor
         /// The empty filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and no filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconEmpty { get; set; } = Icons.Material.Outlined.FilterAlt;
 
         /// <summary>
         /// The filled filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconFilled { get; set; } = Icons.Material.Filled.FilterAlt;
 
         /// <summary>
         /// The clear filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> to remove filters applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
+
+        /// <summary>
+        /// The icon used for column options menus in header cells.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.MoreVert"/>.  Can be overridden for individual columns via <see cref="Column{T}.ColumnOptionsIcon"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string ColumnOptionsIcon { get; set; } = Icons.Material.Filled.MoreVert;
 
         /// <summary>
         /// The way that this grid filters data.

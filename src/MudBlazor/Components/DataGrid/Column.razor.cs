@@ -314,8 +314,52 @@ namespace MudBlazor
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string? SortIcon { get; set; }
+
+        /// <summary>
+        /// The empty filter icon shown when no filters are applied to this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconEmpty"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string? FilterIconEmpty { get; set; }
+
+        /// <summary>
+        /// The filled filter icon shown when filters are applied to this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconFilled"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string? FilterIconFilled { get; set; }
+
+        /// <summary>
+        /// The clear filter icon shown to remove this column's filter.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconClear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string? FilterIconClear { get; set; }
+
+        /// <summary>
+        /// The icon used for this column's options menu.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.ColumnOptionsIcon"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string? ColumnOptionsIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -572,6 +616,16 @@ namespace MudBlazor
                 return Filterable ?? DataGrid?.Filterable ?? false;
             }
         }
+
+        internal string? ResolvedSortIcon => SortIcon ?? DataGrid?.SortIcon;
+
+        internal string? ResolvedFilterIconEmpty => FilterIconEmpty ?? DataGrid?.FilterIconEmpty;
+
+        internal string? ResolvedFilterIconFilled => FilterIconFilled ?? DataGrid?.FilterIconFilled;
+
+        internal string? ResolvedFilterIconClear => FilterIconClear ?? DataGrid?.FilterIconClear;
+
+        internal string? ResolvedColumnOptionsIcon => ColumnOptionsIcon ?? DataGrid?.ColumnOptionsIcon;
 
         #endregion
 
