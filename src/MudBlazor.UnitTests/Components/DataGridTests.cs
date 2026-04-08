@@ -1293,6 +1293,7 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.SortChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.FilterChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.CommittedItemChanges.Should().NotBeNull();
@@ -1319,11 +1320,14 @@ namespace MudBlazor.UnitTests.Components
             // Make sure that the callbacks have not been fired yet.
             comp.Instance.RowClicked.Should().Be(false);
             comp.Instance.RowContextMenuClicked.Should().Be(false);
+            comp.Instance.SortChanged.Should().Be(false);
             comp.Instance.SelectedItemChanged.Should().Be(false);
             comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(false);
             comp.Instance.StartedEditingItem.Should().Be(false);
             comp.Instance.CanceledEditingItem.Should().Be(false);
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetSortAsync(nameof(DataGridEventCallbacksTest.Item.Name), SortDirection.Ascending, x => x.Name));
 
             // Fire RowClick, SelectedItemChanged, SelectedItemsChanged, and StartedEditingItem callbacks.
             await dataGrid.FindAll(".mud-table-body tr")[0].ClickAsync();
@@ -1337,6 +1341,7 @@ namespace MudBlazor.UnitTests.Components
             // Make sure that the callbacks have been fired.
             comp.Instance.RowClicked.Should().Be(true);
             comp.Instance.RowContextMenuClicked.Should().Be(true);
+            comp.Instance.SortChanged.Should().Be(true);
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(true);
@@ -2893,7 +2898,6 @@ namespace MudBlazor.UnitTests.Components
 
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
-
             // click again on the filter button
             await FilterButton().ClickAsync();
 
@@ -3685,6 +3689,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
+            comp.Find(".mud-data-grid-columns-panel").ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
 
             await comp.InvokeAsync(() => dataGrid.Instance.HideColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(0);
@@ -3700,6 +3705,30 @@ namespace MudBlazor.UnitTests.Components
             {
                 dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
             });
+        }
+
+        [Test]
+        public async Task DataGridShowMenuIconOpeningFilterDoesNotRepositionColumnsPanel()
+        {
+            var comp = Context.Render<DataGridShowMenuIconFilterPositionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridShowMenuIconFilterPositionTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel(new MouseEventArgs { PageX = 11, PageY = 22 }));
+
+            IElement columnsPanel = null!;
+            await comp.WaitForAssertionAsync(() =>
+            {
+                columnsPanel = comp.Find(".mud-data-grid-columns-panel");
+            });
+            columnsPanel.GetAttribute("data-pc-x").Should().Be("11");
+            columnsPanel.GetAttribute("data-pc-y").Should().Be("22");
+            columnsPanel.ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
+
+            await comp.Find(".mud-data-grid-columns-panel .filter-button").ClickAsync(new MouseEventArgs { PageX = 101, PageY = 202 });
+
+            comp.Find(".filters-panel").ClassList.Should().Contain("mud-popover-overflow-flip-onopen");
+            comp.Find(".mud-data-grid-columns-panel").GetAttribute("data-pc-x").Should().Be("11");
+            comp.Find(".mud-data-grid-columns-panel").GetAttribute("data-pc-y").Should().Be("22");
         }
 
         [Test]
@@ -4303,7 +4332,12 @@ namespace MudBlazor.UnitTests.Components
                 PageX = openPosition.Left
             };
             comp.Find(".filter-button").Click(mouseArgs);
-            await comp.WaitForAssertionAsync(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var filterPopup = comp.Find(".column-filter-popup");
+                filterPopup.GetAttribute("data-pc-x").Should().Be(openPosition.Left.ToString(CultureInfo.InvariantCulture));
+                filterPopup.GetAttribute("data-pc-y").Should().Be(openPosition.Top.ToString(CultureInfo.InvariantCulture));
+            });
         }
 
         [Test]
@@ -6113,6 +6147,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_ExpandSingleRow_RaisesExpandForOpenedItem()
+        {
+            var comp = Context.Render<DataGridHierarchyVisibilityToggledTest>(p => p.Add(x => x.ExpandSingleRow, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+        }
+
+        [Test]
         public async Task DataGrid_HierarchyVisibilityToggled_CollapseAll()
         {
             var comp = Context.Render<DataGridHierarchyVisibilityToggledTest>();
@@ -6140,6 +6188,75 @@ namespace MudBlazor.UnitTests.Components
             testComponent.ToggledEvents.Should().HaveCount(3);
             testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
             testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_SingleRowToggle()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+
+            testComponent.ToggledEvents.Should().HaveCount(2);
+            testComponent.ToggledEvents[1].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[1].Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_ExpandSingleRow_RaisesExpandForOpenedItem()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>(p => p.Add(x => x.ExpandSingleRow, true));
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_ExpandAndCollapseAll()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded);
+
+            testComponent.ToggledEvents.Clear();
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => !x.Expanded);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyColumn_HierarchyVisibilityToggled_RemovingColumnClearsCachedCallback()
+        {
+            var comp = Context.Render<DataGridHierarchyColumnVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.Find("tbody tr button.mud-icon-button").ClickAsync(new MouseEventArgs());
+            testComponent.ToggledEvents.Should().HaveCount(1);
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowHierarchyColumn, false));
+            comp.FindAll("tbody tr button.mud-icon-button").Should().BeEmpty();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+            testComponent.ToggledEvents.Should().HaveCount(1);
         }
 
         [Test]

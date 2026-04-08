@@ -62,7 +62,7 @@
                                     <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@OnFiltersPanelClosed"></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0;overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
-                                            <MudPopover UserAttributes="@PositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
+                                            <MudPopover UserAttributes="@FiltersPositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;" MaxHeight="400">
                                                 @if (FilterTemplate == null)
                                                 {
@@ -92,7 +92,7 @@
                                     <MudOverlay @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
-                                            <MudPopover UserAttributes="@PositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipAlways"
+                                            <MudPopover UserAttributes="@ColumnsPanelPositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipOnOpen"
                                                         AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4"
                                                         Style="max-width:700px;" MaxHeight="400">

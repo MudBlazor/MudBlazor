@@ -42,7 +42,7 @@
                   @onkeyup:preventDefault="@KeyUpPreventDefault"
                   @onwheel="@OnMouseWheel"
                   aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
+                  aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
                   required="@Required"
                   aria-required="@Required.ToString().ToLowerInvariant()">
             @ReadText
@@ -72,7 +72,7 @@
                @onkeyup:preventDefault="@KeyUpPreventDefault"
                @onwheel="@OnMouseWheel"
                aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@ErrorState.Value.ToString().ToLowerInvariant()"
+               aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
                required="@Required"
                aria-required="@Required.ToString().ToLowerInvariant()">
 
@@ -138,6 +138,7 @@
         <div class="mud-input-numeric-spin">
             <MudButton Variant="Variant.Text"
                        @onclick="OnIncrement"
+                       @onpointerdown="HandleSpinButtonPointerDownAsync"
                        @onmousedown:preventDefault
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"
@@ -147,6 +148,7 @@
 
             <MudButton Variant="Variant.Text"
                        @onclick="OnDecrement"
+                       @onpointerdown="HandleSpinButtonPointerDownAsync"
                        @onmousedown:preventDefault
                        Disabled="@(GetDisabledState() || GetReadOnlyState())"
                        tabindex="-1"

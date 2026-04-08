@@ -47,16 +47,6 @@
             "enabled": false
         },
         {
-            "description": "Keep updates in draft while release age is unknown or immature.",
-            "matchJsonata": [
-                "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
-            ],
-            "draftPR": true,
-            "prBodyNotes": [
-                "> [!WARNING]\n> Target version is either under 14 days old or does not publish a reliable release timestamp yet."
-            ]
-        },
-        {
             "matchFileNames": [
                 "src/MudBlazor/MudBlazor.csproj"
             ],
