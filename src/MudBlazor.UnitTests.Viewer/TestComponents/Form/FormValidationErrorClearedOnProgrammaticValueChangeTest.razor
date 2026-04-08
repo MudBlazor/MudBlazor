@@ -1,9 +1,9 @@
 ﻿@using FluentValidation
 
-<MudForm Model="@model" @ref="@form" Validation="@(orderValidator.ValidateValue)" ValidationDelay="0">
+<MudForm Model="@_model" @ref="@_form" Validation="@(_orderValidator.ValidateValue)" ValidationDelay="0">
     <MudCardContent>
-        <MudTextField @bind-Value="model.Name"                              
-                      For="@(() => model.Name)"
+        <MudTextField @bind-Value="_model.Name"
+                      For="@(() => _model.Name)"
                       Immediate="true"
                       Label="Name" />
     </MudCardContent>
@@ -13,18 +13,30 @@
 <MudButton OnClick="ClearName">Clear Name</MudButton>
 
 @code {
-    public static string __description__ = "When form has validation error and value is updated through code, validation should be re-evaluated.";
+    public static string __description__ = "When form has validation error and value is updated through code, validation should be re-evaluated. #12012";
 
-    MudForm? form;
-    OrderModel model = new OrderModel();
-    OrderModelFluentValidator orderValidator = new OrderModelFluentValidator();
+    private MudForm? _form;
+    private readonly OrderModel _model = new();
+    private readonly OrderModelFluentValidator _orderValidator = new();
+
+    private void SetName()
+    {
+        _model.Name = "Valid Name";
+        StateHasChanged();
+    }
+
+    private void ClearName()
+    {
+        _model.Name = string.Empty;
+        StateHasChanged();
+    }
 
     public class OrderModel
     {
         public string Name { get; set; } = string.Empty;
     }
 
-    public class OrderModelFluentValidator : AbstractValidator<OrderModel>
+    private class OrderModelFluentValidator : AbstractValidator<OrderModel>
     {
         public OrderModelFluentValidator()
         {
@@ -38,19 +50,8 @@
             var result = await ValidateAsync(ValidationContext<OrderModel>.CreateWithOptions((OrderModel)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
                 return Array.Empty<string>();
+
             return result.Errors.Select(e => e.ErrorMessage);
         };
-    }
-
-    private void SetName()
-    {
-        model.Name = "Valid Name";
-        StateHasChanged();
-    }
-
-    private void ClearName()
-    {
-        model.Name = string.Empty;
-        StateHasChanged();
     }
 }
