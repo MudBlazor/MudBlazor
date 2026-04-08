@@ -36,8 +36,6 @@ namespace MudBlazor
         /// </summary>
         public bool Open => OpenHierarchies.Contains(Item);
 
-        internal string? RowCheckboxAriaLabel { get; }
-
         /// <summary>
         /// Creates a new instance.
         /// </summary>
@@ -56,12 +54,6 @@ namespace MudBlazor
                 ToggleHierarchyVisibilityForItemAsync = () => dataGrid.ToggleHierarchyVisibilityAsync(item),
                 GetGroupIcon = (expanded, rightToLeft) => dataGrid.GetGroupIcon(expanded, rightToLeft),
             };
-        }
-
-        internal CellContext(MudDataGrid<T> dataGrid, T item, string? rowCheckboxAriaLabel)
-            : this(dataGrid, item)
-        {
-            RowCheckboxAriaLabel = rowCheckboxAriaLabel;
         }
 
         /// <summary>

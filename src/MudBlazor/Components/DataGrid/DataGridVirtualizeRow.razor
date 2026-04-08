@@ -24,7 +24,6 @@
         resolvedItems = DataGrid.CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
     }
 
-    var rowCheckboxAriaLabels = DataGrid.GetRowCheckboxAriaLabels(resolvedItems);
 }
 
 <MudVirtualize @ref="DataGrid._mudVirtualize"
@@ -57,9 +56,6 @@
                 .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
                 .Build();
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
-            var rowCheckboxAriaLabel = rowCheckboxAriaLabels is not null && rowCheckboxAriaLabels.TryGetValue(itemBag.Index, out var ariaLabel)
-                ? ariaLabel
-                : null;
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
             @attributes="GetRowAttributes(itemBag.Item)"
@@ -71,7 +67,7 @@
                 {
                     if (!column.HiddenState.Value)
                     {
-                        @DataGrid.Cell(column, itemBag.Item, rowCheckboxAriaLabel)
+                        @DataGrid.Cell(column, itemBag.Item)
                     }
                 }
             </CascadingValue>

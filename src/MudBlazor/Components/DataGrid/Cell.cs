@@ -47,11 +47,6 @@ namespace MudBlazor
         #endregion
 
         public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item)
-            : this(dataGrid, column, item, null)
-        {
-        }
-
-        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, string? rowCheckboxAriaLabel)
         {
             _dataGrid = dataGrid;
             _column = column;
@@ -60,9 +55,7 @@ namespace MudBlazor
             OnStartedEditingItem();
 
             // Create the CellContext
-            _cellContext = rowCheckboxAriaLabel is not null
-                ? new CellContext<T>(_dataGrid, _item, rowCheckboxAriaLabel)
-                : new CellContext<T>(_dataGrid, _item);
+            _cellContext = new CellContext<T>(_dataGrid, _item);
         }
 
         public async Task StringValueChangedAsync(string? value)

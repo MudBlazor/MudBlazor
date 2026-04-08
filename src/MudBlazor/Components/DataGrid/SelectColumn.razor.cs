@@ -87,15 +87,15 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
         };
     }
 
-    private string GetRowCheckboxAriaLabel(CellContext<T> context)
+    private string GetRowCheckboxAriaLabel(T item)
     {
-        var ariaLabel = GetCustomAriaLabel(context.Item);
+        var ariaLabel = GetCustomAriaLabel(item);
         if (!string.IsNullOrWhiteSpace(ariaLabel))
         {
             return ariaLabel;
         }
 
-        return context.RowCheckboxAriaLabel ?? Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
+        return Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
     }
 
     private string? GetCustomAriaLabel(T item)

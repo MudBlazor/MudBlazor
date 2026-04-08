@@ -2017,57 +2017,6 @@ namespace MudBlazor
             return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
         }
 
-        internal Dictionary<int, string>? GetRowCheckboxAriaLabels(IReadOnlyList<IndexBag<T>> items)
-        {
-            if (items.Count == 0)
-            {
-                return null;
-            }
-
-            var selectColumn = GetSelectColumn();
-            if (selectColumn is null)
-            {
-                return null;
-            }
-
-            var rowLabelColumns = GetDefaultRowLabelColumns();
-            if (rowLabelColumns.Count == 0)
-            {
-                // Without a value-bearing column to derive row text from, the checkbox falls back to
-                // return null so the selection column can use its own fallback "Select row" aria-label.
-                return null;
-            }
-
-            var labels = new Dictionary<int, string>(items.Count);
-            var baseLabels = new Dictionary<int, string>(items.Count);
-            var duplicateCounts = new Dictionary<string, int>(StringComparer.Ordinal);
-
-            foreach (var item in items)
-            {
-                var baseLabel = GetRowLabel(rowLabelColumns, item.Item);
-                baseLabels[item.Index] = baseLabel;
-
-                if (string.IsNullOrWhiteSpace(baseLabel))
-                {
-                    continue;
-                }
-
-                duplicateCounts.TryGetValue(baseLabel, out var count);
-                duplicateCounts[baseLabel] = count + 1;
-            }
-
-            var duplicateIndexes = new Dictionary<string, int>(StringComparer.Ordinal);
-            var selectRow = Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
-
-            foreach (var item in items)
-            {
-                var baseLabel = baseLabels[item.Index];
-                labels[item.Index] = BuildRowCheckboxAriaLabel(selectRow, baseLabel, duplicateCounts, duplicateIndexes);
-            }
-
-            return labels;
-        }
-
         internal bool? GetRowSelectionState(T item)
         {
             var selectColumn = GetSelectColumn();
@@ -2087,52 +2036,6 @@ namespace MudBlazor
         internal bool IsRowSelectionDisabled(T item)
         {
             return IsRowSelectionDisabled(item, GetSelectColumn());
-        }
-
-        private List<Column<T>> GetDefaultRowLabelColumns()
-        {
-            return RenderedColumns
-                .Where(column => !column.HiddenState.Value
-                    && IsPropertyColumn(column))
-                .ToList();
-        }
-
-        private static string GetRowLabel(IEnumerable<Column<T>> rowLabelColumns, T item)
-        {
-            foreach (var column in rowLabelColumns)
-            {
-                var label = column.CellContent(item)?.ToString()?.Trim();
-                if (!string.IsNullOrWhiteSpace(label))
-                {
-                    return label;
-                }
-            }
-
-            return string.Empty;
-        }
-
-        private static bool IsPropertyColumn(Column<T> column)
-        {
-            var columnType = column.GetType();
-            return columnType.IsGenericType && columnType.GetGenericTypeDefinition() == typeof(PropertyColumn<,>);
-        }
-
-        private static string BuildRowCheckboxAriaLabel(string selectRow, string baseLabel, IReadOnlyDictionary<string, int> duplicateCounts, IDictionary<string, int> duplicateIndexes)
-        {
-            if (string.IsNullOrWhiteSpace(baseLabel))
-            {
-                return selectRow;
-            }
-
-            if (duplicateCounts.TryGetValue(baseLabel, out var count) && count > 1)
-            {
-                duplicateIndexes.TryGetValue(baseLabel, out var index);
-                index++;
-                duplicateIndexes[baseLabel] = index;
-                return $"{selectRow} {baseLabel}-{index}";
-            }
-
-            return $"{selectRow} {baseLabel}";
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
