@@ -279,9 +279,9 @@ namespace MudBlazor
         /// <summary>
         /// Focuses this input when the numeric spin button is pressed.
         /// </summary>
-        protected virtual Task HandleSpinButtonPointerDownAsync(PointerEventArgs _)
+        protected virtual async Task HandleSpinButtonPointerDownAsync(PointerEventArgs _)
         {
-            return ElementReference.FocusAsync();
+            await ElementReference.FocusAsync();
         }
 
         /// <summary>
