@@ -276,28 +276,9 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
-        /// <summary>
-        /// Focuses this input when the numeric spin button is pressed.
-        /// </summary>
         protected virtual async Task HandleSpinButtonPointerDownAsync(PointerEventArgs _)
         {
             await ElementReference.FocusAsync();
-        }
-
-        /// <summary>
-        /// Increases the value with the numeric spin button.
-        /// </summary>
-        protected virtual Task HandleIncrementButtonAsync(MouseEventArgs _)
-        {
-            return OnIncrement.InvokeAsync();
-        }
-
-        /// <summary>
-        /// Decreases the value with the numeric spin button.
-        /// </summary>
-        protected virtual Task HandleDecrementButtonAsync(MouseEventArgs _)
-        {
-            return OnDecrement.InvokeAsync();
         }
 
         private readonly record struct AutoSizingVisualState(
