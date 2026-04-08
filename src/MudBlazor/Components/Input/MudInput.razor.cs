@@ -276,12 +276,18 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        /// <summary>
+        /// Focuses this input before increasing the value with the numeric spin button.
+        /// </summary>
         protected virtual async Task HandleIncrementButtonAsync(MouseEventArgs _)
         {
             await ElementReference.FocusAsync();
             await OnIncrement.InvokeAsync();
         }
 
+        /// <summary>
+        /// Focuses this input before decreasing the value with the numeric spin button.
+        /// </summary>
         protected virtual async Task HandleDecrementButtonAsync(MouseEventArgs _)
         {
             await ElementReference.FocusAsync();

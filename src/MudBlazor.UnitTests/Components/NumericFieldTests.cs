@@ -774,8 +774,11 @@ namespace MudBlazor.UnitTests.Components
 
             var spinButtons = comp.FindAll(".mud-input-numeric-spin .mud-button-root");
             await spinButtons[0].ClickAsync(new MouseEventArgs());
+            await spinButtons[1].ClickAsync(new MouseEventArgs());
 
-            Context.JSInterop.VerifyFocusAsyncInvoke();
+            Context.JSInterop.Invocations
+                .Count(x => x.Identifier == "Blazor._internal.domWrapper.focus")
+                .Should().Be(2);
         }
 
         [TestCaseSource(nameof(TypeCases))]
