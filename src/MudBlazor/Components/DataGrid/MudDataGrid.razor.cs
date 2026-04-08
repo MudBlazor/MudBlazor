@@ -413,12 +413,14 @@ namespace MudBlazor
         /// Defaults to <see cref="Icons.Material.Filled.DragIndicator"/>.  Use the <see cref="DragIndicatorSize"/> property to control this icon's size.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string DragIndicatorIcon { get; set; } = Icons.Material.Filled.DragIndicator;
 
         /// <summary>
         /// The icon used for column options menus in header cells.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ColumnOptionsIcon { get; set; } = Icons.Material.Filled.MoreVert;
 
         /// <summary>
@@ -473,6 +475,7 @@ namespace MudBlazor
         /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>. Can be overridden for individual columns via <see cref="Column{T}.SortIcon"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
@@ -626,60 +629,70 @@ namespace MudBlazor
         /// The empty filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and no filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconEmpty { get; set; } = Icons.Material.Outlined.FilterAlt;
 
         /// <summary>
         /// The filled filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconFilled { get; set; } = Icons.Material.Filled.FilterAlt;
 
         /// <summary>
         /// The clear filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> to remove filters applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
 
         /// <summary>
         /// The remove filter icon shown in the simple filter panel.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterRemoveIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
         /// The icon shown in the data grid toolbar menu.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ToolbarMenuIcon { get; set; } = Icons.Material.Outlined.Settings;
 
         /// <summary>
         /// The icon shown in the columns panel search field.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ColumnsPanelSearchIcon { get; set; } = Icons.Material.Filled.Search;
 
         /// <summary>
         /// The icon shown for moving a column up in the columns panel.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ColumnsPanelMoveUpIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// The icon shown for moving a column down in the columns panel.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ColumnsPanelMoveDownIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The icon shown for grouping a column in the columns panel.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ColumnsPanelGroupIcon { get; set; } = Icons.Material.Filled.TableRows;
 
         /// <summary>
         /// The icon shown for ungrouping a column in the columns panel.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string ColumnsPanelUngroupIcon { get; set; } = Icons.Material.Filled.AccountTree;
 
         /// <summary>

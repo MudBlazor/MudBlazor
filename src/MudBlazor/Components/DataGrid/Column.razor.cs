@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.ComponentModel;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
@@ -318,6 +319,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? SortIcon { get; set; }
 
         /// <summary>
@@ -327,6 +329,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconEmpty"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? FilterIconEmpty { get; set; }
 
         /// <summary>
@@ -336,6 +339,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconFilled"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? FilterIconFilled { get; set; }
 
         /// <summary>
@@ -345,6 +349,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.FilterIconClear"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? FilterIconClear { get; set; }
 
         /// <summary>
@@ -354,6 +359,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.ColumnOptionsIcon"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? ColumnOptionsIcon { get; set; }
 
         /// <summary>
@@ -363,6 +369,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.DragIndicatorIcon"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? DragIndicatorIcon { get; set; }
 
         /// <summary>
