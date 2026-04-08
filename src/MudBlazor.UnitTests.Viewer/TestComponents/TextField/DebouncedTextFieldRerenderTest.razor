@@ -26,6 +26,9 @@
     [Parameter]
     public string? Value { get; set; }
 
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = TimeProvider.System;
+
     public int DebounceInterval => 500;
 
     public int RerenderDelay => 2000;
@@ -41,7 +44,7 @@
 
     private async Task LaunchDelayedRerender()
     {
-        await Task.Delay(RerenderDelay);
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         StateHasChanged();
     }
 }

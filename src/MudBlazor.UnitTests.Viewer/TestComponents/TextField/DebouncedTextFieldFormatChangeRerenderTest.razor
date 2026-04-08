@@ -27,6 +27,9 @@
 
     private int _renderCount;
 
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = TimeProvider.System;
+
     public int DebounceInterval => 500;
 
     public int RerenderDelay => 2000;
@@ -44,7 +47,7 @@
 
     private async Task LaunchDelayedFormatChange()
     {
-        await Task.Delay(RerenderDelay);
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         Format = "dd/MM/yyyy";
         StateHasChanged();
     }
