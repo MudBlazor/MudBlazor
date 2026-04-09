@@ -764,6 +764,22 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be(value);
         }
 
+        [Test]
+        public async Task NumericField_SpinButtonsShouldFocusInput()
+        {
+            var comp = Context.Render<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.HideSpinButtons, false)
+                .Add(x => x.Value, 5)
+                .Add(x => x.Step, 1));
+
+            await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[0].TriggerEventAsync("onpointerdown", new PointerEventArgs());
+            await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[1].TriggerEventAsync("onpointerdown", new PointerEventArgs());
+
+            Context.JSInterop.Invocations
+                .Count(x => x.Identifier == "Blazor._internal.domWrapper.focus")
+                .Should().Be(2);
+        }
+
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericFieldNullable_Increment_Decrement<T>(T value) where T : struct
         {
