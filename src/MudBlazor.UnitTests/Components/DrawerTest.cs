@@ -575,6 +575,39 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
         }
 
+        [Test]
+        public void PersistentWithoutBreakpointCallback_DoesNotSubscribeToViewport()
+        {
+            var browserViewportService = AddBrowserViewportService();
+            var comp = Context.Render<DrawerTest1>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent));
+
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().BeNull();
+        }
+
+        [Test]
+        public async Task PersistentWithBreakpointCallback_SubscribesAndRaisesCallback()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>();
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance);
+
+            subscription.Should().NotBeNull();
+            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Lg);
+            comp.Instance.BreakpointNotifications.Should().Be(1);
+
+            await comp.InvokeAsync(async () =>
+                await browserViewportService.RaiseOnResized(
+                    new BrowserWindowSize { Height = 0, Width = 0 },
+                    Breakpoint.Xs,
+                    subscription!.JavaScriptListenerId));
+
+            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Xs);
+            comp.Instance.BreakpointNotifications.Should().Be(2);
+        }
+
         [Test, Combinatorial]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Values(

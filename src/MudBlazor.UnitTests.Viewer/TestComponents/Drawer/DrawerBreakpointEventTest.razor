@@ -1,0 +1,20 @@
+<MudLayout>
+    <MudDrawer Variant="DrawerVariant.Persistent"
+               Open="@_open"
+               OnBreakpointChanged="HandleBreakpointChanged" />
+</MudLayout>
+
+@code {
+    private bool _open = false;
+
+    public Breakpoint LastBreakpoint { get; private set; }
+
+    public int BreakpointNotifications { get; private set; }
+
+    private Task HandleBreakpointChanged(Breakpoint breakpoint)
+    {
+        LastBreakpoint = breakpoint;
+        BreakpointNotifications++;
+        return Task.CompletedTask;
+    }
+}

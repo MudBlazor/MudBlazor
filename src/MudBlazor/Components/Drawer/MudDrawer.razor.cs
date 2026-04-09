@@ -19,7 +19,10 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private bool _closeOnPointerLeave;
         private bool _initial = true;
+        private bool _isBrowserViewportSubscribed;
+        private bool _lastNotifiedBreakpointInitialized;
         private bool _keepInitialState;
+        private Breakpoint _lastNotifiedBreakpoint = Breakpoint.None;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
         /// <summary>
@@ -138,6 +141,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
+
+        /// <summary>
+        /// Occurs when the current browser breakpoint observed by this drawer has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
         /// <summary>
         /// The content within this drawer.
@@ -281,15 +290,15 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeightAsync();
-                if (!_disposed)
-                {
-                    _ = BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
-                }
-
                 if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
                 {
                     StateHasChanged();
                 }
+            }
+
+            if (!_disposed)
+            {
+                await UpdateBrowserViewportSubscriptionAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -303,7 +312,7 @@ namespace MudBlazor
 
                 DrawerContainer?.Remove(this);
 
-                if (IsJSRuntimeAvailable)
+                if (IsJSRuntimeAvailable && _isBrowserViewportSubscribed)
                 {
                     await BrowserViewportService.UnsubscribeAsync(this);
                 }
@@ -352,6 +361,25 @@ namespace MudBlazor
 
         private void DrawerContainerUpdate() => (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
 
+        private async Task UpdateBrowserViewportSubscriptionAsync()
+        {
+            var shouldSubscribe = ShouldSubscribeToBrowserViewport();
+            if (shouldSubscribe && !_isBrowserViewportSubscribed)
+            {
+                _isBrowserViewportSubscribed = true;
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                return;
+            }
+
+            if (!shouldSubscribe && _isBrowserViewportSubscribed)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+                _isBrowserViewportSubscribed = false;
+            }
+        }
+
+        private bool ShouldSubscribeToBrowserViewport() => IsResponsiveOrMini() || OnBreakpointChanged.HasDelegate;
+
         private Task CloseDrawerAsync()
         {
             if (_openState.Value)
@@ -399,6 +427,8 @@ namespace MudBlazor
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
+        private static bool IsResponsiveOrMini(DrawerVariant variant) => variant is DrawerVariant.Responsive or DrawerVariant.Mini;
+
         private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
         private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
@@ -444,14 +474,25 @@ namespace MudBlazor
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
 
-        ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
+        ResizeOptions IBrowserViewportObserver.ResizeOptions => new()
         {
             ReportRate = 50,
-            NotifyOnBreakpointOnly = false
+            NotifyOnBreakpointOnly = !IsResponsiveOrMini()
         };
 
         async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
+            if (!_lastNotifiedBreakpointInitialized || _lastNotifiedBreakpoint != browserViewportEventArgs.Breakpoint)
+            {
+                _lastNotifiedBreakpoint = browserViewportEventArgs.Breakpoint;
+                _lastNotifiedBreakpointInitialized = true;
+
+                if (OnBreakpointChanged.HasDelegate)
+                {
+                    await OnBreakpointChanged.InvokeAsync(browserViewportEventArgs.Breakpoint);
+                }
+            }
+
             if (browserViewportEventArgs.IsImmediate)
             {
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
