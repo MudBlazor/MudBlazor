@@ -28,6 +28,8 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     private ElementReference _svgRef;
     private ElementReference? _xAxisGroupElementReference;
     private ElementReference? _yAxisGroupElementReference;
+    private ElementSize? _lastYAxisLabelSize;
+    private ElementSize? _lastXAxisLabelSize;
 
     /// <summary>
     /// The size of the Y-axis labels.
@@ -256,24 +258,34 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
 
         var axisChanged = false;
 
-        if (yAxisLabelSize != null && (YAxisLabelSize == null || !_epsilonComparer.Equals(yAxisLabelSize.Width, YAxisLabelSize.Width)))
+        if (yAxisLabelSize != null)
         {
-            if (YAxisLabelSizeChanged.HasDelegate)
+            var baseline = YAxisLabelSize ?? _lastYAxisLabelSize;
+            if (baseline == null || !_epsilonComparer.Equals(yAxisLabelSize.Width, baseline.Width))
             {
-                await YAxisLabelSizeChanged.InvokeAsync(yAxisLabelSize);
-            }
+                _lastYAxisLabelSize = yAxisLabelSize;
+                if (YAxisLabelSizeChanged.HasDelegate)
+                {
+                    await YAxisLabelSizeChanged.InvokeAsync(yAxisLabelSize);
+                }
 
-            axisChanged = true;
+                axisChanged = true;
+            }
         }
 
-        if (xAxisLabelSize != null && (XAxisLabelSize == null || !_epsilonComparer.Equals(xAxisLabelSize.Height, XAxisLabelSize.Height)))
+        if (xAxisLabelSize != null)
         {
-            if (XAxisLabelSizeChanged.HasDelegate)
+            var baseline = XAxisLabelSize ?? _lastXAxisLabelSize;
+            if (baseline == null || !_epsilonComparer.Equals(xAxisLabelSize.Height, baseline.Height))
             {
-                await XAxisLabelSizeChanged.InvokeAsync(xAxisLabelSize);
-            }
+                _lastXAxisLabelSize = xAxisLabelSize;
+                if (XAxisLabelSizeChanged.HasDelegate)
+                {
+                    await XAxisLabelSizeChanged.InvokeAsync(xAxisLabelSize);
+                }
 
-            axisChanged = true;
+                axisChanged = true;
+            }
         }
 
         if (axisChanged && AxisChanged.HasDelegate)
