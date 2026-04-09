@@ -320,8 +320,8 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
             var startGridY = T.CreateSaturating(lowestHorizontalLine + i) * gridYUnits;
             var lineValue = new SvgText()
             {
-                X = HorizontalStartSpace - 10,
-                Y = _boundHeight - y + 5,
+                X = HorizontalStartSpace - YAxisLabelXOffset,
+                Y = _boundHeight - y + YAxisLabelYOffset,
                 Value = BuildYAxisValueString(startGridY)
             };
             HorizontalValues.Add(lineValue);

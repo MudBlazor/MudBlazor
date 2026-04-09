@@ -40,6 +40,7 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     /// The event callback for when the Y-axis label size changes.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<ElementSize?> YAxisLabelSizeChanged { get; set; }
 
     /// <summary>
@@ -53,6 +54,7 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     /// The event callback for when the X-axis label size changes.
     /// </summary>
     [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<ElementSize?> XAxisLabelSizeChanged { get; set; }
 
     /// <summary>
