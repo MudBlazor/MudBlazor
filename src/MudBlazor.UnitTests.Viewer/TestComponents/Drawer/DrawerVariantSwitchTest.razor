@@ -1,0 +1,18 @@
+<MudLayout>
+    <MudDrawer Variant="@_variant"
+               Open="@_open"
+               Breakpoint="Breakpoint.Md"
+               Anchor="Anchor.Start" />
+    <button id="switch-variant-button" @onclick="SwitchVariant">switch variant</button>
+</MudLayout>
+
+@code {
+    private bool _open;
+    private DrawerVariant _variant = DrawerVariant.Mini;
+
+    private void SwitchVariant()
+    {
+        _variant = DrawerVariant.Temporary;
+        _open = false;
+    }
+}

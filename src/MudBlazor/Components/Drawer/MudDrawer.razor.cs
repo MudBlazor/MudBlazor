@@ -38,6 +38,9 @@ namespace MudBlazor
             registerScope.RegisterParameter<Breakpoint>(nameof(Breakpoint))
                 .WithParameter(() => Breakpoint)
                 .WithChangeHandler(OnBreakpointParameterChangedAsync);
+            registerScope.RegisterParameter<DrawerVariant>(nameof(Variant))
+                .WithParameter(() => Variant)
+                .WithChangeHandler(OnVariantParameterChangedAsync);
             registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnRightToLeftParameterChanged);
@@ -338,6 +341,13 @@ namespace MudBlazor
             DrawerContainerUpdate();
         }
 
+        private Task OnVariantParameterChangedAsync(ParameterChangedEventArgs<DrawerVariant> arg)
+        {
+            UpdateDrawerContainerRegistration(arg.LastValue, arg.Value);
+            DrawerContainerUpdate();
+            return Task.CompletedTask;
+        }
+
         private void OnClipModeParameterChange()
         {
             if (IsFixed)
@@ -351,6 +361,25 @@ namespace MudBlazor
         private void OnRightToLeftParameterChanged() => DrawerContainerUpdate();
 
         private void DrawerContainerUpdate() => (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
+
+        private void UpdateDrawerContainerRegistration(DrawerVariant lastVariant, DrawerVariant variant)
+        {
+            if (DrawerContainer is null || lastVariant == variant)
+            {
+                return;
+            }
+
+            if (lastVariant == DrawerVariant.Temporary && variant != DrawerVariant.Temporary)
+            {
+                DrawerContainer.Add(this);
+                return;
+            }
+
+            if (lastVariant != DrawerVariant.Temporary && variant == DrawerVariant.Temporary)
+            {
+                DrawerContainer.Remove(this);
+            }
+        }
 
         private Task CloseDrawerAsync()
         {

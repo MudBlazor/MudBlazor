@@ -575,6 +575,20 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task SwitchingVariantFromMiniToTemporary_RemovesLayoutDrawerClass()
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerVariantSwitchTest>();
+
+            comp.Find("div.mud-layout").ClassList.Should().Contain("mud-drawer-close-mini-md-left");
+
+            await comp.Find("#switch-variant-button").ClickAsync();
+
+            comp.Find("div.mud-layout").ClassList.Should().NotContain("mud-drawer-close-mini-md-left");
+            comp.Find("div.mud-layout").ClassList.Should().NotContain("mud-drawer-close-temporary-left");
+        }
+
         [Test, Combinatorial]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Values(
