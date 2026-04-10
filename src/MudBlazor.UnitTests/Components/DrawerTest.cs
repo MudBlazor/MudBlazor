@@ -608,61 +608,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.BreakpointNotifications.Should().Be(2);
         }
 
-        [Test]
-        public async Task BreakpointCallbackSubscription_ChangingVariant_UpdatesResizeOptions()
-        {
-            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
-            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
-                .Add(x => x.Variant, DrawerVariant.Persistent));
-
-            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
-            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance);
-
-            subscription.Should().NotBeNull();
-            subscription!.Options!.NotifyOnBreakpointOnly.Should().BeTrue();
-
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Variant, DrawerVariant.Responsive));
-
-            mudDrawerComponent = comp.FindComponent<MudDrawer>();
-            subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance);
-
-            subscription.Should().NotBeNull();
-            subscription!.Options!.NotifyOnBreakpointOnly.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task ResponsiveWithLateBreakpointCallback_RaisesCurrentBreakpointImmediately()
-        {
-            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
-            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
-                .Add(x => x.CallbackEnabled, false)
-                .Add(x => x.Variant, DrawerVariant.Responsive));
-
-            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
-            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().NotBeNull();
-            comp.Instance.BreakpointNotifications.Should().Be(0);
-
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.CallbackEnabled, true)
-                .Add(x => x.Variant, DrawerVariant.Responsive));
-
-            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Lg);
-            comp.Instance.BreakpointNotifications.Should().Be(1);
-
-            mudDrawerComponent = comp.FindComponent<MudDrawer>();
-            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance);
-
-            await comp.InvokeAsync(async () =>
-                await browserViewportService.RaiseOnResized(
-                    new BrowserWindowSize { Height = 0, Width = 0 },
-                    Breakpoint.Xs,
-                    subscription!.JavaScriptListenerId));
-
-            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Xs);
-            comp.Instance.BreakpointNotifications.Should().Be(2);
-        }
-
         [Test, Combinatorial]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Values(
