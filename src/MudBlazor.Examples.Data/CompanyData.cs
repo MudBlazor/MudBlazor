@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MudBlazor.Examples.Data.Models;
 
 namespace MudBlazor.Examples.Data;

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MudBlazor.Examples.Data;
 using MudBlazor.Examples.Data.Models;
 
