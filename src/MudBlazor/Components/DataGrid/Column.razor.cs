@@ -303,6 +303,15 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// The sort direction applied when this column is unsorted and the header is clicked for the first time.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.Ascending"/>.
+        /// </remarks>
+        [Parameter]
+        public SortDirection InitialSortDirection { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
         [Parameter]

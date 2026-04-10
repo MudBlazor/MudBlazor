@@ -553,6 +553,7 @@ namespace MudBlazor
         private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
         {
             _validated = false;
+            var wasTouched = Touched;
 
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
@@ -562,6 +563,14 @@ namespace MudBlazor
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
                 await UpdateTextPropertyAsync(false);
+            }
+
+            // Notify the form that the field has changed and trigger re-validation
+            // Only do this after the field has been touched.
+            if (wasTouched)
+            {
+                FieldChanged(arg.Value);
+                await BeginValidateAsync();
             }
         }
 

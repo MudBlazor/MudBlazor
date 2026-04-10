@@ -351,6 +351,18 @@
   <data name="MudInput_Increment" xml:space="preserve">
     <value>Increment</value>
   </data>
+  <data name="MudRangeInput_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="MudRangeInput_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="MudDateRangePicker_Start" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="MudDateRangePicker_End" xml:space="preserve">
+    <value>End date</value>
+  </data>
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
     <value>Contents</value>
   </data>
