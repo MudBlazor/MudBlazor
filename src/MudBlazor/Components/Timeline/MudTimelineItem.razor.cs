@@ -30,6 +30,7 @@ namespace MudBlazor
             new CssBuilder("mud-timeline-item-dot-inner")
                 .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
                 .AddClass($"mud-timeline-dot-{Color.ToStringFast(true)}")
+                .AddClass(DotClass)
                 .Build();
 
         [CascadingParameter]
@@ -53,11 +54,22 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Outlined;
 
         /// <summary>
+        /// The CSS classes applied to the dot.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Timeline.Dot)]
+        public string? DotClass { get; set; }
+
+        /// <summary>
         /// The CSS styles applied to the dot.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Styles such as <c>background-color</c> can be applied (e.g. <c>background-color:red;</c>).
         /// </remarks>
+        [Obsolete("Prefer the DotClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public string? DotStyle { get; set; }
