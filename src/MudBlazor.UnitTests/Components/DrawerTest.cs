@@ -307,18 +307,16 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
 
-            // Resize to small, drawer should stay open and switch to the overlay presentation
+            // Resize to small, drawer should close
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 0, Width = 0 }, Breakpoint.Xs, subscription.JavaScriptListenerId));
 
-            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
-            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeTrue();
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
 
-            // Resize to large, drawer should stay open
+            // Resize to large, drawer should open automatically
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
-            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
 
             // Close drawer
@@ -326,11 +324,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
 
-            // Resize to small, the bound closed state should be preserved
+            // Resize to small, then open drawer
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 400, Width = 600 }, Breakpoint.Sm, subscription.JavaScriptListenerId));
-
-            comp.Instance.Drawer.Open.Should().BeFalse();
-            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
 
             // Open drawer
             await comp.Find("#toggle-drawer-button").ClickAsync();
@@ -347,10 +342,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Resize screen to small in two steps while the drawer is open. The bound open state should be preserved across all breakpoint transitions.
+        /// Resize screen to small in two steps: first to SM, then to XS. After restoring the original screen size, the drawer should reopen automatically.
         /// </summary>
         [Test]
-        public async Task Responsive_ResizeToSmall_RestoreToLarge_KeepsBoundOpenState()
+        public async Task Responsive_ResizeToSmall_RestoreToLarge_CheckStates()
         {
             var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
             var comp = Context.Render<DrawerResponsiveTest>();
@@ -363,33 +358,30 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeTrue();
 
-            // Resize to small, drawer should stay open
+            // Resize to small, drawer should close
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 400, Width = 600 }, Breakpoint.Sm, subscription.JavaScriptListenerId));
 
-            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
-            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeTrue();
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
 
-            // Resize to extra small, drawer should stay open
+            // Resize to extra small, drawer should close
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 0, Width = 0 }, Breakpoint.Xs, subscription.JavaScriptListenerId));
 
-            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
-            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeTrue();
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
 
-            // Resize to large, drawer should stay open
+            // Resize to large, drawer should open automatically
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
-            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(0);
             comp.Instance.Drawer.Open.Should().BeTrue();
         }
 
         /// <summary>
-        /// Resize screen from small to big while the drawer is closed. The bound closed state should not be overridden.
+        /// Resize screen from small to big. Once the screen is large enough, the drawer should open automatically.
         /// </summary>
         [Test]
-        public async Task Responsive_ResizeFromSmall_ToLarge_KeepsBoundClosedState()
+        public async Task Responsive_ResizeFromSmall_ToLarge_CheckStates()
         {
             var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
             var comp = Context.Render<DrawerResponsiveTest>();
@@ -406,11 +398,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
             comp.Instance.Drawer.Open.Should().BeFalse();
 
-            // Resize above breakpoint - drawer should stay closed
+            // Resize above breakpoint - drawer should open
             await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
-            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
-            comp.Instance.Drawer.Open.Should().BeFalse();
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
         }
 
         [Test]

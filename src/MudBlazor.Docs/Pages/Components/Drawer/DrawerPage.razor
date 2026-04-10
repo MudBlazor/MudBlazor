@@ -50,8 +50,7 @@
                     <SectionHeader Title="Responsive">
                         <Description>
                             Responsive Drawers behaves persistently on wider screens and responsively on smaller ones.
-                            When <CodeInline>@("@bind-Open")</CodeInline> is used, resize events preserve the bound <CodeInline>Open</CodeInline> state and only change how the drawer is presented at the current breakpoint.
-                            Without two-way binding, the drawer can still update its open state automatically according to its breakpoint configuration.
+                            Opened Responsive Drawers close automatically when the window size becomes small, and opens after the original state has been restored according to its breakpoint configuration.
                         </Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" Code="@nameof(DrawerResponsiveExample)" ShowCode="false">

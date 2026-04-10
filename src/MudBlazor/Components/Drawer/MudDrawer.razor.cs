@@ -229,7 +229,7 @@ namespace MudBlazor
         /// Displays this drawer.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property keeps the parent-provided state during responsive breakpoint changes.
+        /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property is updated when this drawer closes itself.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -428,7 +428,6 @@ namespace MudBlazor
                 breakpoint = await BrowserViewportService.GetCurrentBreakpointAsync();
             }
 
-            var breakpointChanged = _lastUpdatedBreakpoint != breakpoint;
             var isStateChanged = false;
             if (ShouldCloseDrawer(breakpoint))
             {
@@ -442,7 +441,7 @@ namespace MudBlazor
             }
 
             _lastUpdatedBreakpoint = breakpoint;
-            if (isStateChanged || breakpointChanged)
+            if (isStateChanged)
             {
                 await InvokeAsync(StateHasChanged);
             }
@@ -454,11 +453,9 @@ namespace MudBlazor
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
-        private bool ShouldUpdateOpenStateFromBreakpoint() => !_openState.HasCallback || Variant != DrawerVariant.Responsive || Breakpoint is Breakpoint.Always or Breakpoint.None;
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
-        private bool ShouldCloseDrawer(Breakpoint breakpoint) => ShouldUpdateOpenStateFromBreakpoint() && IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
-
-        private bool ShouldOpenDrawer(Breakpoint breakpoint) => ShouldUpdateOpenStateFromBreakpoint() && IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
 
         internal string GetPosition()
         {
