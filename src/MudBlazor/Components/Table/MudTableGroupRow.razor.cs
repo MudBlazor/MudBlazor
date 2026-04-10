@@ -114,12 +114,14 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles applied to this group's header.
         /// </summary>
+        [Obsolete("Prefer the HeaderClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? HeaderStyle { get; set; }
 
         /// <summary>
         /// The CSS styles applied to this group's footer.
         /// </summary>
+        [Obsolete("Prefer the FooterClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? FooterStyle { get; set; }
 

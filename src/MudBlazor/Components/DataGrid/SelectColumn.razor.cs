@@ -76,7 +76,9 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
         Resizable = false;
         Filterable = false;
         ShowColumnOptions = false;
+#pragma warning disable CS0618 // HeaderStyle is obsolete but this is an internal default initialization
         HeaderStyle = "width:0%";
+#pragma warning restore CS0618
     }
 
     private Dictionary<string, object> GetSelectAllAttributes()

@@ -355,6 +355,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.
         /// </remarks>
+        [Obsolete("Prefer the ContainerClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public string? ContainerStyle { get; set; }
@@ -593,6 +594,7 @@ namespace MudBlazor
         /// <remarks>
         /// Some CSS styles will be overridden by <see cref="MudTd"/>.
         /// </remarks>
+        [Obsolete("Prefer the RowClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public string? RowStyle { get; set; }
@@ -740,7 +742,9 @@ namespace MudBlazor
 
         protected string TableContainerStyle
             => new StyleBuilder()
+#pragma warning disable CS0618 // Type or member is obsolete
                 .AddStyle(ContainerStyle)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
 

@@ -134,6 +134,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Timeline_DotClass()
+        {
+            var comp = Context.Render<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+            comp.Find("div.mud-timeline-item-dot").ClassList.Should().NotContain("my-custom-dot");
+
+            await firstItem.SetParametersAndRenderAsync(p =>
+            {
+                p.Add(t => t.DotClass, "my-custom-dot");
+            });
+
+            comp.Find("div.mud-timeline-item-dot").ClassList.Should().Contain("my-custom-dot");
+        }
+
+        [Test]
+#pragma warning disable CS0618 // DotStyle is obsolete but kept for backward-compatibility testing
         public async Task Timeline_DotStyles()
         {
             var comp = Context.Render<TimelineTest>();
@@ -147,6 +163,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("rgba(255, 0, 0, 1)");
         }
+#pragma warning restore CS0618
 
         /// <summary>
         /// Test horizontal timeline inside vertical timeline.

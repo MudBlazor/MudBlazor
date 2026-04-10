@@ -1,5 +1,8 @@
 ﻿@using MudBlazor.Utilities
 
+@{
+#pragma warning disable CS0618 // GroupStyle/GroupStyleFunc are obsolete but kept for backward-compatibility testing
+}
 <MudDataGrid @ref="@_dataGrid" T="USState"
              ServerData="@ServerReload"
              Hover FixedHeader Groupable

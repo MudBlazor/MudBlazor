@@ -188,12 +188,14 @@ namespace MudBlazor
         /// <summary>
         /// The CSS style applied to this column's header.
         /// </summary>
+        [Obsolete("Prefer the HeaderClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? HeaderStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for the header.
         /// </summary>
+        [Obsolete("Prefer the HeaderClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public Func<IEnumerable<T>, string>? HeaderStyleFunc { get; set; }
 
@@ -422,12 +424,14 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles to apply to this cell.
         /// </summary>
+        [Obsolete("Prefer the CellClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? CellStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for this cell.
         /// </summary>
+        [Obsolete("Prefer the CellClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public Func<T, string>? CellStyleFunc { get; set; }
 
@@ -489,12 +493,14 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles to apply to this column's footer.
         /// </summary>
+        [Obsolete("Prefer the FooterClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? FooterStyle { get; set; }
 
         /// <summary>
         /// The function which calculates CSS styles for this column's footer.
         /// </summary>
+        [Obsolete("Prefer the FooterClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public Func<IEnumerable<T>, string>? FooterStyleFunc { get; set; }
 

@@ -40,8 +40,10 @@ namespace MudBlazor
 
         internal string ComputedStyle =>
             new StyleBuilder()
+#pragma warning disable CS0618 // Type or member is obsolete
                 .AddStyle(_column.CellStyleFunc?.Invoke(_item))
                 .AddStyle(_column.CellStyle)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .Build();
 
         #endregion

@@ -1,4 +1,7 @@
-﻿<MudTable Items="@_cars" Hover="true"
+﻿@{
+#pragma warning disable CS0618 // GroupHeaderStyle/GroupFooterStyle are obsolete but kept for backward-compatibility testing
+}
+<MudTable Items="@_cars" Hover="true"
           GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
           GroupFooterStyle="background-color:var(--mud-palette-background-gray)"
           MultiSelection="true">

@@ -1,11 +1,17 @@
 ﻿@using System.Net.Http.Json
 @namespace MudBlazor.Docs.Examples
 
+<style>
+    .datagrid-header-nowrap {
+        white-space: nowrap;
+    }
+</style>
+
 <MudDataGrid Items="@_users" HorizontalScrollbar="true" Bordered="true" Dense="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" StickyLeft="true" />
         <PropertyColumn Property="x => x.Age" />
-        <PropertyColumn Property="x => x.FillerColumn" HeaderStyle="white-space:nowrap">
+        <PropertyColumn Property="x => x.FillerColumn" HeaderClass="datagrid-header-nowrap">
             <HeaderTemplate>
                 @((MarkupString)$"This is a really long column{string.Join("", Enumerable.Repeat("&nbsp;", 1000))}...")
             </HeaderTemplate>

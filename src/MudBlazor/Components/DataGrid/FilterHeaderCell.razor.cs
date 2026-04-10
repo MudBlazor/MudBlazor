@@ -48,7 +48,9 @@ namespace MudBlazor
 
         private string Stylename =>
             new StyleBuilder()
+#pragma warning disable CS0618 // Type or member is obsolete
                 .AddStyle(Column?.HeaderStyle)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .AddStyle(Style)
                 .Build();
 

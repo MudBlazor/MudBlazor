@@ -1,4 +1,7 @@
-﻿<MudTable T="int" Items="_items" RowStyleFunc="@((item, index) => item > 1 ? "color: blue" : "color: red")" RowClassFunc="@((item, index) => index % 2 == 0 ? "even" : "odd")">
+﻿@{
+#pragma warning disable CS0618 // RowStyleFunc is obsolete but kept for backward-compatibility testing
+}
+<MudTable T="int" Items="_items" RowStyleFunc="@((item, index) => item > 1 ? "color: blue" : "color: red")" RowClassFunc="@((item, index) => index % 2 == 0 ? "even" : "odd")">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>

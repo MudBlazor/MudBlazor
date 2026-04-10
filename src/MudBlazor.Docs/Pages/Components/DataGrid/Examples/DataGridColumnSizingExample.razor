@@ -1,5 +1,14 @@
 @namespace MudBlazor.Docs.Examples
 
+<style>
+    .datagrid-notes-cell {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 0;
+    }
+</style>
+
 <MudDataGrid T="Employee" Items="@_employees" ColumnResizeMode="ResizeMode.Column" HorizontalScrollbar="true">
     <ColGroup>
         <col style="width: 5%;" />
@@ -10,7 +19,7 @@
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="ID" />
         <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Notes" CellStyle="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0;" />
+        <PropertyColumn Property="x => x.Notes" CellClass="datagrid-notes-cell" />
         <PropertyColumn Property="x => x.Salary" />
     </Columns>
 </MudDataGrid>

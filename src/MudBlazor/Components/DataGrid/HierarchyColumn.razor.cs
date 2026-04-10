@@ -113,12 +113,14 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// <summary>
     /// The CSS style applied to this column's header.
     /// </summary>
+    [Obsolete("Prefer the HeaderClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
     [Parameter]
     public string HeaderStyle { get; set; } = "width:0%;";
 
     /// <summary>
     /// The function which calculates CSS styles for the header.
     /// </summary>
+    [Obsolete("Prefer the HeaderClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
     [Parameter]
     public Func<IEnumerable<T>, string>? HeaderStyleFunc { get; set; }
 

@@ -1,4 +1,7 @@
-﻿<MudDataGrid Items="@_items">
+﻿@{
+#pragma warning disable CS0618 // CellStyleFunc/HeaderStyleFunc are obsolete but kept for backward-compatibility testing
+}
+<MudDataGrid Items="@_items">
     <Columns>
         <PropertyColumn Property="x => x.Name" CellStyleFunc="@CellStyleFunc" HeaderStyleFunc="@HeaderStyleFunc" HeaderClassFunc="@HeaderClassFunc" />
     </Columns>

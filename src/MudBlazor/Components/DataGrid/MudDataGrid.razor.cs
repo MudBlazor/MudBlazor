@@ -757,6 +757,7 @@ namespace MudBlazor
         /// <remarks>
         /// Some CSS settings are overridden by other styles, such as those from <see cref="MudTd"/>.
         /// </remarks>
+        [Obsolete("Prefer the RowClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? RowStyle { get; set; }
 
@@ -775,6 +776,7 @@ namespace MudBlazor
         /// <remarks>
         /// The function passes the current item and row index as parameters.
         /// </remarks>
+        [Obsolete("Prefer the RowClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter] public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
@@ -1331,6 +1333,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
+        [Obsolete("Prefer the GroupClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public string? GroupStyle { get; set; }
 
@@ -1349,6 +1352,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
+        [Obsolete("Prefer the GroupClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         public Func<GroupDefinition<T>, string>? GroupStyleFunc { get; set; }
 

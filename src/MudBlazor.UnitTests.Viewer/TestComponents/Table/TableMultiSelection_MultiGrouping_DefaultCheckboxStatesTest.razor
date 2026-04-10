@@ -1,4 +1,7 @@
-﻿<MudSwitch @bind-Value="_groupsDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
+﻿@{
+#pragma warning disable CS0618 // GroupHeaderStyle/GroupFooterStyle are obsolete but kept for backward-compatibility testing
+}
+<MudSwitch @bind-Value="_groupsDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
 <MudSwitch @bind-Value="_groupsDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
 <MudSwitch @bind-Value:get="GetInnerGroupExpandable" @bind-Value:set="SetInnerGroupExpandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
 <MudSwitch @bind-Value="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>

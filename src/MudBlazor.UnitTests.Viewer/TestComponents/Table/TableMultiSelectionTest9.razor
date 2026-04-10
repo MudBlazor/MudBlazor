@@ -1,4 +1,7 @@
-﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+﻿@{
+#pragma warning disable CS0618 // GroupHeaderStyle is obsolete but kept for backward-compatibility testing
+}
+<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
 <MudTable Items="Items"
           T="TableGroupingTest.RacingCar"
           MultiSelection="true"

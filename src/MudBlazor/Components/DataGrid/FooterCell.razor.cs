@@ -48,8 +48,10 @@ namespace MudBlazor
 
         private string Stylename =>
             new StyleBuilder()
+#pragma warning disable CS0618 // Type or member is obsolete
                 .AddStyle(Column?.FooterStyleFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.FooterStyle)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")
                 .Build();

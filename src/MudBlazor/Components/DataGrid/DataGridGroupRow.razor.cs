@@ -22,8 +22,10 @@ namespace MudBlazor
             .Build();
 
         protected string GroupStylename => new StyleBuilder()
+#pragma warning disable CS0618 // Type or member is obsolete
             .AddStyle(GroupStyle)
             .AddStyle(GroupStyleFunc?.Invoke(GroupDefinition))
+#pragma warning restore CS0618 // Type or member is obsolete
             .Build();
 
         /// <summary>
@@ -71,6 +73,7 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles applied to the group row.
         /// </summary>
+        [Obsolete("Prefer the GroupClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupStyle { get; set; }
@@ -85,6 +88,7 @@ namespace MudBlazor
         /// <summary>
         /// The function used to compute CSS styles for the group row.
         /// </summary>
+        [Obsolete("Prefer the GroupClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupStyleFunc { get; set; }

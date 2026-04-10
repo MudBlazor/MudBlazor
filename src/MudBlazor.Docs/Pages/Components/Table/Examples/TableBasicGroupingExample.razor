@@ -12,13 +12,17 @@
         padding-bottom: 50px;
         text-align: right;
     }
+
+    .table-group-header-gray {
+        background-color: var(--mud-palette-background-gray);
+    }
 </style>
 
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
           Items="@Elements"
           Virtualize="@_virtualize"
           GroupBy="@_groupDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupHeaderClass="table-group-header-gray"
           GroupFooterClass="mb-4"
           Dense="_dense"
           MultiSelection="_multiSelect">

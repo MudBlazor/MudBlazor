@@ -2,12 +2,20 @@
 @using MudBlazor.Utilities
 @namespace MudBlazor.Docs.Examples
 
+<style>
+    .datagrid-group-info {
+        background-color: var(--mud-palette-info);
+    }
+</style>
+
+@{
+#pragma warning disable CS0618 // GroupStyleFunc uses dynamic level-based styles that cannot be trivially expressed as CSS classes
+}
 <MudDataGrid @ref="@_dataGrid" T="USState"
              ServerData="@ServerReload"
              Hover FixedHeader Groupable
              Height="500px" 
-             GroupClass="@(_customizeGroupStyle ? "pa-4" : null)"
-             GroupStyle="@(_customizeGroupStyle ? "background-color: var(--mud-palette-info);" : null)"
+             GroupClass="@(_customizeGroupStyle ? "pa-4 datagrid-group-info" : null)"
              GroupClassFunc="@(_customizeGroupStyle ? GroupClassFunc : null)"
              GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
     <ToolBarContent>

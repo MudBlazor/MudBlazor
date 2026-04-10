@@ -4,6 +4,9 @@
 @inject InternalMudLocalizer Localizer
 @typeparam T
 
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
 <TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderClassFunc="@HeaderClassFunc"
     Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged" HeaderClass="@(EnableHeaderToggle ? $"mud-header-togglehierarchy {HeaderClass}" : HeaderClass)"
     Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled" HeaderTemplate="@HeaderTemplate" ButtonDisabledFunc="@ButtonDisabledFunc"

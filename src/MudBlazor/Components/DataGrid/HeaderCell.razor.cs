@@ -84,8 +84,10 @@ namespace MudBlazor
 
         private string Stylename =>
             new StyleBuilder()
+#pragma warning disable CS0618 // Type or member is obsolete
                 .AddStyle(Column?.HeaderStyleFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.HeaderStyle)
+#pragma warning restore CS0618 // Type or member is obsolete
                 .AddStyle("width", Width?.ToPx(), when: Width.HasValue)
                 .AddStyle(Style)
                 .Build();

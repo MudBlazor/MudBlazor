@@ -333,6 +333,7 @@ namespace MudBlazor
         /// <remarks>
         /// The current item and row index are provided to the function.
         /// </remarks>
+        [Obsolete("Prefer the RowClassFunc property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
         public Func<T, int, string>? RowStyleFunc { get; set; }
@@ -507,6 +508,7 @@ namespace MudBlazor
         /// <summary>
         /// The custom CSS styles to apply to each group header row.
         /// </summary>
+        [Obsolete("Prefer the GroupHeaderClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public string? GroupHeaderStyle { get; set; }
@@ -524,6 +526,7 @@ namespace MudBlazor
         /// <summary>
         /// The custom CSS styles to apply to each group footer row.
         /// </summary>
+        [Obsolete("Prefer the GroupFooterClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
         public string? GroupFooterStyle { get; set; }
