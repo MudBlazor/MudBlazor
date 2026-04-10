@@ -33,6 +33,10 @@ namespace MudBlazor
                 .AddClass(DotClass)
                 .Build();
 
+#pragma warning disable CS0618 // Type or member is obsolete
+        protected string? DotStyleValue => DotStyle;
+#pragma warning restore CS0618 // Type or member is obsolete
+
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
