@@ -1,15 +1,26 @@
 <MudLayout>
-    <MudDrawer Variant="DrawerVariant.Persistent"
+    <MudDrawer Variant="@Variant"
                Open="@_open"
-               OnBreakpointChanged="HandleBreakpointChanged" />
+               OnBreakpointChanged="@BreakpointChangedCallback" />
 </MudLayout>
 
 @code {
     private bool _open = false;
 
+    [Parameter]
+    public bool CallbackEnabled { get; set; } = true;
+
+    [Parameter]
+    public DrawerVariant Variant { get; set; } = DrawerVariant.Persistent;
+
     public Breakpoint LastBreakpoint { get; private set; }
 
     public int BreakpointNotifications { get; private set; }
+
+    private EventCallback<Breakpoint> BreakpointChangedCallback =>
+        CallbackEnabled
+            ? EventCallback.Factory.Create<Breakpoint>(this, HandleBreakpointChanged)
+            : default;
 
     private Task HandleBreakpointChanged(Breakpoint breakpoint)
     {

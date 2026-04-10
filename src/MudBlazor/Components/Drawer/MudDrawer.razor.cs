@@ -20,8 +20,10 @@ namespace MudBlazor
         private bool _closeOnPointerLeave;
         private bool _initial = true;
         private bool _isBrowserViewportSubscribed;
+        private bool _lastBreakpointChangedCallbackHasDelegate;
         private bool _lastNotifiedBreakpointInitialized;
         private bool _keepInitialState;
+        private ResizeOptions? _lastBrowserViewportSubscriptionOptions;
         private Breakpoint _lastNotifiedBreakpoint = Breakpoint.None;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
@@ -227,7 +229,7 @@ namespace MudBlazor
         /// Displays this drawer.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property is updated when this drawer closes itself.
+        /// Defaults to <c>false</c>.  Raises the <see cref="OpenChanged"/> event upon change.  When bound via <c>@bind-Open</c>, this property keeps the parent-provided state during responsive breakpoint changes.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -364,10 +366,22 @@ namespace MudBlazor
         private async Task UpdateBrowserViewportSubscriptionAsync()
         {
             var shouldSubscribe = ShouldSubscribeToBrowserViewport();
+            var shouldNotifyCurrentBreakpoint = false;
+            var resizeOptions = shouldSubscribe ? GetBrowserViewportResizeOptions() : null;
+
+            if (shouldSubscribe && _isBrowserViewportSubscribed && !Equals(_lastBrowserViewportSubscriptionOptions, resizeOptions))
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+                _isBrowserViewportSubscribed = false;
+                _lastBrowserViewportSubscriptionOptions = null;
+            }
+
             if (shouldSubscribe && !_isBrowserViewportSubscribed)
             {
-                _isBrowserViewportSubscribed = true;
                 await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                _isBrowserViewportSubscribed = true;
+                _lastBrowserViewportSubscriptionOptions = resizeOptions;
+                _lastBreakpointChangedCallbackHasDelegate = OnBreakpointChanged.HasDelegate;
                 return;
             }
 
@@ -375,6 +389,18 @@ namespace MudBlazor
             {
                 await BrowserViewportService.UnsubscribeAsync(this);
                 _isBrowserViewportSubscribed = false;
+                _lastBrowserViewportSubscriptionOptions = null;
+            }
+            else if (_isBrowserViewportSubscribed && !_lastBreakpointChangedCallbackHasDelegate && OnBreakpointChanged.HasDelegate)
+            {
+                shouldNotifyCurrentBreakpoint = true;
+            }
+
+            _lastBreakpointChangedCallbackHasDelegate = OnBreakpointChanged.HasDelegate;
+
+            if (shouldNotifyCurrentBreakpoint)
+            {
+                await NotifyCurrentBreakpointChangedAsync();
             }
         }
 
@@ -402,6 +428,7 @@ namespace MudBlazor
                 breakpoint = await BrowserViewportService.GetCurrentBreakpointAsync();
             }
 
+            var breakpointChanged = _lastUpdatedBreakpoint != breakpoint;
             var isStateChanged = false;
             if (ShouldCloseDrawer(breakpoint))
             {
@@ -415,7 +442,7 @@ namespace MudBlazor
             }
 
             _lastUpdatedBreakpoint = breakpoint;
-            if (isStateChanged)
+            if (isStateChanged || breakpointChanged)
             {
                 await InvokeAsync(StateHasChanged);
             }
@@ -427,11 +454,11 @@ namespace MudBlazor
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
-        private static bool IsResponsiveOrMini(DrawerVariant variant) => variant is DrawerVariant.Responsive or DrawerVariant.Mini;
+        private bool ShouldUpdateOpenStateFromBreakpoint() => !_openState.HasCallback || Variant != DrawerVariant.Responsive || Breakpoint is Breakpoint.Always or Breakpoint.None;
 
-        private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
+        private bool ShouldCloseDrawer(Breakpoint breakpoint) => ShouldUpdateOpenStateFromBreakpoint() && IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
-        private bool ShouldOpenDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
+        private bool ShouldOpenDrawer(Breakpoint breakpoint) => ShouldUpdateOpenStateFromBreakpoint() && IsResponsiveOrMini() && (Breakpoint == Breakpoint.Always || (!IsBelowBreakpoint(breakpoint) && IsBelowCurrentBreakpoint()));
 
         internal string GetPosition()
         {
@@ -474,23 +501,13 @@ namespace MudBlazor
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
 
-        ResizeOptions IBrowserViewportObserver.ResizeOptions => new()
-        {
-            ReportRate = 50,
-            NotifyOnBreakpointOnly = !IsResponsiveOrMini()
-        };
+        ResizeOptions IBrowserViewportObserver.ResizeOptions => GetBrowserViewportResizeOptions();
 
         async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
             if (!_lastNotifiedBreakpointInitialized || _lastNotifiedBreakpoint != browserViewportEventArgs.Breakpoint)
             {
-                _lastNotifiedBreakpoint = browserViewportEventArgs.Breakpoint;
-                _lastNotifiedBreakpointInitialized = true;
-
-                if (OnBreakpointChanged.HasDelegate)
-                {
-                    await OnBreakpointChanged.InvokeAsync(browserViewportEventArgs.Breakpoint);
-                }
+                await NotifyBreakpointChangedAsync(browserViewportEventArgs.Breakpoint);
             }
 
             if (browserViewportEventArgs.IsImmediate)
@@ -552,6 +569,32 @@ namespace MudBlazor
                 Breakpoint.XlAndUp or Breakpoint.XlAndDown => Breakpoint.Xl,
                 _ => breakpoint,
             };
+        }
+
+        private ResizeOptions GetBrowserViewportResizeOptions() => new()
+        {
+            ReportRate = 50,
+            NotifyOnBreakpointOnly = !IsResponsiveOrMini()
+        };
+
+        private async Task NotifyBreakpointChangedAsync(Breakpoint breakpoint)
+        {
+            _lastNotifiedBreakpoint = breakpoint;
+            _lastNotifiedBreakpointInitialized = true;
+
+            if (OnBreakpointChanged.HasDelegate)
+            {
+                await OnBreakpointChanged.InvokeAsync(breakpoint);
+            }
+        }
+
+        private async Task NotifyCurrentBreakpointChangedAsync()
+        {
+            var breakpoint = _lastNotifiedBreakpointInitialized
+                ? _lastNotifiedBreakpoint
+                : await BrowserViewportService.GetCurrentBreakpointAsync();
+
+            await NotifyBreakpointChangedAsync(breakpoint);
         }
     }
 }
