@@ -1,5 +1,8 @@
-﻿@using System.Threading
+﻿@using System.Net.Http.Json
+@using System.Threading
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient HttpClient
 
 <MudDataGrid @ref="_dataGrid" T="Company"
              ServerData="ServerReload"
@@ -25,10 +28,15 @@
 
 @code {
 #nullable enable
-    private static readonly IReadOnlyCollection<Company> _org = Company.GetRecords();
+    private IReadOnlyCollection<Company> _org = [];
 
     private MudDataGrid<Company> _dataGrid = null!;
     private string? _search;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _org = await HttpClient.GetFromJsonAsync<List<Company>>("webapi/company") ?? [];
+    }
 
     private Task<GridData<Company>> ServerReload(GridState<Company> state, CancellationToken _)
     {

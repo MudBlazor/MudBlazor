@@ -194,11 +194,6 @@ public partial class SectionContent
             }
         }
 
-        if (CompanyRegularExpression().Match(codeFiles).Success)
-        {
-            var companyCodeFile = "Company.cs" + (char)31 + Snippets.GetCode("Company");
-            codeFiles = codeFiles + (char)31 + companyCodeFile;
-        }
         var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
         // var tryMudBlazorLocation = "https://localhost:5001/";
         var tryMudBlazorLocation = "https://try.mudblazor.com/";
@@ -214,7 +209,4 @@ public partial class SectionContent
 
     [GeneratedRegex(@"\bServer\b")]
     private static partial Regex ServerRegularExpression();
-
-    [GeneratedRegex(@"\bCompany\b")]
-    private static partial Regex CompanyRegularExpression();
 }
