@@ -2,13 +2,13 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <label class="@LabelClassname" style="@Style" @onkeydown="HandleKeyDownAsync" id="@ElementId">
             <span class="@SpanClassname">
                 <span class="@SwitchClassname">
                     <span class="mud-switch-button">
-                        <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" aria-readonly="@(GetReadOnlyState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
+                        <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" aria-readonly="@(GetReadOnlyState().ToString().ToLower())" role="switch" aria-checked="@AriaCheckedState" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
                         <span class="@ThumbClassname">
                             @if (!string.IsNullOrEmpty(ThumbIcon))
                             {

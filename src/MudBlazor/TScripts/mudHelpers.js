@@ -112,6 +112,34 @@ window.mudGetSvgBBox = (svgElement) => {
 };
 
 /**
+ * Returns whether or not the element has a parent with a defined height,
+ * either via explicit height or constrained layout context.
+ */
+window.hasDefinedParentHeight = (element) => {
+    const parent = element?.parentElement;
+
+    if (!parent) return false;
+
+    const style = window.getComputedStyle(parent);
+
+    // Explicit height via inline or computed (not auto)
+    const hasExplicitHeight =
+        parent.style.height && parent.style.height !== 'auto';
+
+    // Check for flex/grid constraints
+    const isFlexOrGrid =
+        style.display.includes('flex') ||
+        style.display.includes('grid');
+
+    // Check if height is constrained via layout context
+    const hasConstrainedHeight =
+        style.height !== 'auto' &&
+        style.maxHeight !== 'none';
+
+    return hasExplicitHeight || (hasConstrainedHeight && isFlexOrGrid);
+};
+
+/**
  * Observes element size changes and forwards throttled updates to a .NET callback.
  * Automatically stops observing when the element is removed from the DOM.
  */

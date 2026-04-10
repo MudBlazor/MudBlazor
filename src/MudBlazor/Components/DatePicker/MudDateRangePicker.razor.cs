@@ -506,6 +506,16 @@ namespace MudBlazor
             return date.StartOfMonth(GetCulture());
         }
 
+        protected override async Task OnYearClickedAsync(int year)
+        {
+            await base.OnYearClickedAsync(year);
+
+            if (DateRange?.Start is null && _firstDate is null)
+            {
+                HighlightedDate = PickerMonth;
+            }
+        }
+
         protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;

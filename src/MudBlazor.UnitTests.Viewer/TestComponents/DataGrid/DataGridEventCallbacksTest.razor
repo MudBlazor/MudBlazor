@@ -3,8 +3,10 @@
 <MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
              RowClick="@OnRowClick"
              RowContextMenuClick="@OnRowContextMenuClick"
+             SortChanged="@OnSortChanged"
              SelectedItemChanged="@OnSelectedItemChanged"
              SelectedItemsChanged="@OnSelectedItemsChanged"
+             FilterChanged="@OnFilterChanged"
              CommittedItemChanges="@OnCommittedItemChanges"
              StartedEditingItem="@OnStartedEditingItem"
              CanceledEditingItem="@OnCanceledEditingItem"
@@ -26,8 +28,11 @@
 
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
+    public bool SortChanged { get; set; }
     public bool SelectedItemChanged { get; set; }
     public bool SelectedItemsChanged { get; set; }
+    public bool FilterChanged { get; set; }
+    public int FilterChangedCallCount { get; set; }
     public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
     public bool CanceledEditingItem { get; set; }
@@ -42,6 +47,11 @@
         RowContextMenuClicked = true;
     }
 
+    private void OnSortChanged(Dictionary<string, SortDefinition<Item>> sorts)
+    {
+        SortChanged = true;
+    }
+
     private void OnSelectedItemChanged(Item item)
     {
         SelectedItemChanged = true;
@@ -50,6 +60,12 @@
     private void OnSelectedItemsChanged(HashSet<Item> items)
     {
         SelectedItemsChanged = true;
+    }
+
+    private void OnFilterChanged(IReadOnlyCollection<IFilterDefinition<Item>> _)
+    {
+        FilterChanged = true;
+        FilterChangedCallCount++;
     }
 
     private Task<DataGridEditFormAction> OnCommittedItemChanges(Item item)

@@ -84,7 +84,7 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);

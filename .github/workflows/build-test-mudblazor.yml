@@ -29,8 +29,6 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.x
 
       - name: Restore dependencies
         working-directory: src
@@ -107,12 +105,12 @@ jobs:
         uses: actions/download-artifact@v8
 
       - name: Publish coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Publish test results
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
