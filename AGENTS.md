@@ -105,7 +105,7 @@ Formatting is required for changed files:
 dotnet format <project.csproj> --no-restore --include <path/to/changed/files>
 ```
 
-- Run `dotnet format` once near the end of the task after edits have stabilized. Do not put format into the normal edit-build-test loop.
+- Run `dotnet format` once near the end of the task after edits have stabilized. If tests are part of the validation loop, run format after the tests pass so you do not spend time formatting when tests fail. Do not put format into the normal edit-build-test loop.
 
 - If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
 
