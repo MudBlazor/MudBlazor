@@ -200,7 +200,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-chip")[0].TagName.Should().Be("DIV");
 
             //Should not throw an error because it won't click
-            await comp.FindAll("button.mud-chip-close-button")[0].ClickAsync();
+            await comp.FindAll(".mud-chip-close-button")[0].ClickAsync();
 
             chipset.Instance.SelectedValue.Should().Be(null);
         }

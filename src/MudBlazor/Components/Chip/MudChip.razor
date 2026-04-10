@@ -42,13 +42,13 @@
             }
             @if (IsClosable)
             {
-                <MudIconButton Class="mud-chip-close-button"
-                               Icon="@GetCloseIcon()"
-                               OnClick="OnCloseAsync"
-                               Size="MudBlazor.Size.Small"
-                               Disabled="@Disabled"
-                               aria-label="@Localizer[LanguageResource.MudChip_Close]"
-                               tabindex="-1"/>
+                <span class="@CloseButtonClassname"
+                      aria-label="@Localizer[LanguageResource.MudChip_Close]"
+                      tabindex="-1"
+                      @onclick="OnCloseAsync"
+                      @onclick:stopPropagation="true">
+                    <MudIcon Disabled="@GetDisabled()" Icon="@GetCloseIcon()" Size="MudBlazor.Size.Small" />
+                </span>
             }
         </span>
     </MudElement>

@@ -67,6 +67,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
+    protected string CloseButtonClassname => new CssBuilder("mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-icon-button-size-small mud-chip-close-button")
+        .AddClass("mud-disabled", GetDisabled())
+        .Build();
+
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
     private bool IsButton => GetDisabled() is false
