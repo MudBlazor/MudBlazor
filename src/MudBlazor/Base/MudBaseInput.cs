@@ -498,7 +498,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await BeginValidateAsync();
+                        await ValidateValue();
                     }
                 }
             }
@@ -553,6 +553,7 @@ namespace MudBlazor
         private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
         {
             _validated = false;
+            var wasTouched = Touched;
 
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
@@ -562,6 +563,14 @@ namespace MudBlazor
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
                 await UpdateTextPropertyAsync(false);
+            }
+
+            // Notify the form that the field has changed and trigger re-validation
+            // Only do this after the field has been touched.
+            if (wasTouched)
+            {
+                FieldChanged(arg.Value);
+                await BeginValidateAsync();
             }
         }
 
@@ -627,7 +636,7 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            if (typeof(T) != typeof(string))
+            if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
                 await UpdateTextPropertyAsync(false);
             }
@@ -661,7 +670,7 @@ namespace MudBlazor
         {
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
-
+            var currentValue = ReadValue;
             await base.SetParametersAsync(parameters);
 
             // Refresh Text from Value if Value is present but Text is not
@@ -670,6 +679,14 @@ namespace MudBlazor
             // but we need to update Text even when Value is passed unchanged (for formatting)
             if (hasValue && !hasText)
             {
+                var valueChanged = !EqualityComparer<T?>.Default.Equals(currentValue, ReadValue);
+
+                // Preserve in-progress user text across parent rerenders until Value actually changes.
+                if (_isFocused && !valueChanged && !_forceTextUpdate)
+                {
+                    return;
+                }
+
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
                 await UpdateTextPropertyAsync(false);

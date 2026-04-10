@@ -1,5 +1,9 @@
-﻿<MudDataGrid T="Model" Items="@_items" Filterable="true" FilterMode="FilterMode"
-             FilterIconEmpty="@Icons.Material.Filled.Battery0Bar" FilterIconFilled="@Icons.Material.Filled.BatteryFull" FilterIconClear="@Icons.Material.Filled.BatteryAlert">
+<MudDataGrid T="Model" Items="@_items" Filterable="true" FilterMode="FilterMode"
+             SortIcon="test_grid_sort_icon"
+             FilterIconEmpty="test_grid_filter_empty_icon"
+             FilterIconFilled="test_grid_filter_filled_icon"
+             FilterIconClear="test_grid_filter_clear_icon"
+             ColumnOptionsIcon="test_grid_column_options_icon">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />

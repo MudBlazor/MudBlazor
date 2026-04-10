@@ -46,6 +46,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected abstract bool ShouldInterpolate { get; }
 
     /// <summary>
+    /// When <c>true</c>, data points are always added to <see cref="ChartDataPoints"/> regardless of
+    /// <see cref="IChartOptions.ShowToolTips"/>. Override to <c>true</c> for charts (e.g. scatter plot)
+    /// that use <see cref="ChartDataPoints"/> to render visible markers, not only tooltips.
+    /// </summary>
+    protected virtual bool ShouldAlwaysPopulateDataPoints => false;
+
+    /// <summary>
     /// Gets the data value for a specific series and data point.
     /// </summary>
     /// <typeparam name="TReturn">The type of the return value.</typeparam>
@@ -240,7 +247,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             chartLine.Append(' ');
             chartLine.Append(ToS(y));
 
-            if (ChartOptions?.ShowToolTips == true)
+            if (ChartOptions?.ShowToolTips == true || ShouldAlwaysPopulateDataPoints)
             {
                 chartDataCircles.Add(new SvgCircle
                 {

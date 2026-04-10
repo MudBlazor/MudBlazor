@@ -128,6 +128,34 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
 
+        [Test]
+        public async Task TableSortLabelInitialSortDirection()
+        {
+            var comp = Context.Render<TableInitialSortDirectionTest>();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+
+            comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
+                .Add(p => p.InitialSortDirection, SortDirection.Ascending));
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
+                .Add(p => p.InitialSortDirection, SortDirection.None));
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+        }
+
         /// <summary>
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>

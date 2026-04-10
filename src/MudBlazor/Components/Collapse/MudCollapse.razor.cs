@@ -101,14 +101,17 @@ namespace MudBlazor
             {
                 _state = CollapseState.Entered;
                 StateHasChanged();
+                return OnAnimationEnd.InvokeAsync(_expandedState.Value);
             }
-            else if (_state == CollapseState.Exiting)
+
+            if (_state == CollapseState.Exiting)
             {
                 _state = CollapseState.Exited;
                 StateHasChanged();
+                return OnAnimationEnd.InvokeAsync(_expandedState.Value);
             }
 
-            return OnAnimationEnd.InvokeAsync(_expandedState.Value);
+            return Task.CompletedTask;
         }
     }
 }

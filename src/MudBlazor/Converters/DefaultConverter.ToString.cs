@@ -6,8 +6,10 @@ namespace MudBlazor;
 
 internal partial class DefaultConverter
 {
-    internal sealed class ToStringFallbackConverter<T> : IConverter<T?, string?>
+    internal sealed class ToStringFallbackConverter<T> : IReversibleConverter<T?, string?>
     {
         public string? Convert(T? input) => input?.ToString();
+
+        public T? ConvertBack(string? input) => default;
     }
 }

@@ -38,7 +38,7 @@ namespace MudBlazor
         /// <summary>
         /// The behaviors which occur when filters are applied or cleared.
         /// </summary>
-        public FilterActions Actions { get; }
+        public FilterActions Actions { get; private set; }
 
         /// <summary>
         /// Creates a new instance.
@@ -47,12 +47,23 @@ namespace MudBlazor
         public FilterContext(MudDataGrid<T> dataGrid)
         {
             _dataGrid = dataGrid;
-            Actions = new FilterActions
+            Actions = CreateHeaderCellActions();
+        }
+
+        internal void SetActions(FilterActions actions)
+        {
+            Actions = actions;
+        }
+
+        internal FilterActions CreateHeaderCellActions()
+        {
+            return new FilterActions
             {
                 ApplyFilterAsync = async x => await (HeaderCell?.ApplyFilterAsync(x) ?? Task.CompletedTask),
                 ApplyFiltersAsync = async x => await (HeaderCell?.ApplyFiltersAsync(x) ?? Task.CompletedTask),
                 ClearFilterAsync = async x => await (HeaderCell?.ClearFilterAsync(x) ?? Task.CompletedTask),
                 ClearFiltersAsync = async x => await (HeaderCell?.ClearFiltersAsync(x) ?? Task.CompletedTask),
+                CloseFilterAsync = async () => await (HeaderCell?.CloseFilterAsync() ?? Task.CompletedTask),
             };
         }
 
@@ -80,6 +91,15 @@ namespace MudBlazor
             /// The function which clears multiple filters.
             /// </summary>
             public required Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; }
+
+            /// <summary>
+            /// The function which closes the filter UI associated with this context.
+            /// </summary>
+            /// <remarks>
+            /// In <see cref="DataGridFilterMode.Simple"/>, this closes the data grid filter panel.
+            /// In <see cref="DataGridFilterMode.ColumnFilterMenu"/>, this closes the column filter popover.
+            /// </remarks>
+            public required Func<Task> CloseFilterAsync { get; init; }
         }
     }
 }

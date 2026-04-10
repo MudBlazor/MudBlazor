@@ -26,6 +26,7 @@ public partial class MudStepper : MudComponentBase
     private MudStep? _activeStep;
     private readonly ParameterState<int> _activeIndex;
     private readonly List<MudStep> _steps = [];
+    private readonly string _componentId = Identifier.Create();
 
     protected string Classname =>
         new CssBuilder("mud-stepper")
@@ -45,6 +46,25 @@ public partial class MudStepper : MudComponentBase
             .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
             .AddClass(NavClass)
             .Build();
+
+    internal string GetStepButtonId(MudStep step) => $"stepper-{_componentId}-tab-{step.FieldId}";
+
+    internal string GetStepPanelId(MudStep step) => $"stepper-{_componentId}-tabpanel-{step.FieldId}";
+
+    internal string? GetStepPanelIdIfRendered(MudStep step)
+    {
+        if (IsCompleted && CompletedContent is not null)
+        {
+            return null;
+        }
+
+        if (Vertical)
+        {
+            return GetStepPanelId(step);
+        }
+
+        return step == _activeStep ? GetStepPanelId(step) : null;
+    }
 
     /// <summary>
     /// The steps to step through.
