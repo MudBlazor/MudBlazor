@@ -23,7 +23,6 @@
     {
         resolvedItems = DataGrid.CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
     }
-
 }
 
 <MudVirtualize @ref="DataGrid._mudVirtualize"
