@@ -39,5 +39,27 @@ namespace MudBlazor.UnitTests.Extensions
             // Assert
             result.Should().Be(expectedEdge);
         }
+
+        [Test]
+        public void GeneratedEnumExtensions_ShouldBePublic()
+        {
+            // Arrange
+            var breakPointAssembly = typeof(Breakpoint).Assembly;
+            var sizeAssembly = typeof(Size).Assembly;
+            var variantAssembly = typeof(Variant).Assembly;
+
+            // Assert
+            var breakpointExtensionsType = breakPointAssembly.GetType("MudBlazor.BreakpointExtensions");
+            breakpointExtensionsType.Should().NotBeNull();
+            breakpointExtensionsType.IsPublic.Should().BeTrue();
+
+            var sizeExtensionsType = sizeAssembly.GetType("MudBlazor.SizeExtensions");
+            sizeExtensionsType.Should().NotBeNull();
+            sizeExtensionsType.IsPublic.Should().BeTrue();
+
+            var variantExtensionsType = variantAssembly.GetType("MudBlazor.VariantExtensions");
+            variantExtensionsType.Should().NotBeNull();
+            variantExtensionsType.IsPublic.Should().BeTrue();
+        }
     }
 }
