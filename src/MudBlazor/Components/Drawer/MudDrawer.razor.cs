@@ -43,9 +43,9 @@ namespace MudBlazor
                 .WithChangeHandler(OnRightToLeftParameterChanged);
         }
 
-        private DrawerVariant CurrentRenderVariant => GetCurrentRenderVariant();
+        internal DrawerVariant EffectiveVariant => Variant == DrawerVariant.Mini && IsBelowCurrentBreakpoint() ? DrawerVariant.Temporary : Variant;
 
-        private bool OverlayVisible => _openState.Value && Overlay && (CurrentRenderVariant == DrawerVariant.Temporary || (CurrentRenderVariant == DrawerVariant.Responsive && IsBelowCurrentBreakpoint()));
+        private bool OverlayVisible => _openState.Value && Overlay && (EffectiveVariant == DrawerVariant.Temporary || (EffectiveVariant == DrawerVariant.Responsive && IsBelowCurrentBreakpoint()));
 
         protected string Classname =>
             new CssBuilder("mud-drawer")
@@ -58,7 +58,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-clipped-{ClipMode.ToStringFast(true)}")
                 .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
                 .AddClass($"mud-elevation-{Elevation}")
-                .AddClass($"mud-drawer-{CurrentRenderVariant.ToStringFast(true)}")
+                .AddClass($"mud-drawer-{EffectiveVariant.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
@@ -66,7 +66,7 @@ namespace MudBlazor
             new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer-overlay--open", _openState.Value)
-                .AddClass($"mud-drawer-overlay-{CurrentRenderVariant.ToStringFast(true)}")
+                .AddClass($"mud-drawer-overlay-{EffectiveVariant.ToStringFast(true)}")
                 .AddClass($"mud-drawer-overlay-{Breakpoint.ToStringFast(true)}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
                 .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
@@ -75,7 +75,7 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!IsFixed || CurrentRenderVariant == DrawerVariant.Temporary))
+                .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!IsFixed || EffectiveVariant == DrawerVariant.Temporary))
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle("--mud-drawer-height", string.IsNullOrWhiteSpace(Height) ? _height.ToPx() : Height, Anchor == Anchor.Bottom || Anchor == Anchor.Top)
                 .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && Anchor is Anchor.Bottom or Anchor.Top)
@@ -373,7 +373,7 @@ namespace MudBlazor
 
         private async Task UpdateBreakpointStateAsync(Breakpoint breakpoint)
         {
-            var previousRenderVariant = CurrentRenderVariant;
+            var previousEffectiveVariant = EffectiveVariant;
             if (breakpoint == Breakpoint.None)
             {
                 breakpoint = await BrowserViewportService.GetCurrentBreakpointAsync();
@@ -392,7 +392,7 @@ namespace MudBlazor
             }
 
             _lastUpdatedBreakpoint = breakpoint;
-            var renderVariantChanged = previousRenderVariant != CurrentRenderVariant;
+            var renderVariantChanged = previousEffectiveVariant != EffectiveVariant;
             if (renderVariantChanged)
             {
                 DrawerContainerUpdate();
@@ -409,11 +409,6 @@ namespace MudBlazor
         private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(Breakpoint);
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
-
-        private DrawerVariant GetCurrentRenderVariant()
-            => Variant == DrawerVariant.Mini && IsBelowCurrentBreakpoint()
-                ? DrawerVariant.Temporary
-                : Variant;
 
         private bool ShouldCloseDrawer(Breakpoint breakpoint) => IsResponsiveOrMini() && (Breakpoint == Breakpoint.None || (IsBelowBreakpoint(breakpoint) && !IsBelowCurrentBreakpoint()));
 
@@ -433,7 +428,7 @@ namespace MudBlazor
 
         private async Task OnPointerEnterAsync()
         {
-            if (CurrentRenderVariant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
+            if (EffectiveVariant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
             {
                 _closeOnPointerLeave = true;
                 await _openState.SetValueAsync(true);
@@ -442,7 +437,7 @@ namespace MudBlazor
 
         private async Task OnPointerLeaveAsync()
         {
-            if (CurrentRenderVariant == DrawerVariant.Mini && _openState.Value && _closeOnPointerLeave)
+            if (EffectiveVariant == DrawerVariant.Mini && _openState.Value && _closeOnPointerLeave)
             {
                 _closeOnPointerLeave = false;
                 await _openState.SetValueAsync(false);
@@ -451,7 +446,7 @@ namespace MudBlazor
 
         async Task INavigationEventReceiver.OnNavigation()
         {
-            if (CurrentRenderVariant == DrawerVariant.Temporary ||
+            if (EffectiveVariant == DrawerVariant.Temporary ||
                 (IsResponsiveOrMini() && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
             {
                 await _openState.SetValueAsync(false);
@@ -470,7 +465,7 @@ namespace MudBlazor
         {
             if (browserViewportEventArgs.IsImmediate)
             {
-                var previousRenderVariant = CurrentRenderVariant;
+                var previousEffectiveVariant = EffectiveVariant;
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
                 if (!IsResponsiveOrMini())
                 {
@@ -489,7 +484,7 @@ namespace MudBlazor
                 {
                     await InitialOpenState(false);
                 }
-                else if (previousRenderVariant != CurrentRenderVariant)
+                else if (previousEffectiveVariant != EffectiveVariant)
                 {
                     DrawerContainerUpdate();
                     await InvokeAsync(StateHasChanged);
@@ -515,8 +510,6 @@ namespace MudBlazor
                 return _openState.SetValueAsync(open);
             }
         }
-
-        internal DrawerVariant GetContainerVariant() => CurrentRenderVariant;
 
         private static Breakpoint NormalizeBreakpoint(Breakpoint breakpoint)
         {
