@@ -28,7 +28,7 @@ public enum DrawerVariant
     Persistent,
 
     /// <summary>
-    /// The drawer has a small width but will expand when hovering over it.
+    /// The drawer has a small width on larger screens, but behaves like <see cref="DrawerVariant.Temporary"/> below its breakpoint.
     /// </summary>
     [Description("mini")]
     Mini
