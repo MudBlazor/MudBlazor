@@ -131,8 +131,8 @@
                 <Description>
                     The switching point for Responsive Drawers (<CodeInline>DrawerVariant.Mini</CodeInline> and <CodeInline>DrawerVariant.Responsive</CodeInline>) can be changed using the <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>.<br />
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        <b>Important:</b> When using <b>Mini</b> or <b>Responsive</b> variants, the <b>Breakpoint</b> parameter is always the source of truth for the drawer’s open/close state. The component will automatically open or close itself based on the current browser width and the specified breakpoint.<br />
-                        If you want to control the open state independently of the breakpoint, set <b>Variant="DrawerVariant.Persistent"</b> and use the <b>OnBreakpointChanged</b> event to implement your own logic. In persistent mode, the drawer will not automatically react to breakpoints, giving you full control.<br />
+                        <b>Important:</b> When using <b>Mini</b> or <b>Responsive</b> variants, the drawer may automatically open or close when the browser width crosses the configured <b>Breakpoint</b>. This responsive behavior can override the current <b>Open</b> state, including when using <CodeInline>@("@bind-Open")</CodeInline>.<br />
+                        If you need full manual control of the open state independent of breakpoint transitions, set <b>Variant="DrawerVariant.Persistent"</b> and use the <b>OnBreakpointChanged</b> event to implement your own logic. In persistent mode, the drawer will not automatically react to breakpoints.<br />
                         See the example below for how the <b>Breakpoint</b> parameter affects drawer behavior.
                     </MudAlert>
                 </Description>
