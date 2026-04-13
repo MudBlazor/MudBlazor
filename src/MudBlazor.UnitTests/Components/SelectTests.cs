@@ -2056,6 +2056,17 @@ namespace MudBlazor.UnitTests.Components
             filler.InnerHtml.Should().NotContain("custom-render");
         }
 
+        [Test]
+        public async Task Select_CustomItemRenderFragment()
+        {
+            var comp = Context.Render<CustomItemRenderFragmentTest>();
+
+            comp.Find(".mud-select-input").TextContent.Should().Contain("Initial Item 1");
+            await comp.Find("#switch_values").ClickAsync();
+            comp.Find(".mud-select-input").TextContent.Should().NotBe("");
+            comp.Find(".mud-select-input").TextContent.Should().Contain("Item 1");
+        }
+
         private static string GetCheckboxPath(IElement item)
         {
             return item.QuerySelectorAll("path").Last().GetAttribute("d")!;
