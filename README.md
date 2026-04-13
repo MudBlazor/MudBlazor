@@ -6,6 +6,10 @@
 
 # Guide d'installation et d'utilisation de la librairie MudBlazor
 
+## Prérequis
+
+Avoir le SDK .NET installé sur votre machine certaines fonctionnalités utilisent la version 10 et certaines autres la 9
+
 ## Comment installer le projet
 
 1. Cloner le repo suivant dans Rider : https://github.com/xdaneault/MudBlazor.git
