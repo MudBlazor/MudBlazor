@@ -128,6 +128,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
                 .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
                 .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
+                .AddItem("Scatter Plot Chart", typeof(ScatterPlot<T>), typeof(ScatterPlotChartOptions), typeof(Legend<T>))
                 .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
 

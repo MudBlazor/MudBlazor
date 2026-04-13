@@ -303,10 +303,24 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// The sort direction applied when this column is unsorted and the header is clicked for the first time.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.Ascending"/>.
+        /// </remarks>
+        [Parameter]
+        public SortDirection InitialSortDirection { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        [Obsolete("Column-level sort icon customization is no longer supported. Configure MudDataGrid.SortIcon or use HeaderTemplate for full header customization.", true)]
+        public string? SortIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -577,6 +591,9 @@ namespace MudBlazor
         private FilterContext<T> filterContext = null!;
         internal FooterContext<T> footerContext = null!;
 
+        // Cached filter definition to avoid repeated lookups during rendering
+        private IFilterDefinition<T>? _cachedFilterDefinition;
+
         /// <summary>
         /// The context used for filtering values in this column.
         /// </summary>
@@ -584,16 +601,34 @@ namespace MudBlazor
         {
             get
             {
-                // Make sure that when we access filterContext properties, they have been defined...
-                if (filterContext.FilterDefinition == null)
+                Debug.Assert(DataGrid is not null);
+
+                // Check if the cached filter definition is still valid in the grid's FilterDefinitions
+                var existingFilterDefinition = DataGrid.FilterDefinitions.FirstOrDefault(fd => fd.Column == this);
+
+                if (existingFilterDefinition != null)
                 {
-                    Debug.Assert(DataGrid is not null);
-                    var operators = GetFilterOperators(FieldType.Identify(PropertyType));
-                    var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
-                    filterDefinition.Title = Title;
-                    filterDefinition.Operator = operators.FirstOrDefault();
-                    filterDefinition.Column = this;
-                    filterContext.FilterDefinition = filterDefinition;
+                    // Use the existing filter definition from the grid
+                    if (_cachedFilterDefinition != existingFilterDefinition)
+                    {
+                        _cachedFilterDefinition = existingFilterDefinition;
+                        filterContext.FilterDefinition = existingFilterDefinition;
+                    }
+                }
+                else
+                {
+                    // No filter exists in the grid - check if we have a stale reference or need to create a new one
+                    if (_cachedFilterDefinition != null || filterContext.FilterDefinition == null)
+                    {
+                        // Clear the stale cached reference and create a new filter definition
+                        _cachedFilterDefinition = null;
+                        var operators = GetFilterOperators(FieldType.Identify(PropertyType));
+                        var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
+                        filterDefinition.Title = Title;
+                        filterDefinition.Operator = operators.FirstOrDefault();
+                        filterDefinition.Column = this;
+                        filterContext.FilterDefinition = filterDefinition;
+                    }
                 }
 
                 return filterContext;

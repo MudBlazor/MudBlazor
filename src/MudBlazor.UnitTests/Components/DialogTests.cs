@@ -971,6 +971,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ShowAsyncWithParametersOnly_ShouldPassParameters()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error }
+            };
+            IDialogReference dialogReference = null!;
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithParameters>(parameters));
+            dialogReference.Should().NotBe(null);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.ReadText.Should().Be("test");
+            ((DialogWithParameters)dialogReference.Dialog).ColorTest.Should().Be(Color.Error);
+        }
+
+        [Test]
         public async Task ShowGeneric_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
@@ -1300,6 +1322,36 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBeNull();
 
             comp.Find("div.mud-dialog-title").GetAttribute("class").Should().Be(expectedClassname);
+        }
+
+        [Test]
+        public async Task DialogWithTitleShouldLinkDialogToTitleForAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title"));
+
+            var dialog = comp.Find("div[role='dialog']");
+            var labelledBy = dialog.GetAttribute("aria-labelledby");
+            labelledBy.Should().NotBeNullOrWhiteSpace();
+
+            var title = comp.Find("div.mud-dialog-title");
+            title.GetAttribute("id").Should().Be(labelledBy);
+            title.TrimmedText().Should().Contain("Dialog title");
+        }
+
+        [Test]
+        public async Task DialogWithoutHeaderShouldNotRenderAriaLabelledBy()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-labelledby").Should().BeNull();
+            comp.FindAll("div.mud-dialog-title").Should().BeEmpty();
         }
 
         [Test]

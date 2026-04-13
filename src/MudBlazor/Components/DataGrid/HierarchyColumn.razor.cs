@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -143,6 +144,12 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// </remarks>
     [Parameter]
     public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+    /// <summary>
+    /// Occurs when hierarchy visibility is toggled for an item in this column.
+    /// </summary>
+    [Parameter]
+    public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 #nullable disable
 
     private string GetGroupIcon(CellContext<T> context)

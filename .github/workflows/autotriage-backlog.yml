@@ -40,6 +40,9 @@ on:
         required: false
         default: gemini-3-flash-preview
 
+permissions:
+  contents: read
+
 concurrency:
   group: autotriage-backlog
   cancel-in-progress: true
@@ -51,7 +54,7 @@ jobs:
     steps:
       - name: Generate app token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.MUDBOT_APP_ID }}
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}

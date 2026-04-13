@@ -361,47 +361,66 @@ namespace MudBlazor.UnitTests.Components
             radioGroup.FindAll(".mud-radio > span.mud-readonly").Count.Should().Be(4);
         }
 
-        /// <summary>
-        /// Optional RadioGroup should not have required attribute and aria-required should be false.
-        /// </summary>
         [Test]
-        public void OptionalRadioGroup_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalRadioGroup_Should_HaveAriaRequiredFalse()
         {
             var comp = Context.Render<RadioGroupRequiredTest>();
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
         }
 
-        /// <summary>
-        /// Required RadioGroup should have required and aria-required attributes.
-        /// </summary>
         [Test]
-        public void RequiredRadioGroup_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredRadioGroup_Should_HaveAriaRequiredTrue()
         {
             var comp = Context.Render<RadioGroupRequiredTest>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("true");
         }
 
-        /// <summary>
-        /// Required and aria-required RadioGroup attributes should be dynamic.
-        /// </summary>
         [Test]
-        public async Task RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
+        public async Task RadioGroupAriaRequired_Should_BeDynamic()
         {
             var comp = Context.Render<RadioGroupRequiredTest>();
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Enabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>();
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Disabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex_CaseInsensitive()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("TabIndex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
         }
 
         [Test]

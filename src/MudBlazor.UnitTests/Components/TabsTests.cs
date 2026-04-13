@@ -985,6 +985,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TabsDisabled_DisablesAllPanelsAndPreventsActivation()
+        {
+            var comp = Context.Render<TabsDisabledTest>();
+
+            IReadOnlyList<IElement> Panels() => comp.FindAll(".test-tab-button");
+
+            Panels().Should().HaveCount(2);
+            Panels()[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+            Panels()[0].ClassList.Contains("mud-disabled").Should().BeTrue();
+            Panels()[1].ClassList.Contains("mud-disabled").Should().BeTrue();
+
+            await Panels()[1].ClickAsync();
+
+            Panels()[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+            Panels()[1].ClassList.Contains("mud-tab-active").Should().BeFalse();
+        }
+
+        [Test]
         public void SelectedIndex_Binding()
         {
             //starting with index 1:
@@ -1401,6 +1419,30 @@ namespace MudBlazor.UnitTests.Components
             finalDropInfo.Should().Be(dropInfo);
         }
 #nullable disable
+
+        [Test]
+        public void TabsDragAndDrop_Horizontal_AddsHorizontalDropZoneClass()
+        {
+            var comp = Context.Render<TabsDragAndDropTest>(parameters => parameters.Add(p => p.Position, Position.Top));
+
+            var dropZone = comp.Find("div.mud-tabs-dropzone");
+
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone");
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone-horizontal");
+            dropZone.ClassList.Should().NotContain("mud-tabs-dropzone-vertical");
+        }
+
+        [Test]
+        public void TabsDragAndDrop_Vertical_AddsVerticalDropZoneClass()
+        {
+            var comp = Context.Render<TabsDragAndDropTest>(parameters => parameters.Add(p => p.Position, Position.Left));
+
+            var dropZone = comp.Find("div.mud-tabs-dropzone");
+
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone");
+            dropZone.ClassList.Should().Contain("mud-tabs-dropzone-vertical");
+            dropZone.ClassList.Should().NotContain("mud-tabs-dropzone-horizontal");
+        }
 
         [Test]
         public void LabelSorting_NaturalOrderIfSortingUnspecified()
@@ -1875,6 +1917,58 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("div.mud-tab").Count
                 .Should().Be(0);
+        }
+
+        /// <summary>
+        /// Scroll buttons should remain enabled even when the parent form is disabled via CascadingValue ParentDisabled.
+        /// The tabs navigation should not be affected by the form's disabled state.
+        /// The tabs themselves may be disabled, but scroll buttons should always be interactive for navigation.
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/12366
+        /// </summary>
+        [Test]
+        public async Task ScrollButtons_RemainEnabled_WhenParentFormDisabled()
+        {
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 100.0,
+                PanelTotalSize = 200,
+            };
+
+            var factory = new MockResizeObserverFactory(observer);
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
+
+            var comp = Context.Render<TabScrollButtonsEnabledInsideFormTest>();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindComponents<MudIconButton>().Should().HaveCount(2);
+            });
+
+            var scrollButtons = comp.FindComponents<MudIconButton>();
+            var initialPreviousDisabled = scrollButtons.First().Instance.Disabled;
+            var initialNextDisabled = scrollButtons.Last().Instance.Disabled;
+
+            await comp.Find("button.mud-button-root:not(.mud-icon-button)").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var currentScrollButtons = comp.FindComponents<MudIconButton>();
+                currentScrollButtons.First().Instance.Disabled.Should().Be(initialPreviousDisabled,
+                    "scroll button disabled state should not change when the parent form becomes disabled");
+                currentScrollButtons.Last().Instance.Disabled.Should().Be(initialNextDisabled,
+                    "scroll button disabled state should not change when the parent form becomes disabled");
+            });
+
+            await comp.Find("button.mud-button-root:not(.mud-icon-button)").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var currentScrollButtons = comp.FindComponents<MudIconButton>();
+                currentScrollButtons.First().Instance.Disabled.Should().Be(initialPreviousDisabled,
+                    "scroll button disabled state should remain unchanged when the parent form is re-enabled");
+                currentScrollButtons.Last().Instance.Disabled.Should().Be(initialNextDisabled,
+                    "scroll button disabled state should remain unchanged when the parent form is re-enabled");
+            });
         }
     }
 }

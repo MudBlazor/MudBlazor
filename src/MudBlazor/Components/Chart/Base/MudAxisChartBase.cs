@@ -172,7 +172,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         base.OnParametersSet();
 
-        if (MatchBoundsToSize && _elementSize is null) return;
+        if (MatchBoundsToSize && _elementSize is null)
+        {
+            return;
+        }
 
         RebuildChart();
     }
@@ -227,16 +230,18 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
 
         if (MatchBoundsToSize)
         {
-
-            var isWidthFixed = Width.AsSpan().Trim().EndsWith("px");
-            var isHeightFixed = Height.AsSpan().Trim().EndsWith("px");
-
             if (_elementSize is not null)
             {
-                _boundWidth = _elementSize.Width > 0 ? _elementSize.Width : BoundWidthDefault;
-                _boundHeight = isHeightFixed ? _elementSize.Height : BoundHeightDefault;
+                _boundWidth = _elementSize.Width > 0
+                    ? _elementSize.Width
+                    : BoundWidthDefault;
+
+                _boundHeight = _elementSize.Height > 0
+                    ? _elementSize.Height
+                    : BoundHeightDefault;
             }
-            else if (isWidthFixed && isHeightFixed
+            else if (Width.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
+                && Height.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
                 && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
                 && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
@@ -339,7 +344,9 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected static string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
     {
         if (string.IsNullOrWhiteSpace(format))
+        {
             return string.Empty;
+        }
 
         return format
             .Replace("{{SERIES_NAME}}", series.Name)
@@ -355,12 +362,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     public void OnElementSizeChanged(ElementSize elementSize)
     {
         if (elementSize is null || elementSize.Timestamp <= _elementSize?.Timestamp)
+        {
             return;
+        }
 
         _elementSize = elementSize;
 
         if (!MatchBoundsToSize)
+        {
             return;
+        }
 
         if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
             Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)

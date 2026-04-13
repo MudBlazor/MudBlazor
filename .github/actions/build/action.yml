@@ -11,8 +11,6 @@ runs:
   steps:
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.x
 
     # We try to restore from our 'format-check' job cache if available because it contains all dependencies
     - name: Cache NuGet packages

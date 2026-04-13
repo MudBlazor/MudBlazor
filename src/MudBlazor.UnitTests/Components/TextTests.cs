@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Linq;
+using AwesomeAssertions;
 using Bunit;
 using NUnit.Framework;
 
@@ -8,7 +9,7 @@ namespace MudBlazor.UnitTests.Components;
 public class TextTests : BunitTest
 {
     [Test]
-    public void DefaultPropertyValues()
+    public void Defaults_ShouldExposeExpectedParameterValues()
     {
         var comp = Context.Render<MudText>();
 
@@ -21,18 +22,27 @@ public class TextTests : BunitTest
     }
 
     [Test]
-    public void CustomAttributes_ShouldRender()
+    public void Defaults_ShouldRenderBody1ParagraphWithoutOptionalClasses()
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
-            .AddUnmatched("data-test", "test-value")
-        );
+        var comp = Context.Render<MudText>();
 
-        // Assert
-        comp.Markup.Should().Contain("data-test=\"test-value\"");
+        comp.MarkupMatches("""<p class="mud-typography mud-typography-body1"></p>""");
     }
 
-    [TestCase(Align.Inherit, false, "")]
+    [Test]
+    public void UserAttributes_ShouldBeSplattedOnTheRootElement()
+    {
+        var comp = Context.Render<MudText>(parameters => parameters
+            .AddUnmatched("data-test", "test-value")
+            .AddUnmatched("aria-label", "example"));
+
+        var element = comp.Find(".mud-typography");
+
+        element.GetAttribute("data-test").Should().Be("test-value");
+        element.GetAttribute("aria-label").Should().Be("example");
+    }
+
+    [TestCase(Align.Inherit, false, null)]
     [TestCase(Align.Left, false, "mud-typography-align-left")]
     [TestCase(Align.Center, false, "mud-typography-align-center")]
     [TestCase(Align.Right, false, "mud-typography-align-right")]
@@ -41,134 +51,156 @@ public class TextTests : BunitTest
     [TestCase(Align.End, false, "mud-typography-align-right")]
     [TestCase(Align.Start, true, "mud-typography-align-right")]
     [TestCase(Align.End, true, "mud-typography-align-left")]
-    public void Align_And_RightToLeft_AppliesCorrectClass(Align align, bool rightToLeft, string expectedClass)
+    public void Align_ShouldRenderTheExpectedAlignmentClass(Align align, bool rightToLeft, string expectedClass)
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
+        var comp = Context.Render<MudText>(parameters => parameters
             .Add(p => p.Align, align)
-            .Add(p => p.RightToLeft, rightToLeft)
-        );
+            .Add(p => p.RightToLeft, rightToLeft));
 
-        // Assert
-        if (string.IsNullOrEmpty(expectedClass))
+        var element = comp.Find(".mud-typography");
+        var alignmentClasses = element
+            .ClassList
+            .Where(x => x.StartsWith("mud-typography-align-"))
+            .ToArray();
+
+        if (expectedClass is null)
         {
-            comp.Markup.Should().NotContain("mud-typography-align-");
+            alignmentClasses.Should().BeEmpty();
         }
         else
         {
-            comp.Markup.Should().Contain(expectedClass);
+            alignmentClasses.Should().Contain(expectedClass);
+            alignmentClasses.Should().HaveCount(1);
         }
     }
 
+    [TestCase(Color.Inherit, null)]
+    [TestCase(Color.Default, null)]
     [TestCase(Color.Primary, "mud-primary-text")]
     [TestCase(Color.Secondary, "mud-secondary-text")]
     [TestCase(Color.Tertiary, "mud-tertiary-text")]
-    public void ColorProperty_AppliesCorrectClass(Color color, string expectedClass)
+    [TestCase(Color.Error, "mud-error-text")]
+    public void Color_ShouldRenderTheExpectedTextColorClass(Color color, string expectedClass)
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
-            .Add(p => p.Color, color)
-        );
+        var comp = Context.Render<MudText>(parameters => parameters
+            .Add(p => p.Color, color));
 
-        // Assert
-        comp.Markup.Should().Contain(expectedClass);
+        var element = comp.Find(".mud-typography");
+        var colorClasses = element
+            .ClassList
+            .Where(x => x.EndsWith("-text"))
+            .ToArray();
+
+        if (expectedClass is null)
+        {
+            colorClasses.Should().BeEmpty();
+        }
+        else
+        {
+            colorClasses.Should().Contain(expectedClass);
+            colorClasses.Should().HaveCount(1);
+        }
     }
 
-    [Test]
     [TestCase(true)]
     [TestCase(false)]
-    public void GutterBottom_AppliesCorrectClass(bool gutterBottom)
+    public void GutterBottom_ShouldRenderTheMarginClassOnlyWhenEnabled(bool gutterBottom)
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
-            .Add(p => p.GutterBottom, gutterBottom)
-        );
+        var comp = Context.Render<MudText>(parameters => parameters
+            .Add(p => p.GutterBottom, gutterBottom));
 
-        // Assert
+        var element = comp.Find(".mud-typography");
+
         if (gutterBottom)
         {
-            comp.Markup.Should().Contain("mud-typography-gutterbottom");
+            element.ClassList.Should().Contain("mud-typography-gutterbottom");
         }
         else
         {
-            comp.Markup.Should().NotContain("mud-typography-gutterbottom");
+            element.ClassList.Should().NotContain("mud-typography-gutterbottom");
         }
     }
 
     [Test]
-    public void ChildContent_IsRenderedInsideComponent()
+    public void ChildContent_ShouldRenderInsideTheTypographyElement()
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
-            .AddChildContent("Hello, World!")
-        );
+        var comp = Context.Render<MudText>(parameters => parameters
+            .AddChildContent("Hello, World!"));
 
-        // Assert
-        comp.Markup.Should().Contain("Hello, World!");
+        comp.MarkupMatches("""<p class="mud-typography mud-typography-body1">Hello, World!</p>""");
     }
 
-    [TestCase(Typo.h1, "h1")]
-    [TestCase(Typo.h2, "h2")]
-    [TestCase(Typo.h3, "h3")]
-    [TestCase(Typo.h4, "h4")]
-    [TestCase(Typo.h5, "h5")]
-    [TestCase(Typo.h6, "h6")]
-    [TestCase(Typo.subtitle1, "p")]
-    [TestCase(Typo.subtitle2, "p")]
-    [TestCase(Typo.body1, "p")]
-    [TestCase(Typo.body2, "p")]
-    [TestCase(Typo.button, "span")]
-    [TestCase(Typo.caption, "span")]
-    [TestCase(Typo.overline, "span")]
-    public void Typo_ChangesTag(Typo typo, string expectedTag)
+    [TestCase(Typo.inherit, "span", "mud-typography-inherit")]
+    [TestCase(Typo.h1, "h1", "mud-typography-h1")]
+    [TestCase(Typo.h2, "h2", "mud-typography-h2")]
+    [TestCase(Typo.h3, "h3", "mud-typography-h3")]
+    [TestCase(Typo.h4, "h4", "mud-typography-h4")]
+    [TestCase(Typo.h5, "h5", "mud-typography-h5")]
+    [TestCase(Typo.h6, "h6", "mud-typography-h6")]
+    [TestCase(Typo.subtitle1, "p", "mud-typography-subtitle1")]
+    [TestCase(Typo.subtitle2, "p", "mud-typography-subtitle2")]
+    [TestCase(Typo.body1, "p", "mud-typography-body1")]
+    [TestCase(Typo.body2, "p", "mud-typography-body2")]
+    [TestCase(Typo.button, "span", "mud-typography-button")]
+    [TestCase(Typo.caption, "span", "mud-typography-caption")]
+    [TestCase(Typo.overline, "span", "mud-typography-overline")]
+    public void Typo_ShouldRenderTheExpectedTagAndTypographyClass(Typo typo, string expectedTag, string expectedClass)
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
+        var comp = Context.Render<MudText>(parameters => parameters
             .Add(p => p.Typo, typo)
-        );
+            .AddChildContent("content"));
 
-        // Assert
-        comp.Find(expectedTag).Should().NotBeNull();
+        var element = comp.Find(".mud-typography");
+        var typographyClasses = element
+            .ClassList
+            .Where(x => x.StartsWith("mud-typography-"))
+            .ToArray();
+
+        element.TagName.Should().Be(expectedTag.ToUpperInvariant());
+        typographyClasses.Should().Contain(expectedClass);
+        typographyClasses.Should().HaveCount(1);
+        element.TextContent.Should().Be("content");
     }
 
-    [TestCase(Typo.h1, null, "h1")] // Null defaults to h1
-    [TestCase(Typo.h1, "span", "span")] // span instead of h1
-    [TestCase(Typo.body1, null, "p")] // Null defaults to p
-    [TestCase(Typo.body1, "span", "span")] // span instead of p
-    [TestCase(Typo.caption, null, "span")] // Null defaults to span
-    [TestCase(Typo.caption, "", "span")] // Empty string defaults to span
-    [TestCase(Typo.caption, "p", "p")] // p instead of span
-    public void ActualTag_With_TypoProperty_Or_HtmlTagProperty(Typo typo, string htmlTag, string expectedTag)
+    [TestCase(Typo.h1, null, "h1", "mud-typography-h1")]
+    [TestCase(Typo.body1, "", "p", "mud-typography-body1")]
+    [TestCase(Typo.caption, "p", "p", "mud-typography-caption")]
+    [TestCase(Typo.h4, "span", "span", "mud-typography-h4")]
+    public void HtmlTag_ShouldOverrideOrFallbackToTheTypoSelectedTag(Typo typo, string htmlTag, string expectedTag, string expectedClass)
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
+        var comp = Context.Render<MudText>(parameters => parameters
             .Add(p => p.Typo, typo)
             .Add(p => p.HtmlTag, htmlTag)
-        );
+            .AddChildContent("content"));
 
-        // Assert
-        comp.FindAll(expectedTag).Count.Should().Be(1);
+        var element = comp.Find(".mud-typography");
+        var typographyClasses = element
+            .ClassList
+            .Where(x => x.StartsWith("mud-typography-"))
+            .ToArray();
+
+        element.TagName.Should().Be(expectedTag.ToUpperInvariant());
+        typographyClasses.Should().Contain(expectedClass);
+        typographyClasses.Should().HaveCount(1);
+        element.TextContent.Should().Be("content");
     }
 
     [TestCase(true)]
     [TestCase(false)]
-    public void InlineProperty_AppliesCorrectClass(bool inline)
+    public void Inline_ShouldRenderTheDisplayClassOnlyWhenEnabled(bool inline)
     {
-        // Arrange
-        var comp = Context.Render<MudText>(builder => builder
-            .Add(p => p.Inline, inline)
-        );
+        var comp = Context.Render<MudText>(parameters => parameters
+            .Add(p => p.Inline, inline));
 
-        // Assert
+        var element = comp.Find(".mud-typography");
+
         if (inline)
         {
-            // The inline display class should be added.
-            comp.Markup.Should().Contain("d-inline");
+            element.ClassList.Should().Contain("d-inline");
         }
         else
         {
-            // No display class should be set by default.
-            comp.Markup.Should().NotMatch("d-*");
+            element.ClassList.Should().NotContain("d-inline");
         }
     }
 }
