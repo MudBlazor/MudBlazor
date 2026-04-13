@@ -2063,7 +2063,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".mud-select-input").TextContent.Should().Contain("Initial Item 1");
             await comp.Find("#switch_values").ClickAsync();
-            comp.Find(".mud-select-input").TextContent.Should().NotBe("");
             comp.Find(".mud-select-input").TextContent.Should().Contain("Item 1");
         }
 
