@@ -23,8 +23,8 @@
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 <MudInput T="string"
                           @ref="@_elementReference"
-                          @attributes="@UserAttributes"
-                          InputType="@(!IsFormatted && IsNumberMode ? InputType.Number : InputType.Text)"
+                          @attributes="@InputAttributes"
+                          InputType="@InputType.Text"
                           Style="@Style"
                           Variant="@Variant"
                           Typo="@Typo"
