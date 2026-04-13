@@ -1079,6 +1079,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Required MudSelect should show validation error on focus loss without a value selected.
+        /// </summary>
+        [Test]
+        public async Task Select_Required_Should_ShowValidationError_OnFocusOut()
+        {
+            var comp = Context.Render<SelectRequiredTest>();
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+            select.Required.Should().BeTrue();
+            select.HasErrors.Should().BeFalse();
+            select.Touched.Should().BeFalse();
+            await comp.InvokeAsync(async () => await comp.Find("div.mud-select").TriggerEventAsync("onfocusout", new FocusEventArgs()));
+            select.Touched.Should().BeTrue();
+            select.HasErrors.Should().BeTrue();
+            select.ValidationErrors.First().Should().Be("Required");
+        }
+
+        /// <summary>
         /// Selected option should be hilighted when drop-down opens
         /// </summary>
         [Test]

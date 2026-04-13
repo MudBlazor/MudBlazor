@@ -952,6 +952,10 @@ namespace MudBlazor
                 // otherwise we can't receive key strokes any longer
                 await FocusAsync();
             }
+            else
+            {
+                await OnBlurredAsync(new FocusEventArgs());
+            }
         }
 
         private Task SelectNextItem() => SelectAdjacentItem(+1);
@@ -1313,7 +1317,7 @@ namespace MudBlazor
 
         internal Task OnBlurAsync(FocusEventArgs obj)
         {
-            return base.OnBlur.InvokeAsync(obj);
+            return OnBlurredAsync(obj);
         }
 
         protected override void OnInitialized()
