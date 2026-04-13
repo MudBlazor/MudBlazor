@@ -54,6 +54,11 @@ internal sealed class MudSelectContext<T>
     public IReadOnlyCollection<T?> SelectedValues => _select.GetSelectedValues() ?? Array.Empty<T?>();
 
     /// <summary>
+    /// Gets the user-supplied value comparer from the parent <see cref="MudSelect{T}"/>, if any.
+    /// </summary>
+    public IEqualityComparer<T?>? Comparer => _select.Comparer;
+
+    /// <summary>
     /// Registers an item as visible in the dropdown list.
     /// </summary>
     /// <param name="item">The item to register.</param>

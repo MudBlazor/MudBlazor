@@ -32,7 +32,8 @@ namespace MudBlazor
                 .WithChangeHandler(OnMudShadowSelectChanged);
             registerScope.RegisterParameter<T?>(nameof(Value))
                 .WithParameter(() => Value)
-                .WithChangeHandler(OnValueChanged);
+                .WithChangeHandler(OnValueChanged)
+                .WithComparer(() => (_context ?? _shadowContext)?.Comparer ?? EqualityComparer<T?>.Default);
         }
 
         /// <summary>
