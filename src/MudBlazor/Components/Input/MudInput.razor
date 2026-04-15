@@ -30,8 +30,7 @@
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
                   inputmode="@InputMode.ToStringFast(true)"
-                  @onfocus="@OnFocusedAsync"
-                  @onblur="@OnNativeBlurredAsync"
+                  @onblur="@OnBlurredAsync"
                   @bind:event="@(Immediate ? "oninput" : "onchange")"
                   @bind:get="@_internalText"
                   @bind:set="@OnInputOrOnChangeAsync"
@@ -60,8 +59,7 @@
                @bind:event="@(Immediate ? "oninput" : "onchange")"
                @bind:get="@_internalText"
                @bind:set="@OnInputOrOnChangeAsync"
-               @onfocus="@OnFocusedAsync"
-               @onblur="@OnNativeBlurredAsync"
+               @onblur="@OnBlurredAsync"
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"

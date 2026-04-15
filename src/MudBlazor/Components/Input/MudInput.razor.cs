@@ -17,7 +17,6 @@ namespace MudBlazor
         private bool _shouldInitSizing;
         private bool _shouldUpdateSizingParams;
         private bool _shouldAdjustSizingAfterRender;
-        private bool _blurHandled;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -194,18 +193,6 @@ namespace MudBlazor
             _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
             await SetTextAndUpdateValueAsync(args);
-        }
-
-        protected Task OnFocusedAsync(FocusEventArgs _)
-        {
-            _isFocused = true;
-            _blurHandled = false;
-            return Task.CompletedTask;
-        }
-
-        protected Task OnNativeBlurredAsync(FocusEventArgs args)
-        {
-            return HandleBlurredAsync(args);
         }
 
         /// <summary>
@@ -451,18 +438,13 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            await HandleBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
-        }
-
-        private async Task HandleBlurredAsync(FocusEventArgs args)
-        {
-            if (_blurHandled)
+            // If native blur already ran, do not process the fallback callback again.
+            if (!_isFocused)
             {
                 return;
             }
 
-            _blurHandled = true;
-            await OnBlurredAsync(args);
+            await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
     }
 

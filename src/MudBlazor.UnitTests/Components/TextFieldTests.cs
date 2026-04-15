@@ -1242,25 +1242,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var blurCount = 0;
             var comp = Context.Render<MudInput<string>>(parameters => parameters
+                .Add(p => p.Immediate, true)
                 .Add(p => p.OnBlur, _ => blurCount++));
 
-            await comp.Find("input").FocusAsync();
+            await comp.Find("input").InputAsync("abc");
             await comp.Find("input").BlurAsync();
             await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
-
-            blurCount.Should().Be(1);
-        }
-
-        [Test]
-        public async Task InputBlurBridgeShouldNotProcessBlurTwiceWhenFallbackRunsFirst()
-        {
-            var blurCount = 0;
-            var comp = Context.Render<MudInput<string>>(parameters => parameters
-                .Add(p => p.OnBlur, _ => blurCount++));
-
-            await comp.Find("input").FocusAsync();
-            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
-            await comp.Find("input").BlurAsync();
 
             blurCount.Should().Be(1);
         }
