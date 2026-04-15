@@ -996,6 +996,41 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        public async Task Stepper_ShouldOnlySetAriaControlsForRenderedStepPanel()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "Configure Parameters");
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "Review & Confirm");
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
+                });
+            });
+
+            var stepButtons = stepper.FindAll(".mud-step");
+            var activePanel = stepper.Find("[role='tabpanel']");
+
+            stepButtons[0].GetAttribute("aria-controls").Should().Be(activePanel.Id);
+            stepButtons[1].HasAttribute("aria-controls").Should().BeFalse();
+            activePanel.GetAttribute("aria-labelledby").Should().Be(stepButtons[0].Id);
+
+            await stepButtons[1].ClickAsync();
+
+            stepButtons = stepper.FindAll(".mud-step");
+            activePanel = stepper.Find("[role='tabpanel']");
+
+            stepButtons[0].HasAttribute("aria-controls").Should().BeFalse();
+            stepButtons[1].GetAttribute("aria-controls").Should().Be(activePanel.Id);
+            activePanel.GetAttribute("aria-labelledby").Should().Be(stepButtons[1].Id);
+        }
+
         private static RenderFragment StepContent(Action<RenderTreeBuilder> content)
             => builder => content(builder);
 

@@ -387,36 +387,32 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 .mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    & .mud-table-row:nth-of-type(odd) {
+    // Non-virtualized: nth-of-type works because no <tr> spacers exist.
+    &:not(.mud-table-body-virtualized) .mud-table-row:nth-of-type(odd) {
       background-color: var(--mud-palette-table-striped);
     }
 
-    // When virtualized, <Virtualize> renders spacer <tr> elements that shift
-    // :nth-of-type(odd) ordering. Override with index-based .mud-table-row-stripe class instead.
-    &.mud-table-body-virtualized {
-      & .mud-table-row:nth-of-type(odd):not(:hover) {
-        background-color: initial;
-      }
-
-      & .mud-table-row.mud-table-row-stripe {
-        background-color: var(--mud-palette-table-striped);
-      }
+    // Virtualized: <Virtualize> renders <tr> spacers that shift nth-of-type ordering.
+    // Use index-based .mud-table-row-stripe class instead.
+    &.mud-table-body-virtualized .mud-table-row.mud-table-row-stripe {
+      background-color: var(--mud-palette-table-striped);
     }
   }
 }
 
 .mud-table-hover.mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    @media(hover: hover) and (pointer: fine) {
-      & .mud-table-row:nth-of-type(odd):hover {
-        background-color: var(--mud-palette-table-hover);
+    &:not(.mud-table-body-virtualized) {
+      @media(hover: hover) and (pointer: fine) {
+        & .mud-table-row:nth-of-type(odd):hover {
+          background-color: var(--mud-palette-table-hover);
+        }
       }
     }
 
     &.mud-table-body-virtualized {
       @media(hover: hover) and (pointer: fine) {
-        & .mud-table-row.mud-table-row-stripe:hover,
-        & .mud-table-row:nth-of-type(odd):hover {
+        & .mud-table-row.mud-table-row-stripe:hover {
           background-color: var(--mud-palette-table-hover);
         }
       }

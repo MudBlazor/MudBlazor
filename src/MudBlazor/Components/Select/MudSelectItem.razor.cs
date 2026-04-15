@@ -196,15 +196,20 @@ namespace MudBlazor
         /// It updates the local Selected state and triggers a re-render if needed.
         /// This replaces the OnUpdateSelectionStateFromOutside method.
         /// </remarks>
-        private async Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
+        private Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
         {
             var oldSelected = Selected;
             Selected = selectedValues.Contains(Value);
 
             if (oldSelected != Selected)
             {
-                await InvokeAsync(StateHasChanged);
+                // Avoid await InvokeAsync(StateHasChanged) due to a MAUI dispatcher bug:
+                // https://github.com/MudBlazor/MudBlazor/issues/13009
+                // This issue does not occur on other platforms (e.g., WASM, WinForms Hybrid, etc).
+                StateHasChanged();
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

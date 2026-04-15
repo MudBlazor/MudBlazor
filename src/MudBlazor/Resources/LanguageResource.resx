@@ -435,6 +435,12 @@
   <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
     <value>Remove filter</value>
   </data>
+  <data name="MudDataGrid_SelectRow" xml:space="preserve">
+    <value>Select row</value>
+  </data>
+  <data name="MudDataGrid_SelectAllRows" xml:space="preserve">
+    <value>Select all rows</value>
+  </data>
   <data name="MudDataGridPager_FirstPage" xml:space="preserve">
     <value>First page</value>
   </data>

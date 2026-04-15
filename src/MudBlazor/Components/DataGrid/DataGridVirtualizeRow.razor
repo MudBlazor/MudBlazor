@@ -57,6 +57,7 @@
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+            @attributes="GetRowAttributes(itemBag.Item)"
             @onclick="@((args) => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
@@ -96,3 +97,19 @@
         </tr>
     </NoRecordsContent>
 </MudVirtualize>
+
+@code {
+    private Dictionary<string, object?>? GetRowAttributes(T item)
+    {
+        var rowSelectionState = DataGrid.GetRowSelectionState(item);
+        if (rowSelectionState is null)
+        {
+            return null;
+        }
+
+        return new Dictionary<string, object?>(1)
+        {
+            ["aria-selected"] = rowSelectionState.Value.ToString().ToLowerInvariant()
+        };
+    }
+}
