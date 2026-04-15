@@ -1288,6 +1288,11 @@ namespace MudBlazor
         /// </summary>
         protected virtual async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
         {
+            if (panel.TabContent is not null)
+            {
+                return;
+            }
+
             switch (e.Key)
             {
                 case "Enter":

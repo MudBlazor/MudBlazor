@@ -1,8 +1,12 @@
-﻿<MudDynamicTabs KeepPanelsAlive MinimumTabWidth="100px"
+<MudDynamicTabs KeepPanelsAlive MinimumTabWidth="100px"
                 AddIconClass="custom-add-button" CloseIconClass="custom-close-button" CloseTab="@OnCloseTab" @bind-ActivePanelIndex="@_activePanel">
     @foreach (var item in _tabs)
     {
-        <MudTabPanel ID="@item.Id" Text="@($"tab {item.Id}")" ShowCloseIcon @key="@item" />
+        <MudTabPanel ID="@item.Id" ShowCloseIcon @key="@item">
+            <TabContent>
+                <input class="tab-title-input" value="@($"tab {item.Id}")" />
+            </TabContent>
+        </MudTabPanel>
     }
 </MudDynamicTabs>
 

@@ -176,5 +176,31 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.CloseClicked.Should().HaveCount(i + 1);
             }
         }
+
+        [Test]
+        public async Task CustomTabContent_Backspace_DoesNotCloseTab()
+        {
+            var comp = Context.Render<DynamicTabsWithKeyTest>();
+
+            comp.FindAll("div.mud-tab").Should().HaveCount(4);
+
+            var input = comp.FindAll("input.tab-title-input")[0];
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Backspace" });
+
+            comp.FindAll("div.mud-tab").Should().HaveCount(4);
+        }
+
+        [Test]
+        public async Task CustomTabContent_Delete_DoesNotCloseTab()
+        {
+            var comp = Context.Render<DynamicTabsWithKeyTest>();
+
+            comp.FindAll("div.mud-tab").Should().HaveCount(4);
+
+            var input = comp.FindAll("input.tab-title-input")[0];
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Delete" });
+
+            comp.FindAll("div.mud-tab").Should().HaveCount(4);
+        }
     }
 }

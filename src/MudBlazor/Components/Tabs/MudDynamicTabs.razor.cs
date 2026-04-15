@@ -110,7 +110,7 @@ namespace MudBlazor
         {
             await base.HandleTabKeyDownAsync(e, panel);
 
-            if ((e.Key == "Delete" || e.Key == "Backspace") && panel.ShowCloseIcon)
+            if ((e.Key == "Delete" || e.Key == "Backspace") && panel.TabContent is null && panel.ShowCloseIcon)
             {
                 if (CloseTab.HasDelegate)
                 {
