@@ -297,16 +297,21 @@ public partial class MudFabMenu : MudFab
 
     private void CancelPendingCloseOnMouseLeave()
     {
+        var closeOnMouseLeaveCts = Interlocked.Exchange(ref _closeOnMouseLeaveCts, null);
+        if (closeOnMouseLeaveCts is null)
+        {
+            return;
+        }
+
         try
         {
-            _closeOnMouseLeaveCts?.Cancel();
+            closeOnMouseLeaveCts.Cancel();
         }
         catch (ObjectDisposedException)
         {
             // Ignore disposal races.
         }
 
-        _closeOnMouseLeaveCts?.Dispose();
-        _closeOnMouseLeaveCts = null;
+        closeOnMouseLeaveCts.Dispose();
     }
 }
