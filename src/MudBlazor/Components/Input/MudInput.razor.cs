@@ -17,6 +17,7 @@ namespace MudBlazor
         private bool _shouldInitSizing;
         private bool _shouldUpdateSizingParams;
         private bool _shouldAdjustSizingAfterRender;
+        private bool _blurHandled;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -193,6 +194,18 @@ namespace MudBlazor
             _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
             await SetTextAndUpdateValueAsync(args);
+        }
+
+        protected Task OnFocusedAsync(FocusEventArgs _)
+        {
+            _isFocused = true;
+            _blurHandled = false;
+            return Task.CompletedTask;
+        }
+
+        protected Task OnNativeBlurredAsync(FocusEventArgs args)
+        {
+            return HandleBlurredAsync(args);
         }
 
         /// <summary>
@@ -381,8 +394,7 @@ namespace MudBlazor
             }
             if (firstRender)
             {
-                // add onblur event through javascript which will trigger CallOnBlurredAsync
-                // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
+                // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
                 await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
             }
 
@@ -439,11 +451,18 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            // If onblurred already fired then cancel
-            if (!_isFocused)
-                return;
+            await HandleBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
+        }
 
-            await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
+        private async Task HandleBlurredAsync(FocusEventArgs args)
+        {
+            if (_blurHandled)
+            {
+                return;
+            }
+
+            _blurHandled = true;
+            await OnBlurredAsync(args);
         }
     }
 
