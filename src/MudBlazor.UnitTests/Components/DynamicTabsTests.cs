@@ -180,25 +180,26 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CustomTabContent_Backspace_DoesNotCloseTab()
         {
-            var comp = Context.Render<DynamicTabsWithKeyTest>();
-
-            comp.FindAll("div.mud-tab").Should().HaveCount(4);
-
-            var input = comp.FindAll("input.tab-title-input")[0];
-            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Backspace" });
-
-            comp.FindAll("div.mud-tab").Should().HaveCount(4);
+            await AssertCustomTabContentKeyDoesNotCloseTab("Backspace");
         }
 
         [Test]
         public async Task CustomTabContent_Delete_DoesNotCloseTab()
+        {
+            await AssertCustomTabContentKeyDoesNotCloseTab("Delete");
+        }
+
+        /// <summary>
+        /// Verifies a keyboard key pressed inside custom tab header content does not close a dynamic tab.
+        /// </summary>
+        private async Task AssertCustomTabContentKeyDoesNotCloseTab(string key)
         {
             var comp = Context.Render<DynamicTabsWithKeyTest>();
 
             comp.FindAll("div.mud-tab").Should().HaveCount(4);
 
             var input = comp.FindAll("input.tab-title-input")[0];
-            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Delete" });
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = key });
 
             comp.FindAll("div.mud-tab").Should().HaveCount(4);
         }
