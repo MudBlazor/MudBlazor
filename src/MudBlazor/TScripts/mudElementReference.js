@@ -13,13 +13,23 @@ class MudElementReference {
     }
 
     _detectIOSDevice() {
-        const userAgent = navigator.userAgent || navigator.vendor || "";
-        if (/iPad|iPhone|iPod/i.test(userAgent)) {
-            return true;
+        // 1. Try User-Agent Client Hints (Chromium-based browsers)
+        const uaData = navigator.userAgentData;
+        if (uaData) {
+            // iOS Chromium browsers report "iOS"
+            if (uaData.platform === "iOS") return true;
+            // iPad in desktop mode reports macOS + touch
+            if (uaData.platform === "macOS" && navigator.maxTouchPoints > 1) return true;
         }
 
-        const platform = navigator.userAgentData?.platform || navigator.platform || "";
-        return platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+        // 2. Fallback: classic userAgent check (Safari, Firefox)
+        const ua = navigator.userAgent || "";
+        if (/iPad|iPhone|iPod/i.test(ua)) return true;
+
+        // 3. iPad w/ desktop-mode Safari (reports Mac in UA)
+        if (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1) return true;
+
+        return false;
     }
 
     /**
