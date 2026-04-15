@@ -66,46 +66,44 @@
       pointer-events: auto;
     }
 
-    &.mud-fab-menu-hover-bridge-top {
-      left: 0;
-      right: 0;
-      bottom: 100%;
-      height: 12px;
-    }
-
+    &.mud-fab-menu-hover-bridge-top,
     &.mud-fab-menu-hover-bridge-bottom {
       left: 0;
       right: 0;
-      top: 100%;
       height: 12px;
     }
 
-    &.mud-fab-menu-hover-bridge-left {
-      top: 0;
-      bottom: 0;
-      right: 100%;
-      width: 12px;
+    &.mud-fab-menu-hover-bridge-top {
+      bottom: 100%;
     }
 
-    &.mud-fab-menu-hover-bridge-right {
-      top: 0;
-      bottom: 0;
-      left: 100%;
-      width: 12px;
+    &.mud-fab-menu-hover-bridge-bottom {
+      top: 100%;
     }
 
-    &.mud-fab-menu-hover-bridge-start {
-      top: 0;
-      bottom: 0;
-      inset-inline-end: 100%;
-      width: 12px;
-    }
-
+    &.mud-fab-menu-hover-bridge-left,
+    &.mud-fab-menu-hover-bridge-right,
+    &.mud-fab-menu-hover-bridge-start,
     &.mud-fab-menu-hover-bridge-end {
       top: 0;
       bottom: 0;
-      inset-inline-start: 100%;
       width: 12px;
+    }
+
+    &.mud-fab-menu-hover-bridge-left {
+      right: 100%;
+    }
+
+    &.mud-fab-menu-hover-bridge-right {
+      left: 100%;
+    }
+
+    &.mud-fab-menu-hover-bridge-start {
+      inset-inline-end: 100%;
+    }
+
+    &.mud-fab-menu-hover-bridge-end {
+      inset-inline-start: 100%;
     }
   }
 
