@@ -2022,6 +2022,7 @@ namespace MudBlazor.UnitTests.Components
 
             var input = comp.FindComponent<MudInput<string>>();
             input.Instance.InputType.Should().Be(InputType.Hidden);
+            comp.Find("input").GetAttribute("value").Should().Be("ITEM2");
         }
 
         [Test]
