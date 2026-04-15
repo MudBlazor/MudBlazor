@@ -1190,6 +1190,15 @@ class MudPopover {
 
 window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
     window.mudpopoverHelper.placePopoverByClassSelector();
+
+    if (window.mudpopoverHelper._transitionResizeTimeoutId) {
+        clearTimeout(window.mudpopoverHelper._transitionResizeTimeoutId);
+    }
+
+    window.mudpopoverHelper._transitionResizeTimeoutId = window.setTimeout(() => {
+        window.mudpopoverHelper.placePopoverByClassSelector();
+        window.mudpopoverHelper._transitionResizeTimeoutId = null;
+    }, 300);
 }, 25);
 
 /**
