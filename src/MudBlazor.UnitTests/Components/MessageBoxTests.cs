@@ -325,10 +325,16 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.Render<MudDialogProvider>(builder => builder.Add(x => x.BackgroundClass, "global-background"));
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBeNull();
+            Task<bool?> messageBoxTask = null!;
 
-            await provider.InvokeAsync(() => service!.ShowMessageBoxAsync("Boom!", "I'm a pickle. What do you make of that?"));
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync("Boom!", "I'm a pickle. What do you make of that?");
+            });
 
             provider.Find("div.mud-overlay-dialog").ClassList.Should().Contain("global-background");
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
         }
 
         [Test]
@@ -338,12 +344,18 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBeNull();
             var dialogOptions = new DialogOptions { BackgroundClass = "explicit-background" };
+            Task<bool?> messageBoxTask = null!;
 
-            await provider.InvokeAsync(() => service!.ShowMessageBoxAsync("Boom!", "I'm a pickle. What do you make of that?", options: dialogOptions));
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync("Boom!", "I'm a pickle. What do you make of that?", options: dialogOptions);
+            });
 
             var overlayClasses = provider.Find("div.mud-overlay-dialog").ClassList;
             overlayClasses.Should().Contain("explicit-background");
             overlayClasses.Should().NotContain("global-background");
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
         }
     }
 }
