@@ -12,6 +12,12 @@ class MudElementReference {
         this.eventListeners = {};
     }
 
+    _isIOSDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera || "";
+        return /iPad|iPhone|iPod/.test(userAgent)
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    }
+
     /**
      * Some input types (e.g., "email" and "number") can surface caret APIs but still throw at runtime when selecting ranges.
      */
@@ -240,6 +246,7 @@ class MudElementReference {
      */
     addOnBlurEvent(element, dotNetReference) {
         if (!element) return;
+        if (!this._isIOSDevice()) return;
 
         element._mudBlurHandler = function (e) {
             if (!element || !document.contains(element)) {
