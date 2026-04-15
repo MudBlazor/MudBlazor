@@ -61,6 +61,21 @@ namespace MudBlazor.UnitTests.Components
             "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
         };
 
+        /// <summary>
+        /// Keeps the main interaction tests focused on behavior by asserting every visible representation of a color in one place.
+        /// </summary>
+        /// <remarks>
+        /// These tests care about synchronization bugs, not just whether <see cref="MudColorPicker"/> stores the right value.
+        /// A valid picker state must keep the bound value, numeric inputs, selector position, hue slider, alpha slider,
+        /// and alpha gradient all aligned, so this helper enforces that contract consistently.
+        /// </remarks>
+        /// <param name="comp">The rendered <see cref="SimpleColorPickerTest"/> instance under test.</param>
+        /// <param name="expectedX">The selector position expected from the current color projection.</param>
+        /// <param name="expectedY">The selector position expected from the current color projection.</param>
+        /// <param name="expectedColor">The color every rendered control is expected to reflect.</param>
+        /// <param name="mode">The input mode whose visible fields should match the expected color.</param>
+        /// <param name="checkInstanceValue">Set to <c>false</c> when the DOM should retain the previous visual state even though the bound value was cleared.</param>
+        /// <param name="isRtl">Used to verify the alpha gradient direction when the picker is rendered in right-to-left layouts.</param>
         private async Task CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {
             if (checkInstanceValue)
@@ -123,6 +138,16 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Centralizes the input lookup for wrapper-based tests so mode-specific assertions fail at a single, obvious boundary.
+        /// </summary>
+        /// <remarks>
+        /// The picker renders a different number of inputs in RGB, HSL, and HEX modes. Validating that count here makes the
+        /// higher-level tests read as color-behavior checks instead of repeated DOM plumbing.
+        /// </remarks>
+        /// <param name="comp">The rendered <see cref="SimpleColorPickerTest"/> instance under test.</param>
+        /// <param name="expectedCount">The number of visible inputs the current mode is supposed to expose.</param>
+        /// <returns>The resolved inputs as strongly typed HTML input elements.</returns>
         private static IHtmlInputElement[] GetColorInputs(IRenderedComponent<SimpleColorPickerTest> comp, int expectedCount = 4)
         {
             var inputs = comp.FindAll(".mud-picker-color-inputs input");
@@ -135,8 +160,25 @@ namespace MudBlazor.UnitTests.Components
             return castedInputs;
         }
 
+        /// <summary>
+        /// Keeps single-field interaction tests readable by hiding the repeated input-collection lookup and count guard.
+        /// </summary>
+        /// <param name="comp">The rendered <see cref="SimpleColorPickerTest"/> instance under test.</param>
+        /// <param name="index">The field being exercised by the test.</param>
+        /// <param name="expectedCount">The number of visible inputs the current mode is supposed to expose.</param>
+        /// <returns>The requested input after the surrounding mode shape has been validated.</returns>
         private static IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
 
+        /// <summary>
+        /// Reuses the same input-shape validation for tests that inspect multiple picker instances inside one rendered fragment.
+        /// </summary>
+        /// <remarks>
+        /// The regression harness renders several pickers side by side to mirror initialization bugs reported by users. Scoping
+        /// the lookup avoids cross-instance contamination while preserving the same expectations used by the single-picker helpers.
+        /// </remarks>
+        /// <param name="scope">The DOM subtree belonging to one picker instance.</param>
+        /// <param name="expectedCount">The number of visible inputs the current mode is supposed to expose.</param>
+        /// <returns>The resolved inputs for that picker instance.</returns>
         private static IHtmlInputElement[] GetColorInputs(IElement scope, int expectedCount = 4)
         {
             var inputs = scope.QuerySelectorAll(".mud-picker-color-inputs input");
@@ -147,6 +189,19 @@ namespace MudBlazor.UnitTests.Components
             return inputs.Cast<IHtmlInputElement>().ToArray();
         }
 
+        /// <summary>
+        /// Applies the same full-state synchronization assertions to a single picker inside a larger rendered snippet.
+        /// </summary>
+        /// <remarks>
+        /// The initialization regression tests intentionally render several color pickers in one component to exercise different
+        /// timing and input combinations. This helper ensures each scoped picker is judged by the same standards as the wrapper-based tests.
+        /// </remarks>
+        /// <param name="scope">The DOM subtree belonging to one picker instance.</param>
+        /// <param name="expectedX">The selector position expected from the current color projection.</param>
+        /// <param name="expectedY">The selector position expected from the current color projection.</param>
+        /// <param name="expectedColor">The color every rendered control is expected to reflect.</param>
+        /// <param name="mode">The input mode whose visible fields should match the expected color.</param>
+        /// <param name="isRtl">Used to verify the alpha gradient direction when the picker is rendered in right-to-left layouts.</param>
         private static void CheckColorRelatedValues(IElement scope, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool isRtl = false)
         {
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
@@ -204,6 +259,15 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Derives the selector coordinates that the rendered spectrum should show for a given color.
+        /// </summary>
+        /// <remarks>
+        /// The initialization regressions are not limited to numeric fields. They also affect whether the spectrum selector is
+        /// projected into a stable, non-NaN position, so these tests need a shared way to express the expected geometry.
+        /// </remarks>
+        /// <param name="color">The color whose spectrum projection the test expects to see.</param>
+        /// <returns>The selector coordinates the picker should render for that color.</returns>
         private static (double x, double y) GetExpectedSelectorPosition(MudColor color)
         {
             if (color.R is 0 && color.G is 0 && color.B is 0)
@@ -251,6 +315,15 @@ namespace MudBlazor.UnitTests.Components
             return (Math.Round(selectorX, 2), Math.Round(selectorY, 2));
         }
 
+        /// <summary>
+        /// Exercises the first-render path directly so initialization regressions can be isolated from later parameter updates.
+        /// </summary>
+        /// <remarks>
+        /// Several reported bugs happen before any user interaction occurs. Rendering a fresh picker with a bound initial value
+        /// lets the tests prove whether the component starts in a coherent visual state for that mode.
+        /// </remarks>
+        /// <param name="expectedColor">The initial color value whose rendered state should be verified.</param>
+        /// <param name="mode">The input mode whose first-render state should be validated.</param>
         private async Task AssertInitializedColorStateAsync(MudColor expectedColor, ColorPickerMode mode)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
