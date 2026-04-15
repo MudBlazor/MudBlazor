@@ -5,6 +5,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
@@ -76,13 +77,9 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="mode">The input mode whose visible fields should match the expected color.</param>
         /// <param name="checkInstanceValue">Set to <c>false</c> when the DOM should retain the previous visual state even though the bound value was cleared.</param>
         /// <param name="isRtl">Used to verify the alpha gradient direction when the picker is rendered in right-to-left layouts.</param>
-        private async Task CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
+        private static Task CheckRenderedColorRelatedValues<TComponent>(IRenderedComponent<TComponent> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool isRtl = false)
+            where TComponent : IComponent
         {
-            if (checkInstanceValue)
-            {
-                await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
-            }
-
             if (mode is ColorPickerMode.RGB or ColorPickerMode.HSL)
             {
                 var castedInputs = GetColorInputs(comp);
@@ -107,6 +104,9 @@ namespace MudBlazor.UnitTests.Components
                 var castedInputs = GetColorInputs(comp, 1);
                 castedInputs[0].Value.Should().Be(expectedColor.Value);
             }
+
+            var preview = comp.Find(_colorDotCssSelector);
+            preview.GetAttribute("style").Should().Be($"background: {expectedColor.ToString(MudColorOutputFormats.RGBA)};");
 
             var selector = comp.Find(".mud-picker-color-selector");
             selector.Should().NotBeNull();
@@ -136,6 +136,18 @@ namespace MudBlazor.UnitTests.Components
             {
                 alphaSliderStyleAttribute.Should().Be($"background-image: linear-gradient(to left, transparent, {expectedColor.ToString(MudColorOutputFormats.RGB)});");
             }
+
+            return Task.CompletedTask;
+        }
+
+        private async Task CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
+        {
+            if (checkInstanceValue)
+            {
+                await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColor));
+            }
+
+            await CheckRenderedColorRelatedValues(comp, expectedX, expectedY, expectedColor, mode, isRtl);
         }
 
         /// <summary>
@@ -168,6 +180,17 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="expectedCount">The number of visible inputs the current mode is supposed to expose.</param>
         /// <returns>The requested input after the surrounding mode shape has been validated.</returns>
         private static IHtmlInputElement GetColorInput(IRenderedComponent<SimpleColorPickerTest> comp, int index, int expectedCount = 4) => GetColorInputs(comp, expectedCount)[index];
+
+        private static IHtmlInputElement[] GetColorInputs<TComponent>(IRenderedComponent<TComponent> comp, int expectedCount = 4)
+            where TComponent : IComponent
+        {
+            var inputs = comp.FindAll(".mud-picker-color-inputs input");
+
+            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
+            inputs.Should().HaveCount(expectedCount);
+
+            return inputs.Cast<IHtmlInputElement>().ToArray();
+        }
 
         /// <summary>
         /// Reuses the same input-shape validation for tests that inspect multiple picker instances inside one rendered fragment.
@@ -229,6 +252,10 @@ namespace MudBlazor.UnitTests.Components
                 castedInputs[0].Value.Should().Be(expectedColor.Value);
             }
 
+            var preview = scope.QuerySelector(_colorDotCssSelector);
+            preview.Should().NotBeNull();
+            preview!.GetAttribute("style").Should().Be($"background: {expectedColor.ToString(MudColorOutputFormats.RGBA)};");
+
             var selector = scope.QuerySelector(".mud-picker-color-selector");
             selector.Should().NotBeNull();
 
@@ -272,7 +299,7 @@ namespace MudBlazor.UnitTests.Components
         {
             if (color.R is 0 && color.G is 0 && color.B is 0)
             {
-                return (0, _maxYForColorPanel);
+                return (_maxXForColorPanel, _maxYForColorPanel);
             }
 
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, color.H);
@@ -334,6 +361,18 @@ namespace MudBlazor.UnitTests.Components
 
             var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
             await CheckColorRelatedValues(comp, selectorX, selectorY, expectedColor, mode);
+        }
+
+        private static Task ClickModeSwitchAsync<TComponent>(IRenderedComponent<TComponent> comp)
+            where TComponent : IComponent
+        {
+            return comp.Find(".mud-picker-control-switch button").ClickAsync();
+        }
+
+        private static async Task OpenPickerAsync(IRenderedComponent<ColorPickerInitializationMatrixTest> comp, int index)
+        {
+            await comp.FindAll(".mud-input-adornment button")[index].ClickAsync();
+            _ = await comp.WaitForElementAsync(".mud-picker-color-inputs");
         }
 
         [Test]
@@ -404,11 +443,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("async", "#00ff")]
         public async Task InitializationSnippet_ShouldInitializeRgbControls(string testId, string colorHex)
         {
-            var comp = Context.Render<ColorPickerInitializationBugsTest>();
+            var comp = Context.Render<ColorPickerInitializationBugsTest>(parameters => parameters.Add(x => x.DelayMs, 1));
             var expectedColor = new MudColor(colorHex);
-            var (selectorX, selectorY) = expectedColor.R is 0 && expectedColor.G is 0 && expectedColor.B is 0
-                ? (0, _maxYForColorPanel)
-                : GetExpectedSelectorPosition(expectedColor);
+            var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
 
             await comp.WaitForAssertionAsync(() =>
                 CheckColorRelatedValues(comp.Find($"[data-testid='{testId}']"), selectorX, selectorY, expectedColor, ColorPickerMode.RGB));
@@ -422,11 +459,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("async", "#00ff")]
         public async Task InitializationSnippet_ShouldInitializeHslControls(string testId, string colorHex)
         {
-            var comp = Context.Render<ColorPickerInitializationBugsTest>();
+            var comp = Context.Render<ColorPickerInitializationBugsTest>(parameters => parameters.Add(x => x.DelayMs, 1));
             var expectedColor = new MudColor(colorHex);
-            var (selectorX, selectorY) = expectedColor.R is 0 && expectedColor.G is 0 && expectedColor.B is 0
-                ? (0, _maxYForColorPanel)
-                : GetExpectedSelectorPosition(expectedColor);
+            var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
 
             await comp.WaitForAssertionAsync(() =>
                 CheckColorRelatedValues(comp.Find($"[data-testid='{testId}']"), selectorX, selectorY, expectedColor, ColorPickerMode.RGB));
@@ -435,6 +470,70 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
                 CheckColorRelatedValues(comp.Find($"[data-testid='{testId}']"), selectorX, selectorY, expectedColor, ColorPickerMode.HSL));
+        }
+
+        [Test]
+        [TestCase("broken", "#00000088")]
+        [TestCase("alpha", "#00000188")]
+        [TestCase("lightness", "#ff0000ff")]
+        [TestCase("pseudo", "#0f0f")]
+        [TestCase("async", "#00ff")]
+        public async Task InitializationSnippet_InlinePicker_ShouldRenderExpectedRgbState(string testId, string colorHex)
+        {
+            var comp = Context.Render<ColorPickerInitializationMatrixTest>(parameters => parameters.Add(x => x.DelayMs, 1));
+            var expectedColor = new MudColor(colorHex);
+            var pickerIndex = testId switch
+            {
+                "broken" => 0,
+                "alpha" => 1,
+                "lightness" => 2,
+                "pseudo" => 3,
+                "async" => 4,
+                _ => 0
+            };
+
+            if (testId == "async")
+            {
+                await comp.WaitForAssertionAsync(() => comp.FindComponents<MudColorPicker>()[pickerIndex].Instance.ReadValue.Should().Be(expectedColor));
+            }
+
+            await OpenPickerAsync(comp, pickerIndex);
+
+            var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
+            await CheckRenderedColorRelatedValues(comp, selectorX, selectorY, expectedColor, ColorPickerMode.RGB);
+        }
+
+        [Test]
+        [TestCase("broken", "#00000088")]
+        [TestCase("alpha", "#00000188")]
+        [TestCase("lightness", "#ff0000ff")]
+        [TestCase("pseudo", "#0f0f")]
+        [TestCase("async", "#00ff")]
+        public async Task InitializationSnippet_InlinePicker_ShouldRenderExpectedHslState(string testId, string colorHex)
+        {
+            var comp = Context.Render<ColorPickerInitializationMatrixTest>(parameters => parameters.Add(x => x.DelayMs, 1));
+            var expectedColor = new MudColor(colorHex);
+            var pickerIndex = testId switch
+            {
+                "broken" => 0,
+                "alpha" => 1,
+                "lightness" => 2,
+                "pseudo" => 3,
+                "async" => 4,
+                _ => 0
+            };
+
+            if (testId == "async")
+            {
+                await comp.WaitForAssertionAsync(() => comp.FindComponents<MudColorPicker>()[pickerIndex].Instance.ReadValue.Should().Be(expectedColor));
+            }
+
+            await OpenPickerAsync(comp, pickerIndex);
+            await ClickModeSwitchAsync(comp);
+            await comp.WaitForAssertionAsync(() => GetColorInputs(comp)[0].Value.Should().Be(expectedColor.H.ToString(CultureInfo.CurrentUICulture)));
+
+            var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
+            await CheckRenderedColorRelatedValues(comp, selectorX, selectorY, expectedColor, ColorPickerMode.HSL);
         }
 
         [Test]
