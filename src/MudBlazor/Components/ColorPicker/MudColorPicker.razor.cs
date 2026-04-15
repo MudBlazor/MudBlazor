@@ -522,7 +522,6 @@ namespace MudBlazor
 
         private static (double x, double y) UpdateColorSelectorBasedOnRgb(MudColor newColor)
         {
-            // `#12567` made startup flow through nullable fallback state instead of skipping selector initialization.
             // Pure black is the one RGB value that cannot be normalized by the dominant-channel math below, because
             // every channel is zero. Anchor it explicitly to the bottom-right corner so initialization stays stable.
             if (newColor.R is 0 && newColor.G is 0 && newColor.B is 0)
