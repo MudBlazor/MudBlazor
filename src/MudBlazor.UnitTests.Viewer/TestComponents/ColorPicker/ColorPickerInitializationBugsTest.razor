@@ -27,13 +27,10 @@
     private MudColor _pseudo = "#ff000088";
     private MudColor _async = "#ff000088";
 
-    [Parameter]
-    public int DelayMs { get; set; } = 1;
-
     protected override async Task OnInitializedAsync()
     {
         _pseudo = new MudColor("#0f0f");
-        await Task.Delay(DelayMs);
+        await Task.Yield();
         _async = new MudColor("#00ff");
     }
 }

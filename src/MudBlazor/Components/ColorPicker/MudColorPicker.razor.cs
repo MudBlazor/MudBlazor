@@ -522,13 +522,6 @@ namespace MudBlazor
 
         private static (double x, double y) UpdateColorSelectorBasedOnRgb(MudColor newColor)
         {
-            // Pure black collapses the entire bottom edge of the spectrum to one visible color,
-            // so the generic projection math divides by zero. Keep the selector on a stable edge.
-            if (newColor.R == 0 && newColor.G == 0 && newColor.B == 0)
-            {
-                return (MaxX, MaxY);
-            }
-
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, newColor.H);
             var index = hueValue / 255;
             if (index == 6)
