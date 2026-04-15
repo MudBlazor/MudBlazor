@@ -24,7 +24,7 @@
     <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
-    <PackageReference Include="ReportGenerator" Version="5.5.4" />
+    <PackageReference Include="ReportGenerator" Version="5.5.5" />
   </ItemGroup>
 
   <ItemGroup>
