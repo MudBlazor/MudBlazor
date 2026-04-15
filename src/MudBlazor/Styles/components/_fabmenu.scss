@@ -65,7 +65,8 @@
     pointer-events: none;
     // Default direction: Top
     &.mud-fab-menu-direction-top {
-      bottom: calc(100% + 12px);
+      bottom: 100%;
+      padding-bottom: 12px;
       flex-direction: column-reverse;
       align-items: center;
       width: 100%;
@@ -76,7 +77,8 @@
     }
 
     &.mud-fab-menu-direction-bottom {
-      top: calc(100% + 12px);
+      top: 100%;
+      padding-top: 12px;
       flex-direction: column;
       align-items: center;
       width: 100%;
@@ -87,7 +89,8 @@
     }
 
     &.mud-fab-menu-direction-left {
-      right: calc(100% + 12px);
+      right: 100%;
+      padding-right: 12px;
       flex-direction: row-reverse;
       align-items: center;
       height: 100%;
@@ -102,7 +105,8 @@
     }
 
     &.mud-fab-menu-direction-right {
-      left: calc(100% + 12px);
+      left: 100%;
+      padding-left: 12px;
       flex-direction: row;
       align-items: center;
       height: 100%;
@@ -117,7 +121,8 @@
     }
 
     &.mud-fab-menu-direction-start {
-      inset-inline-end: calc(100% + 12px);
+      inset-inline-end: 100%;
+      padding-inline-end: 12px;
       flex-direction: row-reverse;
       align-items: center;
       height: 100%;
@@ -132,7 +137,8 @@
     }
 
     &.mud-fab-menu-direction-end {
-      inset-inline-start: calc(100% + 12px);
+      inset-inline-start: 100%;
+      padding-inline-start: 12px;
       flex-direction: row;
       align-items: center;
       height: 100%;
