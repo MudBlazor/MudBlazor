@@ -1161,6 +1161,25 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [SetUICulture("ru-RU")]
+        public async Task Should_apply_explicit_default_culture()
+        {
+            var culture = CultureInfo.CurrentUICulture;
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(p => p.Culture, culture));
+
+            var input = comp.Find("input");
+            input.GetAttribute("type").Should().Be("text");
+
+            await input.ChangeAsync("123,45");
+            await input.BlurAsync();
+
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(123.45M));
+            comp.Instance.ReadText.Should().Be("123,45");
+            comp.Instance.Culture.Name.Should().Be(culture.Name);
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
         public async Task Format_should_use_default_culture()
         {
             var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters

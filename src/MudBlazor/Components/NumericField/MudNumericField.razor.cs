@@ -27,6 +27,7 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
+        private bool _isCultureParameterExplicitlySet;
         private MudInput<string> _elementReference = null!;
         private readonly string _elementId = Identifier.Create("numericField");
 
@@ -140,7 +141,16 @@ namespace MudBlazor
             GetFormat() is not null ||
             // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
             // If not, then we override to InvariantCulture to avoid issues with <input type="number">.
-            (GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture));
+            (GetCulture() is { } culture
+             && !culture.Equals(CultureInfo.InvariantCulture)
+             && (_isCultureParameterExplicitlySet || !culture.Equals(CultureInfo.CurrentUICulture)));
+
+        /// <inheritdoc />
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            _isCultureParameterExplicitlySet = parameters.Contains<CultureInfo>(nameof(Culture));
+            await base.SetParametersAsync(parameters);
+        }
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
