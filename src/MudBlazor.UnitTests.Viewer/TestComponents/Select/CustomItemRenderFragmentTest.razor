@@ -1,4 +1,4 @@
-﻿<MudSelect T="ExampleClass"  Class="mb-3"@bind-Value="_selectedItem" RelativeWidth="DropdownWidth.Adaptive"> 
+<MudSelect T="ExampleClass"  Class="mb-3" @bind-Value="_selectedItem" RelativeWidth="DropdownWidth.Adaptive">
     @foreach (var item in _availableItems)
     {
         <MudSelectItem T="ExampleClass" Value="@item">
