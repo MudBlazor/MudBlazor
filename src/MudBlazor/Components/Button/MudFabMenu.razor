@@ -3,12 +3,14 @@
 
 <div class="@Classname"
      style="@Style"
-     @onmouseenter="@(() => OnMouseEnterLeaveAsync(true))"
-     @onmouseleave="@(() => OnMouseEnterLeaveAsync(false))"
      @ontouchstart="@OnTouchStart"
      @attributes="UserAttributes"
      role="menu">
-    <div class="@ClassnameMenu" style="@MenuStyle" @onclick="@OnMenuClickAsync">
+    <div class="@ClassnameMenu"
+         style="@MenuStyle"
+         @onclick="@OnMenuClickAsync"
+         @onmouseenter="@(() => OnMouseEnterLeaveAsync(true, true))"
+         @onmouseleave="@(() => OnMouseEnterLeaveAsync(false, true))">
         <CascadingValue Value="@this">
             @ChildContent
         </CascadingValue>
@@ -28,8 +30,10 @@
             Target="@Target"
             Disabled="@Disabled"
             HtmlTag="@HtmlTag"
-            Rel="@Rel"
-            ClickPropagation="@ClickPropagation"
-            DropShadow="@DropShadow"
-            Ripple="@Ripple"/>
+             Rel="@Rel"
+             ClickPropagation="@ClickPropagation"
+             DropShadow="@DropShadow"
+             Ripple="@Ripple"
+             @onmouseenter="@(() => OnMouseEnterLeaveAsync(true, false))"
+             @onmouseleave="@(() => OnMouseEnterLeaveAsync(false, false))"/>
 </div>
