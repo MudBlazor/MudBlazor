@@ -57,6 +57,58 @@
     right: 16px;
   }
 
+  .mud-fab-menu-hover-bridge {
+    position: absolute;
+    z-index: calc(var(--mud-zindex-popover) - 3);
+    pointer-events: none;
+
+    &.mud-fab-menu-hover-bridge-open {
+      pointer-events: auto;
+    }
+
+    &.mud-fab-menu-hover-bridge-top {
+      left: 0;
+      right: 0;
+      bottom: 100%;
+      height: 12px;
+    }
+
+    &.mud-fab-menu-hover-bridge-bottom {
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 12px;
+    }
+
+    &.mud-fab-menu-hover-bridge-left {
+      top: 0;
+      bottom: 0;
+      right: 100%;
+      width: 12px;
+    }
+
+    &.mud-fab-menu-hover-bridge-right {
+      top: 0;
+      bottom: 0;
+      left: 100%;
+      width: 12px;
+    }
+
+    &.mud-fab-menu-hover-bridge-start {
+      top: 0;
+      bottom: 0;
+      inset-inline-end: 100%;
+      width: 12px;
+    }
+
+    &.mud-fab-menu-hover-bridge-end {
+      top: 0;
+      bottom: 0;
+      inset-inline-start: 100%;
+      width: 12px;
+    }
+  }
+
   .mud-fab-menu {
     position: absolute;
     display: flex;
@@ -65,8 +117,7 @@
     pointer-events: none;
     // Default direction: Top
     &.mud-fab-menu-direction-top {
-      bottom: 100%;
-      padding-bottom: 12px;
+      bottom: calc(100% + 12px);
       flex-direction: column-reverse;
       align-items: center;
       width: 100%;
@@ -77,8 +128,7 @@
     }
 
     &.mud-fab-menu-direction-bottom {
-      top: 100%;
-      padding-top: 12px;
+      top: calc(100% + 12px);
       flex-direction: column;
       align-items: center;
       width: 100%;
@@ -89,8 +139,7 @@
     }
 
     &.mud-fab-menu-direction-left {
-      right: 100%;
-      padding-right: 12px;
+      right: calc(100% + 12px);
       flex-direction: row-reverse;
       align-items: center;
       height: 100%;
@@ -105,8 +154,7 @@
     }
 
     &.mud-fab-menu-direction-right {
-      left: 100%;
-      padding-left: 12px;
+      left: calc(100% + 12px);
       flex-direction: row;
       align-items: center;
       height: 100%;
@@ -121,8 +169,7 @@
     }
 
     &.mud-fab-menu-direction-start {
-      inset-inline-end: 100%;
-      padding-inline-end: 12px;
+      inset-inline-end: calc(100% + 12px);
       flex-direction: row-reverse;
       align-items: center;
       height: 100%;
@@ -137,8 +184,7 @@
     }
 
     &.mud-fab-menu-direction-end {
-      inset-inline-start: 100%;
-      padding-inline-start: 12px;
+      inset-inline-start: calc(100% + 12px);
       flex-direction: row;
       align-items: center;
       height: 100%;

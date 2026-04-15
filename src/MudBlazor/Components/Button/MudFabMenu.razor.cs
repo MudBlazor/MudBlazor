@@ -32,6 +32,11 @@ public partial class MudFabMenu : MudFab
         .AddClass(ButtonClass)
         .Build();
 
+    private string ClassnameHoverBridge => new CssBuilder("mud-fab-menu-hover-bridge")
+        .AddClass("mud-fab-menu-hover-bridge-open", _openState.Value)
+        .AddClass($"mud-fab-menu-hover-bridge-{Direction.ToStringFast(true)}")
+        .Build();
+
     private readonly ParameterState<bool> _openState;
     private string? _startIcon;
     private string? _endIcon;

@@ -8,6 +8,7 @@
      @ontouchstart="@OnTouchStart"
      @attributes="UserAttributes"
      role="menu">
+    <div class="@ClassnameHoverBridge" aria-hidden="true"></div>
     <div class="@ClassnameMenu" style="@MenuStyle" @onclick="@OnMenuClickAsync">
         <CascadingValue Value="@this">
             @ChildContent
