@@ -2016,10 +2016,12 @@ namespace MudBlazor.UnitTests.Components
 
             displaySlots = comp.FindAll("div.mud-input-slot");
             displaySlot = displaySlots.FirstOrDefault(x => x.GetAttribute("style")?.Contains("display:inline") == true || x.GetAttribute("style")?.Contains("display: inline") == true);
-            displaySlot.Should().BeNull("because ToStringFunc should take precedence over RenderFragment when it returns a non-null value");
+            displaySlot.Should().NotBeNull("because select should keep rendering through the regular readonly display slot");
+            displaySlot.TextContent.Trim().Should().Be("ITEM2");
+            displaySlot.InnerHtml.Should().NotContain("custom-render");
 
-            var input = comp.Find("input");
-            input.GetAttribute("value").Should().Be("ITEM2");
+            var input = comp.FindComponent<MudInput<string>>();
+            input.Instance.InputType.Should().Be(InputType.Hidden);
         }
 
         [Test]

@@ -80,10 +80,6 @@
     }
   }
 
-  &:not(.mud-autocomplete) .mud-select-input input[readonly] {
-    caret-color: transparent;
-  }
-
   .mud-disabled {
     .mud-select-input {
       cursor: default;

@@ -481,17 +481,12 @@ namespace MudBlazor
                     return false;
                 }
 
-                if (ToStringFunc is not null && !string.IsNullOrEmpty(ToStringFunc(ReadValue)))
-                {
-                    return false;
-                }
-
                 if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
                 {
                     return false;
                 }
 
-                return item.ChildContent != null;
+                return item.ChildContent is not null;
             }
         }
 
@@ -1417,6 +1412,15 @@ namespace MudBlazor
             if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
             {
                 return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+            }
+
+            if (ToStringFunc is not null)
+            {
+                var converted = ToStringFunc(ReadValue);
+                if (!string.IsNullOrEmpty(converted))
+                {
+                    return builder => builder.AddContent(0, converted);
+                }
             }
 
             return item.ChildContent;
