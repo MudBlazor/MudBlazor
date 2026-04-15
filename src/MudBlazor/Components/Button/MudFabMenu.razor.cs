@@ -254,12 +254,18 @@ public partial class MudFabMenu : MudFab
                 if (hoverDelay > 0)
                 {
                     CancelPendingCloseOnMouseLeave();
-                    _closeOnMouseLeaveCts = new();
+                    var closeOnMouseLeaveCts = new CancellationTokenSource();
+                    _closeOnMouseLeaveCts = closeOnMouseLeaveCts;
                     try
                     {
-                        await Task.Delay(TimeSpan.FromMilliseconds(hoverDelay), _closeOnMouseLeaveCts.Token);
+                        await Task.Delay(TimeSpan.FromMilliseconds(hoverDelay), closeOnMouseLeaveCts.Token);
                     }
                     catch (TaskCanceledException)
+                    {
+                        return;
+                    }
+
+                    if (!ReferenceEquals(_closeOnMouseLeaveCts, closeOnMouseLeaveCts))
                     {
                         return;
                     }
@@ -291,7 +297,15 @@ public partial class MudFabMenu : MudFab
 
     private void CancelPendingCloseOnMouseLeave()
     {
-        _closeOnMouseLeaveCts?.Cancel();
+        try
+        {
+            _closeOnMouseLeaveCts?.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore disposal races.
+        }
+
         _closeOnMouseLeaveCts?.Dispose();
         _closeOnMouseLeaveCts = null;
     }
