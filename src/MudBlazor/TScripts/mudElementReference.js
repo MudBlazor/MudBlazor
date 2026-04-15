@@ -12,10 +12,14 @@ class MudElementReference {
         this.eventListeners = {};
     }
 
-    _isIOSDevice() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera || "";
-        return /iPad|iPhone|iPod/.test(userAgent)
-            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    _detectIOSDevice() {
+        const userAgent = navigator.userAgent || navigator.vendor || "";
+        if (/iPad|iPhone|iPod/i.test(userAgent)) {
+            return true;
+        }
+
+        const platform = navigator.userAgentData?.platform || navigator.platform || "";
+        return platform === 'MacIntel' && navigator.maxTouchPoints > 1;
     }
 
     /**
@@ -246,7 +250,7 @@ class MudElementReference {
      */
     addOnBlurEvent(element, dotNetReference) {
         if (!element) return;
-        if (!this._isIOSDevice()) return;
+        if (!this._detectIOSDevice()) return;
 
         element._mudBlurHandler = function (e) {
             if (!element || !document.contains(element)) {
