@@ -944,7 +944,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnFocusOutAsync()
+        private async Task OnFocusOutAsync(FocusEventArgs args)
         {
             if (_openState.Value)
             {
@@ -954,7 +954,7 @@ namespace MudBlazor
             }
             else
             {
-                await OnBlurredAsync(new FocusEventArgs());
+                await OnBlurredAsync(args);
             }
         }
 

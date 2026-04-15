@@ -1089,7 +1089,7 @@ namespace MudBlazor.UnitTests.Components
             select.Required.Should().BeTrue();
             select.HasErrors.Should().BeFalse();
             select.Touched.Should().BeFalse();
-            await comp.InvokeAsync(async () => await comp.Find("div.mud-select").TriggerEventAsync("onfocusout", new FocusEventArgs()));
+            await comp.InvokeAsync(async () => await comp.Find($"#{select.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs()));
             select.Touched.Should().BeTrue();
             select.HasErrors.Should().BeTrue();
             select.ValidationErrors.First().Should().Be("Required");
