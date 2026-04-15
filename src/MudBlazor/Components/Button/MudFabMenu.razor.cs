@@ -253,6 +253,7 @@ public partial class MudFabMenu : MudFab
                 var hoverDelay = Math.Max(0, MudGlobal.MenuDefaults.HoverDelay);
                 if (hoverDelay > 0)
                 {
+                    CancelPendingCloseOnMouseLeave();
                     _closeOnMouseLeaveCts = new();
                     try
                     {
