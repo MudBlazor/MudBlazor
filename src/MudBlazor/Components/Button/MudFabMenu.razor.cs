@@ -36,9 +36,6 @@ public partial class MudFabMenu : MudFab
     private string? _startIcon;
     private string? _endIcon;
     private bool _lastInteractionWasTouch;
-    private bool _isPointerOverButton;
-    private bool _isPointerOverMenu;
-    private CancellationTokenSource? _closeOnMouseLeaveCts;
 
     /// <summary>
     /// The CSS classes applied to the menu button.
@@ -208,9 +205,6 @@ public partial class MudFabMenu : MudFab
         {
             _startIcon = StartIcon;
             _endIcon = EndIcon;
-            _isPointerOverButton = false;
-            _isPointerOverMenu = false;
-            CancelPendingCloseOnMouseLeave();
         }
     }
 
@@ -227,55 +221,11 @@ public partial class MudFabMenu : MudFab
         await OnClickHandler(args);
     }
 
-    private async Task OnMouseEnterLeaveAsync(bool enter, bool menu)
+    private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (menu)
-        {
-            _isPointerOverMenu = enter;
-        }
-        else
-        {
-            _isPointerOverButton = enter;
-        }
-
         if (OpenOnMouseHover && !_lastInteractionWasTouch)
         {
-            if (enter)
-            {
-                CancelPendingCloseOnMouseLeave();
-                if (!_openState.Value)
-                {
-                    await ToggleMenuAsync(true);
-                }
-            }
-            else if (!_isPointerOverButton && !_isPointerOverMenu)
-            {
-                var hoverDelay = Math.Max(0, MudGlobal.MenuDefaults.HoverDelay);
-                if (hoverDelay > 0)
-                {
-                    CancelPendingCloseOnMouseLeave();
-                    var closeOnMouseLeaveCts = new CancellationTokenSource();
-                    _closeOnMouseLeaveCts = closeOnMouseLeaveCts;
-                    try
-                    {
-                        await Task.Delay(TimeSpan.FromMilliseconds(hoverDelay), closeOnMouseLeaveCts.Token);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        return;
-                    }
-
-                    if (!ReferenceEquals(_closeOnMouseLeaveCts, closeOnMouseLeaveCts))
-                    {
-                        return;
-                    }
-                }
-
-                if (!_isPointerOverButton && !_isPointerOverMenu && _openState.Value)
-                {
-                    await ToggleMenuAsync(false);
-                }
-            }
+            await ToggleMenuAsync(enter);
         }
 
         _lastInteractionWasTouch = false;
@@ -291,27 +241,6 @@ public partial class MudFabMenu : MudFab
 
     private void OnTouchStart()
     {
-        CancelPendingCloseOnMouseLeave();
         _lastInteractionWasTouch = true;
-    }
-
-    private void CancelPendingCloseOnMouseLeave()
-    {
-        var closeOnMouseLeaveCts = Interlocked.Exchange(ref _closeOnMouseLeaveCts, null);
-        if (closeOnMouseLeaveCts is null)
-        {
-            return;
-        }
-
-        try
-        {
-            closeOnMouseLeaveCts.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore disposal races.
-        }
-
-        closeOnMouseLeaveCts.Dispose();
     }
 }
