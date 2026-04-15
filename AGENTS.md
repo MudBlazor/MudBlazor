@@ -5,6 +5,8 @@
 ### Keep changes focused
 - Target specific projects only. Solution-wide commands are too slow unless explicitly requested.
 - Keep diffs small and focused. Avoid repo-wide rewrites unless explicitly asked.
+- Prefer targeted, non-breaking changes unless the task explicitly requires broader or breaking work.
+- If broader follow-up improvements are identified, suggest them for a separate PR instead of expanding the current diff.
 - Do not add new heavy dependencies or packages without approval.
 - Do not make speculative large changes when the intent is unclear. Ask a clarifying question or propose a short plan instead.
 
@@ -105,7 +107,7 @@ Formatting is required for changed files:
 dotnet format <project.csproj> --no-restore --include <path/to/changed/files>
 ```
 
-- Run `dotnet format` once near the end of the task after edits have stabilized. If tests are part of the validation loop, run format after the tests pass so you do not spend time formatting when tests fail. Do not put format into the normal edit-build-test loop.
+- Run `dotnet format` once at the very end of the task as a final pre-PR quality pass after tests succeed. Do not run it repeatedly during the normal edit-build-test loop.
 
 - If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
 
@@ -224,7 +226,7 @@ private Task ToggleAsync()
 ## Breaking Changes and Compatibility
 
 - Avoid breaking changes whenever possible.
-- Prefer additive APIs, safe defaults, or obsoleting old behavior.
+- Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
 - If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
 - For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
 
@@ -233,6 +235,7 @@ private Task ToggleAsync()
 ### General testing guidance
 - Run the narrowest relevant test filter first.
 - Test logic rather than full HTML snapshots.
+- Prefer a fail-first workflow: add or update the test to fail for the target behavior before implementing the fix.
 - Keep tests isolated so they can run in parallel.
 - If a test modifies shared or static state, restore it in `[TearDown]`.
 - Use `[NonParallelizable]` only when isolation is not feasible.
@@ -247,12 +250,16 @@ private Task ToggleAsync()
 - Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
+- Test methods should be self-documenting and should not use XML documentation.
+- Helper methods in test classes should include XML documentation when they are non-trivial or reused.
+- When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
 - Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
 - Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
 
 ## Code Style and Analyzer Rules
 
 - Fix new warnings instead of suppressing them.
+- Comments should usually explain why a decision exists, not restate what the code already shows or describe straightforward mechanics.
 - Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
 
 ## Change Checklist
