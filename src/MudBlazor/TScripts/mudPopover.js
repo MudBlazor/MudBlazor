@@ -6,11 +6,16 @@
  * Core placement helpers for popovers, tooltips, and menus.
  * Owns collision handling, flip logic, and shared repositioning behavior.
  */
+// Typical MudDrawer and responsive layout transitions complete within ~250ms.
+// Use 300ms to ensure one final popover alignment pass after transition settle.
+const LAYOUT_TRANSITION_REPOSITION_DELAY_MS = 300;
+
 window.mudpopoverHelper = {
     // set by the class MudPopover in initialize
     mainContainerClass: null,
     overflowPadding: 24,
     flipMargin: 0,
+    transitionResizeTimeoutId: null,
 
     // used for setting a debounce
     debounce: function (func, wait) {
@@ -1189,16 +1194,18 @@ class MudPopover {
 }
 
 window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
-    window.mudpopoverHelper.placePopoverByClassSelector();
+    const repositionPopovers = () => window.mudpopoverHelper.placePopoverByClassSelector();
 
-    if (window.mudpopoverHelper._transitionResizeTimeoutId) {
-        clearTimeout(window.mudpopoverHelper._transitionResizeTimeoutId);
+    repositionPopovers();
+
+    if (window.mudpopoverHelper.transitionResizeTimeoutId) {
+        clearTimeout(window.mudpopoverHelper.transitionResizeTimeoutId);
     }
 
-    window.mudpopoverHelper._transitionResizeTimeoutId = window.setTimeout(() => {
-        window.mudpopoverHelper.placePopoverByClassSelector();
-        window.mudpopoverHelper._transitionResizeTimeoutId = null;
-    }, 300);
+    window.mudpopoverHelper.transitionResizeTimeoutId = window.setTimeout(() => {
+        repositionPopovers();
+        window.mudpopoverHelper.transitionResizeTimeoutId = null;
+    }, LAYOUT_TRANSITION_REPOSITION_DELAY_MS);
 }, 25);
 
 /**
