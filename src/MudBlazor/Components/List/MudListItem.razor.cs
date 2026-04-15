@@ -42,8 +42,13 @@ namespace MudBlazor
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
 
+        protected MudList<T>? MudList { get; set; } = null;
+
+        /// <summary>
+        /// Parent list is passed down here to be then cast and stored in the MudList field
+        /// </summary>
         [CascadingParameter]
-        protected MudList<T>? MudList { get; set; }
+        private MudComponentBase? ContainerComponent { get; set; }
 
         private MudList<T>? TopLevelList => MudList?.TopLevelList;
 
@@ -285,10 +290,16 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            if (MudList is not null)
+            if (ContainerComponent is null)
+                return;
+            // If there is a type mismatch the cast to MudList<T> will fail.
+            if (ContainerComponent is not MudList<T> mudList)
             {
-                await MudList.RegisterAsync(this);
+                throw new ArgumentException($"Type mismatch! A MudList<{typeof(T)}> can only contain items of type MudListItem<{typeof(T)}>.");
             }
+
+            MudList = mudList;
+            await MudList.RegisterAsync(this);
         }
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
@@ -407,13 +418,9 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            if (MudList is null)
-            {
-                return;
-            }
             try
             {
-                MudList.Unregister(this);
+                MudList?.Unregister(this);
             }
             catch (Exception) { /*ignore*/ }
         }
