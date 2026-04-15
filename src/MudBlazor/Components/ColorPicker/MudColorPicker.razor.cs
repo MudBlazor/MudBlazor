@@ -522,6 +522,11 @@ namespace MudBlazor
 
         private static (double x, double y) UpdateColorSelectorBasedOnRgb(MudColor newColor)
         {
+            if (newColor.R == 0 && newColor.G == 0 && newColor.B == 0)
+            {
+                return (MaxX, MaxY);
+            }
+
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, newColor.H);
             var index = hueValue / 255;
             if (index == 6)

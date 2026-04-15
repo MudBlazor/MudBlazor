@@ -1,0 +1,27 @@
+@using MudBlazor.Utilities
+
+<MudPopoverProvider />
+
+<MudColorPicker @bind-Value="_broken" Label="broken" />
+<MudColorPicker @bind-Value="_alpha" Label="alpha" />
+<MudColorPicker @bind-Value="_lightness" Label="lightness" />
+<MudColorPicker @bind-Value="_pseudo" Label="pseudo" />
+<MudColorPicker @bind-Value="_async" Label="async" />
+
+@code {
+    private MudColor _broken = "#00000088";
+    private MudColor _alpha = "#00000188";
+    private MudColor _lightness = "#ff0000ff";
+    private MudColor _pseudo = "#ff000088";
+    private MudColor _async = "#ff000088";
+
+    [Parameter]
+    public int DelayMs { get; set; } = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pseudo = new MudColor("#0f0f");
+        await Task.Delay(DelayMs);
+        _async = new MudColor("#00ff");
+    }
+}
