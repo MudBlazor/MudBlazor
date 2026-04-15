@@ -6,10 +6,6 @@
  * Core placement helpers for popovers, tooltips, and menus.
  * Owns collision handling, flip logic, and shared repositioning behavior.
  */
-// Typical MudDrawer and responsive layout transitions complete within ~250ms.
-// Use 300ms to ensure one final popover alignment pass after transition settle.
-const LAYOUT_TRANSITION_REPOSITION_DELAY_MS = 300;
-
 window.mudpopoverHelper = {
     // set by the class MudPopover in initialize
     mainContainerClass: null,
@@ -1194,18 +1190,44 @@ class MudPopover {
 }
 
 window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
+    const getMaxOpenPopoverTransitionTime = () => {
+        if (!window.mudPopover?.getAllObservedContainers || !window.mudPopover?.getTransitionTimes) {
+            return 0;
+        }
+
+        let maxTransitionTime = 0;
+        const ids = window.mudPopover.getAllObservedContainers();
+
+        for (const id of ids) {
+            if (window.mudPopover.map[id]?.isOpened !== true) {
+                continue;
+            }
+
+            const transitionTime = window.mudPopover.getTransitionTimes(id);
+            if (transitionTime > maxTransitionTime) {
+                maxTransitionTime = transitionTime;
+            }
+        }
+
+        return Math.ceil(maxTransitionTime);
+    };
+
     const repositionPopovers = () => window.mudpopoverHelper.placePopoverByClassSelector();
 
     repositionPopovers();
 
     if (window.mudpopoverHelper.transitionResizeTimeoutId) {
         clearTimeout(window.mudpopoverHelper.transitionResizeTimeoutId);
+        window.mudpopoverHelper.transitionResizeTimeoutId = null;
     }
 
-    window.mudpopoverHelper.transitionResizeTimeoutId = window.setTimeout(() => {
-        repositionPopovers();
-        window.mudpopoverHelper.transitionResizeTimeoutId = null;
-    }, LAYOUT_TRANSITION_REPOSITION_DELAY_MS);
+    const followUpDelay = getMaxOpenPopoverTransitionTime();
+    if (followUpDelay > 0) {
+        window.mudpopoverHelper.transitionResizeTimeoutId = window.setTimeout(() => {
+            repositionPopovers();
+            window.mudpopoverHelper.transitionResizeTimeoutId = null;
+        }, followUpDelay);
+    }
 }, 25);
 
 /**
