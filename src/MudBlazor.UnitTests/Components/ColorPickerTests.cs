@@ -387,7 +387,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("async", "#00ff")]
         public async Task InitializationSnippet_ShouldInitializeRgbControls(string testId, string colorHex)
         {
-            var comp = Context.Render<ColorPickerInitializationBugsTest>();
+            var comp = Context.Render<ColorPickerInitializationTest>();
             var expectedColor = new MudColor(colorHex);
             var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
 
@@ -403,7 +403,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("async", "#00ff")]
         public async Task InitializationSnippet_ShouldInitializeHslControls(string testId, string colorHex)
         {
-            var comp = Context.Render<ColorPickerInitializationBugsTest>();
+            var comp = Context.Render<ColorPickerInitializationTest>();
             var expectedColor = new MudColor(colorHex);
             var (selectorX, selectorY) = GetExpectedSelectorPosition(expectedColor);
 
