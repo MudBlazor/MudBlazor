@@ -1,6 +1,6 @@
 ﻿<MudDataGrid Items="@_items" Sortable="true" AllowUnsorted="@AllowUnsorted">
     <Columns>
-        <PropertyColumn Property="x => x.Name"/>
+        <PropertyColumn Property="x => x.Name" InitialSortDirection="@InitialSortDirection"/>
         <PropertyColumn Property="x => x.Value"/>
         <PropertyColumn Property="x => x.Misc"/>
     </Columns>
@@ -9,6 +9,9 @@
 @code {
     [Parameter]
     public bool AllowUnsorted { get; set; } = true;
+
+    [Parameter]
+    public SortDirection InitialSortDirection { get; set; } = SortDirection.Ascending;
 
     private readonly List<Item> _items = new List<Item>
     {

@@ -294,7 +294,7 @@ namespace MudBlazor
                 // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, ReadValue))
                 {
-                    await BeginValidateAsync();
+                    await ValidateValue();
                 }
             };
 
@@ -424,7 +424,7 @@ namespace MudBlazor
                     ValidationErrors = errors;
                     await ErrorState.SetValueAsync(errors.Count > 0);
                     await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
-                    await ErrorIdState.SetValueAsync(HasErrors ? Guid.NewGuid().ToString() : null);
+                    await UpdateErrorIdStateAsync(HasErrors);
                     Form?.Update(this);
                     StateHasChanged();
                 }
@@ -676,6 +676,7 @@ namespace MudBlazor
             await ErrorState.SetValueAsync(false);
             ValidationErrors.Clear();
             await ErrorTextState.SetValueAsync(null);
+            await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
             await InvokeAsync(StateHasChanged);
         }
@@ -736,6 +737,7 @@ namespace MudBlazor
                     //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
                     await ErrorState.SetValueAsync(hasError);
                     await ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null);
+                    await UpdateErrorIdStateAsync(hasError);
 
                     ValidationErrors.Clear();
                     ValidationErrors.AddRange(errorMessages);
@@ -747,6 +749,15 @@ namespace MudBlazor
             {
                 Logger.LogError(exception, "An unexpected exception occurred: {ExceptionMessage}", exception.Message);
             }
+        }
+
+        private Task UpdateErrorIdStateAsync(bool hasErrors)
+        {
+            var errorId = hasErrors
+                ? ErrorIdState.RenderValue ?? ErrorIdState.Value ?? Guid.NewGuid().ToString()
+                : ErrorIdState.RenderValue;
+
+            return ErrorIdState.SetValueAsync(errorId);
         }
 
         /// <summary>

@@ -6,8 +6,7 @@
 @typeparam TChartOptions
 
 <svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" 
-     width="@(MatchBoundsToSize ? "100%" : Width)" height="@(MatchBoundsToSize ? "100%" : Height)" 
-     viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
+     width="@(MatchBoundsToSize ? "100%" : Width)" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
      style="@HoveredStylename">
     <Filters />
 

@@ -1,0 +1,37 @@
+﻿@page "/components/scatterplotchart"
+@page "/components/chart-types/scatterplotchart"
+
+<DocsPage>
+    <DocsPageHeader Title="Scatter Plot Chart" Component="@nameof(MudBlazor.Charts.ScatterPlot<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    Use <CodeInline>ChartType="ChartType.ScatterPlot"</CodeInline> to render data as individual points on a two-dimensional axis.
+                    Each data point requires both an X and a Y value, supplied via <CodeInline>ChartData&lt;T&gt;</CodeInline> using <CodeInline>(x, y)</CodeInline> tuples.
+                    Series are clickable and support <CodeInline>CanHideSeries</CodeInline> for legend-driven visibility toggling.
+                    Use <CodeInline>ScatterPlotChartOptions</CodeInline> to configure <CodeInline>PointRadius</CodeInline>, axis tick spacing, tooltips, and data labels.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ScatterPlotExample1)">
+                <ScatterPlotExample1 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Regression Line Overlay">
+                <Description>
+                    A series can be rendered as a continuous line instead of scatter points by setting
+                    <CodeInline>ScatterSeriesType = ScatterSeriesType.Line</CodeInline> in <CodeInline>SeriesDisplayOverrides</CodeInline>.
+                    This is useful for overlaying regression lines or trend lines on top of scatter data.
+                    The line series participates in axis scaling and appears in the legend alongside scatter series.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ScatterPlotExampleRegressionLine)">
+                <ScatterPlotExampleRegressionLine />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

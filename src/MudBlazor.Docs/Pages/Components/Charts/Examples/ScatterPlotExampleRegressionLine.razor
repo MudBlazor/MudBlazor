@@ -1,0 +1,53 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Charts
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart T="double"
+              ChartType="ChartType.ScatterPlot"
+              ChartSeries="@_series"
+              Width="100%"
+              Height="350px"
+              ChartOptions="@_options" />
+</MudPaper>
+
+@code {
+    private ChartSeries<double> _data = new()
+    {
+        Name = "Measurements",
+        Data = new([(1, 1.8), (1, 2.4), (2, 3.5), (2, 2.9), (3, 3.1), (4, 5.1), (4, 4.5), (5, 4.8), (6, 6.4), (6, 7.0), (7, 7.2), (8, 8.0), (8, 9.1), (9, 8.6), (10, 10.1)]),
+    };
+
+    private ChartSeries<double> _regression = new()
+    {
+        Name = "Regression",
+        Data = new([(1, 1.5), (10, 10.5)]),
+    };
+
+    private List<ChartSeries<double>> _series = default!;
+
+    private ScatterPlotChartOptions _options = default!;
+
+    protected override void OnInitialized()
+    {
+        _series = [_data, _regression];
+
+        _options = new ScatterPlotChartOptions
+        {
+            XAxisTitle = "Input Voltage (V)",
+            YAxisTitle = "Measured Output (mV)",
+            XAxisTicks = 1,
+            YAxisTicks = 1,
+            XAxisLines = true,
+            ShowToolTips = true,
+            PointRadius = 5,
+            SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+            {
+                [_regression] = new ScatterSeriesDisplayOverride
+                {
+                    ScatterSeriesType = ScatterSeriesType.Line,
+                    StrokeOpacity = 0.75,
+                }
+            }
+        };
+    }
+}

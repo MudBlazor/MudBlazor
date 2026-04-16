@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -10,6 +10,33 @@ class MudElementReference {
     constructor() {
         this.listenerId = 0;
         this.eventListeners = {};
+    }
+
+    /**
+     * Some input types (e.g., "email" and "number") can surface caret APIs but still throw at runtime when selecting ranges.
+     */
+    _supportsTextSelection(element) {
+        if (!element) {
+            return false;
+        }
+
+        const tagName = element.tagName?.toUpperCase();
+        if (tagName === 'TEXTAREA') {
+            return true;
+        }
+
+        if (tagName !== 'INPUT') {
+            return typeof element.setSelectionRange === 'function'
+                || !!element.createTextRange
+                || typeof element.selectionStart === 'number';
+        }
+
+        const type = (element.type || 'text').toLowerCase();
+        return type === 'text'
+            || type === 'search'
+            || type === 'tel'
+            || type === 'url'
+            || type === 'password';
     }
 
     /**
@@ -93,17 +120,19 @@ class MudElementReference {
     selectRange(element, pos1, pos2) {
         if (element)
         {
-            if (element.createTextRange) {
-                const selRange = element.createTextRange();
-                selRange.collapse(true);
-                selRange.moveStart('character', pos1);
-                selRange.moveEnd('character', pos2);
-                selRange.select();
-            } else if (element.setSelectionRange) {
-                element.setSelectionRange(pos1, pos2);
-            } else if (element.selectionStart) {
-                element.selectionStart = pos1;
-                element.selectionEnd = pos2;
+            if (this._supportsTextSelection(element)) {
+                if (element.createTextRange) {
+                    const selRange = element.createTextRange();
+                    selRange.collapse(true);
+                    selRange.moveStart('character', pos1);
+                    selRange.moveEnd('character', pos2);
+                    selRange.select();
+                } else if (element.setSelectionRange) {
+                    element.setSelectionRange(pos1, pos2);
+                } else if (element.selectionStart) {
+                    element.selectionStart = pos1;
+                    element.selectionEnd = pos2;
+                }
             }
             element.focus();
         }
