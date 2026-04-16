@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+<MudDataGrid @ref="_dataGrid" T="Model" Items="@_items" ReadOnly="false"
+             EditMode="@DataGridEditMode.Inline"
+             EditTrigger="@DataGridEditTrigger.Manual"
+             CommittedItemChanges="@OnCommittedItemChanges">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Editable="true">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Name" Margin="Margin.Dense" Variant="Variant.Text" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" Editable="true">
+            <EditTemplate>
+                <MudNumericField @bind-Value="context.Item.Age" Margin="Margin.Dense" Variant="Variant.Text" />
+            </EditTemplate>
+        </PropertyColumn>
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                @if (context.IsEditing)
+                {
+                    <MudIconButton Class="commit-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@context.Actions.CommitEditingItemAsync" />
+                    <MudIconButton Class="cancel-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@context.Actions.CancelEditingItemAsync" />
+                }
+                else
+                {
+                    <MudIconButton Class="edit-btn" Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Model> _dataGrid = default!;
+    
+    public List<Model> Items => _items;
+    
+    private readonly List<Model> _items = new()
+    {
+        new Model { Name = "John", Age = 45 },
+        new Model { Name = "Johanna", Age = 23 }
+    };
+
+    public int CommitAttempts { get; set; }
+
+    private Task<DataGridEditFormAction> OnCommittedItemChanges(Model item)
+    {
+        CommitAttempts++;
+        
+        // Validation: Name must not be empty and Age must be positive
+        if (string.IsNullOrWhiteSpace(item.Name) || item.Age < 0)
+        {
+            return Task.FromResult(DataGridEditFormAction.KeepOpen);
+        }
+
+        return Task.FromResult(DataGridEditFormAction.Close);
+    }
+
+    public class Model
+    {
+        public string Name { get; set; } = string.Empty;
+        public int Age { get; set; }
+    }
+}

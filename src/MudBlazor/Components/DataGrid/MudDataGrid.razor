@@ -283,7 +283,7 @@
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
                     {
-                        var cell = new Cell<T>(this, column, _editingItem!);
+                        var cell = new Cell<T>(this, column, _editingItem!, _editingSourceItem!);
 
                         if (column.EditTemplate != null)
                         {
@@ -362,10 +362,25 @@
     internal RenderFragment Cell(Column<T> column, T item) =>
         @<text>
              @{
-                 var cell = new Cell<T>(this, column, item);
+                 // For inline editing, use the editing copy if this row is being edited
+                 var effectiveItem = GetEditingItemOrSource(item);
+                 var cell = new Cell<T>(this, column, effectiveItem, item);
+                 var isInlineEditing = EditMode == DataGridEditMode.Inline && IsEditingItem(item);
+                 var cellTemplate = column.GetCellTemplate();
+                 // Determine if we should show edit mode controls:
+                 // - Column must be Editable AND not ReadOnly
+                 // - Either in Cell edit mode OR this row is being inline edited
+                 // - Must have an EditTemplate OR be a supported type (string/number)
+                 // If we have only a CellTemplate (like action buttons), always use CellTemplate
+                 var hasEditableContent = column.EditTemplate is not null || 
+                                          column.PropertyType == typeof(string) || 
+                                          column.isNumber;
+                 var showEditMode = column.Editable && !ReadOnly && 
+                                    (EditMode == DataGridEditMode.Cell || isInlineEditing) &&
+                                    hasEditableContent;
              }
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
-                 @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
+                 @if (showEditMode)
                  {
                      if (column.EditTemplate is not null)
                      {
@@ -395,7 +410,6 @@
                  }
                  else
                  {
-                     var cellTemplate = column.GetCellTemplate();
                      if (cellTemplate is not null)
                      {
                          @cellTemplate(cell._cellContext)

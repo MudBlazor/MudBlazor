@@ -1,0 +1,90 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+<MudDataGrid @ref="_dataGrid" T="Model" Items="@_items" ReadOnly="false"
+             EditMode="@DataGridEditMode.Inline"
+             EditTrigger="@DataGridEditTrigger.Manual"
+             StartedEditingItem="@OnStartedEditingItem"
+             CanceledEditingItem="@OnCanceledEditingItem"
+             CommittedItemChanges="@OnCommittedItemChanges"
+             CommittedItemChanged="@OnCommittedItemChanged">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Editable="true">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Name" Margin="Margin.Dense" Variant="Variant.Text" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" Editable="true">
+            <EditTemplate>
+                <MudNumericField @bind-Value="context.Item.Age" Margin="Margin.Dense" Variant="Variant.Text" />
+            </EditTemplate>
+        </PropertyColumn>
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                @if (context.IsEditing)
+                {
+                    <MudIconButton Class="commit-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@context.Actions.CommitEditingItemAsync" />
+                    <MudIconButton Class="cancel-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@context.Actions.CancelEditingItemAsync" />
+                }
+                else
+                {
+                    <MudIconButton Class="edit-btn" Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Model> _dataGrid = default!;
+    
+    public List<Model> Items => _items;
+    
+    private readonly List<Model> _items = new()
+    {
+        new Model { Name = "John", Age = 45 },
+        new Model { Name = "Johanna", Age = 23 },
+        new Model { Name = "Steve", Age = 32 }
+    };
+
+    public bool StartedEditingItemCalled { get; set; }
+    public bool CanceledEditingItemCalled { get; set; }
+    public bool CommittedItemChangesCalled { get; set; }
+    public bool CommittedItemChangedCalled { get; set; }
+    public Model? LastEditedItem { get; set; }
+    public string? EditedNameWhenCommittedItemChanges { get; set; }
+    public string? SourceNameWhenCommittedItemChanges { get; set; }
+    public string? SourceNameWhenCommittedItemChanged { get; set; }
+    public DataGridEditFormAction NextCommitAction { get; set; } = DataGridEditFormAction.Close;
+
+    private void OnStartedEditingItem(Model item)
+    {
+        StartedEditingItemCalled = true;
+        LastEditedItem = item;
+    }
+
+    private void OnCanceledEditingItem(Model item)
+    {
+        CanceledEditingItemCalled = true;
+    }
+
+    private Task<DataGridEditFormAction> OnCommittedItemChanges(Model item)
+    {
+        CommittedItemChangesCalled = true;
+        EditedNameWhenCommittedItemChanges = item.Name;
+        SourceNameWhenCommittedItemChanges = _items[0].Name;
+        return Task.FromResult(NextCommitAction);
+    }
+
+    private Task OnCommittedItemChanged(Model item)
+    {
+        CommittedItemChangedCalled = true;
+        SourceNameWhenCommittedItemChanged = item.Name;
+        return Task.CompletedTask;
+    }
+
+    public class Model
+    {
+        public string Name { get; set; } = string.Empty;
+        public int Age { get; set; }
+    }
+}

@@ -2195,6 +2195,66 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Checks if the specified item is currently being edited in inline mode.
+        /// </summary>
+        /// <param name="item">The item to check.</param>
+        /// <returns><c>true</c> if the item is being edited; otherwise, <c>false</c>.</returns>
+        public bool IsEditingItem(T item)
+        {
+            if (EditMode != DataGridEditMode.Inline || _editingSourceItem == null)
+                return false;
+
+            // Check both the source item and the editing copy since the context may have either
+            return Comparer!.Equals(_editingSourceItem, item) || 
+                   (_editingItem != null && Comparer.Equals(_editingItem, item));
+        }
+
+        /// <summary>
+        /// Gets the editing copy of the item if it's currently being edited in inline mode;
+        /// otherwise, returns the original item.
+        /// </summary>
+        /// <param name="item">The source item to check.</param>
+        /// <returns>The editing copy if the item is being edited; otherwise, the original item.</returns>
+        internal T GetEditingItemOrSource(T item)
+        {
+            if (EditMode == DataGridEditMode.Inline && _editingItem != null && IsEditingItem(item))
+                return _editingItem;
+
+            return item;
+        }
+
+        /// <summary>
+        /// Commits inline edits, persists changes to the source item, and exits edit mode.
+        /// </summary>
+        /// <remarks>
+        /// Use the <see cref="CommittedItemChanges"/> callback to perform validation before changes are applied.
+        /// Return <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
+        /// </remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task CommitInlineEditAsync()
+        {
+            if (EditMode != DataGridEditMode.Inline || _editingItem == null || _editingSourceItem == null)
+                return;
+
+            // Allow consumer to validate/persist
+            if (CommittedItemChanges != null)
+            {
+                var closeBehavior = await CommittedItemChanges(_editingItem);
+
+                if (closeBehavior == DataGridEditFormAction.KeepOpen)
+                    return;
+            }
+
+            // Copy values from editing copy back to source
+            foreach (var property in _properties.Where(p => p.CanWrite))
+                property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+
+            await CommittedItemChanged.InvokeAsync(_editingSourceItem);
+
+            ClearEditingItem();
+        }
+
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
@@ -2418,7 +2478,12 @@ namespace MudBlazor
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            _isEditFormOpen = true;
+
+            // Only open the dialog form for Form mode, not for Inline mode
+            if (EditMode == DataGridEditMode.Form)
+            {
+                _isEditFormOpen = true;
+            }
         }
 
         /// <summary>
