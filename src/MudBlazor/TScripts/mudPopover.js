@@ -1196,7 +1196,7 @@ class MudPopover {
 }
 
 window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
-    const getOpenPopoverLayoutSnapshot = () => {
+    const createOpenPopoverLayoutSnapshot = () => {
         const openPopovers = document.querySelectorAll('.mud-popover-open');
         const snapshot = Array.from(openPopovers, (popover) => {
             const rect = popover.getBoundingClientRect();
@@ -1222,15 +1222,15 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
     }
 
     const settleState = {
-        previousSnapshot: getOpenPopoverLayoutSnapshot(),
+        previousSnapshot: createOpenPopoverLayoutSnapshot(),
         stableFrames: 0,
         frameCount: 0
     };
 
-    const repositionUntilSettled = () => {
+    const scheduleRepositionUntilSettled = () => {
         window.mudpopoverHelper.transitionResizeAnimationFrameId = requestAnimationFrame(() => {
             repositionPopovers();
-            const currentSnapshot = getOpenPopoverLayoutSnapshot();
+            const currentSnapshot = createOpenPopoverLayoutSnapshot();
             settleState.frameCount++;
 
             if (currentSnapshot === settleState.previousSnapshot) {
@@ -1247,12 +1247,12 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
                 return;
             }
 
-            repositionUntilSettled();
+            scheduleRepositionUntilSettled();
         });
     };
 
     if (settleState.previousSnapshot !== '[]') {
-        repositionUntilSettled();
+        scheduleRepositionUntilSettled();
     }
 }, 25);
 
