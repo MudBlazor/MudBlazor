@@ -6,6 +6,9 @@
  * Core placement helpers for popovers, tooltips, and menus.
  * Owns collision handling, flip logic, and shared repositioning behavior.
  */
+const RESIZE_REPOSITION_MAX_FRAMES = 120;
+const RESIZE_REPOSITION_STABLE_FRAME_THRESHOLD = 2;
+
 window.mudpopoverHelper = {
     // set by the class MudPopover in initialize
     mainContainerClass: null,
@@ -1214,7 +1217,6 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
     let previousSnapshot = getOpenPopoverLayoutSnapshot();
     let stableFrames = 0;
     let frameCount = 0;
-    const maxFrames = 120;
 
     const repositionUntilSettled = () => {
         window.mudpopoverHelper.transitionResizeAnimationFrameId = requestAnimationFrame(() => {
@@ -1229,7 +1231,9 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
                 previousSnapshot = currentSnapshot;
             }
 
-            if (currentSnapshot.length === 0 || stableFrames >= 2 || frameCount >= maxFrames) {
+            if (currentSnapshot.length === 0
+                || stableFrames >= RESIZE_REPOSITION_STABLE_FRAME_THRESHOLD
+                || frameCount >= RESIZE_REPOSITION_MAX_FRAMES) {
                 window.mudpopoverHelper.transitionResizeAnimationFrameId = null;
                 return;
             }
