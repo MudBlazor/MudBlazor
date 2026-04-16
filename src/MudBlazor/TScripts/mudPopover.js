@@ -1198,10 +1198,6 @@ class MudPopover {
 window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
     const getOpenPopoverLayoutSnapshot = () => {
         const openPopovers = document.querySelectorAll('.mud-popover-open');
-        if (openPopovers.length === 0) {
-            return '';
-        }
-
         const snapshot = Array.from(openPopovers, (popover) => {
             const rect = popover.getBoundingClientRect();
             return {
@@ -1244,7 +1240,7 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
                 settleState.previousSnapshot = currentSnapshot;
             }
 
-            if (currentSnapshot.length === 0
+            if (currentSnapshot === '[]'
                 || settleState.stableFrames >= RESIZE_REPOSITION_STABLE_FRAME_THRESHOLD
                 || settleState.frameCount >= RESIZE_REPOSITION_MAX_FRAMES) {
                 window.mudpopoverHelper.transitionResizeAnimationFrameId = null;
@@ -1255,7 +1251,7 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
         });
     };
 
-    if (settleState.previousSnapshot.length > 0) {
+    if (settleState.previousSnapshot !== '[]') {
         repositionUntilSettled();
     }
 }, 25);
