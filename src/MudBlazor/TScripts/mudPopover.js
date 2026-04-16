@@ -11,7 +11,7 @@ window.mudpopoverHelper = {
     mainContainerClass: null,
     overflowPadding: 24,
     flipMargin: 0,
-    transitionResizeTimeoutId: null,
+    transitionResizeAnimationFrameId: null,
 
     // used for setting a debounce
     debounce: function (func, wait) {
@@ -1190,43 +1190,56 @@ class MudPopover {
 }
 
 window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
-    const getMaxOpenPopoverTransitionTime = () => {
-        if (!window.mudPopover?.getAllObservedContainers || !window.mudPopover?.getTransitionTimes) {
-            return 0;
+    const getOpenPopoverLayoutSnapshot = () => {
+        const openPopovers = document.querySelectorAll('.mud-popover-open');
+        if (openPopovers.length === 0) {
+            return '';
         }
 
-        let maxTransitionTime = 0;
-        const ids = window.mudPopover.getAllObservedContainers();
-
-        for (const id of ids) {
-            if (window.mudPopover.map[id]?.isOpened !== true) {
-                continue;
-            }
-
-            const transitionTime = window.mudPopover.getTransitionTimes(id);
-            if (transitionTime > maxTransitionTime) {
-                maxTransitionTime = transitionTime;
-            }
-        }
-
-        return Math.ceil(maxTransitionTime);
+        return Array.from(openPopovers, (popover) => {
+            const rect = popover.getBoundingClientRect();
+            return `${popover.id}:${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.width)},${Math.round(rect.height)}`;
+        }).join('|');
     };
 
     const repositionPopovers = () => window.mudpopoverHelper.placePopoverByClassSelector();
 
     repositionPopovers();
 
-    if (window.mudpopoverHelper.transitionResizeTimeoutId) {
-        clearTimeout(window.mudpopoverHelper.transitionResizeTimeoutId);
-        window.mudpopoverHelper.transitionResizeTimeoutId = null;
+    if (window.mudpopoverHelper.transitionResizeAnimationFrameId) {
+        cancelAnimationFrame(window.mudpopoverHelper.transitionResizeAnimationFrameId);
+        window.mudpopoverHelper.transitionResizeAnimationFrameId = null;
     }
 
-    const followUpDelay = getMaxOpenPopoverTransitionTime();
-    if (followUpDelay > 0) {
-        window.mudpopoverHelper.transitionResizeTimeoutId = window.setTimeout(() => {
+    let previousSnapshot = getOpenPopoverLayoutSnapshot();
+    let stableFrames = 0;
+    let frameCount = 0;
+    const maxFrames = 120;
+
+    const repositionUntilSettled = () => {
+        window.mudpopoverHelper.transitionResizeAnimationFrameId = requestAnimationFrame(() => {
             repositionPopovers();
-            window.mudpopoverHelper.transitionResizeTimeoutId = null;
-        }, followUpDelay);
+            const currentSnapshot = getOpenPopoverLayoutSnapshot();
+            frameCount++;
+
+            if (currentSnapshot === previousSnapshot) {
+                stableFrames++;
+            } else {
+                stableFrames = 0;
+                previousSnapshot = currentSnapshot;
+            }
+
+            if (currentSnapshot.length === 0 || stableFrames >= 2 || frameCount >= maxFrames) {
+                window.mudpopoverHelper.transitionResizeAnimationFrameId = null;
+                return;
+            }
+
+            repositionUntilSettled();
+        });
+    };
+
+    if (previousSnapshot.length > 0) {
+        repositionUntilSettled();
     }
 }, 25);
 
