@@ -788,9 +788,13 @@ class MudPopover {
         this.map = {};
         this.contentObserver = null;
         this.currentMainProvider = null;
+        // Coalesce every external signal into a single RAF flush so many open popovers still
+        // behave well on WASM/Server during resize, drawer animation, or nested scroll.
         this.pendingUpdateIds = new Set();
         this.pendingUpdateAll = false;
         this.updateFrameId = 0;
+        // Share observers/listeners across popovers instead of creating one full observer graph
+        // per instance. That keeps the responsive path cheap when multiple menus/tooltips are open.
         this.resizeSubscriptions = new Map();
         this.scrollSubscriptions = new Map();
         this.resizeObserver = typeof ResizeObserver === 'function'
@@ -934,6 +938,8 @@ class MudPopover {
                 continue;
             }
 
+            // Keep repainting for a short window after the triggering event so anchors that move
+            // due to CSS transition or responsive layout settle without the popover lagging behind.
             if ((item.trackUntil ?? 0) > now) {
                 idsToUpdate.add(id);
                 needsAnotherFrame = true;
@@ -996,6 +1002,9 @@ class MudPopover {
      * Repositions only the popovers that need to react to viewport scrolling.
      */
     handleWindowScroll() {
+        // A body/viewport scroll only changes the screen position of fixed popovers or popovers that
+        // intentionally re-evaluate overflow on every move. Absolute popovers anchored in normal flow
+        // are handled by their own scrollable ancestors and should not all be recomputed here.
         this.scheduleUpdateByClassSelector('mud-popover-fixed');
         this.scheduleUpdateByClassSelector('mud-popover-overflow-flip-always');
     }
@@ -1057,6 +1066,8 @@ class MudPopover {
         if (!ids) {
             ids = new Set();
             this.resizeSubscriptions.set(element, ids);
+            // ResizeObserver is the main fix for layout-shift cases like responsive drawers:
+            // the anchor can move even when there was no viewport resize event.
             this.resizeObserver.observe(element);
         }
 
@@ -1153,11 +1164,16 @@ class MudPopover {
         this.map[id].popoverContentNode = popoverContentNode;
         this.map[id].anchorNode = anchorNode;
 
+        // Observe the full ancestor chain, not only the immediate anchor parent. Fixed-width selects
+        // inside collapsing drawers/regids can move because an outer layout node changes size.
         const resizeTargets = new Set([
             ...this.getAncestorElements(anchorNode),
             popoverContentNode
         ]);
 
+        // This broader subscription set is intentional. Drawer collapse/expand and similar responsive
+        // container changes can move the anchor without changing the immediate parent box, which was a
+        // source of select/popover offset regressions.
         for (const element of resizeTargets) {
             this.registerResizeElement(id, element);
         }
@@ -1203,9 +1219,12 @@ class MudPopover {
      * Handles provider mutations that affect popover open state and placement.
      */
     callbackPopover(mutation) {
-        // good viewertests to check anytime you make a change
-        // DrawerDialogSelectTest, OverlayNestedFreezeTest, OverlayDialogTest, PopoverDataGridFilterOptionsTest
-        // TooltipNotRemovedTest (performance), PopoverFlipDirectionTest (flip test)
+        // Viewer regression map for future popover runtime changes:
+        // DrawerDialogSelectTest: popovers/selects must stay attached while dialogs and drawers interact.
+        // OverlayNestedFreezeTest / OverlayDialogTest: nested overlays must not freeze or desync z-index/position.
+        // PopoverDataGridFilterOptionsTest: nested popovers inside complex container layouts must still place correctly.
+        // TooltipNotRemovedTest: tooltip/popover churn must remain cheap and leak-free.
+        // PopoverFlipDirectionTest: overflow flipping must stay stable while reposition events keep firing.
         const target = mutation.target;
         if (!target) return;
         const id = target.id.substr(15);
@@ -1227,6 +1246,8 @@ class MudPopover {
                     target.style.removeProperty('top');
                 }
                 else {
+                    // Closing is delayed to respect the fade-out, but that delay must not win over a
+                    // fast reopen or we will clear the position of an already visible popover.
                     this.clearCloseTimer(id);
                     this.map[id].closeTimerId = setTimeout(() => {
                         if (this.map[id]?.isOpened) return; // in case it's reopened before the timeout is over
@@ -1250,6 +1271,8 @@ class MudPopover {
         else if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
             const tickAttribute = target.getAttribute('data-ticks');
             if (tickAttribute > 0 && target?.parentNode && this.map[id]?.isOpened) {
+                // data-ticks changes mean the provider reordered or refreshed a live popover. Reposition
+                // here so the top-most/open item stays attached after provider-side updates.
                 this.schedulePopoverUpdate(id);
             }
         }
@@ -1276,6 +1299,8 @@ class MudPopover {
         window.addEventListener('resize', this.onResize, { passive: true });
         window.addEventListener('scroll', this.onScroll, { passive: true });
 
+        // visualViewport catches mobile/browser chrome shifts that do not always surface as a normal
+        // layout resize, but still move what the user perceives as the anchor position.
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', this.onVisualViewportResize, { passive: true });
             window.visualViewport.addEventListener('scroll', this.onVisualViewportScroll, { passive: true });
@@ -1295,6 +1320,8 @@ class MudPopover {
             return;
         }
 
+        // Provider identity can change across layout switches/navigation. Rebind when that happens
+        // or mutations from the new provider will be missed.
         if (this.currentMainProvider === provider) {
             return;
         }
@@ -1318,6 +1345,9 @@ class MudPopover {
                     mutation.target.parentNode === this.currentMainProvider &&
                     mutation.target.classList.contains('mud-popover')
                 ) {
+                    // Only react to direct provider children. Nested content mutations are too noisy and
+                    // caused unnecessary reposition churn in the past; the open popover's own observers
+                    // handle the real geometry changes we care about.
                     this.callbackPopover(mutation);
                 }
             }
@@ -1381,6 +1411,8 @@ class MudPopover {
             this.disconnect(id);
         }
 
+        // Re-check the provider on each connect. This preserves behavior for scenarios where the app
+        // swaps layouts/providers after initialization, such as the existing PopoverTwoLayoutsTest.
         this.observeMainContainer();
 
         const popoverNode = document.getElementById('popover-' + id);
@@ -1407,6 +1439,8 @@ class MudPopover {
         };
 
         if (startOpened) {
+            // A popover can already be open when it reconnects after provider/layout changes. Re-running
+            // the open path preserves attachment across scenarios covered by PopoverTwoLayoutsTest.
             this.openPopover(popoverContentNode, id);
         }
     }
@@ -1491,6 +1525,8 @@ class MudPopover {
 }
 
 window.mudpopoverHelper.debouncedResize = function () {
+    // Preserve the historic "re-evaluate everything" safety net for global layout changes, but route it
+    // through the shared scheduler so repeated resize/layout bursts do not stampede all popovers.
     window.mudPopover.scheduleUpdateAll(true);
 };
 
