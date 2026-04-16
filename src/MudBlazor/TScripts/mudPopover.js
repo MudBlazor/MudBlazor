@@ -6,7 +6,10 @@
  * Core placement helpers for popovers, tooltips, and menus.
  * Owns collision handling, flip logic, and shared repositioning behavior.
  */
+// Keep follow-up repositioning bounded to avoid prolonged frame-by-frame work.
+// 120 frames ~= 2 seconds at 60fps, which comfortably covers typical layout transitions.
 const RESIZE_REPOSITION_MAX_FRAMES = 120;
+// Require two unchanged frames before considering layout settled to avoid single-frame jitter.
 const RESIZE_REPOSITION_STABLE_FRAME_THRESHOLD = 2;
 
 window.mudpopoverHelper = {
@@ -1199,10 +1202,18 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
             return '';
         }
 
-        return Array.from(openPopovers, (popover) => {
+        const snapshot = Array.from(openPopovers, (popover) => {
             const rect = popover.getBoundingClientRect();
-            return `${popover.id}:${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.width)},${Math.round(rect.height)}`;
-        }).join('|');
+            return {
+                id: popover.id,
+                left: Math.round(rect.left),
+                top: Math.round(rect.top),
+                width: Math.round(rect.width),
+                height: Math.round(rect.height)
+            };
+        });
+
+        return JSON.stringify(snapshot);
     };
 
     const repositionPopovers = () => window.mudpopoverHelper.placePopoverByClassSelector();
@@ -1214,26 +1225,28 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
         window.mudpopoverHelper.transitionResizeAnimationFrameId = null;
     }
 
-    let previousSnapshot = getOpenPopoverLayoutSnapshot();
-    let stableFrames = 0;
-    let frameCount = 0;
+    const settleState = {
+        previousSnapshot: getOpenPopoverLayoutSnapshot(),
+        stableFrames: 0,
+        frameCount: 0
+    };
 
     const repositionUntilSettled = () => {
         window.mudpopoverHelper.transitionResizeAnimationFrameId = requestAnimationFrame(() => {
             repositionPopovers();
             const currentSnapshot = getOpenPopoverLayoutSnapshot();
-            frameCount++;
+            settleState.frameCount++;
 
-            if (currentSnapshot === previousSnapshot) {
-                stableFrames++;
+            if (currentSnapshot === settleState.previousSnapshot) {
+                settleState.stableFrames++;
             } else {
-                stableFrames = 0;
-                previousSnapshot = currentSnapshot;
+                settleState.stableFrames = 0;
+                settleState.previousSnapshot = currentSnapshot;
             }
 
             if (currentSnapshot.length === 0
-                || stableFrames >= RESIZE_REPOSITION_STABLE_FRAME_THRESHOLD
-                || frameCount >= RESIZE_REPOSITION_MAX_FRAMES) {
+                || settleState.stableFrames >= RESIZE_REPOSITION_STABLE_FRAME_THRESHOLD
+                || settleState.frameCount >= RESIZE_REPOSITION_MAX_FRAMES) {
                 window.mudpopoverHelper.transitionResizeAnimationFrameId = null;
                 return;
             }
@@ -1242,7 +1255,7 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
         });
     };
 
-    if (previousSnapshot.length > 0) {
+    if (settleState.previousSnapshot.length > 0) {
         repositionUntilSettled();
     }
 }, 25);
