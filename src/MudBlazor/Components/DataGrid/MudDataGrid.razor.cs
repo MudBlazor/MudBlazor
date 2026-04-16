@@ -2202,12 +2202,13 @@ namespace MudBlazor
         /// <returns><c>true</c> if the item is being edited; otherwise, <c>false</c>.</returns>
         public bool IsEditingItem(T item)
         {
-            if (EditMode != DataGridEditMode.Inline || _editingSourceItem == null)
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
                 return false;
 
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+
             // Check both the source item and the editing copy since the context may have either
-            return Comparer!.Equals(_editingSourceItem, item) || 
-                   (_editingItem != null && Comparer.Equals(_editingItem, item));
+            return comparer.Equals(_editingSourceItem, item) || (!EqualityComparer<T?>.Default.Equals(_editingItem, default) && comparer.Equals(_editingItem, item));
         }
 
         /// <summary>
@@ -2218,8 +2219,18 @@ namespace MudBlazor
         /// <returns>The editing copy if the item is being edited; otherwise, the original item.</returns>
         internal T GetEditingItemOrSource(T item)
         {
-            if (EditMode == DataGridEditMode.Inline && _editingItem != null && IsEditingItem(item))
-                return _editingItem;
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
+                return item;
+
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+
+            // Check both the source item and the editing copy since the context may have either
+            if (comparer.Equals(_editingSourceItem, item) || (!EqualityComparer<T?>.Default.Equals(_editingItem, default) && comparer.Equals(_editingItem, item)))
+            {
+                var editingItem = _editingItem;
+                if (editingItem is not null)
+                    return editingItem;
+            }
 
             return item;
         }
@@ -2234,13 +2245,19 @@ namespace MudBlazor
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task CommitInlineEditAsync()
         {
-            if (EditMode != DataGridEditMode.Inline || _editingItem == null || _editingSourceItem == null)
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingItem, default) || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
+                return;
+
+            var editingItem = _editingItem;
+            var editingSourceItem = _editingSourceItem;
+
+            if (editingItem is null || editingSourceItem is null)
                 return;
 
             // Allow consumer to validate/persist
             if (CommittedItemChanges != null)
             {
-                var closeBehavior = await CommittedItemChanges(_editingItem);
+                var closeBehavior = await CommittedItemChanges(editingItem);
 
                 if (closeBehavior == DataGridEditFormAction.KeepOpen)
                     return;
@@ -2248,9 +2265,9 @@ namespace MudBlazor
 
             // Copy values from editing copy back to source
             foreach (var property in _properties.Where(p => p.CanWrite))
-                property.SetValue(_editingSourceItem, property.GetValue(_editingItem));
+                property.SetValue(editingSourceItem, property.GetValue(editingItem));
 
-            await CommittedItemChanged.InvokeAsync(_editingSourceItem);
+            await CommittedItemChanged.InvokeAsync(editingSourceItem);
 
             ClearEditingItem();
         }
