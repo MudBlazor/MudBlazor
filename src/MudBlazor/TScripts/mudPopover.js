@@ -787,124 +787,416 @@ class MudPopover {
     constructor() {
         this.map = {};
         this.contentObserver = null;
-        this.onResize = () => window.mudpopoverHelper.debouncedResize();
-        this.onScroll = () => window.mudpopoverHelper.handleScroll(null);
-        this.onScrollableNodes = (node) => window.mudpopoverHelper.handleScroll(node);
+        this.currentMainProvider = null;
+        this.pendingUpdateIds = new Set();
+        this.pendingUpdateAll = false;
+        this.updateFrameId = 0;
+        this.resizeSubscriptions = new Map();
+        this.scrollSubscriptions = new Map();
+        this.resizeObserver = typeof ResizeObserver === 'function'
+            ? new ResizeObserver((entries) => this.handleObservedResize(entries))
+            : null;
+        this.onResize = () => this.scheduleUpdateAll(true);
+        this.onScroll = () => this.handleWindowScroll();
+        this.onVisualViewportResize = () => this.scheduleUpdateAll(true);
+        this.onVisualViewportScroll = () => this.handleWindowScroll();
     }
 
     /**
-     * Registers scroll listeners on scrollable ancestors up to the body element.
+     * Schedules a reposition for one open popover on the next animation frame.
      */
-    popoverScrollListener(node) {
-        let currentNode = node.parentNode;
-        const scrollableElements = [];
-        while (currentNode) {
-            const isScrollable =
-                (currentNode.scrollHeight > currentNode.clientHeight) || // Vertical scroll
-                (currentNode.scrollWidth > currentNode.clientWidth);    // Horizontal scroll
-            if (isScrollable) {
-                const handler = () => this.onScrollableNodes(node);
-                currentNode.addEventListener('scroll', handler, { passive: true });
-                scrollableElements.push({ element: currentNode, handler });
+    schedulePopoverUpdate(id, trackPosition = false) {
+        const item = this.map[id];
+        if (!item?.isOpened) {
+            return;
+        }
+
+        this.pendingUpdateIds.add(id);
+
+        if (trackPosition) {
+            this.startTracking(id);
+        }
+
+        this.requestFlush();
+    }
+
+    /**
+     * Schedules a reposition for every open popover on the next animation frame.
+     */
+    scheduleUpdateAll(trackPosition = false) {
+        this.pendingUpdateAll = true;
+
+        if (trackPosition) {
+            this.startTrackingAll();
+        }
+
+        this.requestFlush();
+    }
+
+    /**
+     * Schedules a reposition for the subset of open popovers matching a CSS class.
+     */
+    scheduleUpdateByClassSelector(classSelector, trackPosition = false) {
+        const ids = Object.keys(this.map);
+        for (const id of ids) {
+            const item = this.map[id];
+            if (!item?.isOpened || !item.popoverContentNode?.classList?.contains(classSelector)) {
+                continue;
             }
-            // Stop if we reach the body, or head
-            if (currentNode.tagName === "BODY") {
+
+            this.pendingUpdateIds.add(id);
+
+            if (trackPosition) {
+                this.startTracking(id);
+            }
+        }
+
+        this.requestFlush();
+    }
+
+    /**
+     * Starts a short requestAnimationFrame tracking window for a popover so it stays visually attached while
+     * surrounding layout transitions settle.
+     */
+    startTracking(id, duration = null) {
+        const item = this.map[id];
+        if (!item?.isOpened) {
+            return;
+        }
+
+        const trackingDuration = duration ?? this.getTrackingDuration(id);
+        const expiresAt = performance.now() + trackingDuration;
+
+        item.trackUntil = Math.max(item.trackUntil ?? 0, expiresAt);
+    }
+
+    /**
+     * Starts transition-aware tracking for all open popovers.
+     */
+    startTrackingAll() {
+        const ids = Object.keys(this.map);
+        for (const id of ids) {
+            if (this.map[id]?.isOpened) {
+                this.startTracking(id);
+            }
+        }
+    }
+
+    /**
+     * Returns the time window used to keep a popover attached during layout motion.
+     */
+    getTrackingDuration(id) {
+        return Math.max(120, this.getTransitionTimes(id) + 32);
+    }
+
+    /**
+     * Requests the shared reposition flush.
+     */
+    requestFlush() {
+        if (this.updateFrameId) {
+            return;
+        }
+
+        this.updateFrameId = window.requestAnimationFrame((timestamp) => this.flushUpdates(timestamp));
+    }
+
+    /**
+     * Repositions all pending and actively tracked popovers in a single animation frame.
+     */
+    flushUpdates(timestamp) {
+        this.updateFrameId = 0;
+
+        const idsToUpdate = new Set();
+        const now = timestamp ?? performance.now();
+
+        if (this.pendingUpdateAll) {
+            const ids = Object.keys(this.map);
+            for (const id of ids) {
+                if (this.map[id]?.isOpened) {
+                    idsToUpdate.add(id);
+                }
+            }
+        }
+
+        for (const id of this.pendingUpdateIds) {
+            idsToUpdate.add(id);
+        }
+
+        this.pendingUpdateAll = false;
+        this.pendingUpdateIds.clear();
+
+        const trackedIds = Object.keys(this.map);
+        let needsAnotherFrame = false;
+
+        for (const id of trackedIds) {
+            const item = this.map[id];
+            if (!item?.isOpened) {
+                continue;
+            }
+
+            if ((item.trackUntil ?? 0) > now) {
+                idsToUpdate.add(id);
+                needsAnotherFrame = true;
+            }
+        }
+
+        for (const id of idsToUpdate) {
+            this.repositionPopover(id);
+        }
+
+        if (needsAnotherFrame || this.pendingUpdateAll || this.pendingUpdateIds.size > 0) {
+            this.requestFlush();
+        }
+    }
+
+    /**
+     * Repositions one popover if its anchor is still available.
+     */
+    repositionPopover(id) {
+        const popoverNode = document.getElementById('popover-' + id);
+        if (popoverNode) {
+            window.mudpopoverHelper.placePopover(popoverNode);
+        }
+    }
+
+    /**
+     * Clears a delayed close cleanup timer when a popover reopens or disconnects.
+     */
+    clearCloseTimer(id) {
+        const closeTimerId = this.map[id]?.closeTimerId;
+        if (closeTimerId) {
+            clearTimeout(closeTimerId);
+            this.map[id].closeTimerId = null;
+        }
+    }
+
+    /**
+     * Handles the shared resize observer callbacks for tracked anchor/content/ancestor elements.
+     */
+    handleObservedResize(entries) {
+        const idsToTrack = new Set();
+
+        for (const entry of entries) {
+            const ids = this.resizeSubscriptions.get(entry.target);
+            if (!ids) {
+                continue;
+            }
+
+            for (const id of ids) {
+                idsToTrack.add(id);
+            }
+        }
+
+        for (const id of idsToTrack) {
+            this.schedulePopoverUpdate(id, true);
+        }
+    }
+
+    /**
+     * Repositions only the popovers that need to react to viewport scrolling.
+     */
+    handleWindowScroll() {
+        this.scheduleUpdateByClassSelector('mud-popover-fixed');
+        this.scheduleUpdateByClassSelector('mud-popover-overflow-flip-always');
+    }
+
+    /**
+     * Returns the ancestor chain for a node up to and including the body element.
+     */
+    getAncestorElements(node) {
+        const ancestors = [];
+        let currentNode = node;
+
+        while (currentNode && currentNode.nodeType === Node.ELEMENT_NODE) {
+            ancestors.push(currentNode);
+            if (currentNode.tagName === 'BODY') {
                 break;
             }
-            currentNode = currentNode.parentNode;
+
+            currentNode = currentNode.parentElement;
         }
+
+        return ancestors;
+    }
+
+    /**
+     * Returns scrollable ancestors that can move the anchor without a viewport scroll.
+     */
+    getScrollableAncestors(node) {
+        let currentNode = node?.parentElement;
+        const scrollableElements = [];
+
+        while (currentNode && currentNode.nodeType === Node.ELEMENT_NODE) {
+            const style = window.getComputedStyle(currentNode);
+            const canScrollY = /(auto|scroll|overlay)/.test(style.overflowY) && currentNode.scrollHeight > currentNode.clientHeight;
+            const canScrollX = /(auto|scroll|overlay)/.test(style.overflowX) && currentNode.scrollWidth > currentNode.clientWidth;
+
+            if (canScrollY || canScrollX) {
+                scrollableElements.push(currentNode);
+            }
+
+            if (currentNode.tagName === 'BODY') {
+                break;
+            }
+
+            currentNode = currentNode.parentElement;
+        }
+
         return scrollableElements;
     }
 
     /**
-     * Creates resize/scroll observers required for one popover instance.
+     * Registers a popover against a shared resize observer.
      */
-    createObservers(id) {
-        // make sure observer lists are starting clear
-        this.disposeObservers(id);
-
-        // popoverNode is the origin of the popover in the dom, it can be nested inside another popover's content
-        // e.g. the filter popover for datagrid, this would be the inside of <td> where the mudpopover was placed
-        // popoverNode.parentNode is it's immediate parent or the actual <td> element in the above example
-        const popoverNode = document.getElementById('popover-' + id);
-
-        // this is the content node in the provider regardless of the RenderFragment that exists when the popover is active
-        const popoverContentNode = document.getElementById('popovercontent-' + id);
-
-        if (popoverNode?.parentNode && popoverContentNode) {
-            // add a resize observer to catch resize events
-            const resizeObserver = new ResizeObserver(entries => {
-                for (const entry of entries) {
-                    const target = entry.target;
-                    for (const childNode of target.childNodes) {
-                        if (childNode.id?.startsWith('popover-')) {
-                            this.onResize();
-                        }
-                    }
-                }
-            });
-
-            resizeObserver.observe(popoverNode.parentNode);
-            // Add scroll event listeners to the content node and its parents up to the Body
-            const scrollableElements = this.popoverScrollListener(popoverNode);
-
-            // Store all references needed for later cleanup
-            this.map[id].scrollableElements = scrollableElements;
-            this.map[id].parentResizeObserver = resizeObserver;
-
-        } else {
-            console.warn(`Could not connect observers to popover with ID ${id}: One or more required elements not found`);
-        }
-    }
-
-    /**
-     * Disposes resize/scroll observers and listeners for one popover instance.
-     */
-    disposeObservers(id) {
-        if (!this.map[id]) {
+    registerResizeElement(id, element) {
+        if (!element || !this.resizeObserver) {
             return;
         }
 
-        // Get references to items that need cleanup
-        const { scrollableElements, parentResizeObserver } = this.map[id];
-
-        // 1. Remove scroll event listeners from all scrollable parent elements
-        if (scrollableElements && Array.isArray(scrollableElements)) {
-            scrollableElements.forEach(({ element, handler }) => {
-                if (element && typeof element.removeEventListener === 'function') {
-                    element.removeEventListener('scroll', handler);
-                }
-            });
+        let ids = this.resizeSubscriptions.get(element);
+        if (!ids) {
+            ids = new Set();
+            this.resizeSubscriptions.set(element, ids);
+            this.resizeObserver.observe(element);
         }
 
-        // 2. Disconnect any resize observers
-        if (parentResizeObserver && typeof parentResizeObserver.disconnect === 'function') {
-            parentResizeObserver.disconnect();
-        }
-
-        // 3. Clear references to allow garbage collection
-        this.map[id].scrollableElements = null;
-        this.map[id].parentResizeObserver = null;
+        ids.add(id);
+        this.map[id].resizeObservedElements.push(element);
     }
 
     /**
-     * Activates observers and performs transition-aware repositioning for an opened popover.
+     * Unregisters a popover from shared resize observation.
+     */
+    unregisterResizeElement(id, element) {
+        if (!element || !this.resizeObserver) {
+            return;
+        }
+
+        const ids = this.resizeSubscriptions.get(element);
+        if (!ids) {
+            return;
+        }
+
+        ids.delete(id);
+
+        if (ids.size === 0) {
+            this.resizeSubscriptions.delete(element);
+            this.resizeObserver.unobserve(element);
+        }
+    }
+
+    /**
+     * Registers a popover against shared ancestor scroll listeners.
+     */
+    registerScrollElement(id, element) {
+        if (!element) {
+            return;
+        }
+
+        let subscription = this.scrollSubscriptions.get(element);
+        if (!subscription) {
+            const ids = new Set();
+            const handler = () => {
+                for (const observedId of ids) {
+                    this.schedulePopoverUpdate(observedId);
+                }
+            };
+
+            subscription = { ids, handler };
+            this.scrollSubscriptions.set(element, subscription);
+            element.addEventListener('scroll', handler, { passive: true });
+        }
+
+        subscription.ids.add(id);
+        this.map[id].scrollableElements.push(element);
+    }
+
+    /**
+     * Unregisters a popover from shared ancestor scroll listeners.
+     */
+    unregisterScrollElement(id, element) {
+        if (!element) {
+            return;
+        }
+
+        const subscription = this.scrollSubscriptions.get(element);
+        if (!subscription) {
+            return;
+        }
+
+        subscription.ids.delete(id);
+
+        if (subscription.ids.size === 0) {
+            element.removeEventListener('scroll', subscription.handler);
+            this.scrollSubscriptions.delete(element);
+        }
+    }
+
+    /**
+     * Creates resize and scroll subscriptions for one open popover instance.
+     */
+    createObservers(id) {
+        this.disposeObservers(id);
+
+        const popoverNode = document.getElementById('popover-' + id);
+        const popoverContentNode = document.getElementById('popovercontent-' + id);
+        const anchorNode = popoverNode?.parentNode instanceof Element
+            ? popoverNode.parentNode
+            : null;
+
+        if (!popoverNode || !popoverContentNode || !anchorNode) {
+            console.warn(`Could not connect observers to popover with ID ${id}: One or more required elements not found`);
+            return;
+        }
+
+        this.map[id].popoverNode = popoverNode;
+        this.map[id].popoverContentNode = popoverContentNode;
+        this.map[id].anchorNode = anchorNode;
+
+        const resizeTargets = new Set([
+            ...this.getAncestorElements(anchorNode),
+            popoverContentNode
+        ]);
+
+        for (const element of resizeTargets) {
+            this.registerResizeElement(id, element);
+        }
+
+        const scrollableElements = this.getScrollableAncestors(anchorNode);
+        for (const element of scrollableElements) {
+            this.registerScrollElement(id, element);
+        }
+    }
+
+    /**
+     * Disposes resize and scroll subscriptions for one popover instance.
+     */
+    disposeObservers(id) {
+        const item = this.map[id];
+        if (!item) {
+            return;
+        }
+
+        if (Array.isArray(item.scrollableElements)) {
+            item.scrollableElements.forEach((element) => this.unregisterScrollElement(id, element));
+        }
+
+        if (Array.isArray(item.resizeObservedElements)) {
+            item.resizeObservedElements.forEach((element) => this.unregisterResizeElement(id, element));
+        }
+
+        item.scrollableElements = [];
+        item.resizeObservedElements = [];
+        item.trackUntil = 0;
+    }
+
+    /**
+     * Activates shared observers and transition-aware tracking for an opened popover.
      */
     openPopover(target, id) {
-        // create observers for this popover (resizeObserver and scroll Listeners)
+        this.clearCloseTimer(id);
         this.createObservers(id);
-
-        // reposition popover individually through transition duration of itself/parents
-        const total = this.getTransitionTimes(id);
-        const interval = Math.ceil(total / 12);
-        const start = performance.now();
-        window.mudpopoverHelper.placePopoverByNode(target);
-        const intervalId = setInterval(() => {
-            window.mudpopoverHelper.placePopoverByNode(target);
-            if (performance.now() - start > total) {
-                clearInterval(intervalId);
-            }
-        }, interval);
+        this.schedulePopoverUpdate(id, true);
     }
 
     /**
@@ -919,52 +1211,46 @@ class MudPopover {
         const id = target.id.substr(15);
         if (mutation.type == 'attributes' && mutation.attributeName == 'class') {
             if (target.classList.contains('mud-popover-open')) {
-                // setup for an open popover and create observers
                 if (this.map[id]?.isOpened === false) {
                     this.map[id].isOpened = true;
                 }
                 this.openPopover(target, id);
             }
             else {
-                // tell the map that this popover is closed
                 if (this.map[id]?.isOpened) {
                     this.map[id].isOpened = false;
                 }
-                // wait this long until we "move it off screen"
+
                 const delay = Number.parseFloat(target.style['transition-duration']) || 0;
                 if (delay == 0) {
-                    // remove left and top styles
                     target.style.removeProperty('left');
                     target.style.removeProperty('top');
                 }
                 else {
-                    setTimeout(() => {
+                    this.clearCloseTimer(id);
+                    this.map[id].closeTimerId = setTimeout(() => {
                         if (this.map[id]?.isOpened) return; // in case it's reopened before the timeout is over
                         if (!target?.classList?.contains('mud-popover-open')) {
                             target.style.removeProperty('left');
                             target.style.removeProperty('top');
                         }
+                        if (this.map[id]) {
+                            this.map[id].closeTimerId = null;
+                        }
                     }, delay);
                 }
-                // reset flip status
+
                 target.mudPopoverFliped = null;
                 target.removeAttribute('data-mudpopover-flip');
 
-                // Remove individual observers and listeners that might exist
                 this.disposeObservers(id);
-                // reposition overlays as needed
                 window.mudpopoverHelper.popoverOverlayUpdates();
             }
         }
         else if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
-            // when data-ticks attribute is the mutation something has changed with the popover
-            // and it needs to be repositioned and shown, note we don't use mud-popover-open here
-            // instead we use data-ticks since we know the newest data-ticks > 0 is the top most.
             const tickAttribute = target.getAttribute('data-ticks');
-            // data ticks is not 0 so let's reposition the popover and overlay
             if (tickAttribute > 0 && target?.parentNode && this.map[id]?.isOpened) {
-                // reposition popover individually
-                window.mudpopoverHelper.placePopoverByNode(target);
+                this.schedulePopoverUpdate(id);
             }
         }
     }
@@ -973,26 +1259,27 @@ class MudPopover {
      * Initializes the popover runtime and global observers for the provider container.
      */
     initialize(containerClass, flipMargin, overflowPadding) {
-        // only happens when the PopoverService is created which happens on application start and anytime the service might crash
-        // "mud-popover-provider" is the default name of containerClass.
-
-        if (this.map.length > 0) {
+        if (Object.keys(this.map).length > 0) {
             console.error('Popover Service already initialized, disposing to reinitialize.');
             this.dispose();
         }
-        // store options from PopoverOptions in mudpopoverHelper
+
         window.mudpopoverHelper.mainContainerClass = containerClass;
         window.mudpopoverHelper.overflowPadding = overflowPadding;
 
         if (flipMargin) {
             window.mudpopoverHelper.flipMargin = flipMargin;
         }
-        // create a single observer to watch all popovers in the provider
+
         this.observeMainContainer();
 
-        // setup event listeners
         window.addEventListener('resize', this.onResize, { passive: true });
         window.addEventListener('scroll', this.onScroll, { passive: true });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', this.onVisualViewportResize, { passive: true });
+            window.visualViewport.addEventListener('scroll', this.onVisualViewportScroll, { passive: true });
+        }
     }
 
     /**
@@ -1004,19 +1291,16 @@ class MudPopover {
         const provider = mainContent[0];
 
         if (!provider) {
-            console.error(`No Popover Container found with class ${containerClass}`);
+            console.error(`No Popover Container found with class ${window.mudpopoverHelper.mainContainerClass}`);
             return;
         }
 
-        // Avoid re-observing same element unless it's been removed from DOM
         if (this.currentMainProvider === provider) {
             return;
         }
 
-        // Assign and update reference
         this.currentMainProvider = provider;
 
-        // Cleanup old observer
         if (this.contentObserver) {
             this.contentObserver.disconnect();
             this.contentObserver = null;
@@ -1093,39 +1377,38 @@ class MudPopover {
      * @param {string} id - The ID of the popover to connect
      */
     connect(id) {
-        // this happens when a popover is created in the dom (not necessarily displayed)
-        // Ensure we're not creating duplicate listeners for the same ID
         if (this.map[id]) {
             this.disconnect(id);
         }
 
-        // compare this.contentObserver = observer to see if the container being observed still exists
-        // will recreate if not, comment out this line if you want to see PopoverTwoLayoutsTest fail in the Viewer
         this.observeMainContainer();
 
-        // this is the origin of the popover in the dom, it can be nested inside another popover's content
-        // e.g. the filter popover for datagrid, this would be the inside of <td> where the mudpopover was placed
-        // popoverNode.parentNode is it's immediate parent or the actual <td> element in the above example
-        const _ = document.getElementById('popover-' + id);
-
-        // this is the content node in the provider regardless of the RenderFragment that exists when the popover is active
+        const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
+        const anchorNode = popoverNode?.parentNode instanceof Element
+            ? popoverNode.parentNode
+            : null;
+
+        if (!popoverNode || !popoverContentNode) {
+            return;
+        }
 
         const startOpened = popoverContentNode.classList.contains('mud-popover-open');
 
-        // Store all references needed for later cleanup
         this.map[id] = {
+            popoverNode: popoverNode,
             popoverContentNode: popoverContentNode,
-            scrollableElements: null,
-            parentResizeObserver: null,
-            isOpened: startOpened
+            anchorNode: anchorNode,
+            scrollableElements: [],
+            resizeObservedElements: [],
+            isOpened: startOpened,
+            trackUntil: 0,
+            closeTimerId: null
         };
 
         if (startOpened) {
             this.openPopover(popoverContentNode, id);
         }
-        // debounce a full reposition
-        window.mudpopoverHelper.debouncedResize();
     }
 
     /**
@@ -1138,13 +1421,14 @@ class MudPopover {
         }
 
         try {
-            // 1. Remove individual observers and listeners that might exist
+            this.clearCloseTimer(id);
             this.disposeObservers(id);
 
-            // 2. Clear final reference to allow garbage collection
+            this.pendingUpdateIds.delete(id);
             this.map[id].popoverContentNode = null;
+            this.map[id].popoverNode = null;
+            this.map[id].anchorNode = null;
 
-            // 3. Remove this entry from the map
             delete this.map[id];
         } catch (error) {
             console.error(`Error disconnecting popover with ID ${id}:`, error);
@@ -1157,24 +1441,42 @@ class MudPopover {
      */
     dispose() {
         try {
-            // 1. Disconnect all popovers
             const ids = Object.keys(this.map);
             for (const id of ids) {
                 this.disconnect(id);
             }
 
-            // 2. Ensure map is empty
             this.map = {};
+            this.pendingUpdateIds.clear();
+            this.pendingUpdateAll = false;
 
-            // 3. Disconnect the content observer
+            if (this.updateFrameId) {
+                window.cancelAnimationFrame(this.updateFrameId);
+                this.updateFrameId = 0;
+            }
+
             if (this.contentObserver) {
                 this.contentObserver.disconnect();
                 this.contentObserver = null;
             }
 
-            // 4. Remove global event listeners (handled outside this class, listed here for reference)
+            if (this.resizeObserver) {
+                this.resizeObserver.disconnect();
+                this.resizeSubscriptions.clear();
+            }
+
+            for (const [element, subscription] of this.scrollSubscriptions.entries()) {
+                element.removeEventListener('scroll', subscription.handler);
+            }
+            this.scrollSubscriptions.clear();
+
             window.removeEventListener('resize', this.onResize);
             window.removeEventListener('scroll', this.onScroll);
+
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener('resize', this.onVisualViewportResize);
+                window.visualViewport.removeEventListener('scroll', this.onVisualViewportScroll);
+            }
         } catch (error) {
             console.error("Error disposing MudPopover:", error);
         }
@@ -1188,27 +1490,26 @@ class MudPopover {
     }
 }
 
-window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() => {
-    window.mudpopoverHelper.placePopoverByClassSelector();
-}, 25);
+window.mudpopoverHelper.debouncedResize = function () {
+    window.mudPopover.scheduleUpdateAll(true);
+};
 
 /**
  * Repositions popovers after scroll events from body or nested scroll containers.
  */
 window.mudpopoverHelper.handleScroll = function (node = null) {
-    // node is a container scrollable element, doesn't need fixed position or flip always to fire
-    // does need itself to be repositioned to stay anchored to where it's at
-    // the areas that use node are scrollable containers
     if (node) {
-        window.mudpopoverHelper.placePopover(node);
+        const id = node.id?.startsWith('popover-')
+            ? node.id.substr(8)
+            : null;
+
+        if (id) {
+            window.mudPopover.schedulePopoverUpdate(id);
+        }
     }
     else {
-        // reposition all fixed/flip popovers as a body container has scrolled
-        window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
-        window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
+        window.mudPopover.handleWindowScroll();
     }
-    // queue a debounced check all
-    window.mudpopoverHelper.debouncedResize();
 };
 
 window.mudPopover = new MudPopover();
