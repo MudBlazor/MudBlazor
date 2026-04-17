@@ -383,11 +383,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         return (x, y);
     }
 
-    internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
-    {
-        throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
     }
-}
 
 /// <summary>
 /// Represents a data point in a time series chart, containing a DateTime and a value.

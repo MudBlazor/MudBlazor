@@ -191,8 +191,4 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
         return (screenX, screenY);
     }
 
-    internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
-    {
-        throw new NotSupportedException("Interpolation is not supported for scatter plot charts.");
     }
-}

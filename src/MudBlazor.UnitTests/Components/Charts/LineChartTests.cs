@@ -295,5 +295,104 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
         }
+
+        [Test]
+        public void LineChartNullDataPointsCreateGaps()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, 20, null, 40, 50 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+            d.Should().NotBeNull();
+
+            var moveToCount = d!.Split('M').Length - 1;
+            moveToCount.Should().Be(2, because: "null data point should split the line into two segments");
+        }
+
+        [Test]
+        public void LineChartConnectNullPointsBridgesGaps()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, 20, null, 40, 50 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ConnectNullPoints = true
+                }));
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+            d.Should().NotBeNull();
+
+            var moveToCount = d!.Split('M').Length - 1;
+            moveToCount.Should().Be(1, because: "ConnectNullPoints should produce a single continuous line");
+        }
+
+        [Test]
+        public void LineChartNullAtStartAndEnd()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { null, 20, 30, 40, null } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+
+            var moveToCount = d!.Split('M').Length - 1;
+            moveToCount.Should().Be(1, because: "nulls at edges should not create extra segments");
+        }
+
+        [Test]
+        public void LineChartAllNullsRendersNoLine()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { null, null, null } }
+            };
+            string[] xAxisLabels = { "A", "B", "C" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            var paths = comp.FindAll("path.mud-chart-line");
+            paths.Count.Should().Be(0);
+        }
     }
 }

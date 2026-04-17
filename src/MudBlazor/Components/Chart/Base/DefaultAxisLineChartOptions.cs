@@ -52,6 +52,14 @@ public abstract class DefaultAxisLineChartOptions : DefaultAxisChartOptions, IAx
     public InterpolationOption InterpolationOption { get; set; } = InterpolationOption.Straight;
 
     /// <summary>
+    /// When <c>true</c>, lines connect across null data points instead of showing gaps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool ConnectNullPoints { get; set; }
+
+    /// <summary>
     /// Optional per-series display overrides.
     /// </summary>
     public IDictionary<IChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides
