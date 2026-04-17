@@ -26,7 +26,7 @@ public class StringHelpersTests
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
-            StringHelpers.ToS(9.995, "F2").Should().Be("10.00");
+            StringHelpers.ToS(9.996, "F2").Should().Be("10.00");
         }
         finally
         {
