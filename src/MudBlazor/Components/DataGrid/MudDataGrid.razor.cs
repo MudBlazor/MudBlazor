@@ -239,7 +239,7 @@ namespace MudBlazor
             {
                 toIndex--;
             }
-            
+
             list.Insert(toIndex + positionModifier, item);
         }
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
