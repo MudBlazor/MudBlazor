@@ -527,14 +527,12 @@ namespace MudBlazor
 
         private Dictionary<string, object?> GetUserAttributes()
         {
-            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
-            {
-                ["role"] = GetReadOnly() ? "list" : "listbox"
-            };
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("role", GetReadOnly() ? "list" : "listbox");
 
             if (!GetReadOnly() && SelectionMode == SelectionMode.MultiSelection)
             {
-                attributes["aria-multiselectable"] = "true";
+                attributes.TryAdd("aria-multiselectable", "true");
             }
 
             return attributes;

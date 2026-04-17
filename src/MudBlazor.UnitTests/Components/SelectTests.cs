@@ -2085,6 +2085,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Select_UserAttributes_ShouldOverrideGeneratedAccessibilityAttributes()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Label, "US States")
+                .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                {
+                    ["role"] = "button",
+                    ["aria-autocomplete"] = "list",
+                    ["aria-controls"] = "custom-listbox",
+                    ["aria-expanded"] = "mixed",
+                    ["aria-haspopup"] = "dialog",
+                    ["aria-label"] = "Custom label",
+                    ["aria-activedescendant"] = "custom-option"
+                }));
+
+            var input = comp.Find("input");
+            input.GetAttribute("role").Should().Be("button");
+            input.GetAttribute("aria-autocomplete").Should().Be("list");
+            input.GetAttribute("aria-controls").Should().Be("custom-listbox");
+            input.GetAttribute("aria-expanded").Should().Be("mixed");
+            input.GetAttribute("aria-haspopup").Should().Be("dialog");
+            input.GetAttribute("aria-label").Should().Be("Custom label");
+            input.GetAttribute("aria-activedescendant").Should().Be("custom-option");
+        }
+
+        [Test]
         public async Task Select_MultiSelect_ShouldKeepSelectionStateIndependentOfActiveDescendant()
         {
             var comp = Context.Render<MultiSelectTest6>();

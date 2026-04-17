@@ -500,14 +500,12 @@ namespace MudBlazor
 
         private Dictionary<string, object?> GetInputUserAttributes()
         {
-            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
-            {
-                ["role"] = "combobox",
-                ["aria-autocomplete"] = "none",
-                ["aria-controls"] = _listboxId,
-                ["aria-expanded"] = _openState.Value ? "true" : "false",
-                ["aria-haspopup"] = "listbox"
-            };
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("role", "combobox");
+            attributes.TryAdd("aria-autocomplete", "none");
+            attributes.TryAdd("aria-controls", _listboxId);
+            attributes.TryAdd("aria-expanded", _openState.Value ? "true" : "false");
+            attributes.TryAdd("aria-haspopup", "listbox");
 
             if (!attributes.ContainsKey("aria-label") && !attributes.ContainsKey("aria-labelledby") && !string.IsNullOrWhiteSpace(Label))
             {
@@ -516,7 +514,7 @@ namespace MudBlazor
 
             if (_openState.Value && _activeItemId is not null)
             {
-                attributes["aria-activedescendant"] = _activeItemId;
+                attributes.TryAdd("aria-activedescendant", _activeItemId);
             }
 
             return attributes;

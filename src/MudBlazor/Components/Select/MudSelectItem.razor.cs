@@ -23,14 +23,12 @@ namespace MudBlazor
 
         private Dictionary<string, object?> GetUserAttributes()
         {
-            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
-            {
-                ["aria-selected"] = Selected ? "true" : "false"
-            };
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("aria-selected", Selected ? "true" : "false");
 
             if (Disabled)
             {
-                attributes["aria-disabled"] = "true";
+                attributes.TryAdd("aria-disabled", "true");
             }
 
             return attributes;
