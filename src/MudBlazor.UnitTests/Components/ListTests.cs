@@ -324,6 +324,107 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ListKeyboardNavigation_ArrowUpMovesToPreviousItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            await items[2].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Bravo"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[1].GetAttribute("tabindex").Should().Be("0");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_ArrowUpOnFirstItemStaysOnFirstItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Alpha"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[1].GetAttribute("tabindex").Should().Be("-1");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_HomeMovesFocusToFirstItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            await items[2].KeyDownAsync(new KeyboardEventArgs { Key = "Home" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Alpha"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_EndMovesFocusToLastItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("-1");
+            items[2].GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_EnterAndNumpadEnterToggleSelectionInToggleMode()
+        {
+            var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.SelectionMode, SelectionMode.ToggleSelection));
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Alpha"));
+
+            items = comp.FindAll("div.mud-list-item");
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().BeEmpty());
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_NonTabbableItemDoesNotHandleKeyCommands()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[1].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find("p.selected-value").TrimmedText().Should().BeEmpty();
+                var currentItems = comp.FindAll("div.mud-list-item");
+                currentItems[0].GetAttribute("tabindex").Should().Be("0");
+                currentItems[1].GetAttribute("tabindex").Should().Be("-1");
+                currentItems[2].GetAttribute("tabindex").Should().Be("-1");
+            });
+        }
+
+        [Test]
         public async Task ListKeyboardNavigation_SpaceTogglesMultiSelectionWithoutTabbableCheckboxes()
         {
             var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.SelectionMode, SelectionMode.MultiSelection));
@@ -340,6 +441,18 @@ namespace MudBlazor.UnitTests.Components
 
             await items[0].KeyDownAsync(new KeyboardEventArgs { Key = " " });
             await comp.WaitForAssertionAsync(() => comp.Find("p.selected-values").TrimmedText().Should().BeEmpty());
+        }
+
+        [Test]
+        public void ListItem_GetTabIndex_ReadOnlyAnchorHasNoTabIndexAndReadOnlyDivIsMinusOne()
+        {
+            var comp = Context.Render<ListReadOnlyTabIndexTest>();
+
+            var anchorItem = comp.Find("a.mud-list-item");
+            var divItem = comp.Find("div.mud-list-item");
+
+            anchorItem.HasAttribute("tabindex").Should().BeFalse();
+            divItem.GetAttribute("tabindex").Should().Be("-1");
         }
 
         [Test]
