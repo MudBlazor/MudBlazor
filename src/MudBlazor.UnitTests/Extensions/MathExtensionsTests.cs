@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
 
+#nullable enable
 [TestFixture]
 public class MathExtensionsTests
 {

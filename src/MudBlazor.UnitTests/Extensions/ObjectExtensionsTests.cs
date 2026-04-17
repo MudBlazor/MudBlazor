@@ -4,6 +4,7 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
 
+#nullable enable
 [TestFixture]
 public class ObjectExtensionsTests
 {
@@ -14,7 +15,7 @@ public class ObjectExtensionsTests
         object value = "mudblazor";
 
         // Act
-        var result = value.As<string>();
+        var result = ObjectExtensions.As<string>(value);
 
         // Assert
         result.Should().Be("mudblazor");
@@ -27,7 +28,7 @@ public class ObjectExtensionsTests
         object value = 5;
 
         // Act
-        var result = value.As<string>();
+        var result = ObjectExtensions.As<string>(value);
 
         // Assert
         result.Should().BeNull();
@@ -40,7 +41,7 @@ public class ObjectExtensionsTests
         object? value = null;
 
         // Act
-        var result = value.As<string>();
+        var result = ObjectExtensions.As<string>(value);
 
         // Assert
         result.Should().BeNull();
@@ -53,7 +54,7 @@ public class ObjectExtensionsTests
         object value = "10";
 
         // Act
-        var result = value.As<int>();
+        var result = ObjectExtensions.As<int>(value);
 
         // Assert
         result.Should().Be(default(int));
