@@ -500,6 +500,7 @@ namespace MudBlazor
 
         private Dictionary<string, object?> GetInputUserAttributes()
         {
+            // Keep the accessibility contract on the trigger itself because MudSelect currently retains focus there instead of moving focus into the popup list.
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
             {
                 ["role"] = "combobox",
@@ -513,6 +514,7 @@ namespace MudBlazor
                 !attributes.ContainsKey("aria-labelledby") &&
                 !string.IsNullOrWhiteSpace(Label))
             {
+                // Preserve caller-provided naming first; this is only a fallback so the trigger is not unnamed.
                 attributes["aria-label"] = Label;
             }
 

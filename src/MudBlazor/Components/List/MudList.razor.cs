@@ -536,6 +536,7 @@ namespace MudBlazor
 
             if (userDefinedValue is not null)
             {
+                // Respect an explicit caller override so container components like MudSelect can publish the correct semantics without forcing MudList to own the full selection model.
                 return userDefinedValue;
             }
 

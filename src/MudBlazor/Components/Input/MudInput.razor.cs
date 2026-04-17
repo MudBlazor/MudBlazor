@@ -264,6 +264,7 @@ namespace MudBlazor
 
         private static bool ShouldApplyDisplayAttribute(string attributeName)
         {
+            // The display div only exists to carry focus for hidden-input rendering paths, so copying structural attributes like id/class there would duplicate or fight the real input element.
             return attributeName.Equals("role", StringComparison.OrdinalIgnoreCase)
                 || attributeName.StartsWith("aria-", StringComparison.OrdinalIgnoreCase);
         }
