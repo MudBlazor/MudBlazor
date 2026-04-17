@@ -4959,6 +4959,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridPropertyColumnFormat_IsAppliedToBuiltInNumericEditorInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEditFormatTest>();
+
+            comp.FindAll("td input")[1].GetAttribute("value").Should().Be("4.00");
+            comp.FindAll("td input")[3].GetAttribute("value").Should().Be("6.94");
+            comp.FindAll("td input")[5].GetAttribute("value").Should().Be("9.01");
+        }
+
+        [Test]
+        public async Task DataGridPropertyColumnFormat_IsAppliedToBuiltInNumericEditorInFormEditMode()
+        {
+            var comp = Context.Render<DataGridEditFormatTest>(parameters => parameters
+                .Add(x => x.EditMode, DataGridEditMode.Form));
+
+            await comp.FindAll("tbody tr")[1].ClickAsync();
+
+            comp.FindAll("div input")[1].GetAttribute("value").Should().Be("6.94");
+        }
+
+        [Test]
         public async Task DataGridFilteredItemsCache()
         {
             var comp = Context.Render<DataGridSortableTest>();
