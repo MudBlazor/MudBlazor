@@ -21,6 +21,25 @@ namespace MudBlazor
 
         internal string ItemId { get; } = Identifier.Create();
 
+        private Dictionary<string, object?> GetUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+            {
+                ["aria-selected"] = Selected ? "true" : "false"
+            };
+
+            if (Disabled)
+            {
+                attributes["aria-disabled"] = "true";
+            }
+            else
+            {
+                attributes.Remove("aria-disabled");
+            }
+
+            return attributes;
+        }
+
         public MudSelectItem()
         {
             using var registerScope = CreateRegisterScope();

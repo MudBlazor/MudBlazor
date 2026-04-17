@@ -2056,6 +2056,74 @@ namespace MudBlazor.UnitTests.Components
             filler.InnerHtml.Should().NotContain("custom-render");
         }
 
+        [Test]
+        public async Task Select_ShouldExposeComboboxSemantics_OnInput()
+        {
+            var comp = Context.Render<MultiSelectTest6>();
+
+            var input = comp.Find("input");
+            input.GetAttribute("role").Should().Be("combobox");
+            input.GetAttribute("aria-haspopup").Should().Be("listbox");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            input.GetAttribute("aria-label").Should().Be("US States");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var openInput = comp.Find("input");
+                openInput.GetAttribute("aria-expanded").Should().Be("true");
+                openInput.GetAttribute("aria-activedescendant").Should().NotBeNullOrWhiteSpace();
+
+                var listboxId = openInput.GetAttribute("aria-controls");
+                listboxId.Should().NotBeNullOrWhiteSpace();
+
+                var listbox = comp.Find($"#{listboxId}");
+                listbox.GetAttribute("role").Should().Be("listbox");
+                listbox.GetAttribute("aria-multiselectable").Should().Be("true");
+            });
+        }
+
+        [Test]
+        public async Task Select_ShouldExposeComboboxSemantics_OnCustomPresenter()
+        {
+            var comp = Context.Render<SelectPrecedenceTest>();
+
+            var display = comp.Find("div.mud-select-input[tabindex='0']");
+            display.GetAttribute("role").Should().Be("combobox");
+            display.GetAttribute("aria-haspopup").Should().Be("listbox");
+            display.GetAttribute("aria-expanded").Should().Be("false");
+            display.GetAttribute("aria-label").Should().Be("Select");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var openDisplay = comp.Find("div.mud-select-input[tabindex='0']");
+                openDisplay.GetAttribute("aria-expanded").Should().Be("true");
+                openDisplay.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+            });
+        }
+
+        [Test]
+        public async Task Select_MultiSelect_ShouldKeepSelectionStateIndependentOfActiveDescendant()
+        {
+            var comp = Context.Render<MultiSelectTest6>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var input = comp.Find("input");
+                var alabama = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Alabama"));
+                var alaska = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Alaska"));
+
+                input.GetAttribute("aria-activedescendant").Should().Be(alabama.Id);
+                alabama.GetAttribute("aria-selected").Should().Be("false");
+                alaska.GetAttribute("aria-selected").Should().Be("true");
+            });
+        }
+
         private static string GetCheckboxPath(IElement item)
         {
             return item.QuerySelectorAll("path").Last().GetAttribute("d")!;

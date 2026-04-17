@@ -31,6 +31,7 @@ namespace MudBlazor
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
+        private readonly string _listboxId = Identifier.Create("select-listbox");
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
@@ -496,6 +497,51 @@ namespace MudBlazor
         }
 
         protected bool IsValueInList => _context.TryGetShadowItemByValue(ReadValue, out _);
+
+        private Dictionary<string, object?> GetInputUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+            {
+                ["role"] = "combobox",
+                ["aria-autocomplete"] = "none",
+                ["aria-controls"] = _listboxId,
+                ["aria-expanded"] = _openState.Value ? "true" : "false",
+                ["aria-haspopup"] = "listbox"
+            };
+
+            if (!attributes.ContainsKey("aria-label") &&
+                !attributes.ContainsKey("aria-labelledby") &&
+                !string.IsNullOrWhiteSpace(Label))
+            {
+                attributes["aria-label"] = Label;
+            }
+
+            if (_openState.Value && _activeItemId is not null)
+            {
+                attributes["aria-activedescendant"] = _activeItemId;
+            }
+            else
+            {
+                attributes.Remove("aria-activedescendant");
+            }
+
+            return attributes;
+        }
+
+        private Dictionary<string, object?> GetListUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["id"] = _listboxId
+            };
+
+            if (MultiSelection)
+            {
+                attributes["aria-multiselectable"] = "true";
+            }
+
+            return attributes;
+        }
 
         /// <summary>
         /// The icon to display whether all, none, or some items are selected.

@@ -529,6 +529,16 @@ namespace MudBlazor
 
         private string? GetAriaMultiSelectable()
         {
+            var userDefinedValue = UserAttributes
+                .FirstOrDefault(attribute => attribute.Key.Equals("aria-multiselectable", StringComparison.OrdinalIgnoreCase))
+                .Value?
+                .ToString();
+
+            if (userDefinedValue is not null)
+            {
+                return userDefinedValue;
+            }
+
             if (GetReadOnly() || SelectionMode != SelectionMode.MultiSelection)
             {
                 return null;
