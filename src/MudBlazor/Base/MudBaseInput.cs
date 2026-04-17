@@ -21,6 +21,9 @@ namespace MudBlazor
         private bool _validated;
         protected bool _isFocused;
         protected bool _forceTextUpdate;
+        // When true, SetTextAndUpdateValueAsync will not set Touched=true.
+        // This prevents the form from being marked touched during component initialization.
+        private bool _skipTouchedDuringInitialization;
 
         /// <summary>
         /// The resolved input element ID.
@@ -636,9 +639,12 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
+            // Set _skipTouchedDuringInitialization to prevent form from being marked touched during this.
             if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
+                _skipTouchedDuringInitialization = true;
                 await UpdateTextPropertyAsync(false);
+                _skipTouchedDuringInitialization = false;
             }
 
             if (Label == null && For != null)
@@ -700,6 +706,12 @@ namespace MudBlazor
             if (firstRender && AutoFocus)
             {
                 await FocusAsync();
+            }
+
+            // After first render, allow Touched to be set on subsequent text changes
+            if (firstRender)
+            {
+                _skipTouchedDuringInitialization = false;
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -783,7 +795,9 @@ namespace MudBlazor
 
             _validated = false;
 
-            if (!string.IsNullOrEmpty(text))
+            // Don't set Touched during initialization - this prevents the form from being
+            // marked touched when a value is set programmatically on initial load.
+            if (!string.IsNullOrEmpty(text) && !_skipTouchedDuringInitialization)
             {
                 Touched = true;
             }
@@ -799,7 +813,9 @@ namespace MudBlazor
         {
             _validated = false;
 
-            if (!string.IsNullOrEmpty(arg.Value))
+            // Don't set Touched during initialization - this prevents the form from being
+            // marked touched when a value is set programmatically on initial load.
+            if (!string.IsNullOrEmpty(arg.Value) && !_skipTouchedDuringInitialization)
             {
                 Touched = true;
             }

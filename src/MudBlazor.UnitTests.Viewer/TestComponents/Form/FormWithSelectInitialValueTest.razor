@@ -1,0 +1,16 @@
+﻿<MudForm ValidationDelay="0">
+    <MudSelect @bind-Value="_selectedValue" Label="Select an item">
+        <MudSelectItem Value="@("Item1")">Item 1</MudSelectItem>
+        <MudSelectItem Value="@("Item2")">Item 2</MudSelectItem>
+        <MudSelectItem Value="@("Item3")">Item 3</MudSelectItem>
+    </MudSelect>
+</MudForm>
+
+@code {
+    public static string __description__ = "MudForm IsTouched should be false when MudSelect has an initial value but user hasn't interacted with it";
+
+    [Parameter]
+    public string? InitialValue { get; set; }
+
+    private string? _selectedValue = "Item1";
+}
