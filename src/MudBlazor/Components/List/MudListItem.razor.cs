@@ -307,8 +307,8 @@ namespace MudBlazor
                 ParentListComponent,
                 typeof(MudList<>),
                 typeof(T),
-                nameof(MudList),
-                nameof(MudListItem));
+                "MudList",
+                "MudListItem");
         }
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)

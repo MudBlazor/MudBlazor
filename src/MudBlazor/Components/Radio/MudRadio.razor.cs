@@ -204,8 +204,8 @@ namespace MudBlazor
                 ParentRadioGroup,
                 typeof(MudRadioGroup<>),
                 typeof(T),
-                nameof(MudRadioGroup),
-                nameof(MudRadio));
+                "MudRadioGroup",
+                "MudRadio");
         }
 
         /// <inheritdoc />

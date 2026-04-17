@@ -706,8 +706,8 @@ namespace MudBlazor
                 DataGridComponent,
                 typeof(MudDataGrid<>),
                 typeof(T),
-                nameof(MudDataGrid),
-                nameof(Column));
+                "MudDataGrid",
+                "Column");
         }
 
         internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)

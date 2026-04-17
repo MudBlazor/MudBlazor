@@ -1396,12 +1396,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TreeView_ClickHeterogeneousTreeElement_ShouldNotThrow()
+        public void TreeView_RenderHeterogeneousTreeElement_ShouldThrowGenericTypeMismatchException()
         {
-            var comp = Context.Render<TreeViewHeterogeneous>();
-            var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
-            var act = () => l2.ClickAsync();
-            await act.Should().NotThrowAsync();
+            Assert.Throws<MudBlazor.Utilities.Exceptions.GenericTypeMismatchException>(() => Context.Render<TreeViewHeterogeneous>());
         }
 
         [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]

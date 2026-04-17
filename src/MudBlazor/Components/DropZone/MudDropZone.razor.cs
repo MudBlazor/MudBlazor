@@ -495,8 +495,8 @@ namespace MudBlazor
                 ContainerComponent,
                 typeof(MudDropContainer<>),
                 typeof(T),
-                nameof(MudDropContainer),
-                nameof(MudDropZone));
+                "MudDropContainer",
+                "MudDropZone");
         }
 
         private void Container_TransactionIndexChanged(object? sender, MudDragAndDropIndexChangedEventArgs e)

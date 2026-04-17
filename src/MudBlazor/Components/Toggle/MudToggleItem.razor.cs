@@ -149,8 +149,8 @@ namespace MudBlazor
                 ParentComponent,
                 typeof(MudToggleGroup<>),
                 typeof(T),
-                nameof(MudToggleGroup),
-                nameof(MudToggleItem));
+                "MudToggleGroup",
+                "MudToggleItem");
         }
 
         /// <summary>

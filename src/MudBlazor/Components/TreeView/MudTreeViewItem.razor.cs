@@ -519,8 +519,8 @@ namespace MudBlazor
                     ParentTreeItemComponent,
                     typeof(MudTreeViewItem<>),
                     typeof(T),
-                    $"{nameof(MudTreeViewItem)} (Parent)",
-                    nameof(MudTreeViewItem));
+                    "MudTreeViewItem (Parent)",
+                    "MudTreeViewItem");
             }
 
             if (MudTreeRoot is null)
@@ -529,8 +529,8 @@ namespace MudBlazor
                     MudTreeRootComponent,
                     typeof(MudTreeView<>),
                     typeof(T),
-                    nameof(MudTreeView),
-                    nameof(MudTreeViewItem));
+                    "MudTreeView",
+                    "MudTreeViewItem");
             }
         }
 

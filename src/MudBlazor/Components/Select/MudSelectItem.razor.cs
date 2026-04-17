@@ -151,8 +151,8 @@ namespace MudBlazor
                     args.Value,
                     typeof(MudSelect<>),
                     typeof(T),
-                    nameof(MudSelect),
-                    nameof(MudSelectItem));
+                    "MudSelect",
+                    "MudSelectItem");
             }
 
             if (args.Value?.SelectContext is MudSelectContext<T> newContext)
@@ -193,8 +193,8 @@ namespace MudBlazor
                     args.Value,
                     typeof(MudSelect<>),
                     typeof(T),
-                    nameof(MudSelect),
-                    nameof(MudSelectItem));
+                    "MudSelect",
+                    "MudSelectItem");
             }
 
             if (args.Value?.SelectContext is MudSelectContext<T> newContext)

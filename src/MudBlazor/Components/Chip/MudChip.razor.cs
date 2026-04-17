@@ -426,8 +426,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             ChipSetComponent,
             typeof(MudChipSet<>),
             typeof(T),
-            nameof(MudChipSet),
-            nameof(MudChip));
+            "MudChipSet",
+            "MudChip");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
