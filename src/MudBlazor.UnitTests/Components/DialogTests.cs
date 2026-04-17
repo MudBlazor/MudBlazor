@@ -483,6 +483,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Dialog_UserProvidedIdOverridesGeneratedElementId_AndKeyInterceptorUsesEffectiveId()
+        {
+            const string customId = "custom-dialog-id";
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+
+            IDialogReference dialogReference = null;
+            var parameters = new DialogParameters
+            {
+                [nameof(MudDialog.UserAttributes)] = new Dictionary<string, object?> { ["id"] = customId }
+            };
+
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(string.Empty, parameters, new DialogOptions { CloseOnEscapeKey = true }));
+            dialogReference.Should().NotBe(null);
+            var customDialogContainer = comp.Find("div.mud-dialog-container");
+            customDialogContainer.GetAttribute("id").Should().Be(customId);
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(customId, new KeyboardEventArgs { Key = "Escape", Type = "keydown" }));
+            comp.Markup.Trim().Should().BeEmpty();
+
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions { CloseOnEscapeKey = true }));
+            dialogReference.Should().NotBe(null);
+            var fallbackDialogContainer = comp.Find("div.mud-dialog-container");
+            var fallbackId = fallbackDialogContainer.GetAttribute("id");
+            fallbackId.Should().StartWith("dialog");
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(fallbackId, new KeyboardEventArgs { Key = "Escape", Type = "keydown" }));
+            comp.Markup.Trim().Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DialogKeyboardEvents()
         {
             var keyInterceptorService = Context.AddKeyInterceptorService();

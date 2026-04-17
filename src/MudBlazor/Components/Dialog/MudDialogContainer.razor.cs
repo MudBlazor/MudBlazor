@@ -26,6 +26,7 @@ namespace MudBlazor
         private bool _disposed;
         private MudDialog? _dialog;
         private ElementReference _dialogContainerReference;
+        private string? _subscribedElementId;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
 
@@ -130,20 +131,43 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            var effectiveElementId = GetEffectiveElementId();
+
+            if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
+                if (!string.IsNullOrEmpty(_subscribedElementId))
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                }
+
                 var options = new KeyInterceptorOptions(
                     "mud-dialog",
                     [
                         new("/./", subscribeDown: true, subscribeUp: true)
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
                     .OnKeyDown("Escape", HandleEscapeAsync)
                     .OnKeyDown("/./", HandleAnyKeyDownAsync)
                     .OnKeyUp("/./", HandleAnyKeyUpAsync));
+
+                _subscribedElementId = effectiveElementId;
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        internal string GetEffectiveElementId()
+        {
+            if (UserAttributes.TryGetValue("id", out var idValue) && idValue is not null)
+            {
+                var id = idValue.ToString();
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    return id;
+                }
+            }
+
+            return ElementId;
         }
 
         private Task HandleEscapeAsync()
@@ -314,7 +338,7 @@ namespace MudBlazor
             _disposed = true;
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(ElementId);
+                await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId ?? GetEffectiveElementId());
             }
         }
 
@@ -326,7 +350,7 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        string IMudDialogInstance.ElementId => ElementId;
+        string IMudDialogInstance.ElementId => _subscribedElementId ?? GetEffectiveElementId();
 
         /// <inheritdoc />
         string? IMudDialogInstance.Title => _titleState.Value;
