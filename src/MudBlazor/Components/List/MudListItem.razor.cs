@@ -16,6 +16,7 @@ namespace MudBlazor
     {
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
+        private ElementReference _elementReference = new();
 
         private readonly ParameterState<bool> _expandedState;
 
@@ -297,6 +298,8 @@ namespace MudBlazor
             {
                 return;
             }
+
+            MudList?.SetActiveItem(this);
             if (OnClickPreventDefault)
             {
                 await OnClick.InvokeAsync(eventArgs);
@@ -333,6 +336,70 @@ namespace MudBlazor
             if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
+            }
+        }
+
+        internal async Task FocusAsync()
+        {
+            await OnFocusAsync(new FocusEventArgs());
+            await _elementReference.FocusAsync();
+        }
+
+        internal bool IsEnabled() => !GetDisabled();
+
+        internal bool MatchesSearch(string key)
+        {
+            var searchText = Text ?? string.Empty;
+            return searchText.StartsWith(key, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private async Task OnFocusAsync(FocusEventArgs _)
+        {
+            TopLevelList?.SetActiveItem(this);
+
+            if (SelectionMode == SelectionMode.SingleSelection && NestedList is null && TopLevelList is not null && !GetReadOnly())
+            {
+                await TopLevelList.SetSelectedValueAsync(GetValue());
+            }
+        }
+
+        private async Task OnKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (GetDisabled() || MudList is null || !MudList.IsInteractive() || TopLevelList is null || !TopLevelList.IsTabbable(this))
+            {
+                return;
+            }
+
+            switch (args.Key)
+            {
+                case "ArrowDown":
+                    await MudList.FocusAdjacentItemAsync(this, 1);
+                    break;
+                case "ArrowUp":
+                    await MudList.FocusAdjacentItemAsync(this, -1);
+                    break;
+                case "Home":
+                    await MudList.FocusBoundaryItemAsync(first: true);
+                    break;
+                case "End":
+                    await MudList.FocusBoundaryItemAsync(first: false);
+                    break;
+                case " ":
+                    await OnKeyboardActivateAsync(activateLink: false);
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                    if (HtmlTag != "a")
+                    {
+                        await OnKeyboardActivateAsync(activateLink: true);
+                    }
+                    break;
+                default:
+                    if (!args.CtrlKey && !args.AltKey && !args.MetaKey && !args.ShiftKey)
+                    {
+                        await MudList.FocusBySearchAsync(this, args.Key);
+                    }
+                    break;
             }
         }
 
@@ -378,6 +445,85 @@ namespace MudBlazor
             else
             {
                 await TopLevelList.SelectValueAsync(GetValue());
+            }
+        }
+
+        private string? GetRole()
+        {
+            return GetReadOnly() ? "listitem" : "option";
+        }
+
+        private string? GetAriaSelected()
+        {
+            if (GetReadOnly())
+            {
+                return null;
+            }
+
+            return _selected ? "true" : "false";
+        }
+
+        private string? GetAriaExpanded()
+        {
+            if (NestedList is null)
+            {
+                return null;
+            }
+
+            return _expandedState.Value ? "true" : "false";
+        }
+
+        private string? GetTabIndex()
+        {
+            if (GetDisabled())
+            {
+                return "-1";
+            }
+
+            if (GetReadOnly())
+            {
+                return HtmlTag == "a" ? null : "-1";
+            }
+
+            return MudList?.IsTabbable(this) == true ? "0" : "-1";
+        }
+
+        private async Task OnKeyboardActivateAsync(bool activateLink)
+        {
+            if (GetDisabled())
+            {
+                return;
+            }
+
+            if (NestedList is not null)
+            {
+                await _expandedState.SetValueAsync(!_expandedState.Value);
+                return;
+            }
+
+            if (TopLevelList is not null && !GetReadOnly())
+            {
+                var value = GetValue();
+
+                if (MultiSelection)
+                {
+                    await OnCheckboxChangedAsync();
+                }
+                else if (SelectionMode == SelectionMode.ToggleSelection)
+                {
+                    await TopLevelList.SetSelectedValueAsync(_selected ? default : value);
+                }
+                else
+                {
+                    await TopLevelList.SetSelectedValueAsync(value);
+                }
+            }
+
+            await OnClick.InvokeAsync(new MouseEventArgs());
+
+            if (activateLink && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            {
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
         }
 
