@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -17,6 +18,7 @@ namespace MudBlazor
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
         private ElementReference _elementReference = new();
+        private readonly string _keyInterceptorElementId = Identifier.Create("mud-list-item");
 
         private readonly ParameterState<bool> _expandedState;
 
@@ -42,6 +44,9 @@ namespace MudBlazor
 
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter]
         protected MudList<T>? MudList { get; set; }
@@ -290,6 +295,27 @@ namespace MudBlazor
             {
                 await MudList.RegisterAsync(this);
             }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var options = new KeyInterceptorOptions(
+                    [
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("ArrowUp", preventDown: "key+none"),
+                        new("ArrowDown", preventDown: "key+none"),
+                        new("Home", preventDown: "key+none"),
+                        new("End", preventDown: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_keyInterceptorElementId, options, _ => { });
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
@@ -541,13 +567,14 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            if (MudList is null)
-            {
-                return;
-            }
             try
             {
-                MudList.Unregister(this);
+                MudList?.Unregister(this);
+
+                if (IsJSRuntimeAvailable)
+                {
+                    _ = KeyInterceptorService.UnsubscribeAsync(_keyInterceptorElementId);
+                }
             }
             catch (Exception) { /*ignore*/ }
         }
