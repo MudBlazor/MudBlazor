@@ -526,16 +526,10 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Builds the accessibility attributes for the list container.
+        /// Builds fallback accessibility attributes for the list container.
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// <see cref="MudList{T}"/> can render either as a plain list or as an interactive listbox depending on its
-        /// selection behavior, so container semantics are derived here instead of being fixed in markup.
-        /// </para>
-        /// <para>
-        /// Generated attributes are only fallbacks. Caller-provided <see cref="UserAttributes"/> take precedence.
-        /// </para>
+        /// <see cref="MudList{T}"/> derives its container semantics from its selection behavior.
         /// </remarks>
         private Dictionary<string, object?> GetUserAttributes()
         {
