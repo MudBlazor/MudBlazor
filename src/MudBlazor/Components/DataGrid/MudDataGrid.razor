@@ -296,7 +296,7 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" Format="@column.ContentFormat" />
+                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
@@ -380,8 +380,7 @@
                                            ValueChanged="@cell.StringValueChangedAsync"
                                            Margin="@Margin.Dense" Style="margin-top:0"
                                            Required="@column.Required"
-                                           Variant="@Variant.Text"
-                                           Culture="@column.Culture" Format="@column.ContentFormat" />
+                                           Variant="@Variant.Text" Culture="@column.Culture" />
                          }
                          else if (column.isNumber)
                          {
@@ -390,8 +389,8 @@
                                               ValueChanged="@cell.NumberValueChangedAsync"
                                               Margin="@Margin.Dense" Style="margin-top:0"
                                               Required="@column.Required"
-                                              Variant="@Variant.Text"
-                                              Culture="@column.Culture" Format="@column.ContentFormat" />
+                                              Variant="@Variant.Text" Culture="@column.Culture"
+                                              Format="@column.ContentFormat" />
                          }
                      }
                  }
