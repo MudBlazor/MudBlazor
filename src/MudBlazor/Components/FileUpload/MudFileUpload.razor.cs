@@ -280,9 +280,32 @@ namespace MudBlazor
             await InvokeUserDragEventCallbackAsync("ondragend", args);
         }
 
+        /// <summary>
+        /// Invokes a user-provided drag callback from <see cref="UserAttributes"/> when present.
+        /// </summary>
+        /// <param name="key">The drag event attribute key (for example <c>ondragleave</c>).</param>
+        /// <param name="args">The drag event arguments to forward to compatible callbacks.</param>
         private async Task InvokeUserDragEventCallbackAsync(string key, DragEventArgs args)
         {
-            var userAttribute = UserAttributes.FirstOrDefault(x => key.Equals(x.Key, StringComparison.OrdinalIgnoreCase)).Value;
+            if (UserAttributes is null || UserAttributes.Count == 0)
+            {
+                return;
+            }
+
+            object? userAttribute = null;
+            foreach (var attribute in UserAttributes)
+            {
+                if (key.Equals(attribute.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    userAttribute = attribute.Value;
+                    break;
+                }
+            }
+
+            if (userAttribute is null)
+            {
+                return;
+            }
 
             switch (userAttribute)
             {

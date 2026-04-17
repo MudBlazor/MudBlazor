@@ -458,7 +458,7 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(x => x.DragAndDrop, true)
-                .AddUnmatched("ondragleave", EventCallback.Factory.Create<DragEventArgs>(this, () => dragLeaveCalls++)));
+                .AddUnmatched("ondragleave", EventCallback.Factory.Create<DragEventArgs>(this, (DragEventArgs _) => dragLeaveCalls++)));
 
             await comp.Find(".mud-file-upload-dragarea").DragEnterAsync();
             comp.Find(".mud-file-upload-dragarea").ClassList.Should().Contain("mud-border-primary");
