@@ -508,6 +508,47 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Dialog_UserProvidedIdOverridesGeneratedElementId()
+        {
+            var comp = Context.Render<MudDialogContainer>(parameters => parameters
+                .Add(x => x.Id, Guid.NewGuid())
+                .Add(x => x.Options, DialogOptions.Default)
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["id"] = "custom-dialog-id" })
+                .Add(x => x.Content, builder =>
+                {
+                    builder.OpenComponent<DialogOkCancel>(0);
+                    builder.CloseComponent();
+                }));
+            var dialogInstance = (IMudDialogInstance)comp.Instance;
+
+            comp.Find("div.mud-dialog-container").GetAttribute("id").Should().Be("custom-dialog-id");
+            dialogInstance.ElementId.Should().Be("custom-dialog-id");
+        }
+
+        [Test]
+        public async Task DialogKeyboardNavigation_UsesUserProvidedId()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudDialogContainer>(parameters => parameters
+                .Add(x => x.Id, Guid.NewGuid())
+                .Add(x => x.Options, DialogOptions.Default)
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["id"] = "custom-dialog-id" })
+                .Add(x => x.Content, builder =>
+                {
+                    builder.OpenComponent<DialogOkCancel>(0);
+                    builder.CloseComponent();
+                }));
+
+            var dialog = comp.FindComponent<DialogOkCancel>().Instance;
+            dialog.LastKeyDown.Should().BeNull();
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown("custom-dialog-id", new KeyboardEventArgs { Key = "Enter", Type = "keydown" }));
+
+            dialog.LastKeyDown.Should().NotBeNull();
+            dialog.LastKeyDown!.Key.Should().Be("Enter");
+        }
+
+        [Test]
         public async Task DialogHandlesOnBackdropClickEvent()
         {
             var comp = Context.Render<MudDialogProvider>();
