@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -13,7 +12,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item being listed.</typeparam>
     /// <seealso cref="MudList{T}"/>
     /// <seealso cref="MudListSubheader"/>
-    public partial class MudListItem<T> : MudComponentBase, IAsyncDisposable
+    public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
@@ -43,9 +42,6 @@ namespace MudBlazor
 
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
-
-        [Inject]
-        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter]
         protected MudList<T>? MudList { get; set; }
@@ -296,35 +292,6 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                var options = new KeyInterceptorOptions(
-                    "mud-list-item",
-                    [
-                        new(" ", preventDown: "key+none"),
-                        new("ArrowUp", preventDown: "key+none"),
-                        new("ArrowDown", preventDown: "key+none"),
-                        new("Home", preventDown: "key+none"),
-                        new("End", preventDown: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none")
-                    ]);
-
-                await KeyInterceptorService.SubscribeAsync(FieldId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("ArrowDown", () => MudList!.FocusAdjacentItemAsync(this, 1))
-                        .OnKeyDown("ArrowUp", () => MudList!.FocusAdjacentItemAsync(this, -1))
-                        .OnKeyDown("Home", () => MudList!.FocusBoundaryItemAsync(first: true))
-                        .OnKeyDown("End", () => MudList!.FocusBoundaryItemAsync(first: false))
-                        .OnKeyDown(" ", () => OnKeyboardActivateAsync(activateLink: false))
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterKeyAsync)));
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
             if (GetDisabled())
@@ -390,10 +357,6 @@ namespace MudBlazor
             }
         }
 
-        protected Task HandleKeyDownAsync(KeyboardEventArgs args) => IsJSRuntimeAvailable
-            ? KeyInterceptorService.DispatchAsync(FieldId, KeyEventKind.Down, args)
-            : OnKeyDownAsync(args);
-
         private async Task OnKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabled() || MudList is null || !MudList.IsInteractive() || TopLevelList is null || !TopLevelList.IsTabbable(this))
@@ -427,8 +390,6 @@ namespace MudBlazor
                     break;
             }
         }
-
-        private bool CanHandleKeys() => MudList is not null && MudList.IsInteractive() && TopLevelList?.IsTabbable(this) == true;
 
         internal void SetSelected(bool selected)
         {
@@ -554,21 +515,6 @@ namespace MudBlazor
             }
         }
 
-        private Task HandleEnterKeyAsync() => HtmlTag == "a" ? Task.CompletedTask : OnKeyboardActivateAsync(activateLink: true);
-
-        private Dictionary<string, object?> GetUserAttributes()
-        {
-            if (UserAttributes.ContainsKey("id"))
-            {
-                return UserAttributes;
-            }
-
-            return new Dictionary<string, object?>(UserAttributes)
-            {
-                ["id"] = FieldId
-            };
-        }
-
         private string GetIndeterminateIcon()
         {
             // Note: this will only become important should we ever want to add checkboxes for nesting list items similar to treeview
@@ -593,16 +539,15 @@ namespace MudBlazor
 
         private bool GetClickPropagation() => false;
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
+            if (MudList is null)
+            {
+                return;
+            }
             try
             {
-                MudList?.Unregister(this);
-
-                if (IsJSRuntimeAvailable)
-                {
-                    await KeyInterceptorService.UnsubscribeAsync(FieldId);
-                }
+                MudList.Unregister(this);
             }
             catch (Exception) { /*ignore*/ }
         }
