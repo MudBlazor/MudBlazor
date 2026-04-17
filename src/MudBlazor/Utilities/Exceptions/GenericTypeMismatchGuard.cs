@@ -1,4 +1,4 @@
-namespace MudBlazor.Utilities.Exceptions;
+﻿namespace MudBlazor.Utilities.Exceptions;
 
 internal static class GenericTypeMismatchGuard
 {

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
@@ -519,7 +519,7 @@ namespace MudBlazor
                     ParentTreeItemComponent,
                     typeof(MudTreeViewItem<>),
                     typeof(T),
-                    nameof(MudTreeViewItem),
+                    $"{nameof(MudTreeViewItem)} (Parent)",
                     nameof(MudTreeViewItem));
             }
 
