@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Runtime.CompilerServices;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Comparer;
