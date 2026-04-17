@@ -3,11 +3,9 @@
 @typeparam T
 @attribute [CascadingTypeParameter(nameof(T))]
 
-<div @attributes="UserAttributes"
+<div @attributes="GetUserAttributes()"
      class="@Classname"
-     style="@Style"
-     role="@GetRole()"
-     aria-multiselectable="@GetAriaMultiSelectable()">
+     style="@Style">
     <CascadingValue Value="@this" IsFixed="true">
         @ChildContent
     </CascadingValue>

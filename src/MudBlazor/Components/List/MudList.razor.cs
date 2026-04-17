@@ -525,27 +525,19 @@ namespace MudBlazor
             return _activeItem;
         }
 
-        private string GetRole() => GetReadOnly() ? "list" : "listbox";
-
-        private string? GetAriaMultiSelectable()
+        private Dictionary<string, object?> GetUserAttributes()
         {
-            var userDefinedValue = UserAttributes
-                .FirstOrDefault(attribute => attribute.Key.Equals("aria-multiselectable", StringComparison.OrdinalIgnoreCase))
-                .Value?
-                .ToString();
-
-            if (userDefinedValue is not null)
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
             {
-                // Respect an explicit caller override so container components like MudSelect can publish the correct semantics without forcing MudList to own the full selection model.
-                return userDefinedValue;
+                ["role"] = GetReadOnly() ? "list" : "listbox"
+            };
+
+            if (!GetReadOnly() && SelectionMode == SelectionMode.MultiSelection)
+            {
+                attributes["aria-multiselectable"] = "true";
             }
 
-            if (GetReadOnly() || SelectionMode != SelectionMode.MultiSelection)
-            {
-                return null;
-            }
-
-            return "true";
+            return attributes;
         }
 
         /// <summary>

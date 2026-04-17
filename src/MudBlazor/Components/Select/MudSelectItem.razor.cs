@@ -32,10 +32,6 @@ namespace MudBlazor
             {
                 attributes["aria-disabled"] = "true";
             }
-            else
-            {
-                attributes.Remove("aria-disabled");
-            }
 
             return attributes;
         }
