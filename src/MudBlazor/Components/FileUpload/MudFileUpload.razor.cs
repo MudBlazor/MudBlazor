@@ -262,6 +262,51 @@ namespace MudBlazor
             await _draggingState.SetValueAsync(false);
         }
 
+        private async Task OnDropAsync(DragEventArgs args)
+        {
+            await OnDragResetAsync();
+            await InvokeUserDragEventCallbackAsync("ondrop", args);
+        }
+
+        private async Task OnDragLeaveAsync(DragEventArgs args)
+        {
+            await OnDragResetAsync();
+            await InvokeUserDragEventCallbackAsync("ondragleave", args);
+        }
+
+        private async Task OnDragEndAsync(DragEventArgs args)
+        {
+            await OnDragResetAsync();
+            await InvokeUserDragEventCallbackAsync("ondragend", args);
+        }
+
+        private async Task InvokeUserDragEventCallbackAsync(string key, DragEventArgs args)
+        {
+            var userAttribute = UserAttributes.FirstOrDefault(x => key.Equals(x.Key, StringComparison.OrdinalIgnoreCase)).Value;
+
+            switch (userAttribute)
+            {
+                case EventCallback<DragEventArgs> callback when callback.HasDelegate:
+                    await callback.InvokeAsync(args);
+                    break;
+                case EventCallback callback when callback.HasDelegate:
+                    await callback.InvokeAsync(args);
+                    break;
+                case Func<DragEventArgs, Task> callback:
+                    await callback(args);
+                    break;
+                case Action<DragEventArgs> callback:
+                    callback(args);
+                    break;
+                case Func<Task> callback:
+                    await callback();
+                    break;
+                case Action callback:
+                    callback();
+                    break;
+            }
+        }
+
         private Task OnDragAreaClickAsync()
         {
             if (GetDisabledState())

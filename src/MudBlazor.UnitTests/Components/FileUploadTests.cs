@@ -5,7 +5,9 @@
 using System.Globalization;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Extensions;
@@ -443,6 +445,27 @@ namespace MudBlazor.UnitTests.Components
 
             // Test drag end
             await comp.Find("input").DragEndAsync();
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
+        }
+
+        /// <summary>
+        /// Ensures ondragleave from user attributes is invoked together with internal drag reset behavior.
+        /// </summary>
+        [Test]
+        public async Task FileUpload_DragAndDrop_Should_Invoke_User_OnDragLeave()
+        {
+            var dragLeaveCalls = 0;
+
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.DragAndDrop, true)
+                .AddUnmatched("ondragleave", EventCallback.Factory.Create<DragEventArgs>(this, () => dragLeaveCalls++)));
+
+            await comp.Find(".mud-file-upload-dragarea").DragEnterAsync();
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().Contain("mud-border-primary");
+
+            await comp.Find("input").DragLeaveAsync();
+
+            dragLeaveCalls.Should().Be(1);
             comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
         }
 
