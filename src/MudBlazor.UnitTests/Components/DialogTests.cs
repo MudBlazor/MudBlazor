@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Trim().Should().BeEmpty();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
+            IDialogReference? dialogReference = null;
             // open simple test dialog
             await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
