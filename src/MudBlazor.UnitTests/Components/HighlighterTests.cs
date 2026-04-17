@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void GetFragments_NullOrEmptyText_ReturnsEmptyMemory()
+        public void GetFragments_NullOrEmptyText_ReturnsEmpty()
         {
             var nullResult = GetFragments(null, "test", null, out var nullRegex).ToArray();
             nullResult.Should().BeEmpty();
@@ -227,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void GetHtmlAwareFragments_UnmatchedTagWithoutMatch_EncodesTagAndPreservesText()
+        public void GetHtmlAwareFragments_UnmatchedTag_ConvertsTagToTextAndPreservesText()
         {
             var text = "<b>unclosed text";
             var fragments = GetHtmlAwareFragments(text, "missing", null, out var outRegex, caseSensitive: false, untilNextBoundary: false);
