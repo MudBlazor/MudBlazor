@@ -270,11 +270,11 @@
                         @if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                         {
                             <div class="d-flex" style="width: 100%">
-                                <MudDropZone T="Column<T>" Identifier="@($"Pre_{context.Title}")" AllowReorder="true" Class="px-1 py-1"/>
+                                <MudDropZone T="Column<T>" Identifier="@($"Pre_{context.PropertyName}")" AllowReorder="true" Class="px-1 py-1"/>
                                 <div style="width: 90%">
                                         @context.HeaderCell.TableHeader()
                                 </div>
-                                <MudDropZone T="Column<T>" Identifier="@($"Post_{context.Title}")" AllowReorder="true" Class="px-1 py-1"/>
+                                <MudDropZone T="Column<T>" Identifier="@($"Post_{context.PropertyName}")" AllowReorder="true" Class="px-1 py-1"/>
                             </div>
                         } 
                         else
