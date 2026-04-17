@@ -1,7 +1,9 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -9,6 +11,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ListTests : BunitTest
     {
+        [Test]
+        public void ListItem_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudList<int>>(0);
+                    builder.AddAttribute(1, nameof(MudList<int>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudListItem<string>>(0);
+                        child.AddAttribute(1, nameof(MudListItem<string>.Value), "mismatch");
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudList<Int32>");
+            exception.Message.Should().Contain("MudListItem<System.String>");
+        }
+
 
         [Test]
         public async Task ListRender()

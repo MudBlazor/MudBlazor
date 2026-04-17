@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -19,7 +20,6 @@ namespace MudBlazor
     /// <seealso cref="MudSwitch{T}"/>
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
-        private IMudRadioGroup? _parent;
         private readonly string _elementId = Identifier.Create("radio");
         private readonly string _ariaId = Identifier.Create("radio-aria-");
 
@@ -51,18 +51,13 @@ namespace MudBlazor
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         /// <summary>
-        /// The parent Radio Group
+        /// The parent radio group.
         /// </summary>
         [CascadingParameter]
-        internal IMudRadioGroup? IMudRadioGroup
-        {
-            get => _parent;
-            set
-            {
-                _parent = value;
-                _parent?.CheckGenericTypeMatch(this);
-            }
-        }
+        internal MudRadioGroup<T>? MudRadioGroup { get; set; }
+
+        [CascadingParameter(Name = "__MudRadioGroupParent")]
+        internal object? ParentRadioGroup { get; set; }
 
         /// <summary>
         /// The color to use when in an unchecked state.
@@ -135,14 +130,23 @@ namespace MudBlazor
 
         internal bool Checked { get; private set; }
 
-        internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
-
         internal void SetChecked(bool value)
         {
             if (Checked != value)
             {
                 Checked = value;
                 StateHasChanged();
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            ValidateParentGenericType();
+            await base.OnInitializedAsync();
+
+            if (MudRadioGroup is not null)
+            {
+                await MudRadioGroup.RegisterRadioAsync(this);
             }
         }
 
@@ -189,15 +193,19 @@ namespace MudBlazor
             }
         }
 
-        /// <inheritdoc />
-        protected override async Task OnInitializedAsync()
+        private void ValidateParentGenericType()
         {
-            await base.OnInitializedAsync();
-
             if (MudRadioGroup is not null)
             {
-                await MudRadioGroup.RegisterRadioAsync(this);
+                return;
             }
+
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                ParentRadioGroup,
+                typeof(MudRadioGroup<>),
+                typeof(T),
+                nameof(MudRadioGroup),
+                nameof(MudRadio));
         }
 
         /// <inheritdoc />

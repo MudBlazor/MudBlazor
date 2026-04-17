@@ -6,11 +6,13 @@ using AngleSharp.Common;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.ToggleGroup;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -18,6 +20,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ToggleGroupTests : BunitTest
     {
+        [Test]
+        public void ToggleItem_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudToggleGroup<int>>(0);
+                    builder.AddAttribute(1, nameof(MudToggleGroup<int>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudToggleItem<string>>(0);
+                        child.AddAttribute(1, nameof(MudToggleItem<string>.Value), "mismatch");
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudToggleGroup<Int32>");
+            exception.Message.Should().Contain("MudToggleItem<System.String>");
+        }
+
         [Test]
         public async Task ToggleGroup_Bind()
         {

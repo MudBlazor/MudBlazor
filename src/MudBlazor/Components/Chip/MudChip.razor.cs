@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor;
 
@@ -174,6 +175,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     [CascadingParameter]
     private MudChipSet<T>? ChipSet { get; set; }
+
+    [CascadingParameter(Name = "__MudChipSetParent")]
+    private object? ChipSetComponent { get; set; }
 
     /// <summary>
     /// The color of this chip.
@@ -402,12 +406,28 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
+        ValidateParentGenericType();
         await base.OnInitializedAsync();
 
         if (ChipSet is not null)
         {
             await ChipSet.AddAsync(this);
         }
+    }
+
+    private void ValidateParentGenericType()
+    {
+        if (ChipSet is not null)
+        {
+            return;
+        }
+
+        GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+            ChipSetComponent,
+            typeof(MudChipSet<>),
+            typeof(T),
+            nameof(MudChipSet),
+            nameof(MudChip));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

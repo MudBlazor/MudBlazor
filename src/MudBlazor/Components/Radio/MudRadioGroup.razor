@@ -9,14 +9,16 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
-            @* Form should be cascaded as null so the childs are not registered to the Form *@
-            <CascadingValue TValue="IForm" Value="null">
-                <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
-                    <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
-                        <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle" aria-required="@Required.ToString().ToLowerInvariant()">
-                            @ChildContent
-                        </div>
+        <CascadingValue Value="@this" IsFixed="false">
+            <CascadingValue Name="__MudRadioGroupParent" Value="@((object)this)" IsFixed="false">
+                @* Form should be cascaded as null so the childs are not registered to the Form *@
+                <CascadingValue TValue="IForm" Value="null">
+                    <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
+                        <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
+                            <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle" aria-required="@Required.ToString().ToLowerInvariant()">
+                                @ChildContent
+                            </div>
+                        </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>

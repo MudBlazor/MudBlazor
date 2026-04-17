@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -13,7 +12,7 @@ namespace MudBlazor
     /// A group of <see cref="MudRadio{T}"/> components.
     /// </summary>
     /// <typeparam name="T">The type of value being selected.</typeparam>
-    public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
+    public partial class MudRadioGroup<T> : MudFormComponent<T, T>
     {
         private MudRadio<T>? _selectedRadio;
         private readonly HashSet<MudRadio<T>> _radios = new();
@@ -130,20 +129,6 @@ namespace MudBlazor
 
                 await BeginValidateAsync();
                 FieldChanged(_value);
-            }
-        }
-
-        /// <summary>
-        /// Tests whether the specified value is valid for this button.
-        /// </summary>
-        /// <param name="selectItem">The value to examine.</param>
-        /// <exception cref="GenericTypeMismatchException">Raised if the specified value does not match <c>T</c>.</exception>
-        public void CheckGenericTypeMatch(object selectItem)
-        {
-            var itemT = selectItem.GetType().GenericTypeArguments[0];
-            if (itemT != typeof(T))
-            {
-                throw new GenericTypeMismatchException("MudRadioGroup", "MudRadio", typeof(T), itemT);
             }
         }
 

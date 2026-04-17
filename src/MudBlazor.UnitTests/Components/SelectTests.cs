@@ -1,11 +1,13 @@
 ﻿using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using MudBlazor.UnitTests.TestData;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
@@ -14,6 +16,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class SelectTests : BunitTest
     {
+        [Test]
+        public void SelectItem_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudSelect<string>>(0);
+                    builder.AddAttribute(1, nameof(MudSelect<string>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudSelectItem<int>>(0);
+                        child.AddAttribute(1, nameof(MudSelectItem<int>.Value), 1);
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudSelect<String>");
+            exception.Message.Should().Contain("MudSelectItem<System.Int32>");
+        }
+
         [Test]
         public async Task Select_CheckListClass()
         {

@@ -1,8 +1,10 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
+using MudBlazor.Utilities.Exceptions;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
@@ -27,6 +29,26 @@ namespace MudBlazor.UnitTests.Components
             // Input content should not have main class (Classname), but should have input class (InputClass)
             comp.FindAll(".mud-radio-group.some-main-class").Should().BeEmpty();
             comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
+        }
+
+        [Test]
+        public void Radio_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudRadioGroup<int>>(0);
+                    builder.AddAttribute(1, nameof(MudRadioGroup<int>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudRadio<string>>(0);
+                        child.AddAttribute(1, nameof(MudRadio<string>.Value), "mismatch");
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudRadioGroup<Int32>");
+            exception.Message.Should().Contain("MudRadio<System.String>");
         }
 
         [Test]
@@ -287,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var radio = comp.FindComponent<MudRadio<string>>();
 
-            await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
+            await comp.InvokeAsync(() => radio.Instance.MudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
             await comp.WaitForAssertionAsync(() => radio.Instance.ReadValue.Should().Be("1"));
             await radio.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
@@ -300,14 +322,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Radio_TypeException()
         {
-            try
-            {
-                var comp = Context.Render<RadioGroupExceptionTest>();
-            }
-            catch (Exception ex)
-            {
-                typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException).Should().Be(ex.InnerException.GetType());
-            }
+            Assert.Throws<GenericTypeMismatchException>(() => Context.Render<RadioGroupExceptionTest>());
         }
 
         /// <summary>

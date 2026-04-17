@@ -4,7 +4,9 @@
 @typeparam T
 
 <CascadingValue Value="this" IsFixed="true">
-    <div role="group" class="@Classname" style="@Stylename" @attributes="UserAttributes">
-        @ChildContent
-    </div>
+    <CascadingValue Name="__MudToggleGroupParent" Value="@((object)this)" IsFixed="true">
+        <div role="group" class="@Classname" style="@Stylename" @attributes="UserAttributes">
+            @ChildContent
+        </div>
+    </CascadingValue>
 </CascadingValue>

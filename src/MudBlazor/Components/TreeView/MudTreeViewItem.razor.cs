@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -64,8 +65,14 @@ namespace MudBlazor
         [CascadingParameter]
         private MudTreeView<T>? MudTreeRoot { get; set; }
 
+        [CascadingParameter(Name = "__MudTreeViewParent")]
+        private object? MudTreeRootComponent { get; set; }
+
         [CascadingParameter]
         internal MudTreeViewItem<T>? Parent { get; set; }
+
+        [CascadingParameter(Name = "__MudTreeViewItemParent")]
+        private object? ParentTreeItemComponent { get; set; }
 
         // When the item comes from ItemTemplate, this links the component instance to its backing node object.
         [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
@@ -489,6 +496,7 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
+            ValidateParentGenericTypes();
             if (Parent != null)
             {
                 Parent.AddChild(this);
@@ -501,6 +509,29 @@ namespace MudBlazor
                 }
             }
             await base.OnInitializedAsync();
+        }
+
+        private void ValidateParentGenericTypes()
+        {
+            if (Parent is null)
+            {
+                GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                    ParentTreeItemComponent,
+                    typeof(MudTreeViewItem<>),
+                    typeof(T),
+                    nameof(MudTreeViewItem),
+                    nameof(MudTreeViewItem));
+            }
+
+            if (MudTreeRoot is null)
+            {
+                GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                    MudTreeRootComponent,
+                    typeof(MudTreeView<>),
+                    typeof(T),
+                    nameof(MudTreeView),
+                    nameof(MudTreeViewItem));
+            }
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)

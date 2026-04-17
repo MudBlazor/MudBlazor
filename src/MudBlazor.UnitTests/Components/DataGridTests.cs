@@ -31,6 +31,26 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridTests : BunitTest
     {
         [Test]
+        public void DataGridColumn_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<MudBlazor.Utilities.Exceptions.GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudDataGrid<TestModel1>>(0);
+                    builder.AddAttribute(1, nameof(MudDataGrid<TestModel1>.Columns), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<PropertyColumn<TestModel2, string>>(0);
+                        child.AddAttribute(1, nameof(PropertyColumn<TestModel2, string>.Property), (Expression<Func<TestModel2, string>>)(x => x.Name));
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudDataGrid<TestModel1>");
+            exception.Message.Should().Contain("Column<MudBlazor.UnitTests.Components.TestModel2>");
+        }
+
+        [Test]
         [SetCulture("")]
         [SetUICulture("")]
         public void DataGridPropertyNullCheck()

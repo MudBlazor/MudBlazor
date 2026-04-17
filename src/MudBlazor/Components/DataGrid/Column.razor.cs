@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -31,6 +32,9 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter]
         public MudDataGrid<T> DataGrid { get; set; } = null!;
+
+        [CascadingParameter(Name = "__MudDataGridParent")]
+        public object? DataGridComponent { get; set; }
 
         /// <summary>
         /// The value stored in this column.
@@ -661,6 +665,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            ValidateParentGenericType();
             Debug.Assert(DataGrid is not null);
 
             if (FilterOperators.Count > 0)
@@ -688,6 +693,21 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
+        }
+
+        private void ValidateParentGenericType()
+        {
+            if (DataGrid is not null)
+            {
+                return;
+            }
+
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                DataGridComponent,
+                typeof(MudDataGrid<>),
+                typeof(T),
+                nameof(MudDataGrid),
+                nameof(Column));
         }
 
         internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)

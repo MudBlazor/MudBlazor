@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -33,6 +34,9 @@ namespace MudBlazor
 
         [CascadingParameter]
         protected MudDropContainer<T>? Container { get; set; }
+
+        [CascadingParameter(Name = "__MudDropContainerParent")]
+        protected object? ContainerComponent { get; set; }
 
         /// <summary>
         /// The custom content within this drop zone.
@@ -466,6 +470,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            ValidateParentGenericType();
             if (Container is not null && !_containerIsInitialized)
             {
                 _containerIsInitialized = true;
@@ -477,6 +482,21 @@ namespace MudBlazor
             }
 
             base.OnParametersSet();
+        }
+
+        private void ValidateParentGenericType()
+        {
+            if (Container is not null)
+            {
+                return;
+            }
+
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                ContainerComponent,
+                typeof(MudDropContainer<>),
+                typeof(T),
+                nameof(MudDropContainer),
+                nameof(MudDropZone));
         }
 
         private void Container_TransactionIndexChanged(object? sender, MudDragAndDropIndexChangedEventArgs e)

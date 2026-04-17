@@ -3,9 +3,11 @@
 @typeparam T
 
 <CascadingValue Value="this" IsFixed="true">
-	<div @attributes="UserAttributes"
-		 style="@Style"
-		 class="@Classname">
-		@ChildContent
-	</div>
+    <CascadingValue Name="__MudDropContainerParent" Value="@((object)this)" IsFixed="true">
+    	<div @attributes="UserAttributes"
+    		 style="@Style"
+    		 class="@Classname">
+    		@ChildContent
+    	</div>
+    </CascadingValue>
 </CascadingValue>

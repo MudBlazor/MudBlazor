@@ -10,9 +10,12 @@
     _currentRenderFilteredItemsCache = null;
 }
 
-<CascadingValue IsFixed="true" Value="this">@Columns</CascadingValue>
+<CascadingValue IsFixed="true" Value="this">
+    <CascadingValue IsFixed="true" Name="__MudDataGridParent" Value="@((object)this)">@Columns</CascadingValue>
+</CascadingValue>
 
 <CascadingValue IsFixed="true" Value="this">
+    <CascadingValue IsFixed="true" Name="__MudDataGridParent" Value="@((object)this)">
     <div @attributes="UserAttributes" class="@Classname" style="@Stylename">
         @if (Items != null || HasServerData)
         {
@@ -313,6 +316,7 @@
             </DialogActions>
         </MudDialog>
     </CascadingValue>
+</CascadingValue>
 </CascadingValue>
 
 @code {

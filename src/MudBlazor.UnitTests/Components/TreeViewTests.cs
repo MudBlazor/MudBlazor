@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.TreeView;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -12,6 +13,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TreeViewTests : BunitTest
     {
+        [Test]
+        public void TreeViewItem_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudTreeView<int>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeView<int>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudTreeViewItem<string>>(0);
+                        child.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), "mismatch");
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudTreeView<Int32>");
+            exception.Message.Should().Contain("MudTreeViewItem<System.String>");
+        }
+
         [Test]
         public async Task TreeView_ClickWhileDisabled_DoesNotChangeSelection()
         {

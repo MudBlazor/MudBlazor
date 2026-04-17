@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -38,6 +39,9 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter]
         public MudToggleGroup<T>? Parent { get; set; }
+
+        [CascadingParameter(Name = "__MudToggleGroupParent")]
+        internal object? ParentComponent { get; set; }
 
         /// <summary>
         /// The <see cref="MudToggleGroup{T}"/> hosting this item, but validated to be non-null.
@@ -130,7 +134,23 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            ValidateParentGenericType();
             AssertedParent.Register(this);
+        }
+
+        private void ValidateParentGenericType()
+        {
+            if (Parent is not null)
+            {
+                return;
+            }
+
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                ParentComponent,
+                typeof(MudToggleGroup<>),
+                typeof(T),
+                nameof(MudToggleGroup),
+                nameof(MudToggleItem));
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -144,6 +145,16 @@ namespace MudBlazor
                 oldContext.UnregisterShadowItem(this);
             }
 
+            if (args.Value is not null && args.Value.SelectContext is not MudSelectContext<T>)
+            {
+                GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                    args.Value,
+                    typeof(MudSelect<>),
+                    typeof(T),
+                    nameof(MudSelect),
+                    nameof(MudSelectItem));
+            }
+
             if (args.Value?.SelectContext is MudSelectContext<T> newContext)
             {
                 _shadowContext = newContext;
@@ -174,6 +185,16 @@ namespace MudBlazor
                 _selectionSubscription?.Dispose();
                 _selectionSubscription = null;
                 oldContext.UnregisterItem(this);
+            }
+
+            if (args.Value is not null && args.Value.SelectContext is not MudSelectContext<T>)
+            {
+                GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                    args.Value,
+                    typeof(MudSelect<>),
+                    typeof(T),
+                    nameof(MudSelect),
+                    nameof(MudSelectItem));
             }
 
             if (args.Value?.SelectContext is MudSelectContext<T> newContext)

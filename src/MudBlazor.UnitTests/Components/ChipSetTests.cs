@@ -1,7 +1,9 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -9,6 +11,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ChipSetTests : BunitTest
     {
+        [Test]
+        public void Chip_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudChipSet<int>>(0);
+                    builder.AddAttribute(1, nameof(MudChipSet<int>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudChip<string>>(0);
+                        child.AddAttribute(1, nameof(MudChip<string>.Value), "mismatch");
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudChipSet<Int32>");
+            exception.Message.Should().Contain("MudChip<System.String>");
+        }
+
         /// <summary>
         /// Clicking a chip selects it, clicking again de-selects it. Clicking one chip de-selects the other
         /// </summary>

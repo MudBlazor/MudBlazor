@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
@@ -44,6 +45,9 @@ namespace MudBlazor
 
         [CascadingParameter]
         protected MudList<T>? MudList { get; set; }
+
+        [CascadingParameter(Name = "__MudListParent")]
+        protected object? ParentListComponent { get; set; }
 
         private MudList<T>? TopLevelList => MudList?.TopLevelList;
 
@@ -284,11 +288,27 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
+            ValidateParentGenericType();
             await base.OnInitializedAsync();
             if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
             }
+        }
+
+        private void ValidateParentGenericType()
+        {
+            if (MudList is not null)
+            {
+                return;
+            }
+
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                ParentListComponent,
+                typeof(MudList<>),
+                typeof(T),
+                nameof(MudList),
+                nameof(MudListItem));
         }
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)

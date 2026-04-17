@@ -1,11 +1,13 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.DropZone;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -13,6 +15,27 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DropZoneTests : BunitTest
     {
+        [Test]
+        public void DropZone_WithMismatchedParentType_Throws()
+        {
+            var exception = Assert.Throws<GenericTypeMismatchException>(() =>
+                Context.Render(builder =>
+                {
+                    builder.OpenComponent<MudDropContainer<int>>(0);
+                    builder.AddAttribute(1, nameof(MudDropContainer<int>.Items), new[] { 1 });
+                    builder.AddAttribute(2, nameof(MudDropContainer<int>.ChildContent), (RenderFragment)(child =>
+                    {
+                        child.OpenComponent<MudDropZone<string>>(0);
+                        child.AddAttribute(1, nameof(MudDropZone<string>.Identifier), "zone");
+                        child.CloseComponent();
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            exception!.Message.Should().Contain("MudDropContainer<Int32>");
+            exception.Message.Should().Contain("MudDropZone<System.String>");
+        }
+
         [Test]
         public void DropContainer_Defaults()
         {

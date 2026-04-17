@@ -5,6 +5,8 @@
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style" role="group">
     <CascadingValue IsFixed="true" Value="this">
-        @ChildContent
+        <CascadingValue Name="__MudChipSetParent" IsFixed="true" Value="@((object)this)">
+            @ChildContent
+        </CascadingValue>
     </CascadingValue>
 </div>
