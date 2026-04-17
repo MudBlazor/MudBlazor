@@ -183,7 +183,7 @@ namespace MudBlazor
         public EventCallback<bool> VisibleChanged { get; set; }
 
         /// <summary>
-    /// Reverses the order of the action buttons.
+        /// Reverses the order of the action buttons.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
