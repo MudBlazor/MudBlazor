@@ -209,6 +209,7 @@ private Task ToggleAsync()
 ### Accessibility and behavior
 - Add `[CascadingParameter] public bool RightToLeft { get; set; }` when layout depends on direction.
 - Follow best ARIA practices without adding noise.
+- When generating HTML or ARIA attributes in component code, prefer fallback values so caller-provided attributes can override them whenever feasible; do not hard-force generated attributes unless the behavior truly requires it.
 - Ensure keyboard navigation works for interactive components.
 - Provide accessible names for interactive controls through a label, `aria-label`, or `aria-labelledby`.
 - Components with logic require bUnit tests and a docs page at `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`.

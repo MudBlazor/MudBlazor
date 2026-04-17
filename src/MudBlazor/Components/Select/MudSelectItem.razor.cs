@@ -21,6 +21,18 @@ namespace MudBlazor
 
         internal string ItemId { get; } = Identifier.Create();
 
+        /// <summary>
+        /// Builds the accessibility attributes for the rendered option element.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The popup highlight and the selected value are not always the same thing, especially in multiselect mode, so
+        /// option semantics must come from this item's selection state rather than the popup's temporary active item.
+        /// </para>
+        /// <para>
+        /// Generated attributes are only fallbacks. Caller-provided <see cref="UserAttributes"/> take precedence.
+        /// </para>
+        /// </remarks>
         private Dictionary<string, object?> GetUserAttributes()
         {
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);

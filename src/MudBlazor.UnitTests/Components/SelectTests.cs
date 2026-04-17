@@ -2089,16 +2089,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(x => x.Label, "US States")
-                .Add(x => x.UserAttributes, new Dictionary<string, object?>
-                {
-                    ["role"] = "button",
-                    ["aria-autocomplete"] = "list",
-                    ["aria-controls"] = "custom-listbox",
-                    ["aria-expanded"] = "mixed",
-                    ["aria-haspopup"] = "dialog",
-                    ["aria-label"] = "Custom label",
-                    ["aria-activedescendant"] = "custom-option"
-                }));
+                .AddUnmatched("role", "button")
+                .AddUnmatched("aria-autocomplete", "list")
+                .AddUnmatched("aria-controls", "custom-listbox")
+                .AddUnmatched("aria-expanded", "mixed")
+                .AddUnmatched("aria-haspopup", "dialog")
+                .AddUnmatched("aria-label", "Custom label")
+                .AddUnmatched("aria-activedescendant", "custom-option"));
 
             var input = comp.Find("input");
             input.GetAttribute("role").Should().Be("button");

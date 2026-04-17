@@ -469,11 +469,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
-                .Add(x => x.UserAttributes, new Dictionary<string, object?>
-                {
-                    ["role"] = "group",
-                    ["aria-multiselectable"] = "false"
-                }));
+                .AddUnmatched("role", "group")
+                .AddUnmatched("aria-multiselectable", "false"));
 
             var list = comp.Find("div.mud-list");
             list.GetAttribute("role").Should().Be("group");

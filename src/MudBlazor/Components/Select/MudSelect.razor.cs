@@ -498,6 +498,18 @@ namespace MudBlazor
 
         protected bool IsValueInList => _context.TryGetShadowItemByValue(ReadValue, out _);
 
+        /// <summary>
+        /// Builds the accessibility attributes for the focused select trigger.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <see cref="MudSelect{T}"/> currently keeps focus on its trigger while the popup is open, so the trigger must
+        /// expose the combobox relationship to the popup list.
+        /// </para>
+        /// <para>
+        /// Generated attributes are only fallbacks. Caller-provided <see cref="UserAttributes"/> take precedence.
+        /// </para>
+        /// </remarks>
         private Dictionary<string, object?> GetInputUserAttributes()
         {
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
@@ -520,6 +532,17 @@ namespace MudBlazor
             return attributes;
         }
 
+        /// <summary>
+        /// Builds the attributes applied to the internal popup list.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The popup list needs a stable identifier so the trigger can reference it with <c>aria-controls</c>.
+        /// </para>
+        /// <para>
+        /// This helper only publishes list-level semantics owned by <see cref="MudSelect{T}"/> itself.
+        /// </para>
+        /// </remarks>
         private Dictionary<string, object?> GetListUserAttributes()
         {
             var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
