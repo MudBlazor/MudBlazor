@@ -18,6 +18,7 @@ namespace MudBlazor
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
         private ElementReference _elementReference = new();
+        private string? _subscribedElementId;
         internal string ElementId { get; } = Identifier.Create("list-item");
 
         private readonly ParameterState<bool> _expandedState;
@@ -299,8 +300,15 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            var effectiveElementId = GetEffectiveElementId();
+
+            if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
+                if (!string.IsNullOrEmpty(_subscribedElementId))
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                }
+
                 var options = new KeyInterceptorOptions(
                     [
                         // prevent scrolling page
@@ -315,7 +323,7 @@ namespace MudBlazor
                         new("NumpadEnter", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
                         .OnKeyDown("ArrowDown", HandleArrowDownAsync)
                         .OnKeyDown("ArrowUp", HandleArrowUpAsync)
@@ -323,6 +331,8 @@ namespace MudBlazor
                         .OnKeyDown("End", HandleEndAsync)
                         .OnKeyDown(" ", HandleSpaceAsync)
                         .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+
+                _subscribedElementId = effectiveElementId;
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -393,7 +403,21 @@ namespace MudBlazor
             }
         }
 
-        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, args);
+        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(), KeyEventKind.Down, args);
+
+        private string GetEffectiveElementId()
+        {
+            if (UserAttributes.TryGetValue("id", out var idValue) && idValue is not null)
+            {
+                var id = idValue.ToString();
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    return id;
+                }
+            }
+
+            return ElementId;
+        }
 
         private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
 
@@ -571,9 +595,9 @@ namespace MudBlazor
             {
                 MudList?.Unregister(this);
 
-                if (IsJSRuntimeAvailable)
+                if (IsJSRuntimeAvailable && !string.IsNullOrEmpty(_subscribedElementId))
                 {
-                    _ = KeyInterceptorService.UnsubscribeAsync(ElementId);
+                    _ = KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
                 }
             }
             catch (Exception) { /*ignore*/ }

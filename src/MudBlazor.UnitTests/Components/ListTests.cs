@@ -444,15 +444,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ListItem_GetTabIndex_ReadOnlyAnchorHasNoTabIndexAndReadOnlyDivIsMinusOne()
+        public void ListItem_UserProvidedIdOverridesGeneratedElementId()
         {
-            var comp = Context.Render<ListReadOnlyTabIndexTest>();
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Custom attrs")
+                    .AddUnmatched("id", "custom-id")
+                    .AddUnmatched("tabindex", "-1")
+                    .AddUnmatched("data-test", "custom-marker"))
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Default item"))
+            );
 
-            var anchorItem = comp.Find("a.mud-list-item");
-            var divItem = comp.Find("div.mud-list-item");
+            var customIdItem = comp.Find("div.mud-list-item[data-test='custom-marker']");
+            var fallbackItem = comp.FindAll("div.mud-list-item")[1];
 
-            anchorItem.HasAttribute("tabindex").Should().BeFalse();
-            divItem.GetAttribute("tabindex").Should().Be("-1");
+            customIdItem.GetAttribute("id").Should().Be("custom-id");
+            customIdItem.GetAttribute("tabindex").Should().Be("-1");
+            fallbackItem.GetAttribute("id").Should().StartWith("list-item");
         }
 
         [Test]
