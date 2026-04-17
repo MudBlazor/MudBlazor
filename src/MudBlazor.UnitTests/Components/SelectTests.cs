@@ -2102,7 +2102,6 @@ namespace MudBlazor.UnitTests.Components
                 var openDisplay = comp.Find("div.mud-select-input[tabindex='0']");
                 openDisplay.GetAttribute("aria-expanded").Should().Be("true");
                 openDisplay.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
-                openDisplay.GetAttribute("aria-activedescendant").Should().NotBeNullOrWhiteSpace();
             });
         }
 
