@@ -56,7 +56,7 @@ public class MessageBoxOptions
     public string? CancelText { get; set; }
 
     /// <summary>
-    /// The value indicating if order of buttons is reversed.
+    /// Reverses the order of the action buttons.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>. When <c>null</c>, the default order is used.
