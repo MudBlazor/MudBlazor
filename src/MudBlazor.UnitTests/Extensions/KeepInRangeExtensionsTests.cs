@@ -11,10 +11,10 @@ public class KeepInRangeExtensionsTests
     public void EnsureRange_DoubleMax_ClampsValueToUpperBound()
     {
         // Arrange
-        const double Input = 5.5;
+        const double input = 5.5;
 
         // Act
-        var result = Input.EnsureRange(5.0);
+        var result = input.EnsureRange(5.0);
 
         // Assert
         result.Should().Be(5.0);
@@ -24,10 +24,10 @@ public class KeepInRangeExtensionsTests
     public void EnsureRange_DoubleMinMax_ClampsValueToLowerBound()
     {
         // Arrange
-        const double Input = -1.2;
+        const double input = -1.2;
 
         // Act
-        var result = Input.EnsureRange(0.0, 10.0);
+        var result = input.EnsureRange(0.0, 10.0);
 
         // Assert
         result.Should().Be(0.0);
@@ -37,10 +37,10 @@ public class KeepInRangeExtensionsTests
     public void EnsureRange_DoubleMinMax_ReturnsInputWhenInBounds()
     {
         // Arrange
-        const double Input = 7.25;
+        const double input = 7.25;
 
         // Act
-        var result = Input.EnsureRange(0.0, 10.0);
+        var result = input.EnsureRange(0.0, 10.0);
 
         // Assert
         result.Should().Be(7.25);
@@ -62,10 +62,10 @@ public class KeepInRangeExtensionsTests
     public void EnsureRange_ByteMax_UsesZeroAsLowerBound()
     {
         // Arrange
-        const byte Input = 20;
+        const byte input = 20;
 
         // Act
-        var result = Input.EnsureRange(10);
+        var result = input.EnsureRange(10);
 
         // Assert
         result.Should().Be(10);
@@ -87,10 +87,10 @@ public class KeepInRangeExtensionsTests
     public void EnsureRange_IntMax_UsesZeroAsLowerBound()
     {
         // Arrange
-        const int Input = -3;
+        const int input = -3;
 
         // Act
-        var result = Input.EnsureRange(10);
+        var result = input.EnsureRange(10);
 
         // Assert
         result.Should().Be(0);
