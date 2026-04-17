@@ -3,7 +3,7 @@
 @typeparam T
 
 <MudElement HtmlTag="@HtmlTag"
-            id="@_keyInterceptorElementId"
+            id="@ElementId"
             Class="@Classname"
             Style="@Style"
             tabindex="@GetTabIndex()"
@@ -13,7 +13,7 @@
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
             @onfocus="OnFocusAsync"
-            @onkeydown="OnKeyDownAsync"
+            @onkeydown="HandleKeyDownAsync"
             href="@Href"
             target="@Target"
             PreventDefault="@GetPreventDefault()"

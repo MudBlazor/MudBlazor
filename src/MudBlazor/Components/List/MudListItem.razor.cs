@@ -18,7 +18,7 @@ namespace MudBlazor
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
         private ElementReference _elementReference = new();
-        private readonly string _keyInterceptorElementId = Identifier.Create("mud-list-item");
+        internal string ElementId { get; } = Identifier.Create("list-item");
 
         private readonly ParameterState<bool> _expandedState;
 
@@ -303,8 +303,11 @@ namespace MudBlazor
             {
                 var options = new KeyInterceptorOptions(
                     [
+                        // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        // prevent scrolling page and move focus to previous item
                         new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page and move focus to next item
                         new("ArrowDown", preventDown: "key+none"),
                         new("Home", preventDown: "key+none"),
                         new("End", preventDown: "key+none"),
@@ -312,7 +315,14 @@ namespace MudBlazor
                         new("NumpadEnter", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_keyInterceptorElementId, options, _ => { });
+                await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                        .OnKeyDown("Home", HandleHomeAsync)
+                        .OnKeyDown("End", HandleEndAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -383,38 +393,28 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnKeyDownAsync(KeyboardEventArgs args)
+        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(ElementId, KeyEventKind.Down, args);
+
+        private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
+
+        private Task HandleArrowDownAsync() => MudList!.FocusAdjacentItemAsync(this, 1);
+
+        private Task HandleArrowUpAsync() => MudList!.FocusAdjacentItemAsync(this, -1);
+
+        private Task HandleHomeAsync() => MudList!.FocusBoundaryItemAsync(first: true);
+
+        private Task HandleEndAsync() => MudList!.FocusBoundaryItemAsync(first: false);
+
+        private Task HandleSpaceAsync() => OnKeyboardActivateAsync(activateLink: false);
+
+        private Task HandleEnterAsync()
         {
-            if (GetDisabled() || MudList is null || !MudList.IsInteractive() || TopLevelList is null || !TopLevelList.IsTabbable(this))
+            if (HtmlTag == "a")
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            switch (args.Key)
-            {
-                case "ArrowDown":
-                    await MudList.FocusAdjacentItemAsync(this, 1);
-                    break;
-                case "ArrowUp":
-                    await MudList.FocusAdjacentItemAsync(this, -1);
-                    break;
-                case "Home":
-                    await MudList.FocusBoundaryItemAsync(first: true);
-                    break;
-                case "End":
-                    await MudList.FocusBoundaryItemAsync(first: false);
-                    break;
-                case " ":
-                    await OnKeyboardActivateAsync(activateLink: false);
-                    break;
-                case "Enter":
-                case "NumpadEnter":
-                    if (HtmlTag != "a")
-                    {
-                        await OnKeyboardActivateAsync(activateLink: true);
-                    }
-                    break;
-            }
+            return OnKeyboardActivateAsync(activateLink: true);
         }
 
         internal void SetSelected(bool selected)
@@ -573,7 +573,7 @@ namespace MudBlazor
 
                 if (IsJSRuntimeAvailable)
                 {
-                    _ = KeyInterceptorService.UnsubscribeAsync(_keyInterceptorElementId);
+                    _ = KeyInterceptorService.UnsubscribeAsync(ElementId);
                 }
             }
             catch (Exception) { /*ignore*/ }
