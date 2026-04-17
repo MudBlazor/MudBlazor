@@ -145,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudBreadcrumbs_ShouldExpandAfterExpanderClick()
+        public async Task MudBreadcrumbs_ShouldExpandAfterExpanderClick()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
                 .Add(x => x.MaxItems, (byte)4)
@@ -159,9 +159,9 @@ namespace MudBlazor.UnitTests.Components
                 }));
 
             comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(2);
-            comp.Find("li.mud-breadcrumbs-expander").Click();
+            await comp.Find("li.mud-breadcrumbs-expander").ClickAsync();
 
-            comp.WaitForAssertion(() =>
+            await comp.WaitForAssertionAsync(() =>
             {
                 comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(5);
                 comp.FindAll("li.mud-breadcrumb-separator").Should().HaveCount(4);
