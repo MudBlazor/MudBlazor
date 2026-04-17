@@ -347,12 +347,6 @@ namespace MudBlazor
 
         internal bool IsEnabled() => !GetDisabled();
 
-        internal bool MatchesSearch(string key)
-        {
-            var searchText = Text ?? string.Empty;
-            return searchText.StartsWith(key, StringComparison.InvariantCultureIgnoreCase);
-        }
-
         private async Task OnFocusAsync(FocusEventArgs _)
         {
             TopLevelList?.SetActiveItem(this);
@@ -392,12 +386,6 @@ namespace MudBlazor
                     if (HtmlTag != "a")
                     {
                         await OnKeyboardActivateAsync(activateLink: true);
-                    }
-                    break;
-                default:
-                    if (!args.CtrlKey && !args.AltKey && !args.MetaKey && !args.ShiftKey)
-                    {
-                        await MudList.FocusBySearchAsync(this, args.Key);
                     }
                     break;
             }

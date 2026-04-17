@@ -509,32 +509,6 @@ namespace MudBlazor
             await (first ? items[0] : items[^1]).FocusAsync();
         }
 
-        internal async Task FocusBySearchAsync(MudListItem<T> currentItem, string key)
-        {
-            if (string.IsNullOrWhiteSpace(key) || key.Length != 1)
-            {
-                return;
-            }
-
-            var items = _items.Where(x => x.IsEnabled()).ToList();
-            if (items.Count == 0)
-            {
-                return;
-            }
-
-            var currentIndex = items.FindIndex(x => ReferenceEquals(x, currentItem));
-            var orderedItems = items
-                .Skip(Math.Max(currentIndex + 1, 0))
-                .Concat(items.Take(Math.Max(currentIndex + 1, 0)))
-                .ToList();
-
-            var match = orderedItems.FirstOrDefault(x => x.MatchesSearch(key));
-            if (match is not null)
-            {
-                await match.FocusAsync();
-            }
-        }
-
         private MudListItem<T>? EnsureActiveItem()
         {
             if (TopLevelList != this)
