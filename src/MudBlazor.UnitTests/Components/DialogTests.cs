@@ -483,7 +483,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Dialog_UserProvidedIdOverridesGeneratedElementId_AndKeyInterceptorUsesEffectiveId()
+        public async Task Dialog_CustomIdOverride_UsesEffectiveKeyInterceptorSubscription()
         {
             const string customId = "custom-dialog-id";
             var keyInterceptorService = Context.AddKeyInterceptorService();
@@ -491,7 +491,7 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
 
-            IDialogReference dialogReference = null;
+            IDialogReference? dialogReference = null;
             var parameters = new DialogParameters
             {
                 [nameof(MudDialog.UserAttributes)] = new Dictionary<string, object?> { ["id"] = customId }

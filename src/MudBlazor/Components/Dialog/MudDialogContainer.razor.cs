@@ -156,6 +156,9 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <summary>
+        /// Gets the rendered dialog container id, preferring a user-provided <c>id</c> when available.
+        /// </summary>
         internal string GetEffectiveElementId()
         {
             if (UserAttributes.TryGetValue("id", out var idValue) && idValue is not null)
