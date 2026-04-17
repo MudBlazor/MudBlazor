@@ -191,4 +191,4 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
         return (screenX, screenY);
     }
 
-    }
+}

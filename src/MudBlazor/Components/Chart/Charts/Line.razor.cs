@@ -167,5 +167,5 @@ namespace MudBlazor.Charts
             return (x, y);
         }
 
-            }
-        }
+    }
+}

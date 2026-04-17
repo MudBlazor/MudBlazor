@@ -383,7 +383,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         return (x, y);
     }
 
-    }
+}
 
 /// <summary>
 /// Represents a data point in a time series chart, containing a DateTime and a value.
