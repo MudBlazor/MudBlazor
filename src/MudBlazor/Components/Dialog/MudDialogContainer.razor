@@ -6,7 +6,7 @@
 @{
 }
 
-<div id="@GetEffectiveElementId()" @attributes="UserAttributes" class="mud-dialog-container @GetPosition()">
+<div @attributes="UserAttributes" id="@GetEffectiveElementId()" class="mud-dialog-container @GetPosition()">
     <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" @onmouseup="OnMouseUpAsync" />
     <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" aria-labelledby="@(GetHideHeader() ? null : $"_{Id:N}_title")" class="@Classname" style="@Style" tabindex="-1">
         @if (!GetHideHeader())
