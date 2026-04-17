@@ -8,10 +8,10 @@
 
 <div @attributes="UserAttributes" id="@ElementId" class="mud-dialog-container @GetPosition()">
     <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" @onmouseup="OnMouseUpAsync" />
-    <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style" tabindex="-1">
+    <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" aria-labelledby="@(GetHideHeader() ? null : $"_{Id:N}_title")" class="@Classname" style="@Style" tabindex="-1">
         @if (!GetHideHeader())
         {
-            <div class="@TitleClassname">
+            <div id="@($"_{Id:N}_title")" class="@TitleClassname">
                 @if (TitleContent is null)
                 {
                     <MudText Typo="Typo.h6">@_titleState.Value</MudText>

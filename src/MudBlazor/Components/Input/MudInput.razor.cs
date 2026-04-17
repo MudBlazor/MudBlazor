@@ -276,6 +276,11 @@ namespace MudBlazor
             await OnClearButtonClick.InvokeAsync(e);
         }
 
+        protected virtual async Task HandleSpinButtonPointerDownAsync()
+        {
+            await ElementReference.FocusAsync();
+        }
+
         private readonly record struct AutoSizingVisualState(
             Variant Variant,
             Margin Margin,

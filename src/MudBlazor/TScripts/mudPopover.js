@@ -861,6 +861,10 @@ class MudPopover {
      * Disposes resize/scroll observers and listeners for one popover instance.
      */
     disposeObservers(id) {
+        if (!this.map[id]) {
+            return;
+        }
+
         // Get references to items that need cleanup
         const { scrollableElements, parentResizeObserver } = this.map[id];
 

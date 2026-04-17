@@ -30,53 +30,7 @@ Build stunning, interactive web applications with MudBlazor — the open-source 
 
 ## 🚀 Getting Started
 
-Use one of our [templates](https://github.com/MudBlazor/Templates), or follow the quick install guide below:
-
-### Installation
-
-Install Package:
-
-```bash
-dotnet add package MudBlazor
-```
-
-Add to `_Imports.razor`:
-
-```razor
-@using MudBlazor
-```
-
-Add to `MainLayout.razor` or `App.razor`:
-
-```razor
-<MudThemeProvider/>
-<MudPopoverProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
-```
-
-Add to HTML `head` section (`index.html`/`_Layout.cshtml`/`_Host.cshtml`/`App.razor`):
-
-```razor
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
-<link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-```
-
-Add to the default Blazor script at the end of the HTML `body` section:
-
-```razor
-<script src="_content/MudBlazor/MudBlazor.min.js"></script>
-```
-
-Add to `Program.cs`:
-
-```c#
-using MudBlazor.Services;
-```
-
-```c#
-builder.Services.AddMudServices();
-```
+See the [installation guide](https://mudblazor.com/getting-started/installation) to get started.
 
 ### Example Usage
 
@@ -104,8 +58,6 @@ builder.Services.AddMudServices();
     }
 }
 ```
-
-For more details, see the [full installation guide](https://mudblazor.com/getting-started/installation).
 
 ## 🤝 Contributing
 
