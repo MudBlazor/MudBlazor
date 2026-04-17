@@ -365,10 +365,10 @@ namespace MudBlazor.UnitTests.Components
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
 
-            Task<bool?> messageBoxTask = null;
+            Task<bool?> messageBoxTask = null!;
             await provider.InvokeAsync(() =>
             {
-                messageBoxTask = service?.ShowMessageBoxAsync(
+                messageBoxTask = service!.ShowMessageBoxAsync(
                     "Boom!",
                     "I'm a pickle. What do you make of that?",
                     "Great",
