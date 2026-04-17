@@ -151,6 +151,7 @@ namespace MudBlazor
                 YesText = yesText,
                 NoText = noText,
                 CancelText = cancelText,
+                ReverseButtonOrder = options?.ReverseMessageBoxButtonOrder
             }, options);
         }
 
@@ -165,6 +166,7 @@ namespace MudBlazor
                 YesText = yesText,
                 NoText = noText,
                 CancelText = cancelText,
+                ReverseButtonOrder = options?.ReverseMessageBoxButtonOrder
             }, options);
         }
 
@@ -179,6 +181,7 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                [nameof(MessageBoxOptions.ReverseButtonOrder)] = messageBoxOptions.ReverseButtonOrder
             };
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;

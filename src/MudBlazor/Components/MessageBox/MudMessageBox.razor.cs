@@ -182,6 +182,13 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> VisibleChanged { get; set; }
 
+        /// <summary>
+        ///  The value indicating if order of buttons is reversed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.MessageBox.Behavior)]
+        public bool? ReverseButtonOrder { get; set; }
+
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
 
@@ -205,6 +212,7 @@ namespace MudBlazor
                 [nameof(NoButton)] = NoButton,
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
+                [nameof(ReverseButtonOrder)] = ReverseButtonOrder,
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;

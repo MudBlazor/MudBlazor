@@ -357,5 +357,40 @@ namespace MudBlazor.UnitTests.Components
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();
         }
+
+        [Test]
+        public async Task MessageBox_Should_ReverseButtonOrder_WhenReverseButtonOrderIsTrue()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            Task<bool?> messageBoxTask = null;
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service?.ShowMessageBoxAsync(
+                    "Boom!",
+                    "I'm a pickle. What do you make of that?",
+                    "Great",
+                    "Whatever",
+                    "Go away!",
+                    new DialogOptions { ReverseMessageBoxButtonOrder = true });
+            });
+
+            // Assert there are exactly 3 buttons
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Great"); // First button (Yes)
+            buttons[0].ClassList.Should().Contain("mud-message-box__yes-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Go away!");    // Third button (Cancel)
+            buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
     }
 }

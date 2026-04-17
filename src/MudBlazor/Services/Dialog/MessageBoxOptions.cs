@@ -54,4 +54,12 @@ public class MessageBoxOptions
     /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
     /// </remarks>
     public string? CancelText { get; set; }
+
+    /// <summary>
+    /// The value indicating if order of buttons is reversed.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. When <c>null</c>, the default order is used.
+    /// </remarks>
+    public bool? ReverseButtonOrder { get; set; }
 }
