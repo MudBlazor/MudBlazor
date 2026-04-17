@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
             service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
+            IDialogReference? dialogReference = null;
             await comp.InvokeAsync(async () =>
             {
                 dialogReference = await service.ShowAsync<DialogRender>();
