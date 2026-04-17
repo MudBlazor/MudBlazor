@@ -239,36 +239,6 @@ namespace MudBlazor
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
-        private Dictionary<string, object?>? GetDisplayUserAttributes()
-        {
-            if (UserAttributes.Count == 0)
-            {
-                return null;
-            }
-
-            Dictionary<string, object?>? attributes = null;
-
-            foreach (var attribute in UserAttributes)
-            {
-                if (!ShouldApplyDisplayAttribute(attribute.Key))
-                {
-                    continue;
-                }
-
-                attributes ??= new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-                attributes[attribute.Key] = attribute.Value;
-            }
-
-            return attributes;
-        }
-
-        private static bool ShouldApplyDisplayAttribute(string attributeName)
-        {
-            // The display div only exists to carry focus for hidden-input rendering paths, so copying structural attributes like id/class there would duplicate or fight the real input element.
-            return attributeName.Equals("role", StringComparison.OrdinalIgnoreCase)
-                || attributeName.StartsWith("aria-", StringComparison.OrdinalIgnoreCase);
-        }
-
         /// <summary>
         /// Determine whether to show the clear button when Clearable==true.
         /// Of course the clear button won't show up if the text field is empty

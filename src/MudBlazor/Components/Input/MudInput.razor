@@ -83,10 +83,6 @@
              *@
             <div class="@InputClassname"
                  style="@($"display:{(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none")};")"
-                 @attributes="GetDisplayUserAttributes()"
-                 aria-describedby="@GetAriaDescribedByString()"
-                 aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-                 aria-required="@Required.ToString().ToLowerInvariant()"
                  @ref="@_elementReference1">
                 @ChildContent
             </div>
@@ -97,10 +93,6 @@
             <div class="@InputClassname"
                  style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
                  tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
-                 @attributes="GetDisplayUserAttributes()"
-                 aria-describedby="@GetAriaDescribedByString()"
-                 aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-                 aria-required="@Required.ToString().ToLowerInvariant()"
                  @ref="@_elementReference1">
                 @ChildContent
             </div>
