@@ -13,7 +13,7 @@
 ### Default working rules
 - Follow `src/.editorconfig`.
 - Treat warnings as errors. Do not ignore analyzer warnings.
-- Do not run solution-wide build, test, or format commands unless explicitly requested.
+- Do not run solution-wide commands unless explicitly requested.
 - Do not make `dotnet clean` part of the normal local loop. Use it only when incremental build state is clearly stale or corrupted.
 - If no code, project, test, docs app, or asset-pipeline inputs changed, do not call `dotnet`. Changes limited to files such as `README.md`, changelog text, issue templates, or other repo metadata do not require restore, build, test, or format.
 - Prefer a single scoped `dotnet build` or `dotnet test` command as the first verification step. Split build and test only when you will reuse the build outputs for multiple test runs.
@@ -103,12 +103,12 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQu
 ### Formatting
 Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass. Do not run it repeatedly during the normal edit-build-test loop.
 
-Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `dotnet format whitespace --no-restore --include MudBlazor/Components/List/MudListItem.razor.cs`.
+Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `dotnet format --include MudBlazor/Components/List/MudListItem.razor.cs`.
 
 If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
 
 ```bash
-dotnet format src --no-restore
+dotnet format --no-restore
 ```
 
 ### Choose the smallest valid verification loop
