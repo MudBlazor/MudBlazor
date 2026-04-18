@@ -101,7 +101,7 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQu
 - If you are unsure whether the build output depends on regenerated frontend assets, run the normal scoped build without `SkipBunCompile`.
 
 ### Formatting
-Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass. Do not run it repeatedly during the normal edit-build-test loop.
+Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch whitespace/newline/charset/etc mistakes. Do not run it repeatedly during the normal edit-build-test loop.
 
 Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `dotnet format --include MudBlazor/Components/List/MudListItem.razor.cs`.
 
