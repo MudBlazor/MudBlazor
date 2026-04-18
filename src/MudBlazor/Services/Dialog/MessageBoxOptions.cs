@@ -59,7 +59,9 @@ public class MessageBoxOptions
     /// Reverses the order of the action buttons.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>. When <c>null</c>, the default order is used.
+    /// Defaults to <c>null</c>.
+    /// When <c>false</c>, the standard button order is used for this message box.
+    /// When <c>null</c>, the value is inherited from <see cref="DialogOptions.ReverseMessageBoxButtonOrder" />.
     /// </remarks>
     public bool? ReverseButtonOrder { get; set; }
 }

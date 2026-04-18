@@ -123,7 +123,9 @@ namespace MudBlazor
         /// Reverses the button order in <see cref="MudMessageBox"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. When <c>null</c>, the default order is used.
+        /// Defaults to <c>null</c>.
+        /// When <c>false</c>, the standard button order is applied.
+        /// When <c>null</c>, this provider leaves the order unset so dialog-level or message-box-level settings can decide.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
