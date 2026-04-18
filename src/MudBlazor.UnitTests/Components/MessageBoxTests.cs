@@ -358,8 +358,34 @@ namespace MudBlazor.UnitTests.Components
             (await messageBoxTask).Should().BeTrue();
         }
 
+
         [Test]
-        public async Task MessageBox_Should_ReverseButtonOrder_WhenReverseButtonOrderIsTrue()
+        public async Task MessageBox_Should_ReverseButtonOrder_WhenGlobalOptionsSet()
+        {
+            var provider = Context.Render<MudDialogProvider>(parameters => parameters
+                .Add(p => p.ReverseMessageBoxButtonOrder, true));
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            Task<bool?> messageBoxTask = null!;
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync(
+                    "Boom!",
+                    "I'm a pickle. What do you make of that?",
+                    "Great",
+                    "Whatever",
+                    "Go away!");
+            });
+
+            AssertButtonsAreReversed(provider);
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MessageBox_Should_ReverseButtonOrder_WhenDialogOptionsSet()
         {
             var provider = Context.Render<MudDialogProvider>();
             var service = Context.Services.GetService<IDialogService>() as DialogService;
@@ -377,20 +403,121 @@ namespace MudBlazor.UnitTests.Components
                     new DialogOptions { ReverseMessageBoxButtonOrder = true });
             });
 
-            // Assert there are exactly 3 buttons
-            var buttons = provider.FindAll(".mud-dialog-actions button");
-            buttons.Count.Should().Be(3);
-
-            // Verify each button's text and class and that they are in the correct order
-            buttons[0].TrimmedText().Should().Be("Great"); // First button (Yes)
-            buttons[0].ClassList.Should().Contain("mud-message-box__yes-button");
-            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
-            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
-            buttons[2].TrimmedText().Should().Be("Go away!");    // Third button (Cancel)
-            buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
+            AssertButtonsAreReversed(provider);
 
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MessageBox_Should_ReverseButtonOrder_WhenMessageBoxOptionsSet()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            Task<bool?> messageBoxTask = null!;
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync(new MessageBoxOptions()
+                {
+                    Title = "Boom!",
+                    Message = "I'm a pickle. What do you make of that?",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                    ReverseButtonOrder = true
+                });
+            });
+
+            AssertButtonsAreReversed(provider);
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+
+        [Test]
+        public async Task MessageBox_Should_OverrideGlobalSettings_WhenDialogOptionsSet()
+        {
+            var provider = Context.Render<MudDialogProvider>(parameters => parameters
+                .Add(p => p.ReverseMessageBoxButtonOrder, true));
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            Task<bool?> messageBoxTask = null!;
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync(
+                    "Boom!",
+                    "I'm a pickle. What do you make of that?",
+                    "Great",
+                    "Whatever",
+                    "Go away!",
+                    new DialogOptions { ReverseMessageBoxButtonOrder = false });
+            });
+
+            AssertButtonsAreNotReversed(provider);
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MessageBox_Should_OverrideDialogOptionsSettings_WhenMessageBoxOptionsSet()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            Task<bool?> messageBoxTask = null!;
+            await provider.InvokeAsync(() =>
+            {
+                var mboxOptions = new MessageBoxOptions
+                {
+                    Title = "Boom!",
+                    Message = "I'm a pickle. What do you make of that?",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                    ReverseButtonOrder = false
+                };
+
+                var dialogOptions = new DialogOptions
+                {
+                    ReverseMessageBoxButtonOrder = true
+                };
+
+                messageBoxTask = service!.ShowMessageBoxAsync(mboxOptions, dialogOptions);
+            });
+
+            AssertButtonsAreNotReversed(provider);
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+        private void AssertButtonsAreReversed(IRenderedComponent<MudDialogProvider> provider)
+        {
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].TrimmedText().Should().Be("Great");
+            buttons[0].ClassList.Should().Contain("mud-message-box__yes-button");
+            buttons[1].TrimmedText().Should().Be("Whatever");
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Go away!");
+            buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
+        }
+        private void AssertButtonsAreNotReversed(IRenderedComponent<MudDialogProvider> provider)
+        {
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].TrimmedText().Should().Be("Go away!");
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever");
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
         }
     }
 }

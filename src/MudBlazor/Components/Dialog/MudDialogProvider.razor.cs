@@ -119,6 +119,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus? DefaultFocus { get; set; }
 
+        /// <summary>
+        /// Reverses the button order in <see cref="MudMessageBox"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When <c>null</c>, the default order is used.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool? ReverseMessageBoxButtonOrder { get; set; }
+
         protected override void OnInitialized()
         {
             DialogService.DialogInstanceAddedAsync += AddInstanceAsync;
@@ -135,7 +145,8 @@ namespace MudBlazor
                 FullWidth = FullWidth,
                 MaxWidth = MaxWidth,
                 BackgroundClass = BackgroundClass,
-                DefaultFocus = DefaultFocus
+                DefaultFocus = DefaultFocus,
+                ReverseMessageBoxButtonOrder = ReverseMessageBoxButtonOrder
             };
 
             _globalDialogOptions = newOptions;

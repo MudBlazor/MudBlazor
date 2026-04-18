@@ -181,7 +181,7 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
                 [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
-                [nameof(MessageBoxOptions.ReverseButtonOrder)] = messageBoxOptions.ReverseButtonOrder
+                [nameof(MessageBoxOptions.ReverseButtonOrder)] = messageBoxOptions.ReverseButtonOrder ?? options?.ReverseMessageBoxButtonOrder
             };
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;

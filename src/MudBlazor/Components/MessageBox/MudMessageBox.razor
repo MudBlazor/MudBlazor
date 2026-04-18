@@ -28,7 +28,7 @@
     </DialogContent>
     <DialogActions>
         <div tabindex="-1" class="d-contents">
-            @if (ReverseButtonOrder == true)
+            @if (ReverseButtonOrder ?? GlobalDialogOptions?.ReverseMessageBoxButtonOrder ?? false)
             {
                 <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
                     @YesButtonFragment

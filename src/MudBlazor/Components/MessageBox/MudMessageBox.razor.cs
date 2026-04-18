@@ -32,6 +32,9 @@ namespace MudBlazor
                 .WithChangeHandler(OnVisibleChangedAsync);
         }
 
+        [CascadingParameter]
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
+
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
 
