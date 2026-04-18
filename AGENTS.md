@@ -101,15 +101,9 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQu
 - If you are unsure whether the build output depends on regenerated frontend assets, run the normal scoped build without `SkipBunCompile`.
 
 ### Formatting
-Formatting is required for changed files:
+Run `dotnet format whitespace src --folder --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass after tests succeed. Do not run it repeatedly during the normal edit-build-test loop.
 
-```bash
-dotnet format <project.csproj> --no-restore --include <path/to/changed/files>
-```
-
-- Run `dotnet format` once at the very end of the task as a final pre-PR quality pass after tests succeed. Do not run it repeatedly during the normal edit-build-test loop.
-
-- If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
+If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
 
 ```bash
 dotnet format src --no-restore
@@ -266,7 +260,7 @@ private Task ToggleAsync()
 ## Change Checklist
 
 Before finishing, verify all of the following:
-- Formatting was run for changed files when formatting-relevant files under `src/` changed.
+- Formatting was run for relevant changed files.
 - The relevant target project builds cleanly with no new warnings when code, docs app, analyzer, or asset inputs changed.
 - Tests were updated and run when behavior changed.
 - Docs were updated when component behavior or public API changed.
