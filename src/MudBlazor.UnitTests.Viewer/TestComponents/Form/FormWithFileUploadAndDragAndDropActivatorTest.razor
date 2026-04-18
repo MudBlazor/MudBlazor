@@ -25,10 +25,10 @@
                            Hidden="@false"
                            tabindex="-1"
                            Required="@true"
-                           @ondrop="@ClearDragClass"
-                           @ondragenter="@SetDragClass"
-                           @ondragleave="@ClearDragClass"
-                           @ondragend="@ClearDragClass">
+                           OnDrop="@(_ => ClearDragClass())"
+                           OnDragEnter="@(_ => SetDragClass())"
+                           OnDragLeave="@(_ => ClearDragClass())"
+                           OnDragEnd="@(_ => ClearDragClass())">
                 <CustomContent>
                     <MudPaper Height="300px"
                               Outlined="true"

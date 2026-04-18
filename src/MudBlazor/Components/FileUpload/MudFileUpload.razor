@@ -20,6 +20,7 @@
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        @attributes="UserAttributes"
+                       @ondragenter="OnDragEnterAsync"
                        @ondrop="OnDropAsync"
                        @ondragleave="OnDragLeaveAsync"
                        @ondragend="OnDragEndAsync"

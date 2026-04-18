@@ -98,6 +98,34 @@ namespace MudBlazor
         public EventCallback<InputFileChangeEventArgs> OnFilesChanged { get; set; }
 
         /// <summary>
+        /// Occurs when a drag operation enters this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDragEnter { get; set; }
+
+        /// <summary>
+        /// Occurs when files are dropped onto this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDrop { get; set; }
+
+        /// <summary>
+        /// Occurs when a drag operation leaves this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDragLeave { get; set; }
+
+        /// <summary>
+        /// Occurs when a drag operation ends for this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDragEnd { get; set; }
+
+        /// <summary>
         /// Appends new files to the existing selection.
         /// </summary>
         /// <remarks>
@@ -265,69 +293,19 @@ namespace MudBlazor
         private async Task OnDropAsync(DragEventArgs args)
         {
             await OnDragResetAsync();
-            await InvokeUserDragEventCallbackAsync("ondrop", args);
+            await OnDrop.InvokeAsync(args);
         }
 
         private async Task OnDragLeaveAsync(DragEventArgs args)
         {
             await OnDragResetAsync();
-            await InvokeUserDragEventCallbackAsync("ondragleave", args);
+            await OnDragLeave.InvokeAsync(args);
         }
 
         private async Task OnDragEndAsync(DragEventArgs args)
         {
             await OnDragResetAsync();
-            await InvokeUserDragEventCallbackAsync("ondragend", args);
-        }
-
-        /// <summary>
-        /// Invokes a user-provided drag callback from <see cref="UserAttributes"/> when present.
-        /// </summary>
-        /// <param name="key">The drag event attribute key (for example <c>ondragleave</c>).</param>
-        /// <param name="args">The drag event arguments to forward to compatible callbacks.</param>
-        private async Task InvokeUserDragEventCallbackAsync(string key, DragEventArgs args)
-        {
-            if (UserAttributes is null || UserAttributes.Count == 0)
-            {
-                return;
-            }
-
-            object? userAttribute = null;
-            foreach (var attribute in UserAttributes)
-            {
-                if (key.Equals(attribute.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    userAttribute = attribute.Value;
-                    break;
-                }
-            }
-
-            if (userAttribute is null)
-            {
-                return;
-            }
-
-            switch (userAttribute)
-            {
-                case EventCallback<DragEventArgs> callback when callback.HasDelegate:
-                    await callback.InvokeAsync(args);
-                    break;
-                case EventCallback callback when callback.HasDelegate:
-                    await callback.InvokeAsync(args);
-                    break;
-                case Func<DragEventArgs, Task> callback:
-                    await callback(args);
-                    break;
-                case Action<DragEventArgs> callback:
-                    callback(args);
-                    break;
-                case Func<Task> callback:
-                    await callback();
-                    break;
-                case Action callback:
-                    callback();
-                    break;
-            }
+            await OnDragEnd.InvokeAsync(args);
         }
 
         private Task OnDragAreaClickAsync()
@@ -340,14 +318,15 @@ namespace MudBlazor
             return OpenFilePickerAsync();
         }
 
-        private Task OnDragEnterAsync()
+        private async Task OnDragEnterAsync(DragEventArgs args)
         {
             if (GetDisabledState())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return _draggingState.SetValueAsync(true);
+            await _draggingState.SetValueAsync(true);
+            await OnDragEnter.InvokeAsync(args);
         }
 
         private Task OnFileChipCloseAsync(string filename)
