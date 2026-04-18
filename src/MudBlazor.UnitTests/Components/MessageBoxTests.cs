@@ -358,7 +358,6 @@ namespace MudBlazor.UnitTests.Components
             (await messageBoxTask).Should().BeTrue();
         }
 
-
         [Test]
         public async Task MessageBox_Should_ReverseButtonOrder_WhenGlobalOptionsSet()
         {
@@ -436,7 +435,6 @@ namespace MudBlazor.UnitTests.Components
             (await messageBoxTask).Should().BeTrue();
         }
 
-
         [Test]
         public async Task MessageBox_Should_OverrideGlobalSettings_WhenDialogOptionsSet()
         {
@@ -497,7 +495,7 @@ namespace MudBlazor.UnitTests.Components
             (await messageBoxTask).Should().BeTrue();
         }
 
-        private void AssertButtonsAreReversed(IRenderedComponent<MudDialogProvider> provider)
+        private static void AssertButtonsAreReversed(IRenderedComponent<MudDialogProvider> provider)
         {
             var buttons = provider.FindAll(".mud-dialog-actions button");
             buttons.Count.Should().Be(3);
@@ -508,7 +506,8 @@ namespace MudBlazor.UnitTests.Components
             buttons[2].TrimmedText().Should().Be("Go away!");
             buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
         }
-        private void AssertButtonsAreNotReversed(IRenderedComponent<MudDialogProvider> provider)
+
+        private static void AssertButtonsAreNotReversed(IRenderedComponent<MudDialogProvider> provider)
         {
             var buttons = provider.FindAll(".mud-dialog-actions button");
             buttons.Count.Should().Be(3);
