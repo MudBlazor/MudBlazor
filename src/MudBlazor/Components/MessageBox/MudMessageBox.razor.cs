@@ -192,7 +192,7 @@ namespace MudBlazor
         [Category(CategoryTypes.MessageBox.Behavior)]
         public bool? ReverseButtonOrder { get; set; }
 
-        internal bool IsButtonOrderReversed => ReverseButtonOrder ?? GlobalDialogOptions?.ReverseMessageBoxButtonOrder ?? false;
+        internal bool IsButtonOrderReversed => ReverseButtonOrder ?? GlobalDialogOptions.ReverseMessageBoxButtonOrder ?? false;
 
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;
