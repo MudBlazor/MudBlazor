@@ -496,7 +496,22 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            ValidateParentGenericTypes();
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                Parent,
+                ParentTreeItemComponent,
+                typeof(MudTreeViewItem<>),
+                typeof(T),
+                "MudTreeViewItem (Parent)",
+                "MudTreeViewItem");
+
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                MudTreeRoot,
+                MudTreeRootComponent,
+                typeof(MudTreeView<>),
+                typeof(T),
+                "MudTreeView",
+                "MudTreeViewItem");
+
             if (Parent != null)
             {
                 Parent.AddChild(this);
@@ -509,29 +524,6 @@ namespace MudBlazor
                 }
             }
             await base.OnInitializedAsync();
-        }
-
-        private void ValidateParentGenericTypes()
-        {
-            if (Parent is null)
-            {
-                GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
-                    ParentTreeItemComponent,
-                    typeof(MudTreeViewItem<>),
-                    typeof(T),
-                    "MudTreeViewItem (Parent)",
-                    "MudTreeViewItem");
-            }
-
-            if (MudTreeRoot is null)
-            {
-                GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
-                    MudTreeRootComponent,
-                    typeof(MudTreeView<>),
-                    typeof(T),
-                    "MudTreeView",
-                    "MudTreeViewItem");
-            }
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
