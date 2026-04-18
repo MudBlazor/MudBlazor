@@ -5,7 +5,11 @@
              FilterIconClear="test_grid_filter_clear_icon"
              ColumnOptionsIcon="test_grid_column_options_icon">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Name">
+            <FilterTemplate>
+                <MudIconButton Class="custom-filter-template-button" Icon="@context.FilterIcon" Size="@Size.Small" />
+            </FilterTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Age" />
     </Columns>
 </MudDataGrid>
