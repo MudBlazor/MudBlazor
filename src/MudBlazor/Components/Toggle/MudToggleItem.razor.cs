@@ -134,23 +134,14 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            ValidateParentGenericType();
-            AssertedParent.Register(this);
-        }
-
-        private void ValidateParentGenericType()
-        {
-            if (Parent is not null)
-            {
-                return;
-            }
-
             GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                Parent,
                 ParentComponent,
                 typeof(MudToggleGroup<>),
                 typeof(T),
                 "MudToggleGroup",
                 "MudToggleItem");
+            AssertedParent.Register(this);
         }
 
         /// <summary>

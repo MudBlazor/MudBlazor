@@ -470,7 +470,14 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            ValidateParentGenericType();
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                Container,
+                ContainerComponent,
+                typeof(MudDropContainer<>),
+                typeof(T),
+                "MudDropContainer",
+                "MudDropZone");
+
             if (Container is not null && !_containerIsInitialized)
             {
                 _containerIsInitialized = true;
@@ -482,21 +489,6 @@ namespace MudBlazor
             }
 
             base.OnParametersSet();
-        }
-
-        private void ValidateParentGenericType()
-        {
-            if (Container is not null)
-            {
-                return;
-            }
-
-            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
-                ContainerComponent,
-                typeof(MudDropContainer<>),
-                typeof(T),
-                "MudDropContainer",
-                "MudDropZone");
         }
 
         private void Container_TransactionIndexChanged(object? sender, MudDragAndDropIndexChangedEventArgs e)

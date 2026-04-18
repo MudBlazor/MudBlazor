@@ -406,28 +406,20 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
-        ValidateParentGenericType();
+        GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+            ChipSet,
+            ChipSetComponent,
+            typeof(MudChipSet<>),
+            typeof(T),
+            "MudChipSet",
+            "MudChip");
+
         await base.OnInitializedAsync();
 
         if (ChipSet is not null)
         {
             await ChipSet.AddAsync(this);
         }
-    }
-
-    private void ValidateParentGenericType()
-    {
-        if (ChipSet is not null)
-        {
-            return;
-        }
-
-        GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
-            ChipSetComponent,
-            typeof(MudChipSet<>),
-            typeof(T),
-            "MudChipSet",
-            "MudChip");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

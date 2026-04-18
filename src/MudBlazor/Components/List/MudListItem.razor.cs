@@ -295,27 +295,19 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            ValidateParentGenericType();
-            await base.OnInitializedAsync();
-            if (MudList is not null)
-            {
-                await MudList.RegisterAsync(this);
-            }
-        }
-
-        private void ValidateParentGenericType()
-        {
-            if (MudList is not null)
-            {
-                return;
-            }
-
             GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                MudList,
                 ParentListComponent,
                 typeof(MudList<>),
                 typeof(T),
                 "MudList",
                 "MudListItem");
+
+            await base.OnInitializedAsync();
+            if (MudList is not null)
+            {
+                await MudList.RegisterAsync(this);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

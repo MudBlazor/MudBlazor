@@ -3,6 +3,22 @@
 internal static class GenericTypeMismatchGuard
 {
     public static void ThrowIfGenericTypeMismatch(
+        object? typedParent,
+        object? parent,
+        Type expectedParentGenericTypeDefinition,
+        Type childType,
+        string parentName,
+        string childName)
+    {
+        if (typedParent is not null)
+        {
+            return;
+        }
+
+        ThrowIfGenericTypeMismatch(parent, expectedParentGenericTypeDefinition, childType, parentName, childName);
+    }
+
+    public static void ThrowIfGenericTypeMismatch(
         object? parent,
         Type expectedParentGenericTypeDefinition,
         Type childType,

@@ -141,7 +141,14 @@ namespace MudBlazor
 
         protected override async Task OnInitializedAsync()
         {
-            ValidateParentGenericType();
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                MudRadioGroup,
+                ParentRadioGroup,
+                typeof(MudRadioGroup<>),
+                typeof(T),
+                "MudRadioGroup",
+                "MudRadio");
+
             await base.OnInitializedAsync();
 
             if (MudRadioGroup is not null)
@@ -191,21 +198,6 @@ namespace MudBlazor
             {
                 await MudRadioGroup.ResetAsync();
             }
-        }
-
-        private void ValidateParentGenericType()
-        {
-            if (MudRadioGroup is not null)
-            {
-                return;
-            }
-
-            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
-                ParentRadioGroup,
-                typeof(MudRadioGroup<>),
-                typeof(T),
-                "MudRadioGroup",
-                "MudRadio");
         }
 
         /// <inheritdoc />

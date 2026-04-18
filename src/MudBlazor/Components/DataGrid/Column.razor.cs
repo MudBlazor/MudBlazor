@@ -665,7 +665,14 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            ValidateParentGenericType();
+            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
+                DataGrid,
+                DataGridComponent,
+                typeof(MudDataGrid<>),
+                typeof(T),
+                "MudDataGrid",
+                "Column");
+
             Debug.Assert(DataGrid is not null);
 
             if (FilterOperators.Count > 0)
@@ -693,21 +700,6 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
-        }
-
-        private void ValidateParentGenericType()
-        {
-            if (DataGrid is not null)
-            {
-                return;
-            }
-
-            GenericTypeMismatchGuard.ThrowIfGenericTypeMismatch(
-                DataGridComponent,
-                typeof(MudDataGrid<>),
-                typeof(T),
-                "MudDataGrid",
-                "Column");
         }
 
         internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
