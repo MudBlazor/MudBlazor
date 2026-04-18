@@ -103,9 +103,9 @@ dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQu
 ### Formatting
 Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch whitespace/newline/charset/etc mistakes. Do not run it repeatedly during the normal edit-build-test loop.
 
-Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `dotnet format --include MudBlazor/Components/List/MudListItem.razor.cs`.
+Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `--include MudBlazor/Components/List/MudListItem.razor.cs`.
 
-If `src/.editorconfig` changed, format the whole `src` tree instead of only changed files:
+If `src/.editorconfig` changed, format the whole `src` tree:
 
 ```bash
 dotnet format --no-restore
