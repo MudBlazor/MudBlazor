@@ -61,15 +61,10 @@ Skip this section entirely if ANY of these conditions are met:
 ### Good First Issue
 Apply `good first issue` when ALL conditions are met:
 - Issue is well-defined with clear acceptance criteria (what success looks like is explicitly stated or objectively verifiable)
-- For bugs: A reproduction link or clear reproduction steps are provided
-
-Exclude `good first issue` if ANY conditions are met:
-- Issue was created by a maintainer
-- Has any `needs:` label
-- Multiple components or files need coordination
-- Solution approach is unclear or debated
-- Involves complex areas (state management, rendering lifecycle, performance optimization, accessibility implementation, interop)
-- Requires architectural decisions, breaking changes, or design discussions
+- Has no `needs:` labels
+- Solution approach is clear and not debated
+- Does not involve complex areas (state management, rendering lifecycle, interop)
+- Does not require architectural decisions, breaking changes, or design discussions
 
 ### Help Wanted
 Apply `help wanted` when ONE of these conditions is met:
@@ -213,7 +208,7 @@ Mark issues as `stale` when ALL conditions are met:
   - Bug: >=18 months without a timeline event (excluding labeled/unlabeled/renamed)
   - Feature: >=36 months without a timeline event (excluding labeled/unlabeled/renamed)
   - Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days
-- Does NOT qualify for `on hold`, `help wanted`, or `awaiting triage` labels
+- Does NOT qualify for `on hold` or `awaiting triage` labels
 
 Post this comment verbatim (exclude default footer) when marking an issue stale:
 ```

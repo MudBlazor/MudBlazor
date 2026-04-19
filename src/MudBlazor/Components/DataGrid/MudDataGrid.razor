@@ -301,7 +301,7 @@
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" />
+                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" Format="@column.ContentFormat" />
                             }
                         }
                     }
@@ -389,7 +389,8 @@
                                               ValueChanged="@cell.NumberValueChangedAsync"
                                               Margin="@Margin.Dense" Style="margin-top:0"
                                               Required="@column.Required"
-                                              Variant="@Variant.Text" Culture="@column.Culture" />
+                                              Variant="@Variant.Text" Culture="@column.Culture"
+                                              Format="@column.ContentFormat" />
                          }
                      }
                  }
