@@ -107,15 +107,5 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.
         /// </remarks>
         public DefaultFocus? DefaultFocus { get; init; }
-
-        /// <summary>
-        /// Reverses the button order in <see cref="MudMessageBox"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// When <c>false</c>, the standard button order is used for message boxes shown with these options.
-        /// When <c>null</c>, the value is inherited from <see cref="MudDialogProvider.ReverseMessageBoxButtonOrder" />.
-        /// </remarks>
-        public bool? ReverseMessageBoxButtonOrder { get; init; }
     }
 }

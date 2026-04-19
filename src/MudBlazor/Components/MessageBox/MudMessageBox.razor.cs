@@ -33,7 +33,7 @@ namespace MudBlazor
         }
 
         [CascadingParameter]
-        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
+        private MudDialogProvider? DialogProvider { get; set; }
 
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
@@ -192,7 +192,7 @@ namespace MudBlazor
         [Category(CategoryTypes.MessageBox.Behavior)]
         public bool? ReverseButtonOrder { get; set; }
 
-        internal bool IsButtonOrderReversed => ReverseButtonOrder ?? GlobalDialogOptions.ReverseMessageBoxButtonOrder ?? false;
+        internal bool IsButtonOrderReversed => ReverseButtonOrder ?? DialogProvider?.ReverseMessageBoxButtonOrder ?? false;
 
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;

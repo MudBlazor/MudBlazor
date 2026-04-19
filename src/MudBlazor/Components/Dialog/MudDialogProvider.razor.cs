@@ -125,7 +125,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.
         /// When <c>false</c>, the standard button order is applied.
-        /// When <c>null</c>, this provider leaves the order unset so dialog-level or message-box-level settings can decide.
+        /// When <c>null</c>, this provider leaves the order unset, allowing the message box's local setting to decide.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -147,8 +147,7 @@ namespace MudBlazor
                 FullWidth = FullWidth,
                 MaxWidth = MaxWidth,
                 BackgroundClass = BackgroundClass,
-                DefaultFocus = DefaultFocus,
-                ReverseMessageBoxButtonOrder = ReverseMessageBoxButtonOrder
+                DefaultFocus = DefaultFocus
             };
 
             _globalDialogOptions = newOptions;

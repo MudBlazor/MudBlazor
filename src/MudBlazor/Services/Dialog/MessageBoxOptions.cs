@@ -61,7 +61,7 @@ public class MessageBoxOptions
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// When <c>false</c>, the standard button order is used for this message box.
-    /// When <c>null</c>, the value is inherited from <see cref="DialogOptions.ReverseMessageBoxButtonOrder" />.
+    /// When <c>null</c>, the value is inherited from <see cref="MudDialogProvider.ReverseMessageBoxButtonOrder" />.
     /// </remarks>
     public bool? ReverseButtonOrder { get; set; }
 }
