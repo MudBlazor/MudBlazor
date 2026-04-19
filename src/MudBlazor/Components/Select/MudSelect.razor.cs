@@ -481,12 +481,25 @@ namespace MudBlazor
                     return false;
                 }
 
-                if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
+                if (Strict && !IsValueInList)
                 {
                     return false;
                 }
 
-                return item.ChildContent is not null;
+                if (_context.TryGetShadowItemByValue(ReadValue, out var item))
+                {
+                    if (ToStringFunc is not null && !string.IsNullOrEmpty(ToStringFunc(ReadValue)))
+                    {
+                        return true;
+                    }
+
+                    if (item.ChildContent is not null)
+                    {
+                        return true;
+                    }
+                }
+
+                return !string.IsNullOrEmpty(ReadText);
             }
         }
 
@@ -1409,21 +1422,34 @@ namespace MudBlazor
 
         protected RenderFragment? GetSelectedValuePresenter()
         {
-            if (!_context.TryGetShadowItemByValue(ReadValue, out var item))
+            if (Strict && !IsValueInList)
             {
-                return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+                return null;
             }
 
-            if (ToStringFunc is not null)
+            if (_context.TryGetShadowItemByValue(ReadValue, out var item))
             {
-                var converted = ToStringFunc(ReadValue);
-                if (!string.IsNullOrEmpty(converted))
+                if (ToStringFunc is not null)
                 {
-                    return builder => builder.AddContent(0, converted);
+                    var converted = ToStringFunc(ReadValue);
+                    if (!string.IsNullOrEmpty(converted))
+                    {
+                        return builder => builder.AddContent(0, converted);
+                    }
+                }
+
+                if (item.ChildContent is not null)
+                {
+                    return item.ChildContent;
                 }
             }
 
-            return item.ChildContent;
+            if (string.IsNullOrEmpty(ReadText))
+            {
+                return null;
+            }
+
+            return builder => builder.AddContent(0, ReadText);
         }
 
         /// <summary>

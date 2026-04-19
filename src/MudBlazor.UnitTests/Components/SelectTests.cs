@@ -379,7 +379,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
+        /// Initially we have a value of 17 which is not in the list. It should still render through the readonly display slot.
         /// </summary>
         [Test]
         public async Task SelectUnrepresentableValue()
@@ -390,6 +390,8 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("div.mud-input-control");
             select.Instance.ReadValue.Should().Be(17);
             select.Instance.ReadText.Should().Be("17");
+            comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("17");
             comp.Find("input").Attributes["value"]?.Value.Should().Be("17");
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -424,7 +426,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be(2));
             select.Instance.ReadText.Should().Be("2");
             comp.FindComponent<MudInput<string>>().Instance.ReadValue.Should().Be("2");
-            comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Text); // because list item has no render fragment, so we show it as text
+            comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("2");
         }
 
         /// <summary>
@@ -538,18 +541,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SelectWithoutItemPresentersTest>();
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
+            var mudInput = comp.FindComponent<MudInput<string>>();
             var input = comp.Find("div.mud-input-control");
 
             select.Instance.ReadValue.Should().Be(1);
             select.Instance.ReadText.Should().Be("1");
-            comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none");
+            mudInput.Instance.InputType.Should().Be(InputType.Hidden);
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("1");
 
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             await items[1].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-input-slot").Attributes["style"].Value.Should().Contain("display:none"));
+            await comp.WaitForAssertionAsync(() => mudInput.Instance.InputType.Should().Be(InputType.Hidden));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("2"));
             select.Instance.ReadValue.Should().Be(2);
             select.Instance.ReadText.Should().Be("2");
         }
