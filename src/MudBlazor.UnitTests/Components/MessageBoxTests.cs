@@ -435,5 +435,30 @@ namespace MudBlazor.UnitTests.Components
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();
         }
+
+        [Test]
+        public async Task InlineMessageBox_Should_ReverseButtonOrder()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+
+            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
+                .Add(p => p.ReverseButtonOrder, true)
+                .Add(p => p.YesText, "Yes")
+                .Add(p => p.NoText, "No")
+                .Add(p => p.CancelText, "Cancel")
+            );
+
+            Task<bool?> messageBoxTask = null!;
+            await inlineMessageBox.InvokeAsync(() =>
+            {
+                messageBoxTask = inlineMessageBox.Instance.ShowAsync();
+            });
+
+            var dialogMessageBox = provider.FindComponent<MudMessageBox>();
+            dialogMessageBox.Instance.IsButtonOrderReversed.Should().BeTrue();
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
     }
 }
