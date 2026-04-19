@@ -2056,6 +2056,76 @@ namespace MudBlazor.UnitTests.Components
             filler.InnerHtml.Should().NotContain("custom-render");
         }
 
+        [Test]
+        public async Task Select_ShouldExposeComboboxSemantics_OnInput()
+        {
+            var comp = Context.Render<MultiSelectTest6>();
+
+            var input = comp.Find("input");
+            input.GetAttribute("role").Should().Be("combobox");
+            input.GetAttribute("aria-haspopup").Should().Be("listbox");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            input.GetAttribute("aria-label").Should().Be("US States");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var openInput = comp.Find("input");
+                openInput.GetAttribute("aria-expanded").Should().Be("true");
+                openInput.GetAttribute("aria-activedescendant").Should().NotBeNullOrWhiteSpace();
+
+                var listboxId = openInput.GetAttribute("aria-controls");
+                listboxId.Should().NotBeNullOrWhiteSpace();
+
+                var listbox = comp.Find($"#{listboxId}");
+                listbox.GetAttribute("role").Should().Be("listbox");
+                listbox.GetAttribute("aria-multiselectable").Should().Be("true");
+            });
+        }
+
+        [Test]
+        public void Select_UserAttributes_ShouldOverrideGeneratedAccessibilityAttributes()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Label, "US States")
+                .AddUnmatched("role", "button")
+                .AddUnmatched("aria-autocomplete", "list")
+                .AddUnmatched("aria-controls", "custom-listbox")
+                .AddUnmatched("aria-expanded", "mixed")
+                .AddUnmatched("aria-haspopup", "dialog")
+                .AddUnmatched("aria-label", "Custom label")
+                .AddUnmatched("aria-activedescendant", "custom-option"));
+
+            var input = comp.Find("input");
+            input.GetAttribute("role").Should().Be("button");
+            input.GetAttribute("aria-autocomplete").Should().Be("list");
+            input.GetAttribute("aria-controls").Should().Be("custom-listbox");
+            input.GetAttribute("aria-expanded").Should().Be("mixed");
+            input.GetAttribute("aria-haspopup").Should().Be("dialog");
+            input.GetAttribute("aria-label").Should().Be("Custom label");
+            input.GetAttribute("aria-activedescendant").Should().Be("custom-option");
+        }
+
+        [Test]
+        public async Task Select_MultiSelect_ShouldKeepSelectionStateIndependentOfActiveDescendant()
+        {
+            var comp = Context.Render<MultiSelectTest6>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var input = comp.Find("input");
+                var alabama = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Alabama"));
+                var alaska = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Alaska"));
+
+                input.GetAttribute("aria-activedescendant").Should().Be(alabama.Id);
+                alabama.GetAttribute("aria-selected").Should().Be("false");
+                alaska.GetAttribute("aria-selected").Should().Be("true");
+            });
+        }
+
         private static string GetCheckboxPath(IElement item)
         {
             return item.QuerySelectorAll("path").Last().GetAttribute("d")!;

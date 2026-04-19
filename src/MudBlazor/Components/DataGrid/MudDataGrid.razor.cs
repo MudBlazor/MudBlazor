@@ -1849,6 +1849,27 @@ namespace MudBlazor
             return context;
         }
 
+        internal bool HasFilter(Column<T>? column)
+        {
+            if (column is null)
+            {
+                return false;
+            }
+
+            return FilterDefinitions.Any(x =>
+                (ReferenceEquals(x.Column, column) || (column.PropertyName is not null && x.Column?.PropertyName == column.PropertyName)) &&
+                IsFilterApplied(x));
+        }
+
+        private static bool IsFilterApplied(IFilterDefinition<T> filterDefinition)
+        {
+            return (filterDefinition is FilterDefinition<T> dataGridFilterDefinition && dataGridFilterDefinition.FilterFunction is not null) ||
+                   filterDefinition.Value is not null ||
+                   filterDefinition.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
+                       FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
+                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
+        }
+
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))

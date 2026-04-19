@@ -647,9 +647,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
             _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
                 .WithParameter(() => GroupExpanded)
+                .WithEventCallback(() => GroupExpandedChanged)
                 .WithChangeHandler(OnGroupExpandedChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
+                .WithEventCallback(() => GroupByOrderChanged)
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 

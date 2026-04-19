@@ -70,15 +70,6 @@ class MudKeyInterceptor {
         }
         this._isConnected = true;
         this._element = element;
-        const targetClass = this._options.targetClass;
-        // changes to the DOM subtree only require observation when targeting child elements for target class
-        if (targetClass) {
-            this.logger('[MudBlazor | KeyInterceptor] Start observing DOM of element for changes to child with class ', { element, targetClass });
-            this._observer = new MutationObserver(this.onDomChanged);
-            this._observer.mudKeyInterceptor = this;
-            this._observer.observe(this._element, { attributes: false, childList: true, subtree: true });
-        }
-        this._observedChildren = [];
         // transform key options into a key lookup
         this._keyOptions = {};
         this._regexOptions = [];
@@ -90,16 +81,10 @@ class MudKeyInterceptor {
             this.setKeyOption(keyOption);
         }
         this.logger('[MudBlazor | KeyInterceptor] key options: ', this._keyOptions);
-        if (this._regexOptions.size > 0)
+        if (this._regexOptions.length > 0)
             this.logger('[MudBlazor | KeyInterceptor] regex options: ', this._regexOptions);
-        // register handlers
-        if (targetClass) {
-            for (const child of this._element.getElementsByClassName(targetClass)) {
-                this.attachHandlers(child);
-            }
-        } else {
-            this.attachHandlers(this._element);
-        }
+        // register delegated handlers once on the root element
+        this.attachHandlers(this._element);
     }
 
     /**
@@ -138,59 +123,59 @@ class MudKeyInterceptor {
     disconnect() {
         if (!this._isConnected)
             return;
-        if (this._observer) {
-            this.logger('[MudBlazor | KeyInterceptor] disconnect mutation observer and event handlers');
-            this._observer.disconnect();
-            this._observer = null;
-        }
-        for (const child of this._observedChildren)
-            this.detachHandlers(child);
+        this.logger('[MudBlazor | KeyInterceptor] disconnect delegated event handlers');
+        this.detachHandlers(this._element);
         this._isConnected = false;
+        this._element = null;
     }
 
     /**
      * Attaches keydown/keyup handlers to a target element.
      */
-    attachHandlers(child) {
-        this.logger('[MudBlazor | KeyInterceptor] attaching handlers ', { child });
-        if (this._observedChildren.includes(child)) {
-            //console.log("... already attached");
+    attachHandlers(element) {
+        this.logger('[MudBlazor | KeyInterceptor] attaching delegated handlers ', { element });
+        if (this._delegatedHandlersAttached)
             return;
-        }
-        child.mudKeyInterceptor = this;
-        child.addEventListener('keydown', this.onKeyDown);
-        child.addEventListener('keyup', this.onKeyUp);
-        this._observedChildren.push(child);
+        element.mudKeyInterceptor = this;
+        element.addEventListener('keydown', this.onKeyDown);
+        element.addEventListener('keyup', this.onKeyUp);
+        this._delegatedHandlersAttached = true;
     }
 
     /**
      * Detaches keydown/keyup handlers from a target element.
      */
-    detachHandlers(child) {
-        this.logger('[MudBlazor | KeyInterceptor] detaching handlers ', { child });
-        child.removeEventListener('keydown', this.onKeyDown);
-        child.removeEventListener('keyup', this.onKeyUp);
-        this._observedChildren = this._observedChildren.filter(x=>x!==child);
+    detachHandlers(element) {
+        this.logger('[MudBlazor | KeyInterceptor] detaching delegated handlers ', { element });
+        if (!this._delegatedHandlersAttached)
+            return;
+        element.removeEventListener('keydown', this.onKeyDown);
+        element.removeEventListener('keyup', this.onKeyUp);
+        if (element.mudKeyInterceptor === this)
+            delete element.mudKeyInterceptor;
+        this._delegatedHandlersAttached = false;
     }
 
     /**
-     * Applies handler attachment/detachment for added/removed matching DOM nodes.
+     * Determines whether a delegated event should be handled by this interceptor.
      */
-    onDomChanged(mutationsList, _) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == _observer
-        //self.logger('[MudBlazor | KeyInterceptor] onDomChanged: ', { self });
+    shouldHandleEvent(args) {
+        const self = this.mudKeyInterceptor; // func is invoked with this == element that owns delegated handlers
+        if (!self?._isConnected || !self._element)
+            return false;
         const targetClass = self._options.targetClass;
-        for (const mutation of mutationsList) {
-            //self.logger('[MudBlazor | KeyInterceptor] Subtree mutation: ', { mutation });
-            for (const element of mutation.addedNodes) {
-                if (element.classList?.contains(targetClass))
-                    self.attachHandlers(element);
-            }
-            for (const element of mutation.removedNodes) {
-                if (element.classList?.contains(targetClass))
-                    self.detachHandlers(element);
-            }
+        if (!targetClass)
+            return true;
+
+        let current = args.target;
+        if (current?.nodeType !== Node.ELEMENT_NODE)
+            current = current?.parentElement;
+        while (current && current !== self._element) {
+            if (current.classList?.contains(targetClass))
+                return true;
+            current = current.parentElement;
         }
+        return false;
     }
 
     /**
@@ -221,6 +206,8 @@ class MudKeyInterceptor {
      */
     onKeyDown(args) {
         const self = this.mudKeyInterceptor; // func is invoked with this == child
+        if (!self.shouldHandleEvent.call(this, args))
+            return;
         if (!args.key) {
             self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
             return;
@@ -274,6 +261,8 @@ class MudKeyInterceptor {
      */
     onKeyUp(args) {
         const self = this.mudKeyInterceptor; // func is invoked with this == child
+        if (!self.shouldHandleEvent.call(this, args))
+            return;
         if (!args.key) {
             self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
             return;
