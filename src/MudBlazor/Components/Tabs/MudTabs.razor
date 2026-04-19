@@ -116,7 +116,9 @@
             }
             @if (panel.TabContent is not null)
             {
-                @panel.TabContent
+                <div style="display: contents;" @onkeydown:stopPropagation="true">
+                    @panel.TabContent
+                </div>
             }
             else if (!string.IsNullOrEmpty(panel.Text) && string.IsNullOrEmpty(panel.Icon))
             {

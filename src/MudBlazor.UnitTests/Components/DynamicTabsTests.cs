@@ -191,5 +191,20 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("div.mud-tab").Should().HaveCount(4);
         }
+
+        [Test]
+        [TestCase("Backspace")]
+        [TestCase("Delete")]
+        public async Task CustomTabContent_TabWrapperKeyClosesTab(string key)
+        {
+            var comp = Context.Render<DynamicTabsWithKeyTest>();
+
+            comp.FindAll("div.mud-tab").Should().HaveCount(4);
+
+            var tab = comp.FindAll("div.mud-tab")[0];
+            await tab.KeyDownAsync(new KeyboardEventArgs { Key = key });
+
+            comp.FindAll("div.mud-tab").Should().HaveCount(3);
+        }
     }
 }

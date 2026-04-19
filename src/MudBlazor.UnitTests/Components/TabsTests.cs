@@ -1740,6 +1740,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
 
+        [Test]
+        [TestCase("Enter")]
+        [TestCase(" ")]
+        public async Task CustomTabContent_TabWrapperKeyActivatesTab(string key)
+        {
+            var comp = Context.Render<TabsCustomTabContentKeyboardTest>();
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+
+            var tab = comp.FindAll("div.mud-tab")[1];
+            await tab.KeyDownAsync(new KeyboardEventArgs { Key = key });
+
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+        }
+
         /// <summary>
         /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
         /// </summary>
