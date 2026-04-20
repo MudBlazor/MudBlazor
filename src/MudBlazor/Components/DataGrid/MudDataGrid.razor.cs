@@ -1428,11 +1428,14 @@ namespace MudBlazor
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
 
         /// <summary>
-        /// The behavior of the grid when the user reorders columns via drag and drop.
+        /// The behavior of the grid when the user reorders column headers via drag and drop.
         /// </summary>
-        /// <remarks>Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c></remarks>
+        /// <remarks>
+        /// Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c>.
+        /// This mode applies to header drag-and-drop reordering. Reordering from the columns panel uses insert-by-index behavior.
+        /// </remarks>
         [Parameter]
-        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; }
+        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Swap;
         #endregion
 
         /// <summary>
