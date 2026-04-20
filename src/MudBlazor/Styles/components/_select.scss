@@ -58,6 +58,12 @@
     }
   }
 
+  @supports (-moz-appearance: none) {
+    &:not(.mud-autocomplete) .mud-select-input.mud-readonly input[readonly]:not([type="hidden"]) {
+      caret-color: transparent;
+    }
+  }
+
   .mud-select-input {
     cursor: pointer;
 
