@@ -731,7 +731,6 @@ namespace MudBlazor
             if (focusAgain)
             {
                 StateHasChanged();
-                await OnBlur.InvokeAsync(new FocusEventArgs());
                 _elementReference.FocusAsync().CatchAndLog(ignoreExceptions: true);
                 StateHasChanged();
             }
