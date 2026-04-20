@@ -712,6 +712,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 await select.Instance.OpenMenu();
                 await select.Instance.CloseMenu();
+                await comp.Find($"#{select.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
             });
             eventCounter.Should().Be(1);
         }
