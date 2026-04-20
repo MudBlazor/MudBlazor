@@ -2010,6 +2010,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             var statusColumn = dataGrid.Instance.GetColumnByPropertyName("Status");
+            statusColumn.GetFilterOperators(FieldType.Identify(statusColumn.PropertyType))
+                .Should()
+                .ContainInOrder(FilterOperator.Enum.Is, FilterOperator.Enum.IsNot, FilterOperator.Enum.Empty, FilterOperator.Enum.NotEmpty);
 
             #region FilterOperator.Enum.Is
 
@@ -2074,6 +2077,42 @@ namespace MudBlazor.UnitTests.Components
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.Empty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.NotEmpty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -2911,14 +2950,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
+            IElement StatusFilterButton() => dataGrid.FindAll(".filter-button")[2];
 
             // Helper method to select a filter operator and verify the outcome
-            async Task SelectFilterOperator(int operatorIndex, int expectedFilterCount)
+            async Task SelectFilterOperator(Func<IElement> filterButtonSelector, int operatorIndex, int expectedFilterCount)
             {
                 // Ensure the filter panel is open before interacting
                 if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count == 0)
                 {
-                    await FilterButton().ClickAsync();
+                    await filterButtonSelector().ClickAsync();
                     await comp.WaitForElementAsync(".filter-operator");
                 }
 
@@ -2939,7 +2979,7 @@ namespace MudBlazor.UnitTests.Components
                 // Close the filter panel to ensure a clean state for the next test
                 if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count > 0)
                 {
-                    await FilterButton().ClickAsync();
+                    await filterButtonSelector().ClickAsync();
                 }
             }
 
@@ -2948,16 +2988,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
 
             // 2. Test operators that should be removed when their value is empty
-            await SelectFilterOperator(0, 0); // "contains"
-            await SelectFilterOperator(1, 0); // "not contains"
-            await SelectFilterOperator(2, 0); // "equals"
-            await SelectFilterOperator(3, 0); // "not equals"
-            await SelectFilterOperator(4, 0); // "starts with"
-            await SelectFilterOperator(5, 0); // "ends with"
+            await SelectFilterOperator(FilterButton, 0, 0); // "contains"
+            await SelectFilterOperator(FilterButton, 1, 0); // "not contains"
+            await SelectFilterOperator(FilterButton, 2, 0); // "equals"
+            await SelectFilterOperator(FilterButton, 3, 0); // "not equals"
+            await SelectFilterOperator(FilterButton, 4, 0); // "starts with"
+            await SelectFilterOperator(FilterButton, 5, 0); // "ends with"
 
             // 3. Test operators that are valid without a value
-            await SelectFilterOperator(6, 1); // "is empty"
-            await SelectFilterOperator(7, 1); // "is not empty"
+            await SelectFilterOperator(FilterButton, 6, 1); // "is empty"
+            await SelectFilterOperator(FilterButton, 7, 1); // "is not empty"
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+
+            // 4. Enum operators with nullable values
+            await StatusFilterButton().ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
+
+            await SelectFilterOperator(StatusFilterButton, 0, 0); // "is"
+            await SelectFilterOperator(StatusFilterButton, 1, 0); // "is not"
+            await SelectFilterOperator(StatusFilterButton, 2, 1); // "is empty"
+            await SelectFilterOperator(StatusFilterButton, 3, 1); // "is not empty"
         }
 
         [Test]

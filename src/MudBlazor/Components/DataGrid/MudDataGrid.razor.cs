@@ -1867,7 +1867,8 @@ namespace MudBlazor
                    filterDefinition.Value is not null ||
                    filterDefinition.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
                        FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
-                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
+                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty or
+                       FilterOperator.Enum.Empty or FilterOperator.Enum.NotEmpty;
         }
 
         private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
@@ -2505,7 +2506,8 @@ namespace MudBlazor
         private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
             FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not
             FilterOperator.Number.Empty and not FilterOperator.Number.NotEmpty and not
-            FilterOperator.DateTime.Empty and not FilterOperator.DateTime.NotEmpty;
+            FilterOperator.DateTime.Empty and not FilterOperator.DateTime.NotEmpty and not
+            FilterOperator.Enum.Empty and not FilterOperator.Enum.NotEmpty;
 
         internal async Task HideAllColumnsAsync()
         {
