@@ -92,6 +92,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task OnFocusAttributeFiresWhenSelectedValuePresenterReceivesFocus()
+        {
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            IElement Input() => comp.Find("div.mud-input-control");
+            IElement Switch() => comp.Find("#switch");
+            IElement SelectedValuePresenter() => comp.Find("div.mud-select-input[tabindex='0']");
+
+            await Input().MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
+
+            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+            await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeFalse());
+
+            await SelectedValuePresenter().TriggerEventAsync("onfocus", new FocusEventArgs());
+            await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeTrue());
+        }
+
+        [Test]
         public async Task Select_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
         {
             var comp = Context.Render<SelectTest1>();

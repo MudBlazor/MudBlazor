@@ -19,6 +19,7 @@ namespace MudBlazor
         private bool _shouldAdjustSizingAfterRender;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
+        private static readonly Dictionary<string, object?> _emptyAttributes = new(StringComparer.OrdinalIgnoreCase);
 
         [DynamicDependency(nameof(CallOnBlurredAsync))]
         public MudInput()
@@ -267,6 +268,38 @@ namespace MudBlazor
             }
 
             return ReadValue is not string and not null;
+        }
+
+        /// <summary>
+        /// Gets the subset of <see cref="MudComponentBase.UserAttributes"/> which should also be applied to the focusable presenter shown for hidden inputs.
+        /// </summary>
+        /// <remarks>
+        /// When <see cref="InputType"/> is <see cref="MudBlazor.InputType.Hidden"/> and <see cref="ChildContent"/> is shown, focus moves to the presenter <c>div</c>.
+        /// This method forwards accessibility, data, and focus-related attributes to that element.
+        /// </remarks>
+        private Dictionary<string, object?> GetHiddenInputPresenterAttributes()
+        {
+            if (InputType != InputType.Hidden || UserAttributes.Count == 0 || ChildContent is null)
+            {
+                return _emptyAttributes;
+            }
+
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (key, value) in UserAttributes)
+            {
+                if (key.StartsWith("aria-", StringComparison.OrdinalIgnoreCase) ||
+                    key.StartsWith("data-", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals("role", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals("onblur", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals("onfocus", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals("onfocusin", StringComparison.OrdinalIgnoreCase) ||
+                    key.Equals("onfocusout", StringComparison.OrdinalIgnoreCase))
+                {
+                    attributes[key] = value;
+                }
+            }
+
+            return attributes;
         }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
