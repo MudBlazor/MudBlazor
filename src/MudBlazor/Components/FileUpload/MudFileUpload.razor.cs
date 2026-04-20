@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
@@ -272,7 +271,7 @@ namespace MudBlazor
             return OpenFilePickerAsync();
         }
 
-        private Task OnDragEnterAsync()
+        protected Task OnDragEnterAsync()
         {
             if (GetDisabledState())
             {
