@@ -255,7 +255,7 @@ namespace MudBlazor
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
             var destinationPropertyName = ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert
-                ? Regex.Replace(dropItem.DropzoneIdentifier, @"^(Pre_|Post_)", "")
+                ? Regex.Replace(dropItem.DropzoneIdentifier, @"^(Pre_|Post_)", "", RegexOptions.None, TimeSpan.FromMilliseconds(100))
                 : dropItem.DropzoneIdentifier;
             var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == destinationPropertyName);
             if (dragAndDropSource != null && dragAndDropDestination != null)
