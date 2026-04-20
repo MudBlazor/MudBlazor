@@ -1427,7 +1427,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c></remarks>
         [Parameter]
-        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; }
+        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Swap;
         #endregion
 
         /// <summary>
