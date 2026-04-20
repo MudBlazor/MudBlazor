@@ -5178,7 +5178,7 @@ namespace MudBlazor.UnitTests.Components
             var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "HiredOn").FirstOrDefault();
             var firstDropItem = firstDropZone.Children[0];
 
-            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Pre_Age").FirstOrDefault();
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_pre__:Age").FirstOrDefault();
             var secondDropItem = secondDropZone.Children[0];
 
             await firstDropItem.DragStartAsync(new DragEventArgs());
@@ -5219,7 +5219,7 @@ namespace MudBlazor.UnitTests.Components
             var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
             var firstDropItem = firstDropZone.Children[0];
 
-            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Post_Status").FirstOrDefault();
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_post__:Status").FirstOrDefault();
             var secondDropItem = secondDropZone.Children[0];
 
             await firstDropItem.DragStartAsync(new DragEventArgs());

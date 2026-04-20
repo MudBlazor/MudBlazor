@@ -55,6 +55,9 @@ namespace MudBlazor
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
 
+        private const string PrePrefix = "__mud_dg_pre__:";
+        private const string PostPrefix = "__mud_dg_post__:";
+
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
@@ -255,7 +258,12 @@ namespace MudBlazor
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
             var destinationPropertyName = ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert
-                ? Regex.Replace(dropItem.DropzoneIdentifier, @"^(Pre_|Post_)", "", RegexOptions.None, TimeSpan.FromMilliseconds(100))
+                ? dropItem.DropzoneIdentifier switch
+                {
+                    string s when s.StartsWith(PrePrefix) => s.Substring(PrePrefix.Length),
+                    string s when s.StartsWith(PostPrefix) => s.Substring(PostPrefix.Length),
+                    _ => dropItem.DropzoneIdentifier
+                }
                 : dropItem.DropzoneIdentifier;
             var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == destinationPropertyName);
             if (dragAndDropSource != null && dragAndDropDestination != null)
@@ -266,12 +274,7 @@ namespace MudBlazor
                 switch (ColumnReorderMode)
                 {
                     case DataGridDragAndDropColumnReorderMode.Insert:
-                        var position = dropItem.DropzoneIdentifier.Split('_').FirstOrDefault() switch
-                        {
-                            "Pre" => 0,
-                            "Post" => 1,
-                            _ => 0
-                        };
+                        var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix) ? 1 : 0;
                         Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex, position);
                         break;
                     case DataGridDragAndDropColumnReorderMode.Swap:
