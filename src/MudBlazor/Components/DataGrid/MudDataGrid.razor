@@ -537,7 +537,7 @@
                         @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                          Immediate="true" Class="filter-input"/>
+                                          Immediate="true" Class="filter-input" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                         else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
@@ -582,7 +582,7 @@
                         else if (fieldType.IsGuid)
                         {
                             <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                          Immediate="true" Class="filter-input"/>
+                                          Immediate="true" Class="filter-input" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                     </MudItem>
                 </MudGrid>

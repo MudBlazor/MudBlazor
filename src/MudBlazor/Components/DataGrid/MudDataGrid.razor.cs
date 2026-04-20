@@ -1870,6 +1870,16 @@ namespace MudBlazor
                        FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
         }
 
+        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
+        {
+            if (column is null || args.Key != "Enter")
+            {
+                return Task.CompletedTask;
+            }
+
+            return column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask;
+        }
+
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
