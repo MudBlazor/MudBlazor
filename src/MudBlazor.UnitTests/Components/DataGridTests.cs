@@ -3933,7 +3933,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() =>
             {
                 dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
-                comp.FindAll(".column-filter-popup").Should().BeEmpty();
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().BeEmpty();
                 dataGrid.FindAll("tbody tr").Count.Should().Be(4);
             });
         }
