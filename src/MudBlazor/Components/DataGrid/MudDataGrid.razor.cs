@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
@@ -253,7 +254,7 @@ namespace MudBlazor
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
-            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier.Split('_').LastOrDefault());
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == MyRegex().Replace(dropItem.DropzoneIdentifier, ""));
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
@@ -2942,5 +2943,8 @@ namespace MudBlazor
         }
 
         internal record GroupKey(string? Title, object? ItemsKey);
+
+        [GeneratedRegex(@"^(Pre_|Post_)")]
+        private static partial Regex MyRegex();
     }
 }

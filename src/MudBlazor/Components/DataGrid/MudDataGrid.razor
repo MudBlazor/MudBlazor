@@ -267,7 +267,7 @@
                         </table>
                     </ChildContent>
                     <ItemRenderer>
-                        @if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+                        @if (DragDropColumnReordering && ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                         {
                             <div class="d-flex" style="width: 100%">
                                 <MudDropZone T="Column<T>" Identifier="@($"Pre_{context.PropertyName}")" AllowReorder="true" Class="px-1 py-1"/>
