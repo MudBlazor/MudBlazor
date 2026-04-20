@@ -1147,6 +1147,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_Should_ScrollToInitiallySelectedValue_WhenOpened()
+        {
+            var comp = Context.Render<SelectTest2>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudScrollManager.scrollToListItem"));
+        }
+
+        [Test]
         public async Task Select_Should_AllowReloadingItems()
         {
             var comp = Context.Render<ReloadSelectItemsTest>();

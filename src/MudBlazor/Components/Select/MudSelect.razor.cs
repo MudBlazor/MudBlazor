@@ -703,17 +703,6 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
 
-            //Scroll the active item on each opening
-            if (_activeItemId != null)
-            {
-                var index = Items.FindIndex(x => x.ItemId == _activeItemId);
-                if (index > 0)
-                {
-                    var item = Items[index];
-                    await ScrollToItemAsync(item);
-                }
-            }
-
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
@@ -1454,6 +1443,15 @@ namespace MudBlazor
                         await HighlightItemForValueAsync(ReadValue);
                     }
                 });
+
+                if (_openState.Value && _activeItemId is not null)
+                {
+                    var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+                    if (index > 0)
+                    {
+                        await ScrollToItemAsync(Items[index]);
+                    }
+                }
             }
         }
 
