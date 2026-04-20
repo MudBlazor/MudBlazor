@@ -254,7 +254,7 @@ namespace MudBlazor
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
-            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == MyRegex().Replace(dropItem.DropzoneIdentifier, ""));
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == Regex.Replace(dropItem.DropzoneIdentifier, @"^(Pre_|Post_)", ""));
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
@@ -2943,8 +2943,5 @@ namespace MudBlazor
         }
 
         internal record GroupKey(string? Title, object? ItemsKey);
-
-        [GeneratedRegex(@"^(Pre_|Post_)")]
-        private static partial Regex MyRegex();
     }
 }
