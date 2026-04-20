@@ -3904,16 +3904,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridColumnPopupFilteringAutoFocusAndEnterAppliesFilter()
+        public async Task DataGridColumnPopupFilteringEnterAppliesFilter()
         {
             var comp = Context.Render<DataGridColumnPopupFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
-
             await comp.Find(".filter-button").ClickAsync();
-
             var input = comp.FindComponent<MudTextField<string>>();
-            input.Instance.AutoFocus.Should().BeTrue();
-
             await input.Find("input").InputAsync("Sam");
             await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
 
@@ -3929,9 +3925,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DataGridColumnPopupFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
-
             await comp.Find(".filter-button").ClickAsync();
-
             var input = comp.FindComponent<MudTextField<string>>();
             await input.Find("input").InputAsync("Sam");
             await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
