@@ -11,7 +11,6 @@
      @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
      @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)"
      @onkeydown="TrackKeyboardInteraction">
-    
     @if (GetActivatorHidden())
     {
         @* No content was set so no need to render anything *@
