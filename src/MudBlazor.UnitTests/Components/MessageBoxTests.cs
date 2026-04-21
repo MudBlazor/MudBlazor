@@ -359,10 +359,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MessageBox_Should_RenderReverseButtonOrder()
+        public async Task MessageBox__Should_ReverseButtonOrder_WhenGlobalOptionIsSet()
         {
             var service = Context.Services.GetService<IDialogService>() as DialogService;
-            var provider = Context.Render<MudDialogProvider>();
+            var provider = Context.Render<MudDialogProvider>(builder =>
+            {
+                builder.Add(x => x.ReverseMessageBoxButtonOrder, true);
+            });
 
             Task<bool?> messageBoxTask = null!;
             await provider.InvokeAsync(() =>
@@ -373,89 +376,12 @@ namespace MudBlazor.UnitTests.Components
                     Message = "I'm a pickle. What do you make of that?",
                     YesText = "Yes",
                     NoText = "No",
-                    CancelText = "Cancel",
-                    ReverseButtonOrder = true
+                    CancelText = "Cancel"
                 });
             });
 
             var messageBox = provider.FindComponent<MudMessageBox>();
             messageBox.Instance.IsButtonOrderReversed.Should().Be(true);
-
-            var buttons = provider.FindAll(".mud-dialog-actions button");
-            buttons.Count.Should().Be(3);
-            buttons[0].TrimmedText().Should().Be("Yes");
-            buttons[0].ClassList.Should().Contain("mud-message-box__yes-button");
-            buttons[1].TrimmedText().Should().Be("No");
-            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
-            buttons[2].TrimmedText().Should().Be("Cancel");
-            buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
-
-            await provider.Find(".mud-message-box__yes-button").ClickAsync();
-            (await messageBoxTask).Should().BeTrue();
-        }
-
-        [Test]
-        [TestCase(null, null, false)]
-        [TestCase(null, false, false)]
-        [TestCase(null, true, true)]
-        [TestCase(false, null, false)]
-        [TestCase(false, false, false)]
-        [TestCase(false, true, false)]
-        [TestCase(true, null, true)]
-        [TestCase(true, false, true)]
-        [TestCase(true, true, true)]
-        public async Task MessageBox_IsButtonOrderReversed_Should_UseLocalValueBeforeGlobalOption(
-            bool? reverseButtonOrder,
-            bool? globalReverseButtonOrder,
-            bool expectedReversed)
-        {
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            var provider = Context.Render<MudDialogProvider>(builder =>
-            {
-                builder.Add(x => x.ReverseMessageBoxButtonOrder, globalReverseButtonOrder);
-            });
-
-            Task<bool?> messageBoxTask = null!;
-            await provider.InvokeAsync(() =>
-            {
-                messageBoxTask = service!.ShowMessageBoxAsync(new MessageBoxOptions
-                {
-                    Title = "Boom!",
-                    Message = "I'm a pickle. What do you make of that?",
-                    YesText = "Yes",
-                    NoText = "No",
-                    CancelText = "Cancel",
-                    ReverseButtonOrder = reverseButtonOrder
-                });
-            });
-
-            var messageBox = provider.FindComponent<MudMessageBox>();
-            messageBox.Instance.IsButtonOrderReversed.Should().Be(expectedReversed);
-
-            await provider.Find(".mud-message-box__yes-button").ClickAsync();
-            (await messageBoxTask).Should().BeTrue();
-        }
-
-        [Test]
-        public async Task InlineMessageBox_Should_ReverseButtonOrder()
-        {
-            var provider = Context.Render<MudDialogProvider>();
-
-            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
-                .Add(p => p.ReverseButtonOrder, true)
-                .Add(p => p.YesText, "Yes")
-                .Add(p => p.NoText, "No")
-                .Add(p => p.CancelText, "Cancel")
-            );
-
-            Task<bool?> messageBoxTask = null!;
-            await inlineMessageBox.InvokeAsync(() =>
-            {
-                messageBoxTask = inlineMessageBox.Instance.ShowAsync();
-            });
-
-            var dialogMessageBox = provider.FindComponent<MudMessageBox>();
-            dialogMessageBox.Instance.IsButtonOrderReversed.Should().BeTrue();
 
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();

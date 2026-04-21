@@ -54,14 +54,4 @@ public class MessageBoxOptions
     /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
     /// </remarks>
     public string? CancelText { get; set; }
-
-    /// <summary>
-    /// Reverses the order of the action buttons.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// When <c>false</c>, the standard button order is used for this message box.
-    /// When <c>null</c>, the value is inherited from <see cref="MudDialogProvider.ReverseMessageBoxButtonOrder" />.
-    /// </remarks>
-    public bool? ReverseButtonOrder { get; set; }
 }
