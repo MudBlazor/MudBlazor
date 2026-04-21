@@ -1461,20 +1461,14 @@ namespace MudBlazor.UnitTests.Components
             icons[7].Attributes["d"].Value.Should().Be(@unchecked);
         }
 
-        /// <summary>
-        /// Regression for MudSelect losing a non-empty initial <c>SelectedValues</c> when a custom <c>Comparer</c>
-        /// is supplied. Before the fix, <c>OnComparerChangedAsync</c> pushed an empty snapshot to the parameter state
-        /// during initial parameter processing, invoking <c>SelectedValuesChanged</c> with an empty collection and
-        /// silently overwriting the parent's bound field.
-        /// </summary>
-        [Test]
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
         public async Task MultiSelectWithCustomComparer_InitialSelectionPreservedOnFirstRender()
         {
             var comp = Context.Render<MultiSelectWithCustomComparerInitialSelectionTest>();
 
             // The parent's bound collection must still contain both preselected items.
             comp.Instance._selected.Should().HaveCount(2);
-            comp.Instance._selected.Select(c => c!.Key).Should().BeEquivalentTo(new[] { "lat", "esp" });
+            comp.Instance._selected.Select(c => c!.Key).Should().BeEquivalentTo("lat", "esp");
 
             // The input text reflects the preselected values' names (proves the comparer matched on Key).
             comp.Find("input").GetAttribute("value").Should().Be("Preselected Latte, Preselected Espresso");
@@ -1491,6 +1485,29 @@ namespace MudBlazor.UnitTests.Components
             icons[3].Attributes["d"].Value.Should().Be(@checked);   // Cafe Latte (Key="lat")
             icons[5].Attributes["d"].Value.Should().Be(@checked);   // Espresso   (Key="esp")
             icons[7].Attributes["d"].Value.Should().Be(@unchecked); // Irish Coffee
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
+        public async Task MultiSelectWithCustomComparer_InitialBindPreservedOnFirstRender()
+        {
+            var comp = Context.Render<MultiSelectWithCustomComparerInitialBindTest>();
+
+            // @bind target must still hold ["test1"].
+            comp.Instance.SelectedItems.Should().BeEquivalentTo("test1");
+
+            // Rendered input reflects the preselected value.
+            comp.Find("input").GetAttribute("value").Should().Be("test1");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            const string @unchecked =
+                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            const string @checked =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+            var icons = comp.FindAll("div.mud-list-item path").ToArray();
+            icons[1].Attributes["d"].Value.Should().Be(@checked);   // test1
+            icons[3].Attributes["d"].Value.Should().Be(@unchecked); // test2
+            icons[5].Attributes["d"].Value.Should().Be(@unchecked); // test3
         }
 
         [Test]
