@@ -779,11 +779,15 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
+        private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
         {
-            // Apply comparer and refresh selected values
+            // Rebuild the internal HashSet so future equality checks use the new comparer.
+            // Do NOT push to _selectedValuesState here: during initial parameter processing,
+            // this handler fires before OnSelectedValuesChangedAsync has populated _selectedValues,
+            // so SetValueAsync would publish an empty snapshot and invoke SelectedValuesChanged,
+            // silently overwriting the parent's @bind-SelectedValues binding to empty.
             _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
-            await UpdateSelectedValuesStateAsync(arg.Value);
+            return Task.CompletedTask;
         }
 
         private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
