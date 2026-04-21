@@ -150,7 +150,7 @@ namespace MudBlazor
                 Message = message,
                 YesText = yesText,
                 NoText = noText,
-                CancelText = cancelText
+                CancelText = cancelText,
             }, options);
         }
 
@@ -164,7 +164,7 @@ namespace MudBlazor
                 MarkupMessage = markupMessage,
                 YesText = yesText,
                 NoText = noText,
-                CancelText = cancelText
+                CancelText = cancelText,
             }, options);
         }
 
@@ -178,7 +178,7 @@ namespace MudBlazor
                 [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
                 [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
                 [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
-                [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText
+                [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
             };
             var reference = await ShowAsync<MudMessageBox>(title: messageBoxOptions.Title, parameters: parameters, options: options);
             var result = await reference.Result;

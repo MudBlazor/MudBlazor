@@ -209,7 +209,7 @@ namespace MudBlazor
                 [nameof(NoText)] = NoText,
                 [nameof(NoButton)] = NoButton,
                 [nameof(YesText)] = YesText,
-                [nameof(YesButton)] = YesButton
+                [nameof(YesButton)] = YesButton,
             };
             _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
