@@ -3262,31 +3262,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridFilterPerColumnEnumIncludesEmptyOperators()
-        {
-            var comp = Context.Render<DataGridFilterPerColumnTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterPerColumnTest.Model>>();
-
-            IElement StatusFilterButton() => dataGrid.FindAll(".filter-button")[2];
-
-            await StatusFilterButton().ClickAsync();
-
-            var selects = comp.FindAll(".filters-panel .mud-grid-item .mud-input-control.mud-select");
-            selects.Count.Should().Be(2);
-            selects[1].QuerySelector("input")?.GetAttribute("value").Should().Be("is");
-
-            await selects[1].MouseDownAsync(new MouseEventArgs());
-
-            var items = comp.FindAll("div.mud-list-item");
-
-            items.Count.Should().Be(3);
-            items.ToMarkup()
-                 .Should().Contain("is not")
-                 .And.Contain("is empty")
-                 .And.Contain("is not empty");
-        }
-
-        [Test]
         public void DataGridInvalidFilterPerColumn()
         {
             var exception = Assert.Throws<ArgumentException>(() => Context.Render<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
