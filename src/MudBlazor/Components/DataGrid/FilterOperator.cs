@@ -100,12 +100,12 @@ namespace MudBlazor
             public const string LessThanOrEqual = "<=";
 
             /// <summary>
-            /// Find null values.
+            /// Find rows where the nullable enum column is <c>null</c>.
             /// </summary>
             public const string Empty = "is empty";
 
             /// <summary>
-            /// Find values which are not null.
+            /// Find rows where the nullable enum column is not <c>null</c>.
             /// </summary>
             public const string NotEmpty = "is not empty";
         }
