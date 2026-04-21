@@ -217,16 +217,7 @@ namespace MudBlazor
         {
             get
             {
-                if (DataGrid == null)
-                    return false;
-
-                return DataGrid.FilterDefinitions.Any(x =>
-                    x.Column?.PropertyName == Column?.PropertyName &&
-                    ((x is FilterDefinition<T> filterDefinition && filterDefinition.FilterFunction is not null) ||
-                     x.Value is not null ||
-                     x.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
-                         FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
-                         FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty));
+                return DataGrid?.HasFilter(Column) ?? false;
             }
         }
 

@@ -31,6 +31,7 @@ namespace MudBlazor
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
+        private readonly string _listboxId = Identifier.Create("select-listbox");
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
@@ -498,6 +499,55 @@ namespace MudBlazor
         protected bool IsValueInList => _context.TryGetShadowItemByValue(ReadValue, out _);
 
         /// <summary>
+        /// Builds fallback accessibility attributes for the focused select trigger.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="MudSelect{T}"/> keeps focus on its trigger while the popup is open, so the trigger publishes the combobox relationship to the popup list.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("role", "combobox");
+            attributes.TryAdd("aria-autocomplete", "none");
+            attributes.TryAdd("aria-controls", _listboxId);
+            attributes.TryAdd("aria-expanded", _openState.Value ? "true" : "false");
+            attributes.TryAdd("aria-haspopup", "listbox");
+
+            if (!attributes.ContainsKey("aria-label") && !attributes.ContainsKey("aria-labelledby") && !string.IsNullOrWhiteSpace(Label))
+            {
+                attributes["aria-label"] = Label;
+            }
+
+            if (_openState.Value && _activeItemId is not null)
+            {
+                attributes.TryAdd("aria-activedescendant", _activeItemId);
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
+        /// Builds the attributes applied to the internal popup list.
+        /// </summary>
+        /// <remarks>
+        /// Provides the stable list identifier and list-level semantics owned by <see cref="MudSelect{T}"/>.
+        /// </remarks>
+        private Dictionary<string, object?> GetListUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["id"] = _listboxId
+            };
+
+            if (MultiSelection)
+            {
+                attributes["aria-multiselectable"] = "true";
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
         /// The icon to display whether all, none, or some items are selected.
         /// </summary>
         /// <remarks>
@@ -653,17 +703,6 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
 
-            //Scroll the active item on each opening
-            if (_activeItemId != null)
-            {
-                var index = Items.FindIndex(x => x.ItemId == _activeItemId);
-                if (index > 0)
-                {
-                    var item = Items[index];
-                    await ScrollToItemAsync(item);
-                }
-            }
-
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
@@ -681,7 +720,6 @@ namespace MudBlazor
             if (focusAgain)
             {
                 StateHasChanged();
-                await OnBlur.InvokeAsync(new FocusEventArgs());
                 _elementReference.FocusAsync().CatchAndLog(ignoreExceptions: true);
                 StateHasChanged();
             }
@@ -944,13 +982,17 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnFocusOutAsync()
+        private async Task OnFocusOutAsync(FocusEventArgs args)
         {
             if (_openState.Value)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
                 await FocusAsync();
+            }
+            else
+            {
+                await OnBlurredAsync(args);
             }
         }
 
@@ -1313,7 +1355,7 @@ namespace MudBlazor
 
         internal Task OnBlurAsync(FocusEventArgs obj)
         {
-            return base.OnBlur.InvokeAsync(obj);
+            return OnBlurredAsync(obj);
         }
 
         protected override void OnInitialized()
@@ -1404,6 +1446,15 @@ namespace MudBlazor
                         await HighlightItemForValueAsync(ReadValue);
                     }
                 });
+
+                if (_openState.Value && _activeItemId is not null)
+                {
+                    var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+                    if (index > 0)
+                    {
+                        await ScrollToItemAsync(Items[index]);
+                    }
+                }
             }
         }
 

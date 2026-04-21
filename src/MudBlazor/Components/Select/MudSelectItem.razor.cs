@@ -21,6 +21,25 @@ namespace MudBlazor
 
         internal string ItemId { get; } = Identifier.Create();
 
+        /// <summary>
+        /// Builds fallback accessibility attributes for the rendered option element.
+        /// </summary>
+        /// <remarks>
+        /// Option semantics come from this item's selection state rather than the popup's temporary active item.
+        /// </remarks>
+        private Dictionary<string, object?> GetUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("aria-selected", Selected ? "true" : "false");
+
+            if (Disabled)
+            {
+                attributes.TryAdd("aria-disabled", "true");
+            }
+
+            return attributes;
+        }
+
         public MudSelectItem()
         {
             using var registerScope = CreateRegisterScope();
