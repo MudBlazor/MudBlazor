@@ -3273,7 +3273,7 @@ namespace MudBlazor.UnitTests.Components
 
             var selects = comp.FindAll(".filters-panel .mud-grid-item .mud-input-control.mud-select");
             selects.Count.Should().Be(2);
-            selects[1].TextContent.Should().Contain("is");
+            selects[1].QuerySelector("input")?.GetAttribute("value").Should().Be("is");
 
             await selects[1].MouseDownAsync(new MouseEventArgs());
 
