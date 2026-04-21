@@ -3273,15 +3273,15 @@ namespace MudBlazor.UnitTests.Components
 
             var selects = comp.FindAll(".filters-panel .mud-grid-item .mud-input-control.mud-select");
             selects.Count.Should().Be(2);
+            selects[1].TextContent.Should().Contain("is");
 
             await selects[1].MouseDownAsync(new MouseEventArgs());
 
             var items = comp.FindAll("div.mud-list-item");
 
-            items.Count.Should().Be(4);
+            items.Count.Should().Be(3);
             items.ToMarkup()
-                 .Should().Contain("is")
-                 .And.Contain("is not")
+                 .Should().Contain("is not")
                  .And.Contain("is empty")
                  .And.Contain("is not empty");
         }
