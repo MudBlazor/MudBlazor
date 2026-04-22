@@ -30,9 +30,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: triage-db.json
-          key: autotriage-db-${{ github.run_id }}
+          key: ${{ runner.os }}-triage-db-${{ github.run_id }}
           restore-keys: |
-            autotriage-db-
+            ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage pull request
         uses: danielchalmers/AutoTriage@v3
