@@ -359,7 +359,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MessageBox_Should_ReverseButtonOrder_WhenGlobalOptionIsSet()
+        public async Task MessageBox_Should_RenderReverseButtonOrder_WhenGlobalOptionIsSet()
         {
             var service = Context.Services.GetService<IDialogService>() as DialogService;
             var provider = Context.Render<MudDialogProvider>(builder =>
@@ -380,15 +380,24 @@ namespace MudBlazor.UnitTests.Components
                 });
             });
 
-            var messageBox = provider.FindComponent<MudMessageBox>();
-            messageBox.Instance.IsButtonOrderReversed.Should().BeTrue();
+            var dialogMessageBox = provider.FindComponent<MudMessageBox>();
+            dialogMessageBox.Instance.IsButtonOrderReversed.Should().BeTrue();
+
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].TrimmedText().Should().Be("Yes");
+            buttons[0].ClassList.Should().Contain("mud-message-box__yes-button");
+            buttons[1].TrimmedText().Should().Be("No");
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Cancel");
+            buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
 
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();
         }
 
         [Test]
-        public async Task InlineMessageBox_ShouldNot_ReverseButtonOrder()
+        public async Task InlineMessageBox_ShouldNot_RenderReverseButtonOrder()
         {
             var provider = Context.Render<MudDialogProvider>();
 
@@ -406,6 +415,15 @@ namespace MudBlazor.UnitTests.Components
 
             var dialogMessageBox = provider.FindComponent<MudMessageBox>();
             dialogMessageBox.Instance.IsButtonOrderReversed.Should().BeFalse();
+
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].TrimmedText().Should().Be("Cancel");
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("No");
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Yes");
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();
