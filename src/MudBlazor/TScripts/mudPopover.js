@@ -1517,6 +1517,7 @@ class MudPopover {
                 this.contentObserver.disconnect();
                 this.contentObserver = null;
             }
+            this.currentMainProvider = null;
 
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect();
