@@ -958,10 +958,34 @@ class MudPopover {
     /**
      * Repositions one popover if its anchor is still available.
      */
-    repositionPopover(id) {
+    repositionPopover(id, visitedIds = new Set()) {
+        if (visitedIds.has(id)) {
+            return;
+        }
+
+        visitedIds.add(id);
+
         const popoverNode = document.getElementById('popover-' + id);
         if (popoverNode) {
             window.mudpopoverHelper.placePopover(popoverNode);
+        }
+
+        const popoverContentNode = this.map[id]?.popoverContentNode;
+        if (!popoverContentNode) {
+            return;
+        }
+
+        for (const childId of Object.keys(this.map)) {
+            if (childId === id) {
+                continue;
+            }
+
+            const childItem = this.map[childId];
+            if (!childItem?.isOpened || !childItem.anchorNode || !popoverContentNode.contains(childItem.anchorNode)) {
+                continue;
+            }
+
+            this.repositionPopover(childId, visitedIds);
         }
     }
 
