@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCase(128, 99, "99+")]
-        [TestCase(128, 999, "100")]
+        [TestCase(128, 999, "128")]
         public void TabPanelBadgeMaxControlsIntegerBadgeData(int badgeData, int badgeMax, string expectedBadgeText)
         {
             var comp = Context.Render<MudTabs>(parameters => parameters
