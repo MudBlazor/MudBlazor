@@ -545,6 +545,37 @@ namespace MudBlazor.UnitTests.Components
             textfield.ReadValue.Should().Be("B\nC");
         }
 
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task MultilineTextField_Should_InvokeUserOnPasteHandler(bool useAutoSizing)
+        {
+            var pasteCount = 0;
+            var onPaste = new EventCallbackFactory().Create<ClipboardEventArgs>(this, () => pasteCount++);
+
+            var comp = Context.Render<PasteTrackingMudInput>(parameters =>
+            {
+                parameters
+                    .Add(p => p.UserAttributes!, new Dictionary<string, object?> { ["onpaste"] = onPaste });
+
+                if (useAutoSizing)
+                {
+                    parameters
+                        .Add(p => p.Sizing, InputSizing.Auto)
+                        .Add(p => p.MaxLines, 5);
+                }
+                else
+                {
+                    parameters.Add(p => p.Lines, 2);
+                }
+            });
+
+            await comp.Find("textarea").PasteAsync(new ClipboardEventArgs { Type = "paste" });
+
+            pasteCount.Should().Be(1);
+            comp.Instance.InternalPasteCount.Should().Be(1);
+        }
+
         /// <summary>
         /// <para>This is based on a bug reported by a user</para>
         /// <para>After editing the second (multi-line) tf it would not accept any updates from the first tf.</para>
@@ -1996,6 +2027,17 @@ namespace MudBlazor.UnitTests.Components
             var textField = Context.Render<MudTextField<string>>().Instance;
             await textField.InsertTextAtCurrentCaretPositionAsync("test");
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudInput.insertAtCurrentCaretPosition", It.IsAny<object[]>()), Times.Exactly(1));
+        }
+
+        private sealed class PasteTrackingMudInput : MudInput<string>
+        {
+            public int InternalPasteCount { get; private set; }
+
+            protected override Task OnPaste(ClipboardEventArgs args)
+            {
+                InternalPasteCount++;
+                return Task.CompletedTask;
+            }
         }
     }
 }

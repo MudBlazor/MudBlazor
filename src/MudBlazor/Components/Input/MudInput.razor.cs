@@ -178,6 +178,21 @@ namespace MudBlazor
         /// </summary>
         private bool ShouldUseTextArea => Sizing != InputSizing.Fixed || Lines > 1;
 
+        private Dictionary<string, object?> InputUserAttributes
+        {
+            get
+            {
+                if (!TryGetUserOnPasteHandler(out _))
+                {
+                    return UserAttributes;
+                }
+
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+                attributes.Remove("onpaste");
+                return attributes;
+            }
+        }
+
         private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
 
         protected async Task OnInput(string? args)
@@ -201,6 +216,55 @@ namespace MudBlazor
         protected virtual Task OnPaste(ClipboardEventArgs args)
         {
             return Task.CompletedTask;
+        }
+
+        private async Task OnPasteAsync(ClipboardEventArgs args)
+        {
+            await OnPaste(args);
+
+            if (!TryGetUserOnPasteHandler(out var handler))
+            {
+                return;
+            }
+
+            switch (handler)
+            {
+                case EventCallback<ClipboardEventArgs> callback:
+                    await callback.InvokeAsync(args);
+                    break;
+                case EventCallback callback:
+                    await callback.InvokeAsync(args);
+                    break;
+                case Func<ClipboardEventArgs, Task> func:
+                    await func(args);
+                    break;
+                case Func<ClipboardEventArgs, ValueTask> func:
+                    await func(args);
+                    break;
+                case Action<ClipboardEventArgs> action:
+                    action(args);
+                    break;
+                case Func<Task> func:
+                    await func();
+                    break;
+                case Func<ValueTask> func:
+                    await func();
+                    break;
+                case Action action:
+                    action();
+                    break;
+            }
+        }
+
+        private bool TryGetUserOnPasteHandler([NotNullWhen(true)] out object? handler)
+        {
+            if (UserAttributes.TryGetValue("onpaste", out handler) && handler is EventCallback<ClipboardEventArgs> or EventCallback or Func<ClipboardEventArgs, Task> or Func<ClipboardEventArgs, ValueTask> or Action<ClipboardEventArgs> or Func<Task> or Func<ValueTask> or Action)
+            {
+                return true;
+            }
+
+            handler = null;
+            return false;
         }
 
         /// <inheritdoc />
