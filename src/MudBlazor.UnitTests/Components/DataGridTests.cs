@@ -2077,6 +2077,40 @@ namespace MudBlazor.UnitTests.Components
 
             #endregion
 
+            #region FilterOperator.Enum.Empty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.Empty
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.NotEmpty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.NotEmpty
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+
+            #endregion
+
             // null operator
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -3901,6 +3935,41 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringEnterAppliesFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            await comp.Find(".filter-button").ClickAsync();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await input.Find("input").InputAsync("Sam");
+            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+                dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringEscapeClearsFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            await comp.Find(".filter-button").ClickAsync();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await input.Find("input").InputAsync("Sam");
+            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().BeEmpty();
+                dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            });
         }
 
         [Test]

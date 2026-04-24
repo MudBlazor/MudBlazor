@@ -30,10 +30,10 @@
                            InputClass="file-upload-input"
                            ErrorText="@string.Empty"
                            tabindex="-1"
-                           @ondrop="@ClearDragClass"
-                           @ondragenter="@SetDragClass"
-                           @ondragleave="@ClearDragClass"
-                           @ondragend="@ClearDragClass">
+                           OnDrop="@(_ => ClearDragClass())"
+                           OnDragEnter="@(_ => SetDragClass())"
+                           OnDragLeave="@(_ => ClearDragClass())"
+                           OnDragEnd="@(_ => ClearDragClass())">
                 <CustomContent>
                     <MudPaper Height="300px"
                               Outlined="true"

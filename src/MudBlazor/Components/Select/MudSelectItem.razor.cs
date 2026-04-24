@@ -49,6 +49,10 @@ namespace MudBlazor
             registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
                 .WithParameter(() => IMudShadowSelect)
                 .WithChangeHandler(OnMudShadowSelectChanged);
+            registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnValueChanged)
+                .WithComparer(() => (_context ?? _shadowContext)?.Comparer ?? EqualityComparer<T?>.Default);
         }
 
         /// <summary>
@@ -229,6 +233,20 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Handles changes to the <see cref="Value"/> parameter.
+        /// </summary>
+        /// <remarks>
+        /// When the parent swaps the underlying data collection while Blazor reuses the same component instances
+        /// (e.g. a keyless <c>@foreach</c> binding new items to existing <see cref="MudSelectItem{T}"/> positions),
+        /// the value-keyed lookups in <see cref="MudSelectContext{T}"/> must be updated to avoid stale keys.
+        /// </remarks>
+        private void OnValueChanged(ParameterChangedEventArgs<T?> args)
+        {
+            _context?.OnItemValueChanged(this, args.LastValue, args.Value);
+            _shadowContext?.OnShadowItemValueChanged(this, args.LastValue, args.Value);
         }
 
         /// <summary>

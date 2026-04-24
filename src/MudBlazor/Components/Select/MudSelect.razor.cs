@@ -703,17 +703,6 @@ namespace MudBlazor
             UpdateIcon();
             StateHasChanged();
 
-            //Scroll the active item on each opening
-            if (_activeItemId != null)
-            {
-                var index = Items.FindIndex(x => x.ItemId == _activeItemId);
-                if (index > 0)
-                {
-                    var item = Items[index];
-                    await ScrollToItemAsync(item);
-                }
-            }
-
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
@@ -731,7 +720,6 @@ namespace MudBlazor
             if (focusAgain)
             {
                 StateHasChanged();
-                await OnBlur.InvokeAsync(new FocusEventArgs());
                 _elementReference.FocusAsync().CatchAndLog(ignoreExceptions: true);
                 StateHasChanged();
             }
@@ -791,11 +779,15 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
+        private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
         {
-            // Apply comparer and refresh selected values
+            // Rebuild the internal HashSet so future equality checks use the new comparer.
+            // Do NOT push to _selectedValuesState here: during initial parameter processing,
+            // this handler fires before OnSelectedValuesChangedAsync has populated _selectedValues,
+            // so SetValueAsync would publish an empty snapshot and invoke SelectedValuesChanged,
+            // silently overwriting the parent's @bind-SelectedValues binding to empty.
             _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
-            await UpdateSelectedValuesStateAsync(arg.Value);
+            return Task.CompletedTask;
         }
 
         private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
@@ -994,13 +986,17 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnFocusOutAsync()
+        private async Task OnFocusOutAsync(FocusEventArgs args)
         {
             if (_openState.Value)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
                 await FocusAsync();
+            }
+            else
+            {
+                await OnBlurredAsync(args);
             }
         }
 
@@ -1363,7 +1359,7 @@ namespace MudBlazor
 
         internal Task OnBlurAsync(FocusEventArgs obj)
         {
-            return base.OnBlur.InvokeAsync(obj);
+            return OnBlurredAsync(obj);
         }
 
         protected override void OnInitialized()
@@ -1454,6 +1450,15 @@ namespace MudBlazor
                         await HighlightItemForValueAsync(ReadValue);
                     }
                 });
+
+                if (_openState.Value && _activeItemId is not null)
+                {
+                    var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+                    if (index > 0)
+                    {
+                        await ScrollToItemAsync(Items[index]);
+                    }
+                }
             }
         }
 

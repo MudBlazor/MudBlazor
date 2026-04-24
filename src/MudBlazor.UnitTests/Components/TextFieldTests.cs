@@ -1238,6 +1238,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task InputBlurBridgeShouldNotProcessBlurTwiceWhenNativeBlurRunsFirst()
+        {
+            var blurCount = 0;
+            var comp = Context.Render<MudInput<string>>(parameters => parameters
+                .Add(p => p.Immediate, true)
+                .Add(p => p.OnBlur, _ => blurCount++));
+
+            await comp.Find("input").InputAsync("abc");
+            await comp.Find("input").BlurAsync();
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            blurCount.Should().Be(1);
+        }
+
+        [Test]
         public async Task OnKeyDownErrorContentCaughtException()
         {
             var comp = Context.Render<TextFieldErrorContenCaughtException>();
