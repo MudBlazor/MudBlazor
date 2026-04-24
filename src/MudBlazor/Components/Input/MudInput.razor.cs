@@ -14,7 +14,7 @@ namespace MudBlazor
     {
         private string? _internalText;
         private string? _oldText = null;
-        private Dictionary<string, object?> _inputUserAttributes = new(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, object?> _inputUserAttributes = null!;
         private bool _shouldInitSizing;
         private bool _shouldUpdateSizingParams;
         private bool _shouldAdjustSizingAfterRender;
@@ -189,15 +189,15 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            _userOnPasteHandler = null;
-            _inputUserAttributes = UserAttributes;
-
-            if (UserAttributes.TryGetValue("onpaste", out var handler) && IsSupportedUserOnPasteHandler(handler))
+            if (UserAttributes.TryGetValue("onpaste", out var handler) && TryGetUserOnPasteHandler(handler, out _userOnPasteHandler))
             {
-                _userOnPasteHandler = handler;
                 _inputUserAttributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
                 _inputUserAttributes.Remove("onpaste");
+                return;
             }
+
+            _userOnPasteHandler = null;
+            _inputUserAttributes = UserAttributes;
         }
 
         protected async Task OnInput(string? args)
@@ -235,16 +235,18 @@ namespace MudBlazor
             await InvokeUserOnPasteHandlerAsync(_userOnPasteHandler, args);
         }
 
-        private static bool IsSupportedUserOnPasteHandler([NotNullWhen(true)] object? handler)
+        private static bool TryGetUserOnPasteHandler(object? handler, [NotNullWhen(true)] out object? pasteHandler)
         {
-            return handler is EventCallback<ClipboardEventArgs>
-                or EventCallback
-                or Func<ClipboardEventArgs, Task>
-                or Func<ClipboardEventArgs, ValueTask>
-                or Action<ClipboardEventArgs>
-                or Func<Task>
-                or Func<ValueTask>
-                or Action;
+            switch (handler)
+            {
+                case EventCallback<ClipboardEventArgs>:
+                case EventCallback:
+                    pasteHandler = handler;
+                    return true;
+                default:
+                    pasteHandler = null;
+                    return false;
+            }
         }
 
         private static async Task InvokeUserOnPasteHandlerAsync(object handler, ClipboardEventArgs args)
@@ -256,24 +258,6 @@ namespace MudBlazor
                     break;
                 case EventCallback callback:
                     await callback.InvokeAsync(args);
-                    break;
-                case Func<ClipboardEventArgs, Task> func:
-                    await func(args);
-                    break;
-                case Func<ClipboardEventArgs, ValueTask> func:
-                    await func(args);
-                    break;
-                case Action<ClipboardEventArgs> action:
-                    action(args);
-                    break;
-                case Func<Task> func:
-                    await func();
-                    break;
-                case Func<ValueTask> func:
-                    await func();
-                    break;
-                case Action action:
-                    action();
                     break;
             }
         }
