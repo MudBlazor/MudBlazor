@@ -14,9 +14,11 @@ namespace MudBlazor
     {
         private string? _internalText;
         private string? _oldText = null;
+        private Dictionary<string, object?> _inputUserAttributes = new(StringComparer.OrdinalIgnoreCase);
         private bool _shouldInitSizing;
         private bool _shouldUpdateSizingParams;
         private bool _shouldAdjustSizingAfterRender;
+        private object? _userOnPasteHandler;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -178,22 +180,25 @@ namespace MudBlazor
         /// </summary>
         private bool ShouldUseTextArea => Sizing != InputSizing.Fixed || Lines > 1;
 
-        private Dictionary<string, object?> InputUserAttributes
-        {
-            get
-            {
-                if (!TryGetUserOnPasteHandler(out _))
-                {
-                    return UserAttributes;
-                }
-
-                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
-                attributes.Remove("onpaste");
-                return attributes;
-            }
-        }
+        private Dictionary<string, object?> InputUserAttributes => _inputUserAttributes;
 
         private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
+
+        /// <inheritdoc />
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            _userOnPasteHandler = null;
+            _inputUserAttributes = UserAttributes;
+
+            if (UserAttributes.TryGetValue("onpaste", out var handler) && IsSupportedUserOnPasteHandler(handler))
+            {
+                _userOnPasteHandler = handler;
+                _inputUserAttributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+                _inputUserAttributes.Remove("onpaste");
+            }
+        }
 
         protected async Task OnInput(string? args)
         {
@@ -222,11 +227,28 @@ namespace MudBlazor
         {
             await OnPaste(args);
 
-            if (!TryGetUserOnPasteHandler(out var handler))
+            if (_userOnPasteHandler is null)
             {
                 return;
             }
 
+            await InvokeUserOnPasteHandlerAsync(_userOnPasteHandler, args);
+        }
+
+        private static bool IsSupportedUserOnPasteHandler([NotNullWhen(true)] object? handler)
+        {
+            return handler is EventCallback<ClipboardEventArgs>
+                or EventCallback
+                or Func<ClipboardEventArgs, Task>
+                or Func<ClipboardEventArgs, ValueTask>
+                or Action<ClipboardEventArgs>
+                or Func<Task>
+                or Func<ValueTask>
+                or Action;
+        }
+
+        private static async Task InvokeUserOnPasteHandlerAsync(object handler, ClipboardEventArgs args)
+        {
             switch (handler)
             {
                 case EventCallback<ClipboardEventArgs> callback:
@@ -254,17 +276,6 @@ namespace MudBlazor
                     action();
                     break;
             }
-        }
-
-        private bool TryGetUserOnPasteHandler([NotNullWhen(true)] out object? handler)
-        {
-            if (UserAttributes.TryGetValue("onpaste", out handler) && handler is EventCallback<ClipboardEventArgs> or EventCallback or Func<ClipboardEventArgs, Task> or Func<ClipboardEventArgs, ValueTask> or Action<ClipboardEventArgs> or Func<Task> or Func<ValueTask> or Action)
-            {
-                return true;
-            }
-
-            handler = null;
-            return false;
         }
 
         /// <inheritdoc />
