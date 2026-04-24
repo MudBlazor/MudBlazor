@@ -14,7 +14,7 @@ namespace MudBlazor
     {
         private string? _internalText;
         private string? _oldText = null;
-        private Dictionary<string, object?> _inputUserAttributes = null!;
+        private Dictionary<string, object?> _inputUserAttributes = new(StringComparer.OrdinalIgnoreCase);
         private bool _shouldInitSizing;
         private bool _shouldUpdateSizingParams;
         private bool _shouldAdjustSizingAfterRender;
@@ -235,6 +235,12 @@ namespace MudBlazor
             await InvokeUserOnPasteHandlerAsync(_userOnPasteHandler, args);
         }
 
+        /// <summary>
+        /// Determines whether a user-supplied <c>onpaste</c> attribute is a supported Blazor event callback.
+        /// </summary>
+        /// <param name="handler">The unmatched attribute value.</param>
+        /// <param name="pasteHandler">The extracted paste handler when supported.</param>
+        /// <returns><c>true</c> when the value is a supported paste callback; otherwise, <c>false</c>.</returns>
         private static bool TryGetUserOnPasteHandler(object? handler, [NotNullWhen(true)] out object? pasteHandler)
         {
             switch (handler)
@@ -249,6 +255,11 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Invokes a supported user-supplied <c>onpaste</c> callback.
+        /// </summary>
+        /// <param name="handler">The user-supplied paste callback.</param>
+        /// <param name="args">The clipboard event arguments for the paste operation.</param>
         private static async Task InvokeUserOnPasteHandlerAsync(object handler, ClipboardEventArgs args)
         {
             switch (handler)
