@@ -87,14 +87,7 @@ else if (Column != null && !Column.HiddenState.Value)
             <span class="@OptionsClass">
                 @if (sortable)
                 {
-                    if (SortDirection == SortDirection.None)
-                    {
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
-                    }
-                    else
-                    {
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
-                    }
+                    <MudIconButton Icon="@DataGrid.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
 
                     if (DataGrid.SortMode == SortMode.Multiple)
                     {
@@ -123,7 +116,7 @@ else if (Column != null && !Column.HiddenState.Value)
 
                 @if (showColumnOptions)
                 {
-                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
+                    <MudMenu Icon="@DataGrid.ColumnOptionsIcon" Size="Size.Small" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
                         <MudMenuItem Disabled="@(SortDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer[LanguageResource.MudDataGrid_Unsort]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {

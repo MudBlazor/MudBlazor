@@ -44,8 +44,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: autotriage-backlog
-  cancel-in-progress: true
+  group: autotriage-db
+  cancel-in-progress: false
 
 jobs:
   triage:

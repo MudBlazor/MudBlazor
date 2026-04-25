@@ -138,7 +138,7 @@
                                                                 <MudSpacer />
 
                                                                 <div>
-                                                                    <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context.HeaderCell.SortChangedAsync(e))"></MudIconButton>
                                                                     @if (context.DataGrid.SortMode == SortMode.Multiple)
                                                                     {
                                                                         if (context.SortIndex < 0)
@@ -301,7 +301,7 @@
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" />
+                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" Format="@column.ContentFormat" />
                             }
                         }
                     }
@@ -389,7 +389,8 @@
                                               ValueChanged="@cell.NumberValueChangedAsync"
                                               Margin="@Margin.Dense" Style="margin-top:0"
                                               Required="@column.Required"
-                                              Variant="@Variant.Text" Culture="@column.Culture" />
+                                              Variant="@Variant.Text" Culture="@column.Culture"
+                                              Format="@column.ContentFormat" />
                          }
                      }
                  }
@@ -536,12 +537,12 @@
                         @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                          Immediate="true" Class="filter-input"/>
+                                          Immediate="true" Class="filter-input" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                         else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                             Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
+                                             Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                         else if (fieldType.IsEnum)
                         {
@@ -581,7 +582,7 @@
                         else if (fieldType.IsGuid)
                         {
                             <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                          Immediate="true" Class="filter-input"/>
+                                          Immediate="true" Class="filter-input" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                     </MudItem>
                 </MudGrid>

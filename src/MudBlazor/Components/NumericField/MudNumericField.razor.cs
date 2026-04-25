@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -27,8 +28,10 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
+        private bool _cultureParameterSpecified;
         private MudInput<string> _elementReference = null!;
         private readonly string _elementId = Identifier.Create("numericField");
+        private const string DefaultKeyFilterPattern = @"[0-9,.\-]";
 
         private readonly Comparer<T> _comparer = Comparer<T>.Default;
 
@@ -130,17 +133,46 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
+        private Dictionary<string, object?> InputAttributes
+        {
+            get
+            {
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+                {
+                    ["role"] = "spinbutton"
+                };
 
-        // Defensive null check with object pattern: GetCulture() is annotated as non-null, but DataGrid may return null in certain cases.
-        // In typical scenarios it is not null, as MudFormComponent sets a default culture and other components do not override it with null.
-        // The annotation could be changed in the future, but doing so would introduce unnecessary null checks in other components.
-        private bool IsFormatted =>
+                if (TryFormatAriaValue(ReadValue, out var ariaValueNow))
+                {
+                    attributes["aria-valuenow"] = ariaValueNow;
+                }
+
+                if (_minHasValue && TryFormatAriaValue(_min, out var ariaValueMin))
+                {
+                    attributes["aria-valuemin"] = ariaValueMin;
+                }
+
+                if (_maxHasValue && TryFormatAriaValue(_max, out var ariaValueMax))
+                {
+                    attributes["aria-valuemax"] = ariaValueMax;
+                }
+
+                if (!string.IsNullOrWhiteSpace(ReadText) &&
+                    (!attributes.TryGetValue("aria-valuenow", out var currentAriaValue) || !string.Equals(ReadText, currentAriaValue?.ToString(), StringComparison.Ordinal)))
+                {
+                    attributes["aria-valuetext"] = ReadText;
+                }
+
+                return attributes;
+            }
+        }
+
+        private bool UsesManagedFormatting =>
             Pattern is not null ||
             GetFormat() is not null ||
-            // Edgy way to check if the MudComponentForm.Culture is provided explicitly and is a different one than the default CurrentUICulture && InvariantCulture.
-            // If not, then we override to InvariantCulture to avoid issues with <input type="number">.
-            (GetCulture() is { } culture && !culture.Equals(CultureInfo.CurrentUICulture) && !culture.Equals(CultureInfo.InvariantCulture));
+            _cultureParameterSpecified;
+
+        private string EffectiveKeyFilterPattern => (Pattern ?? DefaultKeyFilterPattern).TrimEnd('*');
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
@@ -199,7 +231,7 @@ namespace MudBlazor
 
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debounce period has elapsed
 
-            if (IsFormatted && DebounceInterval <= 0 && !ConversionError)
+            if (UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
             {
                 await _elementReference.SetText(ReadText, updateValue: false);
             }
@@ -317,13 +349,9 @@ namespace MudBlazor
                     new("ArrowDown", preventDown: "key+none"),
                      // prevent dead keys like ^ ` ´ etc
                     new("Dead", preventDown: "key+any"),
+                    // keep the default numeric input constrained even though the field now renders as type="text"
+                    new($"/^(?!{EffectiveKeyFilterPattern}).$/", preventDown: "key+none|key+shift|key+alt"),
                 };
-
-                if (Pattern != null)
-                {
-                    //prevent inputs that do not match the pattern
-                    keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
-                }
 
                 var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
@@ -340,10 +368,8 @@ namespace MudBlazor
                 return;
             }
 
-            // Overrides the browser's culture since <input type="number"> does not consider culture.
-            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
-            // with the corresponding attributes applied.
-            if (!IsFormatted)
+            // Numeric fields default to an invariant text representation unless Culture, Pattern, or Format is supplied explicitly.
+            if (!UsesManagedFormatting)
             {
                 await SetCultureAsync(CultureInfo.InvariantCulture);
             }
@@ -492,7 +518,7 @@ namespace MudBlazor
 
             // Keep formatted text in sync when using formatted input mode.
             // This also covers onchange updates that can occur around blur timing.
-            if (IsFormatted && DebounceInterval <= 0 && !ConversionError)
+            if (UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
             {
                 var formattedText = ConvertSet(ReadValue);
                 if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))
@@ -519,6 +545,19 @@ namespace MudBlazor
         private static long FromInt64(T? v) => Convert.ToInt64((long?)(object?)v);
 
         private static ulong FromUInt64(T? v) => Convert.ToUInt64((ulong?)(object?)v);
+
+        private static bool TryFormatAriaValue(T? value, [NotNullWhen(true)] out string? ariaValue)
+        {
+            ariaValue = FormatParam(value);
+            return !string.IsNullOrWhiteSpace(ariaValue);
+        }
+
+        /// <inheritdoc />
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            _cultureParameterSpecified = parameters.Contains<CultureInfo>(nameof(Culture));
+            await base.SetParametersAsync(parameters);
+        }
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

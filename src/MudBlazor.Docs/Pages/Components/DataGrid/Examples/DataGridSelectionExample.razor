@@ -6,7 +6,7 @@
 
 <MudDataGrid T="Element" Items="@Elements.Take(10)" MultiSelection="true" SelectedItemsChanged="@SelectedItemsChanged">
     <Columns>
-        <SelectColumn DisabledFunc="@(item => item.Number % 5 == 0)" />
+        <SelectColumn DisabledFunc="@(item => item.Number % 5 == 0)" AriaLabelFunc="@(item => $"Select {item.Name}")" />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />

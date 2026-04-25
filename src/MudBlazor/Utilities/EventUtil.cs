@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
@@ -84,7 +85,14 @@ public static class EventUtil
             }
             catch (Exception ex)
             {
-                await RenderHandle(component).DispatchExceptionAsync(ex);
+                try
+                {
+                    await RenderHandle(component).DispatchExceptionAsync(ex);
+                }
+                catch
+                {
+                    ExceptionDispatchInfo.Capture(ex).Throw();
+                }
             }
         }
     }

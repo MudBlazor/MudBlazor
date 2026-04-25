@@ -314,8 +314,13 @@ namespace MudBlazor
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        [Obsolete("Column-level sort icon customization is no longer supported. Configure MudDataGrid.SortIcon or use HeaderTemplate for full header customization.", true)]
+        public string? SortIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -642,9 +647,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
             _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
                 .WithParameter(() => GroupExpanded)
+                .WithEventCallback(() => GroupExpandedChanged)
                 .WithChangeHandler(OnGroupExpandedChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
+                .WithEventCallback(() => GroupByOrderChanged)
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 

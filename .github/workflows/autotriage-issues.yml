@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: autotriage-db
+  cancel-in-progress: false
+
 jobs:
   triage_issue:
     if: ${{ github.repository_owner == 'MudBlazor' }}
@@ -20,6 +24,15 @@ jobs:
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
 
       - uses: actions/checkout@v6
+
+      - name: Cache triage DB
+        id: cache-db
+        uses: actions/cache@v5
+        with:
+          path: triage-db.json
+          key: ${{ runner.os }}-triage-db-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage issue
         uses: danielchalmers/AutoTriage@v3

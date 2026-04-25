@@ -2077,6 +2077,40 @@ namespace MudBlazor.UnitTests.Components
 
             #endregion
 
+            #region FilterOperator.Enum.Empty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.Empty
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.NotEmpty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.NotEmpty
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+
+            #endregion
+
             // null operator
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -3904,6 +3938,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnPopupFilteringEnterAppliesFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            await comp.Find(".filter-button").ClickAsync();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await input.Find("input").InputAsync("Sam");
+            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+                dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringEscapeClearsFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            await comp.Find(".filter-button").ClickAsync();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await input.Find("input").InputAsync("Sam");
+            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().BeEmpty();
+                dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            });
+        }
+
+        [Test]
         public void DataGridColumnShowFilterIcons()
         {
             var comp = Context.Render<DataGridColumnShowFilterIconsTest>();
@@ -4959,6 +5028,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridPropertyColumnFormat_IsAppliedToBuiltInNumericEditorInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEditFormatTest>();
+
+            comp.FindAll("td input")[1].GetAttribute("value").Should().Be("4.00");
+            comp.FindAll("td input")[3].GetAttribute("value").Should().Be("6.94");
+            comp.FindAll("td input")[5].GetAttribute("value").Should().Be("9.01");
+        }
+
+        [Test]
+        public async Task DataGridPropertyColumnFormat_IsAppliedToBuiltInNumericEditorInFormEditMode()
+        {
+            var comp = Context.Render<DataGridEditFormatTest>(parameters => parameters
+                .Add(x => x.EditMode, DataGridEditMode.Form));
+
+            await comp.FindAll("tbody tr")[1].ClickAsync();
+
+            comp.FindAll("div input")[1].GetAttribute("value").Should().Be("6.94");
+        }
+
+        [Test]
         public async Task DataGridFilteredItemsCache()
         {
             var comp = Context.Render<DataGridSortableTest>();
@@ -5237,6 +5327,180 @@ namespace MudBlazor.UnitTests.Components
 
             selectAllCheckboxes[0].Instance.ReadValue.Should().BeFalse();
             selectAllCheckboxes[1].Instance.ReadValue.Should().BeFalse();
+        }
+
+        [Test]
+        [SetCulture("")]
+        [SetUICulture("")]
+        public void SelectColumn_DefaultAriaLabels_AreApplied()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.ShowInFooter), true);
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var headerCheckbox = comp.Find("thead .mud-checkbox input");
+            headerCheckbox.GetAttribute("aria-label").Should().Be("Select all rows");
+
+            var footerCheckbox = comp.Find("tfoot .mud-checkbox input");
+            footerCheckbox.GetAttribute("aria-label").Should().Be("Select all rows");
+
+            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
+            var firstRowLabelId = rowCheckboxes[0].GetAttribute("aria-labelledby");
+            var secondRowLabelId = rowCheckboxes[1].GetAttribute("aria-labelledby");
+            comp.Find($"#{firstRowLabelId}").TextContent.Should().Be("Select row");
+            comp.Find($"#{secondRowLabelId}").TextContent.Should().Be("Select row");
+            rowCheckboxes[0].HasAttribute("aria-label").Should().BeFalse();
+            rowCheckboxes[1].HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        [Test]
+        public void DataGrid_WithoutSelectColumn_DoesNotRenderAriaSelected()
+        {
+            var items = new List<int> { 1, 2 };
+
+            var comp = Context.Render<MudDataGrid<int>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<int, int>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
+                    builder.CloseComponent();
+                }));
+
+            var rows = comp.FindAll("tbody tr");
+            rows[0].HasAttribute("aria-selected").Should().BeFalse();
+            rows[1].HasAttribute("aria-selected").Should().BeFalse();
+        }
+
+        [Test]
+        public async Task SelectColumn_SetsAriaSelectedOnRows()
+        {
+            var items = new List<int> { 1, 2 };
+
+            var comp = Context.Render<MudDataGrid<int>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<int>>(0);
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<int, int>>(1);
+                    builder.AddAttribute(2, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
+                    builder.CloseComponent();
+                }));
+
+            List<IElement> Rows() => comp.FindAll("tbody tr").ToList();
+            List<IElement> RowCheckboxes() => comp.FindAll("tbody .mud-checkbox input").ToList();
+            IElement HeaderCheckbox() => comp.Find("thead .mud-checkbox input");
+
+            Rows()[0].GetAttribute("aria-selected").Should().Be("false");
+            Rows()[1].GetAttribute("aria-selected").Should().Be("false");
+
+            await RowCheckboxes()[0].ChangeAsync(true);
+
+            Rows()[0].GetAttribute("aria-selected").Should().Be("true");
+            Rows()[1].GetAttribute("aria-selected").Should().Be("false");
+
+            await HeaderCheckbox().ChangeAsync(true);
+
+            Rows()[0].GetAttribute("aria-selected").Should().Be("true");
+            Rows()[1].GetAttribute("aria-selected").Should().Be("true");
+
+            await HeaderCheckbox().ChangeAsync(false);
+
+            Rows()[0].GetAttribute("aria-selected").Should().Be("false");
+            Rows()[1].GetAttribute("aria-selected").Should().Be("false");
+        }
+
+        [Test]
+        public void SelectColumn_DoesNotRenderAriaSelected_ForDisabledRows()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Disabled", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc));
+
+            var rows = comp.FindAll("tbody tr");
+            rows[0].GetAttribute("aria-selected").Should().Be("false");
+            rows[1].HasAttribute("aria-selected").Should().BeFalse();
+        }
+
+        [Test]
+        public void SelectColumn_AriaLabelFunc_OverridesDefaultRowLabeling()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.AriaLabelFunc), (Func<TestDataItem, string>)(item => $"Select {item.Name}"));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var rowCheckboxes = comp.FindAll("tbody .mud-checkbox input");
+            comp.Find($"#{rowCheckboxes[0].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select First");
+            comp.Find($"#{rowCheckboxes[1].GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select Second");
+            rowCheckboxes[0].HasAttribute("aria-label").Should().BeFalse();
+            rowCheckboxes[1].HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        [Test]
+        public void SelectColumn_AriaLabelFunc_FallsBackToDefaultRowLabeling()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.AriaLabelFunc), (Func<TestDataItem, string>)(_ => " "));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var rowCheckbox = comp.Find("tbody .mud-checkbox input");
+            comp.Find($"#{rowCheckbox.GetAttribute("aria-labelledby")}").TextContent.Should().Be("Select row");
+            rowCheckbox.HasAttribute("aria-label").Should().BeFalse();
         }
 
         [Test]
@@ -6263,21 +6527,30 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridFilterIcons()
         {
             var comp = Context.Render<DataGridFilterIconsTest>();
-            MudIconButton FirstFilterButton() =>
-                comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
 
-            // Check filter buttons when no filter applied
-            var mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+            dataGrid.Instance.SortIcon.Should().Be("test_grid_sort_icon");
+            dataGrid.Instance.FilterIconEmpty.Should().Be("test_grid_filter_empty_icon");
+            dataGrid.Instance.FilterIconFilled.Should().Be("test_grid_filter_filled_icon");
+            dataGrid.Instance.FilterIconClear.Should().Be("test_grid_filter_clear_icon");
+            dataGrid.Instance.ColumnOptionsIcon.Should().Be("test_grid_column_options_icon");
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_grid_sort_icon");
+                comp.Markup.Should().Contain("test_grid_filter_empty_icon");
+                comp.Markup.Should().Contain("test_grid_column_options_icon");
+            });
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
-            mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_grid_filter_empty_icon");
+            });
 
             // Check filter buttons when filter applied
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterIconsTest.Model>
             {
                 Column = dataGrid.Instance.RenderedColumns.First(),
@@ -6285,22 +6558,51 @@ namespace MudBlazor.UnitTests.Components
                 Value = "Sam"
             }));
 
-            mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_grid_filter_filled_icon");
+            });
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
-            mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_grid_filter_filled_icon");
+            });
 
             // Check filter buttons when FilterMode is ColumnFilterRow
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
 
-            var mudMenu = comp.FindComponents<MudMenu>().FirstOrDefault(x => x.Markup.Contains("column-filter-menu"))?.Instance;
-            mudMenu.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Markup.Should().Contain("test_grid_filter_filled_icon");
+                comp.Markup.Should().Contain("test_grid_filter_clear_icon");
+            });
+        }
 
-            mudIconButton = FirstFilterButton();
-            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
+        [Test]
+        public async Task DataGridFilterTemplateUsesContextFilterIcon()
+        {
+            var comp = Context.Render<DataGridFilterIconsTest>(parameters =>
+                parameters.Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterRow));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
+
+            MudIconButton CustomFilterButton() =>
+                comp.FindComponents<MudIconButton>()
+                    .First(x => x.Markup.Contains("custom-filter-template-button"))
+                    .Instance;
+
+            CustomFilterButton().Icon.Should().Be("test_grid_filter_empty_icon");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterIconsTest.Model>
+            {
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam"
+            }));
+
+            await comp.WaitForAssertionAsync(() =>
+                CustomFilterButton().Icon.Should().Be("test_grid_filter_filled_icon"));
         }
 
         #region Selection Cleanup Tests (ObservableCollection)

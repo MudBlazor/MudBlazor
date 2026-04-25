@@ -381,8 +381,7 @@ namespace MudBlazor
             }
             if (firstRender)
             {
-                // add onblur event through javascript which will trigger CallOnBlurredAsync
-                // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
+                // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
                 await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
             }
 
@@ -439,9 +438,11 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            // If onblurred already fired then cancel
+            // If native blur already ran, do not process the fallback callback again.
             if (!_isFocused)
+            {
                 return;
+            }
 
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
