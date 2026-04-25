@@ -16,6 +16,7 @@ public partial class MudText : MudComponentBase
             .AddClass("mud-typography-gutterbottom", GutterBottom)
             .AddClass($"mud-typography-align-{ConvertAlign(Align).ToStringFast(true)}", Align != Align.Inherit)
             .AddClass("d-inline", Inline)
+            .AddClass("mud-typography-nowrap", Truncate)
             .AddClass(Class)
             .Build();
 
@@ -95,6 +96,13 @@ public partial class MudText : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
+
+    /// <summary>
+    /// Truncates the text with an ellipsis if it overflows its container.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Text.Behavior)]
+    public bool Truncate { get; set; }
 
     private string GetActualTag() => string.IsNullOrEmpty(HtmlTag) ? GetTagName(Typo) : HtmlTag;
 
