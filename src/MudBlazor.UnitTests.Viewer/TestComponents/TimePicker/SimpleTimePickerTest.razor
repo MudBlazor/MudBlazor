@@ -4,6 +4,7 @@
 			   @bind-Time="@Time"
 			   OpenTo="@OpenTo"
 			   AmPm="AmPm"
+			   AutoClose="AutoClose"
 			   TimeEditMode="TimeEditMode"
 			   MinuteSelectionStep="MinuteSelectionStep"
 			   InputId="@InputId" />
@@ -22,6 +23,9 @@
 
 	[Parameter]
     public bool AmPm { get; set; }
+
+	[Parameter]
+    public bool AutoClose { get; set; }
 
 	[Parameter]
     public int MinuteSelectionStep { get; set; } = 1;

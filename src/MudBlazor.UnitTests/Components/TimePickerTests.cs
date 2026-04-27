@@ -160,6 +160,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TimePicker_WithAmPmAndAutoCloseFalse_RemainsOpenUntilExplicitlyClosed()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.AmPm, true)
+                .Add(x => x.MinuteSelectionStep, 15));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(6, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(6));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(15, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(15));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.FindAll("div.mud-timepicker-ampm button")[1].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+                picker.TimeIntermediate.Should().Be(new TimeSpan(18, 15, 0));
+            });
+        }
+
+        [Test]
+        public async Task TimePicker_WithAutoCloseTrue_ClosesAfterFinalSelection()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.AutoClose, true)
+                .Add(x => x.MinuteSelectionStep, 15));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(6, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(6));
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(15, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(15));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            picker.Time.Should().Be(new TimeSpan(6, 15, 0));
+        }
+
+        [Test]
         public async Task ChangeToMinutes_FromHours_CheckHoursHidden()
         {
             var comp = await OpenPicker();

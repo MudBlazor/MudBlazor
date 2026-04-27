@@ -82,9 +82,8 @@ namespace MudBlazor
         /// Closes this picker when the value is set or cleared.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined, 
-        /// the hour and the minutes can be selected and the drop-down will close without having to 
-        /// click any of the action buttons.
+        /// Defaults to <c>false</c>. When <c>true</c>, selecting the final time part or clearing
+        /// the value will close the drop-down without requiring any action buttons.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -603,7 +602,7 @@ namespace MudBlazor
 
         protected async Task SubmitAndCloseAsync()
         {
-            if (PickerActions == null || AutoClose)
+            if (AutoClose)
             {
                 await SubmitAsync();
 
