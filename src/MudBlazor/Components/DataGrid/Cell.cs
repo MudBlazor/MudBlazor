@@ -60,6 +60,7 @@ namespace MudBlazor
 
         public async Task StringValueChangedAsync(string? value)
         {
+            await BeginEditingItemAsync();
             _column.SetProperty(_item, value);
 
             // If the edit mode is Cell, we update immediately.
@@ -69,11 +70,27 @@ namespace MudBlazor
 
         public async Task NumberValueChangedAsync(double? value)
         {
+            await BeginEditingItemAsync();
             _column.SetProperty(_item, value);
 
             // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
+        }
+
+        private async Task BeginEditingItemAsync()
+        {
+            if (_dataGrid.EditMode != DataGridEditMode.Cell)
+            {
+                return;
+            }
+
+            if (_dataGrid._editingItem is not null && EqualityComparer<T>.Default.Equals(_dataGrid._editingSourceItem, _item))
+            {
+                return;
+            }
+
+            await _dataGrid.SetEditingItemAsync(_item);
         }
 
         private void OnStartedEditingItem()
