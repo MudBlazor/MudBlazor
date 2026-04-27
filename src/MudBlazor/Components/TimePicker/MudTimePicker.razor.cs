@@ -196,7 +196,14 @@ namespace MudBlazor
             };
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Commits a pending picker selection after the picker has already closed and the input loses focus.
+        /// </summary>
+        /// <remarks>
+        /// This keeps hour selection interactions deferred while the clock is still open, but applies the
+        /// selected hour with a default <c>00</c> minute value when focus is actually leaving the picker.
+        /// </remarks>
+        /// <param name="obj">The focus event data for the blur event.</param>
         protected override async Task OnInputBlurredAsync(FocusEventArgs obj)
         {
             if (!Open && TimeIntermediate != Time && !ConversionError)

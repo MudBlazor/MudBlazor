@@ -560,6 +560,10 @@ namespace MudBlazor
 
         protected internal virtual Task SubmitAsync() => Task.CompletedTask;
 
+        /// <summary>
+        /// Occurs when the picker input loses focus.
+        /// </summary>
+        /// <param name="args">The focus event data for the blur event.</param>
         protected virtual Task OnInputBlurredAsync(FocusEventArgs args) => Task.CompletedTask;
 
         /// <summary>
