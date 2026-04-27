@@ -14,7 +14,7 @@ using Moq;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
+using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitializationTest;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutocompleteCancelDispose()
         {
             var comp = Context.Render<AutocompleteTest8>();
-            var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
+            var autocompleteContainerComp = comp.FindComponent<AutocompleteContainerTest>();
             var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
             await autocompleteComp.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.Text, "Alabama"));
             await Task.Delay(500);
@@ -305,7 +305,7 @@ namespace MudBlazor.UnitTests.Components
             // Arrange
 
             var valueChangedCount = 0;
-            var comp = Context.Render<AutocompleteStates>(parameters =>
+            var comp = Context.Render<AutocompleteStatesTest>(parameters =>
             {
                 parameters.Add(p => p.DebounceInterval, 0);
                 parameters.Add(p => p.CoerceText, false);
@@ -347,7 +347,7 @@ namespace MudBlazor.UnitTests.Components
             // Arrange
 
             var valueChangedCount = 0;
-            var comp = Context.Render<AutocompleteStates>(parameters =>
+            var comp = Context.Render<AutocompleteStatesTest>(parameters =>
             {
                 parameters.Add(p => p.DebounceInterval, 500);
                 parameters.Add(p => p.CoerceText, false);
@@ -402,7 +402,7 @@ namespace MudBlazor.UnitTests.Components
             var debouncedText = string.Empty;
             var debounceElapsedCount = 0;
 
-            var comp = Context.Render<AutocompleteStates>(parameters =>
+            var comp = Context.Render<AutocompleteStatesTest>(parameters =>
             {
                 parameters.Add(p => p.DebounceInterval, 500);
                 parameters.Add(p => p.CoerceText, false);
@@ -628,7 +628,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutocompleteCoercionOff()
         {
-            var comp = Context.Render<AutocompleteTestCoersionAndBlur>();
+            var comp = Context.Render<AutocompleteCoersionAndBlurTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CoerceText, false));
@@ -647,7 +647,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutocompleteTextCoercionOnTabKey()
         {
-            var comp = Context.Render<AutocompleteTestCoersionAndBlur>();
+            var comp = Context.Render<AutocompleteCoersionAndBlurTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CoerceText, true));
@@ -669,7 +669,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutocompleteTextCoercionAndResetIfEmptyText()
         {
-            var comp = Context.Render<AutocompleteTestCoersionAndBlur>();
+            var comp = Context.Render<AutocompleteCoersionAndBlurTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters
@@ -812,7 +812,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Initialize_Value_on_SetParameters()
         {
-            var comp = Context.Render<AutocompleteSetParametersInitialization>();
+            var comp = Context.Render<AutocompleteSetParametersInitializationTest>();
             // select elements needed for the test
             await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("One"));
         }
@@ -850,7 +850,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AutoCompleteClearable()
         {
-            var comp = Context.Render<AutocompleteTestClearable>();
+            var comp = Context.Render<AutocompleteClearableTest>();
 
             // No button when initialized empty
             await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
@@ -1157,7 +1157,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<AutocompleteStates>(parameters =>
+            var comp = Context.Render<AutocompleteStatesTest>(parameters =>
             {
                 parameters.Add(a => a.DebounceInterval, 0);
             });
@@ -1193,7 +1193,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<AutocompleteStates>(parameters =>
+            var comp = Context.Render<AutocompleteStatesTest>(parameters =>
             {
                 parameters.Add(a => a.Value, "Idaho");
                 parameters.Add(a => a.ResetValueOnEmptyText, resetValueOnEmptyText);
@@ -1429,7 +1429,7 @@ namespace MudBlazor.UnitTests.Components
             jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
             Context.Services.AddSingleton(jsRuntimeMock.Object);
 
-            var comp = Context.Render<AutocompleteStates>();
+            var comp = Context.Render<AutocompleteStatesTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
 
             var adornment = comp.Find(".mud-input-adornment-icon-button");
@@ -1458,7 +1458,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_ChangeAdornmentIcon()
         {
-            var comp = Context.Render<AutocompleteAdornmentChange>(parameters => parameters.Add(x => x.Icon, Icons.Material.Filled.Abc));
+            var comp = Context.Render<AutocompleteAdornmentChangeTest>(parameters => parameters.Add(x => x.Icon, Icons.Material.Filled.Abc));
             var instance = comp.Instance;
 
             var markupBefore = comp.Find("svg.mud-icon-root").Children.ToMarkup().Trim();
@@ -1809,7 +1809,7 @@ namespace MudBlazor.UnitTests.Components
             var selectedItemString = "peach";
             var disabledItemString = "carrot";
 
-            var comp = Context.Render<AutocompleteStrictFalseSelectedHighlight>();
+            var comp = Context.Render<AutocompleteStrictFalseSelectedHighlightTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
 
@@ -2307,7 +2307,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<AutocompleteResetValueOnEmptyText>();
+            var comp = Context.Render<AutocompleteResetValueOnEmptyTextTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
 

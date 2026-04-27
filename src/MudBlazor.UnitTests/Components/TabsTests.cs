@@ -1211,7 +1211,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MinimumTabWidth()
         {
-            var comp = Context.Render<MinimumWidthTabs>();
+            var comp = Context.Render<MinimumWidthTabsTest>();
 
             //Check if style respects minimum width from test
             comp.Find(".mud-tab").GetAttribute("style").Contains("min-width").Should().BeTrue();
@@ -1225,7 +1225,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MenuInHeaderPanelCloseOnClickOutside()
         {
-            var comp = Context.Render<TabsWithMenuInHeader>();
+            var comp = Context.Render<TabsWithMenuInHeaderTest>();
 
             //open the menu
             await comp.Find("button").ClickAsync();
@@ -1243,7 +1243,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PrePanelContent()
         {
-            var comp = Context.Render<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
+            var comp = Context.Render<TabsWithPrePanelContentTest>(p => p.Add(x => x.SelectedIndex, 0));
 
             var content = comp.Find(".pre-panel-content-custom");
 

@@ -401,7 +401,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Should_trigger_file_change_callbacks_as_expected()
         {
-            var comp = Context.Render<FileUploadChangeCountTests>();
+            var comp = Context.Render<FileUploadChangeCountTest>();
 
             // first file change should trigger both callbacks
             var fileContent = new byte[5];

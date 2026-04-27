@@ -15,7 +15,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_Add_ShouldAddGenericParameter()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         dialogParameters._parameters.Should().BeEmpty();
 
         dialogParameters.Add(x => x.TestValue, "Test");
@@ -35,14 +35,14 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_Add_ShouldThrow_IfNotMemberExpression()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         Assert.Throws<ArgumentException>(() => dialogParameters.Add(x => 1, 2));
     }
 
     [Test]
     public void DialogParametersGeneric_Get_ShouldGetParameter()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         dialogParameters._parameters = new() { { "TestValue", "Test" } };
 
         var parameter = dialogParameters.Get(x => x.TestValue);
@@ -62,7 +62,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_Get_ShouldThrow_IfNotMemberExpression()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         Assert.Throws<ArgumentException>(() => dialogParameters.Get(x => 1));
     }
 
@@ -79,7 +79,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_TryGet_ShouldGetParameter()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         dialogParameters._parameters = new() { { "TestValue", "Test" } };
 
         var parameter = dialogParameters.TryGet(x => x.TestValue);
@@ -89,7 +89,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParameters_TryGet_ShouldGetDefault_IfParameterDoesNotExist()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
 
         var parameter = dialogParameters.TryGet<string>("TestValue");
         parameter.Should().Be(default(string));
@@ -98,7 +98,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_TryGet_ShouldGetDefault_IfParameterDoesNotExist()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
 
         var parameter = dialogParameters.TryGet(x => x.TestValue);
         parameter.Should().Be(default(string));
@@ -107,7 +107,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_TryGet_ShouldThrow_IfNotMemberExpression()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         Assert.Throws<ArgumentException>(() => dialogParameters.TryGet(x => 1));
     }
 
@@ -126,7 +126,7 @@ public sealed class DialogParametersTests
     [Test]
     public void DialogParametersGeneric_Count_ShouldBeCorrect()
     {
-        var dialogParameters = new DialogParameters<DialogWithParameters>();
+        var dialogParameters = new DialogParameters<DialogWithParametersTest>();
         dialogParameters.Count.Should().Be(0);
         for (var index = 1; index <= 50; index++)
         {

@@ -1,7 +1,7 @@
-﻿@namespace MudBlazor.UnitTests
+@namespace MudBlazor.UnitTests
 
-<h3>ParameterStateSharedInheritanceHandlerTestComp</h3>
-<SharedStateInheritanceTestComp A="@_a" B="@_b" C="@_c" O="@_o" P="@_p" X="@_x" Y="@_y" Z="@_z" />
+<h3>ParameterStateSharedInheritanceHandlerCompTest</h3>
+<SharedStateInheritanceCompTest A="@_a" B="@_b" C="@_c" O="@_o" P="@_p" X="@_x" Y="@_y" Z="@_z" />
 
 <MudButton Class="abc" OnClick="IncrementAbcClick">Increment A, B and C</MudButton>
 <MudButton Class="op" OnClick="IncrementOpClick">Increment O and P</MudButton>
@@ -10,7 +10,7 @@
 @code
 {
     public static string __description__ = "Tests ParameterState framework with inheritance and multiple scopes " +
-                                           $"All handlers should be invoked correctly similar to {nameof(ParameterStateSharedHandlerTestComp)}";
+                                           $"All handlers should be invoked correctly similar to {nameof(ParameterStateSharedHandlerCompTest)}";
 
     private int _a = 1;
     private int _b = 2;

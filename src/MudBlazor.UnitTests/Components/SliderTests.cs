@@ -428,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task NullableBinding(double? value)
         {
-            var comp = Context.Render<SliderWithNullable>();
+            var comp = Context.Render<SliderWithNullableTest>();
             comp.Instance.NullableValue.Should().BeNull();
 
             IElement Input() => comp.Find(".mud-slider-input");
@@ -445,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task TwoBindValues1(double? value)
         {
-            var comp = Context.Render<SliderWithTwoBindValues>();
+            var comp = Context.Render<SliderWithTwoBindValuesTest>();
             comp.Instance.NullableValue.Should().BeNull();
             comp.Instance.Value.Should().Be(0);
 
@@ -458,7 +458,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TwoBindValues2()
         {
-            var comp = Context.Render<SliderWithTwoBindValues>();
+            var comp = Context.Render<SliderWithTwoBindValuesTest>();
             comp.Instance.NullableValue.Should().BeNull();
             comp.Instance.Value.Should().Be(0);
 

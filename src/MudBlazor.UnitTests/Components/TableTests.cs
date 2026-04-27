@@ -1217,7 +1217,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableMultiSelection_Checkbox_Executes_Callback()
         {
-            var comp = Context.Render<TableMultiSelectionCheckboxExecutesCallback>();
+            var comp = Context.Render<TableMultiSelectionCheckboxExecutesCallbackTest>();
 
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var inputs = comp.FindAll("input");
@@ -1485,10 +1485,10 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns>A <see cref="Task"/> object.</returns>
         [Test]
-        public async Task TableServerDataLoadingTestWithCancel()
+        public async Task TableServerDataLoadingWithCancelTest()
         {
             // Render the server-side data (with cancellation) test
-            var comp = Context.Render<TableServerDataLoadingTestWithCancel>();
+            var comp = Context.Render<TableServerDataLoadingWithCancelTest>();
             // Get the MudTable<int> component
             var table = comp.FindComponent<MudTable<int>>();
 
@@ -1603,7 +1603,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(TableApplyButtonPosition.End)]
         public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
         {
-            var comp = Context.Render<TableInlineEditTestApplyButtons>(
+            var comp = Context.Render<TableInlineEditApplyButtonsTest>(
                 p => p.Add(x => x.ApplyButtonPosition, position));
 
             var trs = comp.FindAll("tr");
@@ -2825,7 +2825,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<TableCurrentPageParameterIntialized>();
+            var comp = Context.Render<TableCurrentPageParameterIntializedTest>();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
             // Assert : DataGrid is initialized with CurrentPage at 2

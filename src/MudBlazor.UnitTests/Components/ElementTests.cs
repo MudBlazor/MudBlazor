@@ -31,13 +31,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudElement_Should_Not_Attach_A_Null_Event()
         {
-            var comp = Context.Render<ElementTestEventNull>();
+            var comp = Context.Render<ElementEventNullTest>();
 
             //initially, renders just an empty span, because AttachEvent is false;
             comp.MarkupMatches("<span></span>");
 
             //we set AttachEvent to true, so it has to attach the mouseover event
-            var comp2 = Context.Render<ElementTestEventNull>(parameters => parameters.Add(x => x.AttachEvent, true));
+            var comp2 = Context.Render<ElementEventNullTest>(parameters => parameters.Add(x => x.AttachEvent, true));
 
             //because we didn't hovered yet the element, the WasHovered property is false
             comp2.Instance.WasHovered.Should().BeFalse();

@@ -67,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavLinkOnClickErrorContentCaughtException()
         {
-            var comp = Context.Render<NavLinkErrorContenCaughtException>();
+            var comp = Context.Render<NavLinkErrorContenCaughtExceptionTest>();
             IElement AlertText() => MudAlert().Find("div.mud-alert-message");
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
             IReadOnlyList<IElement> Links() => comp.FindAll(".mud-nav-link");

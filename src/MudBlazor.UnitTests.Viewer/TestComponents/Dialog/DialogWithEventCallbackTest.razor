@@ -1,4 +1,4 @@
-﻿@inject IDialogService DialogService
+@inject IDialogService DialogService
 
 <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
     Open simple dialog
@@ -16,7 +16,7 @@ Clicked: @(_clicked ? "Yes" : "No")
 
     private Task OpenDialog()
     {
-        return DialogService.ShowAsync<DialogWithEventCallback>("Simple Dialog", new DialogParameters
+        return DialogService.ShowAsync<DialogWithEventCallbackComponentTest>("Simple Dialog", new DialogParameters
         {
             { "OnSearch", new EventCallbackFactory().Create(this, new Action<string>(OnSearch)) },
             { "OnClick", new EventCallbackFactory().Create(this, OnClickAsync) },

@@ -43,7 +43,7 @@
         _lastResult = null;
         _lastCanceled = false;
 
-        var parameters = new DialogParameters<TextFieldAutoSizingDialog>
+        var parameters = new DialogParameters<TextFieldAutoSizingDialogTest>
         {
             { x => x.Title, "Edit note (Auto)" },
             { x => x.Placeholder, "What's on your mind?" },
@@ -59,7 +59,7 @@
             MaxWidth = MaxWidth.Small
         };
 
-        var dialog = await DialogService.ShowAsync<TextFieldAutoSizingDialog>("Edit note (Auto)", parameters, options);
+        var dialog = await DialogService.ShowAsync<TextFieldAutoSizingDialogTest>("Edit note (Auto)", parameters, options);
         await HandleDialogResult(dialog);
     }
 
@@ -68,7 +68,7 @@
         _lastResult = null;
         _lastCanceled = false;
 
-        var parameters = new DialogParameters<TextFieldFixedSizingDialog>
+        var parameters = new DialogParameters<TextFieldFixedSizingDialogTest>
         {
             { x => x.Title, "Edit note (Fixed)" },
             { x => x.Placeholder, "What's on your mind?" },
@@ -83,7 +83,7 @@
             MaxWidth = MaxWidth.Small
         };
 
-        var dialog = await DialogService.ShowAsync<TextFieldFixedSizingDialog>("Edit note (Fixed)", parameters, options);
+        var dialog = await DialogService.ShowAsync<TextFieldFixedSizingDialogTest>("Edit note (Fixed)", parameters, options);
         await HandleDialogResult(dialog);
     }
 

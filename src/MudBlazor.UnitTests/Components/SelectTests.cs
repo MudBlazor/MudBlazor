@@ -1531,14 +1531,14 @@ namespace MudBlazor.UnitTests.Components
         {
             //1a. Check When SelectedItems is empty - Validation Should Fail
             //Check on String type
-            var comp = Context.Render<MultiSelectTestRequiredValue>();
+            var comp = Context.Render<MultiSelectRequiredValueTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.First().Should().Be("Required");
 
             //1b. Check on T type - MultiSelect of T(e.g. class object)
-            var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
+            var selectWithT = comp.FindComponent<MudSelect<MultiSelectRequiredValueTest.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
             await comp.InvokeAsync(() => selectWithT.ValidateAsync());
             selectWithT.ValidationErrors.First().Should().Be("Required");
@@ -1564,7 +1564,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelectClearAndReset()
         {
-            var comp = Context.Render<MultiSelectTestRequiredValue>();
+            var comp = Context.Render<MultiSelectRequiredValueTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.ValidateAsync());
@@ -1608,7 +1608,7 @@ namespace MudBlazor.UnitTests.Components
             select.ValidationErrors.Should().BeEmpty();
 
             //test clearing object values
-            var select2 = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
+            var select2 = comp.FindComponent<MudSelect<MultiSelectRequiredValueTest.TestClass>>().Instance;
             select2.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select2.ValidateAsync());
             select2.ValidationErrors.First().Should().Be("Required");

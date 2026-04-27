@@ -120,7 +120,7 @@ public class LinkTests : BunitTest
     [Test]
     public async Task OnClickErrorContentCaughtException()
     {
-        var comp = Context.Render<LinkErrorContenCaughtException>();
+        var comp = Context.Render<LinkErrorContenCaughtExceptionTest>();
         IElement AlertText() => MudAlert().Find("div.mud-alert-message");
         IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
         IReadOnlyList<IElement> Links() => comp.FindAll("a.mud-link");

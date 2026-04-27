@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MouseOver_PointerLeave_ShouldClose()
         {
-            var comp = Context.Render<MenuTestMouseOver>();
+            var comp = Context.Render<MenuMouseOverTest>();
 
             // Briefly hover over the button and wait for it to open.
             await comp.Find("div.mud-menu").PointerEnterAsync();
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MouseOver_Hover_ShouldOpenMenu()
         {
-            var comp = Context.Render<MenuTestMouseOver>();
+            var comp = Context.Render<MenuMouseOverTest>();
 
             IElement Menu() => comp.Find(".mud-menu");
             comp.Markup.Should().NotContain("mud-popover-open");
@@ -180,7 +180,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var hoverDelay = 200;
             MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
-            var comp = Context.Render<MenuTestMouseOver>();
+            var comp = Context.Render<MenuMouseOverTest>();
             var menu = comp.FindComponent<MudMenu>().Instance;
 
             // Enter opens the menu (after a delay).
@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ActivatorContent_Disabled_CheckDisabled()
         {
-            var comp = Context.Render<MenuTestDisabledCustomActivator>();
+            var comp = Context.Render<MenuDisabledCustomActivatorTest>();
             var activator = comp.Find("div.mud-menu-activator");
             activator.ClassList.Should().Contain("mud-disabled");
             activator.GetAttribute("disabled").Should().NotBeNull();
@@ -278,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Menu_LeftAndRightClick_CheckClosed()
         {
             //Standart button menu -- left click
-            var comp = Context.Render<MenuTestVariants>();
+            var comp = Context.Render<MenuVariantsTest>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);
@@ -375,7 +375,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OnClickErrorContentCaughtException()
         {
-            var comp = Context.Render<MenuErrorContenCaughtException>();
+            var comp = Context.Render<MenuErrorContenCaughtExceptionTest>();
             await comp.FindAll("button.mud-button-root")[0].ClickAsync(new MouseEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-menu-item").Count.Should().Be(1);

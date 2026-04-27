@@ -15,7 +15,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void DoesNotThrowExceptionWhenScopeCreatedMultipleTimes()
     {
-        var createComp = () => Context.Render<ParameterStateMultipleScopeTestComp>();
+        var createComp = () => Context.Render<ParameterStateMultipleScopeCompTest>();
 
         createComp.Should().NotThrow<Exception>();
     }
@@ -23,7 +23,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void ShouldHaveTwoScopes()
     {
-        var comp = Context.Render<ParameterStateMultipleScopeTestComp>();
+        var comp = Context.Render<ParameterStateMultipleScopeCompTest>();
 
         comp.Instance.ParameterContainer.Count.Should().Be(2);
     }
@@ -31,7 +31,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void SharedHandlerIntegration()
     {
-        var comp = Context.Render<ParameterStateSharedHandlerTestComp>();
+        var comp = Context.Render<ParameterStateSharedHandlerCompTest>();
 
         // note: the handler for abc and the one for xyz are each called once per click
         // the handlers for o and p are lambdas which are excluded from this optimization, so they
@@ -56,7 +56,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void InheritanceIntegration()
     {
-        var comp = Context.Render<ParameterStateSharedInheritanceHandlerTestComp>();
+        var comp = Context.Render<ParameterStateSharedInheritanceHandlerCompTest>();
 
         // note: the handler for abc and the one for xyz are each called once per click
         // the handlers for o and p are lambdas which are excluded from this optimization, so they
@@ -81,7 +81,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void EventArgsIntegration()
     {
-        var comp = Context.Render<ParameterStateEventArgsTestComp>();
+        var comp = Context.Render<ParameterStateEventArgsCompTest>();
         comp.Find(".parameter-changes").Children.Length.Should().Be(0);
         comp.Find("button.increment-int-param").Click();
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
@@ -94,7 +94,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public async Task StaticComparerIntegration()
     {
-        var comp = Context.Render<ParameterStateComparerStaticTestComp>(parameters => parameters
+        var comp = Context.Render<ParameterStateComparerStaticCompTest>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
         IElement ParamChanges() => comp.Find(".parameter-changes");
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
@@ -112,7 +112,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public async Task SwapComparerInSequenceIntegration()
     {
-        var comp = Context.Render<ParameterStateComparerSwapTestComp>(parameters => parameters
+        var comp = Context.Render<ParameterStateComparerSwapCompTest>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
         IElement ParamChanges() => comp.Find(".parameter-changes");
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
@@ -130,7 +130,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when the associated value and comparer change at same time.")]
     public async Task SwapComparerAtSameTimeIntegration()
     {
-        var comp = Context.Render<ParameterStateComparerSwapTestComp>(parameters => parameters
+        var comp = Context.Render<ParameterStateComparerSwapCompTest>(parameters => parameters
             .Add(parameter => parameter.DoubleParam, 10000f));
         IElement ParamChanges() => comp.Find(".parameter-changes");
         comp.Find(".parameter-changes").Children.Length.Should().Be(1);
@@ -147,32 +147,32 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void GetStateTestIntegration()
     {
-        var comp = Context.Render<ParameterStateEventArgsTestComp>();
+        var comp = Context.Render<ParameterStateEventArgsCompTest>();
         IElement IncrementButton() => comp.Find("button.increment-int-param");
-        IRenderedComponent<ParameterStateTestComp> StateComponent() => comp.FindComponent<ParameterStateTestComp>();
+        IRenderedComponent<ParameterStateCompTest> StateComponent() => comp.FindComponent<ParameterStateCompTest>();
 
         StateComponent().Instance.GetState(x => x.IntParam).Should().Be(0);
-        StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(0);
+        StateComponent().Instance.GetState<int>(nameof(ParameterStateCompTest.IntParam)).Should().Be(0);
 
         IncrementButton().Click();
 
         StateComponent().Instance.GetState(x => x.IntParam).Should().Be(1);
-        StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(1);
+        StateComponent().Instance.GetState<int>(nameof(ParameterStateCompTest.IntParam)).Should().Be(1);
 
         IncrementButton().Click();
 
         StateComponent().Instance.GetState(x => x.IntParam).Should().Be(2);
-        StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.IntParam)).Should().Be(2);
+        StateComponent().Instance.GetState<int>(nameof(ParameterStateCompTest.IntParam)).Should().Be(2);
     }
 
     [Test]
     public void GetStateTestFailureIntegration()
     {
-        var comp = Context.Render<ParameterStateEventArgsTestComp>();
-        IRenderedComponent<ParameterStateTestComp> StateComponent() => comp.FindComponent<ParameterStateTestComp>();
+        var comp = Context.Render<ParameterStateEventArgsCompTest>();
+        IRenderedComponent<ParameterStateCompTest> StateComponent() => comp.FindComponent<ParameterStateCompTest>();
 
         Action keyNotFoundAct1 = () => StateComponent().Instance.GetState(x => x.NonStateDummyIntParam);
-        Action keyNotFoundAct2 = () => StateComponent().Instance.GetState<int>(nameof(ParameterStateTestComp.NonStateDummyIntParam));
+        Action keyNotFoundAct2 = () => StateComponent().Instance.GetState<int>(nameof(ParameterStateCompTest.NonStateDummyIntParam));
 
         keyNotFoundAct1.Should().Throw<KeyNotFoundException>();
         keyNotFoundAct2.Should().Throw<KeyNotFoundException>();
@@ -195,7 +195,7 @@ public class ParameterStateUsageTests : BunitTest
     {
         var expanded = false;
 
-        var comp = Context.Render<ParameterStateChildBindingTestComp>(parameters =>
+        var comp = Context.Render<ParameterStateChildBindingCompTest>(parameters =>
             parameters.Bind(parameter => parameter.Expanded, expanded, newValue => expanded = newValue));
 
         var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
@@ -256,7 +256,7 @@ public class ParameterStateUsageTests : BunitTest
         var callBackEvents = new List<bool>();
         Action<bool> expandedCallBack = value => { callBackEvents.Add(value); };
 
-        var comp = Context.Render<ParameterStateChildBindingTestComp>(parameters =>
+        var comp = Context.Render<ParameterStateChildBindingCompTest>(parameters =>
             parameters.Add(parameter => parameter.ExpandedChanged, expandedCallBack));
 
         var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
@@ -306,7 +306,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public async Task Parent_TwoWayBinding()
     {
-        var comp = Context.Render<ParameterStateParentBindingTestComp>();
+        var comp = Context.Render<ParameterStateParentBindingCompTest>();
 
         var alertChild1TextFunc = () => comp.Find("#childAlert1 div.mud-alert-message");
         var alertChild2TextFunc = () => comp.Find("#childAlert2 div.mud-alert-message");
@@ -510,14 +510,14 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public async Task ParentChild_IsChildOriginatedChange()
     {
-        var comp = Context.Render<ParameterStateChildParentTestComp>();
+        var comp = Context.Render<ParameterStateChildParentCompTest>();
         IElement ButtonParent() => comp.Find("#parentBtn");
         IElement ButtonChild1() => comp.Find("#childBtn1");
         IElement ButtonChild2() => comp.Find("#childBtn2");
 
-        // ParameterState change handler events for ParameterStateChildComp1
+        // ParameterState change handler events for ParameterStateChildComp1Test
         IElement ParamChanges1() => comp.Find(".parameter-changes1");
-        // ParameterState change handler events for ParameterStateChildComp2
+        // ParameterState change handler events for ParameterStateChildComp2Test
         IElement ParamChanges2() => comp.Find(".parameter-changes2");
 
         // This is expected because the default value of Counter in the child component is 0, 
@@ -575,8 +575,8 @@ public class ParameterStateUsageTests : BunitTest
     public async Task ParameterStateDependencyParameter()
     {
         var comp = Context.Render<ParameterStateDependencyCompTest>();
-        var child1 = comp.FindComponent<ParameterStateDependencyComp1>();
-        var child2 = comp.FindComponent<ParameterStateDependencyComp2>();
+        var child1 = comp.FindComponent<ParameterStateDependencyComp1Test>();
+        var child2 = comp.FindComponent<ParameterStateDependencyComp2Test>();
         IElement ButtonSetValueNullText() => comp.Find("#btnValue");
         IElement ButtonSetTextValueNull() => comp.Find("#btnText");
         IElement ButtonAllSame() => comp.Find("#btnAllSame");

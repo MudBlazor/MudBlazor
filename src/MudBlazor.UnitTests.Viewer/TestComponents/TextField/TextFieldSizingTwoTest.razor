@@ -1,4 +1,4 @@
-﻿@inject IDialogService DialogService
+@inject IDialogService DialogService
 
 
 <div style="display: flex; flex-direction: row">
@@ -26,6 +26,6 @@
     {
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
-        return DialogService.ShowAsync<DialogUsageExample_TextDialog>("Simple Dialog", options);
+        return DialogService.ShowAsync<DialogUsageExample_TextDialogTest>("Simple Dialog", options);
     }
 }

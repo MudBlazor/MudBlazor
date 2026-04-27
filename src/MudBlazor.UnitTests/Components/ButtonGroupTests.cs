@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtonsTest>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, false)
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtonsTest>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, true)
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange
 
-            var comp = Context.Render<ButtonGroupWithThreeButtons>(
+            var comp = Context.Render<ButtonGroupWithThreeButtonsTest>(
                 parameters => parameters
                     .Add(c => c.ButtonGroupFullWidth, true)
                     .Add(c => c.Button1FullWidth, true)

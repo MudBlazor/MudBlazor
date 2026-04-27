@@ -11,7 +11,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        var dialog = await DialogService.ShowAsync<SimpleDialog>();
+        var dialog = await DialogService.ShowAsync<SimpleDialogTest>();
         await Task.Delay(TimeSpan.Zero);
         dialog.Close();
     }

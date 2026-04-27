@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateTestComp : MudComponentBase
+public partial class ParameterStateCompTest : MudComponentBase
 {
     private readonly List<string> _parameterChanges = new();
 
-    public ParameterStateTestComp()
+    public ParameterStateCompTest()
     {
         using var registerScope = CreateRegisterScope();
         _intParam = registerScope.RegisterParameter<int>(nameof(IntParam))

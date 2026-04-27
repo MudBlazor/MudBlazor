@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class SharedStateHandlerTestComp : MudComponentBase
+public partial class SharedStateHandlerCompTest : MudComponentBase
 {
-    public SharedStateHandlerTestComp()
+    public SharedStateHandlerCompTest()
     {
         // abc shared handler group
         using var registerScope = CreateRegisterScope();

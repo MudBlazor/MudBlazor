@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ButtonsOnClickErrorContentCaughtException()
         {
-            var comp = Context.Render<ButtonErrorContenCaughtException>();
+            var comp = Context.Render<ButtonErrorContenCaughtExceptionTest>();
             var alertTextFunc = () => MudAlert().Find("div.mud-alert-message");
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
             IReadOnlyList<IElement> Buttons() => comp.FindAll("button.mud-button-root");

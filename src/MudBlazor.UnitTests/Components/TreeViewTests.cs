@@ -1377,7 +1377,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TreeView_ClickHeterogeneousTreeElement_ShouldNotThrow()
         {
-            var comp = Context.Render<TreeViewHeterogeneous>();
+            var comp = Context.Render<TreeViewHeterogeneousTest>();
             var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
             var act = () => l2.ClickAsync();
             await act.Should().NotThrowAsync();

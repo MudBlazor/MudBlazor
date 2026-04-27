@@ -1,4 +1,4 @@
-﻿@inject IDialogService Dialog
+@inject IDialogService Dialog
 
 <h3>TestPage</h3>
 <MudButton OnClick="ShowTestDialogAsync">Show dialog with MudSelect</MudButton>
@@ -34,6 +34,6 @@
 
     private Task ShowTestDialogAsync()
     {
-        return Dialog.ShowAsync<OverlayTestDialog>("Test title");
+        return Dialog.ShowAsync<OverlayDialogComponentTest>("Test title");
     }
 }

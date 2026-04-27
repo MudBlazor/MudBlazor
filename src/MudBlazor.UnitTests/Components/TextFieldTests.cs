@@ -552,7 +552,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
-            var comp = Context.Render<MultilineTextfieldBindingTest>();
+            var comp = Context.Render<MultilineTextFieldBindingTest>();
 
             // print the generated html
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
@@ -1166,7 +1166,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OnBlurErrorContentCaughtException()
         {
-            var comp = Context.Render<TextFieldErrorContenCaughtException>();
+            var comp = Context.Render<TextFieldErrorContenCaughtExceptionTest>();
             await comp.Find("input").BlurAsync(new FocusEventArgs());
             var mudAlert = comp.FindComponent<MudAlert>();
             var text = mudAlert.Find("div.mud-alert-message");
@@ -1255,7 +1255,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OnKeyDownErrorContentCaughtException()
         {
-            var comp = Context.Render<TextFieldErrorContenCaughtException>();
+            var comp = Context.Render<TextFieldErrorContenCaughtExceptionTest>();
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
             var mudAlert = comp.FindComponent<MudAlert>();
             var text = mudAlert.Find("div.mud-alert-message");
@@ -1265,7 +1265,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OnKeyUpErrorContentCaughtException()
         {
-            var comp = Context.Render<TextFieldErrorContenCaughtException>();
+            var comp = Context.Render<TextFieldErrorContenCaughtExceptionTest>();
             await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter", Type = "keyup" });
             var mudAlert = comp.FindComponent<MudAlert>();
             var text = mudAlert.Find("div.mud-alert-message");

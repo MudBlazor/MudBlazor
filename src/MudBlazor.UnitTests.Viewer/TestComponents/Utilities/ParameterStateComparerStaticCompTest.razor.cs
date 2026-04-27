@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateComparerStaticTestComp : MudComponentBase
+public partial class ParameterStateComparerStaticCompTest : MudComponentBase
 {
     private readonly List<ParameterChangedEventArgs<double>> _parameterChanges = new();
 
     [Parameter]
     public double DoubleParam { get; set; }
 
-    public ParameterStateComparerStaticTestComp()
+    public ParameterStateComparerStaticCompTest()
     {
         var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
         using var registerScope = CreateRegisterScope();

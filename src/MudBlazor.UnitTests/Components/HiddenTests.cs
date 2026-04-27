@@ -299,7 +299,7 @@ namespace MudBlazor.UnitTests.Components
 
             Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
 
-            var component = Context.Render<RenderMultipleHiddenInParallel>();
+            var component = Context.Render<RenderMultipleHiddenInParallelTest>();
 
             await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
             await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));

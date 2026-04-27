@@ -269,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ActiveIndex_ShouldBeTwoWayBindable()
         {
-            var comp = Context.Render<StepperTwoWayBindingTestComponent>();
+            var comp = Context.Render<StepperTwoWayBindingComponentTest>();
             var stepper1 = comp.FindComponents<MudStepper>()[0];
             var stepper2 = comp.FindComponents<MudStepper>()[1];
             stepper1.Instance.ActiveStep?.Title.Should().Be("A");

@@ -458,7 +458,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Should_provide_accessible_keyboard_navigation()
         {
             var onCloseCount = 0;
-            var comp = Context.Render<ChipSetKeyboardNavigationTests>(parameters => parameters
+            var comp = Context.Render<ChipSetKeyboardNavigationTest>(parameters => parameters
                 .Add(p => p.AreChipsClosable, false)
                 .Add(p => p.OnClose, () => onCloseCount++));
 
@@ -506,7 +506,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Should_not_accept_keyboard_inputs_when_disabled_or_readonly()
         {
             var onCloseCount = 0;
-            var comp = Context.Render<ChipSetKeyboardNavigationTests>(parameters => parameters
+            var comp = Context.Render<ChipSetKeyboardNavigationTest>(parameters => parameters
                 .Add(p => p.AreChipsClosable, true)
                 .Add(p => p.Disabled, true)
                 .Add(p => p.OnClose, () => onCloseCount++));

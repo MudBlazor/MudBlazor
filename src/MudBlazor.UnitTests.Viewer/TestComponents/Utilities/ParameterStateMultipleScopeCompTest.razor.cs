@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,9 +7,9 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateMultipleScopeTestComp : MudComponentBase
+public partial class ParameterStateMultipleScopeCompTest : MudComponentBase
 {
-    public ParameterStateMultipleScopeTestComp()
+    public ParameterStateMultipleScopeCompTest()
     {
         using (var registerScope1 = CreateRegisterScope())
         {

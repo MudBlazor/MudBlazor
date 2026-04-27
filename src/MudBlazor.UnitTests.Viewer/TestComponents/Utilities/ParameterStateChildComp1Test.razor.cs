@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,12 +7,12 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateChildComp1 : MudComponentBase
+public partial class ParameterStateChildComp1Test : MudComponentBase
 {
     private readonly ParameterState<int> _counterState;
     private readonly List<ParameterChangedEventArgs<int>> _parameterChangedEvents = [];
 
-    public ParameterStateChildComp1()
+    public ParameterStateChildComp1Test()
     {
         using var registerScope = CreateRegisterScope();
         _counterState = registerScope.RegisterParameter<int>(nameof(Counter))

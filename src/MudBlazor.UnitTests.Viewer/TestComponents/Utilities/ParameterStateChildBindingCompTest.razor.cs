@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,7 +7,7 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateChildBindingTestComp : MudComponentBase
+public partial class ParameterStateChildBindingCompTest : MudComponentBase
 {
     private readonly List<(bool lastValue, bool value)> _parameterChangedEvents = new();
 
@@ -26,7 +26,7 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
 
     public IReadOnlyList<(bool lastValue, bool value)> ParameterChangedEvents => _parameterChangedEvents;
 
-    public ParameterStateChildBindingTestComp()
+    public ParameterStateChildBindingCompTest()
     {
         using var registerScope = CreateRegisterScope();
         _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))

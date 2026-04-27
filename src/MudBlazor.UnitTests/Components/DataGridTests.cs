@@ -4653,14 +4653,14 @@ namespace MudBlazor.UnitTests.Components
 
         public void TableFilterGuid()
         {
-            var comp = Context.Render<DataGridFilterGuid<Guid>>();
+            var comp = Context.Render<DataGridFilterGuidTest<Guid>>();
             var grid = comp.Instance.MudGridRef;
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
             var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuidTest<Guid>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -4669,7 +4669,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuidTest<Guid>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -4679,7 +4679,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuidTest<Guid>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "not equals",
@@ -4692,14 +4692,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableFilterNullableGuid()
         {
-            var comp = Context.Render<DataGridFilterGuid<Guid?>>();
+            var comp = Context.Render<DataGridFilterGuidTest<Guid?>>();
             var grid = comp.Instance.MudGridRef;
 
             grid.Items.Count().Should().Be(2);
             grid.FilteredItems.Count().Should().Be(2);
             var guidColumn = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
 
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuidTest<Guid?>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -4710,7 +4710,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.Count().Should().Be(0);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuidTest<Guid?>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "equals",
@@ -4721,7 +4721,7 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid1);
 
             grid.FilterDefinitions.Clear();
-            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>()
+            grid.FilterDefinitions.Add(new FilterDefinition<DataGridFilterGuidTest<Guid?>.WeatherForecast>()
             {
                 Column = guidColumn,
                 Operator = "not equals",

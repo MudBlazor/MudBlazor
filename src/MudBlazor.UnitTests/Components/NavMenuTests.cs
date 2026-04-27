@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task One_Way_Bindable()
         {
-            var comp = Context.Render<NavMenuOneWay>();
+            var comp = Context.Render<NavMenuOneWayTest>();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Two_Way_Bindable()
         {
-            var comp = Context.Render<NavMenuTwoWay>();
+            var comp = Context.Render<NavMenuTwoWayTest>();
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
             var expanded = comp.Instance.Expanded;

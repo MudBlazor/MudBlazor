@@ -309,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudPopover_WithDynamicContent()
         {
-            var comp = Context.Render<PopoverComplexContent>();
+            var comp = Context.Render<PopoverComplexContentTest>();
 
             var dynamicContentElement = comp.Find(".dynamic-content");
             dynamicContentElement.ChildNodes.Should().BeEmpty();

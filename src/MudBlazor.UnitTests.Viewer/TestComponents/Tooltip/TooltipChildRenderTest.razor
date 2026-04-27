@@ -1,9 +1,9 @@
-﻿@using MudBlazor.UnitTests.TestComponents.Tooltip.RerenderTests
+@using MudBlazor.UnitTests.TestComponents.Tooltip.RerenderTests
 
 <MudPopoverProvider />
 
 <MudTooltip Text="Tooltip with Object" Arrow="true" Placement="Placement.Top">
-    <MyAreaWithComplexObject MyValue="@ComplexValue" />
+    <MyAreaWithComplexObjectTest MyValue="@ComplexValue" />
 </MudTooltip>
 
 <br/>
@@ -11,7 +11,7 @@
 <br/>
 
 <MudTooltip Text="Tooltip with integer" Arrow="true" Placement="Placement.Top">
-    <MyAreaWithSimpleValue MyValue="@SimpleValue" />
+    <MyAreaWithSimpleValueTest MyValue="@SimpleValue" />
 </MudTooltip>
 
 @code {

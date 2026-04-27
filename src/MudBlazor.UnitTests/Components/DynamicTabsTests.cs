@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task BasicParameters_WithToolTips()
         {
-            var comp = Context.Render<SimpleDynamicTabsTestWithToolTips>();
+            var comp = Context.Render<SimpleDynamicTabsWithTooltipsTest>();
 
             // three panels three close icons;
             var closeButtons = comp.FindAll(".my-close-icon-class");

@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateDependencyComp1 : MudComponentBase
+public partial class ParameterStateDependencyComp1Test : MudComponentBase
 {
     private readonly ParameterState<string?> _textState;
     private readonly ParameterState<MudColor?> _valueState;
@@ -23,7 +23,7 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
 
     public List<string> ParameterStateValues { get; } = [];
 
-    public ParameterStateDependencyComp1()
+    public ParameterStateDependencyComp1Test()
     {
         using var registerScope = CreateRegisterScope();
         _textState = registerScope.RegisterParameter<string?>(nameof(Text))

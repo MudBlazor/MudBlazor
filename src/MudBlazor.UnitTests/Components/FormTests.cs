@@ -1181,16 +1181,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task EditForm_Validation_NullContext()
         {
-            var comp = Context.Render<EditFormIssue1229>();
+            var comp = Context.Render<EditFormIssue1229Test>();
             // Check first run attribute
-            EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
+            EditFormIssue1229Test.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
             // Trigger change
             var input = comp.Find("input");
             await input.ChangeAsync("Test");
             await input.BlurAsync();
             // Verify context was set
-            EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().NotBeEmpty();
-            foreach (var vc in EditFormIssue1229.TestAttribute.ValidationContextOnCall)
+            EditFormIssue1229Test.TestAttribute.ValidationContextOnCall.Should().NotBeEmpty();
+            foreach (var vc in EditFormIssue1229Test.TestAttribute.ValidationContextOnCall)
             {
                 vc.Should().NotBeNull();
             }
@@ -1366,7 +1366,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc3()
         {
-            var comp = Context.Render<FormWithSingleTextField>();
+            var comp = Context.Render<FormWithSingleTextFieldTest>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
             await form.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Model, model));
@@ -1390,7 +1390,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormComponent_ValidationWithModelWithNoFor_ShouldShow_ExpectedError()
         {
-            var comp = Context.Render<FormWithSingleTextField>();
+            var comp = Context.Render<FormWithSingleTextFieldTest>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
             await form.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Model, model));
@@ -1409,7 +1409,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormComponent_AsyncValidationWithModelWithNoFor_ShouldShow_ExpectedError()
         {
-            var comp = Context.Render<FormWithSingleTextField>();
+            var comp = Context.Render<FormWithSingleTextFieldTest>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
             await form.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Model, model));
@@ -1430,7 +1430,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormComponent_ValidationWithModel_UnexpectedErrorInValidationFunc5()
         {
-            var comp = Context.Render<FormWithSingleTextField>();
+            var comp = Context.Render<FormWithSingleTextFieldTest>();
             var form = comp.FindComponent<MudForm>();
             var model = new { data = "asdf" };
             await form.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Model, model));
@@ -1609,7 +1609,7 @@ namespace MudBlazor.UnitTests.Components
         public void MudForm_Should_RegisterOnlyTopSubscribeToParentFormFormControls()
         {
             var comp = Context.Render<FormShouldRegisterOnlyTopSubscribeToParentFormFormControlsTest>();
-            var form = comp.FindComponent<MudFormTestable>().Instance;
+            var form = comp.FindComponent<MudFormTestableTest>().Instance;
 
             form.FormControls.Count.Should().Be(13);
         }
@@ -2135,7 +2135,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormValidationErrorClearedOnProgrammaticValueChange()
         {
-            var comp = Context.Render<FormWithSingleTextField>();
+            var comp = Context.Render<FormWithSingleTextFieldTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldComp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldComp.Instance;

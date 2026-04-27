@@ -1,8 +1,8 @@
-﻿@using MudBlazor.Utilities
+@using MudBlazor.Utilities
 @namespace MudBlazor.UnitTests
 
-<ParameterStateDependencyComp1 @bind-Value="_value1" @bind-Text="_text1" />
-<ParameterStateDependencyComp2 @bind-Value="_value2" @bind-Text="_text2" />
+<ParameterStateDependencyComp1Test @bind-Value="_value1" @bind-Text="_text1" />
+<ParameterStateDependencyComp2Test @bind-Value="_value2" @bind-Text="_text2" />
 <MudButton id="btnValue" OnClick="OnValueSetTextNull">Value #fcefe5 Text null</MudButton>
 <MudButton id="btnText" OnClick="OnTextSetValueNull">Text #5fa9e2 Value null</MudButton>
 <MudButton id="btnValueOnly" OnClick="OnValueSetOnly">Value #1abc65 only</MudButton>
@@ -25,7 +25,7 @@
 
     private void OnValueAndColorSetDifferent()
     {
-        // Note for ParameterStateDependencyComp1:
+        // Note for ParameterStateDependencyComp1Test:
         //
         // First click:
         // ParameterChangedContext:
@@ -77,7 +77,7 @@
 
     private void OnValueSetTextNull()
     {
-        // Note for ParameterStateDependencyComp1:
+        // Note for ParameterStateDependencyComp1Test:
         //
         // On second click scenario:
         // - When the same value ("#fcefe5") is selected again.
@@ -109,7 +109,7 @@
 
     private void OnTextSetValueNull()
     {
-        // Note for ParameterStateDependencyComp1:
+        // Note for ParameterStateDependencyComp1Test:
         //
         // On second click scenario:
         // - When the same value ("#5fa9e2") is selected again.

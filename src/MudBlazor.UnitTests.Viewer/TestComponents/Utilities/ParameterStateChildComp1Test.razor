@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+@using System.Globalization
 @inherits MudComponentBase
 @namespace MudBlazor.UnitTests
 
@@ -13,7 +13,7 @@
 <div class="child1-div">
     Child Component 1
     <MudButton id="childBtn1" OnClick="OnClickChild1Async">Click 1 Child</MudButton>
-    <ParameterStateChildComp2 @bind-Counter:get="_counterState.Value" @bind-Counter:set="_counterState.SetValueAsync"/>
+    <ParameterStateChildComp2Test @bind-Counter:get="_counterState.Value" @bind-Counter:set="_counterState.SetValueAsync"/>
     
     <p>Parameter changes 1:</p>
     <div class="parameter-changes1">

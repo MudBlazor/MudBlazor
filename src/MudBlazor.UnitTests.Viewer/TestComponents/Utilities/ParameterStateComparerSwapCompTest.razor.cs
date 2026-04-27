@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -7,7 +7,7 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateComparerSwapTestComp : MudComponentBase
+public partial class ParameterStateComparerSwapCompTest : MudComponentBase
 {
     private readonly List<ParameterChangedEventArgs<double>> _parameterChanges = new();
 
@@ -17,7 +17,7 @@ public partial class ParameterStateComparerSwapTestComp : MudComponentBase
     [Parameter]
     public IEqualityComparer<double> DoubleEqualityComparer { get; set; } = new DoubleEpsilonEqualityComparer(0.0001f);
 
-    public ParameterStateComparerSwapTestComp()
+    public ParameterStateComparerSwapCompTest()
     {
         using var registerScope = CreateRegisterScope();
         registerScope.RegisterParameter<double>(nameof(DoubleParam))

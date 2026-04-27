@@ -158,7 +158,7 @@ namespace MudBlazor.UnitTests.Components
                 builder.CloseElement();
 
             }), Severity.Normal, key: key);
-            _service.Add<SnackbarCustomComponent>(null, key: key);
+            _service.Add<SnackbarCustomComponentTest>(null, key: key);
 
             _service.ShownSnackbars.Count().Should().Be(1);
         }

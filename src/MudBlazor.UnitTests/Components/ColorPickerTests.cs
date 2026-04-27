@@ -1473,7 +1473,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DistinguishBetweenInternalAndExternalView()
         {
-            var comp = Context.Render<PickerWithFixedView>();
+            var comp = Context.Render<PickerWithFixedViewTest>();
 
             //open the color picker
             var inputField = comp.Find(".mud-input-slot");
