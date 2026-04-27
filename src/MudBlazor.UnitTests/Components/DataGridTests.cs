@@ -1390,6 +1390,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridStartedEditingItemOccursOnRowClickInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            comp.Instance.StartedEditingItem.Should().Be(false);
+
+            var item = dataGrid.Instance.CurrentPageItems.First();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.OnRowClickedAsync(new MouseEventArgs(), item, 0));
+
+            comp.Instance.StartedEditingItem.Should().Be(true);
+            dataGrid.Instance._editingItem.Should().NotBeNull();
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridSetEditingItemInCellModeDoesNotOpenEditForm()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell));
+
+            var item = dataGrid.Instance.CurrentPageItems.First();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetEditingItemAsync(item));
+
+            comp.Instance.StartedEditingItem.Should().Be(true);
+            dataGrid.Instance._editingItem.Should().NotBeNull();
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        [Test]
         public async Task DataGridCommittedItemChangedOccursAfterSourceItemUpdateInFormEdit()
         {
             var comp = Context.Render<DataGridCommittedItemChangedTest>();

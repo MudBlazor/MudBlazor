@@ -2235,7 +2235,7 @@ namespace MudBlazor
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
-            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
+            if (EditTrigger == DataGridEditTrigger.OnRowClick)
                 await SetEditingItemAsync(item);
 
             await SetSelectedItemAsync(item);
@@ -2454,7 +2454,7 @@ namespace MudBlazor
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            _isEditFormOpen = true;
+            _isEditFormOpen = EditMode != DataGridEditMode.Cell;
         }
 
         /// <summary>
