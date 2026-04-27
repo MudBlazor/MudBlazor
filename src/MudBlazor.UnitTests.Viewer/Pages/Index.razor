@@ -577,13 +577,6 @@
         // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
         var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
 
-        if (!string.IsNullOrWhiteSpace(entry.Description))
-        {
-            var descriptionScore = Fuzz.PartialTokenSortRatio(entry.Description, query);
-            // Descriptions are helpful fallback context but should not overpower name intent.
-            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.92 + descriptionScore * 0.08));
-        }
-
         return combined;
     }
 
