@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Shared.Search;
 
 public sealed class FuzzySearchService : IFuzzySearchService
 {
-    private const int YieldFrequency = 32;
+    private const int ItemsBetweenYields = 32;
 
     public async Task<FuzzySearchResponse<T>> SearchAsync<T>(string query, IReadOnlyList<FuzzySearchEntry<T>> entries, FuzzySearchOptions? options = null, CancellationToken cancellationToken = default)
     {
@@ -46,7 +46,7 @@ public sealed class FuzzySearchService : IFuzzySearchService
                 }
             }
 
-            if ((i + 1) % YieldFrequency == 0)
+            if ((i + 1) % ItemsBetweenYields == 0)
             {
                 await Task.Yield();
             }
@@ -85,17 +85,17 @@ public sealed class FuzzySearchService : IFuzzySearchService
 
     private static int GetFieldScore(string query, string candidate)
     {
-        if (candidate.Equals(query, StringComparison.Ordinal))
+        if (candidate.Equals(query, StringComparison.OrdinalIgnoreCase))
         {
             return 100;
         }
 
-        if (candidate.StartsWith(query, StringComparison.Ordinal))
+        if (candidate.StartsWith(query, StringComparison.OrdinalIgnoreCase))
         {
             return 96;
         }
 
-        if (candidate.Contains(query, StringComparison.Ordinal))
+        if (candidate.Contains(query, StringComparison.OrdinalIgnoreCase))
         {
             return 90;
         }
