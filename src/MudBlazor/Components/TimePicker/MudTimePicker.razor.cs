@@ -543,7 +543,7 @@ namespace MudBlazor
             // Clicking a stick will submit the time.
             if (_currentView == OpenTo.Minutes)
             {
-                if (!(AmPm && TimeEditMode == TimeEditMode.Normal))
+                if (ShouldAutoCloseAfterMinuteSelection())
                 {
                     await SubmitAndCloseAsync();
                 }
@@ -611,6 +611,9 @@ namespace MudBlazor
         }
 
         private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+
+        private bool ShouldAutoCloseAfterMinuteSelection()
+            => !AmPm || TimeEditMode != TimeEditMode.Normal;
 
         protected async Task SubmitAndCloseAsync()
         {
