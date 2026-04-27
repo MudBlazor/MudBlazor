@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System.Linq;
 using AwesomeAssertions;
@@ -15,7 +15,7 @@ public sealed class FuzzySearchServiceTests
     [Test]
     public async Task Search_IgnoresCaseAcrossMultipleDataPoints()
     {
-        var entries =
+        FuzzySearchEntry<SearchItem>[] entries =
         [
             new FuzzySearchEntry<SearchItem>(
                 new SearchItem("Component Playground", "Utilities"),
@@ -42,7 +42,7 @@ public sealed class FuzzySearchServiceTests
     [Test]
     public async Task Search_RespectsLimitsWhileKeepingTotalMatchCount()
     {
-        var entries =
+        FuzzySearchEntry<SearchItem>[] entries =
         [
             new FuzzySearchEntry<SearchItem>(new SearchItem("Table", "Data"), "Table", [new FuzzySearchDataPoint("Table")]),
             new FuzzySearchEntry<SearchItem>(new SearchItem("Table Column", "Data"), "Table Column", [new FuzzySearchDataPoint("Table Column")]),
