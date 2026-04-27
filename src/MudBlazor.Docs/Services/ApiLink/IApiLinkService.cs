@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MudBlazor.Docs.Services;
@@ -20,7 +21,7 @@ public interface IApiLinkService
     /// Returns the search results for the specified text using a fuzzy algorithm.
     /// </summary>
     /// <param name="text">The search query</param>
-    Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text);
+    Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns all entries registered in the search index.

@@ -100,6 +100,7 @@ public sealed class FuzzySearchService : IFuzzySearchService
             return 90;
         }
 
+        // `candidate` is pre-normalized when the search index is built.
         var ratio = Fuzz.Ratio(candidate, query);
         var partialRatio = Fuzz.PartialRatio(candidate, query);
         var tokenScore = Fuzz.PartialTokenSortRatio(candidate, query);

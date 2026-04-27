@@ -102,14 +102,14 @@ namespace MudBlazor.Docs.Services
         }
 
         /// <inheritdoc />
-        public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
+        public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(text))
             {
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
             }
 
-            return SearchCoreAsync(text);
+            return SearchCoreAsync(text, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -137,13 +137,13 @@ namespace MudBlazor.Docs.Services
             AddKeyword(entry, entry.Link, 0.70);
         }
 
-        private async Task<IReadOnlyCollection<ApiLinkServiceEntry>> SearchCoreAsync(string text)
+        private async Task<IReadOnlyCollection<ApiLinkServiceEntry>> SearchCoreAsync(string text, CancellationToken cancellationToken)
         {
             var result = await _fuzzySearchService.SearchAsync(
                 text,
                 GetSearchEntries(),
                 new FuzzySearchOptions { Threshold = 55 },
-                CancellationToken.None);
+                cancellationToken);
 
             return result.Results.ToList();
         }

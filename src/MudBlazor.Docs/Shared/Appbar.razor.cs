@@ -110,7 +110,7 @@ public partial class Appbar : IDisposable
             return Task.FromResult(ApiLinkService.GetFeaturedEntries());
         }
 
-        return ApiLinkService.Search(text);
+        return ApiLinkService.Search(text, token);
     }
 
     private void OpenSearchDialog() => IsSearchDialogOpen = true;
