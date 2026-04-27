@@ -27,7 +27,11 @@
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
 
                     <MudText Typo="Typo.caption" Class="mud-text-secondary">
-                        @_filteredCountLabel
+                        @(_entries.Length == 0
+                            ? string.Empty
+                            : string.IsNullOrWhiteSpace(_searchText)
+                                ? $"{_entries.Length} tests"
+                                : GetMatchCountLabel(_filteredEntries.Length + _remainingResultsCount))
                     </MudText>
                 </div>
 
@@ -47,7 +51,7 @@
                         </MudButton>
                     </MudVirtualize>
 
-                    @if (_canShowAllLink)
+                    @if (_remainingResultsCount > 0)
                     {
                         <div class="test-viewer-show-all">
                             <MudLink Href="#" OnClick="ShowAllResults" Typo="Typo.caption">
@@ -210,10 +214,8 @@
     private TestEntry[] _filteredEntries = [];
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
-    private string _filteredCountLabel = string.Empty;
     private int _remainingResultsCount;
     private bool _showAllResults;
-    private bool _canShowAllLink;
     private CancellationTokenSource? _searchCts;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
@@ -445,12 +447,10 @@
         try
         {
             _remainingResultsCount = 0;
-            _canShowAllLink = false;
 
             if (_entries.Length == 0)
             {
                 _filteredEntries = [];
-                _filteredCountLabel = string.Empty;
                 await InvokeAsync(StateHasChanged);
                 return;
             }
@@ -462,7 +462,6 @@
             if (query.Length == 0)
             {
                 _filteredEntries = _entries;
-                _filteredCountLabel = $"{_entries.Length} tests";
                 await InvokeAsync(StateHasChanged);
                 return;
             }
@@ -519,11 +518,9 @@
             {
                 filteredEntries = filteredEntries.Take(defaultLimit).ToArray();
                 _remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
-                _canShowAllLink = _remainingResultsCount > 0;
             }
 
             _filteredEntries = filteredEntries;
-            _filteredCountLabel = GetMatchCountLabel(totalMatchCount);
             await InvokeAsync(StateHasChanged);
         }
         catch (OperationCanceledException)
