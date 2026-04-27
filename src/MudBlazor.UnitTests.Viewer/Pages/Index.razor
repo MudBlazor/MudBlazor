@@ -27,11 +27,7 @@
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
 
                     <MudText Typo="Typo.caption" Class="mud-text-secondary">
-                        @(_entries.Length == 0
-                            ? string.Empty
-                            : string.IsNullOrWhiteSpace(_searchText)
-                                ? $"{_entries.Length} tests"
-                                : GetMatchCountLabel(_filteredEntries.Length + _remainingResultsCount))
+                        @_filteredEntries.Length tests
                     </MudText>
                 </div>
 
@@ -528,13 +524,6 @@
             // Ignore; newer search already started.
         }
     }
-
-    private static string GetMatchCountLabel(int matchCount) => matchCount switch
-    {
-        0 => "No matches",
-        1 => "1 match",
-        _ => $"{matchCount} matches"
-    };
 
     private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
     {
