@@ -568,9 +568,8 @@
     {
         // Combining multiple fuzzy signals reduces false positives from any single algorithm.
         var nameRatio = Fuzz.Ratio(entry.Name, query);
-        var nameTokenSort = Fuzz.TokenSortRatio(entry.Name, query);
         var namePartial = Fuzz.PartialRatio(entry.Name, query);
-        var nameScore = (int)Math.Round(nameRatio * 0.55 + nameTokenSort * 0.25 + namePartial * 0.20);
+        var nameScore = (int)Math.Round(nameRatio * 0.73 + namePartial * 0.27);
 
         var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
 
