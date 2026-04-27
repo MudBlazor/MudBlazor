@@ -560,6 +560,8 @@ namespace MudBlazor
 
         protected internal virtual Task SubmitAsync() => Task.CompletedTask;
 
+        protected virtual Task OnInputBlurredAsync(FocusEventArgs args) => Task.CompletedTask;
+
         /// <summary>
         /// Hides this picker.
         /// </summary>

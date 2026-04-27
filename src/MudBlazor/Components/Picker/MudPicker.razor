@@ -37,6 +37,7 @@
                        Clearable="@(Clearable && !GetReadOnlyState())"
                        ClearIcon="@ClearIcon"
                        OnClearButtonClick="@(async () => await ClearAsync())"
+                       OnBlur="OnInputBlurredAsync"
                        ShrinkLabel="@ShrinkLabel"
                        KeyDownPreventDefault="Open"
                        InputId="@InputId"

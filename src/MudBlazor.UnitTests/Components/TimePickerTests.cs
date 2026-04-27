@@ -170,6 +170,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TimePicker_TabBlur_CommitsPendingHourSelectionWithZeroMinutes()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = await OpenPicker(parameters => parameters.Add(x => x.AmPm, true));
+            var picker = comp.FindComponent<MudTimePicker>();
+
+            await comp.InvokeAsync(() => picker.Instance.SelectTimeFromStick(6, false));
+            await comp.InvokeAsync(() => picker.Instance.OnStickClick(6));
+
+            comp.Instance.Time.Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().BeEmpty();
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.Instance.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown" }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+
+            comp.Instance.Time.Should().BeNull();
+
+            await comp.Find("input").BlurAsync();
+
+            await comp.WaitForAssertionAsync(() => comp.Instance.Time.Should().Be(new TimeSpan(6, 0, 0)));
+            comp.Find("input").GetAttribute("value").Should().Be("06:00 AM");
+        }
+
+        [Test]
         public async Task InputStringValues_CheckParsing()
         {
             var comp = Context.Render<MudTimePicker>();

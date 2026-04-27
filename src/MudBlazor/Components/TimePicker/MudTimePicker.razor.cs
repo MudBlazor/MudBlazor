@@ -197,6 +197,15 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        protected override async Task OnInputBlurredAsync(FocusEventArgs obj)
+        {
+            if (!Open && TimeIntermediate != Time && !ConversionError)
+            {
+                await SubmitAsync();
+            }
+        }
+
+        /// <inheritdoc />
         protected internal override Task SubmitAsync()
         {
             if (GetReadOnlyState())
