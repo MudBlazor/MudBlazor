@@ -723,7 +723,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableMultiSelection_IgnoreCheckbox_RowClick()
         {
-            var comp = Context.Render<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var comp = Context.Render<TableMultiSelectIgnoreRowTest>();
             var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableMultiSelection_MultiGrouping_DefaultCheckboxStates()
         {
-            var comp = Context.Render<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var comp = Context.Render<TableMultiGroupCheckboxTest>();
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.

@@ -996,7 +996,7 @@ namespace MudBlazor.UnitTests.Components
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
 
-            var comp = Context.Render<DebouncedNumericFieldCultureChangeRerenderTest>();
+            var comp = Context.Render<NumericFieldCultureChangeTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
             var delayedCultureChange = comp.Find("button#culture-change");
             // ensure text is updated on initialize

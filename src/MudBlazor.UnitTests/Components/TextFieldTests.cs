@@ -223,7 +223,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextField_ShouldStayInSyncWithBoundValueAfterAsyncInitialization()
         {
-            var comp = Context.Render<DebouncedTextFieldAsyncInitializationSyncTest>();
+            var comp = Context.Render<TextFieldAsyncInitTest>();
 
             await comp.WaitForAssertionAsync(() =>
             {

@@ -1866,7 +1866,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_LoadListStartWhenSetAndThereAreItems()
         {
-            var comp = Context.Render<AutocompleteListBeforeAndAfterRendersWithItemsTest>();
+            var comp = Context.Render<AutocompleteListPartsTest>();
 
             await comp.Find("div.mud-input-control").FocusAsync();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
@@ -1883,7 +1883,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_LoadListEndWhenSetAndThereAreItems()
         {
-            var comp = Context.Render<AutocompleteListBeforeAndAfterRendersWithItemsTest>();
+            var comp = Context.Render<AutocompleteListPartsTest>();
 
             await comp.Find("div.mud-input-control").FocusAsync();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
