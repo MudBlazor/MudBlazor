@@ -211,12 +211,10 @@
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
     private string _filteredCountLabel = string.Empty;
-    private int _totalMatchCount;
     private int _remainingResultsCount;
     private bool _showAllResults;
     private bool _canShowAllLink;
     private CancellationTokenSource? _searchCts;
-    private Task? _searchTask;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
     {
@@ -439,41 +437,39 @@
         _searchCts?.Cancel();
         _searchCts?.Dispose();
         _searchCts = new CancellationTokenSource();
-        _searchTask = RecomputeFilteredEntriesAsync(_searchText, _showAllResults, _searchCts.Token);
+        _ = RecomputeFilteredEntriesAsync(_searchCts.Token);
     }
 
-    private async Task RecomputeFilteredEntriesAsync(string searchText, bool showAllResults, CancellationToken token)
+    private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
     {
         try
         {
+            _remainingResultsCount = 0;
+            _canShowAllLink = false;
+
             if (_entries.Length == 0)
             {
                 _filteredEntries = [];
                 _filteredCountLabel = string.Empty;
-                _totalMatchCount = 0;
-                _remainingResultsCount = 0;
-                _canShowAllLink = false;
                 await InvokeAsync(StateHasChanged);
                 return;
             }
 
             token.ThrowIfCancellationRequested();
 
-            if (string.IsNullOrWhiteSpace(searchText))
+            var query = _searchText.Trim();
+
+            if (query.Length == 0)
             {
                 _filteredEntries = _entries;
                 _filteredCountLabel = $"{_entries.Length} tests";
-                _totalMatchCount = _entries.Length;
-                _remainingResultsCount = 0;
-                _canShowAllLink = false;
                 await InvokeAsync(StateHasChanged);
                 return;
             }
 
-            var query = searchText.Trim();
-
             const int threshold = 35;
             const int defaultLimit = 20;
+            var showAllResults = _showAllResults;
 
             var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
             List<(TestEntry Entry, int Score)>? all = showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
@@ -519,28 +515,15 @@
                 .Select(x => x.Entry)
                 .ToArray();
 
-            var filteredCountLabel = totalMatchCount switch
-            {
-                0 => "No matches",
-                1 => "1 match",
-                _ => $"{totalMatchCount} matches"
-            };
-
-            var remainingResultsCount = 0;
-            var canShowAllLink = false;
-
             if (!showAllResults)
             {
                 filteredEntries = filteredEntries.Take(defaultLimit).ToArray();
-                remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
-                canShowAllLink = remainingResultsCount > 0;
+                _remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
+                _canShowAllLink = _remainingResultsCount > 0;
             }
 
             _filteredEntries = filteredEntries;
-            _filteredCountLabel = filteredCountLabel;
-            _totalMatchCount = totalMatchCount;
-            _remainingResultsCount = remainingResultsCount;
-            _canShowAllLink = canShowAllLink;
+            _filteredCountLabel = GetMatchCountLabel(totalMatchCount);
             await InvokeAsync(StateHasChanged);
         }
         catch (OperationCanceledException)
@@ -548,6 +531,13 @@
             // Ignore; newer search already started.
         }
     }
+
+    private static string GetMatchCountLabel(int matchCount) => matchCount switch
+    {
+        0 => "No matches",
+        1 => "1 match",
+        _ => $"{matchCount} matches"
+    };
 
     private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
     {
