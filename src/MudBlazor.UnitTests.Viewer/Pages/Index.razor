@@ -22,7 +22,7 @@
                 </div>
 
                 <div class="test-viewer-search">
-                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="0"
+                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="150"
                                   Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
 
@@ -238,6 +238,8 @@
         get => _searchText;
         set
         {
+            value ??= string.Empty;
+
             if (string.Equals(_searchText, value, StringComparison.Ordinal))
             {
                 return;
@@ -437,43 +439,45 @@
         _searchCts?.Cancel();
         _searchCts?.Dispose();
         _searchCts = new CancellationTokenSource();
-        _searchTask = RecomputeFilteredEntriesAsync(_searchCts.Token);
+        _searchTask = RecomputeFilteredEntriesAsync(_searchText, _showAllResults, _searchCts.Token);
     }
 
-    private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
+    private async Task RecomputeFilteredEntriesAsync(string searchText, bool showAllResults, CancellationToken token)
     {
         try
         {
-            _totalMatchCount = 0;
-            _remainingResultsCount = 0;
-            _canShowAllLink = false;
-
             if (_entries.Length == 0)
             {
                 _filteredEntries = [];
                 _filteredCountLabel = string.Empty;
+                _totalMatchCount = 0;
+                _remainingResultsCount = 0;
+                _canShowAllLink = false;
                 await InvokeAsync(StateHasChanged);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_searchText))
+            token.ThrowIfCancellationRequested();
+
+            if (string.IsNullOrWhiteSpace(searchText))
             {
                 _filteredEntries = _entries;
                 _filteredCountLabel = $"{_entries.Length} tests";
                 _totalMatchCount = _entries.Length;
+                _remainingResultsCount = 0;
+                _canShowAllLink = false;
                 await InvokeAsync(StateHasChanged);
                 return;
             }
 
-            var query = _searchText.Trim();
-            _filteredCountLabel = "Searching…";
-            await InvokeAsync(StateHasChanged);
+            var query = searchText.Trim();
 
             const int threshold = 35;
             const int defaultLimit = 20;
 
             var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
-            List<(TestEntry Entry, int Score)>? all = _showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
+            List<(TestEntry Entry, int Score)>? all = showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
+            var totalMatchCount = 0;
 
             for (var i = 0; i < _entries.Length; i++)
             {
@@ -489,7 +493,7 @@
                     continue;
                 }
 
-                _totalMatchCount++;
+                totalMatchCount++;
 
                 if (all is not null)
                 {
@@ -509,27 +513,34 @@
             token.ThrowIfCancellationRequested();
 
             IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
-            var ordered = final
+            var filteredEntries = final
                 .OrderByDescending(x => x.Score)
                 .ThenBy(x => x.Entry.Name)
                 .Select(x => x.Entry)
                 .ToArray();
 
-            _filteredEntries = ordered;
-            _filteredCountLabel = _totalMatchCount switch
+            var filteredCountLabel = totalMatchCount switch
             {
                 0 => "No matches",
                 1 => "1 match",
-                _ => $"{_totalMatchCount} matches"
+                _ => $"{totalMatchCount} matches"
             };
 
-            if (!_showAllResults)
+            var remainingResultsCount = 0;
+            var canShowAllLink = false;
+
+            if (!showAllResults)
             {
-                _filteredEntries = _filteredEntries.Take(defaultLimit).ToArray();
-                _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
-                _canShowAllLink = _remainingResultsCount > 0;
+                filteredEntries = filteredEntries.Take(defaultLimit).ToArray();
+                remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
+                canShowAllLink = remainingResultsCount > 0;
             }
 
+            _filteredEntries = filteredEntries;
+            _filteredCountLabel = filteredCountLabel;
+            _totalMatchCount = totalMatchCount;
+            _remainingResultsCount = remainingResultsCount;
+            _canShowAllLink = canShowAllLink;
             await InvokeAsync(StateHasChanged);
         }
         catch (OperationCanceledException)
