@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
                 picker.TimeIntermediate.Should().Be(new TimeSpan(18, 15, 0));
             });
 
-            await comp.Find("#theCloseButton").ClickAsync();
+            await comp.FindAll("button").Single(x => x.TrimmedText().Equals("OK")).ClickAsync();
 
             await comp.WaitForAssertionAsync(() =>
             {
