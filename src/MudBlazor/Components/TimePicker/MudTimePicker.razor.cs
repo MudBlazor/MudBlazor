@@ -612,6 +612,12 @@ namespace MudBlazor
 
         private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
 
+        /// <summary>
+        /// Indicates whether selecting minutes completes the current interaction and should trigger auto-close behavior.
+        /// </summary>
+        /// <remarks>
+        /// In the normal 12-hour flow, AM/PM is still pending after minute selection, so the picker remains open until that choice is made.
+        /// </remarks>
         private bool ShouldAutoCloseAfterMinuteSelection()
             => !AmPm || TimeEditMode != TimeEditMode.Normal;
 

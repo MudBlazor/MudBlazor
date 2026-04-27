@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimePicker_WithAmPmAndNoPickerActions_ClosesAfterMeridiemSelection()
+        public async Task TimePicker_WithAmPmAndNoPickerActions_ClosesAfterAmPmSelection()
         {
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.AmPm, true)
