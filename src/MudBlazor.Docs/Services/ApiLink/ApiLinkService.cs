@@ -1,16 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using FuzzySharp;
 using MudBlazor.Docs.Models;
+using MudBlazor.UnitTests.Shared.Search;
 
 namespace MudBlazor.Docs.Services
 {
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
+        private readonly Dictionary<string, ApiLinkServiceEntry> _entriesByKeyword = [];
+        private readonly Dictionary<ApiLinkServiceEntry, List<FuzzySearchDataPoint>> _searchDataPoints = [];
+        private readonly IFuzzySearchService _fuzzySearchService;
+        private IReadOnlyList<FuzzySearchEntry<ApiLinkServiceEntry>> _searchEntries = [];
+        private bool _searchEntriesDirty = true;
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
                 new ApiLinkServiceEntry
@@ -84,8 +89,9 @@ namespace MudBlazor.Docs.Services
                 }
             ];
 
-        public ApiLinkService(IMenuService menuService)
+        public ApiLinkService(IMenuService menuService, IFuzzySearchService fuzzySearchService)
         {
+            _fuzzySearchService = fuzzySearchService;
             // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
             Register(menuService.Customization);
@@ -103,46 +109,13 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
             }
 
-            // Case is ignored.
-            text = text.ToLowerInvariant();
-
-            // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
-
-            // Calculate the ratios of all keywords to the search input.
-            var ratios = new Dictionary<ApiLinkServiceEntry, double>();
-            foreach (var (keyword, entry) in _entries)
-            {
-                var ratio = GetSearchMatchRatio(text, keyword);
-
-                // Assign the highest ratio so far to the entry.
-                if (ratios.TryGetValue(entry, out var highestRatio))
-                {
-                    if (ratio > highestRatio)
-                    {
-                        ratios[entry] = ratio;
-                    }
-                }
-                else
-                {
-                    ratios.Add(entry, ratio);
-                }
-            }
-
-            // Return the most accurate and highest quality results.
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
-                ratios
-                .Where(x => x.Value > 65)
-                .OrderByDescending(x => x.Value)
-                .Select(x => x.Key)
-                .ToList()
-            );
+            return SearchCoreAsync(text);
         }
 
         /// <inheritdoc />
         public IReadOnlyCollection<ApiLinkServiceEntry> GetAllEntries()
         {
-            return _entries.Values
-                .Distinct()
+            return _searchDataPoints.Keys
                 .OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
@@ -154,37 +127,40 @@ namespace MudBlazor.Docs.Services
         }
 
         /// <summary>
-        /// Returns a value representing the match ratio of the search input to the keyword.
-        /// A higher ratio means a better match.
-        /// </summary>
-        /// <param name="search">The search query</param>
-        /// <param name="keyword">The keyword from an existing source</param>
-        private double GetSearchMatchRatio(string search, string keyword)
-        {
-            var ratio = Fuzz.Ratio(keyword, search);
-            var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
-            var averageRatio = (ratio + partialOutOfOrderRatio) / 2.0;
-
-            return averageRatio;
-        }
-
-        /// <summary>
         /// Adds the specified entry to the search index.
         /// </summary>
         private void AddEntry(ApiLinkServiceEntry entry)
         {
-            AddKeyword(entry, entry.Title);
-            AddKeyword(entry, entry.SubTitle);
-            AddKeyword(entry, entry.ComponentName);
-            AddKeyword(entry, entry.Link);
+            AddKeyword(entry, entry.Title, 1.00);
+            AddKeyword(entry, entry.SubTitle, 0.75);
+            AddKeyword(entry, entry.ComponentName, 0.95);
+            AddKeyword(entry, entry.Link, 0.70);
         }
 
-        private void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
+        private async Task<IReadOnlyCollection<ApiLinkServiceEntry>> SearchCoreAsync(string text)
         {
-            if (!string.IsNullOrWhiteSpace(keyword))
+            var result = await _fuzzySearchService.SearchAsync(
+                text,
+                GetSearchEntries(),
+                new FuzzySearchOptions { Threshold = 55 },
+                CancellationToken.None);
+
+            return result.Results.ToList();
+        }
+
+        private IReadOnlyList<FuzzySearchEntry<ApiLinkServiceEntry>> GetSearchEntries()
+        {
+            if (!_searchEntriesDirty)
             {
-                _entries[keyword.ToLowerInvariant()] = entry;
+                return _searchEntries;
             }
+
+            _searchEntries = _searchDataPoints
+                .Select(static x => new FuzzySearchEntry<ApiLinkServiceEntry>(x.Key, x.Key.Title, x.Value))
+                .ToArray();
+            _searchEntriesDirty = false;
+
+            return _searchEntries;
         }
 
         /// <inheritdoc />
@@ -247,10 +223,35 @@ namespace MudBlazor.Docs.Services
 
         private void RegisterAliasKeyword(string link, string alias)
         {
-            if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
+            if (_entriesByKeyword.TryGetValue(link.ToLowerInvariant(), out var entry))
             {
-                AddKeyword(entry, alias);
+                AddKeyword(entry, alias, 0.90);
             }
+        }
+
+        private void AddKeyword(ApiLinkServiceEntry entry, string? keyword, double weight)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return;
+            }
+
+            keyword = keyword.Trim();
+            _entriesByKeyword[keyword.ToLowerInvariant()] = entry;
+
+            if (!_searchDataPoints.TryGetValue(entry, out var dataPoints))
+            {
+                dataPoints = [];
+                _searchDataPoints.Add(entry, dataPoints);
+            }
+
+            if (dataPoints.Any(x => string.Equals(x.Text, keyword, StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            dataPoints.Add(new FuzzySearchDataPoint(keyword, weight));
+            _searchEntriesDirty = true;
         }
 
         /// <summary>

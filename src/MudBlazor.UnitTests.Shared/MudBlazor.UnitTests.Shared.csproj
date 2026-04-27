@@ -8,8 +8,9 @@
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
-  
+   
   <ItemGroup>
+    <PackageReference Include="FuzzySharp" Version="2.0.2" />
     <PackageReference Include="bunit" Version="2.7.2" />
     <PackageReference Include="nunit" Version="4.5.1" />
     <PackageReference Include="Moq" Version="4.20.72" />

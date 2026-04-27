@@ -1,7 +1,8 @@
-﻿@page "/"
+@page "/"
 @using System.Reflection
-@using FuzzySharp
+@using MudBlazor.UnitTests.Shared.Search
 @inject NavigationManager NavManager
+@inject IFuzzySearchService FuzzySearchService
 @implements IDisposable
 
 <MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
@@ -208,6 +209,7 @@
     private string _searchText = string.Empty;
     private TestEntry[] _entries = [];
     private TestEntry[] _filteredEntries = [];
+    private FuzzySearchEntry<TestEntry>[] _searchEntries = [];
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
     private int _remainingResultsCount;
@@ -256,6 +258,16 @@
         _entries = _availableComponentTypes
             .Select(CreateEntry)
             .OrderBy(x => x.Name)
+            .ToArray();
+        _searchEntries = _entries
+            .Select(static entry => new FuzzySearchEntry<TestEntry>(
+                entry,
+                entry.Name,
+                [
+                    new FuzzySearchDataPoint(entry.DisplayName),
+                    new FuzzySearchDataPoint(entry.Name, 0.95),
+                    new FuzzySearchDataPoint(entry.Category, 0.60)
+                ]))
             .ToArray();
 
         _entryByType = _entries.ToDictionary(x => x.Type, x => x);
@@ -465,58 +477,18 @@
             const int threshold = 35;
             const int defaultLimit = 20;
             var showAllResults = _showAllResults;
-
-            var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
-            List<(TestEntry Entry, int Score)>? all = showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
-            var totalMatchCount = 0;
-
-            for (var i = 0; i < _entries.Length; i++)
-            {
-                token.ThrowIfCancellationRequested();
-                var entry = _entries[i];
-                var score = GetSearchScore(query, entry);
-                if (score < threshold)
+            var searchResult = await FuzzySearchService.SearchAsync(
+                query,
+                _searchEntries,
+                new FuzzySearchOptions
                 {
-                    if (i % 25 == 0)
-                    {
-                        await Task.Yield();
-                    }
-                    continue;
-                }
+                    Threshold = threshold,
+                    Limit = showAllResults ? null : defaultLimit
+                },
+                token);
 
-                totalMatchCount++;
-
-                if (all is not null)
-                {
-                    all.Add((entry, score));
-                }
-                else
-                {
-                    InsertTopK(top, (entry, score), defaultLimit);
-                }
-
-                if (i % 25 == 0)
-                {
-                    await Task.Yield();
-                }
-            }
-
-            token.ThrowIfCancellationRequested();
-
-            IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
-            var filteredEntries = final
-                .OrderByDescending(x => x.Score)
-                .ThenBy(x => x.Entry.Name)
-                .Select(x => x.Entry)
-                .ToArray();
-
-            if (!showAllResults)
-            {
-                filteredEntries = filteredEntries.Take(defaultLimit).ToArray();
-                _remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
-            }
-
-            _filteredEntries = filteredEntries;
+            _filteredEntries = searchResult.Results.ToArray();
+            _remainingResultsCount = Math.Max(0, searchResult.TotalMatchCount - _filteredEntries.Length);
             await InvokeAsync(StateHasChanged);
         }
         catch (OperationCanceledException)
@@ -525,58 +497,10 @@
         }
     }
 
-    private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
-    {
-        if (list.Count == 0)
-        {
-            list.Add(candidate);
-            return;
-        }
-
-        var inserted = false;
-        for (var i = 0; i < list.Count; i++)
-        {
-            if (candidate.Score > list[i].Score)
-            {
-                list.Insert(i, candidate);
-                inserted = true;
-                break;
-            }
-        }
-
-        if (!inserted)
-        {
-            if (list.Count < k)
-            {
-                list.Add(candidate);
-            }
-        }
-
-        if (list.Count > k)
-        {
-            list.RemoveAt(list.Count - 1);
-        }
-    }
-
     private void ShowAllResults(MouseEventArgs args)
     {
         _showAllResults = true;
         StartSearch();
-    }
-
-    private int GetSearchScore(string query, TestEntry entry)
-    {
-        // Combining multiple fuzzy signals reduces false positives from any single algorithm.
-        var nameRatio = Fuzz.Ratio(entry.Name, query);
-        var namePartial = Fuzz.PartialRatio(entry.Name, query);
-        var nameScore = (int)Math.Round(nameRatio * 0.73 + namePartial * 0.27);
-
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
-
-        // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
-        var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
-
-        return combined;
     }
 
     private string GetEntryClass(TestEntry entry)
