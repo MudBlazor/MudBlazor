@@ -25,13 +25,7 @@
                     <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="150"
                                   Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-
-                    <MudText Typo="Typo.caption" Class="mud-text-secondary">
-                        @_filteredEntries.Length tests
-                    </MudText>
                 </div>
-
-                <div class="test-viewer-divider" />
 
                 <div class="test-viewer-results">
                     <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
@@ -64,7 +58,7 @@
                 @if (_selectedType is null)
                 {
                     <MudText Typo="Typo.h6">No test selected</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly open a test component.</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
                 }
                 else
                 {
@@ -104,27 +98,19 @@
     }
 
     .test-viewer-sidebar-header {
-        padding: 10px 12px 0 12px;
+        padding: 0 12px 0 12px;
         display: flex;
         align-items: center;
-    }
-
-    .test-viewer-search {
-        padding: 0 12px 12px 12px;
-        display: grid;
-        gap: 6px;
-    }
-
-    .test-viewer-divider {
-        height: 1px;
-        background: var(--mud-palette-divider);
-        margin: 0 12px;
     }
 
     .test-viewer-results {
         flex: 1;
         overflow: auto;
-        scrollbar-gutter: stable;
+        scrollbar-width: none;
+    }
+
+    .test-viewer-results::-webkit-scrollbar {
+        display: none;
     }
 
     .test-viewer-result-row {
@@ -156,8 +142,6 @@
 
     .test-viewer-entry {
         justify-content: flex-start;
-        padding: 8px 0 8px 0;
-        padding-inline-start: 12px;
         border-radius: var(--mud-default-borderradius);
         text-transform: none;
     }
