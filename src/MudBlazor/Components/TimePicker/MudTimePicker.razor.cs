@@ -210,6 +210,8 @@ namespace MudBlazor
             {
                 await SubmitAsync();
             }
+
+            await base.OnInputBlurredAsync(obj);
         }
 
         /// <inheritdoc />

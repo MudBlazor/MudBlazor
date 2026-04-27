@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimePicker_TabBlur_CommitsPendingHourSelectionWithZeroMinutes()
+        public async Task TimePickerTabBlurCommitsPendingHourSelectionWithZeroMinutes()
         {
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = await OpenPicker(parameters => parameters.Add(x => x.AmPm, true));
