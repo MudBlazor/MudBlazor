@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudTimePicker Label="With action buttons" @bind-Time="Time" AmPm="@AmPm" AutoClose="@AutoClose">
+<MudTimePicker Label="With action buttons" @bind-Time="Time" AmPm="AmPm" AutoClose="AutoClose">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
         <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
