@@ -279,7 +279,7 @@ namespace MudBlazor
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h.
             await UpdateTimeAsync();
-            if (_currentView == OpenTo.Minutes && TimeEditMode == TimeEditMode.Normal)
+            if (ShouldAutoCloseAfterAmPmSelection())
             {
                 await SubmitAndCloseAsync();
             }
@@ -295,7 +295,7 @@ namespace MudBlazor
 
             _timeSet.Hour %= 24;
             await UpdateTimeAsync();
-            if (_currentView == OpenTo.Minutes && TimeEditMode == TimeEditMode.Normal)
+            if (ShouldAutoCloseAfterAmPmSelection())
             {
                 await SubmitAndCloseAsync();
             }
@@ -620,6 +620,12 @@ namespace MudBlazor
         /// </remarks>
         private bool ShouldAutoCloseAfterMinuteSelection()
             => !AmPm || TimeEditMode != TimeEditMode.Normal;
+
+        /// <summary>
+        /// Indicates whether selecting AM/PM completes the current interaction and should trigger auto-close behavior.
+        /// </summary>
+        private bool ShouldAutoCloseAfterAmPmSelection()
+            => _currentView == OpenTo.Minutes && TimeEditMode == TimeEditMode.Normal && (PickerActions == null || AutoClose);
 
         protected async Task SubmitAndCloseAsync()
         {

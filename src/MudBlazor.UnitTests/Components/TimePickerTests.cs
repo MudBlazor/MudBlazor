@@ -207,6 +207,14 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.Time.Should().Be(new TimeSpan(0, 45, 0));
                 picker.TimeIntermediate.Should().Be(new TimeSpan(18, 15, 0));
             });
+
+            await comp.Find("#theCloseButton").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+                comp.Instance.Time.Should().Be(new TimeSpan(18, 15, 0));
+            });
         }
 
         [Test]
