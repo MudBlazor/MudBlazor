@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task AutocompleteCancelDispose()
         {
             var comp = Context.Render<AutocompleteTest8>();
-            var autocompleteContainerComp = comp.FindComponent<AutoCompleteContainer>();
+            var autocompleteContainerComp = comp.FindComponent<AutocompleteContainer>();
             var autocompleteComp = autocompleteContainerComp.FindComponent<MudAutocomplete<string>>();
             await autocompleteComp.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.Text, "Alabama"));
             await Task.Delay(500);

@@ -552,7 +552,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
-            var comp = Context.Render<MultilineTextfieldBindingTest>();
+            var comp = Context.Render<MultilineTextFieldBindingTest>();
 
             // print the generated html
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;

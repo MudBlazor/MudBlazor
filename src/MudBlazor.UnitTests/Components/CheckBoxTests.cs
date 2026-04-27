@@ -375,14 +375,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxDisabled()
         {
-            var comp = Context.Render<CheckboxLabelTest>();
+            var comp = Context.Render<CheckBoxLabelTest>();
             comp.FindAll("label.mud-checkbox")[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
         }
 
         [Test]
         public void CheckBoxLabelPlacement()
         {
-            var comp = Context.Render<CheckboxLabelTest>();
+            var comp = Context.Render<CheckBoxLabelTest>();
 
             comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd checkbox: Placement.Start
         }
