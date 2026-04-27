@@ -187,9 +187,9 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.Time.Should().BeNull();
 
-            await comp.Find("input").BlurAsync();
+            await comp.Find("input").TriggerEventAsync("onblur", new FocusEventArgs());
 
-            await comp.WaitForAssertionAsync(() => comp.Instance.Time.Should().Be(new TimeSpan(6, 0, 0)));
+            comp.Instance.Time.Should().Be(new TimeSpan(6, 0, 0));
             comp.Find("input").GetAttribute("value").Should().Be("06:00 AM");
         }
 
