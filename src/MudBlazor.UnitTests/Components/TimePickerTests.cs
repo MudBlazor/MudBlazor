@@ -160,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TimePicker_WithAmPmAndAutoCloseFalse_RemainsOpenUntilExplicitlyClosed()
+        public async Task TimePicker_WithAmPmAndNoPickerActions_ClosesAfterMeridiemSelection()
         {
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.AmPm, true)
@@ -180,26 +180,55 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() =>
             {
-                comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-                picker.TimeIntermediate.Should().Be(new TimeSpan(18, 15, 0));
+                comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+                picker.Time.Should().Be(new TimeSpan(18, 15, 0));
             });
         }
 
         [Test]
-        public async Task TimePicker_WithAutoCloseTrue_ClosesAfterFinalSelection()
+        public async Task TimePicker_WithAmPmAndPickerActions_DoesNotCloseWhenAutoCloseFalse()
         {
-            var comp = await OpenPicker(parameters => parameters
-                .Add(x => x.AutoClose, true)
-                .Add(x => x.MinuteSelectionStep, 15));
+            var comp = Context.Render<AutoCompleteTimePickerTest>(parameters => parameters
+                .Add(x => x.AmPm, true));
             var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.Find("input").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => picker.SelectTimeFromStick(6, false));
             await comp.InvokeAsync(() => picker.OnStickClick(6));
             await comp.InvokeAsync(() => picker.SelectTimeFromStick(15, false));
             await comp.InvokeAsync(() => picker.OnStickClick(15));
+            await comp.FindAll("div.mud-timepicker-ampm button")[1].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+                comp.Instance.Time.Should().Be(new TimeSpan(0, 45, 0));
+                picker.TimeIntermediate.Should().Be(new TimeSpan(18, 15, 0));
+            });
+        }
+
+        [Test]
+        public async Task TimePicker_WithAmPmAndPickerActions_ClosesWhenAutoCloseTrue()
+        {
+            var comp = Context.Render<AutoCompleteTimePickerTest>(parameters => parameters
+                .Add(x => x.AmPm, true)
+                .Add(x => x.AutoClose, true)
+                .Add(x => x.Time, new TimeSpan(0, 45, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.Find("input").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(6, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(6));
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(15, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(15));
+            await comp.FindAll("div.mud-timepicker-ampm button")[1].ClickAsync();
 
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
-            picker.Time.Should().Be(new TimeSpan(6, 15, 0));
+            comp.Instance.Time.Should().Be(new TimeSpan(18, 15, 0));
         }
 
         [Test]

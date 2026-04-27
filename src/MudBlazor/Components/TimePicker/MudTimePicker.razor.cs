@@ -82,8 +82,9 @@ namespace MudBlazor
         /// Closes this picker when the value is set or cleared.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, selecting the final time part or clearing
-        /// the value will close the drop-down without requiring any action buttons.
+        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined,
+        /// the hour and the minutes can be selected and the drop-down will close without having to
+        /// click any of the action buttons.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -278,6 +279,10 @@ namespace MudBlazor
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h.
             await UpdateTimeAsync();
+            if (_currentView == OpenTo.Minutes && TimeEditMode == TimeEditMode.Normal)
+            {
+                await SubmitAndCloseAsync();
+            }
             await FocusAsync();
         }
 
@@ -290,6 +295,10 @@ namespace MudBlazor
 
             _timeSet.Hour %= 24;
             await UpdateTimeAsync();
+            if (_currentView == OpenTo.Minutes && TimeEditMode == TimeEditMode.Normal)
+            {
+                await SubmitAndCloseAsync();
+            }
             await FocusAsync();
         }
 
@@ -534,7 +543,10 @@ namespace MudBlazor
             // Clicking a stick will submit the time.
             if (_currentView == OpenTo.Minutes)
             {
-                await SubmitAndCloseAsync();
+                if (!(AmPm && TimeEditMode == TimeEditMode.Normal))
+                {
+                    await SubmitAndCloseAsync();
+                }
             }
             else if (_currentView == OpenTo.Hours)
             {
@@ -602,7 +614,7 @@ namespace MudBlazor
 
         protected async Task SubmitAndCloseAsync()
         {
-            if (AutoClose)
+            if (PickerActions == null || AutoClose)
             {
                 await SubmitAsync();
 
