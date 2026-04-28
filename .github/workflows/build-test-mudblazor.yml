@@ -82,8 +82,8 @@ jobs:
           --project ${{ matrix.project-path }} \
           -c Release \
           --no-build \
-          --blame-hang \
-          --blame-hang-timeout 60s \
+          --hangdump \
+          --hangdump-timeout 60s \
           /property:GenerateFullPaths=true \
           /consoleloggerparameters:NoSummary \
           --coverlet \
