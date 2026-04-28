@@ -92,7 +92,7 @@ jobs:
           --coverlet-skip-auto-props \
           --report-spekt-junit \
           --report-spekt-junit-filename junit.xml \
-          --results-directory TestResults
+          --results-directory ${{ matrix.project-path }}/TestResults
 
       - name: Extract project name
         id: project
