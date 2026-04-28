@@ -84,16 +84,14 @@ jobs:
           --no-build \
           --hangdump \
           --hangdump-timeout 60s \
-          /property:GenerateFullPaths=true \
-          /consoleloggerparameters:NoSummary \
           --coverlet \
           --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute" \
           --coverlet-exclude-by-attribute "CompilerGeneratedAttribute" \
           --coverlet-exclude-by-file "**/*.g.cs" \
           --coverlet-include "[MudBlazor]*" \
-          --coverlet-skip-auto-props true \
+          --coverlet-skip-auto-props \
           --report-spekt-junit \
-          --report-spekt-junit-filename junit.xml
+          --report-spekt-junit-filename junit.xml \
           --results-directory TestResults
 
       - name: Extract project name
@@ -108,8 +106,8 @@ jobs:
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
           path: |
-            ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
-            ${{ matrix.project-path }}/junit.xml
+            ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+            ${{ matrix.project-path }}/TestResults/junit.xml
 
   upload-codecov:
     needs: build-test
