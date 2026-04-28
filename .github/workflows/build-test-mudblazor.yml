@@ -78,7 +78,8 @@ jobs:
 
       - name: Test ${{ matrix.project-path }}
         run: |
-          dotnet test ${{ matrix.project-path }} \
+          dotnet test \
+          --project ${{ matrix.project-path }} \
           -c Release \
           --no-build \
           --blame-hang \
