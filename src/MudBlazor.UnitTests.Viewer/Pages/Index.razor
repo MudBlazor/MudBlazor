@@ -22,16 +22,10 @@
                 </div>
 
                 <div class="test-viewer-search">
-                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="0"
+                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="150"
                                   Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-
-                    <MudText Typo="Typo.caption" Class="mud-text-secondary">
-                        @_filteredCountLabel
-                    </MudText>
                 </div>
-
-                <div class="test-viewer-divider" />
 
                 <div class="test-viewer-results">
                     <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
@@ -47,7 +41,7 @@
                         </MudButton>
                     </MudVirtualize>
 
-                    @if (_canShowAllLink)
+                    @if (_remainingResultsCount > 0)
                     {
                         <div class="test-viewer-show-all">
                             <MudLink Href="#" OnClick="ShowAllResults" Typo="Typo.caption">
@@ -64,7 +58,7 @@
                 @if (_selectedType is null)
                 {
                     <MudText Typo="Typo.h6">No test selected</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly open a test component.</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
                 }
                 else
                 {
@@ -104,27 +98,19 @@
     }
 
     .test-viewer-sidebar-header {
-        padding: 10px 12px 0 12px;
+        padding: 0 12px 0 12px;
         display: flex;
         align-items: center;
-    }
-
-    .test-viewer-search {
-        padding: 0 12px 12px 12px;
-        display: grid;
-        gap: 6px;
-    }
-
-    .test-viewer-divider {
-        height: 1px;
-        background: var(--mud-palette-divider);
-        margin: 0 12px;
     }
 
     .test-viewer-results {
         flex: 1;
         overflow: auto;
-        scrollbar-gutter: stable;
+        scrollbar-width: none;
+    }
+
+    .test-viewer-results::-webkit-scrollbar {
+        display: none;
     }
 
     .test-viewer-result-row {
@@ -156,8 +142,6 @@
 
     .test-viewer-entry {
         justify-content: flex-start;
-        padding: 8px 0 8px 0;
-        padding-inline-start: 12px;
         border-radius: var(--mud-default-borderradius);
         text-transform: none;
     }
@@ -210,13 +194,9 @@
     private TestEntry[] _filteredEntries = [];
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
-    private string _filteredCountLabel = string.Empty;
-    private int _totalMatchCount;
     private int _remainingResultsCount;
     private bool _showAllResults;
-    private bool _canShowAllLink;
     private CancellationTokenSource? _searchCts;
-    private Task? _searchTask;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
     {
@@ -238,6 +218,8 @@
         get => _searchText;
         set
         {
+            value ??= string.Empty;
+
             if (string.Equals(_searchText, value, StringComparison.Ordinal))
             {
                 return;
@@ -437,43 +419,40 @@
         _searchCts?.Cancel();
         _searchCts?.Dispose();
         _searchCts = new CancellationTokenSource();
-        _searchTask = RecomputeFilteredEntriesAsync(_searchCts.Token);
+        _ = RecomputeFilteredEntriesAsync(_searchCts.Token);
     }
 
     private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
     {
         try
         {
-            _totalMatchCount = 0;
             _remainingResultsCount = 0;
-            _canShowAllLink = false;
 
             if (_entries.Length == 0)
             {
                 _filteredEntries = [];
-                _filteredCountLabel = string.Empty;
                 await InvokeAsync(StateHasChanged);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_searchText))
-            {
-                _filteredEntries = _entries;
-                _filteredCountLabel = $"{_entries.Length} tests";
-                _totalMatchCount = _entries.Length;
-                await InvokeAsync(StateHasChanged);
-                return;
-            }
+            token.ThrowIfCancellationRequested();
 
             var query = _searchText.Trim();
-            _filteredCountLabel = "Searching…";
-            await InvokeAsync(StateHasChanged);
+
+            if (query.Length == 0)
+            {
+                _filteredEntries = _entries;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
 
             const int threshold = 35;
             const int defaultLimit = 20;
+            var showAllResults = _showAllResults;
 
             var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
-            List<(TestEntry Entry, int Score)>? all = _showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
+            List<(TestEntry Entry, int Score)>? all = showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
+            var totalMatchCount = 0;
 
             for (var i = 0; i < _entries.Length; i++)
             {
@@ -489,7 +468,7 @@
                     continue;
                 }
 
-                _totalMatchCount++;
+                totalMatchCount++;
 
                 if (all is not null)
                 {
@@ -509,27 +488,19 @@
             token.ThrowIfCancellationRequested();
 
             IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
-            var ordered = final
+            var filteredEntries = final
                 .OrderByDescending(x => x.Score)
                 .ThenBy(x => x.Entry.Name)
                 .Select(x => x.Entry)
                 .ToArray();
 
-            _filteredEntries = ordered;
-            _filteredCountLabel = _totalMatchCount switch
+            if (!showAllResults)
             {
-                0 => "No matches",
-                1 => "1 match",
-                _ => $"{_totalMatchCount} matches"
-            };
-
-            if (!_showAllResults)
-            {
-                _filteredEntries = _filteredEntries.Take(defaultLimit).ToArray();
-                _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
-                _canShowAllLink = _remainingResultsCount > 0;
+                filteredEntries = filteredEntries.Take(defaultLimit).ToArray();
+                _remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
             }
 
+            _filteredEntries = filteredEntries;
             await InvokeAsync(StateHasChanged);
         }
         catch (OperationCanceledException)
@@ -581,21 +552,13 @@
     {
         // Combining multiple fuzzy signals reduces false positives from any single algorithm.
         var nameRatio = Fuzz.Ratio(entry.Name, query);
-        var nameTokenSort = Fuzz.TokenSortRatio(entry.Name, query);
         var namePartial = Fuzz.PartialRatio(entry.Name, query);
-        var nameScore = (int)Math.Round(nameRatio * 0.55 + nameTokenSort * 0.25 + namePartial * 0.20);
+        var nameScore = (int)Math.Round(nameRatio * 0.73 + namePartial * 0.27);
 
         var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
 
         // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
         var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
-
-        if (!string.IsNullOrWhiteSpace(entry.Description))
-        {
-            var descriptionScore = Fuzz.PartialTokenSortRatio(entry.Description, query);
-            // Descriptions are helpful fallback context but should not overpower name intent.
-            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.92 + descriptionScore * 0.08));
-        }
 
         return combined;
     }
