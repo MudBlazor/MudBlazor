@@ -123,11 +123,27 @@ public class MudHotkeyTests : BunitTest
 
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>(
                 "mudHotkeyListener.registerOrUpdateHotkey",
-                It.Is<object[]>(args =>
-                    args.Length == 6 &&
-                    args[3] is string registeredKey && registeredKey == expectedCode &&
-                    args[4] is string[] modifiers && modifiers.Length == 0 &&
-                    args[5] is true)),
+                It.Is<object[]>(args => MatchesHotkeyRegistration(args, expectedCode))),
             Times.Once);
+    }
+
+    private static bool MatchesHotkeyRegistration(object[] args, string expectedCode)
+    {
+        if (args.Length != 6)
+        {
+            return false;
+        }
+
+        if (!string.Equals(args[3] as string, expectedCode, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (args[4] is not string[] modifiers || modifiers.Length != 0)
+        {
+            return false;
+        }
+
+        return args[5] is true;
     }
 }
