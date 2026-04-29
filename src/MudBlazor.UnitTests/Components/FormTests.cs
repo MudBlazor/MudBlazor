@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -10,7 +11,6 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

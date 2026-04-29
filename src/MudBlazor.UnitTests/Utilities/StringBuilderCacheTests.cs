@@ -2,6 +2,7 @@
 using AwesomeAssertions;
 
 namespace MudBlazor.UnitTests.Utilities;
+
 public class StringBuilderCacheTests
 {
     [Before(HookType.Test)]

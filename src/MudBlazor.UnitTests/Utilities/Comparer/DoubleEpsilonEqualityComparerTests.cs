@@ -1,6 +1,7 @@
 ﻿using AwesomeAssertions;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
+
 public class DoubleEpsilonEqualityComparerTests
 {
     [Test]
@@ -226,12 +227,12 @@ public class DoubleEpsilonEqualityComparerTests
         // Assert
         result.Should().Be(expected);
     }
-    
+
     [Test]
     public void Equals_Nan_Workaround1()
     {
         // This is a separate test because of a TUnit source generator bug
-        
+
         // Arrange
         var a = double.NaN;
         var b = -double.MinValue;
@@ -243,12 +244,12 @@ public class DoubleEpsilonEqualityComparerTests
         // Assert
         result.Should().Be(false);
     }
-    
+
     [Test]
     public void Equals_Nan_Workaround2()
     {
         // This is a separate test because of a TUnit source generator bug
-        
+
         // Arrange
         var a = -double.MinValue;
         var b = double.NaN;

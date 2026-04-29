@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +7,6 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.DropZone;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

@@ -1,10 +1,10 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

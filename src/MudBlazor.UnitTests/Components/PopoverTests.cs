@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.Popover;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

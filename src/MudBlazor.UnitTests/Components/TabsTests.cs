@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -9,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Tabs;
 using MudBlazor.UnitTests.TestComponents.Tabs.KeepTabsAlive;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

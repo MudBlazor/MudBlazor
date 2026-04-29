@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -8,7 +9,6 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.Table;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

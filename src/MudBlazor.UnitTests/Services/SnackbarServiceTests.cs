@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
 
 namespace MudBlazor.UnitTests.Services;
+
 public class SnackbarServiceTests : BunitTest
 {
     private BunitNavigationManager _navigationManager;

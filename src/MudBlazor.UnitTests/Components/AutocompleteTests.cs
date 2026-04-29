@@ -2,6 +2,7 @@
 // License MIT
 
 using System.Reflection;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -14,7 +15,6 @@ using Moq;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -1137,7 +1137,7 @@ namespace MudBlazor.UnitTests.Components
         /// `ResetAsync` has the same behavior, regardless of the component's parameters.
         /// So this method generates all parameter combinations.
         /// </remarks>
-        public static IEnumerable<(bool,bool,bool,bool)> ResetAsyncParameters()
+        public static IEnumerable<(bool, bool, bool, bool)> ResetAsyncParameters()
         {
             const int NbParameters = 4;
             var max = (int)Math.Pow(2, NbParameters);

@@ -7,6 +7,7 @@ using MudBlazor.Justification.BarGroup;
 using MudBlazor.Justification.StackedBars;
 
 namespace MudBlazor.UnitTests.Charts;
+
 public class ChartJustificationStrategyTests
 {
     [Test]

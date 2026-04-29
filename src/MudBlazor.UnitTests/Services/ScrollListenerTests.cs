@@ -1,9 +1,10 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Threading.Tasks;
+using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services;
+
 public class ScrollListenerTests : IAsyncDisposable
 {
     private Mock<IJSRuntime> _runtimeMock;
@@ -15,7 +16,7 @@ public class ScrollListenerTests : IAsyncDisposable
         _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
         _service = new ScrollListener(_runtimeMock.Object);
     }
-    
+
     public async ValueTask DisposeAsync()
     {
         if (_service != null)

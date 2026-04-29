@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor.UnitTests.Utilities;
+
 public class StringHelpersTests
 {
     [Test]

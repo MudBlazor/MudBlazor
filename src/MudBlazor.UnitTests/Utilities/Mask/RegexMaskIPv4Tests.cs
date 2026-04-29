@@ -5,6 +5,7 @@
 using AwesomeAssertions;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
+
 public class RegexMaskIPv4Tests
 {
     [Test]

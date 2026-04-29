@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using AngleSharp.Common;
 using AngleSharp.Dom;
 using AwesomeAssertions;
@@ -11,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.ToggleGroup;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

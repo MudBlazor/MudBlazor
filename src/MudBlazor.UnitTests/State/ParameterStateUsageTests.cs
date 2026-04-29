@@ -1,10 +1,10 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Bunit.Rendering;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.State;
 #nullable enable

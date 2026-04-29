@@ -2,15 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts;
+
 public class RoseChartTests : BunitTest
 {
     private readonly string[] _baseChartPalette =

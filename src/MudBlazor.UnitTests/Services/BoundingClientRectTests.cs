@@ -3,6 +3,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Interop;
 
 namespace MudBlazor.UnitTests.Components;
+
 public class BoundingClientRectTests
 {
     private Bunit.BunitContext _ctx;

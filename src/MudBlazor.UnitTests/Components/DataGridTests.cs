@@ -5,6 +5,7 @@
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -18,7 +19,6 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -3709,7 +3709,7 @@ namespace MudBlazor.UnitTests.Components
                 var buttons = comp.FindComponents<MudButton>();
                 buttons.Count.Should().BeGreaterThan(1);
             });
-            
+
             var buttons = comp.FindComponents<MudButton>();
             await buttons[1].Find("button").ClickAsync();
 

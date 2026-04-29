@@ -2,6 +2,7 @@
 using MudBlazor.Utilities;
 
 namespace MudBlazor.UnitTests.Utilities;
+
 public class ValueBuilderTests
 {
     [Test]

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.ThemeProvider;
 using MudBlazor.Utilities;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

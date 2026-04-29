@@ -1,9 +1,9 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

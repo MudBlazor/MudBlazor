@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

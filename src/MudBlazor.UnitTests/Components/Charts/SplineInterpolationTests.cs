@@ -7,6 +7,7 @@ using AwesomeAssertions;
 using Bunit;
 
 namespace MudBlazor.UnitTests.Charts;
+
 public class SplineInterpolationTests : BunitTest
 {
     [Test]

@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Threading.Tasks;
+using System.Xml.Linq;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Tabs;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

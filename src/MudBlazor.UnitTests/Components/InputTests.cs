@@ -1,6 +1,6 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
 #nullable enable

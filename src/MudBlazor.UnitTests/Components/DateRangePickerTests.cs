@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
-using System.Threading.Tasks;
 using TUnit.Core.Executors;
 
 namespace MudBlazor.UnitTests.Components

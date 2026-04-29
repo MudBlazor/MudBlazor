@@ -1,6 +1,7 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Components;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {

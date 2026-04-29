@@ -1,7 +1,7 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.AvatarGroup;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

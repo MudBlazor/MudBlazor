@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

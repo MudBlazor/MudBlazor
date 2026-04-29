@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -6,7 +7,6 @@ using Moq;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using static MudBlazor.Services.ResizeObserver;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services
 {

@@ -1,10 +1,10 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Pagination;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

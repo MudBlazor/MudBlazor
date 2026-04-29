@@ -1,9 +1,10 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.SplitPanel;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
+
 public class SplitPanelTests : BunitTest
 {
     [Test]

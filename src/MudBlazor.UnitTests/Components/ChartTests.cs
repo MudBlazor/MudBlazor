@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

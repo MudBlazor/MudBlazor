@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using Bunit;
 
 namespace MudBlazor.UnitTests.Components;
+
 public class TextTests : BunitTest
 {
     [Test]

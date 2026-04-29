@@ -5,6 +5,7 @@
 using AwesomeAssertions;
 
 namespace MudBlazor.UnitTests;
+
 public class CollectionExtensionsTests
 {
     private readonly int?[] _array = [1, 2, 3, 4, 5];

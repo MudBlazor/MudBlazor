@@ -4,6 +4,7 @@ using AwesomeAssertions;
 using MudBlazor.Utilities.Comparer;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
+
 public class ReferenceCultureComparerTests
 {
     [Test]

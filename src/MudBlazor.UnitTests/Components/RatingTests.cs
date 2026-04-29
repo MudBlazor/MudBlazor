@@ -1,9 +1,9 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

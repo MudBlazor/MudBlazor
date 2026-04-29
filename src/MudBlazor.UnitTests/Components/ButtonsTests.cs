@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -6,7 +7,6 @@ using Bunit.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.Button;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

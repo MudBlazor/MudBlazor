@@ -1,10 +1,10 @@
 ﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

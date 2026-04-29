@@ -1,9 +1,9 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Components.Highlighter;
 using MudBlazor.UnitTests.TestComponents.Highlighter;
 using static MudBlazor.Components.Highlighter.Splitter;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

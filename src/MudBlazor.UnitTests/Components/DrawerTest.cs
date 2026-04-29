@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
 using AngleSharp.Css.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -9,7 +10,6 @@ using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Drawer;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components

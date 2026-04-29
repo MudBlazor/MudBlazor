@@ -1,10 +1,11 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Button;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
+
 public class FabMenuTests : BunitTest
 {
     [Test]

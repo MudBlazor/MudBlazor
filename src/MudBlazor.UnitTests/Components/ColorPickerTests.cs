@@ -1,6 +1,7 @@
 ﻿#pragma warning disable IDE1006 // leading underscore
 
 using System.Globalization;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
@@ -11,7 +12,6 @@ using MudBlazor.Extensions;
 using MudBlazor.Resources;
 using MudBlazor.UnitTests.TestComponents.ColorPicker;
 using MudBlazor.Utilities;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

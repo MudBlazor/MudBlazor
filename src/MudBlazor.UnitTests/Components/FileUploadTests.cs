@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -14,7 +15,6 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.FileUpload;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

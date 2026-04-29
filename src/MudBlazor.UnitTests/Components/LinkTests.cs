@@ -1,12 +1,13 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Link;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
+
 public class LinkTests : BunitTest
 {
     [Test]

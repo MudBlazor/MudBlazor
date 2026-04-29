@@ -1,8 +1,8 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {

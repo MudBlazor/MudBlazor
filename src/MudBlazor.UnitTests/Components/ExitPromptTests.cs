@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -11,11 +12,11 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Resources;
-using System.Threading.Tasks;
 
 #nullable enable
 
 namespace MudBlazor.UnitTests.Components;
+
 public class ExitPromptTests : BunitTest
 {
     [Test]

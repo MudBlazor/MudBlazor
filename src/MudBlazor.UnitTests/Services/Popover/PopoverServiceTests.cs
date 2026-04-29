@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -13,7 +14,6 @@ using Moq;
 using MudBlazor.Interop;
 using MudBlazor.UnitTests.Services.Popover.Mocks;
 using MudBlazor.Utilities.Background.Batch;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.Popover;
 #nullable enable

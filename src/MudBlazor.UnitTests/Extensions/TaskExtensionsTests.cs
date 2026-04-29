@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using AwesomeAssertions;
 using System.Threading.Tasks;
+using AwesomeAssertions;
 
 namespace MudBlazor.UnitTests.Extensions
 {

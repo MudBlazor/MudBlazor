@@ -8,6 +8,7 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Navigation;
 
 namespace MudBlazor.UnitTests.Components;
+
 public class NavigationAccessibilityTests : BunitTest
 {
     /// <summary>

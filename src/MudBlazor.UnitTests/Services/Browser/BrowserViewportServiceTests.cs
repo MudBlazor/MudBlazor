@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,6 @@ using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Services.Browser.Mocks;
 using MudBlazor.UnitTests.TestData;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.Browser;
 #nullable enable

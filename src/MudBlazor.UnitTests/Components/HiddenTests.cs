@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -7,7 +8,6 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Hidden;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components

@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Slider;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components

@@ -1,11 +1,11 @@
-﻿using AngleSharp.Dom;
+﻿using System.Threading.Tasks;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Stepper;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components

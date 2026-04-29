@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -10,7 +11,6 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Services.KeyInterceptor.Mocks;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.KeyInterceptor;
 #nullable enable

@@ -3,10 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Debounce;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Debounce;
 #nullable enable

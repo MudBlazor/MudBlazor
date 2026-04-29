@@ -2,6 +2,7 @@
 using MudBlazor.Extensions;
 
 namespace MudBlazor.UnitTests.Extensions;
+
 public class KeepInRangeExtensionsTests
 {
     [Test]

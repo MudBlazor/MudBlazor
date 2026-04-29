@@ -2,10 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Throttle;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Throttle;
 #nullable enable

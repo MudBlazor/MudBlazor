@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {

@@ -8,6 +8,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests;
+
 public class ResizeOptionsExtensionsTests
 {
     [Test]

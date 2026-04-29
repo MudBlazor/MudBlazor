@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using MudBlazor.Extensions;
 
 namespace MudBlazor.UnitTests.Extensions;
+
 public class DoubleExtensionsTests
 {
     [Test]
