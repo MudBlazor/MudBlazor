@@ -8,96 +8,102 @@ namespace MudBlazor.UnitTests.Components
 {
     public class MessageBoxTests : BunitTest
     {
-        [Test, CancelAfter(3000)]
+        [Test]
         [Arguments(0, null)]
         [Arguments(1, false)]
         [Arguments(2, true)]
         public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = Context.Render<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-
-            // open message box.
-            Task<bool?> yesNoCancel = null;
-            await comp.InvokeAsync(() =>
+            await Assert.That(async () =>
             {
-                yesNoCancel = service?.ShowMessageBoxAsync(
-                    "Boom!",
-                    "I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!");
-            });
+                var comp = Context.Render<MudDialogProvider>();
+                comp.Markup.Trim().Should().BeEmpty();
+                var service = Context.Services.GetService<IDialogService>() as DialogService;
+                service.Should().NotBe(null);
 
-            comp.Find("div.mud-message-box").Should().NotBe(null);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
-            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
-            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+                // open message box.
+                Task<bool?> yesNoCancel = null;
+                await comp.InvokeAsync(() =>
+                {
+                    yesNoCancel = service?.ShowMessageBoxAsync(
+                        "Boom!",
+                        "I'm a pickle. What do you make of that?",
+                        "Great",
+                        "Whatever",
+                        "Go away!");
+                });
 
-            // Assert there are exactly 3 buttons
-            var buttons = comp.FindAll(".mud-dialog-actions button");
-            buttons.Count.Should().Be(3);
+                comp.Find("div.mud-message-box").Should().NotBe(null);
+                comp.Find("div.mud-dialog-container").Should().NotBe(null);
+                comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+                comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
 
-            // Verify each button's text and class and that they are in the correct order
-            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
-            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
-            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
-            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
-            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
-            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+                // Assert there are exactly 3 buttons
+                var buttons = comp.FindAll(".mud-dialog-actions button");
+                buttons.Count.Should().Be(3);
 
-            // close message box by clicking on Great.
-            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
-            comp.Markup.Trim().Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(expectedResult);
+                // Verify each button's text and class and that they are in the correct order
+                buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+                buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+                buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+                buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+                buttons[2].TrimmedText().Should().Be("Great"); // Third button (Yes)
+                buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+                // close message box by clicking on Great.
+                await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
+                comp.Markup.Trim().Should().BeEmpty();
+                yesNoCancel.Result.Should().Be(expectedResult);
+            }).CompletesWithin(TimeSpan.FromSeconds(3));
         }
 
-        [Test, CancelAfter(3000)]
+        [Test]
         [Arguments(0, null)]
         [Arguments(1, false)]
         [Arguments(2, true)]
         public async Task MessageBox_Should_ReturnTrueWithMarkupVariant(int clickButtonIndex, bool? expectedResult)
         {
-            var comp = Context.Render<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetService<IDialogService>() as DialogService;
-            service.Should().NotBe(null);
-
-            // open message box.
-            Task<bool?> yesNoCancel = null;
-            await comp.InvokeAsync(() =>
+            await Assert.That(async () =>
             {
-                yesNoCancel = service?.ShowMessageBoxAsync(
-                    "Boom!",
-                    (MarkupString)"I'm a pickle. What do you make of that?",
-                    "Great",
-                    "Whatever",
-                    "Go away!");
-            });
+                var comp = Context.Render<MudDialogProvider>();
+                comp.Markup.Trim().Should().BeEmpty();
+                var service = Context.Services.GetService<IDialogService>() as DialogService;
+                service.Should().NotBe(null);
 
-            comp.Find("div.mud-message-box").Should().NotBe(null);
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
-            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
-            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+                // open message box.
+                Task<bool?> yesNoCancel = null;
+                await comp.InvokeAsync(() =>
+                {
+                    yesNoCancel = service?.ShowMessageBoxAsync(
+                        "Boom!",
+                        (MarkupString)"I'm a pickle. What do you make of that?",
+                        "Great",
+                        "Whatever",
+                        "Go away!");
+                });
 
-            // Assert there are exactly 3 buttons
-            var buttons = comp.FindAll(".mud-dialog-actions button");
-            buttons.Count.Should().Be(3);
+                comp.Find("div.mud-message-box").Should().NotBe(null);
+                comp.Find("div.mud-dialog-container").Should().NotBe(null);
+                comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+                comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
 
-            // Verify each button's text and class and that they are in the correct order
-            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
-            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
-            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
-            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
-            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
-            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+                // Assert there are exactly 3 buttons
+                var buttons = comp.FindAll(".mud-dialog-actions button");
+                buttons.Count.Should().Be(3);
 
-            // close message box by clicking on Great.
-            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
-            comp.Markup.Trim().Should().BeEmpty();
-            yesNoCancel.Result.Should().Be(expectedResult);
+                // Verify each button's text and class and that they are in the correct order
+                buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+                buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+                buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+                buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+                buttons[2].TrimmedText().Should().Be("Great"); // Third button (Yes)
+                buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+                // close message box by clicking on Great.
+                await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
+                comp.Markup.Trim().Should().BeEmpty();
+                yesNoCancel.Result.Should().Be(expectedResult);
+            }).CompletesWithin(TimeSpan.FromSeconds(3));
         }
 
         [Test]

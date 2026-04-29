@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 using System.Threading.Tasks;
+using ParameterMetadata = MudBlazor.State.ParameterMetadata;
 
 namespace MudBlazor.UnitTests.State;
 #nullable enable

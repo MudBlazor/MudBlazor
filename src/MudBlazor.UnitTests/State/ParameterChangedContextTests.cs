@@ -5,6 +5,7 @@
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
+using ParameterMetadata = MudBlazor.State.ParameterMetadata;
 
 namespace MudBlazor.UnitTests.State;
 #nullable enable
@@ -27,7 +28,7 @@ public class ParameterChangedContextTests
     [Arguments(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
     [Arguments(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
     [Arguments(null, null, null, null, "", null)]
-    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_TextDominant(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
+    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_TextDominant(string? textBefore, string? textAfter, string? valueBefore, string? valueAfter, string expectedParameter, string? expectedColor)
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Text");
 
@@ -77,7 +78,7 @@ public class ParameterChangedContextTests
     [Arguments(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
     [Arguments(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
     [Arguments(null, null, null, null, "", null)]
-    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_ValueDominant(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
+    public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_ValueDominant(string? textBefore, string? textAfter, string? valueBefore, string? valueAfter, string expectedParameter, string? expectedColor)
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Value");
 
@@ -126,7 +127,7 @@ public class ParameterChangedContextTests
             .WithMessage("Unknown dominant parameter 'NonExistentDominant'.");
     }
 
-    private static EffectiveParameterResult<string?, string?> Resolve(string textBefore, string? textAfter, string valueBefore, string? valueAfter, string dominant)
+    private static EffectiveParameterResult<string?, string?> Resolve(string? textBefore, string? textAfter, string? valueBefore, string? valueAfter, string dominant)
     {
         var parameterStates = new ParameterStateCollection(new Dictionary<string, ParameterStateValue>
         {

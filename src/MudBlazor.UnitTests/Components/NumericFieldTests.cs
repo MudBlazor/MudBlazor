@@ -241,20 +241,23 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, CancelAfter(1000)]
+        [Test]
         public async Task NumericFieldUpdateLoopProtection()
         {
-            var comp = Context.Render<MudNumericField<int>>(parameters => parameters
-                .Add(x => x.Converter, Conversions.From((int s) => s.ToString(), int.Parse)));
-            // these conversion funcs are nonsense of course, but they are designed this way to
-            // test against an infinite update loop that numericFields and other inputs are now protected against.
-            var numericField = comp.Instance;
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1));
-            numericField.ReadValue.Should().Be(1);
-            numericField.ReadText.Should().Be("1");
-            await comp.Find("input").ChangeAsync("3");
-            numericField.ReadValue.Should().Be(3);
-            numericField.ReadText.Should().Be("3");
+            await Assert.That(async () =>
+            {
+                var comp = Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Converter, Conversions.From((int s) => s.ToString(), int.Parse)));
+                // these conversion funcs are nonsense of course, but they are designed this way to
+                // test against an infinite update loop that numericFields and other inputs are now protected against.
+                var numericField = comp.Instance;
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1));
+                numericField.ReadValue.Should().Be(1);
+                numericField.ReadText.Should().Be("1");
+                await comp.Find("input").ChangeAsync("3");
+                numericField.ReadValue.Should().Be(3);
+                numericField.ReadText.Should().Be("3");
+            }).CompletesWithin(TimeSpan.FromSeconds(1));
         }
 
         [Test]

@@ -12,7 +12,6 @@ namespace MudBlazor.UnitTests.Components
 {
     public class DynamicTabsTests : BunitTest
     {
-        [Before(HookType.Test)]
         public override void Setup()
         {
             base.Setup();

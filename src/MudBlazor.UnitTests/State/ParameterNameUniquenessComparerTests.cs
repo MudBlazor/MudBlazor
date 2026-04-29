@@ -6,6 +6,7 @@ using AwesomeAssertions;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 using MudBlazor.State.Comparer;
+using ParameterMetadata = MudBlazor.State.ParameterMetadata;
 
 namespace MudBlazor.UnitTests.State;
 #nullable enable

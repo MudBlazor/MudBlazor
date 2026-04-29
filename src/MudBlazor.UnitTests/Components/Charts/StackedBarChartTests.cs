@@ -1,6 +1,8 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+
+using System.Diagnostics.CodeAnalysis;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -707,6 +709,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        [SuppressMessage("Usage", "TUnit0018:Test methods should not assign instance data")]
         public async Task StackedBarChart_Tooltip_TooltipPositionFunc_ShouldBeCalledOnHover()
         {
             _tooltipPositionFuncCalled = false;

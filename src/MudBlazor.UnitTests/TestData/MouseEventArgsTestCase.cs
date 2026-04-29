@@ -2,16 +2,13 @@
 
 namespace MudBlazor.UnitTests.TestData
 {
-    public static class MouseEventArgsTestCase
+    public class MouseEventArgsTestCase
     {
-        public static TestCaseData[] AllCombinations()
+        public static IEnumerable<Func<MouseEventArgs>> AllCombinations()
         {
-            return
-            [
-                new TestCaseData(new MouseEventArgs { Button = 0 }),
-                new TestCaseData(new MouseEventArgs { Button = 1 }),
-                new TestCaseData(new MouseEventArgs { Button = 2 }),
-            ];
+            yield return () => new MouseEventArgs { Button = 0 };
+            yield return () => new MouseEventArgs { Button = 1 };
+            yield return () => new MouseEventArgs { Button = 2 };
         }
     }
 }

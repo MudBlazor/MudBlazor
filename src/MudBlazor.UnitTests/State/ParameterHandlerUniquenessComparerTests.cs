@@ -7,6 +7,7 @@ using MudBlazor.State;
 using MudBlazor.State.Builder;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
+using ParameterMetadata = MudBlazor.State.ParameterMetadata;
 
 namespace MudBlazor.UnitTests.State;
 #nullable enable

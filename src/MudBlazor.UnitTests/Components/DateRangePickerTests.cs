@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.End.Value.Month.Should().Be(start.Month);
         }
 
-        public async Task<IRenderedComponent<SimpleMudMudDateRangePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudMudDateRangePickerTest>> parameterBuilder = null)
+        private async Task<IRenderedComponent<SimpleMudMudDateRangePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudMudDateRangePickerTest>> parameterBuilder = null)
         {
             IRenderedComponent<SimpleMudMudDateRangePickerTest> comp;
             if (parameterBuilder is null)
@@ -326,7 +326,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.Start.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
         }
 
-        public async Task<IRenderedComponent<SimpleMudMudDateRangePickerTest>> OpenTo12thMonth()
+        private async Task<IRenderedComponent<SimpleMudMudDateRangePickerTest>> OpenTo12thMonth()
         {
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.PickerMonth, new DateTime(DateTime.Now.Year, 12, 01)));
@@ -1307,8 +1307,8 @@ namespace MudBlazor.UnitTests.Components
             );
 
             var calendarStart = await picker.InvokeAsync(() => picker.Instance.StartOfMonth());
-            Assert.That(startMonth.Year == calendarStart.Year);
-            Assert.That(startMonth.Month == calendarStart.Month);
+            await Assert.That(startMonth.Year == calendarStart.Year).IsTrue();
+            await Assert.That(startMonth.Month == calendarStart.Month).IsTrue();
         }
 
         [Test]
@@ -1322,8 +1322,8 @@ namespace MudBlazor.UnitTests.Components
             );
 
             var calendarStart = await picker.InvokeAsync(() => picker.Instance.StartOfMonth());
-            Assert.That(dateRangeStart.Year == calendarStart.Year);
-            Assert.That(dateRangeStart.Month == calendarStart.Month);
+            await Assert.That(dateRangeStart.Year == calendarStart.Year).IsTrue();
+            await Assert.That(dateRangeStart.Month == calendarStart.Month).IsTrue();
         }
 
         [Test]
@@ -1465,30 +1465,26 @@ namespace MudBlazor.UnitTests.Components
     }
     public static class DatePickerRenderedFragmentExtensions
     {
-        public static Task SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
+        public static async Task<Task> SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
         {
-            return comp.ValidateSelection(day, firstOccurrence).ClickAsync();
+            return (await comp.ValidateSelection(day, firstOccurrence)).ClickAsync();
         }
 
-        private static IElement ValidateSelection(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence)
+        private static async Task<IElement> ValidateSelection(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence)
         {
             var matchingDays = comp.FindAll("button.mud-picker-calendar-day")
                        .Where(x => !x.ClassList.Contains("mud-hidden") && x.TrimmedText().Equals(day))
                        .ToList();
-            // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
-
-            Assert.That(matchingDays.Count != 0, $"Invalid day ({day}) selected");
+            await Assert.That(matchingDays.Count).IsNotEqualTo(0);
 
             if (!firstOccurrence)
             {
-                // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
-                Assert.That(matchingDays.Count == 2, $"Only one instance of date ({day}) found");
+                await Assert.That(matchingDays.Count).IsEqualTo(2);
             }
 
             var selectedDate = matchingDays[firstOccurrence ? 0 : 1];
-            // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
 
-            Assert.That(!selectedDate.IsDisabled(), $"Selected date ({day}) is disabled");
+            await Assert.That(selectedDate.IsDisabled()).IsFalse();
 
             return selectedDate;
         }

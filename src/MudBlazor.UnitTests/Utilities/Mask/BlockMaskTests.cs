@@ -107,7 +107,7 @@ public class BlockMaskTests
         mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
         mask.Clear(); // make sure it is initialized
         mask.Mask.Should().Be(@"^(\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?)?$");
-        await Assert.ThrowsAsync<ArgumentException>(() => _ = new BlockMask());
+        Assert.Throws<ArgumentException>(() => _ = new BlockMask());
     }
 
     [Test]

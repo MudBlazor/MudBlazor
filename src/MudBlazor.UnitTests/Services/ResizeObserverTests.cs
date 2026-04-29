@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services
 {
-    public class ResizeObserverTests
+    public class ResizeObserverTests : IAsyncDisposable
     {
         private class PseudoElementReferenceContext : ElementReferenceContext;
 
@@ -22,6 +22,14 @@ namespace MudBlazor.UnitTests.Services
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
             _service = new ResizeObserver(_runtimeMock.Object);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_service != null)
+            {
+                await _service.DisposeAsync();
+            }
         }
 
         [Test]

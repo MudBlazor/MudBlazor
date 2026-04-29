@@ -985,6 +985,7 @@ namespace MudBlazor.UnitTests.Components
                 .Should().HaveCount(daysCount);
         }
 
+        [Test]
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison

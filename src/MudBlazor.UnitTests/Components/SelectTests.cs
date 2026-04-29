@@ -819,7 +819,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in shadowItems)
             {
                 // shadow items don't render, their state is irrelevant, all they do is provide render fragments to the select
-                await Assert.ThrowsAsync<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem<string>>());
+                Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem<string>>());
             }
         }
 
@@ -1955,7 +1955,7 @@ namespace MudBlazor.UnitTests.Components
             filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
         }
 
-        [MethodDataSource(typeof(MouseEventArgsTestCase))]
+        [MethodDataSource<MouseEventArgsTestCase>(nameof(MouseEventArgsTestCase.AllCombinations))]
         [Test]
         public async Task Select_HandleMouseDown(MouseEventArgs args)
         {

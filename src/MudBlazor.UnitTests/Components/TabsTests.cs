@@ -15,7 +15,6 @@ namespace MudBlazor.UnitTests.Components
 {
     public class TabsTests : BunitTest
     {
-        [Before(HookType.Test)]
         public override void Setup()
         {
             base.Setup();
@@ -1236,7 +1235,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find(".mud-overlay").ClickAsync();
 
             //no menu item should be visible anymore
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
         }
 
         [Test]

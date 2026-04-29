@@ -506,7 +506,7 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
-    [MethodDataSource(typeof(BreakpointWithinReferenceSizeTestCase))]
+    [MethodDataSource<BreakpointWithinReferenceSizeTestCase>(nameof(BreakpointWithinReferenceSizeTestCase.AllCombinations))]
     public async Task IsBreakpointWithinReferenceSizeAsync_ReturnsExpectedResult_AllCombinations(Breakpoint breakpoint, Breakpoint referenceBreakpoint, bool expectedResult)
     {
         // Arrange

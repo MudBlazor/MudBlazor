@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (isHidden)
             {
-                await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("p"));
+                Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
             }
             else
             {
@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
 
             await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => component.Find("p"));
+            Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
 
             await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 1080, Width = 1920 }, Breakpoint.Xl, subscription.JavaScriptListenerId));
             component.Find("p").TextContent.Should().Be("MudHidden content");
@@ -122,7 +122,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Invert, true));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("p"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
 
             jsRuntimeMock.Verify();
         }
@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
 
             await component.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => component.Find("p"));
+            Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
 
             jsRuntimeMock.Verify();
         }

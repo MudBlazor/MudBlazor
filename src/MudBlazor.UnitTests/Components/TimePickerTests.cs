@@ -9,7 +9,7 @@ namespace MudBlazor.UnitTests.Components
 {
     public class TimePickerTests : BunitTest
     {
-        public async Task<IRenderedComponent<SimpleTimePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
+        private async Task<IRenderedComponent<SimpleTimePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleTimePickerTest>> parameterBuilder = null)
         {
             IRenderedComponent<SimpleTimePickerTest> comp;
             if (parameterBuilder is null)

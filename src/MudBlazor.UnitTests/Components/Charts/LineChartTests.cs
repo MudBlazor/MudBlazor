@@ -30,9 +30,9 @@ namespace MudBlazor.UnitTests.Charts
             "#01153E", "#2EE8BB", "#EBDDE2"
         };
 
-        private static Array GetInterpolationOptions()
+        public static IEnumerable<InterpolationOption> GetInterpolationOptions()
         {
-            return Enum.GetValues(typeof(InterpolationOption));
+            return Enum.GetValues<InterpolationOption>();
         }
 
         [Before(HookType.Test)]
@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [MethodDataSource("GetInterpolationOptions")]
+        [MethodDataSource(nameof(GetInterpolationOptions))]
         public async Task LineChartExampleData(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries<double>>()
@@ -184,7 +184,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [MethodDataSource("GetInterpolationOptions")]
+        [MethodDataSource(nameof(GetInterpolationOptions))]
         public async Task LineChartExampleZeroValues(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries<double>>()

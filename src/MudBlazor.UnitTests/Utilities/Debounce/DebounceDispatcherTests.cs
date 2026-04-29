@@ -377,11 +377,11 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]

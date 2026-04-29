@@ -4,7 +4,7 @@ using Moq;
 using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services;
-public class ScrollListenerTests
+public class ScrollListenerTests : IAsyncDisposable
 {
     private Mock<IJSRuntime> _runtimeMock;
     private ScrollListener _service;
@@ -14,6 +14,14 @@ public class ScrollListenerTests
     {
         _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
         _service = new ScrollListener(_runtimeMock.Object);
+    }
+    
+    public async ValueTask DisposeAsync()
+    {
+        if (_service != null)
+        {
+            await _service.DisposeAsync();
+        }
     }
 
     [Test]

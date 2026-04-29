@@ -322,11 +322,11 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public async Task Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(-100));
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(-100));
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]

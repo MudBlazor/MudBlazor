@@ -672,7 +672,7 @@ namespace MudBlazor.UnitTests.Components
 
             var colorDot = comp.Find(_colorDotCssSelector);
             // no collection
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
             await colorDot.ClickAsync();
 
             // collection found
@@ -690,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             await colorDot.ClickAsync();
 
             // again no collection visible
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
         }
 
         [Test]
@@ -721,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
 
             var colorDot = comp.Find(_colorDotCssSelector);
             // no collection
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
             await colorDot.ClickAsync();
 
             var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
@@ -750,7 +750,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowToolbar, false));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowToolbar, true));
 
@@ -766,7 +766,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowColorField, false));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowColorField, true));
 
@@ -782,7 +782,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, false));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, true));
 
@@ -813,7 +813,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSliders, false));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_slidersControlCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_slidersControlCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSliders, true));
 
@@ -837,7 +837,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.DisableInput, true));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_colorInputCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.DisableInput, false));
 
@@ -853,7 +853,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowModeSwitch, false));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowModeSwitch, true));
 
@@ -925,7 +925,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, false));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
             comp.Instance.ColorValue.Should().Be(expectedColor);
             comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.Hex));
 
@@ -949,7 +949,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorValue, color);
             });
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, false));
 
@@ -1019,7 +1019,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (!expectedVisibility)
             {
-                await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-close-picker-button"));
+                Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-close-picker-button"));
             }
             else
             {
@@ -1226,7 +1226,7 @@ namespace MudBlazor.UnitTests.Components
             await (await comp.WaitForElementAsync(".mud-picker-color-grid")).Children[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
 
         [Test]
@@ -1248,7 +1248,7 @@ namespace MudBlazor.UnitTests.Components
             await (await comp.WaitForElementAsync(".mud-picker-color-view-collection")).Children[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
 
         [Test]
@@ -1292,7 +1292,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().NotBe(_defaultColor));
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
 
         [Test]
@@ -1491,13 +1491,13 @@ namespace MudBlazor.UnitTests.Components
 
             //ensure that the spectrum mode is still open and not the color grid
             _ = comp.Find(".mud-picker-color-overlay");
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
 
             //change the view per parameter
             await comp.SetParametersAndRenderAsync(x => x.Add(y => y.ColorPickerView, ColorPickerView.GridCompact));
 
             //now the grid view should be visible
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
             _ = comp.Find(".mud-picker-color-grid");
         }
 

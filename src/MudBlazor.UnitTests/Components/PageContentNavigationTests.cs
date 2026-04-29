@@ -11,7 +11,6 @@ namespace MudBlazor.UnitTests.Components
 {
     public class PageContentNavigationTests : BunitTest
     {
-        [Before(HookType.Test)]
         public override void Setup()
         {
             base.Setup();

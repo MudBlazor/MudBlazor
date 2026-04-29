@@ -28,6 +28,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [MatrixDataSource]
         public void Chip_ShouldRenderAnchorIfLinkSet(
             [Matrix("", "ASDF", "nofollow", "_blank")] string target,
             [Matrix(null, "noopener", "nofollow")] string rel)
@@ -51,6 +52,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [MatrixDataSource]
         public void Chip_ShouldRenderButtonAndNotAnchorIfOnClickSet(
             [Matrix(null, "", "https://example.com")] string href,
             [Matrix(null, "", "ASDF", "_blank")] string target,

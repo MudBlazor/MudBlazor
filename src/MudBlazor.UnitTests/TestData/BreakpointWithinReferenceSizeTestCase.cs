@@ -5,142 +5,142 @@
 
 namespace MudBlazor.UnitTests.TestData
 {
-    public static class BreakpointWithinReferenceSizeTestCase
+    public class BreakpointWithinReferenceSizeTestCase
     {
-        public static TestCaseData[] AllCombinations()
+        public static IEnumerable<(Breakpoint, Breakpoint, bool)> AllCombinations()
         {
             return new[]
             {
                 // Xs
-                new TestCaseData(Breakpoint.Xs, Breakpoint.Xs, true),
-                new TestCaseData(Breakpoint.Xs, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.Xs, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.Xs, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.Xs, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.Xs, Breakpoint.Xxl, false),
+                (Breakpoint.Xs, Breakpoint.Xs, true),
+                (Breakpoint.Xs, Breakpoint.Sm, false),
+                (Breakpoint.Xs, Breakpoint.Md, false),
+                (Breakpoint.Xs, Breakpoint.Lg, false),
+                (Breakpoint.Xs, Breakpoint.Xl, false),
+                (Breakpoint.Xs, Breakpoint.Xxl, false),
 
                 // Sm
-                new TestCaseData(Breakpoint.Sm, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.Sm, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.Sm, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.Sm, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.Sm, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.Sm, Breakpoint.Xxl, false),
+                (Breakpoint.Sm, Breakpoint.Xs, false),
+                (Breakpoint.Sm, Breakpoint.Sm, true),
+                (Breakpoint.Sm, Breakpoint.Md, false),
+                (Breakpoint.Sm, Breakpoint.Lg, false),
+                (Breakpoint.Sm, Breakpoint.Xl, false),
+                (Breakpoint.Sm, Breakpoint.Xxl, false),
 
                 // Md
-                new TestCaseData(Breakpoint.Md, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.Md, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.Md, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.Md, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.Md, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.Md, Breakpoint.Xxl, false),
+                (Breakpoint.Md, Breakpoint.Xs, false),
+                (Breakpoint.Md, Breakpoint.Sm, false),
+                (Breakpoint.Md, Breakpoint.Md, true),
+                (Breakpoint.Md, Breakpoint.Lg, false),
+                (Breakpoint.Md, Breakpoint.Xl, false),
+                (Breakpoint.Md, Breakpoint.Xxl, false),
 
                 // Lg
-                new TestCaseData(Breakpoint.Lg, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.Lg, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.Lg, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.Lg, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.Lg, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.Lg, Breakpoint.Xxl, false),
+                (Breakpoint.Lg, Breakpoint.Xs, false),
+                (Breakpoint.Lg, Breakpoint.Sm, false),
+                (Breakpoint.Lg, Breakpoint.Md, false),
+                (Breakpoint.Lg, Breakpoint.Lg, true),
+                (Breakpoint.Lg, Breakpoint.Xl, false),
+                (Breakpoint.Lg, Breakpoint.Xxl, false),
 
                 // Xl
-                new TestCaseData(Breakpoint.Xl, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.Xl, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.Xl, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.Xl, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.Xl, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.Xl, Breakpoint.Xxl, false),
+                (Breakpoint.Xl, Breakpoint.Xs, false),
+                (Breakpoint.Xl, Breakpoint.Sm, false),
+                (Breakpoint.Xl, Breakpoint.Md, false),
+                (Breakpoint.Xl, Breakpoint.Lg, false),
+                (Breakpoint.Xl, Breakpoint.Xl, true),
+                (Breakpoint.Xl, Breakpoint.Xxl, false),
 
                 // Xxl
-                new TestCaseData(Breakpoint.Xxl, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.Xxl, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.Xxl, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.Xxl, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.Xxl, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.Xxl, Breakpoint.Xxl, true),
+                (Breakpoint.Xxl, Breakpoint.Xs, false),
+                (Breakpoint.Xxl, Breakpoint.Sm, false),
+                (Breakpoint.Xxl, Breakpoint.Md, false),
+                (Breakpoint.Xxl, Breakpoint.Lg, false),
+                (Breakpoint.Xxl, Breakpoint.Xl, false),
+                (Breakpoint.Xxl, Breakpoint.Xxl, true),
 
                 // SmAndDown
-                new TestCaseData(Breakpoint.SmAndDown, Breakpoint.Xs, true),
-                new TestCaseData(Breakpoint.SmAndDown, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.SmAndDown, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.SmAndDown, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.SmAndDown, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.SmAndDown, Breakpoint.Xxl, false),
+                (Breakpoint.SmAndDown, Breakpoint.Xs, true),
+                (Breakpoint.SmAndDown, Breakpoint.Sm, true),
+                (Breakpoint.SmAndDown, Breakpoint.Md, false),
+                (Breakpoint.SmAndDown, Breakpoint.Lg, false),
+                (Breakpoint.SmAndDown, Breakpoint.Xl, false),
+                (Breakpoint.SmAndDown, Breakpoint.Xxl, false),
 
                 // MdAndDown
-                new TestCaseData(Breakpoint.MdAndDown, Breakpoint.Xs, true),
-                new TestCaseData(Breakpoint.MdAndDown, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.MdAndDown, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.MdAndDown, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.MdAndDown, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.MdAndDown, Breakpoint.Xxl, false),
+                (Breakpoint.MdAndDown, Breakpoint.Xs, true),
+                (Breakpoint.MdAndDown, Breakpoint.Sm, true),
+                (Breakpoint.MdAndDown, Breakpoint.Md, true),
+                (Breakpoint.MdAndDown, Breakpoint.Lg, false),
+                (Breakpoint.MdAndDown, Breakpoint.Xl, false),
+                (Breakpoint.MdAndDown, Breakpoint.Xxl, false),
 
                 // LgAndDown
-                new TestCaseData(Breakpoint.LgAndDown, Breakpoint.Xs, true),
-                new TestCaseData(Breakpoint.LgAndDown, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.LgAndDown, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.LgAndDown, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.LgAndDown, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.LgAndDown, Breakpoint.Xxl, false),
+                (Breakpoint.LgAndDown, Breakpoint.Xs, true),
+                (Breakpoint.LgAndDown, Breakpoint.Sm, true),
+                (Breakpoint.LgAndDown, Breakpoint.Md, true),
+                (Breakpoint.LgAndDown, Breakpoint.Lg, true),
+                (Breakpoint.LgAndDown, Breakpoint.Xl, false),
+                (Breakpoint.LgAndDown, Breakpoint.Xxl, false),
 
                 // XlAndDown
-                new TestCaseData(Breakpoint.XlAndDown, Breakpoint.Xs, true),
-                new TestCaseData(Breakpoint.XlAndDown, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.XlAndDown, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.XlAndDown, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.XlAndDown, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.XlAndDown, Breakpoint.Xxl, false),
+                (Breakpoint.XlAndDown, Breakpoint.Xs, true),
+                (Breakpoint.XlAndDown, Breakpoint.Sm, true),
+                (Breakpoint.XlAndDown, Breakpoint.Md, true),
+                (Breakpoint.XlAndDown, Breakpoint.Lg, true),
+                (Breakpoint.XlAndDown, Breakpoint.Xl, true),
+                (Breakpoint.XlAndDown, Breakpoint.Xxl, false),
 
                 // SmAndUp
-                new TestCaseData(Breakpoint.SmAndUp, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.SmAndUp, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.SmAndUp, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.SmAndUp, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.SmAndUp, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.SmAndUp, Breakpoint.Xxl, true),
+                (Breakpoint.SmAndUp, Breakpoint.Xs, false),
+                (Breakpoint.SmAndUp, Breakpoint.Sm, true),
+                (Breakpoint.SmAndUp, Breakpoint.Md, true),
+                (Breakpoint.SmAndUp, Breakpoint.Lg, true),
+                (Breakpoint.SmAndUp, Breakpoint.Xl, true),
+                (Breakpoint.SmAndUp, Breakpoint.Xxl, true),
 
                 // MdAndUp
-                new TestCaseData(Breakpoint.MdAndUp, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.MdAndUp, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.MdAndUp, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.MdAndUp, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.MdAndUp, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.MdAndUp, Breakpoint.Xxl, true),
+                (Breakpoint.MdAndUp, Breakpoint.Xs, false),
+                (Breakpoint.MdAndUp, Breakpoint.Sm, false),
+                (Breakpoint.MdAndUp, Breakpoint.Md, true),
+                (Breakpoint.MdAndUp, Breakpoint.Lg, true),
+                (Breakpoint.MdAndUp, Breakpoint.Xl, true),
+                (Breakpoint.MdAndUp, Breakpoint.Xxl, true),
 
                 // LgAndUp
-                new TestCaseData(Breakpoint.LgAndUp, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.LgAndUp, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.LgAndUp, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.LgAndUp, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.LgAndUp, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.LgAndUp, Breakpoint.Xxl, true),
+                (Breakpoint.LgAndUp, Breakpoint.Xs, false),
+                (Breakpoint.LgAndUp, Breakpoint.Sm, false),
+                (Breakpoint.LgAndUp, Breakpoint.Md, false),
+                (Breakpoint.LgAndUp, Breakpoint.Lg, true),
+                (Breakpoint.LgAndUp, Breakpoint.Xl, true),
+                (Breakpoint.LgAndUp, Breakpoint.Xxl, true),
 
                 // XlAndUp
-                new TestCaseData(Breakpoint.XlAndUp, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.XlAndUp, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.XlAndUp, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.XlAndUp, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.XlAndUp, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.XlAndUp, Breakpoint.Xxl, true),
+                (Breakpoint.XlAndUp, Breakpoint.Xs, false),
+                (Breakpoint.XlAndUp, Breakpoint.Sm, false),
+                (Breakpoint.XlAndUp, Breakpoint.Md, false),
+                (Breakpoint.XlAndUp, Breakpoint.Lg, false),
+                (Breakpoint.XlAndUp, Breakpoint.Xl, true),
+                (Breakpoint.XlAndUp, Breakpoint.Xxl, true),
 
                 // None
-                new TestCaseData(Breakpoint.None, Breakpoint.Xs, false),
-                new TestCaseData(Breakpoint.None, Breakpoint.Sm, false),
-                new TestCaseData(Breakpoint.None, Breakpoint.Md, false),
-                new TestCaseData(Breakpoint.None, Breakpoint.Lg, false),
-                new TestCaseData(Breakpoint.None, Breakpoint.Xl, false),
-                new TestCaseData(Breakpoint.None, Breakpoint.Xxl, false),
+                (Breakpoint.None, Breakpoint.Xs, false),
+                (Breakpoint.None, Breakpoint.Sm, false),
+                (Breakpoint.None, Breakpoint.Md, false),
+                (Breakpoint.None, Breakpoint.Lg, false),
+                (Breakpoint.None, Breakpoint.Xl, false),
+                (Breakpoint.None, Breakpoint.Xxl, false),
 
                 // Always
-                new TestCaseData(Breakpoint.Always, Breakpoint.Xs, true),
-                new TestCaseData(Breakpoint.Always, Breakpoint.Sm, true),
-                new TestCaseData(Breakpoint.Always, Breakpoint.Md, true),
-                new TestCaseData(Breakpoint.Always, Breakpoint.Lg, true),
-                new TestCaseData(Breakpoint.Always, Breakpoint.Xl, true),
-                new TestCaseData(Breakpoint.Always, Breakpoint.Xxl, true),
+                (Breakpoint.Always, Breakpoint.Xs, true),
+                (Breakpoint.Always, Breakpoint.Sm, true),
+                (Breakpoint.Always, Breakpoint.Md, true),
+                (Breakpoint.Always, Breakpoint.Lg, true),
+                (Breakpoint.Always, Breakpoint.Xl, true),
+                (Breakpoint.Always, Breakpoint.Xxl, true),
 
                 // Invalid
-                new TestCaseData((Breakpoint)(-1), (Breakpoint)(-1), false),
+                ((Breakpoint)(-1), (Breakpoint)(-1), false),
             };
         }
     }

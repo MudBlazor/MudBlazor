@@ -163,12 +163,14 @@ namespace MudBlazor.UnitTests.Components
         /// this is from issue #1591 "Line chart is not able to plot big Double values"
         /// </summary>
         [Test]
-        [CancelAfter(5000)]
-        public void LineChartWithBigValues()
+        public async Task LineChartWithBigValues()
         {
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
-            var comp = Context.Render<LineChartWithBigValuesTest>();
+            await Assert.That(() =>
+            {
+                var comp = Context.Render<LineChartWithBigValuesTest>();
+            }).CompletesWithin(TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -561,7 +563,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MudHeatMapCell_ShouldThrowExceptionIfNotInMudChart()
         {
             // Attempt to render MudHeatMapCell outside of MudChart
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.Render<MudHeatMapCell<double>>(parameters => parameters
                     .Add(p => p.Row, 0)
                     .Add(p => p.Column, 0)
@@ -718,7 +720,7 @@ namespace MudBlazor.UnitTests.Components
 
         private const double YAxisTestValue = 20;
 
-        private static IEnumerable<YAxisTestCase> YAxisFuncs()
+        public static IEnumerable<YAxisTestCase> YAxisFuncs()
         {
             yield return new YAxisTestCase(x => "hardcoded", "hardcoded");
             yield return new YAxisTestCase(x => $"{x}/tCO2e", "20/tCO2e");

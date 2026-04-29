@@ -1292,7 +1292,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
         {
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
             {
                 var comp = Context.Render<TreeViewTest8>();
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);

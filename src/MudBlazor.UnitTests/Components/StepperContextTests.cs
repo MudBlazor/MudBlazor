@@ -4,19 +4,17 @@ namespace MudBlazor.UnitTests.Components
     public class StepperContextTests
     {
         [Test]
-        public void StepContext_NullStepper_Throws()
+        public async Task StepContext_NullStepper_Throws()
         {
-            // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
-            Assert.That(() => _ = new MudStepContext(null!, new MudStep()),
-                Throws.TypeOf<ArgumentNullException>().With.Property("ParamName").EqualTo("stepper"));
+            await Assert.That(() => _ = new MudStepContext(null!, new MudStep()))
+                .Throws<ArgumentNullException>().And.HasProperty(x => x.ParamName, "stepper");
         }
 
         [Test]
-        public void StepContext_NullStep_Throws()
+        public async Task StepContext_NullStep_Throws()
         {
-            // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
-            Assert.That(() => _ = new MudStepContext(new MudStepper(), null!),
-                Throws.TypeOf<ArgumentNullException>().With.Property("ParamName").EqualTo("step"));
+            await Assert.That(() => _ = new MudStepContext(new MudStepper(), null!))
+                .Throws<ArgumentNullException>().And.HasProperty(x => x.ParamName, "step");
         }
     }
 }

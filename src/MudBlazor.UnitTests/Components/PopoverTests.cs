@@ -346,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 3; i++)
             {
                 await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, false));
-                await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("#my-content"));
+                Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
 
                 await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
@@ -354,10 +354,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudPopoverProvider_NoRenderWhenEnabledIsFalse()
+        public void MudPopoverProvider_NoRenderWhenEnabledIsFalse()
         {
             var comp = Context.Render<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, false));
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("#my-content"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
         //[TestCase(false)] always blocks duplicate provider with latest change
@@ -375,7 +375,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (throwOnDuplicateProvider)
             {
-                var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => Context.Render<PopoverDuplicationTest>());
+                var ex = Assert.Throws<InvalidOperationException>(() => Context.Render<PopoverDuplicationTest>());
                 ex.Message.Should().StartWith("Duplicate MudPopoverProvider detected");
             }
             else

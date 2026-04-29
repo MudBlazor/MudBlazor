@@ -443,11 +443,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGrid_SetParameters_ServerData_Items_Throw()
+        public void DataGrid_SetParameters_ServerData_Items_Throw()
         {
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.ServerData, serverDataFunc)
                     .Add(p => p.Items, Array.Empty<TestModel1>())
@@ -460,11 +460,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGrid_SetParameters_ServerData_QuickFilter_Throw()
+        public void DataGrid_SetParameters_ServerData_QuickFilter_Throw()
         {
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.ServerData, serverDataFunc)
                     .Add(p => p.QuickFilter, (TestModel1 x) => true)
@@ -477,7 +477,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
                     .Add(p => p.QuickFilter, (TestModel1 x) => true)
@@ -492,7 +492,7 @@ namespace MudBlazor.UnitTests.Components
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.ServerData, serverDataFunc)
                     .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
@@ -510,7 +510,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.Items, Array.Empty<TestModel1>())
                     .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
@@ -3259,7 +3259,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridInvalidFilterPerColumn()
         {
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => Context.Render<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
+            var exception = Assert.Throws<ArgumentException>(() => Context.Render<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
 
             exception.Message.Should().Be("Invalid filter operators for Severity: <");
         }
@@ -3700,7 +3700,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // Wait for switches, icons and buttons to appear
-            await comp.WaitForAssertionAsync(async () =>
+            await comp.WaitForAssertionAsync(() =>
             {
                 var switches = comp.FindComponents<MudSwitch<bool>>();
                 switches.Count.Should().Be(6);
@@ -3708,8 +3708,10 @@ namespace MudBlazor.UnitTests.Components
                 iconbuttons.Count.Should().Be(29);
                 var buttons = comp.FindComponents<MudButton>();
                 buttons.Count.Should().BeGreaterThan(1);
-                await buttons[1].Find("button").ClickAsync();
             });
+            
+            var buttons = comp.FindComponents<MudButton>();
+            await buttons[1].Find("button").ClickAsync();
 
             await comp.WaitForAssertionAsync(() =>
             {
@@ -4646,6 +4648,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(7);
         }
 
+        [Test]
         public void TableFilterGuid()
         {
             var comp = Context.Render<DataGridFilterGuid<Guid>>();

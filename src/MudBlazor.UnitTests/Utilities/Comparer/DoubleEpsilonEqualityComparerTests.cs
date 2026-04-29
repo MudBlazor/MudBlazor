@@ -212,8 +212,9 @@ public class DoubleEpsilonEqualityComparerTests
     [Arguments(-double.MaxValue, double.NaN, false)]
     [Arguments(double.NaN, double.MinValue, false)]
     [Arguments(double.MinValue, double.NaN, false)]
-    [Arguments(double.NaN, -double.MinValue, false)]
-    [Arguments(-double.MinValue, double.NaN, false)]
+    // Disabled because of a TUnit source generator bug, see below
+    //[Arguments(double.NaN, -double.MinValue, false)]
+    //[Arguments(-double.MinValue, double.NaN, false)]
     public void Equals_Nan(double a, double b, bool expected)
     {
         // Arrange
@@ -224,6 +225,40 @@ public class DoubleEpsilonEqualityComparerTests
 
         // Assert
         result.Should().Be(expected);
+    }
+    
+    [Test]
+    public void Equals_Nan_Workaround1()
+    {
+        // This is a separate test because of a TUnit source generator bug
+        
+        // Arrange
+        var a = double.NaN;
+        var b = -double.MinValue;
+        var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
+
+        // Act
+        var result = comparer.Equals(a, b);
+
+        // Assert
+        result.Should().Be(false);
+    }
+    
+    [Test]
+    public void Equals_Nan_Workaround2()
+    {
+        // This is a separate test because of a TUnit source generator bug
+        
+        // Arrange
+        var a = -double.MinValue;
+        var b = double.NaN;
+        var comparer = new DoubleEpsilonEqualityComparer(0.00001f);
+
+        // Act
+        var result = comparer.Equals(a, b);
+
+        // Assert
+        result.Should().Be(false);
     }
 
     [Test]

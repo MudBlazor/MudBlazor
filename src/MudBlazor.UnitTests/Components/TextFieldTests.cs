@@ -359,21 +359,24 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, CancelAfter(1000)]
+        [Test]
         public async Task TextFieldUpdateLoopProtection()
         {
-            var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(x => x.Converter, Conversions.From<string?, string>(s => $"{s}x", s => $"{s}y")));
+            await Assert.That(async () =>
+            {
+                var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                    .Add(x => x.Converter, Conversions.From<string?, string>(s => $"{s}x", s => $"{s}y")));
 
-            // these conversion funcs are nonsense of course, but they are designed this way to
-            // test against an infinite update loop that textfields and other inputs are now protected against.
-            var textfield = comp.Instance;
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
-            textfield.ReadValue.Should().Be("A");
-            textfield.ReadText.Should().Be("Ax");
-            await comp.Find("input").ChangeAsync("B");
-            textfield.ReadValue.Should().Be("By");
-            textfield.ReadText.Should().Be("B");
+                // these conversion funcs are nonsense of course, but they are designed this way to
+                // test against an infinite update loop that textfields and other inputs are now protected against.
+                var textfield = comp.Instance;
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "A"));
+                textfield.ReadValue.Should().Be("A");
+                textfield.ReadText.Should().Be("Ax");
+                await comp.Find("input").ChangeAsync("B");
+                textfield.ReadValue.Should().Be("By");
+                textfield.ReadText.Should().Be("B");
+            }).CompletesWithin(TimeSpan.FromSeconds(1));
         }
 
         [Test]
@@ -1941,7 +1944,7 @@ namespace MudBlazor.UnitTests.Components
             comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Variant, Variant.Outlined)
                 .Add(p => p.Label, ""));
-            await Assert.ThrowsAsync<ElementNotFoundException>(() =>
+            Assert.Throws<ElementNotFoundException>(() =>
             {
                 elem = comp.Find("legend");
             });
@@ -1957,7 +1960,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Variant, Variant.Outlined)
                 .Add(p => p.Mask, new PatternMask("0000"))
                 .Add(p => p.Label, ""));
-            await Assert.ThrowsAsync<ElementNotFoundException>(() =>
+            Assert.Throws<ElementNotFoundException>(() =>
             {
                 elem = comp.Find("legend");
             });

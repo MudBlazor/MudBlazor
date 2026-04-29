@@ -577,6 +577,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [MatrixDataSource]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Matrix(
                 Breakpoint.None,

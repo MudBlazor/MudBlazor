@@ -1644,7 +1644,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FieldValidationWithoutRequiredFormTest>();
 
-            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
+            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
         }
 
         /// <summary>

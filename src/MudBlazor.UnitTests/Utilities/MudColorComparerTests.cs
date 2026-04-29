@@ -326,7 +326,7 @@ public class MudColorComparerTests
         return comparer;
     }
 
-    private static IEnumerable<MudColor.MudColorComparer> AllComparers()
+    public static IEnumerable<MudColor.MudColorComparer> AllComparers()
     {
         yield return MudColor.MudColorComparer.Rgba;
         yield return MudColor.MudColorComparer.Hsl;

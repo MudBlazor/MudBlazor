@@ -1137,14 +1137,15 @@ namespace MudBlazor.UnitTests.Components
         /// `ResetAsync` has the same behavior, regardless of the component's parameters.
         /// So this method generates all parameter combinations.
         /// </remarks>
-        private static IEnumerable<bool[]> ResetAsyncParameters()
+        public static IEnumerable<(bool,bool,bool,bool)> ResetAsyncParameters()
         {
             const int NbParameters = 4;
             var max = (int)Math.Pow(2, NbParameters);
             for (var i = 0; i < max; i++)
             {
                 var bits = new System.Collections.BitArray([i]);
-                yield return bits.Cast<bool>().Take(NbParameters).ToArray();
+                var parameters = bits.Cast<bool>().Take(NbParameters).ToArray();
+                yield return (parameters[0], parameters[1], parameters[2], parameters[3]);
             }
         }
 

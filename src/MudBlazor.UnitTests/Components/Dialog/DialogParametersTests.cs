@@ -31,10 +31,10 @@ public sealed class DialogParametersTests
     }
 
     [Test]
-    public async Task DialogParametersGeneric_Add_ShouldThrow_IfNotMemberExpression()
+    public void DialogParametersGeneric_Add_ShouldThrow_IfNotMemberExpression()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        await Assert.ThrowsAsync<ArgumentException>(() => dialogParameters.Add(x => 1, 2));
+        Assert.Throws<ArgumentException>(() => dialogParameters.Add(x => 1, 2));
     }
 
     [Test]
@@ -58,10 +58,10 @@ public sealed class DialogParametersTests
     }
 
     [Test]
-    public async Task DialogParametersGeneric_Get_ShouldThrow_IfNotMemberExpression()
+    public void DialogParametersGeneric_Get_ShouldThrow_IfNotMemberExpression()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        await Assert.ThrowsAsync<ArgumentException>(() => dialogParameters.Get(x => 1));
+        Assert.Throws<ArgumentException>(() => dialogParameters.Get(x => 1));
     }
 
     [Test]
@@ -103,10 +103,10 @@ public sealed class DialogParametersTests
     }
 
     [Test]
-    public async Task DialogParametersGeneric_TryGet_ShouldThrow_IfNotMemberExpression()
+    public void DialogParametersGeneric_TryGet_ShouldThrow_IfNotMemberExpression()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        await Assert.ThrowsAsync<ArgumentException>(() => dialogParameters.TryGet(x => 1));
+        Assert.Throws<ArgumentException>(() => dialogParameters.TryGet(x => 1));
     }
 
     [Test]

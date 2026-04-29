@@ -10,6 +10,7 @@ using MudBlazor.State.Builder;
 using MudBlazor.UnitTests.Comparer;
 using MudBlazor.UnitTests.State.Mocks;
 using System.Threading.Tasks;
+using ParameterMetadata = MudBlazor.State.ParameterMetadata;
 
 namespace MudBlazor.UnitTests.State;
 #nullable enable

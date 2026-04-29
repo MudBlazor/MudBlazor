@@ -1,6 +1,7 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.State;
 using MudBlazor.State.Rule;
+using ParameterMetadata = MudBlazor.State.ParameterMetadata;
 
 namespace MudBlazor.UnitTests.State.Rule;
 #nullable enable
@@ -24,7 +25,7 @@ public class ParameterMetadataRulesTests
     [Arguments("", false)]
     [Arguments("OnParameterChanged", false)]
     [Arguments("() => handlerFireCount++", true)]
-    public void Morph_HandlerName_ShouldChangeMetadata(string handlerName, bool expectedResult)
+    public void Morph_HandlerName_ShouldChangeMetadata(string? handlerName, bool expectedResult)
     {
         // Arrange
         var metadata = new ParameterMetadata("Parameter", handlerName);
