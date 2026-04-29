@@ -3,6 +3,7 @@ using System.Text;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.UnitTests.Docs.Utilities;
+
 public class CodeSnippetUrlTests
 {
     [Test]

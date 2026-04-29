@@ -1,6 +1,7 @@
 ﻿using MudBlazor.Docs.Extensions;
 
 namespace MudBlazor.UnitTests.Docs.Extensions;
+
 public class StringExtensionsTests
 {
     [Test]
