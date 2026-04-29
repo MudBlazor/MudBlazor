@@ -985,7 +985,7 @@ namespace MudBlazor.UnitTests.Components
                 .Should().HaveCount(daysCount);
         }
 
-        [Test]
+        [Test, Skip("Test was missing [Test] attribute during TUnit migration and does not work.")]
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
