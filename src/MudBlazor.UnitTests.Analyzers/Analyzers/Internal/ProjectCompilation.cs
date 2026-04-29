@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Immutable;
-using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -32,11 +31,11 @@ internal class ProjectCompilation : IDisposable
         var workspace = MSBuildWorkspace.Create();
         var project = await workspace.OpenProjectAsync(projectPath);
 
-        project.Should().NotBeNull("Project null");
-        project!.SupportsCompilation.Should().BeTrue("Project compilation not supported");
+        await Assert.That(project).IsNotNull();
+        await Assert.That(project.SupportsCompilation).IsTrue();
 
         var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
-        compilation.Should().NotBeNull("Compilation null");
+        await Assert.That(compilation).IsNotNull();
 
         var additionalTexts = ImmutableArray<AdditionalText>.Empty;
         foreach (var document in project.AdditionalDocuments)

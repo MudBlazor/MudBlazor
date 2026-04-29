@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 
 namespace MudBlazor.UnitTests.Analyzers.Internal;
@@ -54,21 +53,21 @@ internal class ExpectedDiagnostic
             .ThenBy(x => x.Position.StartLinePosition.Character);
     }
 
-    internal static void Compare(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
+    internal static async Task Compare(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
     {
-        diagnostics.Count.Should().Be(expectedDiagnostics.Count);
+        await Assert.That(diagnostics.Count).IsEqualTo(expectedDiagnostics.Count);
         var orderedDiagnostics = SortToFileOrder(diagnostics);
         var orderedExpectedDiagnostics = SortToFileOrder(expectedDiagnostics);
 
         for (var i = 0; i < orderedDiagnostics.Count(); i++)
         {
-            TestMessage(orderedDiagnostics.ElementAt(i), orderedExpectedDiagnostics.ElementAt(i));
+            await TestMessage(orderedDiagnostics.ElementAt(i), orderedExpectedDiagnostics.ElementAt(i));
         }
     }
 
-    private static void TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostic)
+    private static async Task TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostic)
     {
-        diagnostic.GetMessage().Should().StartWith(expectedDiagnostic.Message);
+        await Assert.That(diagnostic.GetMessage()).StartsWith(expectedDiagnostic.Message);
     }
 }
 #nullable restore

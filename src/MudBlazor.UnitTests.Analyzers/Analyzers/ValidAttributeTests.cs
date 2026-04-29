@@ -1,5 +1,4 @@
-﻿using AwesomeAssertions;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using MudBlazor.Analyzers.TestComponents;
@@ -119,7 +118,7 @@ public class ValidAttributeTests
     public static async Task OneTimeSetup()
     {
         Workspace = await ProjectCompilation.CreateAsync(Util.ProjectPath());
-        Workspace.Should().NotBeNull("Workspace null");
+        await Assert.That(Workspace).IsNotNull();
 
         LowerCaseAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase, Workspace.AdditionalTexts));
         DefaultAttributesListDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, Workspace.AdditionalTexts));
@@ -136,7 +135,7 @@ public class ValidAttributeTests
     }
 
     [Test]
-    public void AllowLowerCaseAttributes()
+    public async Task AllowLowerCaseAttributes()
     {
         var diagnostics = LowerCaseAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
 
@@ -156,11 +155,11 @@ public class ValidAttributeTests
             IllegalAttributeValueChangedOnMudChip
         ]);
 
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        await ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
 
     [Test]
-    public void AllowDefaultListAttributes()
+    public async Task AllowDefaultListAttributes()
     {
         var diagnostics = DefaultAttributesListDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
 
@@ -184,11 +183,11 @@ public class ValidAttributeTests
             IllegalAttributeAvatarClassOnMudChip,
             IllegalAttributeValueChangedOnMudChip]);
 
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        await ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
 
     [Test]
-    public void AllowCustomListAttributes()
+    public async Task AllowCustomListAttributes()
     {
         var diagnostics = CustomAttributesListDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
 
@@ -211,11 +210,11 @@ public class ValidAttributeTests
             IllegalAttributeAvatarClassOnMudChip,
             IllegalAttributeValueChangedOnMudChip]);
 
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        await ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
 
     [Test]
-    public void AllowDataAndAriaAttributes()
+    public async Task AllowDataAndAriaAttributes()
     {
         var diagnostics = DataAndAriaAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
 
@@ -240,11 +239,11 @@ public class ValidAttributeTests
             IllegalAttributeAvatarClassOnMudChip,
             IllegalAttributeValueChangedOnMudChip]);
 
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        await ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
 
     [Test]
-    public void AllowNoAttributes()
+    public async Task AllowNoAttributes()
     {
         var diagnostics = NoAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
 
@@ -272,17 +271,17 @@ public class ValidAttributeTests
             IllegalAttributeAvatarClassOnMudChip,
             IllegalAttributeValueChangedOnMudChip]);
 
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        await ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
 
     [Test]
-    public void AllowAnyAttributes()
+    public async Task AllowAnyAttributes()
     {
         var diagnostics = AnyAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
 
         var expectedDiagnostics = new List<ExpectedDiagnostic>([]);
 
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        await ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
 }
 #nullable restore
