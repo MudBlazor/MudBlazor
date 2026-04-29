@@ -1,10 +1,10 @@
-﻿using AwesomeAssertions;
+﻿using System.Threading.Tasks;
+using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using MudBlazor.Analyzers.TestComponents;
 using MudBlazor.UnitTests.Analyzers.Internal;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Analyzers;
 

@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using MudBlazor.UnitTests.Analyzers.Verifiers;
 using System.Threading.Tasks;
+using MudBlazor.UnitTests.Analyzers.Verifiers;
 
 namespace MudBlazor.UnitTests.Analyzers;
 
