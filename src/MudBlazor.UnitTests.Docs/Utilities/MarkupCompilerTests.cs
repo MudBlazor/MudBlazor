@@ -1,10 +1,8 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.Docs.Compiler;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Utilities
 {
-    [TestFixture]
     public class MarkupCompilerTests
     {
         [Test]

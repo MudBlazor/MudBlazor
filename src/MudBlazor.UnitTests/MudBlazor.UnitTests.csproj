@@ -22,6 +22,7 @@
     <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.2.1" />
+    <PackageReference Include="nunit" Version="4.5.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
   </ItemGroup>

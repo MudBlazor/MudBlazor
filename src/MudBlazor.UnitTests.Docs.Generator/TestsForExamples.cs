@@ -21,7 +21,6 @@ public class TestsForExamples
             cb.AddLine("using System.Collections.Generic;");
             cb.AddLine("using MudBlazor.Docs.Examples;");
             cb.AddLine("using MudBlazor.Docs.Wireframes;");
-            cb.AddLine("using NUnit.Framework;");
             cb.AddLine();
 
             cb.AddLine("namespace MudBlazor.UnitTests.Docs.Generated");
@@ -36,9 +35,9 @@ public class TestsForExamples
             // Generate static test case data
             WriteExampleCases(cb);
 
-            // Generate single test method using TestCaseSource
+            // Generate single test method using MethodDataSource
             cb.AddLine("[Test]");
-            cb.AddLine("[TestCaseSource(nameof(ExampleCases))]");
+            cb.AddLine("[MethodDataSource(nameof(ExampleCases))]");
             cb.AddLine("public void Example_Renders(string componentName, System.Type componentType)");
             cb.AddLine("{");
             cb.IndentLevel++;
@@ -72,11 +71,11 @@ public class TestsForExamples
     }
 
     /// <summary>
-    /// Writes the ExampleCases method that yields TestCaseData for each example component.
+    /// Writes the ExampleCases method that yields test data for each example component.
     /// </summary>
     private void WriteExampleCases(CodeBuilder cb)
     {
-        cb.AddLine("public static IEnumerable<TestCaseData> ExampleCases()");
+        cb.AddLine("public static IEnumerable<(string,Type)> ExampleCases()");
         cb.AddLine("{");
         cb.IndentLevel++;
 
@@ -100,7 +99,7 @@ public class TestsForExamples
                 continue;
             }
 
-            cb.AddLine($"yield return new TestCaseData(\"{componentName}\", typeof({componentName})).SetName(\"{componentName}\");");
+            cb.AddLine($"yield return (\"{componentName}\", typeof({componentName}));");
         }
 
         cb.IndentLevel--;

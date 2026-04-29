@@ -2,11 +2,8 @@
 using System.Text;
 using AwesomeAssertions;
 using MudBlazor.Docs.Models;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Utilities;
-
-[TestFixture]
 public class CodeSnippetUrlTests
 {
     [Test]

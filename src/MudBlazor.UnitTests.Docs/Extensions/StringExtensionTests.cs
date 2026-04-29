@@ -1,10 +1,7 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.Docs.Extensions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Extensions;
-
-[TestFixture]
 public class StringExtensionsTests
 {
     [Test]

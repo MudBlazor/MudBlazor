@@ -7,17 +7,15 @@ using MudBlazor.Docs.Pages.Api;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Generated
 {
-    [TestFixture]
     public partial class ApiDocsTests
     {
         private BunitContext _ctx;
         private BunitNavigationManager _navigationManager;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Setup()
         {
             _ctx = new BunitContext();
@@ -71,7 +69,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             exampleLink.Should().NotBeNull();
         }
 
-        [TearDown]
+        [After(HookType.Test)]
         public async Task TearDown() => await _ctx.DisposeAsync();
     }
 }

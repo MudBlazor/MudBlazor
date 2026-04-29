@@ -5,14 +5,11 @@
 using AwesomeAssertions;
 using MudBlazor.Docs.Components;
 using MudBlazor.Docs.Models;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Documentation;
-
 /// <summary>
 /// Tests for the <see cref="ApiMemberTable"/> component.
 /// </summary>
-[TestFixture]
 public sealed class ApiMemberTableTests : BunitTest
 {
     /// <summary>

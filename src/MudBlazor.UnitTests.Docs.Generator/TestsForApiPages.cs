@@ -182,7 +182,6 @@ public partial class TestsForApiPages
             cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
             cb.AddLine("using MudBlazor.Docs.Pages.Api;");
             cb.AddLine("using MudBlazor.Docs.Services;");
-            cb.AddLine("using NUnit.Framework;");
             cb.AddLine();
             cb.AddLine("namespace MudBlazor.UnitTests.Docs.Generated");
             cb.AddLine("{");
@@ -218,11 +217,11 @@ public partial class TestsForApiPages
     }
 
     /// <summary>
-    /// Creates the ApiCases method that yields TestCaseData for all public MudBlazor types.
+    /// Creates the ApiCases method that yields test data for all public MudBlazor types.
     /// </summary>
     public void WritePublicTypeCases(CodeBuilder cb)
     {
-        cb.AddLine("public static IEnumerable<TestCaseData> ApiCases()");
+        cb.AddLine("public static IEnumerable<(string,bool)> ApiCases()");
         cb.AddLine("{");
         cb.IndentLevel++;
 
@@ -254,7 +253,7 @@ public partial class TestsForApiPages
 
             var typeName = type.Name.Replace("`", "");
             var hasExampleLink = TypesWithExamples.Exists(exampleType => exampleType.Name == type.Name);
-            cb.AddLine($"yield return new TestCaseData(\"{type.Name}\", {hasExampleLink.ToString().ToLowerInvariant()}).SetName(\"{typeName}_API\");");
+            cb.AddLine($"yield return (\"{type.Name}\", {hasExampleLink.ToString().ToLowerInvariant()});");
         }
 
         cb.IndentLevel--;
@@ -263,18 +262,18 @@ public partial class TestsForApiPages
     }
 
     /// <summary>
-    /// Creates the LegacyApiCases method that yields TestCaseData for legacy API links.
+    /// Creates the LegacyApiCases method that yields test data for legacy API links.
     /// </summary>
     public void WriteLegacyApiCases(CodeBuilder cb)
     {
-        cb.AddLine("public static IEnumerable<TestCaseData> LegacyApiCases()");
+        cb.AddLine("public static IEnumerable<string> LegacyApiCases()");
         cb.AddLine("{");
         cb.IndentLevel++;
 
         foreach (var url in _legacyApiAddresses)
         {
             var component = url.Replace("api/", "");
-            cb.AddLine($"yield return new TestCaseData(\"{component}\").SetName(\"{component.Replace("/", "_")}_Legacy_API\");");
+            cb.AddLine($"yield return \"{component}\";");
         }
 
         cb.IndentLevel--;
@@ -288,7 +287,7 @@ public partial class TestsForApiPages
     public void WritePublicTypeTest(CodeBuilder cb)
     {
         cb.AddLine("[Test]");
-        cb.AddLine("[TestCaseSource(nameof(ApiCases))]");
+        cb.AddLine("[MethodDataSource(nameof(ApiCases))]");
         cb.AddLine("public async Task ApiPage_Renders(string typeName, bool hasExampleLink)");
         cb.AddLine("{");
         cb.IndentLevel++;
@@ -314,7 +313,7 @@ public partial class TestsForApiPages
     public void WriteLegacyApiTest(CodeBuilder cb)
     {
         cb.AddLine("[Test]");
-        cb.AddLine("[TestCaseSource(nameof(LegacyApiCases))]");
+        cb.AddLine("[MethodDataSource(nameof(LegacyApiCases))]");
         cb.AddLine("public async Task LegacyApiPage_Renders(string component)");
         cb.AddLine("{");
         cb.IndentLevel++;

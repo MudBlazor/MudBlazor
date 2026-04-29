@@ -6,16 +6,14 @@ using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Docs.Mocks;
 using MudBlazor.UnitTests.Mocks;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Generated
 {
-    [TestFixture]
     public partial class ExampleDocsTests
     {
         private BunitContext _ctx;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Setup()
         {
             _ctx = new BunitContext();
@@ -45,7 +43,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
         }
 
-        [TearDown]
+        [After(HookType.Test)]
         public void TearDown()
         {
             try

@@ -4,14 +4,11 @@
 
 using AwesomeAssertions;
 using MudBlazor.Docs.Components;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Documentation;
-
 /// <summary>
 /// Tests for the <see cref="ApiTypeLink"/> component.
 /// </summary>
-[TestFixture]
 public sealed class ApiTypeLinkTests : BunitTest
 {
     /// <summary>
