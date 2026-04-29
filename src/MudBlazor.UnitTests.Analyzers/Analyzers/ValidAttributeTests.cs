@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
