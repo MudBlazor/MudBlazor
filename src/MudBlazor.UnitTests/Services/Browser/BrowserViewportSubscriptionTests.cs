@@ -3,12 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Browser;
-
 #nullable enable
-[TestFixture]
 public class BrowserViewportSubscriptionTests
 {
     [Test]

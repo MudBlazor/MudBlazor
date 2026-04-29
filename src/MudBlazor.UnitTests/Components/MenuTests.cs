@@ -9,23 +9,22 @@ using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class MenuTests : BunitTest
     {
         private int _originalHoverDelay;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void StoreMenuDefaults()
         {
             _originalHoverDelay = MudGlobal.MenuDefaults.HoverDelay;
         }
 
-        [TearDown]
+        [After(HookType.Test)]
         public void RestoreMenuDefaults()
         {
             MudGlobal.MenuDefaults.HoverDelay = _originalHoverDelay;
@@ -434,8 +433,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("x", null, null)]
-        [TestCase("x", "Close menu", "Close menu")]
+        [Arguments("x", null, null)]
+        [Arguments("x", "Close menu", "Close menu")]
         public void MenuWithLabelAndAriaLabel_Should_HaveExpectedAriaLabel(string label, string ariaLabel, string expectedAriaLabel)
         {
             var comp = Context.Render<MenuAccessibilityTest>(parameters => parameters
@@ -446,8 +445,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("Close menu", "Close menu")]
-        [TestCase(null, null, Description = "Ensures aria-label is not present instead of empty string")]
+        [Arguments("Close menu", "Close menu")]
+        [Arguments(null, null)]
+        [Property("Description", "Ensures aria-label is not present instead of empty string")]
         public void IconMenuWithAriaLabel_Should_HaveExpectedAriaLabel(string ariaLabel, string expectedAriaLabel)
         {
             var comp = Context.Render<MenuAccessibilityTest>(parameters => parameters

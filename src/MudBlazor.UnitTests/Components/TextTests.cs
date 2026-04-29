@@ -1,11 +1,8 @@
 ﻿using System.Linq;
 using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class TextTests : BunitTest
 {
     [Test]
@@ -42,15 +39,16 @@ public class TextTests : BunitTest
         element.GetAttribute("aria-label").Should().Be("example");
     }
 
-    [TestCase(Align.Inherit, false, null)]
-    [TestCase(Align.Left, false, "mud-typography-align-left")]
-    [TestCase(Align.Center, false, "mud-typography-align-center")]
-    [TestCase(Align.Right, false, "mud-typography-align-right")]
-    [TestCase(Align.Justify, false, "mud-typography-align-justify")]
-    [TestCase(Align.Start, false, "mud-typography-align-left")]
-    [TestCase(Align.End, false, "mud-typography-align-right")]
-    [TestCase(Align.Start, true, "mud-typography-align-right")]
-    [TestCase(Align.End, true, "mud-typography-align-left")]
+    [Test]
+    [Arguments(Align.Inherit, false, null)]
+    [Arguments(Align.Left, false, "mud-typography-align-left")]
+    [Arguments(Align.Center, false, "mud-typography-align-center")]
+    [Arguments(Align.Right, false, "mud-typography-align-right")]
+    [Arguments(Align.Justify, false, "mud-typography-align-justify")]
+    [Arguments(Align.Start, false, "mud-typography-align-left")]
+    [Arguments(Align.End, false, "mud-typography-align-right")]
+    [Arguments(Align.Start, true, "mud-typography-align-right")]
+    [Arguments(Align.End, true, "mud-typography-align-left")]
     public void Align_ShouldRenderTheExpectedAlignmentClass(Align align, bool rightToLeft, string expectedClass)
     {
         var comp = Context.Render<MudText>(parameters => parameters
@@ -74,12 +72,13 @@ public class TextTests : BunitTest
         }
     }
 
-    [TestCase(Color.Inherit, null)]
-    [TestCase(Color.Default, null)]
-    [TestCase(Color.Primary, "mud-primary-text")]
-    [TestCase(Color.Secondary, "mud-secondary-text")]
-    [TestCase(Color.Tertiary, "mud-tertiary-text")]
-    [TestCase(Color.Error, "mud-error-text")]
+    [Test]
+    [Arguments(Color.Inherit, null)]
+    [Arguments(Color.Default, null)]
+    [Arguments(Color.Primary, "mud-primary-text")]
+    [Arguments(Color.Secondary, "mud-secondary-text")]
+    [Arguments(Color.Tertiary, "mud-tertiary-text")]
+    [Arguments(Color.Error, "mud-error-text")]
     public void Color_ShouldRenderTheExpectedTextColorClass(Color color, string expectedClass)
     {
         var comp = Context.Render<MudText>(parameters => parameters
@@ -102,8 +101,9 @@ public class TextTests : BunitTest
         }
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
     public void GutterBottom_ShouldRenderTheMarginClassOnlyWhenEnabled(bool gutterBottom)
     {
         var comp = Context.Render<MudText>(parameters => parameters
@@ -130,20 +130,21 @@ public class TextTests : BunitTest
         comp.MarkupMatches("""<p class="mud-typography mud-typography-body1">Hello, World!</p>""");
     }
 
-    [TestCase(Typo.inherit, "span", "mud-typography-inherit")]
-    [TestCase(Typo.h1, "h1", "mud-typography-h1")]
-    [TestCase(Typo.h2, "h2", "mud-typography-h2")]
-    [TestCase(Typo.h3, "h3", "mud-typography-h3")]
-    [TestCase(Typo.h4, "h4", "mud-typography-h4")]
-    [TestCase(Typo.h5, "h5", "mud-typography-h5")]
-    [TestCase(Typo.h6, "h6", "mud-typography-h6")]
-    [TestCase(Typo.subtitle1, "p", "mud-typography-subtitle1")]
-    [TestCase(Typo.subtitle2, "p", "mud-typography-subtitle2")]
-    [TestCase(Typo.body1, "p", "mud-typography-body1")]
-    [TestCase(Typo.body2, "p", "mud-typography-body2")]
-    [TestCase(Typo.button, "span", "mud-typography-button")]
-    [TestCase(Typo.caption, "span", "mud-typography-caption")]
-    [TestCase(Typo.overline, "span", "mud-typography-overline")]
+    [Test]
+    [Arguments(Typo.inherit, "span", "mud-typography-inherit")]
+    [Arguments(Typo.h1, "h1", "mud-typography-h1")]
+    [Arguments(Typo.h2, "h2", "mud-typography-h2")]
+    [Arguments(Typo.h3, "h3", "mud-typography-h3")]
+    [Arguments(Typo.h4, "h4", "mud-typography-h4")]
+    [Arguments(Typo.h5, "h5", "mud-typography-h5")]
+    [Arguments(Typo.h6, "h6", "mud-typography-h6")]
+    [Arguments(Typo.subtitle1, "p", "mud-typography-subtitle1")]
+    [Arguments(Typo.subtitle2, "p", "mud-typography-subtitle2")]
+    [Arguments(Typo.body1, "p", "mud-typography-body1")]
+    [Arguments(Typo.body2, "p", "mud-typography-body2")]
+    [Arguments(Typo.button, "span", "mud-typography-button")]
+    [Arguments(Typo.caption, "span", "mud-typography-caption")]
+    [Arguments(Typo.overline, "span", "mud-typography-overline")]
     public void Typo_ShouldRenderTheExpectedTagAndTypographyClass(Typo typo, string expectedTag, string expectedClass)
     {
         var comp = Context.Render<MudText>(parameters => parameters
@@ -162,10 +163,11 @@ public class TextTests : BunitTest
         element.TextContent.Should().Be("content");
     }
 
-    [TestCase(Typo.h1, null, "h1", "mud-typography-h1")]
-    [TestCase(Typo.body1, "", "p", "mud-typography-body1")]
-    [TestCase(Typo.caption, "p", "p", "mud-typography-caption")]
-    [TestCase(Typo.h4, "span", "span", "mud-typography-h4")]
+    [Test]
+    [Arguments(Typo.h1, null, "h1", "mud-typography-h1")]
+    [Arguments(Typo.body1, "", "p", "mud-typography-body1")]
+    [Arguments(Typo.caption, "p", "p", "mud-typography-caption")]
+    [Arguments(Typo.h4, "span", "span", "mud-typography-h4")]
     public void HtmlTag_ShouldOverrideOrFallbackToTheTypoSelectedTag(Typo typo, string htmlTag, string expectedTag, string expectedClass)
     {
         var comp = Context.Render<MudText>(parameters => parameters
@@ -185,8 +187,9 @@ public class TextTests : BunitTest
         element.TextContent.Should().Be("content");
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
     public void Inline_ShouldRenderTheDisplayClassOnlyWhenEnabled(bool inline)
     {
         var comp = Context.Render<MudText>(parameters => parameters

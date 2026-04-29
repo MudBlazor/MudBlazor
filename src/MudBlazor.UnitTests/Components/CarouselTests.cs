@@ -2,11 +2,10 @@
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Carousel;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class CarouselTests : BunitTest
     {
         /// <summary>

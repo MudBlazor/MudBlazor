@@ -1,12 +1,9 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.State;
 using MudBlazor.State.Rule;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State.Rule;
-
 #nullable enable
-[TestFixture]
 public class ParameterMetadataRulesTests
 {
     [Test]
@@ -22,10 +19,11 @@ public class ParameterMetadataRulesTests
         addSameParameter.Should().Throw<ArgumentNullException>();
     }
 
-    [TestCase(null, false)]
-    [TestCase("", false)]
-    [TestCase("OnParameterChanged", false)]
-    [TestCase("() => handlerFireCount++", true)]
+    [Test]
+    [Arguments(null, false)]
+    [Arguments("", false)]
+    [Arguments("OnParameterChanged", false)]
+    [Arguments("() => handlerFireCount++", true)]
     public void Morph_HandlerName_ShouldChangeMetadata(string handlerName, bool expectedResult)
     {
         // Arrange
@@ -39,13 +37,14 @@ public class ParameterMetadataRulesTests
         isNew.Should().Be(expectedResult);
     }
 
-    [TestCase("() => TestComparer", "TestComparer", true)]
-    [TestCase("()=>TestComparer", "TestComparer", true)]
-    [TestCase("()       =>TestComparer", "TestComparer", true)]
-    [TestCase("()=>       TestComparer", "TestComparer", true)]
-    [TestCase("()       =>       TestComparer", "TestComparer", true)]
-    [TestCase(" TestComparer ", "TestComparer", true)]
-    [TestCase("TestComparer", "TestComparer", false)]
+    [Test]
+    [Arguments("() => TestComparer", "TestComparer", true)]
+    [Arguments("()=>TestComparer", "TestComparer", true)]
+    [Arguments("()       =>TestComparer", "TestComparer", true)]
+    [Arguments("()=>       TestComparer", "TestComparer", true)]
+    [Arguments("()       =>       TestComparer", "TestComparer", true)]
+    [Arguments(" TestComparer ", "TestComparer", true)]
+    [Arguments("TestComparer", "TestComparer", false)]
     public void Morph_Comparer_ShouldChangeMetadata(string input, string expectedComparerName, bool expectedResult)
     {
         // Arrange

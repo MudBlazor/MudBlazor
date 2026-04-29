@@ -2,11 +2,8 @@
 using System.Runtime.CompilerServices;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Comparer;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
-
-[TestFixture]
 public class ReferenceCultureComparerTests
 {
     [Test]

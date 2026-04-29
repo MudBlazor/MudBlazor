@@ -8,11 +8,9 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts;
-
-[TestFixture]
 public class RoseChartTests : BunitTest
 {
     private readonly string[] _baseChartPalette =

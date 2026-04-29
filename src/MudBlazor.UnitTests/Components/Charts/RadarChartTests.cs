@@ -10,11 +10,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts;
-
-[TestFixture]
 public class RadarChartTests : BunitTest
 {
     [Test]
@@ -353,10 +351,10 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    [TestCase(Position.Top)]
-    [TestCase(Position.Bottom)]
-    [TestCase(Position.Start)]
-    [TestCase(Position.End)]
+    [Arguments(Position.Top)]
+    [Arguments(Position.Bottom)]
+    [Arguments(Position.Start)]
+    [Arguments(Position.End)]
     public void RadarChart_Should_RespectLegendPosition(Position position)
     {
         var options = new RadarChartOptions
@@ -520,11 +518,11 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    [TestCase(0.0)]
-    [TestCase(90.0)]
-    [TestCase(-45.0)]
-    [TestCase(360.0)]
-    [TestCase(720.0)]
+    [Arguments(0.0)]
+    [Arguments(90.0)]
+    [Arguments(-45.0)]
+    [Arguments(360.0)]
+    [Arguments(720.0)]
     public void RadarChart_Should_ApplyAngleOffset_WithValue(double angleOffset)
     {
         var options = new RadarChartOptions

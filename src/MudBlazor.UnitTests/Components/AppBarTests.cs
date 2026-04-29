@@ -5,11 +5,10 @@
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.AppBar;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class AppBarTests : BunitTest
     {
         /// <summary>

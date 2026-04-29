@@ -5,11 +5,10 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.TreeView;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class TreeViewTests : BunitTest
     {
         [Test]
@@ -98,9 +97,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("item1")]
-        [TestCase("item1.1")]
-        [TestCase("item1.2")]
+        [Arguments("item1")]
+        [Arguments("item1.1")]
+        [Arguments("item1.2")]
         public void TreeViewWithSingleSelection_Should_RespectInitialSelectedValue(string value)
         {
             var comp = Context.Render<SimpleTreeViewTest>(self => self.Add(x => x.SelectedValue, value));
@@ -1291,9 +1290,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
+        public async Task TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
         {
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
             {
                 var comp = Context.Render<TreeViewTest8>();
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
@@ -1383,7 +1382,8 @@ namespace MudBlazor.UnitTests.Components
             await act.Should().NotThrowAsync();
         }
 
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
+        [Test]
+        [Property("Description", "https://github.com/MudBlazor/MudBlazor/issues/12833")]
         public async Task TreeView_NewItem_ShouldBeSelected()
         {
             var comp = Context.Render<TreeViewNewItemSelectTest>();
@@ -1394,7 +1394,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedValue!.Name.Should().Be("4");
         }
 
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12849")]
+        [Test]
+        [Property("Description", "https://github.com/MudBlazor/MudBlazor/issues/12849")]
         public async Task TreeView_ServerData_Reset()
         {
             var comp = Context.Render<TreeViewServerDataResetTest>();

@@ -7,12 +7,9 @@ using AwesomeAssertions;
 using Microsoft.Extensions.Localization;
 using Moq;
 using MudBlazor.Resources;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Localization;
-
 #nullable enable
-[TestFixture]
 public class DefaultLocalizationEnumInterceptorTests
 {
     private enum TestEnum

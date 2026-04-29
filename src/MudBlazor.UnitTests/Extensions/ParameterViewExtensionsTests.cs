@@ -1,12 +1,9 @@
 ﻿using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.Mocks;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
-
 #nullable enable
-[TestFixture]
 public class ParameterViewExtensionsTests
 {
     [Test]

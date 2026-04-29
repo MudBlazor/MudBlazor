@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Charts
             "#01153E", "#2EE8BB", "#EBDDE2"
         };
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 
@@ -269,10 +269,10 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(Position.Top)]
-        [TestCase(Position.Bottom)]
-        [TestCase(Position.Left)]
-        [TestCase(Position.Right)]
+        [Arguments(Position.Top)]
+        [Arguments(Position.Bottom)]
+        [Arguments(Position.Left)]
+        [Arguments(Position.Right)]
         public void StackedBarChart_LegendPosition_ShouldApplyCorrectClass(Position position)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
@@ -337,8 +337,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase("300px", "400px")]
-        [TestCase("50%", "75%")]
+        [Arguments("300px", "400px")]
+        [Arguments("50%", "75%")]
         public void StackedBarChart_WidthAndHeight_ShouldApplyToSvg(string width, string height)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters

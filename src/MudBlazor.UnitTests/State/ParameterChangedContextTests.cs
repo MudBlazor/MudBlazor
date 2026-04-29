@@ -5,31 +5,28 @@
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterChangedContextTests
 {
     [Test]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase("#fcefe5", null, "#fcefe5", null, "Text", null)]
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", null, "Text", "#fcefe5")]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "", null)]
-    [TestCase("#fcefe5", "#5fa9e2", null, null, "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
-    [TestCase(null, "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]
-    [TestCase(null, "#5fa9e2", null, "#5fa9e2", "Text", "#5fa9e2")]
-    [TestCase(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase(null, null, null, null, "", null)]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments("#fcefe5", null, "#fcefe5", null, "Text", null)]
+    [Arguments("#fcefe5", "#fcefe5", "#fcefe5", null, "Text", "#fcefe5")]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]
+    [Arguments("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "", null)]
+    [Arguments("#fcefe5", "#5fa9e2", null, null, "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
+    [Arguments(null, "#5fa9e2", "#fcefe5", "#5fa9e2", "Text", "#5fa9e2")]
+    [Arguments(null, "#5fa9e2", null, "#5fa9e2", "Text", "#5fa9e2")]
+    [Arguments(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments(null, null, null, null, "", null)]
     public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_TextDominant(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Text");
@@ -64,22 +61,22 @@ public class ParameterChangedContextTests
     }
 
     [Test]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase("#fcefe5", null, "#fcefe5", null, "Value", null)]
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", null, "Text", "#fcefe5")]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "", null)]
-    [TestCase("#fcefe5", "#5fa9e2", null, null, "Text", "#5fa9e2")]
-    [TestCase("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
-    [TestCase(null, "#5fa9e2", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase(null, "#5fa9e2", null, "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
-    [TestCase(null, null, null, null, "", null)]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments("#fcefe5", null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments("#fcefe5", null, "#fcefe5", null, "Value", null)]
+    [Arguments("#fcefe5", "#fcefe5", "#fcefe5", null, "Text", "#fcefe5")]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", "#fcefe5", "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", null, "#fcefe5", "#fcefe5", "Value", "#fcefe5")]
+    [Arguments("#fcefe5", "#fcefe5", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments("#fcefe5", "#fcefe5", "#fcefe5", "#fcefe5", "", null)]
+    [Arguments("#fcefe5", "#5fa9e2", null, null, "Text", "#5fa9e2")]
+    [Arguments("#fcefe5", "#5fa9e2", "#fcefe5", null, "Text", "#5fa9e2")]
+    [Arguments(null, "#5fa9e2", "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments(null, "#5fa9e2", null, "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments(null, null, "#fcefe5", "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments(null, null, null, "#5fa9e2", "Value", "#5fa9e2")]
+    [Arguments(null, null, null, null, "", null)]
     public void ResolveEffectiveParameter_ShouldSelectCorrectParameter_ValueDominant(string textBefore, string textAfter, string valueBefore, string valueAfter, string expectedParameter, string? expectedColor)
     {
         var result = Resolve(textBefore, textAfter, valueBefore, valueAfter, "Value");

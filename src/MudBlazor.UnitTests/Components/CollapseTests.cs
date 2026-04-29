@@ -6,11 +6,10 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Collapse;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class CollapseTests : BunitTest
     {
         [Test]

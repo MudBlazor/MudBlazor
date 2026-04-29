@@ -2,17 +2,16 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class MessageBoxTests : BunitTest
     {
         [Test, CancelAfter(3000)]
-        [TestCase(0, null)]
-        [TestCase(1, false)]
-        [TestCase(2, true)]
+        [Arguments(0, null)]
+        [Arguments(1, false)]
+        [Arguments(2, true)]
         public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
         {
             var comp = Context.Render<MudDialogProvider>();
@@ -56,9 +55,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test, CancelAfter(3000)]
-        [TestCase(0, null)]
-        [TestCase(1, false)]
-        [TestCase(2, true)]
+        [Arguments(0, null)]
+        [Arguments(1, false)]
+        [Arguments(2, true)]
         public async Task MessageBox_Should_ReturnTrueWithMarkupVariant(int clickButtonIndex, bool? expectedResult)
         {
             var comp = Context.Render<MudDialogProvider>();

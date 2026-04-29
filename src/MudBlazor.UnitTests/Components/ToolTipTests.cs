@@ -7,11 +7,9 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Tooltip;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ToolTipTests : BunitTest
     {
         [Test]
@@ -29,8 +27,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task RenderContent(bool usingFocusout)
         {
             var comp = Context.Render<TooltipWithTextTest>(p => p.Add(
@@ -100,8 +98,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task RenderTooltipFragment(bool usingFocusout)
         {
             var comp = Context.Render<TooltipWithRenderFragmentContentTest>();
@@ -146,8 +144,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false, new[] { "mud-tooltip-root" })]
-        [TestCase(true, new[] { "mud-tooltip-root", "mud-tooltip-inline" })]
+        [Arguments(false, new[] { "mud-tooltip-root" })]
+        [Arguments(true, new[] { "mud-tooltip-root", "mud-tooltip-inline" })]
         public void ContainerClass_PropertyRelations(bool inlineValue, string[] expectedClasses)
         {
             var comp = Context.Render<TooltipContainerPropertyTest>(p =>
@@ -174,8 +172,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false, new[] { "mud-tooltip" })]
-        [TestCase(true, new[] { "mud-tooltip", "mud-tooltip-arrow" })]
+        [Arguments(false, new[] { "mud-tooltip" })]
+        [Arguments(true, new[] { "mud-tooltip", "mud-tooltip-arrow" })]
         public async Task PopoverClass_PropertyArrow(bool arrowValue, string[] expectedClasses)
         {
             var comp = Context.Render<TooltipPopoverClassPropertyTest>(p =>
@@ -190,10 +188,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Default, new[] { "mud-tooltip", "mud-tooltip-default" })]
-        [TestCase(Color.Tertiary, new[] { "mud-tooltip", "mud-theme-tertiary" })]
-        [TestCase(Color.Success, new[] { "mud-tooltip", "mud-theme-success" })]
-        [TestCase(Color.Dark, new[] { "mud-tooltip", "mud-theme-dark" })]
+        [Arguments(Color.Default, new[] { "mud-tooltip", "mud-tooltip-default" })]
+        [Arguments(Color.Tertiary, new[] { "mud-tooltip", "mud-theme-tertiary" })]
+        [Arguments(Color.Success, new[] { "mud-tooltip", "mud-theme-success" })]
+        [Arguments(Color.Dark, new[] { "mud-tooltip", "mud-theme-dark" })]
         public async Task PopoverClass_PropertyColor(Color colorValue, string[] expectedClasses)
         {
             var comp = Context.Render<TooltipPopoverClassPropertyTest>(p =>
@@ -208,10 +206,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Default, false, new[] { "mud-tooltip", "mud-tooltip-default", })]
-        [TestCase(Color.Default, true, new[] { "mud-tooltip", "mud-tooltip-default", "mud-tooltip-arrow" })]
-        [TestCase(Color.Success, true, new[] { "mud-tooltip", "mud-theme-success", "mud-tooltip-arrow", "mud-border-success" })]
-        [TestCase(Color.Success, false, new[] { "mud-tooltip", "mud-theme-success" })]
+        [Arguments(Color.Default, false, new[] { "mud-tooltip", "mud-tooltip-default", })]
+        [Arguments(Color.Default, true, new[] { "mud-tooltip", "mud-tooltip-default", "mud-tooltip-arrow" })]
+        [Arguments(Color.Success, true, new[] { "mud-tooltip", "mud-theme-success", "mud-tooltip-arrow", "mud-border-success" })]
+        [Arguments(Color.Success, false, new[] { "mud-tooltip", "mud-theme-success" })]
         public async Task PopoverClass_PropertyColorAndArrow(Color colorValue, bool arrowValue, string[] expectedClasses)
         {
             var comp = Context.Render<TooltipPopoverClassPropertyTest>(p =>
@@ -229,18 +227,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Placement.Bottom, false, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
-        [TestCase(Placement.Bottom, true, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
-        [TestCase(Placement.Top, false, new[] { "mud-tooltip", "mud-tooltip-top-center", "mud-popover-anchor-top-center", "mud-popover-bottom-center" })]
-        [TestCase(Placement.Top, true, new[] { "mud-tooltip", "mud-tooltip-top-center", "mud-popover-anchor-top-center", "mud-popover-bottom-center" })]
-        [TestCase(Placement.Left, false, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
-        [TestCase(Placement.Left, true, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
-        [TestCase(Placement.Start, false, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
-        [TestCase(Placement.Start, true, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
-        [TestCase(Placement.Right, false, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
-        [TestCase(Placement.Right, true, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
-        [TestCase(Placement.End, false, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
-        [TestCase(Placement.End, true, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [Arguments(Placement.Bottom, false, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
+        [Arguments(Placement.Bottom, true, new[] { "mud-tooltip", "mud-tooltip-bottom-center", "mud-popover-anchor-bottom-center", "mud-popover-top-center" })]
+        [Arguments(Placement.Top, false, new[] { "mud-tooltip", "mud-tooltip-top-center", "mud-popover-anchor-top-center", "mud-popover-bottom-center" })]
+        [Arguments(Placement.Top, true, new[] { "mud-tooltip", "mud-tooltip-top-center", "mud-popover-anchor-top-center", "mud-popover-bottom-center" })]
+        [Arguments(Placement.Left, false, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [Arguments(Placement.Left, true, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [Arguments(Placement.Start, false, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
+        [Arguments(Placement.Start, true, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [Arguments(Placement.Right, false, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [Arguments(Placement.Right, true, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [Arguments(Placement.End, false, new[] { "mud-tooltip", "mud-tooltip-center-right", "mud-popover-anchor-center-right", "mud-popover-center-left" })]
+        [Arguments(Placement.End, true, new[] { "mud-tooltip", "mud-tooltip-center-left", "mud-popover-anchor-center-left", "mud-popover-center-right" })]
 
         public async Task PopoverClass_Placement(Placement placementValue, bool rtlValue, string[] expectedClasses)
         {
@@ -286,8 +284,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task Visible_ByDefault(bool usingFocusout)
         {
             var comp = Context.Render<TooltipVisiblePropTest>(p =>
@@ -360,8 +358,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task Tooltip_Handle_Pointer_Events(bool showOnHover)
         {
             var comp = Context.Render<MudTooltip>(parameters => parameters

@@ -8,12 +8,11 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.Dialog;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class DialogTests : BunitTest
     {
         /// <summary>
@@ -1258,10 +1257,11 @@ namespace MudBlazor.UnitTests.Components
             dialogInstance.FindAll(".custom-class").Should().HaveCount(1);
         }
 
-        [TestCase("", false, "mud-dialog-content")]
-        [TestCase("", true, "mud-dialog-content mud-dialog-no-side-padding")]
-        [TestCase("my-class", false, "mud-dialog-content my-class")]
-        [TestCase("my-class", true, "mud-dialog-content mud-dialog-no-side-padding my-class")]
+        [Test]
+        [Arguments("", false, "mud-dialog-content")]
+        [Arguments("", true, "mud-dialog-content mud-dialog-no-side-padding")]
+        [Arguments("my-class", false, "mud-dialog-content my-class")]
+        [Arguments("my-class", true, "mud-dialog-content mud-dialog-no-side-padding my-class")]
         public async Task DialogWithContentClassValueShouldRenderExpectedClassname(string contentClass, bool disablePadding, string expectedClassname)
         {
             var comp = Context.Render<MudDialogProvider>();
@@ -1282,8 +1282,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-content").GetAttribute("class").Should().Be(expectedClassname);
         }
 
-        [TestCase("", "mud-dialog-actions")]
-        [TestCase("my-class", "mud-dialog-actions my-class")]
+        [Test]
+        [Arguments("", "mud-dialog-actions")]
+        [Arguments("my-class", "mud-dialog-actions my-class")]
         public async Task DialogWithActionsClassValueShouldRenderExpectedClassname(string actionsClass, string expectedClassname)
         {
             var comp = Context.Render<MudDialogProvider>();
@@ -1303,8 +1304,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-actions").GetAttribute("class").Should().Be(expectedClassname);
         }
 
-        [TestCase("", "mud-dialog-title")]
-        [TestCase("my-title-class my-second-class", "mud-dialog-title my-title-class my-second-class")]
+        [Test]
+        [Arguments("", "mud-dialog-title")]
+        [Arguments("my-title-class my-second-class", "mud-dialog-title my-title-class my-second-class")]
         public async Task DialogWithTitleClassValueShouldRenderExpectedClassname(string titleClass, string expectedClassname)
         {
             var comp = Context.Render<MudDialogProvider>();

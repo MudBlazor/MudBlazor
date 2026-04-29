@@ -1,11 +1,9 @@
 ﻿using System.Reflection;
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Other
 {
-    [TestFixture]
     public class CategoryAttributeTests
     {
         [Test]

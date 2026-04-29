@@ -1,23 +1,21 @@
 ﻿using System.Diagnostics;
 using AwesomeAssertions;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Extensions
 {
-
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class TaskExtensionsTests
     {
         private Action<Exception> _originalExceptionHandler = null!;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void SetUp()
         {
             _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
         }
 
-        [TearDown]
+        [After(HookType.Test)]
         public void TearDown()
         {
             MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
@@ -54,7 +52,7 @@ namespace MudBlazor.UnitTests.Extensions
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
                 {
-                    Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                    Fail.Test("The exception wasn't forwarded to the global exception handler in time!");
                 }
             }
             errorMessage.Should().Be("Something bad is about to happen ...");
@@ -73,7 +71,7 @@ namespace MudBlazor.UnitTests.Extensions
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
                 {
-                    Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                    Fail.Test("The exception wasn't forwarded to the global exception handler in time!");
                 }
             }
             errorMessage.Should().Be("Something bad is about to happen ...");
@@ -92,7 +90,7 @@ namespace MudBlazor.UnitTests.Extensions
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
                 {
-                    Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                    Fail.Test("The exception wasn't forwarded to the global exception handler in time!");
                 }
             }
             errorMessage.Should().Be("Something bad is about to happen ...");
@@ -110,7 +108,7 @@ namespace MudBlazor.UnitTests.Extensions
                 await Task.Delay(10);
                 if (t.Elapsed > TimeSpan.FromSeconds(5))
                 {
-                    Assert.Fail("The test task did not end in time, this should not happen!");
+                    Fail.Test("The test task did not end in time, this should not happen!");
                 }
             }
         }

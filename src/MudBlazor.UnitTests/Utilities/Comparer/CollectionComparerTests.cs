@@ -1,10 +1,7 @@
 ﻿using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
-
 #nullable enable
-[TestFixture]
 public class CollectionComparerTests
 {
     [Test]

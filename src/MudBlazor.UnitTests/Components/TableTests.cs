@@ -8,11 +8,10 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.Table;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class TableTests : BunitTest
     {
         [Test]
@@ -365,8 +364,8 @@ namespace MudBlazor.UnitTests.Components
         /// should only be able to select one item and selecteditems.count should never exceed 1
         /// </summary>
         [Test]
-        [TestCase(TableEditTrigger.RowClick)]
-        [TestCase(TableEditTrigger.EditButton)]
+        [Arguments(TableEditTrigger.RowClick)]
+        [Arguments(TableEditTrigger.EditButton)]
         public async Task TableSingleSelection(TableEditTrigger trigger)
         {
             var comp = Context.Render<TableSingleSelectionTest1>(parameters => parameters
@@ -496,11 +495,11 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// navigate to page test
         /// </summary>
-        [TestCase(0, "Alabama")]
-        [TestCase(-1, "Alabama")]
-        [TestCase(2, "Kentucky")]
-        [TestCase(5, "Texas")]
-        [TestCase(6, "Texas")]
+        [Arguments(0, "Alabama")]
+        [Arguments(-1, "Alabama")]
+        [Arguments(2, "Kentucky")]
+        [Arguments(5, "Texas")]
+        [Arguments(6, "Texas")]
         [Test]
         public async Task TableNavigateToPage(int pageIndex, string expectedFirstItem)
         {
@@ -1597,10 +1596,10 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
-        [Theory]
-        [TestCase(TableApplyButtonPosition.StartAndEnd)]
-        [TestCase(TableApplyButtonPosition.Start)]
-        [TestCase(TableApplyButtonPosition.End)]
+        [Test]
+        [Arguments(TableApplyButtonPosition.StartAndEnd)]
+        [Arguments(TableApplyButtonPosition.Start)]
+        [Arguments(TableApplyButtonPosition.End)]
         public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
         {
             var comp = Context.Render<TableInlineEditTestApplyButtons>(
@@ -1888,12 +1887,12 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures the table buttons render correctly
         /// </summary>
         [Test]
-        [TestCase(true, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
-        [TestCase(true, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
-        [TestCase(true, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
-        [TestCase(false, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
-        [TestCase(false, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
-        [TestCase(false, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
+        [Arguments(true, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
+        [Arguments(true, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
+        [Arguments(true, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
+        [Arguments(false, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
+        [Arguments(false, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
+        [Arguments(false, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
         public void TableEditButtonRender(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
         {
             IRenderedComponent<ComponentBase> comp;
@@ -2512,9 +2511,9 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the correct output when custom info format provided
         /// </summary>
         [Test]
-        [TestCase("", "1-3 of 3")]
-        [TestCase("Test", "Test")]
-        [TestCase("{first_item}-{last_item}/{all_items}", "1-3/3")]
+        [Arguments("", "1-3 of 3")]
+        [Arguments("Test", "Test")]
+        [Arguments("{first_item}-{last_item}/{all_items}", "1-3/3")]
         public void TablePagerInfoTextTest2(string infoFormat, string expectedInfoText)
         {
             // create the component
@@ -2530,10 +2529,10 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
         /// <param name="expectedButtonAriaLabel">The expected value in the aria-label.</param>
-        [TestCase(Page.First, "First page")]
-        [TestCase(Page.Previous, "Previous page")]
-        [TestCase(Page.Next, "Next page")]
-        [TestCase(Page.Last, "Last page")]
+        [Arguments(Page.First, "First page")]
+        [Arguments(Page.Previous, "Previous page")]
+        [Arguments(Page.Next, "Next page")]
+        [Arguments(Page.Last, "Last page")]
         [Test]
         public void TablePagerControlButtonAriaLabel(Page controlButton, string expectedButtonAriaLabel)
         {
@@ -2613,8 +2612,8 @@ namespace MudBlazor.UnitTests.Components
         /// Tests that AllowEditItem is respected when clicking a row
         /// </summary>
         [Test]
-        [TestCase(TableEditTrigger.RowClick)]
-        [TestCase(TableEditTrigger.EditButton)]
+        [Arguments(TableEditTrigger.RowClick)]
+        [Arguments(TableEditTrigger.EditButton)]
         public async Task AllowEditRowPreventsEdit(TableEditTrigger trigger)
         {
             var comp = Context.Render<TableNotEditableRowTest>(parameters => parameters.Add(x => x.EditTrigger, trigger));
@@ -2838,9 +2837,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(SortDirection.None)]
-        [TestCase(SortDirection.Ascending)]
-        [TestCase(SortDirection.Descending)]
+        [Arguments(SortDirection.None)]
+        [Arguments(SortDirection.Ascending)]
+        [Arguments(SortDirection.Descending)]
         public void TableSortLabelDirectionClasses(SortDirection direction)
         {
             var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
@@ -2868,7 +2867,7 @@ namespace MudBlazor.UnitTests.Components
             return items;
         }
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void SetupScrollManagerMock()
         {
             _mockScrollManager = new Mock<IScrollManager>();

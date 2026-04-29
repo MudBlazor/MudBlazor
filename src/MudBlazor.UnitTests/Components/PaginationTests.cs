@@ -4,11 +4,10 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Pagination;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class Pagination : BunitTest
     {
         /// <summary>
@@ -19,12 +18,12 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="initiallySelectedPage">The index of initially selected page.</param>
         /// <param name="expectedSelectedPage">The expected selected page after clicking numberOfClicks times on the button.</param>
         /// <param name="expectedDisabled">The expected disabled state after clicking numberOfClicks times on the button.</param>
-        [TestCase(Page.First, 1, 6, 1, true)]
-        [TestCase(Page.Previous, 3, 5, 2, false)]
-        [TestCase(Page.Previous, 7, 6, 1, true)]
-        [TestCase(Page.Next, 3, 5, 8, false)]
-        [TestCase(Page.Next, 7, 6, 11, true)]
-        [TestCase(Page.Last, 1, 6, 11, true)]
+        [Arguments(Page.First, 1, 6, 1, true)]
+        [Arguments(Page.Previous, 3, 5, 2, false)]
+        [Arguments(Page.Previous, 7, 6, 1, true)]
+        [Arguments(Page.Next, 3, 5, 8, false)]
+        [Arguments(Page.Next, 7, 6, 11, true)]
+        [Arguments(Page.Last, 1, 6, 11, true)]
         [Test]
         public async Task PaginationControlButtonClick(Page controlButton, int numberOfClicks, int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
         {
@@ -53,10 +52,10 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
         /// <param name="expectedButtonAriaLabel">The expected value in the aria-label.</param>
-        [TestCase(Page.First, "First page")]
-        [TestCase(Page.Previous, "Previous page")]
-        [TestCase(Page.Next, "Next page")]
-        [TestCase(Page.Last, "Last page")]
+        [Arguments(Page.First, "First page")]
+        [Arguments(Page.Previous, "Previous page")]
+        [Arguments(Page.Next, "Next page")]
+        [Arguments(Page.Last, "Last page")]
         [Test]
         public void PaginationControlButtonAriaLabel(Page controlButton, string expectedButtonAriaLabel)
         {
@@ -74,11 +73,11 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="index">The index of the control button. first page button has index 2.</param>
         /// <param name="label">The expected value in the aria-label.</param>
-        [TestCase(2, "Page 1")]
-        [TestCase(3, "Page 2")]
-        [TestCase(5, "Current page 6")]
-        [TestCase(7, "Page 10")]
-        [TestCase(8, "Page 11")]
+        [Arguments(2, "Page 1")]
+        [Arguments(3, "Page 2")]
+        [Arguments(5, "Current page 6")]
+        [Arguments(7, "Page 10")]
+        [Arguments(8, "Page 11")]
         [Test]
         public void PaginationPageButtonAriaLabel(int index, string label)
         {
@@ -97,10 +96,10 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
         /// <param name="expectedButtonClickedValue">The expected value in the dom after clicking on the button.</param>
-        [TestCase(Page.First, 0)]
-        [TestCase(Page.Previous, 1)]
-        [TestCase(Page.Next, 2)]
-        [TestCase(Page.Last, 3)]
+        [Arguments(Page.First, 0)]
+        [Arguments(Page.Previous, 1)]
+        [Arguments(Page.Next, 2)]
+        [Arguments(Page.Last, 3)]
         [Test]
         public async Task PaginationControlButtonEventCallback(Page controlButton, int expectedButtonClickedValue)
         {
@@ -131,10 +130,10 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="clickIndexPage">The index of the clicked page button.</param>
         /// <param name="initiallySelectedPage">The initially selected page.</param>
         /// <param name="expectedSelectedPage">The expected selected page.</param>
-        [TestCase(0, 6, 1)]
-        [TestCase(6, 6, 11)]
-        [TestCase(5, 5, 6)]
-        [TestCase(2, 5, 3)]
+        [Arguments(0, 6, 1)]
+        [Arguments(6, 6, 11)]
+        [Arguments(5, 5, 6)]
+        [Arguments(2, 5, 3)]
         [Test]
         public async Task PaginationPageButtonClick(int clickIndexPage, int initiallySelectedPage,
             int expectedSelectedPage)
@@ -175,11 +174,11 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="page">The page to navigate to.</param>
         /// <param name="expectedSelectedPage">The expected selected page.</param>
-        [TestCase(Page.First, 1)]
-        [TestCase(Page.Previous, 5)]
-        [TestCase(Page.Next, 7)]
-        [TestCase(Page.Last, 11)]
-        [TestCase((Page)50, 6)]
+        [Arguments(Page.First, 1)]
+        [Arguments(Page.Previous, 5)]
+        [Arguments(Page.Next, 7)]
+        [Arguments(Page.Last, 11)]
+        [Arguments((Page)50, 6)]
         [Test]
         public async Task PaginationNavigateToPage(Page page, int expectedSelectedPage)
         {
@@ -201,10 +200,10 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="page">The page to navigate to.</param>
         /// <param name="expectedSelectedPage">The expected selected page.</param>
-        [TestCase(1, 1)]
-        [TestCase(11, 11)]
-        [TestCase(-1, 1)]
-        [TestCase(12, 11)]
+        [Arguments(1, 1)]
+        [Arguments(11, 11)]
+        [Arguments(-1, 1)]
+        [Arguments(12, 11)]
         [Test]
         public async Task PaginationNavigateToPage(int page, int expectedSelectedPage)
         {
@@ -227,11 +226,11 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="count">The number of total items.</param>
         /// <param name="middleCount">The number of items displayed in the middle.</param>
         /// <param name="boundaryCount">The number of items displayed on the start and end.</param>
-        [TestCase(21, 5, 7)]
-        [TestCase(9, 3, 2)]
-        [TestCase(5, 1, 1)]
-        [TestCase(5, -1, 1)]
-        [TestCase(5, 1, -1)]
+        [Arguments(21, 5, 7)]
+        [Arguments(9, 3, 2)]
+        [Arguments(5, 1, 1)]
+        [Arguments(5, -1, 1)]
+        [Arguments(5, 1, -1)]
         [Test]
         public async Task PaginationCountWithoutEllipsis(int count, int middleCount, int boundaryCount)
         {
@@ -265,17 +264,17 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="middleCount">The number of items between the ellipsis.</param>
         /// <param name="boundaryCount">The number of items at the start and end of the pagination.</param>
         /// <param name="expectedValues">The expected content of the items.</param>
-        [TestCase(6, 11, 3, 2, new[] { "1", "2", "...", "5", "6", "7", "...", "10", "11" })]
-        [TestCase(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(11, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(11, 22, 1, 1, new[] { "1", "...", "11", "...", "22" })]
-        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "...", "22" })]
-        [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22" })]
-        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
-        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
-        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [Arguments(6, 11, 3, 2, new[] { "1", "2", "...", "5", "6", "7", "...", "10", "11" })]
+        [Arguments(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
+        [Arguments(11, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
+        [Arguments(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
+        [Arguments(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
+        [Arguments(11, 22, 1, 1, new[] { "1", "...", "11", "...", "22" })]
+        [Arguments(1, 22, 1, 1, new[] { "1", "2", "3", "...", "22" })]
+        [Arguments(8, 22, 5, 3, new[] { "1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22" })]
+        [Arguments(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
+        [Arguments(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [Arguments(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [Test]
         public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)

@@ -13,12 +13,10 @@ using Moq;
 using MudBlazor.Interop;
 using MudBlazor.UnitTests.Services.Popover.Mocks;
 using MudBlazor.Utilities.Background.Batch;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.Popover;
-
 #nullable enable
-[TestFixture]
 public class PopoverServiceTests
 {
     private static PopoverService CreateService(IJSRuntime jsRuntime, PopoverOptions? options = null, FakeTimeProvider? timeProvider = null)
@@ -132,8 +130,8 @@ public class PopoverServiceTests
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     public async Task CreatePopoverAsync_CheckForPopoverProvider(bool checkForPopoverProvider)
     {
         // Arrange
@@ -588,7 +586,7 @@ public class PopoverServiceTests
     }
 
     [Test]
-    [Ignore(reason:
+    [Skip(reason:
         $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
         $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
         $"since the {nameof(PopoverJsInterop.DisposeAsync)} does it.")]

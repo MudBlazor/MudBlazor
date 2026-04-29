@@ -7,11 +7,8 @@ using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services;
-
-[TestFixture]
 public class SnackbarServiceTests : BunitTest
 {
     private BunitNavigationManager _navigationManager;

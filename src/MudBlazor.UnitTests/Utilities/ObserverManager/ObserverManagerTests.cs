@@ -8,17 +8,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using MudBlazor.Utilities.ObserverManager;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.ObserverManager;
-
 #nullable enable
-[TestFixture]
 public class ObserverManagerTests
 {
     private ObserverManager<int, string> _observerManager = new(NullLogger<ObserverManager<int, string>>.Instance);
 
-    [SetUp]
+    [Before(HookType.Test)]
     public void Setup()
     {
         //Reset on each test
@@ -476,7 +474,7 @@ public class ObserverManagerTests
     }
 
     [Test]
-    public void CollectionModified()
+    public async Task CollectionModified()
     {
         // Arrange
         var observerManager = new ObserverManager<int, int>(NullLogger.Instance);
@@ -502,6 +500,6 @@ public class ObserverManagerTests
         }
 
         // Act & Assert
-        Assert.DoesNotThrowAsync(() => observerManager.NotifyAsync(NotificationAsync, Predicate));
+        await Assert.That(() => observerManager.NotifyAsync(NotificationAsync, Predicate)).ThrowsNothing();
     }
 }

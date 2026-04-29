@@ -4,12 +4,10 @@
 
 using System.Globalization;
 using AwesomeAssertions;
-using NUnit.Framework;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Converters
 {
-    [TestFixture]
     public class DefaultConverterLegacyTests
     {
         [Test]

@@ -6,12 +6,11 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using MudBlazor.UnitTests.TestData;
-using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class SelectTests : BunitTest
     {
         [Test]
@@ -131,7 +130,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [NonParallelizable]
+        [NotInParallel]
         public async Task Select_KeyDown_WhileClosed()
         {
             var keyInterceptorService = Context.AddKeyInterceptorService();
@@ -820,7 +819,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in shadowItems)
             {
                 // shadow items don't render, their state is irrelevant, all they do is provide render fragments to the select
-                Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem<string>>());
+                await Assert.ThrowsAsync<Bunit.Rendering.ComponentNotFoundException>(() => item.FindComponent<MudListItem<string>>());
             }
         }
 
@@ -1461,7 +1460,8 @@ namespace MudBlazor.UnitTests.Components
             icons[7].Attributes["d"].Value.Should().Be(@unchecked);
         }
 
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
+        [Test]
+        [Property("Description", "https://github.com/MudBlazor/MudBlazor/issues/13106")]
         public async Task MultiSelectWithCustomComparer_InitialSelectionPreservedOnFirstRender()
         {
             var comp = Context.Render<MultiSelectComparerInitialTest>();
@@ -1487,7 +1487,8 @@ namespace MudBlazor.UnitTests.Components
             icons[7].Attributes["d"].Value.Should().Be(@unchecked); // Irish Coffee
         }
 
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
+        [Test]
+        [Property("Description", "https://github.com/MudBlazor/MudBlazor/issues/13106")]
         public async Task MultiSelectWithCustomComparer_InitialBindPreservedOnFirstRender()
         {
             var comp = Context.Render<MultiSelectWithCustomComparerInitialBindTest>();
@@ -1774,8 +1775,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
-        [TestCase(Adornment.Start)]
-        [TestCase(Adornment.End)]
+        [Test]
+        [Arguments(Adornment.Start)]
+        [Arguments(Adornment.End)]
         public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
         {
             var ariaLabel = "the aria label";
@@ -1792,13 +1794,14 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that a select field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
         // no helpers, validates error id is present when error is present
-        [TestCase(false, false)]
+        [Test]
+        [Arguments(false, false)]
         // with helper text, helper element should only be present when there is no error
-        [TestCase(false, true)]
+        [Arguments(false, true)]
         // with user helper id, helper id should always be present
-        [TestCase(true, false)]
+        [Arguments(true, false)]
         // with user helper id and helper text, should always favour user helper id
-        [TestCase(true, true)]
+        [Arguments(true, true)]
         public async Task Should_pass_various_aria_describedby_tests(
             bool withUserHelperId,
             bool withHelperText)
@@ -1952,7 +1955,7 @@ namespace MudBlazor.UnitTests.Components
             filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
         }
 
-        [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
+        [MethodDataSource(typeof(MouseEventArgsTestCase))]
         [Test]
         public async Task Select_HandleMouseDown(MouseEventArgs args)
         {

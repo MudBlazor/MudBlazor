@@ -4,12 +4,9 @@
 
 using AwesomeAssertions;
 using MudBlazor.UnitTests.Dummy;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Themes;
-
 #nullable enable
-[TestFixture]
 public class MudThemeTests
 {
     [Test]

@@ -10,12 +10,10 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Services.KeyInterceptor.Mocks;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.KeyInterceptor;
-
 #nullable enable
-[TestFixture]
 public class KeyInterceptorServiceTests
 {
     [Test]

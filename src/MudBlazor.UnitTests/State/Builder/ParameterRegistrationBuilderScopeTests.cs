@@ -6,12 +6,9 @@ using AwesomeAssertions;
 using Moq;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State.Builder;
-
 #nullable enable
-[TestFixture]
 public class ParameterRegistrationBuilderScopeTests
 {
     [Test]

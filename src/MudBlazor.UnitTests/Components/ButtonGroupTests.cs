@@ -1,11 +1,10 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.ButtonGroup;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ButtonGroupTests : BunitTest
     {
         [Test]

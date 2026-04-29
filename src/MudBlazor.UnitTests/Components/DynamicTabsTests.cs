@@ -6,14 +6,13 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Tabs;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class DynamicTabsTests : BunitTest
     {
-        [SetUp]
+        [Before(HookType.Test)]
         public override void Setup()
         {
             base.Setup();

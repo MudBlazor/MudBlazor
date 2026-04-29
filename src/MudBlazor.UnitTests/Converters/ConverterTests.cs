@@ -5,12 +5,10 @@
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Converters;
-
 #nullable enable
-[TestFixture]
 public class ConverterTests : BunitTest
 {
     [Test]

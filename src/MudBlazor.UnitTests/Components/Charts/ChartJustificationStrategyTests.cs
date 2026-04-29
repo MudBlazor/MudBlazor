@@ -5,19 +5,17 @@
 using AwesomeAssertions;
 using MudBlazor.Justification.BarGroup;
 using MudBlazor.Justification.StackedBars;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts;
-
-[TestFixture]
 public class ChartJustificationStrategyTests
 {
-    [TestCase(Justify.FlexStart, typeof(MudBlazor.Justification.BarGroup.FlexStartStrategy))]
-    [TestCase(Justify.FlexEnd, typeof(MudBlazor.Justification.BarGroup.FlexEndStrategy))]
-    [TestCase(Justify.Center, typeof(MudBlazor.Justification.BarGroup.CenterStrategy))]
-    [TestCase(Justify.SpaceBetween, typeof(MudBlazor.Justification.BarGroup.SpaceBetweenStrategy))]
-    [TestCase(Justify.SpaceAround, typeof(MudBlazor.Justification.BarGroup.SpaceAroundStrategy))]
-    [TestCase(Justify.SpaceEvenly, typeof(MudBlazor.Justification.BarGroup.SpaceEvenlyStrategy))]
+    [Test]
+    [Arguments(Justify.FlexStart, typeof(MudBlazor.Justification.BarGroup.FlexStartStrategy))]
+    [Arguments(Justify.FlexEnd, typeof(MudBlazor.Justification.BarGroup.FlexEndStrategy))]
+    [Arguments(Justify.Center, typeof(MudBlazor.Justification.BarGroup.CenterStrategy))]
+    [Arguments(Justify.SpaceBetween, typeof(MudBlazor.Justification.BarGroup.SpaceBetweenStrategy))]
+    [Arguments(Justify.SpaceAround, typeof(MudBlazor.Justification.BarGroup.SpaceAroundStrategy))]
+    [Arguments(Justify.SpaceEvenly, typeof(MudBlazor.Justification.BarGroup.SpaceEvenlyStrategy))]
     public void BarGroupStrategyFactory_ShouldReturnExpectedStrategyType(Justify justify, Type expectedType)
     {
         var strategy = BarGroupStrategyFactory.GetStrategy(justify);
@@ -45,9 +43,10 @@ public class ChartJustificationStrategyTests
         BarGroupStrategyFactory.GetStrategy(Justify.SpaceEvenly).CalculatePositions(context).Should().Equal(new[] { 29d, 65d, 101d });
     }
 
-    [TestCase(2, new[] { 27d, 61.09375d, 95.1875d })]
-    [TestCase(3, new[] { -3d, 45.09375d, 93.1875d })]
-    [TestCase(4, new[] { -38d, 24.09375d, 86.1875d })]
+    [Test]
+    [Arguments(2, new[] { 27d, 61.09375d, 95.1875d })]
+    [Arguments(3, new[] { -3d, 45.09375d, 93.1875d })]
+    [Arguments(4, new[] { -38d, 24.09375d, 86.1875d })]
     public void BarGroupFlexEndStrategy_ShouldCoverDataSetCountBranches(int dataSetCount, double[] expectedPositions)
     {
         var context = CreateBarGroupContext(dataSetCount);
@@ -77,12 +76,13 @@ public class ChartJustificationStrategyTests
         multipleDataSetPositions.Should().Equal(new[] { 20d, 60d, 100d });
     }
 
-    [TestCase(Justify.FlexStart, typeof(MudBlazor.Justification.StackedBars.FlexStartStrategy))]
-    [TestCase(Justify.FlexEnd, typeof(MudBlazor.Justification.StackedBars.FlexEndStrategy))]
-    [TestCase(Justify.Center, typeof(MudBlazor.Justification.StackedBars.CenterStrategy))]
-    [TestCase(Justify.SpaceBetween, typeof(MudBlazor.Justification.StackedBars.SpaceBetweenStrategy))]
-    [TestCase(Justify.SpaceAround, typeof(MudBlazor.Justification.StackedBars.SpaceAroundStrategy))]
-    [TestCase(Justify.SpaceEvenly, typeof(MudBlazor.Justification.StackedBars.SpaceEvenlyStrategy))]
+    [Test]
+    [Arguments(Justify.FlexStart, typeof(MudBlazor.Justification.StackedBars.FlexStartStrategy))]
+    [Arguments(Justify.FlexEnd, typeof(MudBlazor.Justification.StackedBars.FlexEndStrategy))]
+    [Arguments(Justify.Center, typeof(MudBlazor.Justification.StackedBars.CenterStrategy))]
+    [Arguments(Justify.SpaceBetween, typeof(MudBlazor.Justification.StackedBars.SpaceBetweenStrategy))]
+    [Arguments(Justify.SpaceAround, typeof(MudBlazor.Justification.StackedBars.SpaceAroundStrategy))]
+    [Arguments(Justify.SpaceEvenly, typeof(MudBlazor.Justification.StackedBars.SpaceEvenlyStrategy))]
     public void StackedBarStrategyFactory_ShouldReturnExpectedStrategyType(Justify justify, Type expectedType)
     {
         var strategy = StackedBarStrategyFactory.GetStrategy(justify);

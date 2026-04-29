@@ -4,12 +4,10 @@
 
 using AwesomeAssertions;
 using MudBlazor.Utilities;
-using NUnit.Framework;
 
 namespace UtilityTests
 {
 #nullable enable
-    [TestFixture]
     public class CssBuilderTests
     {
         [Test]

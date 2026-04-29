@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Charts
 
         private static ChartData<double> Points(params (double x, double y)[] pts) => new(pts);
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init() { }
 
         [Test]

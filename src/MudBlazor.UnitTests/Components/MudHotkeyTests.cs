@@ -10,12 +10,10 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.Hotkey;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
-
 #nullable enable
-[TestFixture]
 public class MudHotkeyTests : BunitTest
 {
     [Test]

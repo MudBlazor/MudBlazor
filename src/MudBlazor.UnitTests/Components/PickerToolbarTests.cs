@@ -4,11 +4,8 @@
 
 using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class PickerToolbarTests : BunitTest
 {
     [Test]
@@ -23,8 +20,8 @@ public class PickerToolbarTests : BunitTest
     }
 
     [Test]
-    [TestCase(PickerVariant.Inline)]
-    [TestCase(PickerVariant.Dialog)]
+    [Arguments(PickerVariant.Inline)]
+    [Arguments(PickerVariant.Dialog)]
     public void PickerToolbar_ShouldNotBeLandscape_WhenNonStaticAndOrientationLandscape(PickerVariant pickerVariant)
     {
         var component = Context.Render<MudPickerToolbar>(parameters => parameters

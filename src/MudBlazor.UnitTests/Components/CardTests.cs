@@ -5,11 +5,10 @@
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Card;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class CardTests : BunitTest
     {
         [Test]

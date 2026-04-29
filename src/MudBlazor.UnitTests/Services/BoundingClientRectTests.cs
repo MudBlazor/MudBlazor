@@ -1,23 +1,20 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class BoundingClientRectTests
 {
     private Bunit.BunitContext _ctx;
 
-    [SetUp]
+    [Before(HookType.Test)]
     public void Setup()
     {
         _ctx = new Bunit.BunitContext();
         _ctx.AddTestServices();
     }
 
-    [TearDown]
+    [After(HookType.Test)]
     public void TearDown() => _ctx.Dispose();
 
     [Test]

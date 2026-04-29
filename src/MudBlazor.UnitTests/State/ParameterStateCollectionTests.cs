@@ -4,17 +4,14 @@
 
 using AwesomeAssertions;
 using MudBlazor.State;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterStateCollectionTests
 {
     private ParameterStateCollection _collectionWithData;
 
-    [SetUp]
+    [Before(HookType.Test)]
     public void SetUp()
     {
         // Sample data collection

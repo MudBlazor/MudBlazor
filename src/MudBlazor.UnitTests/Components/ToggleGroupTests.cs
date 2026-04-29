@@ -11,11 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.ToggleGroup;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ToggleGroupTests : BunitTest
     {
         [Test]
@@ -115,9 +114,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Small)]
-        [TestCase(Size.Medium)]
-        [TestCase(Size.Large)]
+        [Arguments(Size.Small)]
+        [Arguments(Size.Medium)]
+        [Arguments(Size.Large)]
         public void ToggleGroup_SizeClasses(Size size)
         {
             var comp = Context.Render<MudToggleGroup<string>>(builder =>
@@ -148,7 +147,8 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [Test(Description = "Ensures the checkmark is a direct descendant of the button label, is using the right name, and correctly contains a custom class definition")]
+        [Test]
+        [Property("Description", "Ensures the checkmark is a direct descendant of the button label, is using the right name, and correctly contains a custom class definition")]
         public void ToggleGroup_CheckMarkClass()
         {
             var comp = Context.Render<MudToggleGroup<string>>(builder =>
@@ -242,9 +242,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(SelectionMode.SingleSelection, "b")]
-        [TestCase(SelectionMode.MultiSelection, "b")]
-        [TestCase(SelectionMode.ToggleSelection, "b")]
+        [Arguments(SelectionMode.SingleSelection, "b")]
+        [Arguments(SelectionMode.MultiSelection, "b")]
+        [Arguments(SelectionMode.ToggleSelection, "b")]
         public async Task ToggleGroup_SetSelectedFromValues(SelectionMode selMode, string selectedValues)
         {
             // Arrange
@@ -294,8 +294,8 @@ namespace MudBlazor.UnitTests.Components
         /// This test will fail if selection isn't working without someone being subscribed to the ValueChanged event
         /// </summary>
         [Test]
-        [TestCase(SelectionMode.SingleSelection)]
-        [TestCase(SelectionMode.ToggleSelection)]
+        [Arguments(SelectionMode.SingleSelection)]
+        [Arguments(SelectionMode.ToggleSelection)]
         public async Task ToggleGroup_UnselectPreviousValue_OnToggle(SelectionMode selMode)
         {
             // Arrange
@@ -326,9 +326,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(SelectionMode.SingleSelection, "b")]
-        [TestCase(SelectionMode.MultiSelection, "b")]
-        [TestCase(SelectionMode.ToggleSelection, "b")]
+        [Arguments(SelectionMode.SingleSelection, "b")]
+        [Arguments(SelectionMode.MultiSelection, "b")]
+        [Arguments(SelectionMode.ToggleSelection, "b")]
         public async Task ToggleGroup_SetSelectedFromValuesTest_WithAsyncItems(SelectionMode selMode, string selectedValues)
         {
             // Arrange
@@ -376,8 +376,8 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         [Test]
         public void ToggleGroup_RTL(bool isRTL)
         {

@@ -5,12 +5,10 @@
 using AwesomeAssertions;
 using Moq;
 using MudBlazor.Utilities.Background.Batch;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Background;
-
 #nullable enable
-[TestFixture]
 public class BatchPeriodicQueueTests
 {
     [Test]

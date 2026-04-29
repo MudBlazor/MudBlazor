@@ -3,12 +3,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using MudBlazor.Resources;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Localization;
-
 #nullable enable
-[TestFixture]
 public class InternalMudLocalizerTests
 {
     [Test]

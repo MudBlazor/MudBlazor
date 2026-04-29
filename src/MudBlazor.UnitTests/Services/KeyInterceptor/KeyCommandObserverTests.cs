@@ -5,12 +5,10 @@
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.KeyInterceptor;
-
 #nullable enable
-[TestFixture]
 public class KeyCommandObserverTests
 {
     [Test]

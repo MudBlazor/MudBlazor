@@ -3,12 +3,11 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
 #nullable enable
-    [TestFixture]
     public class RatingTests : BunitTest
     {
         /// <summary>

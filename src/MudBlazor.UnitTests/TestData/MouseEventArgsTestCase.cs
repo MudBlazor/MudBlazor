@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.TestData
 {

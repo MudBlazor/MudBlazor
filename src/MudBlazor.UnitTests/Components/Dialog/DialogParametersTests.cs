@@ -4,12 +4,10 @@
 
 using AwesomeAssertions;
 using MudBlazor.UnitTests.TestComponents.Dialog;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components.Dialog;
-
 #nullable enable
-[TestFixture]
 public sealed class DialogParametersTests
 {
     [Test]
@@ -33,10 +31,10 @@ public sealed class DialogParametersTests
     }
 
     [Test]
-    public void DialogParametersGeneric_Add_ShouldThrow_IfNotMemberExpression()
+    public async Task DialogParametersGeneric_Add_ShouldThrow_IfNotMemberExpression()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        Assert.Throws<ArgumentException>(() => dialogParameters.Add(x => 1, 2));
+        await Assert.ThrowsAsync<ArgumentException>(() => dialogParameters.Add(x => 1, 2));
     }
 
     [Test]
@@ -60,10 +58,10 @@ public sealed class DialogParametersTests
     }
 
     [Test]
-    public void DialogParametersGeneric_Get_ShouldThrow_IfNotMemberExpression()
+    public async Task DialogParametersGeneric_Get_ShouldThrow_IfNotMemberExpression()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        Assert.Throws<ArgumentException>(() => dialogParameters.Get(x => 1));
+        await Assert.ThrowsAsync<ArgumentException>(() => dialogParameters.Get(x => 1));
     }
 
     [Test]
@@ -105,10 +103,10 @@ public sealed class DialogParametersTests
     }
 
     [Test]
-    public void DialogParametersGeneric_TryGet_ShouldThrow_IfNotMemberExpression()
+    public async Task DialogParametersGeneric_TryGet_ShouldThrow_IfNotMemberExpression()
     {
         var dialogParameters = new DialogParameters<DialogWithParameters>();
-        Assert.Throws<ArgumentException>(() => dialogParameters.TryGet(x => 1));
+        await Assert.ThrowsAsync<ArgumentException>(() => dialogParameters.TryGet(x => 1));
     }
 
     [Test]

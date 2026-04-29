@@ -8,12 +8,9 @@ using AwesomeAssertions;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Converters;
-
 #nullable enable
-[TestFixture]
 public class DefaultConverterTests
 {
     #region DefeultConverter

@@ -8,11 +8,10 @@ using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Charts;
 using MudBlazor.Services;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.UserAttributes
 {
-    [TestFixture]
     public sealed class UserAttributesTests
     {
         static UserAttributesTests()

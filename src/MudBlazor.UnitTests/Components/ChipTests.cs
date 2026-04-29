@@ -5,11 +5,10 @@
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Chip;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ChipTests : BunitTest
     {
         [Test]
@@ -29,10 +28,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Combinatorial]
         public void Chip_ShouldRenderAnchorIfLinkSet(
-            [Values("", "ASDF", "nofollow", "_blank")] string target,
-            [Values(null, "noopener", "nofollow")] string rel)
+            [Matrix("", "ASDF", "nofollow", "_blank")] string target,
+            [Matrix(null, "noopener", "nofollow")] string rel)
         {
 
             var comp = Context.Render<MudChip<string>>(parameters => parameters
@@ -53,11 +51,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [Combinatorial]
         public void Chip_ShouldRenderButtonAndNotAnchorIfOnClickSet(
-            [Values(null, "", "https://example.com")] string href,
-            [Values(null, "", "ASDF", "_blank")] string target,
-            [Values(null, "", "noopener", "nofollow")] string rel)
+            [Matrix(null, "", "https://example.com")] string href,
+            [Matrix(null, "", "ASDF", "_blank")] string target,
+            [Matrix(null, "", "noopener", "nofollow")] string rel)
         {
             var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { })

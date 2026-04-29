@@ -2,11 +2,9 @@
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Button;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class FabMenuTests : BunitTest
 {
     [Test]
@@ -72,12 +70,13 @@ public class FabMenuTests : BunitTest
         await comp.WaitForAssertionAsync(() => { comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Count.Should().Be(0); });
     }
 
-    [TestCase(Direction.Top, "mud-fab-menu-direction-top")]
-    [TestCase(Direction.Bottom, "mud-fab-menu-direction-bottom")]
-    [TestCase(Direction.Left, "mud-fab-menu-direction-left")]
-    [TestCase(Direction.Right, "mud-fab-menu-direction-right")]
-    [TestCase(Direction.Start, "mud-fab-menu-direction-start")]
-    [TestCase(Direction.End, "mud-fab-menu-direction-end")]
+    [Test]
+    [Arguments(Direction.Top, "mud-fab-menu-direction-top")]
+    [Arguments(Direction.Bottom, "mud-fab-menu-direction-bottom")]
+    [Arguments(Direction.Left, "mud-fab-menu-direction-left")]
+    [Arguments(Direction.Right, "mud-fab-menu-direction-right")]
+    [Arguments(Direction.Start, "mud-fab-menu-direction-start")]
+    [Arguments(Direction.End, "mud-fab-menu-direction-end")]
     public void AppliesDirectionClass(Direction direction, string expectedClass)
     {
         var comp = Context.Render<MudFabMenu>(parameters => parameters
@@ -86,15 +85,16 @@ public class FabMenuTests : BunitTest
         comp.Find(".mud-fab-menu").ClassList.Contains(expectedClass).Should().BeTrue();
     }
 
-    [TestCase(Origin.TopLeft, "mud-fab-anchor-top-left")]
-    [TestCase(Origin.TopCenter, "mud-fab-anchor-top-center")]
-    [TestCase(Origin.TopRight, "mud-fab-anchor-top-right")]
-    [TestCase(Origin.CenterLeft, "mud-fab-anchor-center-left")]
-    [TestCase(Origin.CenterCenter, "mud-fab-anchor-center-center")]
-    [TestCase(Origin.CenterRight, "mud-fab-anchor-center-right")]
-    [TestCase(Origin.BottomLeft, "mud-fab-anchor-bottom-left")]
-    [TestCase(Origin.BottomCenter, "mud-fab-anchor-bottom-center")]
-    [TestCase(Origin.BottomRight, "mud-fab-anchor-bottom-right")]
+    [Test]
+    [Arguments(Origin.TopLeft, "mud-fab-anchor-top-left")]
+    [Arguments(Origin.TopCenter, "mud-fab-anchor-top-center")]
+    [Arguments(Origin.TopRight, "mud-fab-anchor-top-right")]
+    [Arguments(Origin.CenterLeft, "mud-fab-anchor-center-left")]
+    [Arguments(Origin.CenterCenter, "mud-fab-anchor-center-center")]
+    [Arguments(Origin.CenterRight, "mud-fab-anchor-center-right")]
+    [Arguments(Origin.BottomLeft, "mud-fab-anchor-bottom-left")]
+    [Arguments(Origin.BottomCenter, "mud-fab-anchor-bottom-center")]
+    [Arguments(Origin.BottomRight, "mud-fab-anchor-bottom-right")]
     public void AppliesAnchorClassWhenFixed(Origin anchor, string expectedClass)
     {
         var comp = Context.Render<MudFabMenu>(parameters => parameters

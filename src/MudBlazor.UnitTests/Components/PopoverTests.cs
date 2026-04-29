@@ -3,11 +3,10 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.Popover;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class PopoverTests : BunitTest
     {
         [Test]
@@ -242,15 +241,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Origin.BottomCenter, "bottom-center")]
-        [TestCase(Origin.BottomLeft, "bottom-left")]
-        [TestCase(Origin.BottomRight, "bottom-right")]
-        [TestCase(Origin.CenterCenter, "center-center")]
-        [TestCase(Origin.CenterLeft, "center-left")]
-        [TestCase(Origin.CenterRight, "center-right")]
-        [TestCase(Origin.TopCenter, "top-center")]
-        [TestCase(Origin.TopLeft, "top-left")]
-        [TestCase(Origin.TopRight, "top-right")]
+        [Arguments(Origin.BottomCenter, "bottom-center")]
+        [Arguments(Origin.BottomLeft, "bottom-left")]
+        [Arguments(Origin.BottomRight, "bottom-right")]
+        [Arguments(Origin.CenterCenter, "center-center")]
+        [Arguments(Origin.CenterLeft, "center-left")]
+        [Arguments(Origin.CenterRight, "center-right")]
+        [Arguments(Origin.TopCenter, "top-center")]
+        [Arguments(Origin.TopLeft, "top-left")]
+        [Arguments(Origin.TopRight, "top-right")]
         public void MudPopover_Property_TransformOrigin(Origin transformOrigin, string expectedClass)
         {
             var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
@@ -262,15 +261,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Origin.BottomCenter, "bottom-center")]
-        [TestCase(Origin.BottomLeft, "bottom-left")]
-        [TestCase(Origin.BottomRight, "bottom-right")]
-        [TestCase(Origin.CenterCenter, "center-center")]
-        [TestCase(Origin.CenterLeft, "center-left")]
-        [TestCase(Origin.CenterRight, "center-right")]
-        [TestCase(Origin.TopCenter, "top-center")]
-        [TestCase(Origin.TopLeft, "top-left")]
-        [TestCase(Origin.TopRight, "top-right")]
+        [Arguments(Origin.BottomCenter, "bottom-center")]
+        [Arguments(Origin.BottomLeft, "bottom-left")]
+        [Arguments(Origin.BottomRight, "bottom-right")]
+        [Arguments(Origin.CenterCenter, "center-center")]
+        [Arguments(Origin.CenterLeft, "center-left")]
+        [Arguments(Origin.CenterRight, "center-right")]
+        [Arguments(Origin.TopCenter, "top-center")]
+        [Arguments(Origin.TopLeft, "top-left")]
+        [Arguments(Origin.TopRight, "top-right")]
         public void MudPopover_Property_AnchorOrigin(Origin anchorOrigin, string expectedClass)
         {
             var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
@@ -282,9 +281,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(OverflowBehavior.FlipNever, "flip-never")]
-        [TestCase(OverflowBehavior.FlipOnOpen, "flip-onopen")]
-        [TestCase(OverflowBehavior.FlipAlways, "flip-always")]
+        [Arguments(OverflowBehavior.FlipNever, "flip-never")]
+        [Arguments(OverflowBehavior.FlipOnOpen, "flip-onopen")]
+        [Arguments(OverflowBehavior.FlipAlways, "flip-always")]
         public void MudPopover_Property_OverflowBehavior(OverflowBehavior overflowBehavior, string expectedClass)
         {
             var comp = Context.Render<PopoverPropertyTest>(p => p.Add(
@@ -347,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 3; i++)
             {
                 await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, false));
-                Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
+                await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("#my-content"));
 
                 await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, true));
                 comp.Find("#my-content").TextContent.Should().Be("Popover content");
@@ -355,14 +354,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudPopoverProvider_NoRenderWhenEnabledIsFalse()
+        public async Task MudPopoverProvider_NoRenderWhenEnabledIsFalse()
         {
             var comp = Context.Render<PopoverProviderTest>(p => p.Add(x => x.ProviderEnabled, false));
-            Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
         //[TestCase(false)] always blocks duplicate provider with latest change
-        [TestCase(true)]
+        [Test]
+        [Arguments(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
         {
             var options = new PopoverOptions
@@ -375,7 +375,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (throwOnDuplicateProvider)
             {
-                var ex = Assert.Throws<InvalidOperationException>(() => Context.Render<PopoverDuplicationTest>());
+                var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => Context.Render<PopoverDuplicationTest>());
                 ex.Message.Should().StartWith("Duplicate MudPopoverProvider detected");
             }
             else

@@ -3,11 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
-
-[TestFixture]
 public class BlockMaskTests
 {
 
@@ -101,7 +99,7 @@ public class BlockMaskTests
     }
 
     [Test]
-    public void BlockMask_Internals()
+    public async Task BlockMask_Internals()
     {
         var mask = new BlockMask(".", new Block('('), new Block('0', 2, 2), new Block(')'));
         mask.Clear(); // make sure it is initialized
@@ -109,7 +107,7 @@ public class BlockMaskTests
         mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2), new Block('0', 2, 4));
         mask.Clear(); // make sure it is initialized
         mask.Mask.Should().Be(@"^(\d(\d)?([\.](\d(\d)?([\.](\d(\d(\d(\d)?)?)?)?)?)?)?)?$");
-        Assert.Throws<ArgumentException>(() => _ = new BlockMask());
+        await Assert.ThrowsAsync<ArgumentException>(() => _ = new BlockMask());
     }
 
     [Test]

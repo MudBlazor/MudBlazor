@@ -6,21 +6,20 @@ using AwesomeAssertions;
 using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services
 {
-    [TestFixture]
     public class JsEventTests
     {
         [Test]
         public async Task NoSubscriptionWithoutConnect()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
-            Assert.Throws<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
-            Assert.Throws<InvalidOperationException>(() => jsevent.CaretPositionChanged += x => Console.WriteLine(x));
-            Assert.Throws<InvalidOperationException>(() => jsevent.Select += (x, y) => Console.WriteLine());
-            Assert.Throws<InvalidOperationException>(() => jsevent.Subscribe("copy"));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => jsevent.CaretPositionChanged += x => Console.WriteLine(x));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => jsevent.Select += (x, y) => Console.WriteLine());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => jsevent.Subscribe("copy"));
             // unsubscribing before connection is ignored
             await jsevent.Unsubscribe("copy");
             await jsevent.Disconnect();

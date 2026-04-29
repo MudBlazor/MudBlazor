@@ -3,11 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using Moq;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.PointerEvents;
-
-[TestFixture]
 public class PointerEventsNoneObserverTests
 {
     [Test]

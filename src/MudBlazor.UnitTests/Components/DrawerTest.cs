@@ -9,12 +9,11 @@ using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Drawer;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class DrawerTest : BunitTest
     {
         private static BrowserViewportService GetBrowserViewportService(BrowserWindowSize browserWindowSize)
@@ -72,8 +71,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task Temporary_OverlayAutoClose(bool overlayAutoClose)
         {
             var comp = Context.Render<DrawerTest1>(parameters => parameters
@@ -220,8 +219,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Breakpoint.Xs)]
-        [TestCase(Breakpoint.Sm)]
+        [Arguments(Breakpoint.Xs)]
+        [Arguments(Breakpoint.Sm)]
         public async Task ResponsiveSmallClosed_Open_CheckOpenedAndOverlayAsync(Breakpoint point)
         {
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(point));
@@ -236,19 +235,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
-        [TestCase(Breakpoint.Xs)]
-        [TestCase(Breakpoint.Sm)]
-        [TestCase(Breakpoint.SmAndDown)]
-        [TestCase(Breakpoint.SmAndUp)]
-        [TestCase(Breakpoint.Md)]
-        [TestCase(Breakpoint.MdAndDown)]
-        [TestCase(Breakpoint.MdAndUp)]
-        [TestCase(Breakpoint.Lg)]
-        [TestCase(Breakpoint.LgAndDown)]
-        [TestCase(Breakpoint.LgAndUp)]
-        [TestCase(Breakpoint.Xl)]
-        [TestCase(Breakpoint.XlAndDown)]
-        [TestCase(Breakpoint.XlAndUp)]
+        [Test]
+        [Arguments(Breakpoint.Xs)]
+        [Arguments(Breakpoint.Sm)]
+        [Arguments(Breakpoint.SmAndDown)]
+        [Arguments(Breakpoint.SmAndUp)]
+        [Arguments(Breakpoint.Md)]
+        [Arguments(Breakpoint.MdAndDown)]
+        [Arguments(Breakpoint.MdAndUp)]
+        [Arguments(Breakpoint.Lg)]
+        [Arguments(Breakpoint.LgAndDown)]
+        [Arguments(Breakpoint.LgAndUp)]
+        [Arguments(Breakpoint.Xl)]
+        [Arguments(Breakpoint.XlAndDown)]
+        [Arguments(Breakpoint.XlAndUp)]
         public async Task ResponsiveClosed_StartLargeScreen_SetBreakpoint_Open_CheckStateAsync(Breakpoint breakpoint)
         {
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xl));
@@ -265,19 +265,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
-        [TestCase(Breakpoint.Xs)]
-        [TestCase(Breakpoint.Sm)]
-        [TestCase(Breakpoint.SmAndDown)]
-        [TestCase(Breakpoint.SmAndUp)]
-        [TestCase(Breakpoint.Md)]
-        [TestCase(Breakpoint.MdAndDown)]
-        [TestCase(Breakpoint.MdAndUp)]
-        [TestCase(Breakpoint.Lg)]
-        [TestCase(Breakpoint.LgAndDown)]
-        [TestCase(Breakpoint.LgAndUp)]
-        [TestCase(Breakpoint.Xl)]
-        [TestCase(Breakpoint.XlAndDown)]
-        [TestCase(Breakpoint.XlAndUp)]
+        [Test]
+        [Arguments(Breakpoint.Xs)]
+        [Arguments(Breakpoint.Sm)]
+        [Arguments(Breakpoint.SmAndDown)]
+        [Arguments(Breakpoint.SmAndUp)]
+        [Arguments(Breakpoint.Md)]
+        [Arguments(Breakpoint.MdAndDown)]
+        [Arguments(Breakpoint.MdAndUp)]
+        [Arguments(Breakpoint.Lg)]
+        [Arguments(Breakpoint.LgAndDown)]
+        [Arguments(Breakpoint.LgAndUp)]
+        [Arguments(Breakpoint.Xl)]
+        [Arguments(Breakpoint.XlAndDown)]
+        [Arguments(Breakpoint.XlAndUp)]
         public async Task ResponsiveClosed_StartSmallScreen_SetBreakpoint_Open_CheckStateAsync(Breakpoint breakpoint)
         {
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
@@ -575,9 +576,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
         }
 
-        [Test, Combinatorial]
+        [Test]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
-            [Values(
+            [Matrix(
                 Breakpoint.None,
                 Breakpoint.Xs,
                 Breakpoint.Sm,
@@ -594,7 +595,7 @@ namespace MudBlazor.UnitTests.Components
                 Breakpoint.XlAndUp,
                 Breakpoint.Always
             )] Breakpoint breakpoint,
-            [Values(
+            [Matrix(
                 true,
                 false
             )] bool initialState)

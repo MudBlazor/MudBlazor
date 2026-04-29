@@ -5,12 +5,10 @@
 using System.Globalization;
 using System.Linq.Expressions;
 using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
 #nullable enable
-    [TestFixture]
     public class AggregateDefinitionTests
     {
         public record AccountingModel(long Id, int Position, decimal Salary);
@@ -347,7 +345,8 @@ namespace MudBlazor.UnitTests.Components
             value.Should().Be("0");
         }
 
-        [Test(Description = "This is to ensure that we do not return same cached compiled expression and get same results after passing different expression")]
+        [Test]
+        [Property("Description", "This is to ensure that we do not return same cached compiled expression and get same results after passing different expression")]
         public void AggregateDefinition_ReuseDefinition_With_Different_Expressions()
         {
             Expression<Func<AccountingModel, long>> propertyExpressionId = model => model.Id;

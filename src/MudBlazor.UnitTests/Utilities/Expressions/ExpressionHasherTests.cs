@@ -5,12 +5,10 @@
 using System.Linq.Expressions;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Expressions
 {
 #nullable enable
-    [TestFixture]
     public class ExpressionHasherTests
     {
         private class ExpressionTestClass
@@ -56,7 +54,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             // ReSharper restore MemberCanBeMadeStatic.Local
         }
 
-        [Test(Description = "VisitMethodCall")]
+        [Test]
+        [Property("Description", "VisitMethodCall")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test1()
         {
             Expression<Func<ExpressionTestClass, string?>> exp1 = x => x.FirstName;
@@ -68,7 +67,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitMethodCall")]
+        [Test]
+        [Property("Description", "VisitMethodCall")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test2()
         {
             Expression<Action<ExpressionTestClass>> exp1 = x => x.Method1();
@@ -80,7 +80,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitParameter")]
+        [Test]
+        [Property("Description", "VisitParameter")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test3()
         {
             Expression<Action<ExpressionTestClass>> exp1 = x => x.MethodParam(1);
@@ -92,7 +93,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitNewArray")]
+        [Test]
+        [Property("Description", "VisitNewArray")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test4()
         {
             Expression<Func<ExpressionTestClass, string?>> exp1 = x => x.Convert(new[] { 1, 2, 3 });
@@ -104,7 +106,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitConstant")]
+        [Test]
+        [Property("Description", "VisitConstant")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test5()
         {
             const string ConstEmptyString = "";
@@ -117,7 +120,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "Checks VisitConstant -> UpdateHash(node.Value) where values is null")]
+        [Test]
+        [Property("Description", "Checks VisitConstant -> UpdateHash(node.Value) where values is null")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test6()
         {
             Expression<Func<ExpressionTestClass, string?>> exp1 = x => null;
@@ -129,7 +133,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitNew")]
+        [Test]
+        [Property("Description", "VisitNew")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test7()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass("Name");
@@ -165,7 +170,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitMemberAssignment")]
+        [Test]
+        [Property("Description", "VisitMemberAssignment")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test10()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { FirstName = "assignment" };
@@ -177,7 +183,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitTypeBinary")]
+        [Test]
+        [Property("Description", "VisitTypeBinary")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test11()
         {
             Expression<Func<ExpressionTestClass, bool>> exp1 = x => x.Children[0] is ICloneable;
@@ -189,7 +196,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitMemberMemberBinding")]
+        [Test]
+        [Property("Description", "VisitMemberMemberBinding")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test12()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { Nested1 = { SubMember1 = "MemberMemberBinding" } };
@@ -201,7 +209,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitMemberListBinding")]
+        [Test]
+        [Property("Description", "VisitMemberListBinding")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test13()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { Children = { new ExpressionTestClass(), new ExpressionTestClass() } };
@@ -213,7 +222,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitIndex")]
+        [Test]
+        [Property("Description", "VisitIndex")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test14()
         {
             Expression<Func<ExpressionTestClass, int>> exp1 = x => x.Nested1[0];
@@ -237,7 +247,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeTrue();
         }
 
-        [Test(Description = "VisitMethodCall")]
+        [Test]
+        [Property("Description", "VisitMethodCall")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test1()
         {
             Expression<Func<ExpressionTestClass, string?>> exp1 = x => x.FirstName;
@@ -249,7 +260,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitMethodCall")]
+        [Test]
+        [Property("Description", "VisitMethodCall")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test2()
         {
             Expression<Action<ExpressionTestClass>> exp1 = x => x.Method1();
@@ -261,7 +273,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitParameter")]
+        [Test]
+        [Property("Description", "VisitParameter")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test3()
         {
             Expression<Action<ExpressionTestClass>> exp1 = x => x.MethodParam(1);
@@ -273,7 +286,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitNewArray")]
+        [Test]
+        [Property("Description", "VisitNewArray")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test4()
         {
             Expression<Func<ExpressionTestClass, string?>> exp1 = x => x.Convert(Array.Empty<int>());
@@ -297,7 +311,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitConstant")]
+        [Test]
+        [Property("Description", "VisitConstant")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test6()
         {
             const string ConstString1 = "Test1";
@@ -311,7 +326,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitNew")]
+        [Test]
+        [Property("Description", "VisitNew")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test7()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass("Name1");
@@ -335,7 +351,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitMemberAssignment")]
+        [Test]
+        [Property("Description", "VisitMemberAssignment")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test9()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { FirstName = "assignment1" };
@@ -347,7 +364,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitTypeBinary")]
+        [Test]
+        [Property("Description", "VisitTypeBinary")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test10()
         {
             Expression<Func<ExpressionTestClass, bool>> exp1 = x => x.Children[0] is ICloneable;
@@ -359,7 +377,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitMemberMemberBinding")]
+        [Test]
+        [Property("Description", "VisitMemberMemberBinding")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test11()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { Nested1 = { SubMember1 = "MemberMemberBinding1" } };
@@ -371,7 +390,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitMemberListBinding")]
+        [Test]
+        [Property("Description", "VisitMemberListBinding")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test12()
         {
             Expression<Func<ExpressionTestClass>> exp1 = () => new ExpressionTestClass { Children = { new ExpressionTestClass() } };
@@ -383,7 +403,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "VisitIndex")]
+        [Test]
+        [Property("Description", "VisitIndex")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test14()
         {
             Expression<Func<ExpressionTestClass, int>> exp1 = x => x.Nested1[0];

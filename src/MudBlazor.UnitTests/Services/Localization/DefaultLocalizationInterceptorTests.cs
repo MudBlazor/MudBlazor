@@ -4,12 +4,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using MudBlazor.Resources;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Localization;
-
 #nullable enable
-[TestFixture(Description = "Similar to InternalMudLocalizerTests but more narrow focusing on IgnoreDefaultEnglish cases.")]
 public class DefaultLocalizationInterceptorTests
 {
     [Test]
@@ -85,8 +82,8 @@ public class DefaultLocalizationInterceptorTests
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     [SetUICulture("fr-FR")]
     public void CustomMudLocalizer_IgnoreDefaultEnglishFalse_TemplateTranslation_ReturnsFormattedString(bool ignoreDefaultEnglish)
     {
@@ -110,8 +107,8 @@ public class DefaultLocalizationInterceptorTests
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     [SetUICulture("en-US")]
     public void CustomMudLocalizer_DefaultLocalizationFallback_TemplateTranslation_ReturnsFormattedString(bool ignoreDefaultEnglish)
     {
@@ -137,8 +134,8 @@ public class DefaultLocalizationInterceptorTests
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     [SetUICulture("en-US")]
     public void CustomMudLocalizer_DefaultLocalizationFallback_KeyTranslation_ReturnsString(bool ignoreDefaultEnglish)
     {
@@ -163,8 +160,8 @@ public class DefaultLocalizationInterceptorTests
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     [SetUICulture("en-US")]
     public void NullMudLocalizer_DefaultLocalizationFallback_TemplateTranslation_ReturnsFormattedString(bool ignoreDefaultEnglish)
     {

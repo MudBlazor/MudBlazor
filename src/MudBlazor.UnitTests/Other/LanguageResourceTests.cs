@@ -6,7 +6,6 @@ using System.Collections;
 using System.Globalization;
 using AwesomeAssertions;
 using MudBlazor.Resources;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Other;
 

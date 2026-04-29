@@ -4,18 +4,17 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Snackbar;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class SnackbarTests : BunitTest
     {
         private IRenderedComponent<MudSnackbarProvider> _provider;
         private ISnackbar _service;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void SnackbarSetUp()
         {
             _service = Context.Services.GetService<ISnackbar>();
@@ -23,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
             _provider.Find("#mud-snackbar-container").InnerHtml.Trimmed().Should().BeEmpty();
         }
 
-        [TearDown]
+        [After(HookType.Test)]
         public async Task SnackbarTearDown()
         {
             await _provider.InvokeAsync(() => _service.Clear());

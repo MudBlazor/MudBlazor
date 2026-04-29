@@ -1,14 +1,12 @@
 ﻿using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ContainerTests : BunitTest
     {
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void GuttersProperty_AddsClass(bool gutters)
         {
             // Arrange

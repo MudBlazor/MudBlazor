@@ -5,12 +5,11 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Interop;
 using MudBlazor.Services;
-using NUnit.Framework;
 using static MudBlazor.Services.ResizeObserver;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services
 {
-    [TestFixture]
     public class ResizeObserverTests
     {
         private class PseudoElementReferenceContext : ElementReferenceContext;
@@ -18,7 +17,7 @@ namespace MudBlazor.UnitTests.Services
         private Mock<IJSRuntime> _runtimeMock;
         private ResizeObserver _service;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void SetUp()
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);

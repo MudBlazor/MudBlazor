@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using MudBlazor.UnitTests.Shared.Extensions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Shared
 {
@@ -11,14 +10,14 @@ namespace MudBlazor.UnitTests.Shared
     {
         protected Bunit.BunitContext Context { get; private set; } = null!;
 
-        [SetUp]
+        [Before(HookType.Test)]
         public virtual void Setup()
         {
             Context = new();
             Context.AddTestServices();
         }
 
-        [TearDown]
+        [After(HookType.Test)]
         public void TearDown()
         {
             try

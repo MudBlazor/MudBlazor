@@ -1,17 +1,15 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.Extensions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
 {
-    [TestFixture]
     public class EnumExtensionsTests
     {
         [Test]
-        [TestCase(null, new string[0])]
-        [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
-        [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
-        [TestCase(typeof(string), new string[0])]
+        [Arguments(null, new string[0])]
+        [Arguments(typeof(Adornment), new[] { "None", "Start", "End" })]
+        [Arguments(typeof(Adornment?), new[] { "None", "Start", "End" })]
+        [Arguments(typeof(string), new string[0])]
         public void GetSafeEnumValues(Type type, string[] expectedNames)
         {
             var values = EnumExtensions.GetSafeEnumValues(type);
@@ -27,10 +25,11 @@ namespace MudBlazor.UnitTests.Extensions
             Breakpoint.Sm.ToStringFast(true).Should().Be("sm");
         }
 
-        [TestCase(Adornment.Start, Edge.Start)]
-        [TestCase(Adornment.End, Edge.End)]
-        [TestCase(Adornment.None, Edge.False)]
-        [TestCase((Adornment)999, Edge.False)] // Invalid adornment value
+        [Test]
+        [Arguments(Adornment.Start, Edge.Start)]
+        [Arguments(Adornment.End, Edge.End)]
+        [Arguments(Adornment.None, Edge.False)]
+        [Arguments((Adornment)999, Edge.False)] // Invalid adornment value
         public void Adornment_ToEdge_Should_ReturnExpectedValue(Adornment adornment, Edge expectedEdge)
         {
             // Act

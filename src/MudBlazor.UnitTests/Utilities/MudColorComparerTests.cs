@@ -5,12 +5,9 @@
 using System.Reflection;
 using AwesomeAssertions;
 using MudBlazor.Utilities;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities;
-
 #nullable enable
-[TestFixture]
 public class MudColorComparerTests
 {
     [Test]
@@ -58,7 +55,7 @@ public class MudColorComparerTests
     }
 
     [Test]
-    [TestCaseSource(nameof(AllComparers))]
+    [MethodDataSource(nameof(AllComparers))]
     public void Equals_ShouldReturnTrue_WhenBothNull(MudColor.MudColorComparer comparer)
     {
         // Arrange & Act
@@ -69,7 +66,7 @@ public class MudColorComparerTests
     }
 
     [Test]
-    [TestCaseSource(nameof(AllComparers))]
+    [MethodDataSource(nameof(AllComparers))]
     public void Equals_ShouldReturnFalse_WhenOneNull(MudColor.MudColorComparer comparer)
     {
         // Arrange
@@ -85,7 +82,7 @@ public class MudColorComparerTests
     }
 
     [Test]
-    [TestCaseSource(nameof(AllComparers))]
+    [MethodDataSource(nameof(AllComparers))]
     public void Equals_ShouldReturnTrue_WhenSameReference(MudColor.MudColorComparer comparer)
     {
         // Arrange
@@ -142,7 +139,7 @@ public class MudColorComparerTests
     }
 
     [Test]
-    [TestCaseSource(nameof(AllComparers))]
+    [MethodDataSource(nameof(AllComparers))]
     public void GetHashCode_NullObject(MudColor.MudColorComparer comparer)
     {
         // Arrange & Act

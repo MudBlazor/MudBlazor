@@ -17,13 +17,12 @@ using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using MudBlazor.UnitTests.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class TextFieldTests : BunitTest
     {
         /// <summary>
@@ -1276,7 +1275,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        [Ignore("Flaky test: randomly fails due to timing/rerender race conditions in CI.")]
+        [Skip("Flaky test: randomly fails due to timing/rerender race conditions in CI.")]
         public async Task DebouncedTextFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
@@ -1368,8 +1367,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// A text field with sizing enabled should contain the correct sizing class.
         /// </summary>
-        [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
-        [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+        [Test]
+        [Arguments(InputSizing.Auto, "mud-input-sizing-auto")]
+        [Arguments(InputSizing.Fixed, "mud-input-sizing-fixed")]
         public void TextFieldSizingHasClass(InputSizing sizing, string expectedClass)
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
@@ -1810,14 +1810,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
-        [TestCase(Adornment.Start, false, false)]
-        [TestCase(Adornment.Start, false, true)]
-        [TestCase(Adornment.Start, true, false)]
-        [TestCase(Adornment.Start, true, true)]
-        [TestCase(Adornment.End, false, false)]
-        [TestCase(Adornment.End, false, true)]
-        [TestCase(Adornment.End, true, false)]
-        [TestCase(Adornment.End, true, true)]
+        [Test]
+        [Arguments(Adornment.Start, false, false)]
+        [Arguments(Adornment.Start, false, true)]
+        [Arguments(Adornment.Start, true, false)]
+        [Arguments(Adornment.Start, true, true)]
+        [Arguments(Adornment.End, false, false)]
+        [Arguments(Adornment.End, false, true)]
+        [Arguments(Adornment.End, true, false)]
+        [Arguments(Adornment.End, true, true)]
         public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment, bool withMultipleLines, bool withMask)
         {
             var ariaLabel = "the aria label";
@@ -1837,25 +1838,26 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that a text field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
         // no helpers, validates error id is present when error is present
-        [TestCase(false, false, false, false)]
-        [TestCase(false, false, false, true)]
-        [TestCase(false, false, true, false)]
-        [TestCase(false, false, true, true)]
+        [Test]
+        [Arguments(false, false, false, false)]
+        [Arguments(false, false, false, true)]
+        [Arguments(false, false, true, false)]
+        [Arguments(false, false, true, true)]
         // with helper text, helper element should only be present when there is no error
-        [TestCase(false, true, false, false)]
-        [TestCase(false, true, false, true)]
-        [TestCase(false, true, true, false)]
-        [TestCase(false, true, true, true)]
+        [Arguments(false, true, false, false)]
+        [Arguments(false, true, false, true)]
+        [Arguments(false, true, true, false)]
+        [Arguments(false, true, true, true)]
         // with user helper id, helper id should always be present
-        [TestCase(true, false, false, false)]
-        [TestCase(true, false, false, true)]
-        [TestCase(true, false, true, false)]
-        [TestCase(true, false, true, true)]
+        [Arguments(true, false, false, false)]
+        [Arguments(true, false, false, true)]
+        [Arguments(true, false, true, false)]
+        [Arguments(true, false, true, true)]
         // with user helper id and helper text, should always favour user helper id
-        [TestCase(true, true, false, false)]
-        [TestCase(true, true, false, true)]
-        [TestCase(true, true, true, false)]
-        [TestCase(true, true, true, true)]
+        [Arguments(true, true, false, false)]
+        [Arguments(true, true, false, true)]
+        [Arguments(true, true, true, false)]
+        [Arguments(true, true, true, true)]
         public async Task Should_pass_various_aria_describedby_tests(
             bool withUserHelperId,
             bool withHelperText,
@@ -1928,7 +1930,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OutlineLegendRender()
+        public async Task OutlineLegendRender()
         {
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Variant, Variant.Outlined)
@@ -1939,7 +1941,7 @@ namespace MudBlazor.UnitTests.Components
             comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Variant, Variant.Outlined)
                 .Add(p => p.Label, ""));
-            Assert.Throws<ElementNotFoundException>(() =>
+            await Assert.ThrowsAsync<ElementNotFoundException>(() =>
             {
                 elem = comp.Find("legend");
             });
@@ -1955,7 +1957,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Variant, Variant.Outlined)
                 .Add(p => p.Mask, new PatternMask("0000"))
                 .Add(p => p.Label, ""));
-            Assert.Throws<ElementNotFoundException>(() =>
+            await Assert.ThrowsAsync<ElementNotFoundException>(() =>
             {
                 elem = comp.Find("legend");
             });

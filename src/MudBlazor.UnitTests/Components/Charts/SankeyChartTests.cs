@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -56,21 +56,21 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void InvalidDataNodeWidth()
+        public async Task InvalidDataNodeWidth()
         {
             var edges = GetEdges();
             var options = new SankeyChartOptions { NodeWidth = -1 };
 
-            Assert.DoesNotThrow(() => RenderSankey(edges, options));
+            await Assert.That(() => RenderSankey(edges, options)).ThrowsNothing();
         }
 
         [Test]
-        public void InvalidDataMinVerticalSpacing()
+        public async Task InvalidDataMinVerticalSpacing()
         {
             var edges = GetEdges();
             var options = new SankeyChartOptions { MinVerticalSpacing = -1 };
 
-            Assert.DoesNotThrow(() => RenderSankey(edges, options));
+            await Assert.That(() => RenderSankey(edges, options)).ThrowsNothing();
         }
 
         private static List<SankeyEdge<double>> GetEdges()

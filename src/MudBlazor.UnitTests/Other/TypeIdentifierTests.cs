@@ -4,18 +4,16 @@
 
 using System.Numerics;
 using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Other
 {
-    [TestFixture]
     public class TypeIdentifierTests
     {
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(int), false)]
-        [TestCase(typeof(int?), false)]
-        [TestCase(typeof(string), true)]
+        [Arguments(null, false)]
+        [Arguments(typeof(int), false)]
+        [Arguments(typeof(int?), false)]
+        [Arguments(typeof(string), true)]
         public void IsString(Type type, bool expected)
         {
             var isString = TypeIdentifier.IsString(type);
@@ -23,33 +21,33 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(DateTime), false)]
-        [TestCase(typeof(DateTime?), false)]
-        [TestCase(typeof(int), true)]
-        [TestCase(typeof(double), true)]
-        [TestCase(typeof(decimal), true)]
-        [TestCase(typeof(long), true)]
-        [TestCase(typeof(short), true)]
-        [TestCase(typeof(sbyte), true)]
-        [TestCase(typeof(byte), true)]
-        [TestCase(typeof(ulong), true)]
-        [TestCase(typeof(ushort), true)]
-        [TestCase(typeof(uint), true)]
-        [TestCase(typeof(float), true)]
-        [TestCase(typeof(BigInteger), true)]
-        [TestCase(typeof(int?), true)]
-        [TestCase(typeof(double?), true)]
-        [TestCase(typeof(decimal?), true)]
-        [TestCase(typeof(long?), true)]
-        [TestCase(typeof(short?), true)]
-        [TestCase(typeof(sbyte?), true)]
-        [TestCase(typeof(byte?), true)]
-        [TestCase(typeof(ulong?), true)]
-        [TestCase(typeof(ushort?), true)]
-        [TestCase(typeof(uint?), true)]
-        [TestCase(typeof(float?), true)]
-        [TestCase(typeof(BigInteger?), true)]
+        [Arguments(null, false)]
+        [Arguments(typeof(DateTime), false)]
+        [Arguments(typeof(DateTime?), false)]
+        [Arguments(typeof(int), true)]
+        [Arguments(typeof(double), true)]
+        [Arguments(typeof(decimal), true)]
+        [Arguments(typeof(long), true)]
+        [Arguments(typeof(short), true)]
+        [Arguments(typeof(sbyte), true)]
+        [Arguments(typeof(byte), true)]
+        [Arguments(typeof(ulong), true)]
+        [Arguments(typeof(ushort), true)]
+        [Arguments(typeof(uint), true)]
+        [Arguments(typeof(float), true)]
+        [Arguments(typeof(BigInteger), true)]
+        [Arguments(typeof(int?), true)]
+        [Arguments(typeof(double?), true)]
+        [Arguments(typeof(decimal?), true)]
+        [Arguments(typeof(long?), true)]
+        [Arguments(typeof(short?), true)]
+        [Arguments(typeof(sbyte?), true)]
+        [Arguments(typeof(byte?), true)]
+        [Arguments(typeof(ulong?), true)]
+        [Arguments(typeof(ushort?), true)]
+        [Arguments(typeof(uint?), true)]
+        [Arguments(typeof(float?), true)]
+        [Arguments(typeof(BigInteger?), true)]
         public void IsNumber(Type type, bool expected)
         {
             var isNumber = TypeIdentifier.IsNumber(type);
@@ -57,11 +55,11 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(int), false)]
-        [TestCase(typeof(int?), false)]
-        [TestCase(typeof(Adornment), true)]
-        [TestCase(typeof(Adornment?), true)]
+        [Arguments(null, false)]
+        [Arguments(typeof(int), false)]
+        [Arguments(typeof(int?), false)]
+        [Arguments(typeof(Adornment), true)]
+        [Arguments(typeof(Adornment?), true)]
         public void IsEnum(Type type, bool expected)
         {
             var isEnum = TypeIdentifier.IsEnum(type);
@@ -69,11 +67,11 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(int), false)]
-        [TestCase(typeof(int?), false)]
-        [TestCase(typeof(DateTime), true)]
-        [TestCase(typeof(DateTime?), true)]
+        [Arguments(null, false)]
+        [Arguments(typeof(int), false)]
+        [Arguments(typeof(int?), false)]
+        [Arguments(typeof(DateTime), true)]
+        [Arguments(typeof(DateTime?), true)]
         public void IsDateTime(Type type, bool expected)
         {
             var isDateTime = TypeIdentifier.IsDateTime(type);
@@ -81,11 +79,11 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(int), false)]
-        [TestCase(typeof(int?), false)]
-        [TestCase(typeof(bool), true)]
-        [TestCase(typeof(bool?), true)]
+        [Arguments(null, false)]
+        [Arguments(typeof(int), false)]
+        [Arguments(typeof(int?), false)]
+        [Arguments(typeof(bool), true)]
+        [Arguments(typeof(bool?), true)]
         public void IsBoolean(Type type, bool expected)
         {
             var isBoolean = TypeIdentifier.IsBoolean(type);
@@ -93,13 +91,13 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(int), false)]
-        [TestCase(typeof(int?), false)]
-        [TestCase(typeof(DateOnly), true)]
-        [TestCase(typeof(DateOnly?), true)]
-        [TestCase(typeof(DateTime), false)]
-        [TestCase(typeof(DateTime?), false)]
+        [Arguments(null, false)]
+        [Arguments(typeof(int), false)]
+        [Arguments(typeof(int?), false)]
+        [Arguments(typeof(DateOnly), true)]
+        [Arguments(typeof(DateOnly?), true)]
+        [Arguments(typeof(DateTime), false)]
+        [Arguments(typeof(DateTime?), false)]
         public void IsDateOnly(Type type, bool expected)
         {
             var isDateOnly = TypeIdentifier.IsDateOnly(type);
@@ -107,11 +105,11 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        [TestCase(null, false)]
-        [TestCase(typeof(int), false)]
-        [TestCase(typeof(int?), false)]
-        [TestCase(typeof(Guid), true)]
-        [TestCase(typeof(Guid?), true)]
+        [Arguments(null, false)]
+        [Arguments(typeof(int), false)]
+        [Arguments(typeof(int?), false)]
+        [Arguments(typeof(Guid), true)]
+        [Arguments(typeof(Guid?), true)]
         public void IsGuid(Type type, bool expected)
         {
             var isGuid = TypeIdentifier.IsGuid(type);

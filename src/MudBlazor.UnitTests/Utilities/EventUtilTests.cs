@@ -6,11 +6,9 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Utilities;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities
 {
-    [TestFixture]
     public class EventUtilTests : BunitTest
     {
         [Test]

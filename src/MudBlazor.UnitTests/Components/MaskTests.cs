@@ -6,11 +6,10 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Mask;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class MaskTests : BunitTest
     {
         public static object[] TextFieldWithMask_SetValueParameterUpdateText_Parameters = [
@@ -21,7 +20,8 @@ namespace MudBlazor.UnitTests.Components
             new object[] { "DateMask", new DateMask("""MM/dd/yyyy"""), "01/01/2024", "02/03/2025" }
         ];
 
-        [TestCaseSource(nameof(TextFieldWithMask_SetValueParameterUpdateText_Parameters))]
+        [Test]
+        [MethodDataSource(nameof(TextFieldWithMask_SetValueParameterUpdateText_Parameters))]
         public async Task TextFieldWithMask_SetValueParameterUpdateText(string testName, IMask mask, string initialValue, string setValue)
         {
             // Arrange

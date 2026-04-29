@@ -5,12 +5,9 @@
 using System.Linq.Expressions;
 using AwesomeAssertions;
 using Moq;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
-
 #nullable enable
-[TestFixture]
 public class TableExtensionsTests
 {
     internal class TestItem(string name)

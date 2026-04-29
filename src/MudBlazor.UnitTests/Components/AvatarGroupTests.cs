@@ -1,11 +1,10 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.AvatarGroup;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class AvatarGroupTests : BunitTest
     {
         [Test]

@@ -5,11 +5,9 @@
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.ToolBar;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ToolBarTests : BunitTest
     {
         [Test]

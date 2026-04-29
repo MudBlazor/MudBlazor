@@ -2,12 +2,11 @@
 using Bunit;
 using MudBlazor.Components.Highlighter;
 using MudBlazor.UnitTests.TestComponents.Highlighter;
-using NUnit.Framework;
 using static MudBlazor.Components.Highlighter.Splitter;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class HighlighterSplitterTests
     {
         private const string TEXT = "This is the first item";
@@ -311,8 +310,6 @@ namespace MudBlazor.UnitTests.Components
             fragmentsInsensitive.Should().BeEquivalentTo(expectedInsensitive, options => options.WithStrictOrdering());
         }
     }
-
-    [TestFixture]
     public class HighlighterTests : BunitTest
     {
         private const string TEXT = "This is the first item";

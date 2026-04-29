@@ -7,7 +7,7 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components
@@ -540,10 +540,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true, true)]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(false, false)]
+        [Arguments(true, true)]
+        [Arguments(true, false)]
+        [Arguments(false, true)]
+        [Arguments(false, false)]
         public void TestRtlGroupIconMethod(bool isRightToLeft, bool isExpanded)
         {
             var test = new MudDataGrid<int>();
@@ -772,8 +772,8 @@ namespace MudBlazor.UnitTests.Components
             var groupRowA_X = subGroupRows.First(x => x.Instance.GroupDefinition.KeyPath.Equals(groupKey));
             var groupRowB_X = subGroupRows.First(x => !x.Instance.GroupDefinition.KeyPath.Equals(groupKey));
 
-            Assert.That(groupRowA_X.Instance.GroupDefinition.Expanded, Is.True, "SubGroup X under group A should be expanded");
-            Assert.That(groupRowB_X.Instance.GroupDefinition.Expanded, Is.False, "SubGroup X under group B should remain collapsed");
+            await Assert.That(groupRowA_X.Instance.GroupDefinition.Expanded).IsTrue().Because("SubGroup X under group A should be expanded");
+            await Assert.That(groupRowB_X.Instance.GroupDefinition.Expanded).IsFalse().Because("SubGroup X under group B should remain collapsed");
         }
     }
 }

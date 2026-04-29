@@ -5,7 +5,7 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Charts
             return Enum.GetValues(typeof(InterpolationOption));
         }
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 
@@ -48,8 +48,8 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("mud-chart");
         }
 
-        [Theory]
-        [TestCaseSource("GetInterpolationOptions")]
+        [Test]
+        [MethodDataSource("GetInterpolationOptions")]
         public async Task LineChartExampleData(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries<double>>()
@@ -183,8 +183,8 @@ namespace MudBlazor.UnitTests.Charts
             }
         }
 
-        [Theory]
-        [TestCaseSource("GetInterpolationOptions")]
+        [Test]
+        [MethodDataSource("GetInterpolationOptions")]
         public async Task LineChartExampleZeroValues(InterpolationOption opt)
         {
             var chartSeries = new List<ChartSeries<double>>()

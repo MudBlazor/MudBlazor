@@ -4,12 +4,9 @@
 
 using AwesomeAssertions;
 using MudBlazor.Services;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.KeyInterceptor;
-
 #nullable enable
-[TestFixture]
 public class KeyOptionsTests
 {
     [Test]

@@ -13,12 +13,10 @@ using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Services.Browser.Mocks;
 using MudBlazor.UnitTests.TestData;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.Browser;
-
 #nullable enable
-[TestFixture]
 public class BrowserViewportServiceTests
 {
     [Test]
@@ -485,12 +483,12 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
-    [TestCase(2560, 1440, Breakpoint.Xxl)]
-    [TestCase(1920, 1080, Breakpoint.Xl)]
-    [TestCase(1280, 1024, Breakpoint.Lg)]
-    [TestCase(960, 720, Breakpoint.Md)]
-    [TestCase(600, 400, Breakpoint.Sm)]
-    [TestCase(0, 0, Breakpoint.Xs)]
+    [Arguments(2560, 1440, Breakpoint.Xxl)]
+    [Arguments(1920, 1080, Breakpoint.Xl)]
+    [Arguments(1280, 1024, Breakpoint.Lg)]
+    [Arguments(960, 720, Breakpoint.Md)]
+    [Arguments(600, 400, Breakpoint.Sm)]
+    [Arguments(0, 0, Breakpoint.Xs)]
     public async Task GetCurrentBreakpointAsync_WithWindowSize_ReturnsBreakpoint(int width, int height, Breakpoint expectedBreakpoint)
     {
         // Arrange
@@ -508,7 +506,7 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
-    [TestCaseSource(typeof(BreakpointWithinReferenceSizeTestCase), nameof(BreakpointWithinReferenceSizeTestCase.AllCombinations))]
+    [MethodDataSource(typeof(BreakpointWithinReferenceSizeTestCase))]
     public async Task IsBreakpointWithinReferenceSizeAsync_ReturnsExpectedResult_AllCombinations(Breakpoint breakpoint, Breakpoint referenceBreakpoint, bool expectedResult)
     {
         // Arrange
@@ -523,14 +521,14 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
-    [TestCase(Breakpoint.None, false)]
-    [TestCase(Breakpoint.Always, true)]
-    [TestCase(Breakpoint.Xs, false)]
-    [TestCase(Breakpoint.Sm, true)]
-    [TestCase(Breakpoint.Md, false)]
-    [TestCase(Breakpoint.Lg, false)]
-    [TestCase(Breakpoint.Xl, false)]
-    [TestCase(Breakpoint.Xxl, false)]
+    [Arguments(Breakpoint.None, false)]
+    [Arguments(Breakpoint.Always, true)]
+    [Arguments(Breakpoint.Xs, false)]
+    [Arguments(Breakpoint.Sm, true)]
+    [Arguments(Breakpoint.Md, false)]
+    [Arguments(Breakpoint.Lg, false)]
+    [Arguments(Breakpoint.Xl, false)]
+    [Arguments(Breakpoint.Xxl, false)]
     public async Task IsBreakpointWithinWindowSizeAsync_ReturnsExpectedResult(Breakpoint breakpoint, bool expectedResult)
     {
         // Arrange

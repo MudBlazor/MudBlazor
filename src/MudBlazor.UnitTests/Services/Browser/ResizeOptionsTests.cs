@@ -4,12 +4,10 @@
 
 using AwesomeAssertions;
 using MudBlazor.Services;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Browser
 {
 #nullable enable
-    [TestFixture]
     public class ResizeOptionsTests
     {
         [Test]

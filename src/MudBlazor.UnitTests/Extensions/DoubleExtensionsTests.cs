@@ -1,11 +1,8 @@
 ﻿using System.Globalization;
 using AwesomeAssertions;
 using MudBlazor.Extensions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
-
-[TestFixture]
 public class DoubleExtensionsTests
 {
     [Test]

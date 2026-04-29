@@ -4,11 +4,9 @@
 
 using AwesomeAssertions;
 using MudBlazor.Utilities;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
 {
-    [TestFixture]
     public class WebUnitsExtensionsTests
     {
         [Test]

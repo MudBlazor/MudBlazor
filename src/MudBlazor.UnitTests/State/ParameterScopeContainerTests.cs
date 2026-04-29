@@ -9,12 +9,10 @@ using MudBlazor.State;
 using MudBlazor.State.Builder;
 using MudBlazor.UnitTests.Comparer;
 using MudBlazor.UnitTests.State.Mocks;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterScopeContainerTests
 {
     [Test]
@@ -689,7 +687,8 @@ public class ParameterScopeContainerTests
         }, because: "We swapped comparer.");
     }
 
-    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
+    [Test]
+    [Property("Description", "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
     public async Task SetParametersAsync_FuncCustomComparerAsParameter_Swap()
     {
         // Arrange
@@ -722,7 +721,8 @@ public class ParameterScopeContainerTests
         });
     }
 
-    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
+    [Test]
+    [Property("Description", "Tests a very special case described in ParameterStateInternal.HasParameterChanged when comparer is a blazor parameter and changes together with the associated value.")]
     public async Task SetParametersAsync_FuncCustomComparerTransformAsParameter_Swap()
     {
         var comparer = new DoubleEpsilonEqualityComparer(0.0001f);

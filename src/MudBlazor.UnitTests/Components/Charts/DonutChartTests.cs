@@ -6,7 +6,7 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -31,7 +31,7 @@ namespace MudBlazor.UnitTests.Charts
             "#01153E", "#2EE8BB", "#EBDDE2"
         };
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 
@@ -63,8 +63,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(new double[] { 50, 25, 20, 5 })]
-        [TestCase(new double[] { 50, 25, 20, 5, 12 })]
+        [Arguments(new double[] { 50, 25, 20, 5 })]
+        [Arguments(new double[] { 50, 25, 20, 5, 12 })]
         public async Task DonutChartExampleData(double[] data)
         {
             string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
@@ -114,8 +114,8 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        [TestCase(new double[] { 50, 25, 20, 5 })]
-        [TestCase(new double[] { 50, 25, 20, 5, 12 })]
+        [Arguments(new double[] { 50, 25, 20, 5 })]
+        [Arguments(new double[] { 50, 25, 20, 5, 12 })]
         public void DonutCirclePosition(double[] data)
         {
             string[] labels = { "Fossil", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",

@@ -3,12 +3,9 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor.UnitTests.TestComponents.Virtualize;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
-
 #nullable enable
-[TestFixture]
 public class VirtualizeTests : BunitTest
 {
     [Test]

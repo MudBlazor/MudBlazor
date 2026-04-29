@@ -6,13 +6,13 @@ using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
     public class TimeSeriesChartTests : BunitTest
     {
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 

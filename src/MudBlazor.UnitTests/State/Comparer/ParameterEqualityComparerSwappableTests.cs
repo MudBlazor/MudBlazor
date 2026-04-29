@@ -5,12 +5,9 @@
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State.Comparer;
-
 #nullable enable
-[TestFixture]
 public class ParameterEqualityComparerSwappableTests
 {
     private class CustomEqualityComparer : IEqualityComparer<int>

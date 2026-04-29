@@ -3,22 +3,21 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.ExpansionPanel;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ExpansionPanelTests : BunitTest
     {
 
-        [OneTimeSetUp]
+        [Before(HookType.Class)]
         public static void Init()
         {
             AssertionConfiguration.Current.Formatting.MaxDepth = 100;
             AssertionConfiguration.Current.Formatting.MaxLines = 5000;
         }
 
-        [OneTimeTearDown]
+        [After(HookType.Class)]
         public static void Cleanup()
         {
             AssertionConfiguration.Current.Formatting.MaxDepth = 5;

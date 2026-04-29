@@ -10,11 +10,10 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class FormTests : BunitTest
     {
         /// <summary>
@@ -1641,11 +1640,11 @@ namespace MudBlazor.UnitTests.Components
         /// triggering validation. Validations requiring "Form" or "For" properties should not crash.
         /// </summary>
         [Test]
-        public void FieldValidationWithoutRequiredForm_ShouldNot_Validate()
+        public async Task FieldValidationWithoutRequiredForm_ShouldNot_Validate()
         {
             var comp = Context.Render<FieldValidationWithoutRequiredFormTest>();
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-input-error"));
         }
 
         /// <summary>

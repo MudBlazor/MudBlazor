@@ -5,11 +5,9 @@
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Field;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class FieldTests : BunitTest
     {
         [Test]

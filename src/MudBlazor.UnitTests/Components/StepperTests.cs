@@ -5,12 +5,11 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Stepper;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class StepperTests : BunitTest
     {
         [Test]
@@ -942,8 +941,9 @@ namespace MudBlazor.UnitTests.Components
             stepIcon.ClassList.Should().NotContain("mud-secondary");
         }
 
-        [TestCase(true, true)]
-        [TestCase(false, false)]
+        [Test]
+        [Arguments(true, true)]
+        [Arguments(false, false)]
         public void HasRippleClass(bool ripple, bool hasClass)
         {
             var stepper = Context.Render<MudStepper>(self =>
@@ -969,8 +969,9 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [TestCase(true, true)]
-        [TestCase(false, false)]
+        [Test]
+        [Arguments(true, true)]
+        [Arguments(false, false)]
         public void HasClickableClassIfNonLinear(bool nonLinear, bool hasClass)
         {
             var stepper = Context.Render<MudStepper>(self =>

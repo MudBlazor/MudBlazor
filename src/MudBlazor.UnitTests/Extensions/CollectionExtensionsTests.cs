@@ -3,11 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests;
-
-[TestFixture]
 public class CollectionExtensionsTests
 {
     private readonly int?[] _array = [1, 2, 3, 4, 5];

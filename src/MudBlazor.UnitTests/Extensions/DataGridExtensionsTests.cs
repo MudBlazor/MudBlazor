@@ -3,11 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
 {
-    [TestFixture]
     public class DataGridExtensionsTests
     {
         private class Person

@@ -1,17 +1,15 @@
 ﻿using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services;
-
-[TestFixture]
 public class ScrollListenerTests
 {
     private Mock<IJSRuntime> _runtimeMock;
     private ScrollListener _service;
 
-    [SetUp]
+    [Before(HookType.Test)]
     public void SetUp()
     {
         _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);

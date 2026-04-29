@@ -7,11 +7,10 @@ using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Timeline;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class TimelineTests : BunitTest
     {
         [Test]
@@ -58,45 +57,45 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
 
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Alternate, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Start, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Left, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Right, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.End, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Alternate, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Start, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Left, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Right, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.End, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
 
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Top, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-top" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Bottom, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-bottom" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Top, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-top" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Bottom, false, new[] { "mud-timeline-horizontal", "mud-timeline-position-bottom" })]
 
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Alternate, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Top, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Bottom, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Alternate, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Top, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Bottom, false, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
 
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Start, false, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.End, false, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Start, false, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.End, false, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
 
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Left, false, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Right, false, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Left, false, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Right, false, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
 
         //RTL to true
 
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Alternate, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Start, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Left, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Right, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.End, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Alternate, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Start, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Left, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Right, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.End, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-alternate" })]
 
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Top, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-top" })]
-        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Bottom, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-bottom" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Top, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-top" })]
+        [Arguments(TimelineOrientation.Horizontal, TimelinePosition.Bottom, true, new[] { "mud-timeline-horizontal", "mud-timeline-position-bottom" })]
 
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Alternate, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Top, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Bottom, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Alternate, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Top, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Bottom, true, new[] { "mud-timeline-vertical", "mud-timeline-position-alternate" })]
 
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Start, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.End, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Start, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.End, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
 
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Left, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
-        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Right, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Left, true, new[] { "mud-timeline-vertical", "mud-timeline-position-end" })]
+        [Arguments(TimelineOrientation.Vertical, TimelinePosition.Right, true, new[] { "mud-timeline-vertical", "mud-timeline-position-start" })]
 
         public async Task TimelineTest_Position(TimelineOrientation orientation, TimelinePosition position, bool rtl, string[] expectedClass)
         {

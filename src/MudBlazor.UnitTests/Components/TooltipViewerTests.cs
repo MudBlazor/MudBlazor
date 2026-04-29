@@ -1,11 +1,9 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.Tooltip;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class TooltipViewerTests : BunitTest
     {
         [Test]

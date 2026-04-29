@@ -4,11 +4,10 @@
 
 using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ImageTests : BunitTest
     {
         [Test]
@@ -55,11 +54,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ObjectFit.Contain, "contain")]
-        [TestCase(ObjectFit.Cover, "cover")]
-        [TestCase(ObjectFit.Fill, "fill")]
-        [TestCase(ObjectFit.None, "none")]
-        [TestCase(ObjectFit.ScaleDown, "scale-down")]
+        [Arguments(ObjectFit.Contain, "contain")]
+        [Arguments(ObjectFit.Cover, "cover")]
+        [Arguments(ObjectFit.Fill, "fill")]
+        [Arguments(ObjectFit.None, "none")]
+        [Arguments(ObjectFit.ScaleDown, "scale-down")]
         public void Image_ObjectFitToClassMapping(ObjectFit fit, string expectedClass)
         {
 
@@ -73,15 +72,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ObjectPosition.Bottom, "bottom")]
-        [TestCase(ObjectPosition.Center, "center")]
-        [TestCase(ObjectPosition.Left, "left")]
-        [TestCase(ObjectPosition.LeftBottom, "left-bottom")]
-        [TestCase(ObjectPosition.LeftTop, "left-top")]
-        [TestCase(ObjectPosition.Right, "right")]
-        [TestCase(ObjectPosition.RightBottom, "right-bottom")]
-        [TestCase(ObjectPosition.RightTop, "right-top")]
-        [TestCase(ObjectPosition.Top, "top")]
+        [Arguments(ObjectPosition.Bottom, "bottom")]
+        [Arguments(ObjectPosition.Center, "center")]
+        [Arguments(ObjectPosition.Left, "left")]
+        [Arguments(ObjectPosition.LeftBottom, "left-bottom")]
+        [Arguments(ObjectPosition.LeftTop, "left-top")]
+        [Arguments(ObjectPosition.Right, "right")]
+        [Arguments(ObjectPosition.RightBottom, "right-bottom")]
+        [Arguments(ObjectPosition.RightTop, "right-top")]
+        [Arguments(ObjectPosition.Top, "top")]
         public void Image_ObjectPositionToClassMapping(ObjectPosition position, string expectedClass)
         {
 
@@ -131,4 +130,3 @@ namespace MudBlazor.UnitTests.Components
         }
     }
 }
-

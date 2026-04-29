@@ -11,13 +11,11 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Resources;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class ExitPromptTests : BunitTest
 {
     [Test]

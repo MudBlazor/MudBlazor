@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
+using TUnit.Core.Executors;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class DateRangePickerTests : BunitTest
     {
         [Test]
@@ -911,8 +911,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task CheckCloseOnClearDateRangePicker(bool closeOnClear)
         {
             // Define a date range for comparison
@@ -1475,15 +1475,18 @@ namespace MudBlazor.UnitTests.Components
             var matchingDays = comp.FindAll("button.mud-picker-calendar-day")
                        .Where(x => !x.ClassList.Contains("mud-hidden") && x.TrimmedText().Equals(day))
                        .ToList();
+            // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
 
             Assert.That(matchingDays.Count != 0, $"Invalid day ({day}) selected");
 
             if (!firstOccurrence)
             {
+                // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
                 Assert.That(matchingDays.Count == 2, $"Only one instance of date ({day}) found");
             }
 
             var selectedDate = matchingDays[firstOccurrence ? 0 : 1];
+            // TODO: TUnit migration - Complex NUnit constraint. Manual conversion required.
 
             Assert.That(!selectedDate.IsDisabled(), $"Selected date ({day}) is disabled");
 

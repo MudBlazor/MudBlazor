@@ -4,11 +4,10 @@
 
 using AwesomeAssertions;
 using MudBlazor.UnitTests.Dummy;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests
 {
-    [TestFixture]
     public class ComponentBaseTests : BunitTest
     {
 

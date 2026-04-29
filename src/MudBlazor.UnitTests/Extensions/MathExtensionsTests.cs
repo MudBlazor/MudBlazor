@@ -1,11 +1,8 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.Extensions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions;
-
 #nullable enable
-[TestFixture]
 public class MathExtensionsTests
 {
     [Test]

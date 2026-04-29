@@ -4,11 +4,10 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class CheckBoxTests : BunitTest
     {
 
@@ -347,15 +346,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Default, Color.Primary)]
-        [TestCase(Color.Primary, Color.Secondary)]
-        [TestCase(Color.Secondary, Color.Info)]
-        [TestCase(Color.Tertiary, Color.Success)]
-        [TestCase(Color.Info, Color.Warning)]
-        [TestCase(Color.Success, Color.Error)]
-        [TestCase(Color.Warning, Color.Dark)]
-        [TestCase(Color.Error, Color.Primary)]
-        [TestCase(Color.Dark, Color.Primary)]
+        [Arguments(Color.Default, Color.Primary)]
+        [Arguments(Color.Primary, Color.Secondary)]
+        [Arguments(Color.Secondary, Color.Info)]
+        [Arguments(Color.Tertiary, Color.Success)]
+        [Arguments(Color.Info, Color.Warning)]
+        [Arguments(Color.Success, Color.Error)]
+        [Arguments(Color.Warning, Color.Dark)]
+        [Arguments(Color.Error, Color.Primary)]
+        [Arguments(Color.Dark, Color.Primary)]
         public async Task CheckBoxColor(Color color, Color uncheckedcolor)
         {
             var comp = Context.Render<MudCheckBox<bool>>(x => x.Add(c => c.Color, color).Add(b => b.UncheckedColor, uncheckedcolor));

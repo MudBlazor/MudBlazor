@@ -14,12 +14,11 @@ using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
@@ -91,7 +90,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Setting the value to null should not cause a validation error
         /// </summary>
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericField_WithNullableTypes_ShouldAllowNulls<T>(T value) where T : struct
         {
             var comp = Context.Render<MudNumericField<T?>>(parameters => parameters.Add(x => x.Value, value));
@@ -330,10 +330,11 @@ namespace MudBlazor.UnitTests.Components
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        [TestCaseSource(nameof(TypeCases))]
-        public void NumericField_OfAnyType_Should_Render<T>(T value)
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
+        public async Task NumericField_OfAnyType_Should_Render<T>(T value)
         {
-            Assert.DoesNotThrow(() => Context.Render<MudNumericField<T>>(), $"{typeof(MudNumericField<>)}<{typeof(T)}> render failed.");
+            await Assert.That(() => Context.Render<MudNumericField<T>>()).ThrowsNothing();
         }
 
         /// <summary>
@@ -685,7 +686,8 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericField_Validation<T>(T value)
         {
             var comp = Context.Render<MudNumericField<T>>();
@@ -699,7 +701,8 @@ namespace MudBlazor.UnitTests.Components
             numericField.ReadValue.Should().Be(value);
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericFieldMinMax<T>(T value)
         {
             var min = (T)Convert.ChangeType(1, typeof(T));
@@ -720,7 +723,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(min));
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericFieldMinMaxNullable<T>(T value) where T : struct
         {
             var min = (T)Convert.ChangeType(1, typeof(T));
@@ -741,7 +745,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(min));
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement<T>(T value)
         {
             var comp = Context.Render<MudNumericField<T>>();
@@ -780,7 +785,8 @@ namespace MudBlazor.UnitTests.Components
                 .Should().Be(2);
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericFieldNullable_Increment_Decrement<T>(T value) where T : struct
         {
             var comp = Context.Render<MudNumericField<T?>>();
@@ -803,7 +809,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be(value);
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
         {
             var comp = Context.Render<MudNumericField<T?>>();
@@ -827,7 +834,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be(value);
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
         {
             var comp = Context.Render<MudNumericField<T>>();
@@ -844,7 +852,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be(comp.Instance.Min);
         }
 
-        [TestCaseSource(nameof(TypeCases))]
+        [Test]
+        [MethodDataSource(nameof(TypeCases))]
         public async Task NumericFieldNullable_Increment_Decrement_OverflowHandled<T>(T value) where T : struct
         {
             var comp = Context.Render<MudNumericField<T?>>();
@@ -864,8 +873,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// NumericField with min/max set and nullable int can be cleared
         /// </summary>
-        [TestCase(10, 20, 15)]
-        [TestCase(-20, -10, -15)]
+        [Test]
+        [Arguments(10, 20, 15)]
+        [Arguments(-20, -10, -15)]
         public async Task NumericFieldCanBeCleared(int min, int max, int value)
         {
             var comp = Context.Render<MudNumericField<int?>>();
@@ -942,7 +952,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         // TODO: Re-enable parallel execution. This test intermittently causes test-host hangs under full parallel coverage runs.
         [Test]
-        [NonParallelizable]
+        [NotInParallel]
         public async Task DebouncedNumericFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
@@ -1305,8 +1315,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
-        [TestCase(Adornment.Start)]
-        [TestCase(Adornment.End)]
+        [Test]
+        [Arguments(Adornment.Start)]
+        [Arguments(Adornment.End)]
         public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
         {
             var ariaLabel = "the aria label";
@@ -1323,13 +1334,14 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that a numeric field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
         // no helpers, validates error id is present when error is present
-        [TestCase(false, false)]
+        [Test]
+        [Arguments(false, false)]
         // with helper text, helper element should only be present when there is no error
-        [TestCase(false, true)]
+        [Arguments(false, true)]
         // with user helper id, helper id should always be present
-        [TestCase(true, false)]
+        [Arguments(true, false)]
         // with user helper id and helper text, should always favour user helper id
-        [TestCase(true, true)]
+        [Arguments(true, true)]
         public async Task Should_pass_various_aria_describedby_tests(
             bool withUserHelperId,
             bool withHelperText)

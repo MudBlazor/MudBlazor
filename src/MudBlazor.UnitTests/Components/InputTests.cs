@@ -1,11 +1,9 @@
 ﻿using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
-
 #nullable enable
-[TestFixture]
 public class InputTests : BunitTest
 {
     [Test]
@@ -22,8 +20,9 @@ public class InputTests : BunitTest
         comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
     }
 
-    [TestCase(InputSizing.Auto, "mud-input-sizing-auto")]
-    [TestCase(InputSizing.Fixed, "mud-input-sizing-fixed")]
+    [Test]
+    [Arguments(InputSizing.Auto, "mud-input-sizing-auto")]
+    [Arguments(InputSizing.Fixed, "mud-input-sizing-fixed")]
     public void InputSizingHasClass(InputSizing sizing, string expectedClass)
     {
         var comp = Context.Render<MudInput<string>>(parameters => parameters

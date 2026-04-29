@@ -6,11 +6,8 @@
 using AwesomeAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.Services;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests;
-
-[TestFixture]
 public class ResizeOptionsExtensionsTests
 {
     [Test]

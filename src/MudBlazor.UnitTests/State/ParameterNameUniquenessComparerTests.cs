@@ -6,12 +6,9 @@ using AwesomeAssertions;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 using MudBlazor.State.Comparer;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterNameUniquenessComparerTests
 {
     [Test]

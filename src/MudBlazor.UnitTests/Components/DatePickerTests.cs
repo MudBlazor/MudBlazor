@@ -9,12 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
 #nullable enable
-    [TestFixture]
     public class DatePickerTests : BunitTest
     {
         [Test]
@@ -820,10 +819,11 @@ namespace MudBlazor.UnitTests.Components
                 .Should().OnlyContain(disabled => disabled == false);
         }
 
-        [TestCase(10, 8, 2, 2)]
-        [TestCase(10, 9, 2, 2)]
-        [TestCase(10, 10, 2, 1)]
-        [TestCase(10, 11, 2, 1)]
+        [Test]
+        [Arguments(10, 8, 2, 2)]
+        [Arguments(10, 9, 2, 2)]
+        [Arguments(10, 10, 2, 1)]
+        [Arguments(10, 11, 2, 1)]
         public async Task MinDateEffectOnDisablingMonthsIfDayFixed(int minDatesDay, int fixedDay, int month, int disabledOnes)
         {
             var currentDate = DateTime.Now;
@@ -844,10 +844,11 @@ namespace MudBlazor.UnitTests.Components
                 .Should().ContainInConsecutiveOrder(expectedResult);
         }
 
-        [TestCase(10, 9, 11, 1)]
-        [TestCase(10, 10, 11, 1)]
-        [TestCase(10, 11, 11, 2)]
-        [TestCase(10, 12, 11, 2)]
+        [Test]
+        [Arguments(10, 9, 11, 1)]
+        [Arguments(10, 10, 11, 1)]
+        [Arguments(10, 11, 11, 2)]
+        [Arguments(10, 12, 11, 2)]
         public async Task MaxDateEffectOnDisablingMonthsIfDayFixed(int maxDatesDay, int fixedDay,
             int month, int disabledOnes)
         {
@@ -869,10 +870,11 @@ namespace MudBlazor.UnitTests.Components
                 .Should().ContainInConsecutiveOrder(expectedResult);
         }
 
-        [TestCase(30, 3, 2)]
-        [TestCase(31, 3, 2)]
-        [TestCase(1, 4, 3)]
-        [TestCase(2, 4, 3)]
+        [Test]
+        [Arguments(30, 3, 2)]
+        [Arguments(31, 3, 2)]
+        [Arguments(1, 4, 3)]
+        [Arguments(2, 4, 3)]
         public async Task MinDateEffectOnDisablingMonthsIfDayNotFixed(int minDatesDay, int month, int disabledOnes)
         {
             var currentYear = DateTime.Now.Year;
@@ -892,10 +894,11 @@ namespace MudBlazor.UnitTests.Components
                 .Should().ContainInConsecutiveOrder(expectedResult);
         }
 
-        [TestCase(1, 10, 2)]
-        [TestCase(2, 10, 2)]
-        [TestCase(30, 9, 3)]
-        [TestCase(29, 9, 3)]
+        [Test]
+        [Arguments(1, 10, 2)]
+        [Arguments(2, 10, 2)]
+        [Arguments(30, 9, 3)]
+        [Arguments(29, 9, 3)]
         public async Task MaxDateEffectOnDisablingMonthsIfDayNotFixed(int maxDatesDay, int month, int disabledOnes)
         {
             var currentYear = DateTime.Now.Year;
@@ -1157,8 +1160,8 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <param name="navigateToMonthSelection">If true navigates to the month selection page.</param>
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task CheckButtonType(bool navigateToMonthSelection)
         {
             var dateComp = Context.Render<MudDatePicker>(p =>

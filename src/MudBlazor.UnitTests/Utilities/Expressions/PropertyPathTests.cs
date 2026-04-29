@@ -5,11 +5,9 @@
 using System.Linq.Expressions;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Expressions
 {
-    [TestFixture]
     public class PropertyPathTests
     {
         // ReSharper disable ClassNeverInstantiated.Local

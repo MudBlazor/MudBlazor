@@ -6,11 +6,9 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.TestComponents.Overlay;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class OverlayTests : BunitTest
 {
     [Test]
@@ -34,8 +32,8 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     public async Task AutoClose_OnClick(bool autoClose)
     {
         var providerComp = Context.Render<MudPopoverProvider>();
@@ -102,10 +100,10 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true, true)]
-    [TestCase(true, false)]
-    [TestCase(false, true)]
-    [TestCase(false, false)]
+    [Arguments(true, true)]
+    [Arguments(true, false)]
+    [Arguments(false, true)]
+    [Arguments(false, false)]
     public void ShouldApplyBackgroundColor(bool darkBackground, bool lightBackground)
     {
         var providerComp = Context.Render<MudPopoverProvider>();
@@ -134,8 +132,8 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     public void ShouldApplyAbsoluteClass(bool absolute)
     {
         var providerComp = Context.Render<MudPopoverProvider>();
@@ -155,8 +153,8 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Arguments(true)]
+    [Arguments(false)]
     public void ShouldApplyCorrectPointerEvents(bool modal)
     {
         var providerComp = Context.Render<MudPopoverProvider>();
@@ -186,10 +184,10 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true, "", false, 0)] // Absolute is true
-    [TestCase(false, "mud-skip-overlay-section", false, 1)] // Dialog
-    [TestCase(false, "", true, 3)]  // Child content
-    [TestCase(false, "", false, 4)] // no exception
+    [Arguments(true, "", false, 0)] // Absolute is true
+    [Arguments(false, "mud-skip-overlay-section", false, 1)] // Dialog
+    [Arguments(false, "", true, 3)]  // Child content
+    [Arguments(false, "", false, 4)] // no exception
     public void ShouldRender_SectionLocation(bool absolute, string expectedClass, bool hasChildContent, int testNum)
     {
         var childContent = "<div class='child-content'>Hello World</div>";
@@ -259,14 +257,14 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true, true, false, true)]
-    [TestCase(true, false, false, false)]
-    [TestCase(true, false, true, false)]
-    [TestCase(true, true, true, false)]
-    [TestCase(false, true, false, false)]
-    [TestCase(false, false, false, false)]
-    [TestCase(false, false, true, false)]
-    [TestCase(false, true, true, false)]
+    [Arguments(true, true, false, true)]
+    [Arguments(true, false, false, false)]
+    [Arguments(true, false, true, false)]
+    [Arguments(true, true, true, false)]
+    [Arguments(false, true, false, false)]
+    [Arguments(false, false, false, false)]
+    [Arguments(false, false, true, false)]
+    [Arguments(false, true, true, false)]
     public void CallsSubscribeAsyncOnPointerEventsNoneServiceWhenExpected(bool visible, bool autoClose, bool modal, bool callsStart)
     {
         Context.Services.Remove(ServiceDescriptor.Scoped<IPointerEventsNoneService, PointerEventsNoneService>());
@@ -305,10 +303,10 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true, true)]
-    [TestCase(true, false)]
-    [TestCase(false, true)]
-    [TestCase(false, false)]
+    [Arguments(true, true)]
+    [Arguments(true, false)]
+    [Arguments(false, true)]
+    [Arguments(false, false)]
     public async Task Overlay_HandleLockScrollChanges(bool absolute, bool lockscroll)
     {
         var scrollManagerMock = new Mock<IScrollManager>();

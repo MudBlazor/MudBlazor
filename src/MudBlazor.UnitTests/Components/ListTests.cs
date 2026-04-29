@@ -3,11 +3,10 @@ using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ListTests : BunitTest
     {
 
@@ -220,15 +219,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Default)]
-        [TestCase(Color.Primary)]
-        [TestCase(Color.Secondary)]
-        [TestCase(Color.Tertiary)]
-        [TestCase(Color.Info)]
-        [TestCase(Color.Success)]
-        [TestCase(Color.Warning)]
-        [TestCase(Color.Error)]
-        [TestCase(Color.Dark)]
+        [Arguments(Color.Default)]
+        [Arguments(Color.Primary)]
+        [Arguments(Color.Secondary)]
+        [Arguments(Color.Tertiary)]
+        [Arguments(Color.Info)]
+        [Arguments(Color.Success)]
+        [Arguments(Color.Warning)]
+        [Arguments(Color.Error)]
+        [Arguments(Color.Dark)]
         public void ListColor(Color color)
         {
             var comp = Context.Render<ListSelectionInitialValueTest>(x => x.Add(c => c.Color, color));
@@ -244,12 +243,12 @@ namespace MudBlazor.UnitTests.Components
         /// The child lists should honor the Dense property of their parent list if not overridden.
         /// </summary>
         [Test]
-        [TestCase(true, null, 9)]
-        [TestCase(false, null, 0)]
-        [TestCase(true, true, 9)]
-        [TestCase(false, false, 0)]
-        [TestCase(true, false, 5)]
-        [TestCase(false, true, 4)]
+        [Arguments(true, null, 9)]
+        [Arguments(false, null, 0)]
+        [Arguments(true, true, 9)]
+        [Arguments(false, false, 0)]
+        [Arguments(true, false, 5)]
+        [Arguments(false, true, 4)]
         public void ListDenseInheritance(bool dense, bool? innerListDense, int expectedDenseClassCount)
         {
             var comp = Context.Render<ListDenseInheritanceTest>(x => x.Add(c => c.Dense, dense).Add(c => c.InnerListDense, innerListDense));
@@ -478,12 +477,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true, null, true)]
-        [TestCase(true, true, true)]
-        [TestCase(true, false, false)]
-        [TestCase(false, null, false)]
-        [TestCase(false, true, true)]
-        [TestCase(false, false, false)]
+        [Arguments(true, null, true)]
+        [Arguments(true, true, true)]
+        [Arguments(true, false, false)]
+        [Arguments(false, null, false)]
+        [Arguments(false, true, true)]
+        [Arguments(false, false, false)]
         public void SettingGuttersOnList_Should_OverrideGuttersOnItemsWithoutGuttersSetting(bool listGutters, bool? itemGutters, bool resultingGutters)
         {
             var comp = Context.Render<ListItemGuttersTest>(self => self

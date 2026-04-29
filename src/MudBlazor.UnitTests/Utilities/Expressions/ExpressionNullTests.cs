@@ -5,12 +5,9 @@
 using System.Linq.Expressions;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Expressions;
-
 #nullable enable
-[TestFixture]
 public class ExpressionNullTests
 {
     [Test]

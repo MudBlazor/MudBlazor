@@ -5,16 +5,14 @@
 using System.Globalization;
 using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts;
-
-[TestFixture]
 public class SplineInterpolationTests : BunitTest
 {
-    [TestCase(InterpolationOption.NaturalSpline)]
-    [TestCase(InterpolationOption.EndSlope)]
-    [TestCase(InterpolationOption.Periodic)]
+    [Test]
+    [Arguments(InterpolationOption.NaturalSpline)]
+    [Arguments(InterpolationOption.EndSlope)]
+    [Arguments(InterpolationOption.Periodic)]
     public void SplineInterpolator_ShouldReturnOriginalPoint_ForSinglePoint(InterpolationOption option)
     {
         var spline = CreateInterpolator(option, [0], [10]);
@@ -23,9 +21,10 @@ public class SplineInterpolationTests : BunitTest
         spline.InterpolatedYs.Should().Equal([10]);
     }
 
-    [TestCase(InterpolationOption.NaturalSpline)]
-    [TestCase(InterpolationOption.EndSlope)]
-    [TestCase(InterpolationOption.Periodic)]
+    [Test]
+    [Arguments(InterpolationOption.NaturalSpline)]
+    [Arguments(InterpolationOption.EndSlope)]
+    [Arguments(InterpolationOption.Periodic)]
     public void SplineInterpolator_ShouldPreserveEndpoints_ForTwoPoints(InterpolationOption option)
     {
         var spline = CreateInterpolator(option, [0, 1], [10, 20]);
@@ -41,9 +40,10 @@ public class SplineInterpolationTests : BunitTest
         AssertFinite(spline.InterpolatedYs);
     }
 
-    [TestCase(InterpolationOption.NaturalSpline)]
-    [TestCase(InterpolationOption.EndSlope)]
-    [TestCase(InterpolationOption.Periodic)]
+    [Test]
+    [Arguments(InterpolationOption.NaturalSpline)]
+    [Arguments(InterpolationOption.EndSlope)]
+    [Arguments(InterpolationOption.Periodic)]
     public void SplineInterpolator_ShouldReturnFiniteValues_ForThreePoints(InterpolationOption option)
     {
         var spline = CreateInterpolator(option, [0, 1, 2], [10, 20, 15]);
@@ -59,9 +59,10 @@ public class SplineInterpolationTests : BunitTest
         AssertFinite(spline.InterpolatedYs);
     }
 
-    [TestCase(InterpolationOption.NaturalSpline)]
-    [TestCase(InterpolationOption.EndSlope)]
-    [TestCase(InterpolationOption.Periodic)]
+    [Test]
+    [Arguments(InterpolationOption.NaturalSpline)]
+    [Arguments(InterpolationOption.EndSlope)]
+    [Arguments(InterpolationOption.Periodic)]
     public void SplineInterpolator_LargeData_ShouldRemainFinite(InterpolationOption option)
     {
         var n = 1000;

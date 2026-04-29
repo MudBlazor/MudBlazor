@@ -6,19 +6,18 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.ThemeProvider;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
 #nullable enable
-    [TestFixture]
     public class ThemeProviderTests : BunitTest
     {
         [Test]
-        [TestCase("en-us")]
-        [TestCase("de-DE")]
-        [TestCase("he-IL")]
-        [TestCase("ar-ER")]
+        [Arguments("en-us")]
+        [Arguments("de-DE")]
+        [Arguments("he-IL")]
+        [Arguments("ar-ER")]
         public void DifferentCultures(string cultureString)
         {
             var culture = new CultureInfo(cultureString, false);
@@ -333,11 +332,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("")]
-        [TestCase("root")]
-        [TestCase("host")]
-        [TestCase(":root")]
-        [TestCase(":host")]
+        [Arguments("")]
+        [Arguments("root")]
+        [Arguments("host")]
+        [Arguments(":root")]
+        [Arguments(":host")]
         public void PseudoCssScope(string scope)
         {
             var mudTheme = new MudTheme

@@ -14,11 +14,10 @@ using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.FileUpload;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class FileUploadTests : BunitTest
     {
         /// <summary>
@@ -310,8 +309,8 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies files are appended correctly
         /// </summary>
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void FileUploadAppendMultiple(bool appendMultiple)
         {
             var comp = Context.Render<FileUploadAppendMultipleTest>(p =>
@@ -649,9 +648,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(typeof(IBrowserFile))]
-        [TestCase(typeof(IReadOnlyList<IBrowserFile>))]
-        [TestCase(null)]
+        [Arguments(typeof(IBrowserFile))]
+        [Arguments(typeof(IReadOnlyList<IBrowserFile>))]
+        [Arguments(null)]
         public void GetFilenames_ShouldNotThrow_ForDifferentTypes(Type type)
         {
             // Act & Assert

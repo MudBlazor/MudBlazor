@@ -4,12 +4,10 @@
 
 using AwesomeAssertions;
 using MudBlazor.UnitTests.Utilities.Background.Mocks;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Background;
-
 #nullable enable
-[TestFixture]
 public class BackgroundWorkerTests
 {
     [Test]
@@ -41,13 +39,13 @@ public class BackgroundWorkerTests
     }
 
     [Test]
-    public void StartAsync_ReturnsLongRunningTaskIfFailed()
+    public async Task StartAsync_ReturnsLongRunningTaskIfFailed()
     {
         var tcs = new TaskCompletionSource<object>();
         tcs.TrySetException(new Exception("fail!"));
         var worker = new MyBackgroundWorkerMock(tcs.Task);
 
-        var exception = Assert.ThrowsAsync<Exception>(() => worker.StartAsync(CancellationToken.None));
+        var exception = await Assert.ThrowsAsync<Exception>(() => worker.StartAsync(CancellationToken.None));
 
         exception?.Message.Should().Be("fail!");
     }
@@ -98,7 +96,7 @@ public class BackgroundWorkerTests
 
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
 
-        Assert.ThrowsAsync<AggregateException>(() => worker.StopAsync(cts.Token));
+        await Assert.ThrowsAsync<AggregateException>(() => worker.StopAsync(cts.Token));
         worker.TokenCalls.Should().Be(2);
     }
 
@@ -123,7 +121,7 @@ public class BackgroundWorkerTests
 
         await tokenSource.CancelAsync();
 
-        Assert.ThrowsAsync<TaskCanceledException>(() => worker.ExecutingTask);
+        await Assert.ThrowsAsync<TaskCanceledException>(() => worker.ExecutingTask);
     }
 
     [Test]

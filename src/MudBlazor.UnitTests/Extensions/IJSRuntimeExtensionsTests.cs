@@ -7,7 +7,7 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.Mocks;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests
 {
@@ -40,7 +40,8 @@ namespace MudBlazor.UnitTests
             runtimeMock.Verify();
         }
 
-        [TestCaseSource(nameof(_caughtExceptions))]
+        [Test]
+        [MethodDataSource(nameof(_caughtExceptions))]
         public async Task InvokeVoidAsyncWithErrorHandling_Exception<T>(T ex) where T : Exception
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
@@ -94,7 +95,8 @@ namespace MudBlazor.UnitTests
             runtimeMock.Verify();
         }
 
-        [TestCaseSource(nameof(_caughtExceptions))]
+        [Test]
+        [MethodDataSource(nameof(_caughtExceptions))]
         public async Task InvokeAsyncWithErrorHandling_Exception_WithDefaultValue<T>(T ex) where T : Exception
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
@@ -113,7 +115,8 @@ namespace MudBlazor.UnitTests
             runtimeMock.Verify();
         }
 
-        [TestCaseSource(nameof(_caughtExceptions))]
+        [Test]
+        [MethodDataSource(nameof(_caughtExceptions))]
         public async Task InvokeAsyncWithErrorHandling_Exception_WithFallbackValue<T>(T ex) where T : Exception
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);

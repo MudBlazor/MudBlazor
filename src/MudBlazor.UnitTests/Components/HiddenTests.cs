@@ -7,20 +7,19 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Hidden;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class HiddenTests : BunitTest
     {
         [Test]
-        [TestCase(false, false, false)]
-        [TestCase(false, true, true)]
-        [TestCase(true, false, true)]
-        [TestCase(true, true, false)]
-        public void Content_Visible(bool mediaResult, bool invert, bool isHidden)
+        [Arguments(false, false, false)]
+        [Arguments(false, true, true)]
+        [Arguments(true, false, true)]
+        [Arguments(true, true, false)]
+        public async Task Content_Visible(bool mediaResult, bool invert, bool isHidden)
         {
             BrowserWindowSize GetBrowserSize()
             {
@@ -47,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (isHidden)
             {
-                Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
+                await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("p"));
             }
             else
             {
@@ -86,7 +85,7 @@ namespace MudBlazor.UnitTests.Components
 
             await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
 
-            Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => component.Find("p"));
 
             await component.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 1080, Width = 1920 }, Breakpoint.Xl, subscription.JavaScriptListenerId));
             component.Find("p").TextContent.Should().Be("MudHidden content");
@@ -123,7 +122,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Invert, true));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find("p"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find("p"));
 
             jsRuntimeMock.Verify();
         }
@@ -156,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
 
             await component.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.Breakpoint, Breakpoint.Md));
 
-            Assert.Throws<ElementNotFoundException>(() => component.Find("p"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => component.Find("p"));
 
             jsRuntimeMock.Verify();
         }
@@ -281,7 +280,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [NonParallelizable]
+        [NotInParallel]
         public async Task TestSemaphore_RenderInParallel()
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();

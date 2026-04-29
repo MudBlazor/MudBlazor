@@ -5,12 +5,10 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Throttle;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Throttle;
-
 #nullable enable
-[TestFixture]
 public class ThrottleDispatcherTests
 {
     [Test]
@@ -89,7 +87,7 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_ExceptionInAction_PropagatesException()
+    public async Task ThrottleAsync_ExceptionInAction_PropagatesException()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
@@ -99,8 +97,7 @@ public class ThrottleDispatcherTests
         }
 
         // Act & Assert
-        var exception = Assert.ThrowsAsync<InvalidOperationException>(
-            () => dispatcher.ThrottleAsync(ThrowingAction));
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => dispatcher.ThrottleAsync(ThrowingAction));
         exception!.Message.Should().Be("Test exception");
     }
 
@@ -124,8 +121,7 @@ public class ThrottleDispatcherTests
         }
 
         // Act
-        Assert.ThrowsAsync<InvalidOperationException>(
-            () => dispatcher.ThrottleAsync(ThrowingAction));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => dispatcher.ThrottleAsync(ThrowingAction));
         counter.Should().Be(1);
 
         // Should be able to call immediately after exception
@@ -291,7 +287,7 @@ public class ThrottleDispatcherTests
         dispatcher.Dispose();
 
         // Assert - Should not throw, just pass if we get here
-        Assert.Pass();
+        ;
     }
 
     [Test]
@@ -326,22 +322,21 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public async Task Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(-100));
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(-100));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]
-    public void ThrottleAsync_NullAction_ThrowsArgumentNullException()
+    public async Task ThrottleAsync_NullAction_ThrowsArgumentNullException()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
 
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await dispatcher.ThrottleAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await dispatcher.ThrottleAsync(null!));
     }
 
     [Test]

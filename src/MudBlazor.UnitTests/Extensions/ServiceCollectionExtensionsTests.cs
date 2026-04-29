@@ -11,12 +11,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests;
-
 #nullable enable
-[TestFixture]
 public class ServiceCollectionExtensionsTests
 {
     [Test]

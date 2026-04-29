@@ -7,12 +7,9 @@ using MudBlazor.State;
 using MudBlazor.State.Builder;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Invocation;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterHandlerUniquenessComparerTests
 {
     [Test]

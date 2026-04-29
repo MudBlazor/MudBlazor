@@ -1,13 +1,10 @@
 ﻿using System.Text;
 using AwesomeAssertions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities;
-
-[TestFixture]
 public class StringBuilderCacheTests
 {
-    [SetUp]
+    [Before(HookType.Test)]
     public void SetUp()
     {
         DrainCache();

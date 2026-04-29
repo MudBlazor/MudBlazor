@@ -6,12 +6,9 @@ using AwesomeAssertions;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Converter.Dispatcher;
 using MudBlazor.Utilities.Exceptions;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Converters;
-
 #nullable enable
-[TestFixture]
 public class TypeDispatcherPolicyTests
 {
     [Test]

@@ -9,14 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Tabs;
 using MudBlazor.UnitTests.TestComponents.Tabs.KeepTabsAlive;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class TabsTests : BunitTest
     {
-        [SetUp]
+        [Before(HookType.Test)]
         public override void Setup()
         {
             base.Setup();
@@ -232,10 +231,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(400.0, 50)] // centered tab
-        [TestCase(300.0, 100)]
-        [TestCase(200.0, 150)] // centered tab
-        [TestCase(100.0, 200)] // centered tab
+        [Arguments(400.0, 50)] // centered tab
+        [Arguments(300.0, 100)]
+        [Arguments(200.0, 150)] // centered tab
+        [Arguments(100.0, 200)] // centered tab
         public async Task ScrollToItem_CentralizeViewAroundActiveItem(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
@@ -264,10 +263,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(400.0, 45)]
-        [TestCase(300.0, 95)] // formula beside edges is presize - half viewport - half panel
-        [TestCase(200.0, 145)] // selected panel 2 so 2 presize panels (0 and 1) or 200
-        [TestCase(100.0, 195)] // 200 - (110 / 2 = 55) + (100 / 2 = 50) = 195
+        [Arguments(400.0, 45)]
+        [Arguments(300.0, 95)] // formula beside edges is presize - half viewport - half panel
+        [Arguments(200.0, 145)] // selected panel 2 so 2 presize panels (0 and 1) or 200
+        [Arguments(100.0, 195)] // 200 - (110 / 2 = 55) + (100 / 2 = 50) = 195
         public async Task ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
@@ -1050,8 +1049,8 @@ namespace MudBlazor.UnitTests.Components
         /// The header should be rendered based on the value of header position.
         /// </summary>
         [Test]
-        [TestCase(TabHeaderPosition.After)]
-        [TestCase(TabHeaderPosition.Before)]
+        [Arguments(TabHeaderPosition.After)]
+        [Arguments(TabHeaderPosition.Before)]
         public async Task RenderHeaderBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.Render<TabsWithHeaderTest>();
@@ -1096,8 +1095,8 @@ namespace MudBlazor.UnitTests.Components
         /// The panel header header should be rendered based on the value of header position.
         /// </summary>
         [Test]
-        [TestCase(TabHeaderPosition.After)]
-        [TestCase(TabHeaderPosition.Before)]
+        [Arguments(TabHeaderPosition.After)]
+        [Arguments(TabHeaderPosition.Before)]
         public async Task RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.Render<TabsWithHeaderTest>();
@@ -1237,7 +1236,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find(".mud-overlay").ClickAsync();
 
             //no menu item should be visible anymore
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".my-menu-item-1"));
         }
 
         [Test]
@@ -1364,8 +1363,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
+        [Test]
+        [Arguments(true)]
+        [Arguments(false)]
         public void TabPanel_Hidden_Class(bool visible)
         {
             var comp = Context.Render<TabsVisibleTest>(parameters => parameters.Add(x => x.Visible, visible));
@@ -1781,8 +1781,8 @@ namespace MudBlazor.UnitTests.Components
             result.Should().Be("test-tab-list-id");
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         [Test]
         /// <summary>
         /// A test to ensure TabWrapperContent and Tooltip is rendered in both regular and EnableDragandDrop modes

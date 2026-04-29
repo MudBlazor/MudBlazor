@@ -5,12 +5,11 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Slider;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 #nullable enable
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class SliderTests : BunitTest
     {
         [Test]
@@ -41,9 +40,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Small, "small")]
-        [TestCase(Size.Medium, "medium")]
-        [TestCase(Size.Large, "large")]
+        [Arguments(Size.Small, "small")]
+        [Arguments(Size.Medium, "medium")]
+        [Arguments(Size.Large, "large")]
         public void CheckSizeCssClass(Size size, string expectedSizeClass)
         {
             var comp = Context.Render<MudSlider<int>>(x => x.Add(p => p.Size, size));
@@ -67,9 +66,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Small, "small")]
-        [TestCase(Size.Medium, "medium")]
-        [TestCase(Size.Large, "large")]
+        [Arguments(Size.Small, "small")]
+        [Arguments(Size.Medium, "medium")]
+        [Arguments(Size.Large, "large")]
         public void CheckInputSizeCssClass(Size size, string expectedSizeClass)
         {
             var comp = Context.Render<MudSlider<int>>(x => x.Add(p => p.Size, size));
@@ -79,18 +78,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Default, "default")]
-        [TestCase(Color.Primary, "primary")]
-        [TestCase(Color.Secondary, "secondary")]
-        [TestCase(Color.Tertiary, "tertiary")]
-        [TestCase(Color.Info, "info")]
-        [TestCase(Color.Success, "success")]
-        [TestCase(Color.Warning, "warning")]
-        [TestCase(Color.Error, "error")]
-        [TestCase(Color.Dark, "dark")]
-        [TestCase(Color.Transparent, "transparent")]
-        [TestCase(Color.Inherit, "inherit")]
-        [TestCase(Color.Surface, "surface")]
+        [Arguments(Color.Default, "default")]
+        [Arguments(Color.Primary, "primary")]
+        [Arguments(Color.Secondary, "secondary")]
+        [Arguments(Color.Tertiary, "tertiary")]
+        [Arguments(Color.Info, "info")]
+        [Arguments(Color.Success, "success")]
+        [Arguments(Color.Warning, "warning")]
+        [Arguments(Color.Error, "error")]
+        [Arguments(Color.Dark, "dark")]
+        [Arguments(Color.Transparent, "transparent")]
+        [Arguments(Color.Inherit, "inherit")]
+        [Arguments(Color.Surface, "surface")]
         public void CheckColorCssClass(Color color, string expectedColorClass)
         {
             var comp = Context.Render<MudSlider<int>>(x => x.Add(p => p.Color, color));
@@ -287,12 +286,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.0, 100.0, 25.0, 5)]
-        [TestCase(0.0, 100.0, 10.0, 11)]
-        [TestCase(0.0, 100.0, 1.0, 101)]
+        [Arguments(0.0, 100.0, 25.0, 5)]
+        [Arguments(0.0, 100.0, 10.0, 11)]
+        [Arguments(0.0, 100.0, 1.0, 101)]
 
-        [TestCase(100.0, 200.0, 25.0, 5)]
-        [TestCase(-200.0, -100.0, 25.0, 5)]
+        [Arguments(100.0, 200.0, 25.0, 5)]
+        [Arguments(-200.0, -100.0, 25.0, 5)]
         public void TickMarksEnabled_CheckAmount(double min, double max, double step, int expectedAmount)
         {
             var comp = Context.Render<MudSlider<double>>(x =>
@@ -310,32 +309,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.0, 100.0, 0, "0")]
-        [TestCase(0.0, 100.0, 20, "20")]
-        [TestCase(0.0, 100.0, 22.5, "22.5")]
-        [TestCase(0.0, 100.0, 50, "50")]
-        [TestCase(0.0, 100.0, 100, "100")]
+        [Arguments(0.0, 100.0, 0, "0")]
+        [Arguments(0.0, 100.0, 20, "20")]
+        [Arguments(0.0, 100.0, 22.5, "22.5")]
+        [Arguments(0.0, 100.0, 50, "50")]
+        [Arguments(0.0, 100.0, 100, "100")]
 
-        [TestCase(0.0, 1.0, 0.0, "0")]
-        [TestCase(0.0, 1.0, 0.2, "20")]
-        [TestCase(0.0, 1.0, 0.5, "50")]
-        [TestCase(0.0, 1.0, 1, "100")]
+        [Arguments(0.0, 1.0, 0.0, "0")]
+        [Arguments(0.0, 1.0, 0.2, "20")]
+        [Arguments(0.0, 1.0, 0.5, "50")]
+        [Arguments(0.0, 1.0, 1, "100")]
 
-        [TestCase(1.0, 2.0, 1.0, "0")]
-        [TestCase(1.0, 2.0, 1.2, "20")]
-        [TestCase(1.0, 2.0, 1.5, "50")]
-        [TestCase(1.0, 2.0, 2, "100")]
+        [Arguments(1.0, 2.0, 1.0, "0")]
+        [Arguments(1.0, 2.0, 1.2, "20")]
+        [Arguments(1.0, 2.0, 1.5, "50")]
+        [Arguments(1.0, 2.0, 2, "100")]
 
-        [TestCase(-100.0, 100.0, -100.0, "0")]
-        [TestCase(-100.0, 100.0, -50, "25")]
-        [TestCase(-100.0, 100.0, 0, "50")]
-        [TestCase(-100.0, 100.0, 50, "75")]
-        [TestCase(-100.0, 100.0, 100, "100")]
+        [Arguments(-100.0, 100.0, -100.0, "0")]
+        [Arguments(-100.0, 100.0, -50, "25")]
+        [Arguments(-100.0, 100.0, 0, "50")]
+        [Arguments(-100.0, 100.0, 50, "75")]
+        [Arguments(-100.0, 100.0, 100, "100")]
 
-        [TestCase(0.0, 100.0, 110, "100")]
-        [TestCase(0.0, 100.0, -10, "0")]
-        [TestCase(-200.0, -100.0, -90, "100")]
-        [TestCase(-200.0, -100.0, -210, "0")]
+        [Arguments(0.0, 100.0, 110, "100")]
+        [Arguments(0.0, 100.0, -10, "0")]
+        [Arguments(-200.0, -100.0, -90, "100")]
+        [Arguments(-200.0, -100.0, -210, "0")]
         public void Percentage(double min, double max, double value, string expectedPercentage)
         {
             var cultures = new[] {
@@ -368,10 +367,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.0, 100.0, 50, "50")]
-        [TestCase(0.0, 100.0, 25, "25")]
-        [TestCase(0.0, 100.0, 0, "0")]
-        [TestCase(0.0, 100.0, 100, "100")]
+        [Arguments(0.0, 100.0, 50, "50")]
+        [Arguments(0.0, 100.0, 25, "25")]
+        [Arguments(0.0, 100.0, 0, "0")]
+        [Arguments(0.0, 100.0, 100, "100")]
         public void ValueLabelPosition_Rtl(double min, double max, double value, string expectedPercentage)
         {
             var comp = Context.Render<MudSlider<double>>(x =>
@@ -388,8 +387,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task CheckInput(bool immediate)
         {
             var comp = Context.Render<MudSlider<double>>(x =>
@@ -407,12 +406,12 @@ namespace MudBlazor.UnitTests.Components
 
             if (immediate == false)
             {
-                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().InputAsync(value));
+                await Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().InputAsync(value));
                 await Input().ChangeAsync(value);
             }
             else
             {
-                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().ChangeAsync(value));
+                await Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().ChangeAsync(value));
                 await Input().InputAsync(value);
             }
 
@@ -420,11 +419,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(null)]
-        [TestCase(0.0)]
-        [TestCase(20.5)]
-        [TestCase(75.5)]
-        [TestCase(100.0)]
+        [Arguments(null)]
+        [Arguments(0.0)]
+        [Arguments(20.5)]
+        [Arguments(75.5)]
+        [Arguments(100.0)]
         [SetCulture("en-US")]
         public async Task NullableBinding(double? value)
         {
@@ -437,11 +436,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(null)]
-        [TestCase(0.0)]
-        [TestCase(20.5)]
-        [TestCase(75.5)]
-        [TestCase(100.0)]
+        [Arguments(null)]
+        [Arguments(0.0)]
+        [Arguments(20.5)]
+        [Arguments(75.5)]
+        [Arguments(100.0)]
         [SetCulture("en-US")]
         public async Task TwoBindValues1(double? value)
         {
@@ -484,10 +483,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.0, "$0.00")]
-        [TestCase(20.5, "$20.50")]
-        [TestCase(75.5, "$75.50")]
-        [TestCase(100.0, "$100.00")]
+        [Arguments(0.0, "$0.00")]
+        [Arguments(20.5, "$20.50")]
+        [Arguments(75.5, "$75.50")]
+        [Arguments(100.0, "$100.00")]
         public void CustomCultureAndFormatting(decimal value, string expectedValueLabel)
         {
             var customCulture = (CultureInfo)CultureInfo.GetCultureInfo("en").Clone();

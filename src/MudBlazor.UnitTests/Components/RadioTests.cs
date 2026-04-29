@@ -4,11 +4,10 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using MudBlazor.UnitTests.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class RadioTests : BunitTest
     {
         [Test]

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Components;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Charts
             "#01153E", "#2EE8BB", "#EBDDE2"
         };
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 

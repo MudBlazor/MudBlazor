@@ -6,14 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.Shared.Mocks;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class PageContentNavigationTests : BunitTest
     {
-        [SetUp]
+        [Before(HookType.Test)]
         public override void Setup()
         {
             base.Setup();
@@ -35,8 +33,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task AddSection(bool withUpdate)
         {
             var comp = Context.Render<MudPageContentNavigation>();

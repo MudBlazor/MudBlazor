@@ -1,10 +1,8 @@
 ﻿using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class StackTests : BunitTest
     {
         [Test]
@@ -49,23 +47,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0)]
-        [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
-        [TestCase(6)]
-        [TestCase(7)]
-        [TestCase(8)]
-        [TestCase(9)]
-        [TestCase(10)]
-        [TestCase(11)]
-        [TestCase(12)]
-        [TestCase(13)]
-        [TestCase(14)]
-        [TestCase(15)]
-        [TestCase(16)]
+        [Arguments(0)]
+        [Arguments(1)]
+        [Arguments(2)]
+        [Arguments(3)]
+        [Arguments(4)]
+        [Arguments(5)]
+        [Arguments(6)]
+        [Arguments(7)]
+        [Arguments(8)]
+        [Arguments(9)]
+        [Arguments(10)]
+        [Arguments(11)]
+        [Arguments(12)]
+        [Arguments(13)]
+        [Arguments(14)]
+        [Arguments(15)]
+        [Arguments(16)]
         public void CheckSpacingClass(int spacing)
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.Spacing, spacing));
@@ -75,54 +73,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Breakpoint.None)]
-        [TestCase(Breakpoint.Always)]
-        [TestCase(Breakpoint.Xs)]
-        [TestCase(Breakpoint.Sm)]
-        [TestCase(Breakpoint.Md)]
-        [TestCase(Breakpoint.Lg)]
-        [TestCase(Breakpoint.Xl)]
-        [TestCase(Breakpoint.Xxl)]
-        [TestCase(Breakpoint.SmAndDown)]
-        [TestCase(Breakpoint.MdAndDown)]
-        [TestCase(Breakpoint.LgAndDown)]
-        [TestCase(Breakpoint.XlAndDown)]
-        [TestCase(Breakpoint.SmAndUp)]
-        [TestCase(Breakpoint.MdAndUp)]
-        [TestCase(Breakpoint.LgAndUp)]
-        [TestCase(Breakpoint.XlAndUp)]
-        [TestCase(Breakpoint.None, true)]
-        [TestCase(Breakpoint.Always, true)]
-        [TestCase(Breakpoint.Xs, true)]
-        [TestCase(Breakpoint.Sm, true)]
-        [TestCase(Breakpoint.Md, true)]
-        [TestCase(Breakpoint.Lg, true)]
-        [TestCase(Breakpoint.Xl, true)]
-        [TestCase(Breakpoint.Xxl, true)]
-        [TestCase(Breakpoint.SmAndDown, true)]
-        [TestCase(Breakpoint.MdAndDown, true)]
-        [TestCase(Breakpoint.LgAndDown, true)]
-        [TestCase(Breakpoint.XlAndDown, true)]
-        [TestCase(Breakpoint.SmAndUp, true)]
-        [TestCase(Breakpoint.MdAndUp, true)]
-        [TestCase(Breakpoint.LgAndUp, true)]
-        [TestCase(Breakpoint.XlAndUp, true)]
-        [TestCase(Breakpoint.None, true, true)]
-        [TestCase(Breakpoint.Always, true, true)]
-        [TestCase(Breakpoint.Xs, true, true)]
-        [TestCase(Breakpoint.Sm, true, true)]
-        [TestCase(Breakpoint.Md, true, true)]
-        [TestCase(Breakpoint.Lg, true, true)]
-        [TestCase(Breakpoint.Xl, true, true)]
-        [TestCase(Breakpoint.Xxl, true, true)]
-        [TestCase(Breakpoint.SmAndDown, true, true)]
-        [TestCase(Breakpoint.MdAndDown, true, true)]
-        [TestCase(Breakpoint.LgAndDown, true, true)]
-        [TestCase(Breakpoint.XlAndDown, true, true)]
-        [TestCase(Breakpoint.SmAndUp, true, true)]
-        [TestCase(Breakpoint.MdAndUp, true, true)]
-        [TestCase(Breakpoint.LgAndUp, true, true)]
-        [TestCase(Breakpoint.XlAndUp, true, true)]
+        [Arguments(Breakpoint.None)]
+        [Arguments(Breakpoint.Always)]
+        [Arguments(Breakpoint.Xs)]
+        [Arguments(Breakpoint.Sm)]
+        [Arguments(Breakpoint.Md)]
+        [Arguments(Breakpoint.Lg)]
+        [Arguments(Breakpoint.Xl)]
+        [Arguments(Breakpoint.Xxl)]
+        [Arguments(Breakpoint.SmAndDown)]
+        [Arguments(Breakpoint.MdAndDown)]
+        [Arguments(Breakpoint.LgAndDown)]
+        [Arguments(Breakpoint.XlAndDown)]
+        [Arguments(Breakpoint.SmAndUp)]
+        [Arguments(Breakpoint.MdAndUp)]
+        [Arguments(Breakpoint.LgAndUp)]
+        [Arguments(Breakpoint.XlAndUp)]
+        [Arguments(Breakpoint.None, true)]
+        [Arguments(Breakpoint.Always, true)]
+        [Arguments(Breakpoint.Xs, true)]
+        [Arguments(Breakpoint.Sm, true)]
+        [Arguments(Breakpoint.Md, true)]
+        [Arguments(Breakpoint.Lg, true)]
+        [Arguments(Breakpoint.Xl, true)]
+        [Arguments(Breakpoint.Xxl, true)]
+        [Arguments(Breakpoint.SmAndDown, true)]
+        [Arguments(Breakpoint.MdAndDown, true)]
+        [Arguments(Breakpoint.LgAndDown, true)]
+        [Arguments(Breakpoint.XlAndDown, true)]
+        [Arguments(Breakpoint.SmAndUp, true)]
+        [Arguments(Breakpoint.MdAndUp, true)]
+        [Arguments(Breakpoint.LgAndUp, true)]
+        [Arguments(Breakpoint.XlAndUp, true)]
+        [Arguments(Breakpoint.None, true, true)]
+        [Arguments(Breakpoint.Always, true, true)]
+        [Arguments(Breakpoint.Xs, true, true)]
+        [Arguments(Breakpoint.Sm, true, true)]
+        [Arguments(Breakpoint.Md, true, true)]
+        [Arguments(Breakpoint.Lg, true, true)]
+        [Arguments(Breakpoint.Xl, true, true)]
+        [Arguments(Breakpoint.Xxl, true, true)]
+        [Arguments(Breakpoint.SmAndDown, true, true)]
+        [Arguments(Breakpoint.MdAndDown, true, true)]
+        [Arguments(Breakpoint.LgAndDown, true, true)]
+        [Arguments(Breakpoint.XlAndDown, true, true)]
+        [Arguments(Breakpoint.SmAndUp, true, true)]
+        [Arguments(Breakpoint.MdAndUp, true, true)]
+        [Arguments(Breakpoint.LgAndUp, true, true)]
+        [Arguments(Breakpoint.XlAndUp, true, true)]
         public void CheckBreakpointClass(Breakpoint breakpoint, bool row = false, bool reverse = false)
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.Breakpoint, breakpoint).Add(c => c.Row, row).Add(c => c.Reverse, reverse));
@@ -193,12 +191,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Justify.FlexStart, "start")]
-        [TestCase(Justify.Center, "center")]
-        [TestCase(Justify.FlexEnd, "end")]
-        [TestCase(Justify.SpaceBetween, "space-between")]
-        [TestCase(Justify.SpaceAround, "space-around")]
-        [TestCase(Justify.SpaceEvenly, "space-evenly")]
+        [Arguments(Justify.FlexStart, "start")]
+        [Arguments(Justify.Center, "center")]
+        [Arguments(Justify.FlexEnd, "end")]
+        [Arguments(Justify.SpaceBetween, "space-between")]
+        [Arguments(Justify.SpaceAround, "space-around")]
+        [Arguments(Justify.SpaceEvenly, "space-evenly")]
         public void CheckJustifyClass(Justify justify, string expectedClass)
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.Justify, justify));
@@ -208,11 +206,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(AlignItems.Baseline, "baseline")]
-        [TestCase(AlignItems.Center, "center")]
-        [TestCase(AlignItems.Start, "start")]
-        [TestCase(AlignItems.End, "end")]
-        [TestCase(AlignItems.Stretch, "stretch")]
+        [Arguments(AlignItems.Baseline, "baseline")]
+        [Arguments(AlignItems.Center, "center")]
+        [Arguments(AlignItems.Start, "start")]
+        [Arguments(AlignItems.End, "end")]
+        [Arguments(AlignItems.Stretch, "stretch")]
         public void CheckAlignItemsClass(AlignItems align, string expectedClass)
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.AlignItems, align));
@@ -222,11 +220,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(StretchItems.Start, "start")]
-        [TestCase(StretchItems.End, "end")]
-        [TestCase(StretchItems.StartAndEnd, "start-and-end")]
-        [TestCase(StretchItems.Middle, "middle")]
-        [TestCase(StretchItems.All, "all")]
+        [Arguments(StretchItems.Start, "start")]
+        [Arguments(StretchItems.End, "end")]
+        [Arguments(StretchItems.StartAndEnd, "start-and-end")]
+        [Arguments(StretchItems.Middle, "middle")]
+        [Arguments(StretchItems.All, "all")]
         public void CheckStretchItemsClass(StretchItems stretch, string expectedClass)
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.StretchItems, stretch));
@@ -245,9 +243,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Wrap.NoWrap, "nowrap")]
-        [TestCase(Wrap.Wrap, "wrap")]
-        [TestCase(Wrap.WrapReverse, "wrap-reverse")]
+        [Arguments(Wrap.NoWrap, "nowrap")]
+        [Arguments(Wrap.Wrap, "wrap")]
+        [Arguments(Wrap.WrapReverse, "wrap-reverse")]
         public void CheckWrapClass(Wrap wrap, string expectedClass)
         {
             var stack = Context.Render<MudStack>(x => x.Add(c => c.Wrap, wrap));

@@ -4,12 +4,10 @@ using Bunit;
 using Bunit.Rendering;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterStateUsageTests : BunitTest
 {
     [Test]
@@ -127,7 +125,8 @@ public class ParameterStateUsageTests : BunitTest
         ParamChanges().Children[1].TextContent.Trimmed().Should().Be("DoubleParam: 10001=>10002");
     }
 
-    [Test(Description = "Tests a very special case described in ParameterStateInternal.HasParameterChanged when the associated value and comparer change at same time.")]
+    [Test]
+    [Property("Description", "Tests a very special case described in ParameterStateInternal.HasParameterChanged when the associated value and comparer change at same time.")]
     public async Task SwapComparerAtSameTimeIntegration()
     {
         var comp = Context.Render<ParameterStateComparerSwapTestComp>(parameters => parameters

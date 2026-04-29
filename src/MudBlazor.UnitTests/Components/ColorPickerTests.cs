@@ -11,11 +11,10 @@ using MudBlazor.Extensions;
 using MudBlazor.Resources;
 using MudBlazor.UnitTests.TestComponents.ColorPicker;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ColorPickerTests : BunitTest
     {
         private const double _maxXForColorPanel = 312.0;
@@ -347,13 +346,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("#00000088", ColorPickerMode.RGB)]
-        [TestCase("#00000088", ColorPickerMode.HSL)]
-        [TestCase("#00000188", ColorPickerMode.RGB)]
-        [TestCase("#00000188", ColorPickerMode.HSL)]
-        [TestCase("#ff0000ff", ColorPickerMode.HSL)]
-        [TestCase("#0f0f", ColorPickerMode.RGB)]
-        [TestCase("#0f0f", ColorPickerMode.HSL)]
+        [Arguments("#00000088", ColorPickerMode.RGB)]
+        [Arguments("#00000088", ColorPickerMode.HSL)]
+        [Arguments("#00000188", ColorPickerMode.RGB)]
+        [Arguments("#00000188", ColorPickerMode.HSL)]
+        [Arguments("#ff0000ff", ColorPickerMode.HSL)]
+        [Arguments("#0f0f", ColorPickerMode.RGB)]
+        [Arguments("#0f0f", ColorPickerMode.HSL)]
         public async Task InitiallyBoundValue_ShouldInitializeAllVisibleControls(string colorHex, ColorPickerMode mode)
         {
             var expectedColor = new MudColor(colorHex);
@@ -361,8 +360,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ColorPickerMode.RGB)]
-        [TestCase(ColorPickerMode.HSL)]
+        [Arguments(ColorPickerMode.RGB)]
+        [Arguments(ColorPickerMode.HSL)]
         public async Task BoundValueSetAfterInitialRender_ShouldRefreshAllVisibleControls(ColorPickerMode mode)
         {
             var initialColor = new MudColor("#ff000088");
@@ -380,11 +379,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("broken", "#00000088")]
-        [TestCase("alpha", "#00000188")]
-        [TestCase("lightness", "#ff0000ff")]
-        [TestCase("pseudo", "#0f0f")]
-        [TestCase("async", "#00ff")]
+        [Arguments("broken", "#00000088")]
+        [Arguments("alpha", "#00000188")]
+        [Arguments("lightness", "#ff0000ff")]
+        [Arguments("pseudo", "#0f0f")]
+        [Arguments("async", "#00ff")]
         public async Task InitializationSnippet_ShouldInitializeRgbControls(string testId, string colorHex)
         {
             var comp = Context.Render<ColorPickerInitializationTest>();
@@ -396,11 +395,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("broken", "#00000088")]
-        [TestCase("alpha", "#00000188")]
-        [TestCase("lightness", "#ff0000ff")]
-        [TestCase("pseudo", "#0f0f")]
-        [TestCase("async", "#00ff")]
+        [Arguments("broken", "#00000088")]
+        [Arguments("alpha", "#00000188")]
+        [Arguments("lightness", "#ff0000ff")]
+        [Arguments("pseudo", "#0f0f")]
+        [Arguments("async", "#00ff")]
         public async Task InitializationSnippet_ShouldInitializeHslControls(string testId, string colorHex)
         {
             var comp = Context.Render<ColorPickerInitializationTest>();
@@ -417,7 +416,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(40, 256.78, _defaultYForColorPanel)]
+        [Arguments(40, 256.78, _defaultYForColorPanel)]
         public async Task SetR(byte r, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
@@ -431,7 +430,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(240, 196.3, 14.71)]
+        [Arguments(240, 196.3, 14.71)]
         public async Task SetG(byte g, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
@@ -446,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(90, 55.47, 161.76)]
+        [Arguments(90, 55.47, 161.76)]
         public async Task SetB(byte b, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
@@ -461,7 +460,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.9, _defaultXForColorPanel, _defaultYForColorPanel)]
+        [Arguments(0.9, _defaultXForColorPanel, _defaultYForColorPanel)]
         public async Task SetA_InRGBMode(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
@@ -476,7 +475,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(90, 208.46, _defaultYForColorPanel)]
+        [Arguments(90, 208.46, _defaultYForColorPanel)]
         public async Task SetH(int h, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -491,7 +490,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.4, 134.88, 61.76)]
+        [Arguments(0.4, 134.88, 61.76)]
         public async Task SetS(double s, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -506,7 +505,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.67, 163.43, 23.53)]
+        [Arguments(0.67, 163.43, 23.53)]
         public async Task SetL(double l, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -520,7 +519,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0.5, _defaultXForColorPanel, _defaultYForColorPanel)]
+        [Arguments(0.5, _defaultXForColorPanel, _defaultYForColorPanel)]
         public async Task SetAlpha_AsHLS(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -534,7 +533,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("#8cb829ff", 242.48, 69.61)]
+        [Arguments("#8cb829ff", 242.48, 69.61)]
         public async Task SetColorInput(string colorHexString, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
@@ -550,7 +549,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("#8qb829ff")]
+        [Arguments("#8qb829ff")]
         public async Task SetColorInput_InvalidNoChange(string colorHexString)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HEX));
@@ -673,7 +672,7 @@ namespace MudBlazor.UnitTests.Components
 
             var colorDot = comp.Find(_colorDotCssSelector);
             // no collection
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
             await colorDot.ClickAsync();
 
             // collection found
@@ -691,7 +690,7 @@ namespace MudBlazor.UnitTests.Components
             await colorDot.ClickAsync();
 
             // again no collection visible
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
         }
 
         [Test]
@@ -722,7 +721,7 @@ namespace MudBlazor.UnitTests.Components
 
             var colorDot = comp.Find(_colorDotCssSelector);
             // no collection
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-collection"));
             await colorDot.ClickAsync();
 
             var expectedColors = new MudColor[] { "#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff" };
@@ -751,7 +750,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowToolbar, false));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_toolbarCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowToolbar, true));
 
@@ -767,7 +766,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowColorField, false));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_mudColorPickerCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowColorField, true));
 
@@ -783,7 +782,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, false));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_colorDotCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowPreview, true));
 
@@ -814,7 +813,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSliders, false));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_slidersControlCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_slidersControlCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSliders, true));
 
@@ -822,9 +821,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ColorPickerMode.HEX)]
-        [TestCase(ColorPickerMode.HSL)]
-        [TestCase(ColorPickerMode.RGB)]
+        [Arguments(ColorPickerMode.HEX)]
+        [Arguments(ColorPickerMode.HSL)]
+        [Arguments(ColorPickerMode.RGB)]
         public async Task Toggle_Input(ColorPickerMode mode)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -838,7 +837,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.DisableInput, true));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_colorInputCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.DisableInput, false));
 
@@ -854,7 +853,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowModeSwitch, false));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_colorInputModeSwitchCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowModeSwitch, true));
 
@@ -908,8 +907,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ColorPickerMode.HSL)]
-        [TestCase(ColorPickerMode.RGB)]
+        [Arguments(ColorPickerMode.HSL)]
+        [Arguments(ColorPickerMode.RGB)]
         public async Task Toggle_Alpha(ColorPickerMode mode)
         {
             var color = new MudColor(12, 220, 124, 120);
@@ -926,7 +925,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, false));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
             comp.Instance.ColorValue.Should().Be(expectedColor);
             comp.Instance.TextValue.Should().Be(expectedColor.ToString(MudColorOutputFormats.Hex));
 
@@ -950,7 +949,7 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.ColorValue, color);
             });
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(_alphaInputCssSelector));
 
             await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowAlpha, false));
 
@@ -1002,9 +1001,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(PickerVariant.Static, false)]
-        [TestCase(PickerVariant.Inline, true)]
-        [TestCase(PickerVariant.Dialog, true)]
+        [Arguments(PickerVariant.Static, false)]
+        [Arguments(PickerVariant.Inline, true)]
+        [Arguments(PickerVariant.Dialog, true)]
         public async Task CloseButtonInToolbarVisible(PickerVariant variant, bool expectedVisibility)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1020,7 +1019,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (!expectedVisibility)
             {
-                Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-close-picker-button"));
+                await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-close-picker-button"));
             }
             else
             {
@@ -1029,9 +1028,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ColorPickerView.Spectrum, 0)]
-        [TestCase(ColorPickerView.Grid, 1)]
-        [TestCase(ColorPickerView.Palette, 2)]
+        [Arguments(ColorPickerView.Spectrum, 0)]
+        [Arguments(ColorPickerView.Grid, 1)]
+        [Arguments(ColorPickerView.Palette, 2)]
         public void ColorPickerView_Selection(ColorPickerView view, int index)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1210,8 +1209,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(PickerVariant.Inline)]
-        [TestCase(PickerVariant.Dialog)]
+        [Arguments(PickerVariant.Inline)]
+        [Arguments(PickerVariant.Dialog)]
         public async Task GridCompact_CloseOnSelect(PickerVariant variant)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1227,12 +1226,12 @@ namespace MudBlazor.UnitTests.Components
             await (await comp.WaitForElementAsync(".mud-picker-color-grid")).Children[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
 
         [Test]
-        [TestCase(PickerVariant.Inline)]
-        [TestCase(PickerVariant.Dialog)]
+        [Arguments(PickerVariant.Inline)]
+        [Arguments(PickerVariant.Dialog)]
         public async Task Palette_CloseOnSelect(PickerVariant variant)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1249,14 +1248,14 @@ namespace MudBlazor.UnitTests.Components
             await (await comp.WaitForElementAsync(".mud-picker-color-view-collection")).Children[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().Be(expectedColors[0]));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
 
         [Test]
-        [TestCase(PickerVariant.Inline, ColorPickerView.Grid)]
-        [TestCase(PickerVariant.Dialog, ColorPickerView.Grid)]
-        [TestCase(PickerVariant.Inline, ColorPickerView.Spectrum)]
-        [TestCase(PickerVariant.Dialog, ColorPickerView.Spectrum)]
+        [Arguments(PickerVariant.Inline, ColorPickerView.Grid)]
+        [Arguments(PickerVariant.Dialog, ColorPickerView.Grid)]
+        [Arguments(PickerVariant.Inline, ColorPickerView.Spectrum)]
+        [Arguments(PickerVariant.Dialog, ColorPickerView.Spectrum)]
         public async Task NoControls_CloseOnSelect(PickerVariant variant, ColorPickerView view)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1293,18 +1292,18 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => comp.Instance.ColorValue.Should().NotBe(_defaultColor));
 
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-container"));
         }
 
         [Test]
-        [TestCase(ColorPickerView.Spectrum, false, "#78797aff")]
-        [TestCase(ColorPickerView.Grid, false, "#78797aff")]
-        [TestCase(ColorPickerView.Palette, false, "#78797a")]
-        [TestCase(ColorPickerView.GridCompact, false, "#78797a")]
-        [TestCase(ColorPickerView.Spectrum, true, "#78797a")]
-        [TestCase(ColorPickerView.Grid, true, "#78797a")]
-        [TestCase(ColorPickerView.Palette, true, "#78797a")]
-        [TestCase(ColorPickerView.GridCompact, true, "#78797a")]
+        [Arguments(ColorPickerView.Spectrum, false, "#78797aff")]
+        [Arguments(ColorPickerView.Grid, false, "#78797aff")]
+        [Arguments(ColorPickerView.Palette, false, "#78797a")]
+        [Arguments(ColorPickerView.GridCompact, false, "#78797a")]
+        [Arguments(ColorPickerView.Spectrum, true, "#78797a")]
+        [Arguments(ColorPickerView.Grid, true, "#78797a")]
+        [Arguments(ColorPickerView.Palette, true, "#78797a")]
+        [Arguments(ColorPickerView.GridCompact, true, "#78797a")]
         public void TextOutput_Alpha(ColorPickerView view, bool disableAlpha, string expectedOutput)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1371,8 +1370,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task Spectrum_DragPointer(bool disableDragEffect)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
@@ -1492,13 +1491,13 @@ namespace MudBlazor.UnitTests.Components
 
             //ensure that the spectrum mode is still open and not the color grid
             _ = comp.Find(".mud-picker-color-overlay");
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-grid"));
 
             //change the view per parameter
             await comp.SetParametersAndRenderAsync(x => x.Add(y => y.ColorPickerView, ColorPickerView.GridCompact));
 
             //now the grid view should be visible
-            Assert.Throws<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
+            await Assert.ThrowsAsync<ElementNotFoundException>(() => comp.Find(".mud-picker-color-overlay"));
             _ = comp.Find(".mud-picker-color-grid");
         }
 

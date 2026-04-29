@@ -4,11 +4,9 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Link;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class LinkTests : BunitTest
 {
     [Test]
@@ -70,8 +68,9 @@ public class LinkTests : BunitTest
         linkElement.ClassList.Should().Contain("mud-link-disabled");
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
     public async Task ShouldExecute_OnClick(bool disabled)
     {
         var calls = 0;
@@ -131,9 +130,10 @@ public class LinkTests : BunitTest
         AlertText().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
     }
 
-    [TestCase(Color.Primary, "mud-primary-text")]
-    [TestCase(Color.Secondary, "mud-secondary-text")]
-    [TestCase(Color.Tertiary, "mud-tertiary-text")]
+    [Test]
+    [Arguments(Color.Primary, "mud-primary-text")]
+    [Arguments(Color.Secondary, "mud-secondary-text")]
+    [Arguments(Color.Tertiary, "mud-tertiary-text")]
     public void ColorProperty_AppliesCorrectClass(Color color, string expectedClass)
     {
         var comp = Context.Render<MudLink>(builder => builder
@@ -144,9 +144,10 @@ public class LinkTests : BunitTest
         linkElement.ClassList.Should().Contain(expectedClass);
     }
 
-    [TestCase(Typo.h1, "mud-typography-h1")]
-    [TestCase(Typo.subtitle1, "mud-typography-subtitle1")]
-    [TestCase(Typo.caption, "mud-typography-caption")]
+    [Test]
+    [Arguments(Typo.h1, "mud-typography-h1")]
+    [Arguments(Typo.subtitle1, "mud-typography-subtitle1")]
+    [Arguments(Typo.caption, "mud-typography-caption")]
     public void TypoProperty_AppliesCorrectClass(Typo typo, string expectedClass)
     {
         var comp = Context.Render<MudLink>(builder => builder
@@ -157,9 +158,10 @@ public class LinkTests : BunitTest
         linkElement.ClassList.Should().Contain(expectedClass);
     }
 
-    [TestCase(Underline.None, "mud-link-underline-none")]
-    [TestCase(Underline.Hover, "mud-link-underline-hover")]
-    [TestCase(Underline.Always, "mud-link-underline-always")]
+    [Test]
+    [Arguments(Underline.None, "mud-link-underline-none")]
+    [Arguments(Underline.Hover, "mud-link-underline-hover")]
+    [Arguments(Underline.Always, "mud-link-underline-always")]
     public void UnderlineProperty_AppliesCorrectClass(Underline underline, string expectedClass)
     {
         var comp = Context.Render<MudLink>(builder => builder
@@ -170,10 +172,11 @@ public class LinkTests : BunitTest
         linkElement.ClassList.Should().Contain(expectedClass);
     }
 
-    [TestCase("_blank")]
-    [TestCase("_self")]
-    [TestCase("_parent")]
-    [TestCase("_top")]
+    [Test]
+    [Arguments("_blank")]
+    [Arguments("_self")]
+    [Arguments("_parent")]
+    [Arguments("_top")]
     public void TargetProperty_AppliesCorrectAttribute(string target)
     {
         var comp = Context.Render<MudLink>(builder => builder

@@ -7,12 +7,10 @@ using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.State;
-
 #nullable enable
-[TestFixture]
 public class ParameterContainerTests
 {
     [Test]
@@ -188,7 +186,8 @@ public class ParameterContainerTests
         parameter2ChangedEventArgs!.Value.Should().Be(Parameter2NewValue);
     }
 
-    [Test(Description = "https://github.com/MudBlazor/MudBlazor/pull/12023")]
+    [Test]
+    [Property("Description", "https://github.com/MudBlazor/MudBlazor/pull/12023")]
     public async Task ParameterState_Snapshot()
     {
         var tcs1 = new TaskCompletionSource();

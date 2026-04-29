@@ -8,13 +8,11 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.Services.PointerEvents.Mocks;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services.PointerEvents;
-
 #nullable enable
 
-[TestFixture]
 public class PointerEventsNoneServiceTests
 {
     [Test]

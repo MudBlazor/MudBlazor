@@ -1,11 +1,10 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using MudBlazor.UnitTests.TestComponents.ToggleIconButton;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ToggleIconButtonTest : BunitTest
     {
         [Test]
@@ -94,8 +93,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Toggled.Should().BeFalse();
         }
 
-        [TestCase("icon-default", "icon-toggled", "icon-default", "icon-toggled")]
-        [TestCase("icon-default", null, "icon-default", "icon-default")]
+        [Test]
+        [Arguments("icon-default", "icon-toggled", "icon-default", "icon-toggled")]
+        [Arguments("icon-default", null, "icon-default", "icon-default")]
         public async Task GetIcon_ShouldReturnCorrectValueAsync(string icon, string toggledIcon, string expectedIcon, string expectedToggledIcon)
         {
             var comp = Context.Render<MudToggleIconButton>(parameters => parameters
@@ -113,8 +113,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetIcon().Should().Be(expectedToggledIcon);
         }
 
-        [TestCase(Size.Small, Size.Large, Size.Small, Size.Large)]
-        [TestCase(Size.Small, null, Size.Small, Size.Small)]
+        [Test]
+        [Arguments(Size.Small, Size.Large, Size.Small, Size.Large)]
+        [Arguments(Size.Small, null, Size.Small, Size.Small)]
         public async Task GetSize_ShouldReturnCorrectValueAsync(Size size, Size? toggledSize, Size expectedSize, Size expectedToggledSize)
         {
             var comp = Context.Render<MudToggleIconButton>(parameters => parameters
@@ -132,8 +133,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetSize().Should().Be(expectedToggledSize);
         }
 
-        [TestCase(Color.Tertiary, Color.Secondary, Color.Tertiary, Color.Secondary)]
-        [TestCase(Color.Tertiary, null, Color.Tertiary, Color.Tertiary)]
+        [Test]
+        [Arguments(Color.Tertiary, Color.Secondary, Color.Tertiary, Color.Secondary)]
+        [Arguments(Color.Tertiary, null, Color.Tertiary, Color.Tertiary)]
         public async Task GetColor_ShouldReturnCorrectValueAsync(Color color, Color? toggledColor, Color expectedColor, Color expectedToggledColor)
         {
             var comp = Context.Render<MudToggleIconButton>(parameters => parameters
@@ -151,8 +153,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetColor().Should().Be(expectedToggledColor);
         }
 
-        [TestCase(Variant.Outlined, Variant.Filled, Variant.Outlined, Variant.Filled)]
-        [TestCase(Variant.Outlined, null, Variant.Outlined, Variant.Outlined)]
+        [Test]
+        [Arguments(Variant.Outlined, Variant.Filled, Variant.Outlined, Variant.Filled)]
+        [Arguments(Variant.Outlined, null, Variant.Outlined, Variant.Outlined)]
         public async Task GetVariant_ShouldReturnCorrectValueAsync(Variant variant, Variant? toggledVariant, Variant expectedVariant, Variant expectedToggledVariant)
         {
             var comp = Context.Render<MudToggleIconButton>(parameters => parameters

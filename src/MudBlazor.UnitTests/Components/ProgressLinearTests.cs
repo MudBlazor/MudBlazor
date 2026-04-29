@@ -1,11 +1,9 @@
 ﻿using System.Globalization;
 using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ProgressLinearTests : BunitTest
     {
         [Test]
@@ -29,13 +27,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0, 100, 30, 20, 30.0, 20.0)]
-        [TestCase(0, 10, 3, 2, 30.0, 20.0)]
-        [TestCase(0, 10, 0.03, 0.02, 0.3, 0.2)]
+        [Arguments(0, 100, 30, 20, 30.0, 20.0)]
+        [Arguments(0, 10, 3, 2, 30.0, 20.0)]
+        [Arguments(0, 10, 0.03, 0.02, 0.3, 0.2)]
 
-        [TestCase(-100, 0, -70, -80, 30.0, 20.0)]
-        [TestCase(0, 200, 30, 20, 15, 10)]
-        [TestCase(200, 400, 230, 220, 15, 10)]
+        [Arguments(-100, 0, -70, -80, 30.0, 20.0)]
+        [Arguments(0, 200, 30, 20, 15, 10)]
+        [Arguments(200, 400, 230, 220, 15, 10)]
         public void CheckingPercentageAndBufferValue(double min, double max, double value, double buffervalue, double expectedValue, double expectedBufferValue)
         {
             var comp = Context.Render<MudProgressLinear>(x =>
@@ -54,15 +52,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0, 100, -30, -20, 0.0, 0.0)]
-        [TestCase(0, 100, 30, -20, 30, 0.0)]
-        [TestCase(0, 100, -30, 20, 0.0, 20)]
+        [Arguments(0, 100, -30, -20, 0.0, 0.0)]
+        [Arguments(0, 100, 30, -20, 30, 0.0)]
+        [Arguments(0, 100, -30, 20, 0.0, 20)]
 
-        [TestCase(0, 100, 130, 120, 100, 100)]
-        [TestCase(0, 100, 30, 120, 30, 100)]
-        [TestCase(0, 100, 130, 20, 100, 20)]
+        [Arguments(0, 100, 130, 120, 100, 100)]
+        [Arguments(0, 100, 30, 120, 30, 100)]
+        [Arguments(0, 100, 130, 20, 100, 20)]
 
-        [TestCase(0, 0, 30, 20, 0.0, 0.0)]
+        [Arguments(0, 0, 30, 20, 0.0, 0.0)]
 
         public void EnsureMaxAndMinConsitency(double min, double max, double value, double buffervalue, double expectedValue, double expectedBufferValue)
         {
@@ -82,8 +80,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void DefaultStructure(bool isVertical)
         {
             var comp = Context.Render<MudProgressLinear>(x =>
@@ -141,8 +139,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void BufferStructure(bool isVertical)
         {
             var comp = Context.Render<MudProgressLinear>(x =>
@@ -219,8 +217,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(true)]
+        [Arguments(true)]
+        [Arguments(true)]
         public void TestClassesForRounded(bool rounded)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
@@ -238,8 +236,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(true)]
+        [Arguments(true)]
+        [Arguments(true)]
         public void TestClassesForStriped(bool striped)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
@@ -257,8 +255,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(true)]
+        [Arguments(true)]
+        [Arguments(true)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
@@ -276,10 +274,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false, false)]
-        [TestCase(false, true)]
-        [TestCase(true, false)]
-        [TestCase(true, true)]
+        [Arguments(false, false)]
+        [Arguments(false, true)]
+        [Arguments(true, false)]
+        [Arguments(true, true)]
         public void TestClassesForBuffer(bool buffer, bool indeterminate)
         {
             var comp = Context.Render<MudProgressLinear>(x =>
@@ -302,9 +300,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Large, "large")]
-        [TestCase(Size.Medium, "medium")]
-        [TestCase(Size.Small, "small")]
+        [Arguments(Size.Large, "large")]
+        [Arguments(Size.Medium, "medium")]
+        [Arguments(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Size, size));
@@ -315,9 +313,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Success, "success")]
-        [TestCase(Color.Surface, "surface")]
-        [TestCase(Color.Error, "error")]
+        [Arguments(Color.Success, "success")]
+        [Arguments(Color.Surface, "surface")]
+        [Arguments(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Color, color));
@@ -328,8 +326,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(true)]
+        [Arguments(true)]
+        [Arguments(true)]
         public void TestClassesForVertical(bool vertical)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
@@ -350,10 +348,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase("en-us")]
-        [TestCase("de-DE")]
-        [TestCase("he-IL")]
-        [TestCase("ar-ER")]
+        [Arguments("en-us")]
+        [Arguments("de-DE")]
+        [Arguments("he-IL")]
+        [Arguments("ar-ER")]
         public void AriaValuesInDifferentCultures(string cultureString)
         {
             var culture = new CultureInfo(cultureString, false);

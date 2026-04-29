@@ -10,11 +10,10 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ChartTests : BunitTest
     {
         /// <summary>
@@ -82,9 +81,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(ChartType.Bar)]
-        [TestCase(ChartType.Line)]
-        [TestCase(ChartType.StackedBar)]
+        [Arguments(ChartType.Bar)]
+        [Arguments(ChartType.Line)]
+        [Arguments(ChartType.StackedBar)]
         public async Task ChartYAxisFormat(ChartType chartType)
         {
             DefaultAxisChartOptions options = chartType switch
@@ -188,10 +187,10 @@ namespace MudBlazor.UnitTests.Components
         ///// Checks if the element is added to the CustomGraphics RenderFragment
         ///// </summary>
         [Test]
-        [TestCase(ChartType.Line, "Hello")]
-        [TestCase(ChartType.Bar, "123")]
-        [TestCase(ChartType.Donut, "Garderoben")]
-        [TestCase(ChartType.Pie, "henon")]
+        [Arguments(ChartType.Line, "Hello")]
+        [Arguments(ChartType.Bar, "123")]
+        [Arguments(ChartType.Donut, "Garderoben")]
+        [Arguments(ChartType.Pie, "henon")]
         public void ChartCustomGraphics(ChartType chartType, string text)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
@@ -312,10 +311,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Position.Top)]
-        [TestCase(Position.Bottom)]
-        [TestCase(Position.Left)]
-        [TestCase(Position.Right)]
+        [Arguments(Position.Top)]
+        [Arguments(Position.Bottom)]
+        [Arguments(Position.Left)]
+        [Arguments(Position.Right)]
         public void HeatMap_ShouldRenderLegendInCorrectPosition(Position position)
         {
             var series = new List<ChartSeries<double>>
@@ -371,10 +370,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(XAxisLabelPosition.Top)]
-        [TestCase(XAxisLabelPosition.Bottom)]
-        [TestCase(YAxisLabelPosition.Left)]
-        [TestCase(YAxisLabelPosition.Right)]
+        [Arguments(XAxisLabelPosition.Top)]
+        [Arguments(XAxisLabelPosition.Bottom)]
+        [Arguments(YAxisLabelPosition.Left)]
+        [Arguments(YAxisLabelPosition.Right)]
         public void HeatMap_ShouldRenderAxisLabelsInCorrectPosition(Enum position)
         {
             var series = new List<ChartSeries<double>>
@@ -482,10 +481,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(null, "")]
-        [TestCase(0, "0")]
-        [TestCase(1.23456, "1.234")]
-        [TestCase(1000.123, "1000.")]
+        [Arguments(null, "")]
+        [Arguments(0, "0")]
+        [Arguments(1.23456, "1.234")]
+        [Arguments(1000.123, "1000.")]
         public void HeatMap_ShouldFormatValuesCorrectly(double? input, string expected)
         {
             var series = new List<ChartSeries<double>>
@@ -559,27 +558,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudHeatMapCell_ShouldThrowExceptionIfNotInMudChart()
+        public async Task MudHeatMapCell_ShouldThrowExceptionIfNotInMudChart()
         {
             // Attempt to render MudHeatMapCell outside of MudChart
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Context.Render<MudHeatMapCell<double>>(parameters => parameters
                     .Add(p => p.Row, 0)
                     .Add(p => p.Column, 0)
-                )
-            );
+                ));
 
             // Verify that the exception message is appropriate
             exception.Message.Should().Contain("MudHeatMapCell must be used inside a MudChart component.");
         }
 
-        [TestCase(Position.Top)]
-        [TestCase(Position.Bottom)]
-        [TestCase(Position.Left)]
-        [TestCase(Position.Right)]
-        [TestCase(Position.Start)]
-        [TestCase(Position.End)]
-        [TestCase(Position.Center)]
+        [Arguments(Position.Top)]
+        [Arguments(Position.Bottom)]
+        [Arguments(Position.Left)]
+        [Arguments(Position.Right)]
+        [Arguments(Position.Start)]
+        [Arguments(Position.End)]
+        [Arguments(Position.Center)]
         [Test]
         public void HeatMap_ShouldCorrectBadPositions(Position pos)
         {
@@ -595,9 +593,10 @@ namespace MudBlazor.UnitTests.Components
             heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
         }
 
-        [TestCase(null, null)]
-        [TestCase(0, 100)]
-        [TestCase(0, .95)]
+        [Test]
+        [Arguments(null, null)]
+        [Arguments(0, 100)]
+        [Arguments(0, .95)]
         public void HeatMap_Override_Min_Max(double? min, double? max)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
@@ -621,13 +620,13 @@ namespace MudBlazor.UnitTests.Components
             heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
         }
 
-        [TestCase(ChartType.Donut)]
-        [TestCase(ChartType.Line)]
-        [TestCase(ChartType.Pie)]
-        [TestCase(ChartType.Bar)]
-        [TestCase(ChartType.StackedBar)]
-        [TestCase(ChartType.HeatMap)]
-        [TestCase(ChartType.Timeseries)]
+        [Arguments(ChartType.Donut)]
+        [Arguments(ChartType.Line)]
+        [Arguments(ChartType.Pie)]
+        [Arguments(ChartType.Bar)]
+        [Arguments(ChartType.StackedBar)]
+        [Arguments(ChartType.HeatMap)]
+        [Arguments(ChartType.Timeseries)]
         [Test]
         public void NoLabel_Chart_IsValid(ChartType chart)
         {
@@ -727,7 +726,7 @@ namespace MudBlazor.UnitTests.Components
             yield return new YAxisTestCase(null!, "20");
         }
 
-        [Test, TestCaseSource(nameof(YAxisFuncs))]
+        [Test, MethodDataSource(nameof(YAxisFuncs))]
         [SetCulture("en-US")]
         public void YAxisToStringFunc(YAxisTestCase testCase)
         {

@@ -6,12 +6,10 @@ using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.State.Builder;
-
 #nullable enable
-[TestFixture]
 public class RegisterParameterBuilderTests
 {
     [Test]

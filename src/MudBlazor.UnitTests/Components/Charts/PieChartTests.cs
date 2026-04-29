@@ -5,7 +5,7 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Charts
 {
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Charts
             "#01153E", "#2EE8BB", "#EBDDE2"
         };
 
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 
@@ -46,9 +46,9 @@ namespace MudBlazor.UnitTests.Charts
             comp.Instance.ChartSeries.Should().BeNull();
         }
 
-        [Theory]
-        [TestCase(new double[] { 77, 25, 20, 5 })]
-        [TestCase(new double[] { 77, 25, 20, 5, 8 })]
+        [Test]
+        [Arguments(new double[] { 77, 25, 20, 5 })]
+        [Arguments(new double[] { 77, 25, 20, 5, 8 })]
         public async Task PieChartExampleData(double[] data)
         {
             string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",

@@ -3,23 +3,23 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.NavLink;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class NavLinkTests : BunitTest
     {
         /// <summary>
         /// When Target is not empty, rel attribute should be equals to "noopener noreferrer" on the a element
         /// </summary>
-        [TestCase(null, "")]
-        [TestCase("", "")]
-        [TestCase("_self", "noopener noreferrer")]
-        [TestCase("_blank", "noopener noreferrer")]
-        [TestCase("_parent", "noopener noreferrer")]
-        [TestCase("_top", "noopener noreferrer")]
-        [TestCase("myFrameName", "noopener noreferrer")]
+        [Test]
+        [Arguments(null, "")]
+        [Arguments("", "")]
+        [Arguments("_self", "noopener noreferrer")]
+        [Arguments("_blank", "noopener noreferrer")]
+        [Arguments("_parent", "noopener noreferrer")]
+        [Arguments("_top", "noopener noreferrer")]
+        [Arguments("myFrameName", "noopener noreferrer")]
         public void NavLink_CheckRelAttribute(string target, string expectedRel)
         {
             var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.Target, target));

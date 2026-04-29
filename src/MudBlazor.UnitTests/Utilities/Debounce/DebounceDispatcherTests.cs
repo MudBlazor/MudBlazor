@@ -6,12 +6,10 @@ using System.Reflection;
 using AwesomeAssertions;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Debounce;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Utilities.Debounce;
-
 #nullable enable
-[TestFixture]
 public class DebounceDispatcherTests
 {
     [Test]
@@ -115,7 +113,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void DebounceAsync_ExceptionInAction_PropagatesException()
+    public async Task DebounceAsync_ExceptionInAction_PropagatesException()
     {
         // Arrange
         var timeProvider = new FakeTimeProvider();
@@ -126,8 +124,7 @@ public class DebounceDispatcherTests
         }
 
         // Act & Assert
-        var exception = Assert.ThrowsAsync<InvalidOperationException>(
-            async () =>
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 var task = debounceDispatcher.DebounceAsync(ThrowingAction);
                 timeProvider.Advance(TimeSpan.FromMilliseconds(50));
@@ -249,7 +246,7 @@ public class DebounceDispatcherTests
         debounceDispatcher.Dispose();
 
         // Assert - Should not throw, just pass if we get here
-        Assert.Pass();
+        ;
     }
 
     [Test]
@@ -380,22 +377,21 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public async Task Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]
-    public void DebounceAsync_NullAction_ThrowsArgumentNullException()
+    public async Task DebounceAsync_NullAction_ThrowsArgumentNullException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);
 
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await debounceDispatcher.DebounceAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(async () => await debounceDispatcher.DebounceAsync(null!));
     }
 
     [Test]
@@ -430,7 +426,7 @@ public class DebounceDispatcherTests
         await secondTask;
 
         // Assert - If we got here, it worked
-        Assert.Pass();
+        ;
     }
 
     [Test]
@@ -545,14 +541,14 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void UpdateInterval_NegativeInterval_ThrowsArgumentOutOfRangeException()
+    public async Task UpdateInterval_NegativeInterval_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
         using var debounceDispatcher = new DebounceDispatcher(100);
 
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await debounceDispatcher.UpdateIntervalAsync(-100));
-        Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(-100)));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await debounceDispatcher.UpdateIntervalAsync(-100));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(-100)));
     }
 
     [Test]
@@ -970,7 +966,7 @@ public class DebounceDispatcherTests
             await Task.Yield();
         }
 
-        Assert.Fail("Timed out waiting for DebounceDispatcher to create its cancellation token source.");
+        Fail.Test("Timed out waiting for DebounceDispatcher to create its cancellation token source.");
         return null!;
     }
 

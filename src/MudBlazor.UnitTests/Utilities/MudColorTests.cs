@@ -8,11 +8,9 @@ using System.Text;
 using AwesomeAssertions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.Utilities;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities
 {
-    [TestFixture]
     public class MudColorTests
     {
         [Test]
@@ -102,15 +100,15 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("12315aca", 18, 49, 90, 202)]
-        [TestCase("12315a", 18, 49, 90, 255)]
-        [TestCase("#12315a", 18, 49, 90, 255)]
-        [TestCase("12315ACA", 18, 49, 90, 202)]
-        [TestCase("12315Aca", 18, 49, 90, 202)]
-        [TestCase("#12315Aca", 18, 49, 90, 202)]
-        [TestCase("1ab", 17, 170, 187, 255)]
-        [TestCase("1AB", 17, 170, 187, 255)]
-        [TestCase("1abd", 17, 170, 187, 221)]
+        [Arguments("12315aca", 18, 49, 90, 202)]
+        [Arguments("12315a", 18, 49, 90, 255)]
+        [Arguments("#12315a", 18, 49, 90, 255)]
+        [Arguments("12315ACA", 18, 49, 90, 202)]
+        [Arguments("12315Aca", 18, 49, 90, 202)]
+        [Arguments("#12315Aca", 18, 49, 90, 202)]
+        [Arguments("1ab", 17, 170, 187, 255)]
+        [Arguments("1AB", 17, 170, 187, 255)]
+        [Arguments("1abd", 17, 170, 187, 221)]
         public void FromString_Hex(string input, byte r, byte g, byte b, byte alpha)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -136,9 +134,9 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgb(12,204,210)", 12, 204, 210, 255)]
-        [TestCase("rgb(0,0,0)", 0, 0, 0, 255)]
-        [TestCase("rgb(255,255,255)", 255, 255, 255, 255)]
+        [Arguments("rgb(12,204,210)", 12, 204, 210, 255)]
+        [Arguments("rgb(0,0,0)", 0, 0, 0, 255)]
+        [Arguments("rgb(255,255,255)", 255, 255, 255, 255)]
         public void FromString_RGB(string input, byte r, byte g, byte b, byte alpha)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -164,9 +162,9 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgba(12,204,210,0.5)", 12, 204, 210, 127)]
-        [TestCase("rgba(0,0,0,0)", 0, 0, 0, 0)]
-        [TestCase("rgba(255,255,255,1)", 255, 255, 255, 255)]
+        [Arguments("rgba(12,204,210,0.5)", 12, 204, 210, 127)]
+        [Arguments("rgba(0,0,0,0)", 0, 0, 0, 0)]
+        [Arguments("rgba(255,255,255,1)", 255, 255, 255, 255)]
         public void FromString_RGBA(string input, byte r, byte g, byte b, byte alpha)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -192,10 +190,10 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgba(12,204,210,0.5)", 12, 204, 210, 127)]
-        [TestCase("rgba(67,160,71,1)", 67, 160, 71, 1)]
-        [TestCase("#43a047", 67, 160, 71, 1)]
-        [TestCase("rgba(255,255,255,1)", 255, 255, 255, 255)]
+        [Arguments("rgba(12,204,210,0.5)", 12, 204, 210, 127)]
+        [Arguments("rgba(67,160,71,1)", 67, 160, 71, 1)]
+        [Arguments("#43a047", 67, 160, 71, 1)]
+        [Arguments("rgba(255,255,255,1)", 255, 255, 255, 255)]
         public void FromString_RGBA_And_Darken(string input, byte r, byte g, byte b, byte alpha)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -372,8 +370,8 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 130, 229, 0.79, 0.73)]
-        [TestCase(71, 88, 99, 222, 204, 0.16, 0.33)]
+        [Arguments(130, 150, 240, 130, 229, 0.79, 0.73)]
+        [Arguments(71, 88, 99, 222, 204, 0.16, 0.33)]
         public void TransformHlsFromRgb(byte r, byte g, byte b, byte a, double expectedH, double expectedS, double expectedL)
         {
             MudColor color = new(r, g, b, a);
@@ -537,8 +535,8 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 170, "#8296f0aa")]
-        [TestCase(71, 88, 99, 204, "#475863cc")]
+        [Arguments(130, 150, 240, 170, "#8296f0aa")]
+        [Arguments(71, 88, 99, 204, "#475863cc")]
         public void ValueAndExplicitCast(byte r, byte g, byte b, byte a, string expectedValue)
         {
             MudColor color = new(r, g, b, a);
@@ -549,8 +547,8 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 255, "rgb(130,150,240)")]
-        [TestCase(71, 88, 99, 255, "rgb(71,88,99)")]
+        [Arguments(130, 150, 240, 255, "rgb(130,150,240)")]
+        [Arguments(71, 88, 99, 255, "rgb(71,88,99)")]
         public void ToRGB(byte r, byte g, byte b, byte a, string expectedValue)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -566,9 +564,9 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 255, "rgba(130,150,240,1)")]
-        [TestCase(71, 88, 99, 0, "rgba(71,88,99,0)")]
-        [TestCase(71, 88, 99, 204, "rgba(71,88,99,0.8)")]
+        [Arguments(130, 150, 240, 255, "rgba(130,150,240,1)")]
+        [Arguments(71, 88, 99, 0, "rgba(71,88,99,0)")]
+        [Arguments(71, 88, 99, 204, "rgba(71,88,99,0.8)")]
         public void ToRGBA(byte r, byte g, byte b, byte a, string expectedValue)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -584,8 +582,8 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 255, "130,150,240")]
-        [TestCase(71, 88, 99, 255, "71,88,99")]
+        [Arguments(130, 150, 240, 255, "130,150,240")]
+        [Arguments(71, 88, 99, 255, "71,88,99")]
         public void ToColorRgbElements(byte r, byte g, byte b, byte a, string expectedValue)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -601,8 +599,8 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 170, "#8296f0")]
-        [TestCase(71, 88, 99, 204, "#475863")]
+        [Arguments(130, 150, 240, 170, "#8296f0")]
+        [Arguments(71, 88, 99, 204, "#475863")]
         public void ToHex(byte r, byte g, byte b, byte a, string expectedValue)
         {
             var cultures = new[] { new CultureInfo("en", false), new CultureInfo("se", false) };
@@ -682,7 +680,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCaseSource(nameof(_multiGradientTestCases))]
+        [MethodDataSource(nameof(_multiGradientTestCases))]
         public void GenerateMultiGradientPalette_ShouldGenerateCorrectGradient(MudColor[] colors, int numberOfColors, MudColor[] expectedColors)
         {
             // Arrange & Act
@@ -694,7 +692,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCaseSource(nameof(_gradientTestCases))]
+        [MethodDataSource(nameof(_gradientTestCases))]
         public void GenerateGradientPalette_ShouldGenerateCorrectGradient(MudColor startColor, MudColor endColor, int numberOfColors, MudColor[] expectedColors)
         {
             // Arrange & Act
@@ -759,7 +757,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCaseSource(nameof(_lerpTestCases))]
+        [MethodDataSource(nameof(_lerpTestCases))]
         public void Lerp_ShouldInterpolateCorrectly(MudColor colorStart, MudColor colorEnd, float t, MudColor expectedColor)
         {
             // Arrange & Act
@@ -920,9 +918,9 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(120, 0.5, 0.4, 1, 121, 0.5, 0.4, 1, false)] // Hue differs
-        [TestCase(120, 0.5, 0.4, 1, 120, 0.51, 0.4, 1, false)] // Saturation differs
-        [TestCase(120, 0.5, 0.4, 1, 120, 0.5, 0.41, 1, false)] // Lightness differs
+        [Arguments(120, 0.5, 0.4, 1, 121, 0.5, 0.4, 1, false)] // Hue differs
+        [Arguments(120, 0.5, 0.4, 1, 120, 0.51, 0.4, 1, false)] // Saturation differs
+        [Arguments(120, 0.5, 0.4, 1, 120, 0.5, 0.41, 1, false)] // Lightness differs
         public void HslEquals(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
         {
             // Arrange
@@ -950,11 +948,11 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(10, 20, 30, 255, 10, 20, 30, 254, false)] // Alpha differs
-        [TestCase(10, 20, 30, 255, 10, 20, 31, 255, false)] // Blue differs
-        [TestCase(10, 20, 30, 255, 10, 21, 30, 255, false)] // Green differs
-        [TestCase(10, 20, 30, 255, 11, 20, 30, 255, false)] // Red differs
-        [TestCase(10, 20, 30, 255, 10, 20, 30, 255, true)]  // All equal
+        [Arguments(10, 20, 30, 255, 10, 20, 30, 254, false)] // Alpha differs
+        [Arguments(10, 20, 30, 255, 10, 20, 31, 255, false)] // Blue differs
+        [Arguments(10, 20, 30, 255, 10, 21, 30, 255, false)] // Green differs
+        [Arguments(10, 20, 30, 255, 11, 20, 30, 255, false)] // Red differs
+        [Arguments(10, 20, 30, 255, 10, 20, 30, 255, true)]  // All equal
         public void RgbaEquals(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
         {
             // Arrange
@@ -1011,10 +1009,10 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("en-us")]
-        [TestCase("de-DE")]
-        [TestCase("he-IL")]
-        [TestCase("ar-ER")]
+        [Arguments("en-us")]
+        [Arguments("de-DE")]
+        [Arguments("he-IL")]
+        [Arguments("ar-ER")]
         public void CheckPaletteInDifferentCultures(string cultureString)
         {
             var culture = new CultureInfo(cultureString, false);
@@ -1028,10 +1026,10 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(0x000000FFu)]//Black
-        [TestCase(0xFF0000FFu)]//Red
-        [TestCase(0x00FF00FFu)]//Green
-        [TestCase(0x0000FFFFu)]//Blue
+        [Arguments(0x000000FFu)]//Black
+        [Arguments(0xFF0000FFu)]//Red
+        [Arguments(0x00FF00FFu)]//Green
+        [Arguments(0x0000FFFFu)]//Blue
         public void UInt32(uint rgba)
         {
             MudColor mudColor = new(rgba);
@@ -1055,10 +1053,10 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgba(130,150,240,0.52)", 130, 150, 240, 132)]
-        [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
-        [TestCase("#8296f0ff", 130, 150, 240, 255)]
-        [TestCase("#475863", 71, 88, 99, 255)]
+        [Arguments("rgba(130,150,240,0.52)", 130, 150, 240, 132)]
+        [Arguments("rgb(71,88,99)", 71, 88, 99, 255)]
+        [Arguments("#8296f0ff", 130, 150, 240, 255)]
+        [Arguments("#475863", 71, 88, 99, 255)]
         public void Parse(string value, byte r, byte g, byte b, byte a)
         {
             // Arrange
@@ -1072,9 +1070,9 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgba(130,150,240,0.52,50)")]
-        [TestCase("rgb(71,88,99,63)")]
-        [TestCase("#8296f0ffff")]
+        [Arguments("rgba(130,150,240,0.52,50)")]
+        [Arguments("rgb(71,88,99,63)")]
+        [Arguments("#8296f0ffff")]
         public void ParseIncorrectFormat(string value)
         {
             // Act & Arrange
@@ -1085,10 +1083,10 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgba(130,150,240,0.52)", 130, 150, 240, 132)]
-        [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
-        [TestCase("#8296f0ff", 130, 150, 240, 255)]
-        [TestCase("#475863", 71, 88, 99, 255)]
+        [Arguments("rgba(130,150,240,0.52)", 130, 150, 240, 132)]
+        [Arguments("rgb(71,88,99)", 71, 88, 99, 255)]
+        [Arguments("#8296f0ff", 130, 150, 240, 255)]
+        [Arguments("#475863", 71, 88, 99, 255)]
         public void TryParse(string value, byte r, byte g, byte b, byte a)
         {
             // Arrange
@@ -1103,11 +1101,11 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgba(130,150,240,0.52,50)")]
-        [TestCase("rgb(71,88,99, 63)")]
-        [TestCase("#8296f0ffff")]
-        [TestCase("")]
-        [TestCase(null)]
+        [Arguments("rgba(130,150,240,0.52,50)")]
+        [Arguments("rgb(71,88,99, 63)")]
+        [Arguments("#8296f0ffff")]
+        [Arguments("")]
+        [Arguments(null)]
         public void TryParseIncorrectFormat(string value)
         {
             // Act

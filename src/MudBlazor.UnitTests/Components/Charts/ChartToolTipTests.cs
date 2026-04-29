@@ -1,12 +1,11 @@
 ﻿using AwesomeAssertions;
 using MudBlazor.Charts;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
 {
     public class ChartToolTipTests : BunitTest
     {
-        [SetUp]
+        [Before(HookType.Test)]
         public void Init()
         {
 

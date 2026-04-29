@@ -1,10 +1,8 @@
 ﻿using AwesomeAssertions;
 using Bunit;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
     public class ProgressCircularTests : BunitTest
     {
         [Test]
@@ -23,8 +21,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void DefaultStructure(bool indeterminate)
         {
             var minValue = -500;
@@ -73,8 +71,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void TestClassesForRounded(bool rounded)
         {
             var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Rounded, rounded));
@@ -92,8 +90,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
             var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Indeterminate, indeterminate));
@@ -126,9 +124,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Size.Large, "large")]
-        [TestCase(Size.Medium, "medium")]
-        [TestCase(Size.Small, "small")]
+        [Arguments(Size.Large, "large")]
+        [Arguments(Size.Medium, "medium")]
+        [Arguments(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
             var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Size, size));
@@ -139,9 +137,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(Color.Success, "success")]
-        [TestCase(Color.Surface, "surface")]
-        [TestCase(Color.Error, "error")]
+        [Arguments(Color.Success, "success")]
+        [Arguments(Color.Surface, "surface")]
+        [Arguments(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
             var comp = Context.Render<MudProgressCircular>(x => x.Add(y => y.Color, color));
@@ -152,11 +150,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(3, "22.5 22.5 43 43")]
-        [TestCase(5, "21.5 21.5 45 45")]
-        [TestCase(10, "19 19 50 50")]
-        [TestCase(1, "23.5 23.5 41 41")]
-        [TestCase(0, "24 24 40 40")]
+        [Arguments(3, "22.5 22.5 43 43")]
+        [Arguments(5, "21.5 21.5 45 45")]
+        [Arguments(10, "19 19 50 50")]
+        [Arguments(1, "23.5 23.5 41 41")]
+        [Arguments(0, "24 24 40 40")]
         public void MudProgressCircular_ShouldHaveCorrectViewBox_BasedOnStrokeWidth(int strokeWidth, string expectedViewBox)
         {
             var comp = Context.Render<MudProgressCircular>(parameters => parameters

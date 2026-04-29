@@ -6,11 +6,8 @@ using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Navigation;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
-
-[TestFixture]
 public class NavigationAccessibilityTests : BunitTest
 {
     /// <summary>

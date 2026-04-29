@@ -18,7 +18,7 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -26,8 +26,6 @@ namespace MudBlazor.UnitTests.Components
     public record TestModel2(string Name, int? Age, DateTime? Date);
     public record TestModel3(string Name, int? Age, Severity? Status);
     public record TestModel4(string Name, int? Age, bool? Hired);
-
-    [TestFixture]
     public class DataGridTests : BunitTest
     {
         [Test]
@@ -445,16 +443,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_SetParameters_ServerData_Items_Throw()
+        public async Task DataGrid_SetParameters_ServerData_Items_Throw()
         {
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.ServerData, serverDataFunc)
                     .Add(p => p.Items, Array.Empty<TestModel1>())
-                )
-            );
+                ));
             exception.Message.Should().Be(
                 """
                 MudBlazor.MudDataGrid`1[MudBlazor.UnitTests.Components.TestModel1] can only accept one item source from its parameters. Do not supply both 'Items' and 'ServerData'.
@@ -463,46 +460,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_SetParameters_ServerData_QuickFilter_Throw()
+        public async Task DataGrid_SetParameters_ServerData_QuickFilter_Throw()
         {
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.ServerData, serverDataFunc)
                     .Add(p => p.QuickFilter, (TestModel1 x) => true)
-                )
-            );
+                ));
             exception.Message.Should().Be("Do not supply both 'ServerData' and 'QuickFilter'.");
         }
 
         [Test]
-        public void DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
+        public async Task DataGrid_SetParameters_VirtualizeServerData_QuickFilter_Throw()
         {
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
                     .Add(p => p.QuickFilter, (TestModel1 x) => true)
-                )
-            );
+                ));
             exception.Message.Should().Be("Do not supply both 'VirtualizeServerData' and 'QuickFilter'.");
         }
 
         [Test]
-        public void DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
+        public async Task DataGrid_SetParameters_ServerData_VirtualizeServerData_Throw()
         {
             var serverDataFunc =
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.ServerData, serverDataFunc)
                     .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
-                )
-            );
+                ));
 
             exception.Message.Should().Be(
                 """
@@ -512,16 +506,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
+        public async Task DataGrid_SetParameters_Items_VirtualizeServerData_Throw()
         {
             var virtualizeServerDataFunc =
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
-            var exception = Assert.Throws<InvalidOperationException>(() =>
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
                 Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
                     .Add(p => p.Items, Array.Empty<TestModel1>())
                     .Add(p => p.VirtualizeServerData, virtualizeServerDataFunc)
-                )
-            );
+                ));
 
             exception.Message.Should().Be(
                 """
@@ -1087,9 +1080,9 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
-        [Theory]
-        [TestCase(12, true)]
-        [TestCase(-12, false)]
+        [Test]
+        [Arguments(12, true)]
+        [Arguments(-12, false)]
         public async Task DataGridChangesBehaviorTest(int age, bool shouldClose)
         {
             var comp = Context.Render<DataGridEditFormActionTest>();
@@ -1146,7 +1139,8 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        [Test(Description = "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
+        [Test]
+        [Property("Description", "Checks if there is no NRE exception when nested property has a null value somewhere in the middle.")]
         public void DataGridNoNullExceptionWhenNestedPropertyNullValue()
         {
             var comp = Context.Render<DataGridNestedNullPropertyTest>();
@@ -1159,7 +1153,8 @@ namespace MudBlazor.UnitTests.Components
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
 
-        [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
+        [Test]
+        [Property("Description", "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
         public async Task DataGridDialogEditCloneStrategyTest1()
         {
             var comp = Context.Render<DataGridFormEditCloneStrategyTest>();
@@ -3262,9 +3257,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridInvalidFilterPerColumn()
+        public async Task DataGridInvalidFilterPerColumn()
         {
-            var exception = Assert.Throws<ArgumentException>(() => Context.Render<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => Context.Render<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
 
             exception.Message.Should().Be("Invalid filter operators for Severity: <");
         }
@@ -3471,8 +3466,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
         {
             var comp = Context.Render<DataGridHierarchyColumnTest>(param => param
@@ -4456,15 +4451,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridColumnFilterRowProperty()
+        public async Task DataGridColumnFilterRowProperty()
         {
             var comp = Context.Render<DataGridColumnFilterRowPropertyTest>();
 
-            Assert.DoesNotThrow(() => comp.FindComponent<MudTextField<string>>());
-            Assert.DoesNotThrow(() => comp.FindComponent<MudNumericField<double?>>());
-            Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
-            Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
-            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
+            await Assert.That(() => comp.FindComponent<MudTextField<string>>()).ThrowsNothing();
+            await Assert.That(() => comp.FindComponent<MudNumericField<double?>>()).ThrowsNothing();
+            await Assert.That(() => comp.FindComponent<MudSelect<Enum>>()).ThrowsNothing();
+            await Assert.That(() => comp.FindComponent<MudSelect<bool?>>()).ThrowsNothing();
+            await Assert.That(() => comp.FindComponent<MudDatePicker>()).ThrowsNothing();
         }
 
         [Test]
@@ -5886,8 +5881,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task DataGridHeaderToggleIcon(bool rightToLeft)
         {
             // Render with EnableHeaderToggle = true and set RTL mode

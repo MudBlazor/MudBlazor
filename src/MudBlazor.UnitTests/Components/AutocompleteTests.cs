@@ -13,13 +13,12 @@ using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
-using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Components
 {
-    [TestFixture]
-    [NonParallelizable]
+    [NotInParallel]
     public class AutocompleteTests : BunitTest
     {
         [Test]
@@ -821,7 +820,8 @@ namespace MudBlazor.UnitTests.Components
         /// When T is a complex type and Text is explicitly set without a Value,
         /// the initial Text should be preserved and not overwritten.
         /// </summary>
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12900")]
+        [Test]
+        [Property("Description", "https://github.com/MudBlazor/MudBlazor/issues/12900")]
         public void Autocomplete_ComplexType_Should_Preserve_Initial_Text()
         {
             var comp = Context.Render<AutocompleteInitialTextComplexTypeTest>();
@@ -1152,7 +1152,8 @@ namespace MudBlazor.UnitTests.Components
         /// When calling ResetAsync() without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [TestCaseSource(nameof(ResetAsyncParameters))]
+        [Test]
+        [MethodDataSource(nameof(ResetAsyncParameters))]
         public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
@@ -1188,7 +1189,8 @@ namespace MudBlazor.UnitTests.Components
         /// When calling ResetAsync() with value and without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [TestCaseSource(nameof(ResetAsyncParameters))]
+        [Test]
+        [MethodDataSource(nameof(ResetAsyncParameters))]
         public async Task ResetAsync_WithValueAndWithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
@@ -1682,8 +1684,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(0)] //test toStringFunc
-        [TestCase(1)] //test toString
+        [Arguments(0)] //test toStringFunc
+        [Arguments(1)] //test toString
         public async Task AutocompleteStrictFalse(int index)
         {
             var listItemQuerySelector = "div.mud-list-item";
@@ -1936,8 +1938,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
+        [Arguments(true)]
+        [Arguments(false)]
         public async Task Autocomplete_Should_OpenMenuOnFocus(bool openOnFocus)
         {
             var comp = Context.Render<AutocompleteFocusTest>();
@@ -2202,8 +2204,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
-        [TestCase(Adornment.Start)]
-        [TestCase(Adornment.End)]
+        [Test]
+        [Arguments(Adornment.Start)]
+        [Arguments(Adornment.End)]
         public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
         {
             var ariaLabel = "the aria label";
@@ -2220,13 +2223,14 @@ namespace MudBlazor.UnitTests.Components
         /// Verifies that an autocomplete field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
         // no helpers, validates error id is present when error is present
-        [TestCase(false, false)]
+        [Test]
+        [Arguments(false, false)]
         // with helper text, helper element should only be present when there is no error
-        [TestCase(false, true)]
+        [Arguments(false, true)]
         // with user helper id, helper id should always be present
-        [TestCase(true, false)]
+        [Arguments(true, false)]
         // with user helper id and helper text, should always favour user helper id
-        [TestCase(true, true)]
+        [Arguments(true, true)]
         public async Task Should_pass_various_aria_describedby_tests(
             bool withUserHelperId,
             bool withHelperText)
@@ -2391,8 +2395,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task AutoComplete_ShouldHaveOnAdornmentClickBehavior(bool attachDelegate)
         {
             var eventCallbackFactory = new EventCallbackFactory();
@@ -2409,8 +2413,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
-        [TestCase(true)]
+        [Arguments(false)]
+        [Arguments(true)]
         public async Task Autocomplete_OpenOnFocusShouldWork(bool openOnFocus)
         {
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
