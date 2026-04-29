@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using MudBlazor.UnitTests.Analyzers.Verifiers;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Analyzers;
 
@@ -11,12 +11,10 @@ extern alias MudBlazorAnalyzer;
 using VerifyCS = CSharpCodeFixVerifier<
     MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer,
     MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateCodeFixProvider>;
-
 /// <summary>
 /// Tests for ParameterStateCodeFixProvider following Microsoft's code fix testing patterns.
 /// See: https://github.com/dotnet/samples/tree/main/csharp/roslyn-sdk/Tutorials/MakeConst
 /// </summary>
-[TestFixture]
 public class ParameterStateCodeFixProviderTests
 {
     [Test]

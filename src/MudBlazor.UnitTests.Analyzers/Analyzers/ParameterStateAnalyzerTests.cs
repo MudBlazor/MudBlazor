@@ -4,64 +4,61 @@
 
 using Microsoft.CodeAnalysis;
 using MudBlazor.UnitTests.Analyzers.Verifiers;
-using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Analyzers;
 
 extern alias MudBlazorAnalyzer;
 using VerifyCS = CSharpAnalyzerVerifier<MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer>;
-
 /// <summary>
 /// Tests for ParameterStateAnalyzer following Microsoft's analyzer testing patterns.
 /// </summary>
-[TestFixture]
 public class ParameterStateAnalyzerTests
 {
     [Test]
-    public void AnalyzerShouldReportSupportedDiagnostics()
+    public async Task AnalyzerShouldReportSupportedDiagnostics()
     {
         var analyzer = new MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer();
         var supportedDiagnostics = analyzer.SupportedDiagnostics;
 
-        Assert.That(supportedDiagnostics, Has.Length.EqualTo(3));
-        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0010"));
-        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0011"));
-        Assert.That(supportedDiagnostics, Has.Some.Matches<DiagnosticDescriptor>(d => d.Id == "MUD0012"));
+        await Assert.That(supportedDiagnostics).Count().IsEqualTo(3);
+        await Assert.That(supportedDiagnostics).Any(d => d.Id == "MUD0010");
+        await Assert.That(supportedDiagnostics).Any(d => d.Id == "MUD0011");
+        await Assert.That(supportedDiagnostics).Any(d => d.Id == "MUD0012");
     }
 
     [Test]
-    public void DiagnosticDescriptors_ShouldHaveCorrectProperties()
+    public async Task DiagnosticDescriptors_ShouldHaveCorrectProperties()
     {
         // Assert MUD0010
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.Id, Is.EqualTo("MUD0010"));
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.IsEnabledByDefault, Is.True);
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.Id).IsEqualTo("MUD0010");
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.DefaultSeverity).IsEqualTo(DiagnosticSeverity.Warning);
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ReadDescriptor.IsEnabledByDefault).IsTrue();
 
         // Assert MUD0011
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.Id, Is.EqualTo("MUD0011"));
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.IsEnabledByDefault, Is.True);
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.Id).IsEqualTo("MUD0011");
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.DefaultSeverity).IsEqualTo(DiagnosticSeverity.Warning);
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.WriteDescriptor.IsEnabledByDefault).IsTrue();
 
         // Assert MUD0012
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.Id, Is.EqualTo("MUD0012"));
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.DefaultSeverity, Is.EqualTo(DiagnosticSeverity.Warning));
-        Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.IsEnabledByDefault, Is.True);
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.Id).IsEqualTo("MUD0012");
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.DefaultSeverity).IsEqualTo(DiagnosticSeverity.Warning);
+        await Assert.That(MudBlazorAnalyzer::MudBlazor.Analyzers.ParameterStateAnalyzer.ExternalAccessDescriptor.IsEnabledByDefault).IsTrue();
     }
 
     [Test]
-    public void ParameterUsageOptions_MustMatch()
+    public async Task ParameterUsageOptions_MustMatch()
     {
-        void AssertEnumsMatch(Type enumA, Type enumB)
+        async Task AssertEnumsMatch(Type enumA, Type enumB)
         {
             var namesA = Enum.GetNames(enumA);
             var namesB = Enum.GetNames(enumB);
-            Assert.That(namesA, Is.EqualTo(namesB));
+            await Assert.That(namesA).IsEquivalentTo(namesB);
 
             var valuesA = Enum.GetValues(enumA).Cast<object>().Select(v => (int)v);
             var valuesB = Enum.GetValues(enumB).Cast<object>().Select(v => (int)v);
-            Assert.That(valuesA, Is.EqualTo(valuesB));
+            await Assert.That(valuesA).IsEquivalentTo(valuesB);
         }
-        AssertEnumsMatch(
+        await AssertEnumsMatch(
             typeof(MudBlazor.State.ParameterUsageOptions),
             typeof(MudBlazorAnalyzer.MudBlazor.State.ParameterUsageOptions)
         );

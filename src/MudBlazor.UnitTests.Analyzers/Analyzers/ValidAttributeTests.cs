@@ -4,14 +4,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using MudBlazor.Analyzers.TestComponents;
 using MudBlazor.UnitTests.Analyzers.Internal;
-using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Analyzers;
 
 extern alias MudBlazorAnalyzer;
-
 #nullable enable
-[TestFixture]
 //[Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
 public class ValidAttributeTests
 {
@@ -118,7 +116,7 @@ public class ValidAttributeTests
         new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(328, 8), new LinePosition(328, 71)),
         "Illegal Attribute 'ValueChanged' on 'MudChip'");
 
-    [OneTimeSetUp]
+    [Before(HookType.Class)]
     public static async Task OneTimeSetup()
     {
         Workspace = await ProjectCompilation.CreateAsync(Util.ProjectPath());
@@ -132,7 +130,7 @@ public class ValidAttributeTests
         AnyAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any, Workspace.AdditionalTexts));
     }
 
-    [OneTimeTearDown]
+    [After(HookType.Class)]
     public static void Cleanup()
     {
         Workspace.Dispose();
