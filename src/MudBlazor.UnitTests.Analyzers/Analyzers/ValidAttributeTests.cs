@@ -13,7 +13,7 @@ extern alias MudBlazorAnalyzer;
 #nullable enable
 [TestFixture]
 //[Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
-public class ValidAttributeTests : BunitTest
+public class ValidAttributeTests
 {
     private static ProjectCompilation Workspace { get; set; } = null!;
 
