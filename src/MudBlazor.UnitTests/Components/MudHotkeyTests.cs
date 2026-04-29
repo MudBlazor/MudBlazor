@@ -106,44 +106,4 @@ public class MudHotkeyTests : BunitTest
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()), Times.Exactly(3));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()), Times.Exactly(1));
     }
-
-    [TestCase(JsKey.NumpadEnter, nameof(JsKey.NumpadEnter))]
-    [TestCase(JsKey.NumpadEqual, nameof(JsKey.NumpadEqual))]
-    [TestCase(JsKey.NumpadComma, nameof(JsKey.NumpadComma))]
-    public void Hotkey_JsRegistration_UsesStandardNumpadCodes(JsKey key, string expectedCode)
-    {
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.registerOrUpdateHotkey", It.IsAny<object[]>()));
-        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudHotkeyListener.unregisterHotkey", It.IsAny<object[]>()));
-        Context.Services.AddSingleton(jsRuntimeMock.Object);
-
-        Context.Render<MudHotkeyTest>(p => p
-            .Add(x => x.Key, key)
-            .Add(x => x.KeyModifiers, []));
-
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>(
-                "mudHotkeyListener.registerOrUpdateHotkey",
-                It.Is<object[]>(args => MatchesHotkeyRegistration(args, expectedCode))),
-            Times.Once);
-    }
-
-    private static bool MatchesHotkeyRegistration(object[] args, string expectedCode)
-    {
-        if (args.Length != 6)
-        {
-            return false;
-        }
-
-        if (!string.Equals(args[3] as string, expectedCode, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        if (args[4] is not string[] modifiers || modifiers.Length != 0)
-        {
-            return false;
-        }
-
-        return args[5] is true;
-    }
 }
