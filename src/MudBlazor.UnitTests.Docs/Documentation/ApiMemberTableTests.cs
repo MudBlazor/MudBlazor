@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
 using MudBlazor.Docs.Components;
 using MudBlazor.Docs.Models;
 
@@ -16,32 +15,32 @@ public sealed class ApiMemberTableTests : BunitTest
     /// Renders the empty-state message for a missing type.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderMissingType()
+    public async Task ApiMemberTable_RenderMissingType()
     {
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters.Add(x => x.Type, null));
 
-        comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found");
+        await Assert.That(comp.Markup).Contains("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should be a message saying no members are found");
     }
 
     /// <summary>
     /// Renders the empty-state message in <see cref="ApiMemberTableMode.None"/>.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderNoneMode()
+    public async Task ApiMemberTable_RenderNoneMode()
     {
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudAlert)
             .Add(x => x.Mode, ApiMemberTableMode.None));
 
-        comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found");
+        await Assert.That(comp.Markup).Contains("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should be a message saying no members are found");
     }
 
     /// <summary>
     /// Renders <see cref="ApiMemberTableMode.Properties"/> with protected properties shown.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderProperties_WithProtected()
+    public async Task ApiMemberTable_RenderProperties_WithProtected()
     {
         // Get a type with protected properties
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
@@ -50,18 +49,18 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Mode, ApiMemberTableMode.Properties)
             .Add(x => x.ShowProtected, true));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        await Assert.That(comp.Markup).Contains("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>").Because("There should be a switch for protected properties");
 
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">", "The \"Classname\" protected property should be visible");
+        await Assert.That(comp.Markup).Contains("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">").Because("The \"Classname\" protected property should be visible");
     }
 
     /// <summary>
     /// Renders <see cref="ApiMemberTableMode.Properties"/> with protected properties hidden.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderProperties_WithoutProtected()
+    public async Task ApiMemberTable_RenderProperties_WithoutProtected()
     {
         // Get a type without protected properties
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
@@ -70,18 +69,18 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Mode, ApiMemberTableMode.Properties)
             .Add(x => x.ShowProtected, false));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        await Assert.That(comp.Markup).Contains("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>").Because("There should be a switch for protected properties");
 
-        comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">", "The \"Classname\" protected property should NOT be visible");
+        await Assert.That(comp.Markup).DoesNotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">").Because("The \"Classname\" protected property should NOT be visible");
     }
 
     /// <summary>
     /// Renders <see cref="ApiMemberTableMode.Methods"/> with protected methods shown.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderMethods_WithProtected()
+    public async Task ApiMemberTable_RenderMethods_WithProtected()
     {
         // Get a type without protected methods
         var mudAutocomplete = ApiDocumentation.GetType("MudBlazor.MudAutocomplete`1");
@@ -90,18 +89,18 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Mode, ApiMemberTableMode.Methods)
             .Add(x => x.ShowProtected, true));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        await Assert.That(comp.Markup).Contains("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>").Because("There should be a switch for protected properties");
 
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">", "The \"BeginValidateAsync\" protected method should be visible");
+        await Assert.That(comp.Markup).Contains("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">").Because("The \"BeginValidateAsync\" protected method should be visible");
     }
 
     /// <summary>
     /// Renders <see cref="ApiMemberTableMode.Methods"/> with protected methods hidden.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderMethods_WithoutProtected()
+    public async Task ApiMemberTable_RenderMethods_WithoutProtected()
     {
         // Get a type without protected methods
         var mudAutocomplete = ApiDocumentation.GetType("MudBlazor.MudAutocomplete`1");
@@ -110,18 +109,18 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Mode, ApiMemberTableMode.Methods)
             .Add(x => x.ShowProtected, false));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        await Assert.That(comp.Markup).Contains("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>").Because("There should be a switch for protected properties");
 
-        comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">", "The \"BeginValidateAsync\" protected method should NOT be visible");
+        await Assert.That(comp.Markup).DoesNotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">").Because("The \"BeginValidateAsync\" protected method should NOT be visible");
     }
 
     /// <summary>
     /// Renders <see cref="ApiMemberTableMode.Fields"/> with protected fields shown.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderFields_WithProtected()
+    public async Task ApiMemberTable_RenderFields_WithProtected()
     {
         // Get a type with protected fields
         var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
@@ -130,18 +129,18 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Mode, ApiMemberTableMode.Fields)
             .Add(x => x.ShowProtected, true));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        await Assert.That(comp.Markup).Contains("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>").Because("There should be a switch for protected properties");
 
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">", "The \"CurrentView\" protected field should be visible");
+        await Assert.That(comp.Markup).Contains("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">").Because("The \"CurrentView\" protected field should be visible");
     }
 
     /// <summary>
     /// Renders <see cref="ApiMemberTableMode.Fields"/> with protected fields hidden.
     /// </summary>
     [Test]
-    public void ApiMemberTable_RenderFields_WithoutProtected()
+    public async Task ApiMemberTable_RenderFields_WithoutProtected()
     {
         // Get a type without protected fields
         var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
@@ -150,11 +149,11 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Mode, ApiMemberTableMode.Fields)
             .Add(x => x.ShowProtected, false));
 
-        comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found  (since the protected field was the ONLY field)");
+        await Assert.That(comp.Markup).Contains("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should be a message saying no members are found  (since the protected field was the ONLY field)");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        await Assert.That(comp.Markup).Contains("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>").Because("There should be a switch for protected properties");
 
-        comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">", "The \"CurrentView\" protected field should NOT be visible");
+        await Assert.That(comp.Markup).DoesNotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">").Because("The \"CurrentView\" protected field should NOT be visible");
     }
 
     /// <summary>
@@ -164,7 +163,7 @@ public sealed class ApiMemberTableTests : BunitTest
     /// At the time of writing this test, there are no protected events in the entire MudBlazor library.
     /// </remarks>
     [Test]
-    public void ApiMemberTable_RenderEvents()
+    public async Task ApiMemberTable_RenderEvents()
     {
         // Get a type with events
         var mudDataGrid = ApiDocumentation.GetType("MudBlazor.MudDataGrid`1");
@@ -172,7 +171,7 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudDataGrid)
             .Add(x => x.Mode, ApiMemberTableMode.Events));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
     }
 
     /// <summary>
@@ -182,7 +181,7 @@ public sealed class ApiMemberTableTests : BunitTest
     /// At the time of writing this test, there are globals for <see cref="MudMenu"/>.
     /// </remarks>
     [Test]
-    public void ApiMemberTable_RenderGlobals_WhenExisting()
+    public async Task ApiMemberTable_RenderGlobals_WhenExisting()
     {
         // Get a type with globals
         var mudMenu = ApiDocumentation.GetType("MudBlazor.MudMenu");
@@ -190,7 +189,7 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudMenu)
             .Add(x => x.Mode, ApiMemberTableMode.Globals));
 
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
+        await Assert.That(comp.Markup).DoesNotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should NOT be a message saying no members are found");
     }
 
     /// <summary>
@@ -200,7 +199,7 @@ public sealed class ApiMemberTableTests : BunitTest
     /// At the time of writing this test, there are NO globals for <see cref="MudAlert"/>.
     /// </remarks>
     [Test]
-    public void ApiMemberTable_RenderGlobals_WhenNotExisting()
+    public async Task ApiMemberTable_RenderGlobals_WhenNotExisting()
     {
         // Get a type with no globals
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
@@ -208,6 +207,6 @@ public sealed class ApiMemberTableTests : BunitTest
             .Add(x => x.Type, mudAlert)
             .Add(x => x.Mode, ApiMemberTableMode.Globals));
 
-        comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found");
+        await Assert.That(comp.Markup).Contains("<div class=\"mud-alert-message\">No members match the current filters.</div>").Because("There should be a message saying no members are found");
     }
 }

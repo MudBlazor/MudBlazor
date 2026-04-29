@@ -1,13 +1,12 @@
 ﻿using System.IO.Compression;
 using System.Text;
-using AwesomeAssertions;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.UnitTests.Docs.Utilities;
 public class CodeSnippetUrlTests
 {
     [Test]
-    public void CompressedUrlRoundtripTest()
+    public async Task CompressedUrlRoundtripTest()
     {
         var snippet = Snippets.GetCode("TableServerSidePaginateExample");
         string urlEncodedBase64CompressedCode;
@@ -41,6 +40,6 @@ public class CodeSnippetUrlTests
             snippet1 = Encoding.UTF8.GetString(uncompressed.ToArray());
         }
 
-        snippet1.Should().Be(snippet, "The roundtrip should preserve the snippet");
+        await Assert.That(snippet1).IsEqualTo(snippet).Because("The roundtrip should preserve the snippet");
     }
 }

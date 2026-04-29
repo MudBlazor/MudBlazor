@@ -178,7 +178,6 @@ public partial class TestsForApiPages
             cb.AddHeader();
             cb.AddLine("using System.Collections.Generic;");
             cb.AddLine("using Bunit;");
-            cb.AddLine("using AwesomeAssertions;");
             cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
             cb.AddLine("using MudBlazor.Docs.Pages.Api;");
             cb.AddLine("using MudBlazor.Docs.Services;");
@@ -299,7 +298,7 @@ public partial class TestsForApiPages
         cb.AddLine("{");
         cb.IndentLevel++;
         cb.AddLine(@"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href != null && link.Instance.Href.StartsWith(""/component""));");
-        cb.AddLine(@"exampleLink.Should().NotBeNull();");
+        cb.AddLine(@"await Assert.That(exampleLink).IsNotNull();");
         cb.IndentLevel--;
         cb.AddLine("}");
         cb.IndentLevel--;

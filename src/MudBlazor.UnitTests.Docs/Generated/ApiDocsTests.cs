@@ -1,5 +1,4 @@
-﻿using AwesomeAssertions;
-using Bunit;
+﻿using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,7 +65,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             await _ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();
             comp.Find(".mud-breadcrumbs");
             var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href.StartsWith("/component"));
-            exampleLink.Should().NotBeNull();
+            await Assert.That(exampleLink).IsNotNull();
         }
 
         [After(HookType.Test)]
