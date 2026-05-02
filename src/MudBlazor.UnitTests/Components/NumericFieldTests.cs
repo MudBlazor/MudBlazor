@@ -1015,10 +1015,9 @@ namespace MudBlazor.UnitTests.Components
             numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            // trigger the culture change
+            // trigger the delayed culture change
             var cultureChangeTask = delayedCultureChange.ClickAsync();
-            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.RerenderDelay));
-            await cultureChangeTask;
+
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
@@ -1030,9 +1029,17 @@ namespace MudBlazor.UnitTests.Components
                 timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
+
+            await cultureChangeTask;
+
             // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
             await comp.WaitForAssertionAsync(() => numericField.ReadText.Should().Be(currentText));
             comp.Instance.Culture.Name.Should().Be("de-DE");
+
+            // once debounce occurs, both value and text are translated into the new culture
+            // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await comp.WaitForAssertionAsync(() => numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture)));
         }
 
         /// <summary>

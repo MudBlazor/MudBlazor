@@ -1353,12 +1353,10 @@ namespace MudBlazor.UnitTests.Components
             // ensure text is updated on initialize
             textField.ReadText.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
 
-            // trigger the format change
+            // trigger the delayed format change
             var formatChangeTask = comp.Find("#format-change-button").ClickAsync();
-            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.RerenderDelay));
-            await formatChangeTask;
 
-            // keep typing after the delayed format change to ensure pending input is preserved
+            // imitate "typing in progress" by extending the debounce interval until the component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
             while (elapsedTime < comp.Instance.RerenderDelay)
@@ -1370,10 +1368,21 @@ namespace MudBlazor.UnitTests.Components
                 elapsedTime += delay;
             }
 
-            // after the format change has elapsed, the uncommitted text is retained (with the old Format)
-            textField.ReadText.Should().Be(currentText);
+            await formatChangeTask;
 
+            // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
+            textField.ReadText.Should().Be(currentText);
             comp.Instance.Format.Should().Be("dd/MM/yyyy");
+
+            // once debounce occurs, both value and text are reset because they define an invalid DateTime,
+            // now with the new Format
+            var expectedFinalDateTime = default(DateTime);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                textField.ReadValue.Should().Be(expectedFinalDateTime);
+                textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            });
         }
 
         /// <summary>
