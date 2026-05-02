@@ -42,15 +42,9 @@
         base.OnAfterRender(firstRender);
     }
 
-    private Task LaunchDelayedRerender()
-    {
-        _ = LaunchDelayedRerenderAsync();
-        return Task.CompletedTask;
-    }
-
-    private async Task LaunchDelayedRerenderAsync()
+    private async Task LaunchDelayedRerender()
     {
         await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
 }

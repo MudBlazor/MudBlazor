@@ -47,16 +47,10 @@
         base.OnAfterRender(firstRender);
     }
 
-    private Task LaunchDelayedCultureChange()
-    {
-        _ = LaunchDelayedCultureChangeAsync();
-        return Task.CompletedTask;
-    }
-
-    private async Task LaunchDelayedCultureChangeAsync()
+    private async Task LaunchDelayedCultureChange()
     {
         await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         Culture = new CultureInfo("de-DE");
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
   }

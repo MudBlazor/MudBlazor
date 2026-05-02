@@ -45,16 +45,10 @@
         base.OnAfterRender(firstRender);
     }
 
-    private Task LaunchDelayedFormatChange()
-    {
-        _ = LaunchDelayedFormatChangeAsync();
-        return Task.CompletedTask;
-    }
-
-    private async Task LaunchDelayedFormatChangeAsync()
+    private async Task LaunchDelayedFormatChange()
     {
         await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         Format = "dd/MM/yyyy";
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
 }
