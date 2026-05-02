@@ -71,7 +71,7 @@ jobs:
     env:
       LANG: ${{ matrix.language }}.UTF-8
       LC_ALL: ${{ matrix.language }}.UTF-8
-      DEFAULT_LANGUAGE: "en_US.UTF-8"
+      DEFAULT_LANGUAGE: "en_US"
 
     steps:
       - uses: actions/checkout@v6
