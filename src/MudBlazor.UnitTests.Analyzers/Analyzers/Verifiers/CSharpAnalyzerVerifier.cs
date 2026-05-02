@@ -46,15 +46,9 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
     {
         public Test()
         {
-            // Add reference assemblies for .NET
-            // Keep the version in sync with the MudBlazor project
-            // TODO: Use standard .NET 10.0 reference assemblies when available
-            // Copied from https://github.com/dotnet/roslyn-sdk/blob/f500e81ba5596809e711a3022bf8e80a00c8371b/src/Microsoft.CodeAnalysis.Testing/Microsoft.CodeAnalysis.Analyzer.Testing/ReferenceAssemblies.cs#L1216
-            ReferenceAssemblies = new("net10.0",
-                new("Microsoft.NETCore.App.Ref", "10.0.0-rc.1.25451.107"),
-                Path.Combine("ref", "net10.0"));
-            TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(Microsoft.AspNetCore.Components.ComponentBase).Assembly.Location));
-            TestState.AdditionalReferences.Add(MetadataReference.CreateFromFile(typeof(MudBlazor._Imports).Assembly.Location));
+            ReferenceAssemblies = VerifierSettings.DefaultReferenceAssemblies;
+            TestState.AdditionalReferences.Add(VerifierSettings.ComponentBaseReference);
+            TestState.AdditionalReferences.Add(VerifierSettings.MudBlazorReference);
         }
     }
 }
