@@ -31,8 +31,12 @@ namespace MudBlazor
                 .AddClass("mud-progress-linear-background", ShowBackground)
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
-                .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
+                .Build();
+
+        protected string BarsClassname =>
+            new CssBuilder("mud-progress-linear-bars")
+                .AddClass("mud-flip-x-rtl", !Vertical)
                 .Build();
 
         /// <summary>

@@ -219,6 +219,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RtlFlipClassIsAppliedOnlyToBars(bool isVertical)
+        {
+            var comp = Context.Render<MudProgressLinear>(x =>
+            {
+                x.Add(y => y.Vertical, isVertical);
+                x.Add(y => y.ChildContent, "<p>my content</p>");
+            });
+
+            var container = comp.Find(".mud-progress-linear");
+            container.ClassList.Should().NotContain("mud-flip-x-rtl");
+
+            var barContainer = comp.Find(".mud-progress-linear-bars");
+            if (isVertical)
+            {
+                barContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
+            }
+            else
+            {
+                barContainer.ClassList.Should().Contain("mud-flip-x-rtl");
+            }
+
+            var contentContainer = comp.Find(".mud-progress-linear-content");
+            contentContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(true)]
         public void TestClassesForRounded(bool rounded)
