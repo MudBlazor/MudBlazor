@@ -2069,5 +2069,63 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.PickerMonth?.Month.Should().Be(12);
             return comp;
         }
+
+        #region Per-TValue smoke tests (DateOnly, DateTimeOffset)
+
+        [Test]
+        public async Task MudDatePicker_DateOnly_RoundTrip()
+        {
+            var initial = DateOnly.FromDateTime(DateTime.Today);
+            var comp = Context.Render<MudDatePicker<DateOnly?>>(parameters => parameters.Add(p => p.Date, initial));
+
+            comp.Instance.Date.Should().Be(initial);
+
+            var newDate = initial.AddDays(5);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, newDate));
+
+            comp.Instance.Date.Should().Be(newDate);
+        }
+
+        [Test]
+        public async Task MudDatePicker_DateOnly_DateChangedFires()
+        {
+            DateOnly? captured = null;
+            var comp = Context.Render<MudDatePicker<DateOnly?>>(parameters => parameters
+                .Add(p => p.DateChanged, (DateOnly? d) => captured = d));
+
+            var target = DateOnly.FromDateTime(DateTime.Today).AddDays(3);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, target));
+
+            captured.Should().Be(target);
+        }
+
+        [Test]
+        public async Task MudDatePicker_DateTimeOffset_RoundTrip()
+        {
+            var initial = new DateTimeOffset(2024, 6, 15, 12, 0, 0, TimeSpan.FromHours(2));
+            var comp = Context.Render<MudDatePicker<DateTimeOffset?>>(parameters => parameters.Add(p => p.Date, initial));
+
+            comp.Instance.Date.Should().Be(initial);
+
+            var newDate = initial.AddDays(5);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, newDate));
+
+            comp.Instance.Date.Should().Be(newDate);
+        }
+
+        [Test]
+        public async Task MudDatePicker_DateTimeOffset_DateChangedFires()
+        {
+            DateTimeOffset? captured = null;
+            var comp = Context.Render<MudDatePicker<DateTimeOffset?>>(parameters => parameters
+                .Add(p => p.DateChanged, (DateTimeOffset? d) => captured = d));
+
+            var target = new DateTimeOffset(2024, 6, 18, 9, 30, 0, TimeSpan.FromHours(2));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, target));
+
+            captured.Should().Be(target);
+        }
+
+        #endregion
     }
 }

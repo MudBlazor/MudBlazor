@@ -16,6 +16,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Supported Types">
+                <Description>
+                    <CodeInline>MudDatePicker</CodeInline> is generic over <CodeInline>TValue</CodeInline> and supports
+                    <CodeInline>DateTime</CodeInline>, <CodeInline>DateOnly</CodeInline>, and
+                    <CodeInline>DateTimeOffset</CodeInline> (and their nullable variants). Specify the type via
+                    the <CodeInline>TValue</CodeInline> attribute.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerTValueExample)" ShowCode="false">
+                <DatePickerTValueExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Input Masking">
                 <Description>
                     By setting the <CodeInline>Mask</CodeInline> parameter, an editable DatePicker can be used with any suitable

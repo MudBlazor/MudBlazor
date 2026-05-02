@@ -1462,6 +1462,88 @@ namespace MudBlazor.UnitTests.Components
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
         }
+
+        #region Per-TValue smoke tests (DateOnly, DateTimeOffset)
+
+        [Test]
+        public async Task MudDateRangePicker_DateOnly_RoundTrip()
+        {
+            var start = DateOnly.FromDateTime(DateTime.Today);
+            var end = start.AddDays(7);
+            var range = new DateRange<DateOnly?>(start, end);
+
+            var comp = Context.Render<MudDateRangePicker<DateOnly?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().Be(start);
+            comp.Instance.DateRange.End.Should().Be(end);
+
+            var newStart = start.AddDays(10);
+            var newEnd = end.AddDays(10);
+            await comp.SetParametersAndRenderAsync(parameters =>
+                parameters.Add(p => p.DateRange, new DateRange<DateOnly?>(newStart, newEnd)));
+
+            comp.Instance.DateRange.Start.Should().Be(newStart);
+            comp.Instance.DateRange.End.Should().Be(newEnd);
+        }
+
+        [Test]
+        public async Task MudDateRangePicker_DateOnly_DateRangeChangedFires()
+        {
+            DateRange<DateOnly?> captured = null;
+            var comp = Context.Render<MudDateRangePicker<DateOnly?>>(parameters => parameters
+                .Add(p => p.DateRangeChanged, (DateRange<DateOnly?> r) => captured = r));
+
+            var start = DateOnly.FromDateTime(DateTime.Today);
+            var end = start.AddDays(3);
+            var target = new DateRange<DateOnly?>(start, end);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, target));
+
+            captured.Should().NotBeNull();
+            captured.Start.Should().Be(start);
+            captured.End.Should().Be(end);
+        }
+
+        [Test]
+        public async Task MudDateRangePicker_DateTimeOffset_RoundTrip()
+        {
+            var start = new DateTimeOffset(2024, 6, 15, 12, 0, 0, TimeSpan.FromHours(2));
+            var end = start.AddDays(7);
+            var range = new DateRange<DateTimeOffset?>(start, end);
+
+            var comp = Context.Render<MudDateRangePicker<DateTimeOffset?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().Be(start);
+            comp.Instance.DateRange.End.Should().Be(end);
+
+            var newStart = start.AddDays(10);
+            var newEnd = end.AddDays(10);
+            await comp.SetParametersAndRenderAsync(parameters =>
+                parameters.Add(p => p.DateRange, new DateRange<DateTimeOffset?>(newStart, newEnd)));
+
+            comp.Instance.DateRange.Start.Should().Be(newStart);
+            comp.Instance.DateRange.End.Should().Be(newEnd);
+        }
+
+        [Test]
+        public async Task MudDateRangePicker_DateTimeOffset_DateRangeChangedFires()
+        {
+            DateRange<DateTimeOffset?> captured = null;
+            var comp = Context.Render<MudDateRangePicker<DateTimeOffset?>>(parameters => parameters
+                .Add(p => p.DateRangeChanged, (DateRange<DateTimeOffset?> r) => captured = r));
+
+            var start = new DateTimeOffset(2024, 6, 18, 9, 30, 0, TimeSpan.FromHours(2));
+            var end = start.AddDays(3);
+            var target = new DateRange<DateTimeOffset?>(start, end);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, target));
+
+            captured.Should().NotBeNull();
+            captured.Start.Should().Be(start);
+            captured.End.Should().Be(end);
+        }
+
+        #endregion
     }
     public static class DatePickerRenderedFragmentExtensions
     {

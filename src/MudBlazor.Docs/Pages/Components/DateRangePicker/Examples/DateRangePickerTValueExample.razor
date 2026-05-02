@@ -1,0 +1,45 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="4">
+        <MudDateRangePicker TValue="DateTime" Label="DateTime" @bind-DateRange="_dateTimeRange" />
+        <MudText Class="mt-2">@FormatRange(_dateTimeRange?.Start, _dateTimeRange?.End, "yyyy-MM-dd")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDateRangePicker TValue="DateOnly" Label="DateOnly" @bind-DateRange="_dateOnlyRange" />
+        <MudText Class="mt-2">@FormatRange(_dateOnlyRange?.Start, _dateOnlyRange?.End, "yyyy-MM-dd")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDateRangePicker TValue="DateTimeOffset" Label="DateTimeOffset" @bind-DateRange="_dateTimeOffsetRange" />
+        <MudText Class="mt-2">@FormatRange(_dateTimeOffsetRange?.Start, _dateTimeOffsetRange?.End, "yyyy-MM-dd zzz")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDateRangePicker TValue="DateTime?" Label="DateTime?" @bind-DateRange="_dateTimeRangeNullable" />
+        <MudText Class="mt-2">@FormatRange(_dateTimeRangeNullable?.Start, _dateTimeRangeNullable?.End, "yyyy-MM-dd")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDateRangePicker TValue="DateOnly?" Label="DateOnly?" @bind-DateRange="_dateOnlyRangeNullable" />
+        <MudText Class="mt-2">@FormatRange(_dateOnlyRangeNullable?.Start, _dateOnlyRangeNullable?.End, "yyyy-MM-dd")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDateRangePicker TValue="DateTimeOffset?" Label="DateTimeOffset?" @bind-DateRange="_dateTimeOffsetRangeNullable" />
+        <MudText Class="mt-2">@FormatRange(_dateTimeOffsetRangeNullable?.Start, _dateTimeOffsetRangeNullable?.End, "yyyy-MM-dd zzz")</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DateRange<DateTime> _dateTimeRange = new(DateTime.Today, DateTime.Today.AddDays(7));
+    private DateRange<DateOnly> _dateOnlyRange = new(DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddDays(7)));
+    private DateRange<DateTimeOffset> _dateTimeOffsetRange = new(DateTimeOffset.Now, DateTimeOffset.Now.AddDays(7));
+
+    private DateRange<DateTime?> _dateTimeRangeNullable = new(DateTime.Today, DateTime.Today.AddDays(7));
+    private DateRange<DateOnly?> _dateOnlyRangeNullable = new(DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddDays(7)));
+    private DateRange<DateTimeOffset?> _dateTimeOffsetRangeNullable = new(DateTimeOffset.Now, DateTimeOffset.Now.AddDays(7));
+
+    private static string FormatRange<T>(T? start, T? end, string format) where T : struct, IFormattable
+    {
+        var startText = start?.ToString(format, null) ?? "(none)";
+        var endText = end?.ToString(format, null) ?? "(none)";
+        return $"{startText} — {endText}";
+    }
+}

@@ -1,0 +1,38 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="4">
+        <MudDatePicker TValue="DateTime" Label="DateTime" @bind-Date="_dateTime" />
+        <MudText Class="mt-2">@_dateTime.ToString("yyyy-MM-dd HH:mm")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker TValue="DateOnly" Label="DateOnly" @bind-Date="_dateOnly" />
+        <MudText Class="mt-2">@_dateOnly.ToString("yyyy-MM-dd")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker TValue="DateTimeOffset" Label="DateTimeOffset" @bind-Date="_dateTimeOffset" />
+        <MudText Class="mt-2">@_dateTimeOffset.ToString("yyyy-MM-dd zzz")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker TValue="DateTime?" Label="DateTime?" @bind-Date="_dateTimeNullable" />
+        <MudText Class="mt-2">@(_dateTimeNullable?.ToString("yyyy-MM-dd HH:mm") ?? "(none)")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker TValue="DateOnly?" Label="DateOnly?" @bind-Date="_dateOnlyNullable" />
+        <MudText Class="mt-2">@(_dateOnlyNullable?.ToString("yyyy-MM-dd") ?? "(none)")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker TValue="DateTimeOffset?" Label="DateTimeOffset?" @bind-Date="_dateTimeOffsetNullable" />
+        <MudText Class="mt-2">@(_dateTimeOffsetNullable?.ToString("yyyy-MM-dd zzz") ?? "(none)")</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DateTime _dateTime = DateTime.Today;
+    private DateOnly _dateOnly = DateOnly.FromDateTime(DateTime.Today);
+    private DateTimeOffset _dateTimeOffset = DateTimeOffset.Now;
+
+    private DateTime? _dateTimeNullable = DateTime.Today;
+    private DateOnly? _dateOnlyNullable = DateOnly.FromDateTime(DateTime.Today);
+    private DateTimeOffset? _dateTimeOffsetNullable = DateTimeOffset.Now;
+}
