@@ -32,6 +32,9 @@
     [Parameter]
     public bool ExpandSingleRow { get; set; }
 
+    [Parameter]
+    public int ServerDataDelay { get; set; } = 200;
+
     private MudDataGrid<Model> _dataGrid = null!;
     private int _rowsPerPage = 5;
 
@@ -52,7 +55,10 @@
 
     private async Task<GridData<Model>> ServerReload(GridState<Model> state, CancellationToken token)
     {
-        await Task.Delay(200, token);
+        if (ServerDataDelay > 0)
+        {
+            await Task.Delay(ServerDataDelay, token);
+        }
 
         IEnumerable<Model> data = _itemList;
 
