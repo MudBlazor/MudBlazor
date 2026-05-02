@@ -25,6 +25,9 @@
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce with changed format.";
 
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = null!;
+
     private int _renderCount;
 
     public int DebounceInterval => 500;
@@ -42,10 +45,16 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task LaunchDelayedFormatChange()
+    private Task LaunchDelayedFormatChange()
     {
-        await Task.Delay(RerenderDelay);
+        _ = LaunchDelayedFormatChangeAsync();
+        return Task.CompletedTask;
+    }
+
+    private async Task LaunchDelayedFormatChangeAsync()
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         Format = "dd/MM/yyyy";
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 }

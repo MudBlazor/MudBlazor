@@ -21,7 +21,10 @@
  
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce.";
-    
+
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = null!;
+
     private int _renderCount;
 
     [Parameter]
@@ -37,9 +40,15 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task LaunchDelayedRerender()
+    private Task LaunchDelayedRerender()
     {
-        await Task.Delay(RerenderDelay);
-        StateHasChanged();
+        _ = LaunchDelayedRerenderAsync();
+        return Task.CompletedTask;
     }
- }
+
+    private async Task LaunchDelayedRerenderAsync()
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
+        await InvokeAsync(StateHasChanged);
+    }
+  }

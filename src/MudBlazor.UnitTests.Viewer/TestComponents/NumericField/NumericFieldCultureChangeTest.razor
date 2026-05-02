@@ -26,6 +26,9 @@
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce with changed culture.";
 
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = null!;
+
     private int _renderCount;
 
     public double Value { get; private set; } = 1.0;
@@ -44,10 +47,16 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task LaunchDelayedCultureChange()
+    private Task LaunchDelayedCultureChange()
     {
-        await Task.Delay(RerenderDelay);
-        Culture = new CultureInfo("de-DE");
-        StateHasChanged();
+        _ = LaunchDelayedCultureChangeAsync();
+        return Task.CompletedTask;
     }
- }
+
+    private async Task LaunchDelayedCultureChangeAsync()
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
+        Culture = new CultureInfo("de-DE");
+        await InvokeAsync(StateHasChanged);
+    }
+  }
