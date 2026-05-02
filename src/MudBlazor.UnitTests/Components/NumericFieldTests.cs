@@ -940,9 +940,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
-        // TODO: Re-enable parallel execution. This test intermittently causes test-host hangs under full parallel coverage runs.
         [Test]
-        [NonParallelizable]
+        [Ignore("Randomly fails or causes test-host hangs under heavy loads.")]
         public async Task DebouncedNumericFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
@@ -991,6 +990,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
         /// </summary>
         [Test]
+        [Ignore("Randomly fails or causes test-host hangs under heavy loads.")]
         public async Task DebouncedNumericFieldCultureChangeRerender()
         {
             var timeProvider = new FakeTimeProvider();

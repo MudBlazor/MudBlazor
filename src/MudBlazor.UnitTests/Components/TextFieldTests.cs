@@ -1276,7 +1276,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        [Ignore("Flaky test: randomly fails due to timing/rerender race conditions in CI.")]
+        [Ignore("Randomly fails under heavy loads.")]
         public async Task DebouncedTextFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
@@ -1325,7 +1325,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
         [Test]
-        [Ignore("Flaky test: randomly fails due to timing/rerender race conditions in CI.")]
+        [Ignore("Randomly fails under heavy loads.")]
         public async Task DebouncedTextFieldFormatChangeRerender()
         {
             var timeProvider = new FakeTimeProvider();
