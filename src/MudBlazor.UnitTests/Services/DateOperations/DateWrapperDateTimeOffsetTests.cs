@@ -19,7 +19,7 @@ public class DateWrapperDateTimeOffsetTests
     public void EndOfMonth_ShouldReturnExpectedDate(DateTimeOffset date, CultureInfo culture, DateTimeOffset expected)
     {
         // Arrange
-        var dateWrapper = new DateWrapper<DateTimeOffset>(new DateTimeOffsetConverter());
+        var dateWrapper = new DateWrapper<DateTimeOffset>(new DateTimeOffsetConverter(), TimeProvider.System);
         dateWrapper.SetCulture(culture);
 
         // Act
@@ -35,7 +35,7 @@ public class DateWrapperDateTimeOffsetTests
     public void StartOfMonth_ShouldReturnExpectedDate(DateTimeOffset date, CultureInfo culture, DateTimeOffset expected)
     {
         // Arrange
-        var dateWrapper = new DateWrapper<DateTimeOffset>(new DateTimeOffsetConverter());
+        var dateWrapper = new DateWrapper<DateTimeOffset>(new DateTimeOffsetConverter(), TimeProvider.System);
         dateWrapper.SetCulture(culture);
 
         // Act

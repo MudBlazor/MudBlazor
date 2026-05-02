@@ -19,7 +19,7 @@ public class DateWrapperDateTimeTests
     public void EndOfMonth_ShouldReturnExpectedDate(DateTime date, CultureInfo culture, DateTime expected)
     {
         // Arrange
-        var dateWrapper = new DateWrapper<DateTime>(new DateTimeConverter());
+        var dateWrapper = new DateWrapper<DateTime>(new DateTimeConverter(), TimeProvider.System);
         dateWrapper.SetCulture(culture);
 
         // Act
@@ -34,7 +34,7 @@ public class DateWrapperDateTimeTests
     [TestCaseSource(nameof(AreEqualTestData))]
     public void AreEqual_ShouldReturnExpectedResult(DateTime? date, DateTime date2, bool expected)
     {
-        var sut = new DateWrapper<DateTime>(new DateTimeConverter());
+        var sut = new DateWrapper<DateTime>(new DateTimeConverter(), TimeProvider.System);
         sut.AreEqual(date, date2).Should().Be(expected);
     }
 

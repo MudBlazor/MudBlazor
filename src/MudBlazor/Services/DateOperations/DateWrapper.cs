@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using MudBlazor.Extensions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MudBlazor.Services;
 #nullable enable
@@ -70,17 +69,20 @@ internal interface IDateWrapper<T> where T : struct
 internal class DateWrapper<T> : IDateWrapper<T> where T : struct
 {
     private readonly IDateConverter<T> _converter;
+    private readonly TimeProvider _timeProvider;
 
     public CultureInfo Culture { get; private set; }
 
     /// <summary>
     /// returns the current date
     /// </summary>
-    public T Today => _converter.ConvertFrom(DateTimeOffset.UtcNow.Date);
+    // GetLocalNow (not UtcNow) so DateOnly does not skew across UTC day boundaries.
+    public T Today => _converter.ConvertFrom(_timeProvider.GetLocalNow().Date);
 
-    public DateWrapper(IDateConverter<T> converter)
+    public DateWrapper(IDateConverter<T> converter, TimeProvider timeProvider)
     {
         _converter = converter;
+        _timeProvider = timeProvider;
         Culture = CultureInfo.CurrentCulture;
     }
 
