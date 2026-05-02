@@ -37,6 +37,9 @@ namespace MudBlazor
         /// <summary>
         /// The CSS classes for the internal bars container.
         /// </summary>
+        /// <remarks>
+        /// Horizontal progress bars are mirrored in RTL layouts so the fill direction remains correct, while vertical bars do not require mirroring.
+        /// </remarks>
         protected string BarsClassname =>
             new CssBuilder("mud-progress-linear-bars")
                 .AddClass("mud-flip-x-rtl", !Vertical)

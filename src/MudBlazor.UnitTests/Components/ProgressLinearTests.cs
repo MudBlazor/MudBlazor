@@ -221,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(false)]
         [TestCase(true)]
-        public void RtlFlipClassIsAppliedOnlyToBars(bool isVertical)
+        public void RtlFlipClassOnlyOnHorizontalBars(bool isVertical)
         {
             var comp = Context.Render<MudProgressLinear>(x =>
             {
