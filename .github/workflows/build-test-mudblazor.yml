@@ -67,11 +67,11 @@ jobs:
             "src/MudBlazor.UnitTests.Docs",
             "src/MudBlazor.UnitTests.Analyzers",
           ]
-        language: ["en_US.UTF-8", "de_DE.UTF-8"]
+        language: ["en_US", "de_DE"]
     env:
-      LANG: ${{ matrix.language }}
-      LC_ALL: ${{ matrix.language }}
-      DEFAULT_LANGUAGE: "en-US.UTF-8"
+      LANG: ${{ matrix.language }}.UTF-8
+      LC_ALL: ${{ matrix.language }}.UTF-8
+      DEFAULT_LANGUAGE: "en_US.UTF-8"
 
     steps:
       - uses: actions/checkout@v6
