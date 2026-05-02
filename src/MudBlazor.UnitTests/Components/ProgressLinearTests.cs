@@ -244,6 +244,7 @@ namespace MudBlazor.UnitTests.Components
 
             var contentContainer = comp.Find(".mud-progress-linear-content");
             contentContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
+            contentContainer.TextContent.Should().Be("my content");
         }
 
         [Test]
