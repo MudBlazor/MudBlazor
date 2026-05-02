@@ -462,6 +462,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(0.9, _defaultXForColorPanel, _defaultYForColorPanel)]
+        [SetUICulture("en-US")]
         public async Task SetA_InRGBMode(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>();
@@ -492,6 +493,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(0.4, 134.88, 61.76)]
+        [SetUICulture("en-US")]
         public async Task SetS(double s, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -507,6 +509,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(0.67, 163.43, 23.53)]
+        [SetUICulture("en-US")]
         public async Task SetL(double l, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -521,6 +524,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(0.5, _defaultXForColorPanel, _defaultYForColorPanel)]
+        [SetUICulture("en-US")]
         public async Task SetAlpha_AsHLS(double a, double selectorXPosition, double selectorYPosition)
         {
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.ColorPickerMode, ColorPickerMode.HSL));
@@ -566,6 +570,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetUICulture("en-US")]
         public async Task SetAlphaSlider()
         {
             var comp = Context.Render<SimpleColorPickerTest>();
@@ -1336,6 +1341,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetUICulture("en-US")]
         public async Task SetHLS_NotChangeRBG_ButCallbackFired()
         {
             var comp = Context.Render<SimpleColorPickerTest>(p =>
