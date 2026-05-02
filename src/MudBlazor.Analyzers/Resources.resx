@@ -156,4 +156,13 @@
   <data name="MUD0012MessageFormat" xml:space="preserve">
     <value>External access of '{0}' parameter state property is not allowed. Use GetState(x =&gt; x.{0}) instead.</value>
   </data>
+  <data name="MUD0003Title" xml:space="preserve">
+    <value>Unsupported TValue on date picker or DateRange</value>
+  </data>
+  <data name="MUD0003Description" xml:space="preserve">
+    <value>MudDatePicker, MudDateRangePicker, and DateRange only support DateTime, DateOnly, DateTimeOffset, and their nullable variants. Other types compile but throw at runtime.</value>
+  </data>
+  <data name="MUD0003MessageFormat" xml:space="preserve">
+    <value>'{0}' uses unsupported TValue '{1}'. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).</value>
+  </data>
 </root>

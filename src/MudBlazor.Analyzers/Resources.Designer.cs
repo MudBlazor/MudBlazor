@@ -176,5 +176,32 @@ namespace MudBlazor.Analyzers {
                 return ResourceManager.GetString("MUD0012Title", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported TValue on date picker or DateRange.
+        /// </summary>
+        internal static string MUD0003Title {
+            get {
+                return ResourceManager.GetString("MUD0003Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for the MUD0003 description.
+        /// </summary>
+        internal static string MUD0003Description {
+            get {
+                return ResourceManager.GetString("MUD0003Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string for the MUD0003 message format.
+        /// </summary>
+        internal static string MUD0003MessageFormat {
+            get {
+                return ResourceManager.GetString("MUD0003MessageFormat", resourceCulture);
+            }
+        }
     }
 }
