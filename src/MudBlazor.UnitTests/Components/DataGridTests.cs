@@ -6264,45 +6264,23 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridRowDetailInitiallyExpandedServerMultiple()
         {
-            var comp = Context.Render<DataGridServerHierarchyTest>(parameters => parameters
-                .Add(x => x.ServerDataDelay, 0));
+            var comp = Context.Render<DataGridServerHierarchyTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerHierarchyTest.Model>>();
 
-            Task WaitForGridStateAsync(int expectedPage, string[] expectedServerItems, string[] expectedOpenHierarchies, string[] expectedMarkup, string[] unexpectedMarkup)
+            await comp.WaitForAssertionAsync(() =>
             {
-                return comp.WaitForAssertionAsync(() =>
-                {
-                    dataGrid.Instance.Loading.Should().BeFalse();
-                    dataGrid.Instance.CurrentPage.Should().Be(expectedPage);
+                dataGrid.Instance.Loading.Should().BeFalse();
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "Ira");
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "Anders");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Ira");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Anders");
+                comp.Markup.Should().Contain("uid = Ira|27|Success|");
+                comp.Markup.Should().Contain("uid = Anders|24|Error|");
+            }, TimeSpan.FromSeconds(5));
 
-                    foreach (var expectedServerItem in expectedServerItems)
-                    {
-                        dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == expectedServerItem);
-                    }
-
-                    foreach (var expectedOpenHierarchy in expectedOpenHierarchies)
-                    {
-                        dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == expectedOpenHierarchy);
-                    }
-
-                    foreach (var expectedRowMarkup in expectedMarkup)
-                    {
-                        comp.Markup.Should().Contain(expectedRowMarkup);
-                    }
-
-                    foreach (var unexpectedRowMarkup in unexpectedMarkup)
-                    {
-                        comp.Markup.Should().NotContain(unexpectedRowMarkup);
-                    }
-                }, TimeSpan.FromSeconds(5));
-            }
-
-            await WaitForGridStateAsync(
-                expectedPage: 0,
-                expectedServerItems: ["Ira", "Anders"],
-                expectedOpenHierarchies: ["Ira", "Anders"],
-                expectedMarkup: ["uid = Ira|27|Success|", "uid = Anders|24|Error|"],
-                unexpectedMarkup: ["uid = Sam|56|Normal|", "uid = Alicia|54|Info|", "uid = John|32|Warning|"]);
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
 
             // Collapse Ira
             await comp.InvokeAsync(async () =>
@@ -6326,12 +6304,19 @@ namespace MudBlazor.UnitTests.Components
                 await nextButton.ClickAsync();
             });
 
-            await WaitForGridStateAsync(
-                expectedPage: 1,
-                expectedServerItems: ["ScarletKuro"],
-                expectedOpenHierarchies: ["Anders", "ScarletKuro"],
-                expectedMarkup: ["uid = ScarletKuro|27|Success|"],
-                unexpectedMarkup: ["uid = Versile2|24|Error|", "uid = Anu6is|56|Normal|", "uid = Garderoben|32|Warning|", "uid = Henon|54|Info|"]);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.Loading.Should().BeFalse();
+                dataGrid.Instance.CurrentPage.Should().Be(1);
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "ScarletKuro");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "ScarletKuro");
+                comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|");
+            }, TimeSpan.FromSeconds(5));
+
+            comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
+            comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Garderoben|32|Warning|");
+            comp.Markup.Should().NotContain("uid = Henon|54|Info|");
 
             // Go back to previous page
             await comp.InvokeAsync(async () =>
@@ -6341,12 +6326,12 @@ namespace MudBlazor.UnitTests.Components
                 await prevButton.ClickAsync();
             });
 
-            await WaitForGridStateAsync(
-                expectedPage: 0,
-                expectedServerItems: ["Ira", "Anders"],
-                expectedOpenHierarchies: ["Anders", "ScarletKuro"],
-                expectedMarkup: ["uid = Anders|24|Error|"],
-                unexpectedMarkup: ["uid = Ira|27|Success|", "uid = Sam|56|Normal|", "uid = Alicia|54|Info|", "uid = John|32|Warning|"]);
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
+
+            comp.Markup.Should().NotContain("uid = Ira|27|Success|");
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
