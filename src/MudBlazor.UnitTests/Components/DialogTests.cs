@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/11789
         /// </remarks>
         [Test]
-        public void InlineDialog_OpenCancelOpen()
+        public async Task InlineDialog_OpenCancelOpen()
         {
             // Arrange
 
@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Open the dialog
 
-            sup.Find(".open-dialog-button").Click();
+            await sup.Find(".open-dialog-button").ClickAsync();
 
             // Assert : Dialog should be open
 
@@ -216,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Cancel by click outside
 
-            comp.Find("div.mud-overlay-dialog").Click();
+            await comp.Find("div.mud-overlay-dialog").ClickAsync();
 
             // Assert : Dialog should be closed
 
@@ -224,7 +224,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Reopen the dialog
 
-            sup.Find(".open-dialog-button").Click();
+            await sup.Find(".open-dialog-button").ClickAsync();
 
             // Assert : Dialog should be open
 
