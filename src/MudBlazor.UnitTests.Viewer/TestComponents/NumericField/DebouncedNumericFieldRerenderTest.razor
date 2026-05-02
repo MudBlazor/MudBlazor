@@ -1,4 +1,6 @@
-﻿<MudNumericField @bind-Value="@Value"
+﻿@inject TimeProvider TimeProvider
+
+<MudNumericField @bind-Value="@Value"
                  Immediate="@true"
                  DebounceInterval="@DebounceInterval"
                  Required="@true"
@@ -39,7 +41,7 @@
 
     private async Task LaunchDelayedRerender()
     {
-        await Task.Delay(RerenderDelay);
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         StateHasChanged();
     }
- }
+  }

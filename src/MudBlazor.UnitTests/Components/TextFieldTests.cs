@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq.Expressions;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using FluentValidation;
@@ -23,7 +24,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class TextFieldTests : BunitTest
     {
         /// <summary>
@@ -174,12 +174,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInTextField()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
             var textField = comp.Instance;
             var input = comp.Find("input");
 
             //Act
-            await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await input.InputAsync("Some Value");
 
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
@@ -189,10 +192,11 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
-            await Task.Delay(100);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             textField.ReadValue.Should().BeNull();
 
             //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
         }
 
@@ -202,13 +206,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebounceInterval_EpsilonEquivalentValues_PreservesDebounce()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
             // Arrange
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200.0));
             var textField = comp.Instance;
             var input = comp.Find("input");
 
             // Act - Input a value
-            await input.InputAsync(new ChangeEventArgs() { Value = "Test Value" });
+            await input.InputAsync("Test Value");
 
             // Change DebounceInterval to an epsilon-equivalent value (should not reset debouncer)
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 200.0000001));
@@ -217,6 +224,7 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             // Wait for the debounce to complete
+            timeProvider.Advance(TimeSpan.FromMilliseconds(200));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Test Value"));
         }
 
@@ -1276,21 +1284,23 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        [Ignore("Flaky test: randomly fails due to timing/rerender race conditions in CI.")]
         public async Task DebouncedTextFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
-            var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "test" });
+            var textFieldComponent = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComponent.Instance;
+            IElement Input() => comp.Find("input");
+            await Input().InputAsync("test");
 
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            await textFieldComponent.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("test"), TimeSpan.FromSeconds(5));
 
             // trigger delayed re-render
-            await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
+            var delayedRerender = comp.Find("#re-render-button").ClickAsync();
 
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
@@ -1299,16 +1309,19 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                await Input().InputAsync(currentText);
                 timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
+            await delayedRerender;
 
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(currentText);
-            textField.ReadText.Should().Be(currentText);
+            await textFieldComponent.WaitForAssertionAsync(() =>
+            {
+                textField.ReadValue.Should().Be(currentText);
+                textField.ReadText.Should().Be(currentText);
+            }, TimeSpan.FromSeconds(5));
         }
 
         [Test]
@@ -1331,14 +1344,15 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
 
             var comp = Context.Render<DebouncedTextFieldFormatChangeRerenderTest>();
-            var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
+            var textFieldComponent = comp.FindComponent<MudTextField<DateTime>>();
+            var textField = textFieldComponent.Instance;
             DateTime expectedFinalDateTime = default;
 
             // ensure text is updated on initialize
             textField.ReadText.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
 
             // trigger the format change
-            await comp.Find("#format-change-button").ClickAsync();
+            var delayedFormatChange = comp.Find("#format-change-button").ClickAsync();
 
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
@@ -1351,18 +1365,19 @@ namespace MudBlazor.UnitTests.Components
                 timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
                 elapsedTime += delay;
             }
+            await delayedFormatChange;
 
             // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
-            textField.ReadText.Should().Be(currentText);
+            await textFieldComponent.WaitForAssertionAsync(() => textField.ReadText.Should().Be(currentText), TimeSpan.FromSeconds(5));
 
             // once debounce occurs, both value and text are reset because they define an invalid DateTime,
             // now with the new Format
-            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            comp.WaitForAssertion(() =>
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval * 2));
+            await textFieldComponent.WaitForAssertionAsync(() =>
             {
                 textField.ReadValue.Should().Be(expectedFinalDateTime);
                 textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
-            });
+            }, TimeSpan.FromSeconds(5));
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿<MudTextField T="DateTime"
+﻿@inject TimeProvider TimeProvider
+
+<MudTextField T="DateTime"
               @bind-Value="@Date"
               Format="@Format"
               Immediate="@true"
@@ -44,7 +46,7 @@
 
     private async Task LaunchDelayedFormatChange()
     {
-        await Task.Delay(RerenderDelay);
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         Format = "dd/MM/yyyy";
         StateHasChanged();
     }

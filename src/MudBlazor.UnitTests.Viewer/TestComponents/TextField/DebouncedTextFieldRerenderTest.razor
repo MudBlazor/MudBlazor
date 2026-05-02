@@ -1,4 +1,6 @@
-﻿<MudTextField T="string"
+﻿@inject TimeProvider TimeProvider
+
+<MudTextField T="string"
               @bind-Value="@Value"
               Immediate="@true"
               DebounceInterval="@DebounceInterval"
@@ -41,7 +43,7 @@
 
     private async Task LaunchDelayedRerender()
     {
-        await Task.Delay(RerenderDelay);
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         StateHasChanged();
     }
 }

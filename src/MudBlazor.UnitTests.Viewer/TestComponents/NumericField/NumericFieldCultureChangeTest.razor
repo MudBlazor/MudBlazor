@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@inject TimeProvider TimeProvider
 
 <MudNumericField @bind-Value="@Value"
                  Culture="@Culture"
@@ -46,8 +47,8 @@
 
     private async Task LaunchDelayedCultureChange()
     {
-        await Task.Delay(RerenderDelay);
+        await Task.Delay(TimeSpan.FromMilliseconds(RerenderDelay), TimeProvider);
         Culture = new CultureInfo("de-DE");
         StateHasChanged();
     }
- }
+  }
