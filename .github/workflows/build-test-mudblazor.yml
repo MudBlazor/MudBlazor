@@ -67,6 +67,11 @@ jobs:
             "src/MudBlazor.UnitTests.Docs",
             "src/MudBlazor.UnitTests.Analyzers",
           ]
+        language: ["en_US.UTF-8", "de_DE.UTF-8"]
+    env:
+      LANG: ${{ matrix.language }}
+      LC_ALL: ${{ matrix.language }}
+      DEFAULT_LANGUAGE: "en-US.UTF-8"
 
     steps:
       - uses: actions/checkout@v6
@@ -101,7 +106,7 @@ jobs:
           echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && matrix.language == env.DEFAULT_LANGUAGE }}
         uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
