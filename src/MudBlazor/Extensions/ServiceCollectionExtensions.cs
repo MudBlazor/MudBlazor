@@ -242,7 +242,6 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorDateOperations(this IServiceCollection services)
         {
-            services.TryAddTransient(typeof(IDateWrapper<>), typeof(DateWrapper<>));
             services.TryAddSingleton<IDateConverter<DateOnly>, DateOnlyConverter>();
             services.TryAddSingleton<IDateConverter<DateTime>, DateTimeConverter>();
             services.TryAddSingleton<IDateConverter<DateTimeOffset>, DateTimeOffsetConverter>();
