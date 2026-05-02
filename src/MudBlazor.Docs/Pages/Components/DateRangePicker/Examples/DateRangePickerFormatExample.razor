@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack>
-    <MudDateRangePicker @bind-DateRange="@_dateRange" DateFormat="dddd, dd MMMM, yyyy" TitleDateFormat="MMMM dd" Margin="Margin.Dense"
+    <MudDateRangePicker TValue="DateTime?" @bind-DateRange="@_dateRange" DateFormat="dddd, dd MMMM, yyyy" TitleDateFormat="MMMM dd" Margin="Margin.Dense"
                         Variant="Variant.Filled" Label="Range"/>
 </MudStack>
 
 @code {
-    private DateRange _dateRange { get; set; }
+    private DateRange<DateTime?> _dateRange { get; set; }
 }

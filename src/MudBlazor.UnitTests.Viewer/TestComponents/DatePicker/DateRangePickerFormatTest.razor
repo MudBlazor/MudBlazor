@@ -1,15 +1,15 @@
 @if (FormatFirst)
 {
-    <MudDateRangePicker DateFormat="yyyy MMMM dd" DateRange="@(DateRange)"/>
+    <MudDateRangePicker TValue="DateTime?" DateFormat="yyyy MMMM dd" DateRange="@(DateRange)"/>
 }
 else
 {
-    <MudDateRangePicker DateRange="@(DateRange)" DateFormat="yyyy MMMM dd"/>
+    <MudDateRangePicker TValue="DateTime?" DateRange="@(DateRange)" DateFormat="yyyy MMMM dd"/>
 }
 
 @code {
     [Parameter, EditorRequired]
-    public required DateRange DateRange { get; set; }
+    public required DateRange<DateTime?> DateRange { get; set; }
 
     [Parameter]
     public bool FormatFirst { get; set; }

@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem>
-        <MudDatePicker @ref="@Picker"
+        <MudDatePicker TValue="DateTime?" @ref="@Picker"
                        Style="max-width: 300px"
                        Placeholder="dd-MM-yyyy"
                        Editable="true"
@@ -24,5 +24,5 @@
 
     public DateTime? SelectedDate { get; set; }
 
-    public MudDatePicker Picker { get; set; } = null!;
+    public MudDatePicker<DateTime?> Picker { get; set; } = null!;
 }

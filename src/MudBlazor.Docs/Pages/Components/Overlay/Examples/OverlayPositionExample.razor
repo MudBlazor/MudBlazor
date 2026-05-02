@@ -17,7 +17,7 @@
 <MudPopover Open="@_isPopoverOpen" 
             AnchorOrigin="Origin.BottomCenter" 
             TransformOrigin="Origin.TopCenter">
-    <MudDatePicker Label="Publish Date" Class="pa-2"
+    <MudDatePicker TValue="DateTime?" Label="Publish Date" Class="pa-2"
                     MinDate="new DateTime(1950, 1, 1)"
                     @bind-Date="@_selectedDate"
                     Variant="Variant.Outlined"

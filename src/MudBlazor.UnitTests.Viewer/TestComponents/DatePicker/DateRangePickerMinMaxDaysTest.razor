@@ -1,12 +1,12 @@
 ﻿@using MudBlazor.Interfaces;
 
 <MudStack>
-    <MudDateRangePicker @ref="_picker" @bind-DateRange="@DateRange"
+    <MudDateRangePicker TValue="DateTime?" @ref="_picker" @bind-DateRange="@DateRange"
     MinDays="MinDays" MaxDays="@MaxDays"
     PickerVariant="PickerVariant.Static" Margin="Margin.Dense"
-    IsDateDisabledFunc="@( (d) => AllowWeekends ? false : IsWeekend(d))" 
+    IsDateDisabledFunc="@( (d) => AllowWeekends ? false : (d.HasValue && IsWeekend(d.Value)))"
     AllowDisabledDatesInRange AllowDisabledDatesInCount="@CountDisabledDays"
-    AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" />
+    AdditionalDateClassesFunc="@((DateTime? dt)=>((dt.HasValue && (int)dt.Value.DayOfWeek == 0) ? "red-text text-accent-4" : ""))" />
 
     <MudStack Row>
         <MudSwitch @bind-Value="AllowWeekends" @bind-Value:after="@(() => _picker.RecalculateValidDays())" Color="Color.Primary">Allow Weekends</MudSwitch>
@@ -18,10 +18,10 @@
 @code {
     public static string __description__ = "DateTime range with a restricted mix & max days selection";
     
-    private MudDateRangePicker? _picker;
+    private MudDateRangePicker<DateTime?>? _picker;
     
     [Parameter]
-    public DateRange? DateRange { get; set; }
+    public DateRange<DateTime?>? DateRange { get; set; }
 
     [Parameter]
     public int MinDays { get; set; } = 3;

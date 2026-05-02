@@ -16,8 +16,8 @@ namespace MudBlazor
     /// <summary>
     /// Provides a simple way to select time values.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDatePicker{TValue}"/>
+    /// <seealso cref="MudDateRangePicker{TValue}"/>
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private OpenTo _currentView;

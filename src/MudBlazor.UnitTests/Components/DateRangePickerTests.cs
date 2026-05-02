@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Default()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             var picker = comp.Instance;
 
             picker.Text.Should().Be(null);
@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DateRangePickerPlaceHolders()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             await comp.SetParametersAndRenderAsync(parameters =>
                 parameters
                     .Add(picker => picker.PlaceholderStart, "Start")
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DateRangePickerInputDefaultAriaLabels()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             var inputs = comp.FindAll("input");
 
             inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Start date");
@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task DateRangePickerSeparatorIcon()
         {
             var newIcon = Icons.Material.Filled.Star;
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             await comp.SetParametersAndRenderAsync(parameters =>
                 parameters
                     .Add(picker => picker.SeparatorIcon, newIcon)
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DateRangePickerOpenButtonDefaultAriaLabel()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             var openButton = comp.Find(".mud-input-adornment button");
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetPickerValue_CheckDateRange_SetPickerDate_CheckValue()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().BeNullOrEmpty();
@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Start.Should().Be(new DateTime(2021, 01, 01));
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.DateRange, new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01))));
+                .Add(x => x.DateRange, new DateRange<DateTime?>(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01))));
             picker.Text.Should().Be(RangeUtility.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
         }
 
@@ -407,8 +407,8 @@ namespace MudBlazor.UnitTests.Components
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
-                .Add(x => x.DateRange, new DateRange(date, date.AddDays(5))));
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
+                .Add(x => x.DateRange, new DateRange<DateTime?>(date, date.AddDays(5))));
             // select elements needed for the test
             var picker = comp.Instance;
 
@@ -426,14 +426,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var today = DateTime.Now.Date;
             var comp = await OpenPicker(parameters => parameters
-                .Add(x => x.DateRange, new DateRange(today, today)));
+                .Add(x => x.DateRange, new DateRange<DateTime?>(today, today)));
             comp.FindAll("button.mud-selected").Count.Should().Be(1);
         }
 
         [Test]
         public async Task IsDateDisabledFunc_DisablesCalendarDateButtons()
         {
-            Func<DateTime, bool> isDisabledFunc = date => true;
+            Func<DateTime?, bool> isDisabledFunc = date => true;
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.IsDateDisabledFunc, isDisabledFunc));
 
@@ -450,12 +450,12 @@ namespace MudBlazor.UnitTests.Components
             var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             var wasEventCallbackCalled = false;
 
-            Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            Func<DateTime?, bool> isDisabledFunc = date => date == yesterday;
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(x => x.IsDateDisabledFunc, isDisabledFunc)
-                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
+                .Add(x => x.DateRangeChanged, (DateRange<DateTime?> _) => wasEventCallbackCalled = true));
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange(twoDaysAgo, today)));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange<DateTime?>(twoDaysAgo, today)));
 
             comp.Instance.DateRange.Should().BeNull();
             wasEventCallbackCalled.Should().BeFalse();
@@ -469,11 +469,11 @@ namespace MudBlazor.UnitTests.Components
             var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             var wasEventCallbackCalled = false;
 
-            Func<DateTime, bool> isDisabledFunc = date => date == twoDaysAgo;
-            var range = new DateRange(yesterday, today);
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            Func<DateTime?, bool> isDisabledFunc = date => date == twoDaysAgo;
+            var range = new DateRange<DateTime?>(yesterday, today);
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(x => x.IsDateDisabledFunc, isDisabledFunc)
-                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
+                .Add(x => x.DateRangeChanged, (DateRange<DateTime?> _) => wasEventCallbackCalled = true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, range));
 
@@ -492,7 +492,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AdditionalDateClassesFunc_ClassIsAdded()
         {
-            Func<DateTime, string> additionalDateClassesFunc = date => "__addedtestclass__";
+            Func<DateTime?, string> additionalDateClassesFunc = date => "__addedtestclass__";
 
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.AdditionalDateClassesFunc, additionalDateClassesFunc));
@@ -509,9 +509,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetRangeTextFunc_NullInputNoError()
         {
-            var comp = Context.Render<MudDateRangePicker>(parameters =>
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters =>
                 parameters.Add(p => p.DateRange,
-                    new DateRange(new DateTime(2020, 12, 26), null)));
+                    new DateRange<DateTime?>(new DateTime(2020, 12, 26), null)));
             await comp.Find("input").ChangeAsync("");
             comp.Instance.DateRange.Should().BeNull();
         }
@@ -520,7 +520,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task SetRangeTextFunc_NullRangeTextNoError()
         {
             var dateTime = new DateTime(2020, 12, 26);
-            var comp = Context.Render<MudDateRangePicker>(parameters =>
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters =>
                 parameters.Add(p => p.DateRange, null)
                     .Add(p => p.Culture, CultureInfo.CurrentCulture));
             await comp.Find("input").ChangeAsync(dateTime.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern));
@@ -531,14 +531,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task SetDateRange_NoChangedIfSameValues()
         {
-            var dr1 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
-            var dr2 = new DateRange(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+            var dr1 = new DateRange<DateTime?>(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
+            var dr2 = new DateRange<DateTime?>(new DateTime(2021, 10, 08), new DateTime(2021, 10, 09));
 
             var wasEventCallbackCalled = false;
 
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(x => x.DateRange, dr1)
-                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
+                .Add(x => x.DateRangeChanged, (DateRange<DateTime?> _) => wasEventCallbackCalled = true));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, dr2));
 
@@ -549,7 +549,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InitializeDateRange_DefaultConstructor()
         {
-            var range = new DateRange();
+            var range = new DateRange<DateTime?>();
 
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.DateRange, range));
@@ -564,14 +564,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InitializeDateRange_WithMinValue_ShouldTreatAsNull()
         {
-            var range = new DateRange(DateTime.MinValue, DateTime.MinValue);
+            var range = new DateRange<DateTime?>(DateTime.MinValue, DateTime.MinValue);
 
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.DateRange, range));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                var picker = comp.FindComponent<MudDateRangePicker>();
+                var picker = comp.FindComponent<MudDateRangePicker<DateTime?>>();
 
                 picker.Instance.DateRange.Should().NotBeNull();
                 picker.Instance.DateRange.Start.Should().BeNull();
@@ -582,14 +582,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InitializeDateRange_WithMinValueStartOnly_ShouldNormalizeStart()
         {
-            var range = new DateRange(DateTime.MinValue, DateTime.Today);
+            var range = new DateRange<DateTime?>(DateTime.MinValue, DateTime.Today);
 
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.DateRange, range));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                var picker = comp.FindComponent<MudDateRangePicker>();
+                var picker = comp.FindComponent<MudDateRangePicker<DateTime?>>();
 
                 picker.Instance.DateRange.Should().NotBeNull();
                 picker.Instance.DateRange.Start.Should().BeNull();
@@ -600,14 +600,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InitializeDateRange_WithMinValueEndOnly_ShouldNormalizeEnd()
         {
-            var range = new DateRange(DateTime.Today, DateTime.MinValue);
+            var range = new DateRange<DateTime?>(DateTime.Today, DateTime.MinValue);
 
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.DateRange, range));
 
             await comp.WaitForAssertionAsync(() =>
             {
-                var picker = comp.FindComponent<MudDateRangePicker>();
+                var picker = comp.FindComponent<MudDateRangePicker<DateTime?>>();
 
                 picker.Instance.DateRange.Should().NotBeNull();
                 picker.Instance.DateRange.Start.Should().Be(DateTime.Today);
@@ -618,7 +618,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InitializeDateRange_AllNullValues()
         {
-            var range = new DateRange(null, null);
+            var range = new DateRange<DateTime?>(null, null);
 
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.DateRange, range));
@@ -639,7 +639,7 @@ namespace MudBlazor.UnitTests.Components
             var endDate = DateTime.Now.Date.AddDays(2);
 
             // create the component
-            var dateRangePickerComponent = Context.Render<MudDateRangePicker>(parameters => parameters
+            var dateRangePickerComponent = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(x => x.Required, true)
                 .Add(x => x.RequiredError, errorMessage));
 
@@ -684,7 +684,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckAutoCloseDateRangePicker_DoNotCloseWhenValueIsOff()
         {
             // Define a date range for comparison
-            var initialDateRange = new DateRange(
+            var initialDateRange = new DateRange<DateTime?>(
                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
 
@@ -710,7 +710,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckAutoCloseDateRangePicker_CloseWhenValueIsOn()
         {
             // Define a date range for comparison
-            var initialDateRange = new DateRange(
+            var initialDateRange = new DateRange<DateTime?>(
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
 
@@ -732,7 +732,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the date range is changed because autoclose is true even when actions are defined
             comp.Instance.DateRange.Should().NotBe(initialDateRange);
-            comp.Instance.DateRange.Should().Be(new DateRange(
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10),
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
@@ -750,14 +750,14 @@ namespace MudBlazor.UnitTests.Components
             // Check that the marked date is the current date
             await comp.Find("button.mud-current").ClickAsync();
             await comp.Find("button.mud-range-start-selected").ClickAsync();
-            comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(currentDate, currentDate));
         }
 
         [Test]
         public async Task SingleDayRange_Should_Render_Selected()
         {
             var today = DateTime.Today;
-            var initialRange = new DateRange(new DateTime(today.Year, today.Month, 01), new DateTime(today.Year, today.Month, 05));
+            var initialRange = new DateRange<DateTime?>(new DateTime(today.Year, today.Month, 01), new DateTime(today.Year, today.Month, 05));
 
             var comp = Context.Render<AutoCloseDateRangePickerTest>(parameters => parameters
                 .Add(x => x.DateRange, initialRange));
@@ -782,15 +782,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DateRangePicker_Should_Clear()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
             // select elements needed for the test
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.DateRange.Should().Be(null);
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Clearable, true)
-                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29))));
-            picker.DateRange.Should().Be(new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
+                .Add(p => p.DateRange, new DateRange<DateTime?>(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29))));
+            picker.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29)));
 
             await comp.Find("button").ClickAsync(); //clear the input
 
@@ -825,7 +825,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void OptionalDateRangePicker_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
 
             comp.FindAll("input").Should().AllSatisfy(input =>
             {
@@ -840,7 +840,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RequiredDateRangePicker_Should_HaveRequiredAndAriaRequiredAttributes()
         {
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(p => p.Required, true));
 
             comp.FindAll("input").Should().AllSatisfy(input =>
@@ -856,7 +856,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RequiredAndAriaRequiredDateRangePickerAttributes_Should_BeDynamic()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
 
             comp.FindAll("input").Should().AllSatisfy(input =>
             {
@@ -878,14 +878,14 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public void FormatFirst_Should_RenderCorrectly()
         {
-            DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
+            DateRange<DateTime?> range = new DateRange<DateTime?>(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
             var comp = Context.Render<DateRangePickerFormatTest>
             (parameters =>
             {
                 parameters.Add(p => p.DateRange, range);
                 parameters.Add(p => p.FormatFirst, true);
             });
-            var instance = comp.FindComponent<MudDateRangePicker>().Instance;
+            var instance = comp.FindComponent<MudDateRangePicker<DateTime?>>().Instance;
             instance.DateRange.Should().Be(range);
             instance.DateFormat.Should().Be("yyyy MMMM dd");
             comp.Markup.Should().Contain("2024 April 22");
@@ -896,14 +896,14 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public void FormatLast_Should_RenderCorrectly()
         {
-            DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
+            DateRange<DateTime?> range = new DateRange<DateTime?>(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
             var comp = Context.Render<DateRangePickerFormatTest>
             (parameters =>
             {
                 parameters.Add(p => p.DateRange, range);
                 parameters.Add(p => p.FormatFirst, false);
             });
-            var instance = comp.FindComponent<MudDateRangePicker>().Instance;
+            var instance = comp.FindComponent<MudDateRangePicker<DateTime?>>().Instance;
             instance.DateRange.Should().Be(range);
             instance.DateFormat.Should().Be("yyyy MMMM dd");
             comp.Markup.Should().Contain("2024 April 22");
@@ -916,7 +916,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CheckCloseOnClearDateRangePicker(bool closeOnClear)
         {
             // Define a date range for comparison
-            var initialDateRange = new DateRange(
+            var initialDateRange = new DateRange<DateTime?>(
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 01),
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 02));
 
@@ -949,9 +949,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Should_respect_underline_parameter()
         {
-            var underlinedComp = Context.Render<MudDateRangePicker>(parameters
+            var underlinedComp = Context.Render<MudDateRangePicker<DateTime?>>(parameters
                 => parameters.Add(p => p.Underline, true));
-            var notUnderlinedComp = Context.Render<MudDateRangePicker>(parameters
+            var notUnderlinedComp = Context.Render<MudDateRangePicker<DateTime?>>(parameters
                 => parameters.Add(p => p.Underline, false));
 
             underlinedComp.FindAll(".mud-input-underline").Should().HaveCount(1);
@@ -966,14 +966,14 @@ namespace MudBlazor.UnitTests.Components
             var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             var wasEventCallbackCalled = false;
 
-            var range = new DateRange(twoDaysAgo, today);
-            Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var range = new DateRange<DateTime?>(twoDaysAgo, today);
+            Func<DateTime?, bool> isDisabledFunc = date => date == yesterday;
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(x => x.AllowDisabledDatesInRange, true)
                 .Add(x => x.IsDateDisabledFunc, isDisabledFunc)
-                .Add(x => x.DateRangeChanged, (DateRange _) => wasEventCallbackCalled = true));
+                .Add(x => x.DateRangeChanged, (DateRange<DateTime?> _) => wasEventCallbackCalled = true));
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange(twoDaysAgo, today)));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange<DateTime?>(twoDaysAgo, today)));
 
             comp.Instance.DateRange.Should().Be(range);
             wasEventCallbackCalled.Should().BeTrue();
@@ -983,7 +983,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TestDateRangeClearableWithFormat()
         {
             var comp = Context.Render<DateRangePickerClearableTest>();
-            var picker = comp.FindComponents<MudDateRangePicker>();
+            var picker = comp.FindComponents<MudDateRangePicker<DateTime?>>();
             picker.Count.Should().Be(2);
             var openBtn = picker[0].FindComponents<MudIconButton>();
             openBtn.Count.Should().Be(1);
@@ -1013,7 +1013,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DateRangePickerToolbar_DisplaysSelectedDate()
         {
-            var selectedRange = new DateRange(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
+            var selectedRange = new DateRange<DateTime?>(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
             var comp = Context.Render<DateRangePickerPresetWithoutTimestampTest>(p => p.Add(x => x.DateRange, selectedRange));
 
             comp.FindAll("button.mud-picker-calendar-day")
@@ -1072,7 +1072,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DateRangePicker_HighlightSelectedMonthOnly()
         {
-            var selectedRange = new DateRange(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
+            var selectedRange = new DateRange<DateTime?>(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
             var comp = Context.Render<DateRangePickerPresetWithoutTimestampTest>(p => p.Add(x => x.DateRange, selectedRange));
 
             //go to month view
@@ -1107,7 +1107,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DateRangePicker_HighlightSelectedYearOnly()
         {
-            var selectedRange = new DateRange(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
+            var selectedRange = new DateRange<DateTime?>(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
             var comp = Context.Render<DateRangePickerPresetWithoutTimestampTest>(p => p.Add(x => x.DateRange, selectedRange));
 
             //go to year view
@@ -1129,7 +1129,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DatePicker_JumpToYear()
         {
-            var selectedRange = new DateRange(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
+            var selectedRange = new DateRange<DateTime?>(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
             var comp = Context.Render<DateRangePickerPresetWithoutTimestampTest>(p => p.Add(x => x.DateRange, selectedRange));
             var picker = comp.Instance;
 
@@ -1159,14 +1159,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task DateRangePicker_MinMaxDays()
         {
             //no restrictions - minimum of 3 days
-            var startingRange = new DateRange(new DateTime(2025, 1, 1).Date, new DateTime(2025, 1, 1).Date);
+            var startingRange = new DateRange<DateTime?>(new DateTime(2025, 1, 1).Date, new DateTime(2025, 1, 1).Date);
             var comp = Context.Render<DateRangePickerMinMaxDaysTest>(p => p.Add(x => x.DateRange, startingRange));
 
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("17")).ToMarkup().Should().Contain("disabled");
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("18")).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
 
             //no restrictions - maximum of 7 days 
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
@@ -1180,7 +1180,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("24")).ToMarkup().Should().Contain("disabled"); //9 days not allowed
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("22")).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 22).Date));
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 22).Date));
 
             //weekends not allowed - minimum of 3 days - count disabled
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AllowWeekends, false));
@@ -1197,7 +1197,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("24")).ToMarkup().Should().Contain("disabled"); //9 days not allowed
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("20")).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 20).Date)); //min valid range 5 days
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 20).Date)); //min valid range 5 days
 
             //weekends not allowed - maximum of 7 days - count disabled
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs()); //                              [1]
@@ -1211,7 +1211,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("24")).ToMarkup().Should().Contain("disabled"); //9 days not allowed
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("22")).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 22).Date)); //max valid range 7 days
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 22).Date)); //max valid range 7 days
 
             //weekends not allowed - minimum of 3 days - exclude disabled (skip weekends)
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CountDisabledDays, false));
@@ -1228,7 +1228,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("24")).ToMarkup().Should().NotContain("disabled"); //9 days valid              [7]
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("20")).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 20).Date)); //min valid range 5 days
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 20).Date)); //min valid range 5 days
 
             //weekends not allowed - maximum of 7 days - exclude disabled (skip weekends)
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());  //                             [1]
@@ -1244,17 +1244,17 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("24")).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 24).Date)); //max valid range 9 days
+            comp.Instance.DateRange.Should().Be(new DateRange<DateTime?>(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 24).Date)); //max valid range 9 days
         }
 
         [Test]
         public async Task DateRangePicker_MaxSelectableDate()
         {
-            var comp = Context.Render<MudDateRangePicker>();
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>();
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.MaxDays, 30)
                                                                 .Add(picker => picker.PickerVariant, PickerVariant.Static)
-                                                                .Add(picker => picker.IsDateDisabledFunc, x => x.Date > DateTime.Today));
+                                                                .Add(picker => picker.IsDateDisabledFunc, x => x.HasValue && x.Value.Date > DateTime.Today));
 
             var today = DateTime.Today;
 
@@ -1269,7 +1269,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DateRangePicker_Blur()
         {
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                     .Add(picker => picker.ReadOnly, false)
                     .Add(picker => picker.Editable, true));
 
@@ -1299,7 +1299,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task StartMonth_SetInitially_IsRespected()
         {
             var startMonth = new DateTime(2025, 12, 3); //expected Dec. 3rd
-            var dateRange = new DateRange(new DateTime(2025, 12, 5), new DateTime(2025, 12, 20));
+            var dateRange = new DateRange<DateTime?>(new DateTime(2025, 12, 5), new DateTime(2025, 12, 20));
 
             var picker = Context.Render<DateRangePickerImpl>(ps => ps
                 .Add(p => p.StartMonth, startMonth)
@@ -1315,7 +1315,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Unset_StartMonth_IsIgnored_RangeStart_IsUsed()
         {
             var dateRangeStart = new DateTime(2025, 12, 3);
-            var dateRange = new DateRange(new DateTime(2025, 12, 5), new DateTime(2025, 12, 20));
+            var dateRange = new DateRange<DateTime?>(new DateTime(2025, 12, 5), new DateTime(2025, 12, 20));
 
             var picker = Context.Render<DateRangePickerImpl>(ps => ps
                 .Add(p => p.DateRange, dateRange)
@@ -1330,7 +1330,7 @@ namespace MudBlazor.UnitTests.Components
         public void MudDateRangePickerStaticVariant_DisabledIsNotSpecified_EnabledByDefault()
         {
             var comp = Context.Render<DateRangePickerStaticDisabledTest>();
-            var picker = comp.FindComponents<MudDateRangePicker>();
+            var picker = comp.FindComponents<MudDateRangePicker<DateTime?>>();
             picker.Count.Should().Be(2);
 
             picker[1].Instance.Disabled.Should().BeFalse();
@@ -1340,7 +1340,7 @@ namespace MudBlazor.UnitTests.Components
         public void DisabledMudDateRangePickerStaticVariant_ShouldHave_DisabledIsTrue()
         {
             var comp = Context.Render<DateRangePickerStaticDisabledTest>();
-            var picker = comp.FindComponents<MudDateRangePicker>();
+            var picker = comp.FindComponents<MudDateRangePicker<DateTime?>>();
             picker.Count.Should().Be(2);
 
             picker[0].Instance.Disabled.Should().BeTrue();
@@ -1350,7 +1350,7 @@ namespace MudBlazor.UnitTests.Components
         public void MudDateRangePickerStaticVariant_Disabled_HasMudDisabledClass()
         {
             var comp = Context.Render<DateRangePickerStaticDisabledTest>();
-            var picker = comp.FindComponents<MudDateRangePicker>();
+            var picker = comp.FindComponents<MudDateRangePicker<DateTime?>>();
             picker.Count.Should().Be(2);
 
             picker[0].Markup.Should().Contain("mud-disabled");
@@ -1362,7 +1362,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DateRangePickerStaticDisabledTest>();
 
-            var pickers = comp.FindComponents<MudDateRangePicker>();
+            var pickers = comp.FindComponents<MudDateRangePicker<DateTime?>>();
             pickers.Count.Should().Be(2);
 
             pickers[0].Markup.Should().Contain("opacity:0.5");
@@ -1377,8 +1377,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DateRangePicker_CustomClearIcon_Should_BeRenderedInMarkup()
         {
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
-                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)))
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
+                .Add(p => p.DateRange, new DateRange<DateTime?>(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)))
                 .Add(p => p.Editable, true)
                 .Add(p => p.Clearable, true)
                 .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
@@ -1389,13 +1389,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DateRangePicker_ClearAndReselectSameDateRange_ShouldFireDateRangeChanged()
         {
-            var initialRange = new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
-            var changedRanges = new List<DateRange>();
+            var initialRange = new DateRange<DateTime?>(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
+            var changedRanges = new List<DateRange<DateTime?>>();
 
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(p => p.Clearable, true)
                 .Add(p => p.DateRange, initialRange)
-                .Add(p => p.DateRangeChanged, (DateRange range) => changedRanges.Add(range)));
+                .Add(p => p.DateRangeChanged, (DateRange<DateTime?> range) => changedRanges.Add(range)));
 
             var picker = comp.Instance;
             picker.DateRange.Should().Be(initialRange);
@@ -1416,13 +1416,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DateRangePicker_ClearViaClearAsync_ShouldFireDateRangeChanged()
         {
-            var initialRange = new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
-            var changedRanges = new List<DateRange>();
+            var initialRange = new DateRange<DateTime?>(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
+            var changedRanges = new List<DateRange<DateTime?>>();
 
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(p => p.Clearable, true)
                 .Add(p => p.DateRange, initialRange)
-                .Add(p => p.DateRangeChanged, (DateRange range) => changedRanges.Add(range)));
+                .Add(p => p.DateRangeChanged, (DateRange<DateTime?> range) => changedRanges.Add(range)));
 
             var picker = comp.Instance;
             picker.DateRange.Should().Be(initialRange);
@@ -1443,8 +1443,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task StaticReadOnly_ShouldNotChangeDateRange()
         {
-            var initialRange = new DateRange(new DateTime(2025, 6, 10), new DateTime(2025, 6, 20));
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var initialRange = new DateRange<DateTime?>(new DateTime(2025, 6, 10), new DateTime(2025, 6, 20));
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters
                 .Add(p => p.PickerVariant, PickerVariant.Static)
                 .Add(p => p.ReadOnly, true)
                 .Add(p => p.DateRange, initialRange));
@@ -1458,7 +1458,7 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().Be(initialRange);
         }
 
-        private sealed class DateRangePickerImpl : MudDateRangePicker
+        private sealed class DateRangePickerImpl : MudDateRangePicker<DateTime?>
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
         }

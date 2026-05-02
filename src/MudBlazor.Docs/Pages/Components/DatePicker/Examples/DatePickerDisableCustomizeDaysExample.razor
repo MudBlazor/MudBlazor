@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDatePicker 
-    Label="Not working days, Sunday in red"   
-    IsDateDisabledFunc="@((DateTime dt)=>((int)dt.DayOfWeek > 0 && (int)dt.DayOfWeek < 6))"
-    AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"/>
+<MudDatePicker TValue="DateTime?"
+    Label="Not working days, Sunday in red"
+    IsDateDisabledFunc="@((DateTime? dt) => dt.HasValue && (int)dt.Value.DayOfWeek > 0 && (int)dt.Value.DayOfWeek < 6)"
+    AdditionalDateClassesFunc="@((DateTime? dt) => (dt.HasValue && (int)dt.Value.DayOfWeek == 0) ? "red-text text-accent-4" : "")"/>

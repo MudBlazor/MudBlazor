@@ -42,6 +42,7 @@ internal interface IDateWrapper<T> where T : struct
 
     T? AddMonths(T? date, int month);
     bool IsMinYearMonth(T? date);
+    bool IsMaxValue(T date);
     T GetPreviousMonth(T? date);
     T GetNextMonth(T? pickerMonth);
     string? ToString(T? date, string format);
@@ -251,6 +252,11 @@ internal class DateWrapper<T> : IDateWrapper<T> where T : struct
     public bool IsMinYearMonth(T? date)
     {
         return date.HasValue && _converter.ConvertTo(date.Value) is { Year: 1, Month: 1 };
+    }
+
+    public bool IsMaxValue(T date)
+    {
+        return _converter.ConvertTo(date) >= new DateTimeOffset(Culture.Calendar.MaxSupportedDateTime, TimeSpan.Zero);
     }
 
     public T GetPreviousMonth(T? date)

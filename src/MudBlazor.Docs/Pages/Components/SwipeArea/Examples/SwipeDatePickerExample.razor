@@ -3,7 +3,7 @@
 
 <MudSwipeArea OnSwipeEnd="@OnSwipeEnd">
     <div style="user-select: none;">
-        <MudDatePicker PickerVariant="PickerVariant.Static" Date="@(DateTime.Today.AddDays(1))" @bind-PickerMonth="@_pickerMonth"/>
+        <MudDatePicker TValue="DateTime?" PickerVariant="PickerVariant.Static" Date="@(DateTime.Today.AddDays(1))" @bind-PickerMonth="@_pickerMonth"/>
     </div>
 </MudSwipeArea>
 

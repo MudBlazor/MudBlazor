@@ -1,6 +1,6 @@
 <MudPopoverProvider/>
 <MudStack>
-    <MudDateRangePicker Class="hsx-daterange"
+    <MudDateRangePicker TValue="DateTime?" Class="hsx-daterange"
                         @bind-DateRange="_dateRange"
                         Clearable="true"
                         PlaceholderStart="PlaceholderFrom"
@@ -8,7 +8,7 @@
                         ShowToolbar="false"
                         Variant="Variant.Outlined"
     />
-    <MudDateRangePicker Class="hsx-daterange"
+    <MudDateRangePicker TValue="DateTime?" Class="hsx-daterange"
                         @bind-DateRange="_dateRange"
                         Clearable="true"
                         PlaceholderStart="PlaceholderFrom"
@@ -21,6 +21,6 @@
 </MudStack>
 
 @code {
-    private DateRange? _dateRange;
+    private DateRange<DateTime?>? _dateRange;
     private bool _autoClose;
 }

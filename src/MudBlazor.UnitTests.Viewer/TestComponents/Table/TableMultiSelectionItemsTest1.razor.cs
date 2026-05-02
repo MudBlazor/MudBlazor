@@ -14,7 +14,7 @@ public partial class TableMultiSelectionItemsTest1
     private HashSet<ComplexObject> _selectedItems = [];
 
     [Parameter]
-    public DateRange DateRange { get; set; } = new();
+    public DateRange<DateTime?> DateRange { get; set; } = new();
 
     private readonly List<ComplexObject> _simulatedServerData = Enumerable
         .Range(1, 25)

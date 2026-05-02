@@ -100,8 +100,8 @@ namespace MudBlazor.Docs.Services
 
             //Pickers
             .AddNavGroup("Pickers", false, new DocsComponents()
-                .AddItem("Date Picker", typeof(MudDatePicker))
-                .AddItem("Date Range Picker", typeof(MudDateRangePicker))
+                .AddItem("Date Picker", typeof(MudDatePicker<DateTime?>))
+                .AddItem("Date Range Picker", typeof(MudDateRangePicker<DateTime?>))
                 .AddItem("Time Picker", typeof(MudTimePicker))
                 .AddItem("Color Picker", typeof(MudColorPicker))
             )

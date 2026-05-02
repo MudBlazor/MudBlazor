@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudDatePicker id="picker" @ref="PickerReference" Label="With action buttons" PickerVariant="PickerVariant.Static" @bind-Date="Date">
+<MudDatePicker TValue="DateTime?" id="picker" @ref="PickerReference" Label="With action buttons" PickerVariant="PickerVariant.Static" @bind-Date="Date">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="@(() => PickerReference.ClearAsync())">Clear</MudButton>
         <MudButton OnClick="@(() => PickerReference.CloseAsync(false))">Cancel</MudButton>
@@ -12,5 +12,5 @@
     [Parameter]
     public DateTime? Date { get; set; } = DateTime.Today.Subtract(TimeSpan.FromDays(60));
 
-    public MudDatePicker PickerReference { get; set; } = null!;
+    public MudDatePicker<DateTime?> PickerReference { get; set; } = null!;
 }

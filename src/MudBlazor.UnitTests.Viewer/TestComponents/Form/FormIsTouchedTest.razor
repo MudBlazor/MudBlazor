@@ -1,6 +1,6 @@
 ﻿<MudForm ValidationDelay="0">
     <MudTextField T="string" Required="true" RequiredError="Enter a rock star"></MudTextField>
-    <MudDatePicker @bind-Date="_date"></MudDatePicker>
+    <MudDatePicker TValue="DateTime?" @bind-Date="_date"></MudDatePicker>
 </MudForm>
 
 @code {
