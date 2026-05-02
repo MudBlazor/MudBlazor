@@ -34,6 +34,9 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        /// <summary>
+        /// The CSS classes for the internal bars container.
+        /// </summary>
         protected string BarsClassname =>
             new CssBuilder("mud-progress-linear-bars")
                 .AddClass("mud-flip-x-rtl", !Vertical)

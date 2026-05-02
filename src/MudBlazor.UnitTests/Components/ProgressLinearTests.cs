@@ -248,7 +248,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForRounded(bool rounded)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
@@ -267,7 +267,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForStriped(bool striped)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
@@ -286,7 +286,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
@@ -357,7 +357,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForVertical(bool vertical)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
