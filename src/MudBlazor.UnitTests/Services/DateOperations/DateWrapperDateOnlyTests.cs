@@ -5,6 +5,7 @@
 using System;
 using System.Globalization;
 using AwesomeAssertions;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Services;
 using NUnit.Framework;
 
@@ -13,6 +14,31 @@ namespace MudBlazor.UnitTests.Services.DateOperations;
 [TestFixture]
 public class DateWrapperDateOnlyTests
 {
+    [Test]
+    public void Today_UsesInjectedTimeProvider()
+    {
+        var timeProvider = new FakeTimeProvider();
+        timeProvider.SetUtcNow(new DateTimeOffset(2024, 6, 15, 12, 0, 0, TimeSpan.Zero));
+        var sut = new DateWrapper<DateOnly>(new DateOnlyConverter(), timeProvider);
+
+        sut.Today.Should().Be(new DateOnly(2024, 6, 15));
+    }
+
+    // Today must reflect the user's local civil date, not the UTC date.
+    // Fake "now" is 2024-03-15 23:00 in UTC-5 (== 2024-03-16 04:00 UTC).
+    // Civil date is the 15th; UtcNow.Date would have given the 16th.
+    [Test]
+    public void Today_NearMidnightInNonUtcZone_ReturnsLocalCivilDate()
+    {
+        var timeProvider = new FakeTimeProvider();
+        timeProvider.SetLocalTimeZone(TimeZoneInfo.CreateCustomTimeZone("UTC-5", TimeSpan.FromHours(-5), "UTC-5", "UTC-5"));
+        timeProvider.SetUtcNow(new DateTimeOffset(2024, 3, 16, 4, 0, 0, TimeSpan.Zero));
+        var sut = new DateWrapper<DateOnly>(new DateOnlyConverter(), timeProvider);
+
+        sut.Today.Should().Be(new DateOnly(2024, 3, 15));
+    }
+
+
     [Test]
     [Theory]
     [TestCaseSource(nameof(EndOfMonthTestData))]
