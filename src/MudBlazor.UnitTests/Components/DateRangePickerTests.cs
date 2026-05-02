@@ -1467,7 +1467,7 @@ namespace MudBlazor.UnitTests.Components
     {
         public static Task SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
         {
-            return comp.ValidateSelection(day, firstOccurrence).ClickAsync();
+            return comp.InvokeAsync(async () => await comp.ValidateSelection(day, firstOccurrence).ClickAsync());
         }
 
         private static IElement ValidateSelection(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence)
