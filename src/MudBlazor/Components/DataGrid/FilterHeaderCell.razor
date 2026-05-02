@@ -44,7 +44,7 @@
                 }
                 else if (fieldType.IsDateOnly && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudDatePicker TValue="DateTime?" Date="@valueDateOnlyForPicker" DateChanged="@(EventCallback.Factory.Create<DateTime?>(this, DateOnlyValueChangedAsync))" Margin="@Margin.Dense" />
+                    <MudDatePicker TValue="DateOnly?" Date="@valueDateOnlyForPicker" DateChanged="@DateOnlyValueChangedAsync" Margin="@Margin.Dense" />
                 }
                 else if (fieldType.IsDateTime && !(@operator ?? "").EndsWith("empty"))
                 {

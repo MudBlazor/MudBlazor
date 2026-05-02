@@ -19,7 +19,7 @@ namespace MudBlazor
         internal double? _valueNumber;
         internal Enum? _valueEnum;
         internal bool? _valueBool;
-        internal DateTime? _valueDateOnlyForPicker;
+        internal DateOnly? _valueDateOnlyForPicker;
         internal DateTime? _valueDateTimeForPicker;
         internal TimeSpan? _valueTime;
         internal Guid? _valueGuid;
@@ -51,7 +51,7 @@ namespace MudBlazor
             }
             else if (fieldType.IsDateOnly)
             {
-                _valueDateOnlyForPicker = ((DateOnly?)_filterDefinition.Value)?.ToDateTime(TimeOnly.MinValue);
+                _valueDateOnlyForPicker = (DateOnly?)_filterDefinition.Value;
             }
             else if (fieldType.IsGuid)
                 _valueGuid = _filterDefinition.Value as Guid?;
@@ -145,17 +145,10 @@ namespace MudBlazor
             _dataGrid.GroupItems();
         }
 
-        internal void DateOnlyValueChanged(DateTime? value)
+        internal void DateOnlyValueChanged(DateOnly? value)
         {
             _valueDateOnlyForPicker = value;
-
-            if (value is not null)
-            {
-                _filterDefinition.Value = DateOnly.FromDateTime(value.Value);
-            }
-            else
-                _filterDefinition.Value = null;
-
+            _filterDefinition.Value = value;
             _dataGrid.GroupItems();
         }
 

@@ -499,7 +499,7 @@
                             }
                             else if (fieldType.IsDateOnly && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
-                                <MudDatePicker TValue="DateTime?" Date="@filter._valueDateOnlyForPicker" DateChanged="@(EventCallback.Factory.Create<DateTime?>(this, filter.DateOnlyValueChanged))" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                <MudDatePicker TValue="DateOnly?" Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                             }
                             else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
@@ -566,7 +566,7 @@
                         }
                         else if (fieldType.IsDateOnly && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
-                            <MudDatePicker TValue="DateTime?" Date="@filter._valueDateOnlyForPicker" DateChanged="@(EventCallback.Factory.Create<DateTime?>(this, filter.DateOnlyValueChanged))" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                            <MudDatePicker TValue="DateOnly?" Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                         }
                         else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {

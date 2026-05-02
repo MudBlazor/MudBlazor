@@ -3164,12 +3164,12 @@ namespace MudBlazor.UnitTests.Components
             dateTimeFilterDefinitionWithNull.Value.Should().BeNull();
 
             // test internal filter class for dateonly data type.
-            var dateOnlyDateTimeInput = DateTime.UtcNow;
+            var dateOnlyInput = DateOnly.FromDateTime(DateTime.UtcNow);
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);
             dateOnlyFilterDefinition.Column.dataType.Should().Be(typeof(DateOnly?));
 
-            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyDateTimeInput));
-            dateOnlyFilterDefinition.Value.Should().Be(DateOnly.FromDateTime(dateOnlyDateTimeInput));
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyInput));
+            dateOnlyFilterDefinition.Value.Should().Be(dateOnlyInput);
 
             await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(null));
             dateOnlyFilterDefinition.Value.Should().BeNull();
