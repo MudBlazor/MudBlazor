@@ -6276,7 +6276,7 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Anders");
                 comp.Markup.Should().Contain("uid = Ira|27|Success|");
                 comp.Markup.Should().Contain("uid = Anders|24|Error|");
-            }, TimeSpan.FromSeconds(5));
+            });
 
             comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
             comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
@@ -6311,7 +6311,7 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "ScarletKuro");
                 dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "ScarletKuro");
                 comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|");
-            }, TimeSpan.FromSeconds(5));
+            });
 
             comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
             comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
