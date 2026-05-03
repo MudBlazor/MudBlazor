@@ -1,0 +1,41 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="@_orders" Filterable="true" FilterMode="@_filterMode" FilterPickerEditable="@_editableFilters" RowsPerPage="5">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="#" Filterable="false" />
+        <PropertyColumn Property="x => x.Customer" />
+        <PropertyColumn Property="x => x.PlacedAt" Title="Placed" Format="yyyy-MM-dd HH:mm" />
+        <PropertyColumn Property="x => x.DueDate" Title="Due" Format="yyyy-MM-dd" />
+        <PropertyColumn Property="x => x.Total" Format="C" Filterable="false" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Order" PageSizeOptions="new[] { 5 }" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudRadioGroup T="DataGridFilterMode" @bind-Value="_filterMode">
+        <MudRadio Dense="true" Value="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
+    </MudRadioGroup>
+    <MudSwitch @bind-Value="_editableFilters" Color="Color.Primary" Class="ml-4">Editable date filter</MudSwitch>
+</div>
+
+@code {
+    private DataGridFilterMode _filterMode = DataGridFilterMode.ColumnFilterRow;
+    private bool _editableFilters;
+
+    public record Order(int Id, string Customer, DateTime PlacedAt, DateOnly DueDate, decimal Total);
+
+    private readonly List<Order> _orders =
+    [
+        new(1001, "Acme Corp",      new DateTime(2025, 1, 14, 9, 30, 0),  new DateOnly(2025, 2, 10), 1240.00m),
+        new(1002, "Globex",         new DateTime(2025, 1, 22, 14, 0, 0),  new DateOnly(2025, 2, 15),  580.50m),
+        new(1003, "Initech",        new DateTime(2025, 2, 3, 11, 15, 0),  new DateOnly(2025, 2, 28), 2310.75m),
+        new(1004, "Umbrella",       new DateTime(2025, 2, 18, 16, 45, 0), new DateOnly(2025, 3, 12),  925.00m),
+        new(1005, "Stark Industries",new DateTime(2025, 3, 5, 8, 0, 0),   new DateOnly(2025, 3, 20), 4870.10m),
+        new(1006, "Wayne Enterprises",new DateTime(2025, 3, 19, 13, 30, 0),new DateOnly(2025, 4, 5),  3120.00m),
+        new(1007, "Cyberdyne",      new DateTime(2025, 4, 2, 10, 10, 0),  new DateOnly(2025, 4, 25),  640.25m),
+    ];
+}

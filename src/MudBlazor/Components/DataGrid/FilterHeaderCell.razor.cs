@@ -78,7 +78,15 @@ namespace MudBlazor
         private Enum? valueEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition?.Value is not null ? (Enum)Column.FilterContext.FilterDefinition.Value : default;
         private DateTime? valueDateTimeForPicker => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition?.Value : default;
         private DateOnly? valueDateOnlyForPicker => fieldType.IsDateOnly && Column.FilterContext.FilterDefinition?.Value != null ? (DateOnly)Column.FilterContext.FilterDefinition.Value : null;
-        private TimeSpan? valueTime => fieldType.IsDateTime && Column.FilterContext.FilterDefinition?.Value is not null ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay : null;
+
+        // Holds a time picked before any date has been set. Without this, picking time first and
+        // then date would commit the date with 00:00 because the time picker is otherwise a derived
+        // projection of FilterDefinition.Value (which is null until the date is picked).
+        private TimeSpan? _stagedTime;
+        private TimeSpan? valueTime => _stagedTime
+            ?? (fieldType.IsDateTime && Column.FilterContext.FilterDefinition?.Value is not null
+                ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay
+                : null);
         private string? @operator => Column.FilterContext.FilterDefinition?.Operator ?? operators.FirstOrDefault();
 
         private string chosenOperatorStyle(string o)
@@ -140,6 +148,7 @@ namespace MudBlazor
                 }
 
                 Column.FilterContext.FilterDefinition.Value = date;
+                _stagedTime = null;
             }
             else
             {
@@ -170,7 +179,13 @@ namespace MudBlazor
                 }
 
                 Column.FilterContext.FilterDefinition.Value = date;
+                _stagedTime = null;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
+            }
+            else
+            {
+                // No date yet — stash the time so DateTimeValueChangedAsync can combine them later.
+                _stagedTime = value;
             }
         }
 

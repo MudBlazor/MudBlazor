@@ -499,13 +499,13 @@
                             }
                             else if (fieldType.IsDateOnly && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
-                                <MudDatePicker T="DateOnly?" Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                <MudDatePicker T="DateOnly?" Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Editable="@FilterPickerEditable" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                             }
                             else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
                                 <MudGrid Spacing="0">
                                     <MudItem xs="7">
-                                        <MudDatePicker T="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                        <MudDatePicker T="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Editable="@FilterPickerEditable" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                     </MudItem>
                                     <MudItem xs="5">
                                         <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
@@ -566,13 +566,13 @@
                         }
                         else if (fieldType.IsDateOnly && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
-                            <MudDatePicker T="DateOnly?" Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                            <MudDatePicker T="DateOnly?" Date="@filter._valueDateOnlyForPicker" DateChanged="@filter.DateOnlyValueChanged" Editable="@FilterPickerEditable" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date flex-grow-1"/>
                         }
                         else if (fieldType.IsDateTime && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker T="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker T="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Editable="@FilterPickerEditable" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date flex-grow-1"/>
                                 </MudItem>
                                 <MudItem xs="5">
                                     <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>

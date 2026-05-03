@@ -687,6 +687,15 @@ namespace MudBlazor
         public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
         /// <summary>
+        /// When <c>true</c>, the date pickers used in column filters allow direct text entry in addition to calendar selection.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Applies to the built-in <see cref="MudDatePicker{T}"/> rendered for <c>DateTime</c> and <c>DateOnly</c> filter values in the column filter row and column filter menu.
+        /// </remarks>
+        [Parameter]
+        public bool FilterPickerEditable { get; set; }
+
+        /// <summary>
         /// The template used to display each filter.
         /// </summary>
         [Parameter]

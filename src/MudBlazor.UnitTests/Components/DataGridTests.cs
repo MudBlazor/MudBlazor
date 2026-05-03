@@ -4516,6 +4516,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterRow_DateTime_TimeSetBeforeDate_PreservesTime()
+        {
+            // Regression: in the column filter row the time picker was a derived projection
+            // of the filter Value. Picking time before any date dropped the time silently and
+            // the subsequent date pick committed with 00:00.
+            var comp = Context.Render<DataGridFilterRowDateTimeTest>();
+            var headerCell = comp.FindComponent<FilterHeaderCell<DataGridFilterRowDateTimeTest.Model>>();
+
+            var time = new TimeSpan(10, 30, 0);
+            var date = new DateTime(2024, 6, 15);
+
+            await comp.InvokeAsync(() => headerCell.Instance.TimeValueChangedAsync(time));
+            await comp.InvokeAsync(() => headerCell.Instance.DateTimeValueChangedAsync(date));
+
+            var filter = headerCell.Instance.Column.FilterContext.FilterDefinition;
+            filter!.Value.Should().Be(date.Add(time));
+        }
+
+        [Test]
         public void DataGridStickyColumns()
         {
             var comp = Context.Render<DataGridStickyColumnsTest>();
