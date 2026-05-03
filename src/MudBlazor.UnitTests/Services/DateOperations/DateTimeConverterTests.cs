@@ -13,7 +13,6 @@ namespace MudBlazor.UnitTests.Services.DateOperations;
 public class DateTimeConverterTests
 {
     [Test]
-    [Theory]
     [TestCaseSource(nameof(ConvertToTestData))]
     public void ConvertTo(DateTime date, DateTimeOffset expected)
     {
@@ -28,7 +27,6 @@ public class DateTimeConverterTests
     }
 
     [Test]
-    [Theory]
     [TestCaseSource(nameof(ConvertFromTestData))]
     public void ConvertFrom_ShouldReturnExpectedDateTime(DateTimeOffset date, DateTime expected)
     {

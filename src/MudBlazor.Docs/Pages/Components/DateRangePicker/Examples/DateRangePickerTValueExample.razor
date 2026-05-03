@@ -14,7 +14,7 @@
         <MudText Class="mt-2">@FormatRange(_dateTimeOffsetRange?.Start, _dateTimeOffsetRange?.End, "yyyy-MM-dd zzz")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker Label="DateTime?" @bind-DateRange="_dateTimeRangeNullable" />
+        <MudDateRangePicker TValue="DateTime?" Label="DateTime?" @bind-DateRange="_dateTimeRangeNullable" />
         <MudText Class="mt-2">@FormatRange(_dateTimeRangeNullable?.Start, _dateTimeRangeNullable?.End, "yyyy-MM-dd")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">

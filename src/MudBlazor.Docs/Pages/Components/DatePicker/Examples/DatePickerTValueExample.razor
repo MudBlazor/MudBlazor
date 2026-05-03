@@ -14,7 +14,7 @@
         <MudText Class="mt-2">@_dateTimeOffset.ToString("yyyy-MM-dd zzz")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDatePicker Label="DateTime?" @bind-Date="_dateTimeNullable" />
+        <MudDatePicker TValue="DateTime?" Label="DateTime?" @bind-Date="_dateTimeNullable" />
         <MudText Class="mt-2">@(_dateTimeNullable?.ToString("yyyy-MM-dd HH:mm") ?? "(none)")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">

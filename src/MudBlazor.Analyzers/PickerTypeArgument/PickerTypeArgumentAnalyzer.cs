@@ -59,11 +59,7 @@ public sealed partial class PickerTypeArgumentAnalyzer : DiagnosticAnalyzer
     {
         var builder = ImmutableHashSet.CreateBuilder<ITypeSymbol>(SymbolEqualityComparer.Default);
 
-        var dateTime = compilation.GetSpecialType(SpecialType.System_DateTime);
-        if (dateTime.SpecialType != SpecialType.None)
-        {
-            builder.Add(dateTime);
-        }
+        builder.Add(compilation.GetSpecialType(SpecialType.System_DateTime));
 
         var dateTimeOffset = compilation.GetTypeByMetadataName("System.DateTimeOffset");
         if (dateTimeOffset is not null)

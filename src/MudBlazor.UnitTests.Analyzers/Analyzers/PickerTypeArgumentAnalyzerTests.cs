@@ -40,7 +40,6 @@ using MudBlazor;
 
 class C
 {{
-    {type.Replace('.', '.')} _v;
     MudDatePicker<{type}> _p;
     MudDateRangePicker<{type}> _rp;
     DateRange<{type}> _r;

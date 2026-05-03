@@ -13,7 +13,7 @@
 </div>
 
 @code {
-    private MudDatePicker<DateTime?> _picker;
+    private MudDatePicker<DateTime?> _picker = null!;
     private DateTime? _date = DateTime.Today.AddDays(210);
     private DateTime _maxDate = new DateTime(2050, 12, 31);
 

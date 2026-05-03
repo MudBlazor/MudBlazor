@@ -13,7 +13,6 @@ namespace MudBlazor.UnitTests.Services.DateOperations;
 public class DateTimeOffsetConverterTests
 {
     [Test]
-    [Theory]
     [TestCaseSource(nameof(ConvertToTestData))]
     public void ConvertTo_ShouldReturnSameDateTimeOffset(DateTimeOffset date)
     {
@@ -28,7 +27,6 @@ public class DateTimeOffsetConverterTests
     }
 
     [Test]
-    [Theory]
     [TestCaseSource(nameof(ConvertFromTestData))]
     public void ConvertFrom_ShouldReturnSameDateTimeOffset(DateTimeOffset date)
     {
@@ -40,6 +38,32 @@ public class DateTimeOffsetConverterTests
 
         // Assert
         result.Should().Be(date);
+    }
+
+    [Test]
+    public void ConvertTo_Nullable_NullInput_ReturnsNull()
+    {
+        new DateTimeOffsetConverter().ConvertTo((DateTimeOffset?)null).Should().BeNull();
+    }
+
+    [Test]
+    public void ConvertTo_Nullable_NonNullInput_ReturnsSameValue()
+    {
+        var sample = new DateTimeOffset(2024, 6, 15, 12, 0, 0, TimeSpan.FromHours(2));
+        new DateTimeOffsetConverter().ConvertTo((DateTimeOffset?)sample).Should().Be(sample);
+    }
+
+    [Test]
+    public void ConvertFrom_Nullable_NullInput_ReturnsNull()
+    {
+        new DateTimeOffsetConverter().ConvertFrom((DateTimeOffset?)null).Should().BeNull();
+    }
+
+    [Test]
+    public void ConvertFrom_Nullable_NonNullInput_ReturnsSameValue()
+    {
+        var sample = new DateTimeOffset(2024, 6, 15, 12, 0, 0, TimeSpan.FromHours(2));
+        new DateTimeOffsetConverter().ConvertFrom((DateTimeOffset?)sample).Should().Be(sample);
     }
 
     private static object[] ConvertToTestData() =>
