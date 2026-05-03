@@ -4,9 +4,9 @@
     <MudDateRangePicker @ref="_picker" @bind-DateRange="@DateRange"
     MinDays="MinDays" MaxDays="@MaxDays"
     PickerVariant="PickerVariant.Static" Margin="Margin.Dense"
-    IsDateDisabledFunc="@( (d) => AllowWeekends ? false : (d.HasValue && IsWeekend(d.Value)))"
+    IsDateDisabledFunc="@(d => !AllowWeekends && IsWeekend(d))"
     AllowDisabledDatesInRange AllowDisabledDatesInCount="@CountDisabledDays"
-    AdditionalDateClassesFunc="@((DateTime? dt)=>((dt.HasValue && (int)dt.Value.DayOfWeek == 0) ? "red-text text-accent-4" : ""))" />
+    AdditionalDateClassesFunc="@(d => d?.DayOfWeek == DayOfWeek.Sunday ? "red-text text-accent-4" : "")" />
 
     <MudStack Row>
         <MudSwitch @bind-Value="AllowWeekends" @bind-Value:after="@(() => _picker.RecalculateValidDays())" Color="Color.Primary">Allow Weekends</MudSwitch>
@@ -35,9 +35,9 @@
     [Parameter]
     public bool CountDisabledDays { get; set; } = true;
 
-    private static bool IsWeekend(DateTime date)
+    private static bool IsWeekend(DateTime? date)
     {
-        DayOfWeek day = date.DayOfWeek;
+        var day = date?.DayOfWeek;
         return day == DayOfWeek.Saturday || day == DayOfWeek.Sunday;
     }
 }
