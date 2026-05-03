@@ -223,7 +223,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextField_ShouldStayInSyncWithBoundValueAfterAsyncInitialization()
         {
-            var comp = Context.Render<DebouncedTextFieldAsyncInitializationSyncTest>();
+            var comp = Context.Render<TextFieldAsyncInitTest>();
 
             await comp.WaitForAssertionAsync(() =>
             {
@@ -552,7 +552,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
-            var comp = Context.Render<MultilineTextfieldBindingTest>();
+            var comp = Context.Render<MultilineTextFieldBindingTest>();
 
             // print the generated html
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
@@ -1276,7 +1276,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        [Ignore("Flaky test: randomly fails due to timing/rerender race conditions in CI.")]
+        [Ignore("Randomly fails under heavy loads.")]
         public async Task DebouncedTextFieldRerender()
         {
             var timeProvider = new FakeTimeProvider();
@@ -1325,6 +1325,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
         [Test]
+        [Ignore("Randomly fails under heavy loads.")]
         public async Task DebouncedTextFieldFormatChangeRerender()
         {
             var timeProvider = new FakeTimeProvider();

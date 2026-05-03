@@ -753,9 +753,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_MultilevelGrouping_ExpandSpecificNestedGroup()
         {
-            var comp = Context.Render<DataGridMultilevelGroupingNestedGroupExpansionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultilevelGroupingNestedGroupExpansionTest.Model>>();
-            var subGroupColName = nameof(DataGridMultilevelGroupingNestedGroupExpansionTest.Model.SubGroup);
+            var comp = Context.Render<DataGridNestedGroupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNestedGroupTest.Model>>();
+            var subGroupColName = nameof(DataGridNestedGroupTest.Model.SubGroup);
             var groupKey = new GroupKeyPath(["A", "X"]);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleGroupExpand(
@@ -765,7 +765,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
 
             var subGroupRows = comp
-                .FindComponents<DataGridGroupRow<DataGridMultilevelGroupingNestedGroupExpansionTest.Model>>()
+                .FindComponents<DataGridGroupRow<DataGridNestedGroupTest.Model>>()
                 .Where(x => x.Instance.GroupDefinition.Title == subGroupColName)
                 .ToList();
 

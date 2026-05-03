@@ -1464,7 +1464,7 @@ namespace MudBlazor.UnitTests.Components
         [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
         public async Task MultiSelectWithCustomComparer_InitialSelectionPreservedOnFirstRender()
         {
-            var comp = Context.Render<MultiSelectWithCustomComparerInitialSelectionTest>();
+            var comp = Context.Render<MultiSelectComparerInitialTest>();
 
             // The parent's bound collection must still contain both preselected items.
             comp.Instance._selected.Should().HaveCount(2);

@@ -988,7 +988,7 @@ namespace MudBlazor.UnitTests.Components
             var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
             // Get access to the datepicker of the instance
-            var comp = Context.Render<AutoCompleteDatePickerTest>();
+            var comp = Context.Render<AutocompleteDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             // Open the datepicker
