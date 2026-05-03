@@ -548,40 +548,27 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Normalize a date by treating DateTime.MinValue as null
-        /// This prevents an ArgumentOutOfRangeException from happening when performing date arithmetic
-        /// </summary>
-        /// <param name="date">The date to normalize</param>
-        /// <returns>Normalized date or null</returns>
-        private static DateTime? NormalizeDate(DateTime? date)
-        {
-            if (date is null)
-                return null;
-
-            // Treat DateTime.MinValue as null
-            if (date.Value == DateTime.MinValue)
-                return null;
-
-            return date;
-        }
-
-        /// <summary>
         /// Normalize a date range by checking the start date and end date for DateTime.MinValue
         /// This prevents an ArgumentOutOfRangeException from happening when performing date arithmetic
         /// </summary>
-        /// <see cref="NormalizeDate"/>
         /// <param name="range">The date range to normalize</param>
         /// <returns>Normalized date range or null</returns>
-        private DateRange<T>? NormalizeDateRange(DateRange<T>? range)
+        private static DateRange<T>? NormalizeDateRange(DateRange<T>? range)
         {
             if (range is null)
                 return null;
 
-            var start = NormalizeDate(ToDateTime(range.Start));
-            var end = NormalizeDate(ToDateTime(range.End));
-
-            return new DateRange<T>(FromDateTime(start), FromDateTime(end));
+            return new DateRange<T>(NormalizeValue(range.Start), NormalizeValue(range.End));
         }
 
+        private static T? NormalizeValue(T? value)
+        {
+            if (value is null)
+                return default;
+            var dt = ToDateTime(value);
+            if (dt is null || dt.Value == DateTime.MinValue)
+                return default;
+            return value;
+        }
     }
 }

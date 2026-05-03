@@ -1543,6 +1543,89 @@ namespace MudBlazor.UnitTests.Components
             captured.End.Should().Be(end);
         }
 
+        [TestCase(0)]
+        [TestCase(-5)]
+        [TestCase(330)] // +05:30 (India)
+        [TestCase(-210)] // -03:30 (Newfoundland)
+        public void MudDateRangePicker_DateTimeOffset_PreservesOffset(int offsetMinutes)
+        {
+            var offset = TimeSpan.FromMinutes(offsetMinutes);
+            var start = new DateTimeOffset(2024, 6, 15, 12, 0, 0, offset);
+            var end = start.AddDays(7);
+            var range = new DateRange<DateTimeOffset?>(start, end);
+
+            var comp = Context.Render<MudDateRangePicker<DateTimeOffset?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Value.Offset.Should().Be(offset);
+            comp.Instance.DateRange.End.Value.Offset.Should().Be(offset);
+            comp.Instance.DateRange.Start.Should().Be(start);
+            comp.Instance.DateRange.End.Should().Be(end);
+        }
+
+        [Test]
+        public void MudDateRangePicker_DateTime_PreservesUtcKind()
+        {
+            var start = new DateTime(2024, 6, 15, 12, 0, 0, DateTimeKind.Utc);
+            var end = start.AddDays(7);
+            var range = new DateRange<DateTime?>(start, end);
+
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Value.Kind.Should().Be(DateTimeKind.Utc);
+            comp.Instance.DateRange.End.Value.Kind.Should().Be(DateTimeKind.Utc);
+        }
+
+        [Test]
+        public void MudDateRangePicker_DateTimeOffset_MinValue_NormalizesToNull()
+        {
+            var range = new DateRange<DateTimeOffset?>(DateTimeOffset.MinValue, DateTimeOffset.MinValue);
+
+            var comp = Context.Render<MudDateRangePicker<DateTimeOffset?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
+        }
+
+        [Test]
+        public void MudDateRangePicker_DateOnly_MinValue_NormalizesToNull()
+        {
+            var range = new DateRange<DateOnly?>(DateOnly.MinValue, DateOnly.MinValue);
+
+            var comp = Context.Render<MudDateRangePicker<DateOnly?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
+        }
+
+        [Test]
+        public void MudDateRangePicker_DateTime_MinValue_NormalizesToNull()
+        {
+            var range = new DateRange<DateTime?>(DateTime.MinValue, DateTime.MinValue);
+
+            var comp = Context.Render<MudDateRangePicker<DateTime?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().BeNull();
+        }
+
+        [Test]
+        public void MudDateRangePicker_DateTimeOffset_AsymmetricRange_PreservesValues()
+        {
+            var end = new DateTimeOffset(2024, 6, 22, 12, 0, 0, TimeSpan.FromHours(-5));
+            var range = new DateRange<DateTimeOffset?>(null, end);
+
+            var comp = Context.Render<MudDateRangePicker<DateTimeOffset?>>(parameters => parameters.Add(p => p.DateRange, range));
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().BeNull();
+            comp.Instance.DateRange.End.Should().Be(end);
+        }
+
         #endregion
     }
     public static class DatePickerRenderedFragmentExtensions

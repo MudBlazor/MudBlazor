@@ -127,7 +127,7 @@ public sealed class ApiMemberTableTests : BunitTest
     public void ApiMemberTable_RenderFields_WithProtected()
     {
         // Get a type with protected fields
-        var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
+        var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker`1");
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudBaseDatePicker)
             .Add(x => x.Mode, ApiMemberTableMode.Fields)
@@ -147,7 +147,7 @@ public sealed class ApiMemberTableTests : BunitTest
     public void ApiMemberTable_RenderFields_WithoutProtected()
     {
         // Get a type without protected fields
-        var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker");
+        var mudBaseDatePicker = ApiDocumentation.GetType("MudBlazor.MudBaseDatePicker`1");
         using var comp = Context.Render<ApiMemberTable>(parameters => parameters
             .Add(x => x.Type, mudBaseDatePicker)
             .Add(x => x.Mode, ApiMemberTableMode.Fields)
