@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FuzzySharp;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -10,6 +9,7 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
+        private readonly ISearchService _searchService;
         private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
@@ -198,8 +198,9 @@ namespace MudBlazor.Docs.Services
                 }
             ];
 
-        public ApiLinkService(IMenuService menuService)
+        public ApiLinkService(IMenuService menuService, ISearchService searchService)
         {
+            _searchService = searchService;
             // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
             Register(menuService.Customization);
@@ -227,7 +228,7 @@ namespace MudBlazor.Docs.Services
             var ratios = new Dictionary<ApiLinkServiceEntry, double>();
             foreach (var (keyword, entry) in _entries)
             {
-                var ratio = Fuzz.WeightedRatio(keyword, text);
+                var ratio = _searchService.GetScore(keyword, text);
 
                 // Assign the highest ratio so far to the entry.
                 if (ratios.TryGetValue(entry, out var highestRatio))

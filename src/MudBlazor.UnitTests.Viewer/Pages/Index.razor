@@ -547,17 +547,12 @@
 
     private int GetSearchScore(string query, TestEntry entry)
     {
-        // Combining multiple fuzzy signals reduces false positives from any single algorithm.
-        var nameRatio = Fuzz.Ratio(entry.Name, query);
-        var namePartial = Fuzz.PartialRatio(entry.Name, query);
-        var nameScore = (int)Math.Round(nameRatio * 0.73 + namePartial * 0.27);
-
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
+        // Use the same algorithm as SearchService for consistency.
+        var nameScore = Fuzz.WeightedRatio(entry.Name, query);
+        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.WeightedRatio(entry.Category, query);
 
         // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
-        var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
-
-        return combined;
+        return (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
     }
 
     private string GetEntryClass(TestEntry entry)

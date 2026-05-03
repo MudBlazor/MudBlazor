@@ -11,8 +11,10 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Docs.Services;
 
 [TestFixture]
-public sealed class ApiLinkServiceTests
+public sealed class SearchServiceTests
 {
+    private static IApiLinkService CreateService() => new ApiLinkService(new MenuService(), new SearchService());
+
     [TestCase("data gri", "components/datagrid")]
     [TestCase("muddatagrid", "components/datagrid")]
     [TestCase("snakbar", "components/snackbar")]
@@ -25,7 +27,7 @@ public sealed class ApiLinkServiceTests
     [TestCase("breakpoint providr", "components/breakpointprovider")]
     public async Task Search_ReturnsTopResultForPartialOrMisspelledTitle(string search, string expectedLink)
     {
-        var service = new ApiLinkService(new MenuService());
+        var service = CreateService();
 
         var results = await service.Search(search);
 
@@ -44,7 +46,7 @@ public sealed class ApiLinkServiceTests
     [TestCase("current app content", "components/dialog")]
     public async Task Search_ReturnsTopResultForPartialOrMisspelledSubtitle(string search, string expectedLink)
     {
-        var service = new ApiLinkService(new MenuService());
+        var service = CreateService();
 
         var results = await service.Search(search);
 
@@ -63,7 +65,7 @@ public sealed class ApiLinkServiceTests
     [TestCase("date", "components/datepicker")]
     public async Task Search_ReturnsTopResultForAmbiguousMatches(string search, string expectedLink)
     {
-        var service = new ApiLinkService(new MenuService());
+        var service = CreateService();
 
         var results = await service.Search(search);
 
