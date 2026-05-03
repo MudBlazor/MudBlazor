@@ -77,17 +77,18 @@ dotnet tool restore --tool-manifest .config/dotnet-tools.json
 
 - For a single validation pass, prefer one filtered `dotnet test` command. This builds the component library plus the relevant test graph and runs the selected tests in one invocation.
 - Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
+- This repository uses Microsoft.Testing.Platform via `global.json`, so pass runner-specific options after `--` and prefer `--hangdump`/`--hangdump-timeout` instead of the older VSTest blame flags.
 
 ```bash
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-restore /p:SkipBunCompile=true --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
 ```
 
 - If you expect to run multiple filtered test commands against the same edits, build once and then reuse the outputs with `--no-build`:
 
 ```bash
 dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~PopoverTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build --no-restore -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build --no-restore -- --filter "FullyQualifiedName~PopoverTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
 ```
 
 ### Bun
@@ -113,12 +114,12 @@ dotnet format --no-restore
 
 ### Choose the smallest valid verification loop
 - For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
-- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test` against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
+- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test --project ... -- --filter ...` run against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
 - For component `.cs` or `.razor` changes that only need compile validation: build `src/MudBlazor/MudBlazor.csproj` with `/p:SkipBunCompile=true`.
 - For `TScripts` or `Styles`: run a normal scoped project build.
 - For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
-- For docs example or API-page changes that need parity with CI, run `dotnet test src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
-- For analyzer or code-fix changes: prefer a single filtered `dotnet test` from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
+- For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
+- For analyzer or code-fix changes: prefer a single filtered `dotnet test --project ... -- --filter ...` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
 - Prefer the narrowest relevant test filter over running an entire test project.
 - Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
 
