@@ -30,6 +30,17 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Convert a public-API <typeparamref name="TValue"/> limit (<see cref="MinDate"/>/<see cref="MaxDate"/>) into a <see cref="DateTime"/>.
+        /// Treats <c>default(TValue)</c> as "no limit set" so unconstrained-TValue pickers don't apply a bogus year-1 limit when the user leaves the parameter unset.
+        /// </summary>
+        protected static DateTime? ToDateTimeLimit(TValue? value)
+        {
+            if (value is null) return null;
+            if (EqualityComparer<TValue?>.Default.Equals(value, default)) return null;
+            return ToDateTime(value);
+        }
+
+        /// <summary>
         /// Convert an internal <see cref="DateTime"/> back to <typeparamref name="TValue"/>.
         /// For <see cref="DateTimeOffset"/>, the picker-local offset (<see cref="TimeProvider.GetLocalNow"/>) is used unless a concrete subclass preserves the user's original offset.
         /// </summary>
@@ -493,8 +504,8 @@ namespace MudBlazor
 
         protected virtual bool IsDayDisabled(DateTime date)
         {
-            var minDate = ToDateTime(MinDate);
-            var maxDate = ToDateTime(MaxDate);
+            var minDate = ToDateTimeLimit(MinDate);
+            var maxDate = ToDateTimeLimit(MaxDate);
             if (minDate.HasValue && date < minDate) return true;
             if (maxDate.HasValue && date > maxDate) return true;
             var asTValue = FromDateTime(date);
@@ -560,8 +571,8 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var minDate = ToDateTime(MinDate);
-            var maxDate = ToDateTime(MaxDate);
+            var minDate = ToDateTimeLimit(MinDate);
+            var maxDate = ToDateTimeLimit(MaxDate);
             if (!FixDay.HasValue)
             {
                 if (minDate.HasValue && month.EndOfMonth(culture) < minDate) return true;
@@ -716,7 +727,7 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var minDate = ToDateTime(MinDate);
+            var minDate = ToDateTimeLimit(MinDate);
             if (minDate.HasValue)
                 return calendar.GetYear(minDate.Value);
             return calendar.GetYear(DateTime.Today) - 100;
@@ -726,7 +737,7 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var maxDate = ToDateTime(MaxDate);
+            var maxDate = ToDateTimeLimit(MaxDate);
             if (maxDate.HasValue)
                 return calendar.GetYear(maxDate.Value);
             return calendar.GetYear(DateTime.Today) + 100;

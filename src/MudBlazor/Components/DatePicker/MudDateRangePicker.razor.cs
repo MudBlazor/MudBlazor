@@ -273,8 +273,8 @@ namespace MudBlazor
 
         private (DateTime? Start, DateTime? End) GetValidDateRange(DateTime selectedDate)
         {
-            var minDate = ToDateTime(MinDate);
-            var maxDate = ToDateTime(MaxDate);
+            var minDate = ToDateTimeLimit(MinDate);
+            var maxDate = ToDateTimeLimit(MaxDate);
             var start = MinDays switch
             {
                 null => minDate ?? DateTime.MinValue,
@@ -305,7 +305,7 @@ namespace MudBlazor
             var validDayCount = 1;
             var lastValidDate = startDate;
             var maxDate = startDate.AddDays(1);
-            var maxDateLimit = ToDateTime(MaxDate) ?? startDate.AddYears(50);
+            var maxDateLimit = ToDateTimeLimit(MaxDate) ?? startDate.AddYears(50);
 
             while (validDayCount < maxDays)
             {
