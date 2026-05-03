@@ -276,11 +276,15 @@ namespace MudBlazor.Docs.Services
         /// <param name="keyword">The keyword from an existing source</param>
         private double GetSearchMatchRatio(string search, string keyword)
         {
+            if (keyword.Equals(search, StringComparison.Ordinal))
+            {
+                return 101;
+            }
+
             var ratio = Fuzz.Ratio(keyword, search);
             var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
-            var averageRatio = (ratio + partialOutOfOrderRatio) / 2.0;
 
-            return averageRatio;
+            return Math.Max(ratio, partialOutOfOrderRatio);
         }
 
         /// <summary>
@@ -352,6 +356,7 @@ namespace MudBlazor.Docs.Services
             {
                 if (entry.ComponentType is not null)
                 {
+                    RegisterAliasKeyword(entry.Link, entry.SubTitle);
                     continue;
                 }
 
@@ -372,7 +377,7 @@ namespace MudBlazor.Docs.Services
             }
         }
 
-        private void RegisterAliasKeyword(string link, string alias)
+        private void RegisterAliasKeyword(string link, string? alias)
         {
             if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
             {
