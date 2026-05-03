@@ -83,6 +83,105 @@ namespace MudBlazor.Docs.Services
                     SubTitle = "Nav menu provides a tree-like menu linking to the content on your site."
                 }
             ];
+        private readonly IReadOnlyCollection<ApiLinkServiceEntry> _navigationEntries =
+            [
+                new ApiLinkServiceEntry
+                {
+                    Title = "Explore",
+                    Link = "docs/overview",
+                    SubTitle = "Discover our library and all its components to power your next project."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Installation",
+                    Link = "getting-started/installation"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Layouts",
+                    Link = "getting-started/layouts"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Usage",
+                    Link = "getting-started/usage"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Wireframes",
+                    Link = "getting-started/wireframes"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "What is MudBlazor?",
+                    Link = "mud/introduction"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Announcements",
+                    Link = "mud/announcements"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Getting Help",
+                    Link = "mud/community/getting-help"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Reporting Bugs",
+                    Link = "mud/community/reporting-bugs"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Contribution",
+                    Link = "mud/community/contribution"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Community Extensions",
+                    Link = "mud/community/extensions"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Releases",
+                    Link = "mud/project/releases"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Roadmap",
+                    Link = "mud/project/roadmap"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Sponsors & Backers",
+                    Link = "mud/project/sponsor"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Team & Contributors",
+                    Link = "mud/project/team"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "How it Started",
+                    Link = "mud/project/how-it-started"
+                }
+            ];
 
         public ApiLinkService(IMenuService menuService)
         {
@@ -92,6 +191,7 @@ namespace MudBlazor.Docs.Services
             Register(menuService.Features);
             Register(menuService.Utilities);
             RegisterFeaturedPages();
+            RegisterNavigationPages();
             RegisterAliases();
         }
 
@@ -225,6 +325,10 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
             RegisterAliasKeyword("components/navmenu", "Navigation Menu");
+            RegisterAliasKeyword("docs/overview", "Explore MudBlazor");
+            RegisterAliasKeyword("getting-started/installation", "Get Started");
+            RegisterAliasKeyword("getting-started/installation", "Getting Started");
+            RegisterAliasKeyword("mud/introduction", "Learn More");
         }
 
         private void RegisterFeaturedPages()
@@ -242,6 +346,14 @@ namespace MudBlazor.Docs.Services
                     componentType: entry.ComponentType,
                     link: entry.Link
                 );
+            }
+        }
+
+        private void RegisterNavigationPages()
+        {
+            foreach (var entry in _navigationEntries)
+            {
+                AddEntry(entry);
             }
         }
 
