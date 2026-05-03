@@ -210,6 +210,26 @@ namespace MudBlazor.UnitTests.Components
             masked.Markup.Should().Contain("mud-shrink");
         }
 
+        [Test]
+        public void TelephoneInput_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<TextFieldShrinkLabelTest>();
+            var noMask = comp.FindComponents<MudTextField<string>>()[0];
+
+            noMask.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            noMask.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
+        [Test]
+        public void TelephoneInputWithMask_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<TextFieldShrinkLabelTest>();
+            var masked = comp.FindComponents<MudTextField<string>>()[1];
+
+            masked.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            masked.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
         /// <summary>
         /// A glue class to make it easy to define validation rules for single values using FluentValidation
         /// </summary>

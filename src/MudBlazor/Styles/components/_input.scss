@@ -345,6 +345,23 @@
   }
 }
 
+[dir=rtl] .mud-input.mud-input-adorned-start {
+  > input.mud-ltr,
+  > div.mud-input-slot.mud-ltr {
+    &.mud-input-root-filled.mud-input-root-adorned-start {
+      padding-left: 12px;
+      padding-inline-start: 12px;
+      padding-inline-end: 0;
+    }
+
+    &.mud-input-root-outlined.mud-input-root-adorned-start {
+      padding-left: 14px;
+      padding-inline-start: 14px;
+      padding-inline-end: 0;
+    }
+  }
+}
+
 .mud-input > textarea {
   &.mud-input-root {
     font: inherit;
