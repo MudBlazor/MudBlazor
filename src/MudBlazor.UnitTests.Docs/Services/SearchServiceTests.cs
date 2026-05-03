@@ -16,6 +16,38 @@ public sealed class SearchServiceTests
     private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService());
 
     // ──────────────────────────────────────────────────────────────────────────
+    // Exact title – the full component name typed verbatim
+    // ──────────────────────────────────────────────────────────────────────────
+    [TestCase("dialog", "components/dialog")]
+    [TestCase("badge", "components/badge")]
+    [TestCase("avatar", "components/avatar")]
+    [TestCase("rating", "components/rating")]
+    [TestCase("slider", "components/slider")]
+    [TestCase("tooltip", "components/tooltip")]
+    [TestCase("carousel", "components/carousel")]
+    [TestCase("stepper", "components/stepper")]
+    [TestCase("drawer", "components/drawer")]
+    [TestCase("card", "components/card")]
+    [TestCase("tabs", "components/tabs")]
+    [TestCase("alert", "components/alert")]
+    [TestCase("breadcrumbs", "components/breadcrumbs")]
+    [TestCase("timeline", "components/timeline")]
+    [TestCase("skeleton", "components/skeleton")]
+    [TestCase("collapse", "components/collapse")]
+    [TestCase("image", "components/image")]
+    [TestCase("divider", "components/divider")]
+    [TestCase("overlay", "components/overlay")]
+    [TestCase("paper", "components/paper")]
+    public async Task Search_ReturnsTopResultForExactTitle(string search, string expectedLink)
+    {
+        var service = CreateApiLinkService();
+
+        var results = await service.Search(search);
+
+        results.First().Link.Should().Be(expectedLink);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
     // Title – typos, partials, and out-of-order words
     // ──────────────────────────────────────────────────────────────────────────
     [TestCase("data gri", "components/datagrid")]           // partial two-word
@@ -86,28 +118,28 @@ public sealed class SearchServiceTests
     // ──────────────────────────────────────────────────────────────────────────
     // Ambiguous – short prefixes or single words that compete with similar names
     // ──────────────────────────────────────────────────────────────────────────
-    [TestCase("table", "components/table")]
-    [TestCase("pagination", "components/pagination")]
-    [TestCase("butt", "components/button")]
-    [TestCase("select", "components/select")]
-    [TestCase("simple table", "components/simpletable")]
-    [TestCase("button g", "components/buttongroup")]
-    [TestCase("icon b", "components/iconbutton")]
-    [TestCase("nav", "components/navmenu")]
-    [TestCase("data g", "components/datagrid")]
-    [TestCase("date", "components/datepicker")]
-    [TestCase("color p", "components/colorpicker")]
-    [TestCase("time p", "components/timepicker")]
-    [TestCase("autoc", "components/autocomplete")]
-    [TestCase("checkb", "components/checkbox")]
-    [TestCase("snack", "components/snackbar")]
-    [TestCase("dialog", "components/dialog")]
-    [TestCase("badge", "components/badge")]
-    [TestCase("avatar", "components/avatar")]
-    [TestCase("rating", "components/rating")]
-    [TestCase("slider", "components/slider")]
-    [TestCase("tooltip", "components/tooltip")]
-    [TestCase("carousel", "components/carousel")]
+    [TestCase("table", "components/table")]                     // Table vs SimpleTable vs DataGrid
+    [TestCase("pagination", "components/pagination")]           // Pagination vs AppBar (has prev/next)
+    [TestCase("butt", "components/button")]                     // Button vs ButtonGroup vs IconButton
+    [TestCase("select", "components/select")]                   // Select vs Autocomplete
+    [TestCase("simple table", "components/simpletable")]        // SimpleTable vs Table
+    [TestCase("button g", "components/buttongroup")]            // ButtonGroup vs Button
+    [TestCase("icon b", "components/iconbutton")]               // IconButton vs Icons
+    [TestCase("nav", "components/navmenu")]                     // NavMenu vs NavLink vs NavGroup
+    [TestCase("data g", "components/datagrid")]                 // DataGrid vs Grid
+    [TestCase("date", "components/datepicker")]                 // DatePicker vs DateRangePicker
+    [TestCase("color p", "components/colorpicker")]             // ColorPicker vs Color (features)
+    [TestCase("time p", "components/timepicker")]               // TimePicker vs Timeline vs TimeSeries
+    [TestCase("autoc", "components/autocomplete")]              // Autocomplete vs Select
+    [TestCase("checkb", "components/checkbox")]                 // Checkbox vs Check...
+    [TestCase("snack", "components/snackbar")]                  // Snackbar vs Alert
+    [TestCase("button", "components/button")]                   // Button vs ButtonGroup vs IconButton vs FAB
+    [TestCase("icon", "components/icons")]                      // Icons vs Icon Button vs Toggle Icon Button
+    [TestCase("toggle", "components/togglegroup")]              // Toggle Group vs Toggle Icon Button
+    [TestCase("chip", "components/chips")]                      // Chips vs Chip Set
+    [TestCase("date range", "components/daterangepicker")]      // DateRangePicker vs DatePicker
+    [TestCase("bar chart", "components/barchart")]              // BarChart vs StackedBarChart
+    [TestCase("grid", "components/grid")]                       // Grid (layout) vs DataGrid
     public async Task Search_ReturnsTopResultForAmbiguousMatches(string search, string expectedLink)
     {
         var service = CreateApiLinkService();
