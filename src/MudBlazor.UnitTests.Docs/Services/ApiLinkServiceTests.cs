@@ -53,14 +53,14 @@ public sealed class ApiLinkServiceTests
 
     [TestCase("table", "components/table")]
     [TestCase("pagination", "components/pagination")]
-    [TestCase("button", "components/button")]
+    [TestCase("butt", "components/button")]
     [TestCase("select", "components/select")]
     [TestCase("simple table", "components/simpletable")]
-    [TestCase("button group", "components/buttongroup")]
-    [TestCase("icon button", "components/iconbutton")]
-    [TestCase("nav menu", "components/navmenu")]
-    [TestCase("data grid", "components/datagrid")]
-    [TestCase("date picker", "components/datepicker")]
+    [TestCase("button g", "components/buttongroup")]
+    [TestCase("icon b", "components/iconbutton")]
+    [TestCase("nav", "components/navmenu")]
+    [TestCase("data g", "components/datagrid")]
+    [TestCase("date", "components/datepicker")]
     public async Task Search_ReturnsTopResultForAmbiguousMatches(string search, string expectedLink)
     {
         var service = new ApiLinkService(new MenuService());
