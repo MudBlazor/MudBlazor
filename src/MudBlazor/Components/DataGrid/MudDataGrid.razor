@@ -508,7 +508,7 @@
                                         <MudDatePicker T="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Editable="@FilterPickerEditable" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                     </MudItem>
                                     <MudItem xs="5">
-                                        <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
+                                        <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Editable="@FilterPickerEditable" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
                                     </MudItem>
                                 </MudGrid>
                             }
@@ -575,7 +575,7 @@
                                     <MudDatePicker T="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Editable="@FilterPickerEditable" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
-                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>
+                                    <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Editable="@FilterPickerEditable" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>
                                 </MudItem>
                             </MudGrid>
                         }
