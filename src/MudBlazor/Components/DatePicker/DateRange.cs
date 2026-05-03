@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -136,8 +136,8 @@ public class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
     private static DateTime? AsDateTime(T? value)
     {
         if (value is null) return null;
-        if (_underlyingType == typeof(DateTime))       return (DateTime)(object)value;
-        if (_underlyingType == typeof(DateOnly))       return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
+        if (_underlyingType == typeof(DateTime)) return (DateTime)(object)value;
+        if (_underlyingType == typeof(DateOnly)) return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
         if (_underlyingType == typeof(DateTimeOffset)) return ((DateTimeOffset)(object)value).DateTime;
         throw new InvalidOperationException($"DateRange does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
     }

@@ -23,8 +23,8 @@ namespace MudBlazor
         protected static DateTime? ToDateTime(T? value)
         {
             if (value is null) return null;
-            if (_underlyingType == typeof(DateTime))       return (DateTime)(object)value;
-            if (_underlyingType == typeof(DateOnly))       return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
+            if (_underlyingType == typeof(DateTime)) return (DateTime)(object)value;
+            if (_underlyingType == typeof(DateOnly)) return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
             if (_underlyingType == typeof(DateTimeOffset)) return ((DateTimeOffset)(object)value).DateTime;
             throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
         }
@@ -47,8 +47,8 @@ namespace MudBlazor
         protected T? FromDateTime(DateTime? value)
         {
             if (value is null) return default;
-            if (_underlyingType == typeof(DateTime))       return (T)(object)value.Value;
-            if (_underlyingType == typeof(DateOnly))       return (T)(object)DateOnly.FromDateTime(value.Value);
+            if (_underlyingType == typeof(DateTime)) return (T)(object)value.Value;
+            if (_underlyingType == typeof(DateOnly)) return (T)(object)DateOnly.FromDateTime(value.Value);
             if (_underlyingType == typeof(DateTimeOffset)) return (T)(object)new DateTimeOffset(value.Value, TimeProvider.GetLocalNow().Offset);
             throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
         }
