@@ -227,7 +227,7 @@ namespace MudBlazor.Docs.Services
             var ratios = new Dictionary<ApiLinkServiceEntry, double>();
             foreach (var (keyword, entry) in _entries)
             {
-                var ratio = GetSearchMatchRatio(text, keyword);
+                var ratio = Fuzz.WeightedRatio(keyword, text);
 
                 // Assign the highest ratio so far to the entry.
                 if (ratios.TryGetValue(entry, out var highestRatio))
@@ -266,22 +266,6 @@ namespace MudBlazor.Docs.Services
         public IReadOnlyCollection<ApiLinkServiceEntry> GetFeaturedEntries()
         {
             return _featuredEntries;
-        }
-
-        /// <summary>
-        /// Returns a value representing the match ratio of the search input to the keyword.
-        /// A higher ratio means a better match.
-        /// </summary>
-        /// <param name="search">The search query</param>
-        /// <param name="keyword">The keyword from an existing source</param>
-        private double GetSearchMatchRatio(string search, string keyword)
-        {
-            if (keyword.Equals(search, StringComparison.Ordinal))
-            {
-                return 101;
-            }
-
-            return Fuzz.WeightedRatio(keyword, search);
         }
 
         /// <summary>
