@@ -10,7 +10,7 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
+        private readonly Dictionary<string, HashSet<ApiLinkServiceEntry>> _entries = [];
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
                 new ApiLinkServiceEntry
@@ -88,9 +88,9 @@ namespace MudBlazor.Docs.Services
         {
             // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
-            Register(menuService.Customization);
-            Register(menuService.Features);
-            Register(menuService.Utilities);
+            Register(menuService.Customization, "Customization");
+            Register(menuService.Features, "Features");
+            Register(menuService.Utilities, "CSS Utilities");
             RegisterFeaturedPages();
             RegisterAliases();
         }
@@ -110,21 +110,24 @@ namespace MudBlazor.Docs.Services
 
             // Calculate the ratios of all keywords to the search input.
             var ratios = new Dictionary<ApiLinkServiceEntry, double>();
-            foreach (var (keyword, entry) in _entries)
+            foreach (var (keyword, entries) in _entries)
             {
                 var ratio = GetSearchMatchRatio(text, keyword);
 
-                // Assign the highest ratio so far to the entry.
-                if (ratios.TryGetValue(entry, out var highestRatio))
+                foreach (var entry in entries)
                 {
-                    if (ratio > highestRatio)
+                    // Assign the highest ratio so far to the entry.
+                    if (ratios.TryGetValue(entry, out var highestRatio))
                     {
-                        ratios[entry] = ratio;
+                        if (ratio > highestRatio)
+                        {
+                            ratios[entry] = ratio;
+                        }
                     }
-                }
-                else
-                {
-                    ratios.Add(entry, ratio);
+                    else
+                    {
+                        ratios.Add(entry, ratio);
+                    }
                 }
             }
 
@@ -142,6 +145,7 @@ namespace MudBlazor.Docs.Services
         public IReadOnlyCollection<ApiLinkServiceEntry> GetAllEntries()
         {
             return _entries.Values
+                .SelectMany(entries => entries)
                 .Distinct()
                 .OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -183,7 +187,14 @@ namespace MudBlazor.Docs.Services
         {
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                _entries[keyword.ToLowerInvariant()] = entry;
+                var normalizedKeyword = keyword.ToLowerInvariant();
+                if (_entries.TryGetValue(normalizedKeyword, out var entries) is false)
+                {
+                    entries = [];
+                    _entries[normalizedKeyword] = entries;
+                }
+
+                entries.Add(entry);
             }
         }
 
@@ -247,9 +258,12 @@ namespace MudBlazor.Docs.Services
 
         private void RegisterAliasKeyword(string link, string alias)
         {
-            if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
+            if (_entries.TryGetValue(link.ToLowerInvariant(), out var entries))
             {
-                AddKeyword(entry, alias);
+                foreach (var entry in entries)
+                {
+                    AddKeyword(entry, alias);
+                }
             }
         }
 
@@ -272,16 +286,25 @@ namespace MudBlazor.Docs.Services
         /// <summary>
         /// Registers the specified links to the search index.
         /// </summary>
-        private void Register(IEnumerable<DocsLink> links)
+        private void Register(IEnumerable<DocsLink> links, string sectionTitle)
         {
             foreach (var link in links)
             {
+                var subtitle = string.IsNullOrWhiteSpace(link.Group) ? sectionTitle : $"{sectionTitle} > {link.Group}";
+
                 RegisterPage(
                     title: link.Title,
-                    subtitle: "",
+                    subtitle: subtitle,
                     componentType: null,
                     link: link.Href
                 );
+
+                RegisterAliasKeyword(link.Href, sectionTitle);
+                if (!string.IsNullOrWhiteSpace(link.Group))
+                {
+                    RegisterAliasKeyword(link.Href, link.Group);
+                    RegisterAliasKeyword(link.Href, subtitle);
+                }
             }
         }
     }
