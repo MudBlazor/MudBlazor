@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack AlignItems="AlignItems.Center" Style="width:650px; height:450px">
-    <MudDateRangePicker TValue="DateTime?" PickerVariant="@_variant" @bind-DateRange="@_dateRange" Margin="Margin.Dense" />
+    <MudDateRangePicker PickerVariant="@_variant" @bind-DateRange="@_dateRange" Margin="Margin.Dense" />
     <MudSpacer />
     <MudToggleGroup T="PickerVariant" SelectionMode="SelectionMode.SingleSelection" Value="@_variant" ValueChanged="@OnValueChanged" 
                     Color="Color.Primary" CheckMark="true" FixedContent="true">

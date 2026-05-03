@@ -2,7 +2,7 @@
 
 @if (IsDateDisabledFunc != null)
 {
-    <MudDateRangePicker TValue="DateTime?" @ref="_picker"
+    <MudDateRangePicker @ref="_picker"
                         @bind-DateRange="@DateRange"
                         IsDateDisabledFunc="IsDateDisabledFunc"
                         @bind-PickerMonth="PickerMonth"
@@ -14,7 +14,7 @@
 }
 else
 {
-    <MudDateRangePicker TValue="DateTime?" @ref="_picker"
+    <MudDateRangePicker @ref="_picker"
                         @bind-DateRange="@DateRange"
                         @bind-PickerMonth="PickerMonth"
                         OpenTo="@OpenTo"

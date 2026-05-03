@@ -1,10 +1,10 @@
 @if (FormatFirst)
 {
-    <MudDateRangePicker TValue="DateTime?" DateFormat="yyyy MMMM dd" DateRange="@(DateRange)"/>
+    <MudDateRangePicker DateFormat="yyyy MMMM dd" DateRange="@(DateRange)"/>
 }
 else
 {
-    <MudDateRangePicker TValue="DateTime?" DateRange="@(DateRange)" DateFormat="yyyy MMMM dd"/>
+    <MudDateRangePicker DateRange="@(DateRange)" DateFormat="yyyy MMMM dd"/>
 }
 
 @code {
