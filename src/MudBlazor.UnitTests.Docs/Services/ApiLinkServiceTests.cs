@@ -41,9 +41,10 @@ public sealed class ApiLinkServiceTests
 
         var entries = service.GetAllEntries();
 
-        entries.Should().Contain(entry => entry.Link == "docs/overview" && entry.Title == "Explore");
-        entries.Should().Contain(entry => entry.Link == "getting-started/layouts" && entry.Title == "Layouts");
-        entries.Should().Contain(entry => entry.Link == "mud/project/roadmap" && entry.Title == "Roadmap");
+        entries.Should().Contain(entry => entry.Link == "docs/overview" && entry.Title == "Explore" && entry.SubTitle == "Docs");
+        entries.Should().Contain(entry => entry.Link == "getting-started/layouts" && entry.Title == "Layouts" && entry.SubTitle == "Getting Started");
+        entries.Should().Contain(entry => entry.Link == "mud/project/roadmap" && entry.Title == "Roadmap" && entry.SubTitle == "Learn More");
+        entries.Should().Contain(entry => entry.Link == "mud/community/getting-help" && entry.Title == "Getting Help" && entry.SubTitle == "Learn More");
     }
 
     private static global::MudBlazor.Docs.Services.ApiLinkService CreateService()

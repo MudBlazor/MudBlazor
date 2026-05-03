@@ -89,97 +89,112 @@ namespace MudBlazor.Docs.Services
                 {
                     Title = "Explore",
                     Link = "docs/overview",
-                    SubTitle = "Discover our library and all its components to power your next project."
+                    SubTitle = "Docs"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Installation",
-                    Link = "getting-started/installation"
+                    Link = "getting-started/installation",
+                    SubTitle = "Getting Started"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Layouts",
-                    Link = "getting-started/layouts"
+                    Link = "getting-started/layouts",
+                    SubTitle = "Getting Started"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Usage",
-                    Link = "getting-started/usage"
+                    Link = "getting-started/usage",
+                    SubTitle = "Getting Started"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Wireframes",
-                    Link = "getting-started/wireframes"
+                    Link = "getting-started/wireframes",
+                    SubTitle = "Getting Started"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "What is MudBlazor?",
-                    Link = "mud/introduction"
+                    Link = "mud/introduction",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Announcements",
-                    Link = "mud/announcements"
+                    Link = "mud/announcements",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Getting Help",
-                    Link = "mud/community/getting-help"
+                    Link = "mud/community/getting-help",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Reporting Bugs",
-                    Link = "mud/community/reporting-bugs"
+                    Link = "mud/community/reporting-bugs",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Contribution",
-                    Link = "mud/community/contribution"
+                    Link = "mud/community/contribution",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Community Extensions",
-                    Link = "mud/community/extensions"
+                    Link = "mud/community/extensions",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Releases",
-                    Link = "mud/project/releases"
+                    Link = "mud/project/releases",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Roadmap",
-                    Link = "mud/project/roadmap"
+                    Link = "mud/project/roadmap",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Sponsors & Backers",
-                    Link = "mud/project/sponsor"
+                    Link = "mud/project/sponsor",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "Team & Contributors",
-                    Link = "mud/project/team"
+                    Link = "mud/project/team",
+                    SubTitle = "Learn More"
                 },
 
                 new ApiLinkServiceEntry
                 {
                     Title = "How it Started",
-                    Link = "mud/project/how-it-started"
+                    Link = "mud/project/how-it-started",
+                    SubTitle = "Learn More"
                 }
             ];
 
