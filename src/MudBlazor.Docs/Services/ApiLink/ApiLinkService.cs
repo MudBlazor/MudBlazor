@@ -9,7 +9,6 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly ISearchService _searchService;
         private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
@@ -198,9 +197,8 @@ namespace MudBlazor.Docs.Services
                 }
             ];
 
-        public ApiLinkService(IMenuService menuService, ISearchService searchService)
+        public ApiLinkService(IMenuService menuService)
         {
-            _searchService = searchService;
             // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
             Register(menuService.Customization);
@@ -225,10 +223,11 @@ namespace MudBlazor.Docs.Services
             // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
 
             // Calculate the ratios of all keywords to the search input.
+            // Both keyword (stored lowercase at registration) and text (lowercased above) are already lowercase.
             var ratios = new Dictionary<ApiLinkServiceEntry, double>();
             foreach (var (keyword, entry) in _entries)
             {
-                var ratio = _searchService.GetScore(keyword, text);
+                var ratio = SearchService.ComputeScore(keyword.AsSpan(), text.AsSpan());
 
                 // Assign the highest ratio so far to the entry.
                 if (ratios.TryGetValue(entry, out var highestRatio))

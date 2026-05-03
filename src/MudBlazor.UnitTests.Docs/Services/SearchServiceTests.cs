@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Docs.Services;
 [TestFixture]
 public sealed class SearchServiceTests
 {
-    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService(), new SearchService());
+    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService());
 
     // ──────────────────────────────────────────────────────────────────────────
     // Title – typos, partials, and out-of-order words

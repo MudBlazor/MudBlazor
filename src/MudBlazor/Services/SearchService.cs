@@ -4,12 +4,12 @@
 
 using System;
 
-namespace MudBlazor.Docs.Services;
+namespace MudBlazor;
 
 #nullable enable
 
 /// <inheritdoc cref="ISearchService"/>
-public sealed class SearchService : ISearchService
+internal sealed class SearchService : ISearchService
 {
     // Characters that delimit word tokens inside a search keyword.
     private static ReadOnlySpan<char> TokenSeparators => " -.,_/<>()";
