@@ -50,7 +50,7 @@
                 {
                     <MudGrid Spacing="0">
                         <MudItem xs="7">
-                            <MudDatePicker TValue="DateTime?" Date="@valueDateTimeForPicker" DateChanged="@(EventCallback.Factory.Create<DateTime?>(this, DateTimeValueChangedAsync))" Margin="@Margin.Dense" />
+                            <MudDatePicker TValue="DateTime?" Date="@valueDateTimeForPicker" DateChanged="@DateTimeValueChangedAsync" Margin="@Margin.Dense" />
                         </MudItem>
                         <MudItem xs="5">
                             <MudTimePicker Time="@valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />

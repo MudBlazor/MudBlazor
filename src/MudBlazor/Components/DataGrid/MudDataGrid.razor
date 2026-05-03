@@ -505,7 +505,7 @@
                             {
                                 <MudGrid Spacing="0">
                                     <MudItem xs="7">
-                                        <MudDatePicker TValue="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@(EventCallback.Factory.Create<DateTime?>(this, filter.DateValueChanged))" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                        <MudDatePicker TValue="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                     </MudItem>
                                     <MudItem xs="5">
                                         <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time" />
@@ -572,7 +572,7 @@
                         {
                             <MudGrid Spacing="0">
                                 <MudItem xs="7">
-                                    <MudDatePicker TValue="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@(EventCallback.Factory.Create<DateTime?>(this, filter.DateValueChanged))" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
+                                    <MudDatePicker TValue="DateTime?" Date="@filter._valueDateTimeForPicker" DateChanged="@filter.DateValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-date"/>
                                 </MudItem>
                                 <MudItem xs="5">
                                     <MudTimePicker Time="@filter._valueTime" TimeChanged="@filter.TimeValueChanged" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Class="filter-input-time"/>
