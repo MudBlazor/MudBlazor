@@ -1,6 +1,5 @@
 ﻿@page "/"
 @using System.Reflection
-@using FuzzySharp
 @inject NavigationManager NavManager
 @implements IDisposable
 
@@ -547,12 +546,189 @@
 
     private int GetSearchScore(string query, TestEntry entry)
     {
-        // Use the same algorithm as SearchService for consistency.
-        var nameScore = Fuzz.WeightedRatio(entry.Name, query);
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.WeightedRatio(entry.Category, query);
-
+        var q = query.ToLowerInvariant();
         // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
+        var nameScore = SearchScore(entry.Name.ToLowerInvariant(), q);
+        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : SearchScore(entry.Category.ToLowerInvariant(), q);
+
         return (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
+    }
+
+    // ── Search algorithm ─────────────────────────────────────────────────────
+    // Mirrors SearchService.ComputeScore in MudBlazor.Docs so both surfaces
+    // use the same scoring logic.
+
+    private static ReadOnlySpan<char> SearchTokenSeparators => " -.,_/<>()";
+
+    // Stack-allocation budget for Levenshtein rows and Range arrays.
+    private const int SearchStackAllocLimit = 64;
+
+    // Maximum token count stored on the stack per query/target string.
+    // Tokens beyond this count are silently ignored, which is fine for
+    // typical test-name inputs that rarely exceed a handful of words.
+    private const int SearchMaxQueryTokens = 16;
+    private const int SearchMaxTargetTokens = 64;
+
+    private static int SearchScore(ReadOnlySpan<char> target, ReadOnlySpan<char> query)
+    {
+        if (target.IsEmpty || query.IsEmpty)
+            return 0;
+        if (target.SequenceEqual(query))
+            return 100;
+
+        var best = 0;
+
+        if (target.StartsWith(query))
+            best = Math.Max(best, SearchPrefixScore(target.Length, query.Length));
+
+        if (target.IndexOf(query) >= 0)
+            best = Math.Max(best, 70);
+
+        Span<Range> qRanges = stackalloc Range[SearchMaxQueryTokens];
+        Span<Range> tRanges = stackalloc Range[SearchMaxTargetTokens];
+        var qCount = query.SplitAny(qRanges, SearchTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        var tCount = target.SplitAny(tRanges, SearchTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+
+        if (qCount > 0 && tCount > 0)
+            best = Math.Max(best, SearchTokenSetScore(query, qRanges[..qCount], target, tRanges[..tCount]));
+
+        if (qCount > 1)
+        {
+            Span<char> concat = stackalloc char[SearchStackAllocLimit];
+            var concatLen = SearchBuildConcat(query, qRanges[..qCount], concat);
+            if (concatLen > 0)
+                best = Math.Max(best, SearchSinglePairScore(concat[..concatLen], target));
+        }
+
+        return best;
+    }
+
+    private static int SearchPrefixScore(int targetLen, int queryLen) =>
+        Math.Max(65, 100 - (targetLen - queryLen) * 3);
+
+    private static int SearchTokenSetScore(
+        ReadOnlySpan<char> queryStr, ReadOnlySpan<Range> qRanges,
+        ReadOnlySpan<char> targetStr, ReadOnlySpan<Range> tRanges)
+    {
+        var totalScore = 0;
+        var totalLen = 0;
+
+        foreach (var qr in qRanges)
+        {
+            var qt = queryStr[qr];
+            if (qt.IsEmpty)
+                continue;
+
+            var best = 0;
+            foreach (var tr in tRanges)
+            {
+                var tt = targetStr[tr];
+                if (tt.IsEmpty)
+                    continue;
+
+                var s = SearchTokenPairScore(qt, tt);
+                if (s > best)
+                    best = s;
+            }
+
+            if (best == 0)
+                return 0;
+
+            totalScore += best * qt.Length;
+            totalLen += qt.Length;
+        }
+
+        if (totalLen == 0)
+            return 0;
+
+        var avg = totalScore / totalLen;
+        var coverage = Math.Min(1.0, (double)qRanges.Length / tRanges.Length);
+        return (int)(avg * (0.85 + 0.15 * coverage));
+    }
+
+    private static int SearchTokenPairScore(ReadOnlySpan<char> qt, ReadOnlySpan<char> tt)
+    {
+        if (tt.SequenceEqual(qt))
+            return 100;
+
+        if (tt.StartsWith(qt))
+            return Math.Max(50, qt.Length * 100 / tt.Length);
+
+        var maxLen = Math.Max(qt.Length, tt.Length);
+        var maxDist = maxLen <= 3 ? 0 : maxLen <= 5 ? 1 : maxLen <= 8 ? 2 : 3;
+
+        if (maxDist > 0)
+        {
+            var dist = SearchEditDistance(qt, tt);
+            if (dist <= maxDist)
+                return (maxLen - dist) * 100 / maxLen;
+        }
+
+        return 0;
+    }
+
+    private static int SearchSinglePairScore(ReadOnlySpan<char> a, ReadOnlySpan<char> b)
+    {
+        if (a.SequenceEqual(b))
+            return 100;
+        if (b.StartsWith(a))
+            return SearchPrefixScore(b.Length, a.Length);
+
+        var maxLen = Math.Max(a.Length, b.Length);
+        var maxDist = maxLen <= 5 ? 1 : maxLen <= 8 ? 2 : 3;
+        var dist = SearchEditDistance(a, b);
+        if (dist <= maxDist)
+            return (maxLen - dist) * 100 / maxLen;
+
+        return 0;
+    }
+
+    private static int SearchBuildConcat(ReadOnlySpan<char> source, ReadOnlySpan<Range> ranges, Span<char> dest)
+    {
+        var pos = 0;
+        foreach (var r in ranges)
+        {
+            var tok = source[r];
+            if (pos + tok.Length > dest.Length)
+                return 0;
+            tok.CopyTo(dest[pos..]);
+            pos += tok.Length;
+        }
+        return pos;
+    }
+
+    private static int SearchEditDistance(ReadOnlySpan<char> a, ReadOnlySpan<char> b)
+    {
+        if (a.IsEmpty) return b.Length;
+        if (b.IsEmpty) return a.Length;
+
+        var n = b.Length + 1;
+        Span<int> prev = n <= SearchStackAllocLimit ? stackalloc int[n] : new int[n];
+        Span<int> curr = n <= SearchStackAllocLimit ? stackalloc int[n] : new int[n];
+
+        for (var j = 0; j < n; j++)
+            prev[j] = j;
+
+        for (var i = 0; i < a.Length; i++)
+        {
+            curr[0] = i + 1;
+            for (var j = 0; j < b.Length; j++)
+            {
+                var cost = a[i] == b[j] ? 0 : 1;
+                curr[j + 1] = Math.Min(
+                    Math.Min(curr[j] + 1, prev[j + 1] + 1),
+                    prev[j] + cost);
+
+                if (i > 0 && j > 0 && a[i] == b[j - 1] && a[i - 1] == b[j])
+                    curr[j + 1] = Math.Min(curr[j + 1], prev[j - 1] + 1);
+            }
+
+            var tmp = prev;
+            prev = curr;
+            curr = tmp;
+        }
+
+        return prev[b.Length];
     }
 
     private string GetEntryClass(TestEntry entry)
