@@ -3,8 +3,6 @@ using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 
-#nullable enable
-
 namespace MudBlazor.Charts;
 
 /// <summary>
@@ -12,6 +10,9 @@ namespace MudBlazor.Charts;
 /// </summary>
 partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
+    [Inject]
+    private TimeProvider TimeProvider { get; set; } = null!;
+
     public override RenderFragment? OverlayContent { get; set; }
 
     private DateTime _minDateTime;
@@ -41,7 +42,10 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     public override void RebuildChart()
     {
-        if (IsOverlayChart && SharedData is null) return;
+        if (IsOverlayChart && SharedData is null)
+        {
+            return;
+        }
 
         Series = (ChartContainer != null && ChartReference is MudChart<T>)
             ? ChartContainer.ChartSeries
@@ -51,8 +55,15 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
 
-        if (Series.Count == 0) return;
-        if (!_generateChartLines) return;
+        if (Series.Count == 0)
+        {
+            return;
+        }
+
+        if (!_generateChartLines)
+        {
+            return;
+        }
 
         if (!IsOverlayChart)
         {
@@ -82,7 +93,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         ComputeMinAndMaxDateTimes();
         ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
 
-        var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+        var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
         horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
         verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
@@ -90,7 +101,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         if (_minDateLabelOffset != TimeSpan.Zero)
         {
-            startOffset = (_minDateLabelOffset.TotalMilliseconds / (_maxDateTime - _minDateTime).TotalMilliseconds) * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
+            startOffset = _minDateLabelOffset.TotalMilliseconds / (_maxDateTime - _minDateTime).TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
         }
 
         var fullDateTimeDiff = _maxDateTime - _minDateTime;
@@ -121,7 +132,9 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         _maxDateTime = maxDate.Value;
 
         if (!ChartOptions.TimeLabelSpacingRounding)
+        {
             return;
+        }
 
         ApplyLabelRounding(labelSpacing);
     }
@@ -134,8 +147,15 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         {
             foreach (var dt in series.Data.Points.Select(p => p.X).OfType<DateTime>())
             {
-                if (min == null || dt < min) min = dt;
-                if (max == null || dt > max) max = dt;
+                if (min == null || dt < min)
+                {
+                    min = dt;
+                }
+
+                if (max == null || dt > max)
+                {
+                    max = dt;
+                }
             }
         }
 
@@ -144,12 +164,20 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     private void SetDefaultDateRange(TimeSpan spacing)
     {
-        var now = DateTime.Now;
+        var now = TimeProvider.GetLocalNow().DateTime;
         _minDateTime = now;
-        _maxDateTime =
-            spacing.Days > 0 ? now.AddDays(1) :
-            spacing.Minutes > 0 ? now.AddHours(1) :
-            now.AddMinutes(1);
+        if (spacing.Days > 0)
+        {
+            _maxDateTime = now.AddDays(1);
+        }
+        else if (spacing.Minutes > 0)
+        {
+            _maxDateTime = now.AddHours(1);
+        }
+        else
+        {
+            _maxDateTime = now.AddMinutes(1);
+        }
     }
 
     private void ApplyLabelRounding(TimeSpan spacing)
@@ -159,9 +187,13 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
             var offset = new TimeSpan(_minDateTime.Ticks % spacing.Ticks);
 
             if (ChartOptions!.TimeLabelSpacingRoundingPadSeries)
+            {
                 _minDateTime = _minDateTime.Subtract(offset);
+            }
             else
+            {
                 _minDateLabelOffset = spacing - offset;
+            }
         }
 
         if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % spacing.Ticks != 0)
@@ -219,7 +251,9 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         }
 
         if (minY.Equals(T.MaxValue))
+        {
             return (T.Zero, T.Zero);
+        }
 
         var requireZero = ChartOptions?.YAxisRequireZeroPoint == true || HasAreaSeries();
         if (requireZero)
@@ -238,14 +272,16 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     private void AdjustSuggestedMax(ref T maxY)
     {
         if (ChartOptions?.YAxisSuggestedMax is { } suggested)
+        {
             maxY = T.Max(T.CreateSaturating(suggested), maxY);
+        }
     }
 
     private static int GetLowestLine(T minY, T unit) =>
-        (int)Math.Floor(double.CreateSaturating(minY / unit));
+        (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(unit));
 
     private static int GetHighestLine(T maxY, T unit) =>
-        (int)Math.Ceiling(double.CreateSaturating(maxY / unit));
+        (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(unit));
 
     private void ClampHorizontalLines(ref T unit, T minY, T maxY, ref int numLines, ref int lowestLine)
     {
@@ -277,7 +313,9 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     private TimeValue<T>[][] GetCachedDataPoints()
     {
         if (_cachedDataPoints != null)
+        {
             return _cachedDataPoints;
+        }
 
         _cachedDataPoints = new TimeValue<T>[Series.Count][];
 
@@ -322,13 +360,13 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
-        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat);
+        var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
+        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat, CultureInfo.CurrentCulture);
     }
 
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
+        var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
         return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "G");
     }
 
@@ -336,7 +374,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         var dataPoint = GetCachedDataPoints()[seriesIndex][dataPointIndex];
 
-        var gridValue = (dataPoint.Value / T.CreateSaturating(gridYUnits) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
+        var gridValue = ((double.CreateSaturating(dataPoint.Value) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
         var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
 
         var diffFromMin = dataPoint.DateTime - _minDateTime;
@@ -354,4 +392,4 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 /// <summary>
 /// Represents a data point in a time series chart, containing a DateTime and a value.
 /// </summary>
-public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>;
+public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>, IFormattable;

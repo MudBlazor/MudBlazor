@@ -7,7 +7,6 @@ using MudBlazor.Resources;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents comparison operations which execute a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
@@ -125,6 +124,16 @@ namespace MudBlazor
             /// Find values which do not match the filter value.
             /// </summary>
             public const string IsNot = "is not";
+
+            /// <summary>
+            /// Find rows where the nullable enum column is <c>null</c>.
+            /// </summary>
+            public const string Empty = "is empty";
+
+            /// <summary>
+            /// Find rows where the nullable enum column is not <c>null</c>.
+            /// </summary>
+            public const string NotEmpty = "is not empty";
         }
 
         /// <summary>
@@ -246,7 +255,7 @@ namespace MudBlazor
             public const string NotEqual = "not equals";
         }
 
-        internal static string[] GetOperatorByDataType(Type type)
+        internal static string[] GetOperatorByDataType(Type? type)
         {
             var fieldType = FieldType.Identify(type);
             return GetOperatorByDataType(fieldType);
@@ -287,6 +296,8 @@ namespace MudBlazor
                 return new[] {
                     Enum.Is,
                     Enum.IsNot,
+                    Enum.Empty,
+                    Enum.NotEmpty,
                 };
             }
             if (fieldType.IsBoolean)

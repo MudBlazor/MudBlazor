@@ -4,7 +4,7 @@
 
 using System.Collections;
 using System.Globalization;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Resources;
 using NUnit.Framework;
 

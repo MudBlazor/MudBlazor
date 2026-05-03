@@ -1,9 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using System.Diagnostics
 @using MudBlazor.Resources
+@using Microsoft.JSInterop
 @typeparam T
 
 @inject InternalMudLocalizer Localizer
+@inject IJSRuntime JSRuntime
 
 @if (IsOnlyHeader)
 {
@@ -26,7 +29,13 @@ else if (Column != null && !Column.HiddenState.Value)
         }
         @if (resizable)
         {
-            <div @onpointerdown=OnResizerPointerDown @onpointerover=OnResizerPointerOver @onpointerleave=OnResizerPointerLeave
+            <div @ref="_resizerElement"
+                 @onpointerdown="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerDown)" 
+                 @onpointerdown:stopPropagation="true"
+                 @onpointermove="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerMove)" 
+                 @onpointerup="this.AsNonRenderingEventHandler<PointerEventArgs>(OnResizerPointerUp)"
+                 @onpointerover="@OnResizerPointerOver"
+                 @onpointerleave="this.AsNonRenderingEventHandler(OnResizerPointerLeave)"
                  class="@ResizerClass" style="@ResizerStyle" />
         }
     </th>
@@ -36,15 +45,19 @@ else if (Column != null && !Column.HiddenState.Value)
 
     internal RenderFragment TableHeader()
     {
+        Debug.Assert(Column is not null);
+        Debug.Assert(DataGrid is not null);
+        var headerTemplate = Column.GetHeaderTemplate();
+
         return
         @<text>
         <span class="column-header">
             @if (sortable)
             {
                 <span class="@SortHeaderClass" @onclick="SortChangedAsync">
-                    @if (Column.HeaderTemplate != null)
+                    @if (headerTemplate != null)
                     {
-                        @Column.HeaderTemplate(Column.headerContext)
+                        @headerTemplate(Column.headerContext);
                     }
                     else if (IncludeHierarchyToggle)
                     {
@@ -58,9 +71,9 @@ else if (Column != null && !Column.HiddenState.Value)
             }
             else
             { 
-                @if (Column.HeaderTemplate != null)
+                @if (headerTemplate != null)
                 {
-                    @Column.HeaderTemplate(Column.headerContext)
+                    @headerTemplate(Column.headerContext);
                 }
                 else if (IncludeHierarchyToggle)
                 {
@@ -74,14 +87,7 @@ else if (Column != null && !Column.HiddenState.Value)
             <span class="@OptionsClass">
                 @if (sortable)
                 {
-                    if (SortDirection == SortDirection.None)
-                    {
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
-                    }
-                    else
-                    {
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
-                    }
+                    <MudIconButton Icon="@DataGrid.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
 
                     if (DataGrid.SortMode == SortMode.Multiple)
                     {
@@ -110,7 +116,7 @@ else if (Column != null && !Column.HiddenState.Value)
 
                 @if (showColumnOptions)
                 {
-                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Size="Size.Small" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
+                    <MudMenu Icon="@DataGrid.ColumnOptionsIcon" Size="Size.Small" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_ShowColumnOptions]">
                         <MudMenuItem Disabled="@(SortDirection == SortDirection.None)" OnClick="@RemoveSortAsync">@Localizer[LanguageResource.MudDataGrid_Unsort]</MudMenuItem>
                         @if (filterable && DataGrid.FilterMode != DataGridFilterMode.ColumnFilterRow)
                         {
@@ -142,7 +148,7 @@ else if (Column != null && !Column.HiddenState.Value)
         @if (filterable && DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
         {
             <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
-            <MudPopover UserAttributes="@DataGrid?.PositionAttributes" Open="@_filtersMenuVisible" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup mud-popover-position-override">
+            <MudPopover UserAttributes="@PositionAttributes" Open="@_filtersMenuVisible" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup mud-popover-position-override">
                 @if (Column.FilterTemplate != null)
                 {
                     @Column.FilterTemplate(Column.FilterContext) 
@@ -151,7 +157,7 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     <MudGrid>
                         <MudItem xs="12">
-                            @DataGrid.Filter(Column.FilterContext.FilterDefinition, Column)
+                            @DataGrid?.Filter(Column.FilterContext.FilterDefinition!, Column)
                         </MudItem>
                         <MudItem xs="12" Class="d-flex justify-end">
                             <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>

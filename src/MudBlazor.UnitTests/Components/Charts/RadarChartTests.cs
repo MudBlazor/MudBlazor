@@ -2,9 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
@@ -26,7 +27,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
+    public async Task RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
     {
         var seriesData = new double[] { 10, 20, 30 };
         var chartLabels = new[] { "A", "B", "C" };
@@ -46,7 +47,7 @@ public class RadarChartTests : BunitTest
         // Markers for "Other Series": indices 0, 1, 2 (but associated with series index 1)
 
         // Click on the second data marker of the first series (PointIndex 1, SeriesIndex 0)
-        dataMarkers[1].Click();
+        await dataMarkers[1].ClickAsync();
         comp.Instance.SelectedPointIndex.Should().Be(1);
         comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0);
 
@@ -54,7 +55,7 @@ public class RadarChartTests : BunitTest
 
         // Click on the first data marker of the second series (PointIndex 0, SeriesIndex 1)
         // Total markers = 3 (for series 1) + 3 (for series 2) = 6. So index 3 is first marker of 2nd series.
-        dataMarkers[3].Click();
+        await dataMarkers[3].ClickAsync();
         comp.Instance.SelectedPointIndex.Should().Be(0);
         comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
     }
@@ -85,7 +86,6 @@ public class RadarChartTests : BunitTest
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(4);
         comp.FindAll("path.mud-chart-axis-line").Count.Should().Be(1);
     }
-
 
     [Test]
     public void RadarChart_Option_ShowGridLines_And_GridLevels()
@@ -192,7 +192,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Interaction_SelectedIndex()
+    public async Task RadarChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
         var comp = Context.Render<Radar<double>>(parameters => parameters
@@ -209,11 +209,11 @@ public class RadarChartTests : BunitTest
         );
 
         // Simulate click on the first series path (index 0)
-        comp.FindAll("path.mud-chart-serie").First().Click();
+        await comp.FindAll("path.mud-chart-serie").First().ClickAsync();
         selectedIndex.Should().Be(0);
 
         // Simulate click on the second series path (index 1)
-        comp.FindAll("path.mud-chart-serie").Last().Click();
+        await comp.FindAll("path.mud-chart-serie").Last().ClickAsync();
         selectedIndex.Should().Be(1);
     }
 
@@ -233,7 +233,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_CanHideSeries_Test()
+    public async Task RadarChart_CanHideSeries()
     {
         var chartSeries = new List<ChartSeries<double>>()
         {
@@ -271,21 +271,21 @@ public class RadarChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Series 3 path should initially be hidden");
 
         // Hide Series 1
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+        await seriesCheckboxes[0].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
         chartSeries[0].Visible.Should().BeFalse("Series 1 Visible property should be false");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Series 1 path should be hidden after unchecking");
 
         // Show Series 1 again
-        comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+        await seriesCheckboxes[0].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after showing");
         chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true");
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should be visible again after re-checking");
 
         // Hide Series 2
-        comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+        await seriesCheckboxes[1].ChangeAsync(false);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
         chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false");
@@ -293,7 +293,7 @@ public class RadarChartTests : BunitTest
         comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should still be visible"); // Ensure other series not affected
 
         // Show Series 3 (which was initially hidden)
-        comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+        await seriesCheckboxes[2].ChangeAsync(true);
         seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
         seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
         chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true");
@@ -623,7 +623,6 @@ public class RadarChartTests : BunitTest
         };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
 
-
         var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
@@ -701,7 +700,6 @@ public class RadarChartTests : BunitTest
         };
         var chartLabels = new string[] { "Max", "Zero", "Min", "Normal" };
         var options = new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet };
-
 
         var comp = Context.Render<Radar<double>>(parameters => parameters
             .Add(p => p.ChartSeries, chartSeries)
@@ -889,7 +887,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowDefaultTooltip_OnSeriesPathHover()
+    public async Task RadarChart_Should_ShowDefaultTooltip_OnSeriesPathHover()
     {
         var seriesName = "My Series";
         var seriesData = new double[] { 10, 20, 30 };
@@ -908,7 +906,7 @@ public class RadarChartTests : BunitTest
         seriesPath.Should().NotBeNull();
 
         // Simulate mouseover to trigger tooltip
-        seriesPath.TriggerEvent("onmouseover", new MouseEventArgs());
+        await seriesPath.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull();
@@ -916,7 +914,7 @@ public class RadarChartTests : BunitTest
     }
 
     [Test]
-    public void RadarChart_Should_ShowCustomTooltip_WithTooltipTemplate()
+    public async Task RadarChart_Should_ShowCustomTooltip_WithTooltipTemplate()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Custom Series";
@@ -943,7 +941,7 @@ public class RadarChartTests : BunitTest
 
         var seriesPath = comp.Find("path.mud-chart-serie");
         seriesPath.Should().NotBeNull();
-        seriesPath.TriggerEvent("onmouseover", new MouseEventArgs());
+        await seriesPath.MouseOverAsync();
 
         var tooltipContent = comp.Find("div.custom-tooltip-test");
         tooltipContent.Should().NotBeNull();
@@ -972,14 +970,13 @@ public class RadarChartTests : BunitTest
         dataMarkers.Count.Should().Be(seriesData.Length);
 
         var firstMarker = dataMarkers.First();
-        firstMarker.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstMarker.MouseOverAsync();
 
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull();
 
         tooltip.TextContent.Should().Contain(seriesName);
         tooltip.TextContent.Should().Contain(seriesData[0].ToString());
-
 
         // Test with Custom Tooltip Template
         RenderFragment CustomTooltip((SvgPath Segment, string Color) info) => builder =>
@@ -996,7 +993,7 @@ public class RadarChartTests : BunitTest
         // Re-find marker and re-trigger hover after re-render
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
         firstMarker = dataMarkers.First();
-        firstMarker.TriggerEvent("onmouseover", new MouseEventArgs());
+        await firstMarker.MouseOverAsync();
 
         var customTooltipContent = comp.Find("div.custom-tooltip-test");
         customTooltipContent.Should().NotBeNull();
@@ -1005,13 +1002,13 @@ public class RadarChartTests : BunitTest
         // Hover on the second marker
         dataMarkers = comp.FindAll("circle.mud-chart-series-point");
         var secondMarker = dataMarkers[1];
-        secondMarker.TriggerEvent("onmouseover", new MouseEventArgs());
+        await secondMarker.MouseOverAsync();
         customTooltipContent = comp.Find("div.custom-tooltip-test"); // Re-find, content should update
         customTooltipContent.TextContent.Should().Be($"{seriesName}, Value: {seriesData[1]}");
     }
 
     [Test]
-    public void RadarChart_Should_HideTooltip_OnMouseOut()
+    public async Task RadarChart_Should_HideTooltip_OnMouseOut()
     {
         Context.JSInterop.Mode = JSRuntimeMode.Loose;
         var seriesName = "Hide Test Series";
@@ -1031,12 +1028,12 @@ public class RadarChartTests : BunitTest
         seriesPath.Should().NotBeNull();
 
         // Mouse over to show tooltip
-        seriesPath.TriggerEvent("onmouseover", new MouseEventArgs());
+        await seriesPath.MouseOverAsync();
         var tooltip = comp.Find("g.svg-tooltip");
         tooltip.Should().NotBeNull("Tooltip should be visible on mouseover.");
 
         // Mouse out to hide tooltip
-        seriesPath.TriggerEvent("onmouseout", new MouseEventArgs());
+        await seriesPath.MouseOutAsync();
         comp.FindAll("g.svg-tooltip").Count.Should().Be(0, "Tooltip content should be removed or hidden on mouseout.");
     }
 
@@ -1102,7 +1099,6 @@ public class RadarChartTests : BunitTest
 
         var newLabels = new[] { "Price", "Speed", "Ease of Use", "Support" }; // Changed names and count
         var updatedSeriesData = new List<ChartSeries<double>> { new() { Name = "ProductX", Data = new double[] { 10, 20, 30, 40 } } };
-
 
         await comp.SetParametersAndRenderAsync(parameters => parameters
             .Add(p => p.ChartLabels, newLabels)
@@ -1280,5 +1276,201 @@ public class RadarChartTests : BunitTest
         customRect.Should().NotBeNull("Custom graphic rect should be rendered inside the chart SVG.");
         customRect.GetAttribute("fill").Should().Be("red");
         customRect.GetAttribute("x").Should().Be("10");
+    }
+
+    [Test]
+    public void RadarChart_Scaling_SmallValues_GridLevels1()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 1, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Count.Should().Be(1);
+        axisValues[0].TextContent.Should().Be("5");
+    }
+
+    [Test]
+    public void RadarChart_Scaling_SmallValues_GridLevels6()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 6, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Count.Should().Be(6);
+        // max value is 5. 5/6 = 0.833. FindNextNiceStep(0.833) -> exponent -1, fraction 8.33 -> niceFraction 10 -> step 1.
+        // 1 * 6 = 6. axisMaxValue = 6.
+        // steps: 1, 2, 3, 4, 5, 6
+        axisValues[5].TextContent.Should().Be("6");
+    }
+
+    [Test]
+    public void RadarChart_Scaling_SmallValues_GridLevels2()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 2, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Count.Should().Be(2);
+        // max 5. 5/2 = 2.5. FindNextNiceStep(2.5) -> 2.5.
+        // 2.5 * 2 = 5.
+        axisValues[0].TextContent.Should().Be("2.5");
+        axisValues[1].TextContent.Should().Be("5");
+    }
+
+    [Test]
+    public void RadarChart_Option_AxisSuggestedMax()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 1, ShowAxisValues = true, AxisSuggestedMax = 10 };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Last().TextContent.Should().Be("10");
+    }
+
+    [Test]
+    public void RadarChart_Option_AxisFormat()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 1, ShowAxisValues = true, AxisFormat = "N2" };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var expectedLabel = seriesData[0].ToString(options.AxisFormat, CultureInfo.CurrentCulture);
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues[0].TextContent.Should().Be(expectedLabel);
+    }
+
+    [Test]
+    public void RadarChart_Option_AxisToStringFunc()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions
+        {
+            GridLevels = 1,
+            ShowAxisValues = true,
+            AxisToStringFunc = (val) => $"Value: {val}"
+        };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues[0].TextContent.Should().Be("Value: 5");
+    }
+
+    [Test]
+    public void RadarChart_Scaling_GridLevelsZero()
+    {
+        var seriesData = new double[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 0, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Count.Should().Be(0);
+    }
+
+    [Test]
+    public void RadarChart_Scaling_AllZeroValues()
+    {
+        var seriesData = new double[] { 0, 0, 0 };
+        var options = new RadarChartOptions { GridLevels = 5, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+
+        axisValues.Count.Should().Be(options.GridLevels);
+
+        foreach (var label in axisValues)
+        {
+            label.TextContent.Should().Be("0");
+        }
+    }
+
+    [Test]
+    public void RadarChart_Scaling_VeryLargeValues()
+    {
+        var seriesData = new double[] { 1e15, 1e15, 1e15 };
+        var options = new RadarChartOptions { GridLevels = 2, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Count.Should().Be(2);
+        axisValues[0].TextContent.Should().Be((5e14).ToString(CultureInfo.InvariantCulture));
+        axisValues[1].TextContent.Should().Be((1e15).ToString(CultureInfo.InvariantCulture));
+    }
+
+    [Test]
+    public void RadarChart_Scaling_NegativeValues()
+    {
+        var seriesData = new double[] { -5, -10, -5 };
+        var options = new RadarChartOptions { GridLevels = 2, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+
+        axisValues.Count.Should().Be(options.GridLevels);
+
+        foreach (var label in axisValues)
+        {
+            label.TextContent.Should().Be("0");
+        }
+    }
+
+    [Test]
+    public void RadarChart_Scaling_IntegerData()
+    {
+        var seriesData = new long[] { 5, 5, 5 };
+        var options = new RadarChartOptions { GridLevels = 2, ShowAxisValues = true };
+
+        var comp = Context.Render<Radar<long>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<long>> { new() { Name = "Series", Data = seriesData } })
+            .Add(p => p.ChartOptions, options)
+        );
+
+        var axisValues = comp.FindAll("text.mud-chart-axis-value");
+        axisValues.Count.Should().Be(2);
+        axisValues[0].TextContent.Should().Be("2.5");
+        axisValues[1].TextContent.Should().Be("5");
     }
 }

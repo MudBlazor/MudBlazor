@@ -30,53 +30,7 @@ Build stunning, interactive web applications with MudBlazor — the open-source 
 
 ## 🚀 Getting Started
 
-Use one of our [templates](https://github.com/MudBlazor/Templates), or follow the quick install guide below:
-
-### Installation
-
-Install Package:
-
-```bash
-dotnet add package MudBlazor
-```
-
-Add to `_Imports.razor`:
-
-```razor
-@using MudBlazor
-```
-
-Add to `MainLayout.razor` or `App.razor`:
-
-```razor
-<MudThemeProvider/>
-<MudPopoverProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
-```
-
-Add to HTML `head` section (`index.html`/`_Layout.cshtml`/`_Host.cshtml`/`App.razor`):
-
-```razor
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-<link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-```
-
-Add to the default Blazor script at the end of the HTML `body` section:
-
-```razor
-<script src="_content/MudBlazor/MudBlazor.min.js"></script>
-```
-
-Add to `Program.cs`:
-
-```c#
-using MudBlazor.Services;
-```
-
-```c#
-builder.Services.AddMudServices();
-```
+See the [installation guide](https://mudblazor.com/getting-started/installation) to get started.
 
 ### Example Usage
 
@@ -105,8 +59,6 @@ builder.Services.AddMudServices();
 }
 ```
 
-For more details, see the [full installation guide](https://mudblazor.com/getting-started/installation).
-
 ## 🤝 Contributing
 
 Contributions from the community are what make MudBlazor successful.  
@@ -129,3 +81,4 @@ Contributions from the community are what make MudBlazor successful.
 > 1. Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/discussions/12086) for help with breaking changes.  
 > 2. Static rendering is not supported. [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes)
 > 3. Use an up-to-date browser. [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms)
+> 4. Want to test the latest features? Learn about our [nightly builds](https://github.com/MudBlazor/MudBlazor/discussions/12621)!

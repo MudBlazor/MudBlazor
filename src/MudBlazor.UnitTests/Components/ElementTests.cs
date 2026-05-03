@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using MudBlazor.UnitTests.TestComponents.Element;
 using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
@@ -48,10 +48,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ElementReferenceCapture()
+        public async Task ElementReferenceCapture()
         {
             var comp = Context.Render<ElementReferenceExceptionTest>();
-            comp.Find("#element-button").Click();
+            await comp.Find("#element-button").ClickAsync();
         }
     }
 }

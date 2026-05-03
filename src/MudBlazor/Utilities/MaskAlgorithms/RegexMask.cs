@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// An input mask consisting of a regular expression.
 /// </summary>
@@ -124,7 +123,7 @@ public class RegexMask : BaseMask
         {
             // since we just auto-deleted delimiters which were re-created by AlignAgainstMask we can just as well
             // adjust the cursor position to after the delimiters
-            CaretPos += (numDeleted - 1);
+            CaretPos += numDeleted - 1;
         }
     }
 

@@ -1,4 +1,4 @@
-@using MudBlazor.Utilities
+﻿@using MudBlazor.Utilities
 <MudPopoverProvider />
 
 <MudForm FieldChanged="v => FormFieldChangedEventArgs = v">
@@ -12,7 +12,7 @@
 
 @code {
     public static string __description__ = "FieldChanged should trigger when T != string and MultiSelect=true";
-    private IEnumerable<State> _options = new HashSet<State> { new("Alaska") };
+    private IReadOnlyCollection<State> _options = [new("Alaska")];
 
     public State[] States { get; init; } =
     [

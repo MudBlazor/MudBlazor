@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides methods for managing scroll behavior.
 /// </summary>

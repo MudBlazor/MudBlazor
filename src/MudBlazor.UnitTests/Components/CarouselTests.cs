@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Carousel;
 using NUnit.Framework;
@@ -132,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing some parameters
         /// </summary>
         [Test]
-        public async Task CarouselTest_RenderingOptions()
+        public async Task Carousel_RenderingOptions()
         {
             var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing autoCycle
         /// </summary>
         [Test]
-        public async Task CarouselTest_AutoCycle()
+        public async Task Carousel_AutoCycle()
         {
             var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing Transition With SelectedIndex
         /// </summary>
         [Test]
-        public void CarouselTest_SelectedIndexTransition()
+        public void Carousel_SelectedIndexTransition()
         {
             var comp = Context.Render<CarouselTest>();
 
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing when DisableSwipeGesture
         /// </summary>
         [Test]
-        public async Task CarouselTest_DisableSwipeGesture()
+        public async Task Carousel_DisableSwipeGesture()
         {
             var comp = Context.Render<MudCarousel<object>>();
 
@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public void CarouselTest_DataBinding()
+        public void Carousel_DataBinding()
         {
             var comp = Context.Render<CarouselBindingTest>();
             // print the generated html
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
         /// Testing Bullet count after adding items
         /// </summary>
         [Test]
-        public async Task CarouselTest_AddBullets()
+        public async Task Carousel_AddBullets()
         {
             var comp = Context.Render<MudCarousel<object>>();
 
@@ -310,6 +310,29 @@ namespace MudBlazor.UnitTests.Components
 
             // check the final button amount
             comp.FindAll("button.mud-icon-button").Count.Should().Be(6); //left + right + 4 items
+        }
+
+        /// <summary>
+        /// Testing ArrowsColor parameter
+        /// </summary>
+        [Test]
+        public async Task Carousel_ArrowsColor()
+        {
+            var comp = Context.Render<MudCarousel<object>>();
+
+            // By default, arrows use Color.Inherit
+            comp.FindAll("button.mud-inherit-text").Count.Should().Be(2);
+            comp.FindAll("button.mud-primary-text").Count.Should().Be(0);
+
+            // Setting ArrowsColor to Primary
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ArrowsColor, Color.Primary));
+            comp.FindAll("button.mud-inherit-text").Count.Should().Be(0);
+            comp.FindAll("button.mud-primary-text").Count.Should().Be(2);
+
+            // Resetting ArrowsColor to null restores Color.Inherit
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ArrowsColor, null));
+            comp.FindAll("button.mud-inherit-text").Count.Should().Be(2);
+            comp.FindAll("button.mud-primary-text").Count.Should().Be(0);
         }
     }
 }

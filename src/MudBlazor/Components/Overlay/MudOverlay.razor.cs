@@ -9,7 +9,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Renders a translucent layer over content, typically used for modals, popovers, progress bars, or blocking interactions.
@@ -211,10 +210,10 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             .WithChangeHandler(HandleVisibleChanged);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstTime)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // set initial handlelockscrollchanges
-        if (firstTime)
+        if (firstRender)
         {
             _previousLockScroll = LockScroll;
             _previousAbsolute = Absolute;

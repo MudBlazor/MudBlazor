@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Utility class for opting out of rerendering in Blazor when an EventCallback is invoked.
 /// By default, components inherit from ComponentBase, which automatically invokes StateHasChanged
@@ -85,7 +85,14 @@ public static class EventUtil
             }
             catch (Exception ex)
             {
-                await RenderHandle(component).DispatchExceptionAsync(ex);
+                try
+                {
+                    await RenderHandle(component).DispatchExceptionAsync(ex);
+                }
+                catch
+                {
+                    ExceptionDispatchInfo.Capture(ex).Throw();
+                }
             }
         }
     }

@@ -13,8 +13,6 @@ using MudBlazor.Interop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
-
 namespace MudBlazor.Charts
 {
     partial class HeatMap<T> : MudChartBase<T, HeatMapChartOptions>, IDisposable where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
@@ -37,6 +35,8 @@ namespace MudBlazor.Charts
         private const double BoundWidth = 800.0;
 
         private const double BoundHeight = 350.0;
+
+        private const int AxisLabelsPadding = 5;
 
         internal Position _legendPosition = Position.Bottom;
 
@@ -66,7 +66,7 @@ namespace MudBlazor.Charts
 
         private double _dynamicFontSize = 8;
 
-        private double _yAxisLabelWidth = 0;
+        private double _yAxisLabelWidth;
 
         // padding or legend area for each side of the heatmap
         private double _horizontalStartSpace = HeatMapPadding;
@@ -92,10 +92,10 @@ namespace MudBlazor.Charts
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
 
         // the amount of pixels a legend extends horizontally when it's on left/right
-        private int _legendLabelsYAxis = 0;
+        private int _legendLabelsYAxis;
 
         // the amount of pixels a legend extends vertically when it's on the top/bottom
-        private int _legendLabelsXAxis = 0;
+        private int _legendLabelsXAxis;
 
         // Calculate the actual width of the heatmap cells area
         private double HeatmapWidth => _boundWidth - _horizontalStartSpace - _horizontalEndSpace;
@@ -231,7 +231,7 @@ namespace MudBlazor.Charts
             }
 
             var cellHeight = Math.Max(CellMinSize, (_boundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1))) / RowCount);
-            var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - (padding * (SeriesLength - 1))) / SeriesLength);
 
             _cellDimension = new CellDimension(cellWidth, cellHeight, padding);
         }
@@ -277,7 +277,7 @@ namespace MudBlazor.Charts
 
                 if (CanHideSeries)
                 {
-                    var legend = new SvgLegend()
+                    var legend = new SvgLegend
                     {
                         Index = row,
                         Labels = _series[row].Name,
@@ -316,13 +316,14 @@ namespace MudBlazor.Charts
             _dynamicFontSize = CalculateFontSize(estimatedCellWidth, estimatedCellHeight, 8);
 
             // Calculate Y-axis label width based on dynamic font size
-            _yAxisLabelWidth = (_series.Count > 0 ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
+            _yAxisLabelWidth = (_series.Count > 0 ? _series.Max(x => x.Name.Length) : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
 
-            var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
+            const double DefaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }
-                ? (defaultCharsWidth + LegendLineLength) : 0);
+                ? DefaultCharsWidth + LegendLineLength
+                : 0);
             _legendLabelsXAxis = _options is { ShowLegendLabels: true }
-                ? (LegendFontSize + LegendLineLength)
+                ? LegendFontSize + LegendLineLength
                 : 0;
 
             // make room for X and Y Axis Labels
@@ -330,18 +331,22 @@ namespace MudBlazor.Charts
             {
                 _horizontalStartSpace += CellPadding + _yAxisLabelWidth + CellPadding;
             }
+
             if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
             {
                 _horizontalEndSpace += CellPadding + _yAxisLabelWidth + CellPadding;
             }
+
             if (_options?.XAxisLabelPosition == XAxisLabelPosition.Top)
             {
                 _verticalStartSpace += CellPadding + _dynamicFontSize + CellPadding;
             }
+
             if (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom)
             {
                 _verticalEndSpace += CellPadding + _dynamicFontSize + CellPadding;
             }
+
             // Make Room for Legend (if Any)
             if (_options is { ShowLegend: true })
             {
@@ -350,12 +355,15 @@ namespace MudBlazor.Charts
                     case Position.Bottom:
                         _verticalEndSpace += CellPadding + _legendLabelsXAxis + LegendBox + CellPadding;
                         break;
+
                     case Position.Top:
                         _verticalStartSpace += CellPadding + _legendLabelsXAxis + LegendBox + CellPadding;
                         break;
+
                     case Position.Left:
                         _horizontalStartSpace += CellPadding + _legendLabelsYAxis + LegendBox + CellPadding;
                         break;
+
                     case Position.Right:
                         _horizontalEndSpace += CellPadding + _legendLabelsYAxis + LegendBox + CellPadding;
                         break;
@@ -371,7 +379,7 @@ namespace MudBlazor.Charts
             for (var i = 0; i < colors.Length; i++)
             {
                 var t = i / (double)(colors.Length - 1);
-                var value = _minValue + T.CreateSaturating(t) * (_maxValue - _minValue);
+                var value = _minValue + (T.CreateSaturating(t) * (_maxValue - _minValue));
                 _legends.Add((value, colors[i].ToString(MudColorOutputFormats.RGB)));
             }
         }
@@ -383,11 +391,13 @@ namespace MudBlazor.Charts
             {
                 return null;
             }
+
             // need to ensure column index exists in case there is no data for a column in a series
             if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Values.Count)
             {
                 return null;
             }
+
             return _series[row].Data[col].Y;
         }
 
@@ -416,14 +426,13 @@ namespace MudBlazor.Charts
             {
                 return MudColor.GenerateTintShadePalette(baseColors[0]).ToArray();
             }
-            else if (colorCount != 5)
+
+            if (colorCount != 5)
             {
                 return MudColor.GenerateMultiGradientPalette(baseColors, shadeCount).ToArray();
             }
-            else
-            {
-                return baseColors;
-            }
+
+            return baseColors;
         }
 
         private string FormatValueForDisplay(T? value)
@@ -435,7 +444,7 @@ namespace MudBlazor.Charts
             // Format the value and truncate to 5 characters or fewer
             var formattedValue = value.Value.ToString(formatString, CultureInfo.InvariantCulture);
 
-            return formattedValue.Length > 5 ? formattedValue.Substring(0, 5) : formattedValue;
+            return formattedValue.Length > 5 ? formattedValue[..5] : formattedValue;
         }
 
         private static double CalculateFontSize(double cellWidth, double cellHeight, int defaultSize)
@@ -510,9 +519,9 @@ namespace MudBlazor.Charts
                     _boundHeight = _elementSize.Height;
                 }
                 else if (Width.EndsWith("px")
-                    && Height.EndsWith("px")
-                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                         && Height.EndsWith("px")
+                         && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
+                         && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
                 {
                     _boundWidth = width;
                     _boundHeight = height;
@@ -544,24 +553,21 @@ namespace MudBlazor.Charts
         {
             _debouncer.DebounceAsync(async () =>
             {
-                await InvokeAsync(() =>
-                {
-                    RebuildChart();
-                });
+                await InvokeAsync(RebuildChart);
             }).CatchAndLog();
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T> cell)
+        private void OnCellMouseOver(HeatMapCell<T>? cell)
         {
             _hoveredCell = cell;
         }
 
-        private void OnCellMouseOut(MouseEventArgs _)
+        private void OnCellMouseOut()
         {
             _hoveredCell = null;
         }
 
-        private void OnLegendMouseOver(MouseEventArgs _, (T value, string color) legend, PointF position)
+        private void OnLegendMouseOver((T value, string color) legend, PointF position)
         {
             _hoveredLegend = legend;
             _hoveredLegendPosition = position;

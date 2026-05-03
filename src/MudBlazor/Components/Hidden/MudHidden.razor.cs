@@ -3,7 +3,6 @@ using MudBlazor.State;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A component which conditionally renders content depending on the screen size.

@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor
 {
-#nullable enable
     internal static class ExpressionModifier
     {
         internal static Expression<Func<T, bool>> Modify<T>(this Expression firstExpression, Expression secondExpression)

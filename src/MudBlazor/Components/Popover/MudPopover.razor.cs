@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// Displays content as a window over other content.
@@ -18,10 +17,10 @@ namespace MudBlazor
             new CssBuilder("mud-popover")
                 .AddClass($"mud-popover-fixed", Fixed)
                 .AddClass($"mud-popover-open", Open)
-                .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
-                .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
-                .AddClass($"mud-popover-overflow-{GetOverflowBehavior().ToDescriptionString()}")
-                .AddClass($"mud-popover-{RelativeWidth.ToDescriptionString()}-width", RelativeWidth != DropdownWidth.Ignore)
+                .AddClass($"mud-popover-{TransformOrigin.ToStringFast(true)}")
+                .AddClass($"mud-popover-anchor-{AnchorOrigin.ToStringFast(true)}")
+                .AddClass($"mud-popover-overflow-{GetOverflowBehavior().ToStringFast(true)}")
+                .AddClass($"mud-popover-{RelativeWidth.ToStringFast(true)}-width", RelativeWidth != DropdownWidth.Ignore)
                 .AddClass($"mud-paper", Paper)
                 .AddClass($"mud-paper-square", Paper && Square)
                 .AddClass($"mud-elevation-{Elevation}", Paper && DropShadow)

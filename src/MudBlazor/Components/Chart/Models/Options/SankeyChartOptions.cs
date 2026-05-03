@@ -2,7 +2,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 public class SankeyChartOptions : DefaultChartOptions
 {
     /// <summary>
@@ -98,7 +97,6 @@ public class SankeyChartOptions : DefaultChartOptions
     /// Refer to <see cref="AggregationOption"/>
     /// </remarks>
     public AggregationOption AggregationOption { get; set; }
-
 
     /// <summary>
     /// Hides all nodes and their corresponding edges which have a weight of less than the specified one. 

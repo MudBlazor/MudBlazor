@@ -2,8 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Reflection;
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Converters;
@@ -516,8 +515,7 @@ public class BoolConverterTests
         Action act = () => conv.Convert(new object());
 
         act.Should()
-            .Throw<TargetInvocationException>()
-            .WithInnerException<InvalidOperationException>()
+            .Throw<InvalidOperationException>()
             .WithMessage("Cannot convert type System.Object to bool?");
     }
 }

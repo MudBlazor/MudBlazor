@@ -7,7 +7,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -52,6 +51,14 @@ namespace MudBlazor
         /// <param name="options">The custom display options for the dialog.</param>
         /// <returns>A reference to the dialog.</returns>
         Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(string? title, DialogOptions options) where TComponent : IComponent;
+
+        /// <summary>
+        /// Displays a dialog with parameters.
+        /// </summary>
+        /// <typeparam name="TComponent">The dialog to display.</typeparam>
+        /// <param name="parameters">The custom parameters to set within the dialog.</param>
+        /// <returns>A reference to the dialog.</returns>
+        Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>(DialogParameters parameters) where TComponent : IComponent;
 
         /// <summary>
         /// Displays a dialog with a custom title and parameters.

@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Services;
 using NUnit.Framework;
 
@@ -27,5 +27,6 @@ public class KeyOptionsTests
         keyOptions1.PreventUp.Should().Be(keyOptions2.PreventUp);
         keyOptions1.StopDown.Should().Be(keyOptions2.StopDown);
         keyOptions1.StopUp.Should().Be(keyOptions2.StopUp);
+        keyOptions1.IgnoreDownRepeats.Should().Be(keyOptions2.IgnoreDownRepeats);
     }
 }

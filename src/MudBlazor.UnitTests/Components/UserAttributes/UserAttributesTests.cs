@@ -3,8 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Concurrent;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Charts;
 using MudBlazor.Services;
@@ -22,6 +22,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudBreakpointProvider)); // just exposing a cascading value, no layout implications
             Exclude(typeof(MudPicker<>));       // Internal component, skip
             Exclude(typeof(MudRadioGroup<>));   // Wrapping component, skip
+            Exclude(typeof(MudDragHandle<>));   // Wrapping component, skip
             Exclude(typeof(MudOverlay));        // Sectioned component, skip
             Exclude(typeof(DataGridGroupRow<>));  // Internal component, skip
             Exclude(typeof(DataGridVirtualizeRow<>)); // Internal component, skip
@@ -50,7 +51,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             // these components do not need to have user attributes
             var excludedComponents = new HashSet<string>()
             {
-                nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar), nameof(MudHotkey),
+                nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar), nameof(MudHotkey), nameof(MudExitPrompt),
                 "Column`1", "FooterCell`1", "HeaderCell`1", "FilterHeaderCell`1", "SelectColumn`1",
                 "HierarchyColumn`1", "PropertyColumn`2", "TemplateColumn`1", "MudToggleItem`1", "MudHeatMapCell`1"
             };
@@ -58,7 +59,10 @@ namespace MudBlazor.UnitTests.UserAttributes
             foreach (var componentType in mudComponentTypes)
             {
                 if (excludedComponents.Contains(componentType.Name))
+                {
                     continue;
+                }
+
                 var component = componentFactory.Create(componentType, testContext);
                 component.Markup.Should()
                     .NotBeEmpty(because: $"the component {componentType.Name} should at least contain one element");

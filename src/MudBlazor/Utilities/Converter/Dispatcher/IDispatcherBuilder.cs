@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-
 namespace MudBlazor.Utilities.Converter.Dispatcher;
 
-#nullable enable
 /// <summary>
 /// Builder API used to register per-type converters and produce a dispatcher that routes conversions
 /// to the appropriate registered converter.

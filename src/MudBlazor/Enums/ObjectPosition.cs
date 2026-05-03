@@ -2,12 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the position of an object relative to its container.
 /// </summary>
+[EnumExtensions]
 public enum ObjectPosition
 {
     /// <summary>

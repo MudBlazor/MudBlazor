@@ -6,7 +6,6 @@ using System.Globalization;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides culture and format providers for converters that need culture-aware formatting or parsing.
 /// </summary>

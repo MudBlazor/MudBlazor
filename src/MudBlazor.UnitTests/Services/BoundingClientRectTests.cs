@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using NUnit.Framework;

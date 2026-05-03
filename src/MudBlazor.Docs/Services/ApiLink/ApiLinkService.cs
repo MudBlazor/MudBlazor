@@ -11,6 +11,192 @@ namespace MudBlazor.Docs.Services
     public class ApiLinkService : IApiLinkService
     {
         private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
+        private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
+            [
+                new ApiLinkServiceEntry
+                {
+                    Title = "Installation",
+                    Link = "getting-started/installation",
+                    SubTitle = "Get started with MudBlazor fast and easy."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Wireframes",
+                    Link = "getting-started/wireframes",
+                    SubTitle = "These small templates can be copied directly or just be used for inspiration."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Table",
+                    Link = "components/table",
+                    ComponentType = typeof(MudTable<T>),
+                    SubTitle = "A sortable, filterable table with multiselection and pagination."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Grid",
+                    Link = "components/grid",
+                    ComponentType = typeof(MudGrid),
+                    SubTitle = "The grid component helps keeping layout consistent across various screen resolutions and sizes."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Button",
+                    Link = "components/button",
+                    ComponentType = typeof(MudGrid),
+                    SubTitle = "A Material Design button for triggering an action or navigating to a link."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Card",
+                    Link = "components/card",
+                    ComponentType = typeof(MudCard),
+                    SubTitle = "Cards can contain actions, text, or media like images or graphics."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Dialog",
+                    Link = "components/dialog",
+                    ComponentType = typeof(MudDialog),
+                    SubTitle = "A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "App Bar",
+                    Link = "components/appbar",
+                    ComponentType = typeof(MudAppBar),
+                    SubTitle = "App bar is used to display actions, branding, navigation and screen titles."
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Navigation Menu",
+                    Link = "components/navmenu",
+                    ComponentType = typeof(MudNavMenu),
+                    SubTitle = "Nav menu provides a tree-like menu linking to the content on your site."
+                }
+            ];
+        private readonly IReadOnlyCollection<ApiLinkServiceEntry> _navigationEntries =
+            [
+                new ApiLinkServiceEntry
+                {
+                    Title = "Explore",
+                    Link = "docs/overview",
+                    SubTitle = "Docs"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Installation",
+                    Link = "getting-started/installation",
+                    SubTitle = "Getting Started"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Layouts",
+                    Link = "getting-started/layouts",
+                    SubTitle = "Getting Started"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Usage",
+                    Link = "getting-started/usage",
+                    SubTitle = "Getting Started"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Wireframes",
+                    Link = "getting-started/wireframes",
+                    SubTitle = "Getting Started"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "What is MudBlazor?",
+                    Link = "mud/introduction",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Announcements",
+                    Link = "mud/announcements",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Getting Help",
+                    Link = "mud/community/getting-help",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Reporting Bugs",
+                    Link = "mud/community/reporting-bugs",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Contribution",
+                    Link = "mud/community/contribution",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Community Extensions",
+                    Link = "mud/community/extensions",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Releases",
+                    Link = "mud/project/releases",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Roadmap",
+                    Link = "mud/project/roadmap",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Sponsors & Backers",
+                    Link = "mud/project/sponsor",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "Team & Contributors",
+                    Link = "mud/project/team",
+                    SubTitle = "Learn More"
+                },
+
+                new ApiLinkServiceEntry
+                {
+                    Title = "How it Started",
+                    Link = "mud/project/how-it-started",
+                    SubTitle = "Learn More"
+                }
+            ];
 
         public ApiLinkService(IMenuService menuService)
         {
@@ -19,6 +205,8 @@ namespace MudBlazor.Docs.Services
             Register(menuService.Customization);
             Register(menuService.Features);
             Register(menuService.Utilities);
+            RegisterFeaturedPages();
+            RegisterNavigationPages();
             RegisterAliases();
         }
 
@@ -65,6 +253,21 @@ namespace MudBlazor.Docs.Services
             );
         }
 
+        /// <inheritdoc />
+        public IReadOnlyCollection<ApiLinkServiceEntry> GetAllEntries()
+        {
+            return _entries.Values
+                .Distinct()
+                .OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<ApiLinkServiceEntry> GetFeaturedEntries()
+        {
+            return _featuredEntries;
+        }
+
         /// <summary>
         /// Returns a value representing the match ratio of the search input to the keyword.
         /// A higher ratio means a better match.
@@ -85,18 +288,18 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         private void AddEntry(ApiLinkServiceEntry entry)
         {
-            void AddKeyword(string? k)
-            {
-                if (!string.IsNullOrWhiteSpace(k))
-                {
-                    _entries[k.ToLowerInvariant()] = entry;
-                }
-            }
+            AddKeyword(entry, entry.Title);
+            AddKeyword(entry, entry.SubTitle);
+            AddKeyword(entry, entry.ComponentName);
+            AddKeyword(entry, entry.Link);
+        }
 
-            AddKeyword(entry.Title);
-            AddKeyword(entry.SubTitle);
-            AddKeyword(entry.ComponentName);
-            AddKeyword(entry.Link);
+        private void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
+        {
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                _entries[keyword.ToLowerInvariant()] = entry;
+            }
         }
 
         /// <inheritdoc />
@@ -136,6 +339,45 @@ namespace MudBlazor.Docs.Services
             RegisterPage("Side Panel", subtitle: "Go to Drawer", componentType: typeof(MudDrawer));
             RegisterPage("Toast", subtitle: "Go to Snackbar", componentType: typeof(MudSnackbarProvider));
             RegisterPage("Typeahead", subtitle: "Go to Autocomplete", componentType: typeof(MudAutocomplete<T>));
+            RegisterAliasKeyword("components/navmenu", "Navigation Menu");
+            RegisterAliasKeyword("docs/overview", "Explore MudBlazor");
+            RegisterAliasKeyword("getting-started/installation", "Get Started");
+            RegisterAliasKeyword("getting-started/installation", "Getting Started");
+            RegisterAliasKeyword("mud/introduction", "Learn More");
+        }
+
+        private void RegisterFeaturedPages()
+        {
+            foreach (var entry in _featuredEntries)
+            {
+                if (entry.ComponentType is not null)
+                {
+                    continue;
+                }
+
+                RegisterPage(
+                    title: entry.Title,
+                    subtitle: entry.SubTitle,
+                    componentType: entry.ComponentType,
+                    link: entry.Link
+                );
+            }
+        }
+
+        private void RegisterNavigationPages()
+        {
+            foreach (var entry in _navigationEntries)
+            {
+                AddEntry(entry);
+            }
+        }
+
+        private void RegisterAliasKeyword(string link, string alias)
+        {
+            if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
+            {
+                AddKeyword(entry, alias);
+            }
         }
 
         /// <summary>
@@ -163,7 +405,7 @@ namespace MudBlazor.Docs.Services
             {
                 RegisterPage(
                     title: link.Title,
-                    subtitle: "",
+                    subtitle: link.Group,
                     componentType: null,
                     link: link.Href
                 );

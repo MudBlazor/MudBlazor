@@ -1,13 +1,7 @@
 ﻿@page "/components/menu"
 
 <DocsPage>
-    <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)">
-        <Description>
-            Use menus to show items in a scannable way.
-            Make menus easy to open, close, and select.
-            Menus can open from a variety of components, including icon buttons and text fields.
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -201,18 +195,6 @@
                     <SectionContent Code="@nameof(MenuModalExample)" ShowCode="false">
                         <MenuModalExample />
                     </SectionContent>
-                </DocsPageSection>
-
-                <DocsPageSection>
-                    <SectionHeader Title="Popover Settings">
-                        <Description>
-                            This component leverages <MudLink Href="/components/popover">MudPopover</MudLink> along with
-                            <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage its item list.
-                            You can configure certain aspects using <CodeInline>PopoverFixed</CodeInline> and <CodeInline>OverflowBehavior</CodeInline>,
-                            which sets default appearance and behavior properties.
-                            Learn more on the <MudLink Color="Color.Secondary" Href="/components/popover#individual-dropdown-settings">popover documentation page.</MudLink>
-                        </Description>
-                    </SectionHeader>
                 </DocsPageSection>
 
             </SectionSubGroups>

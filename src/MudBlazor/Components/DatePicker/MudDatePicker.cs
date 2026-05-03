@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -31,23 +30,27 @@ namespace MudBlazor
             set => SetDateAsync(value, true).CatchAndLog();
         }
 
-        private DateTime _lastSetTime = DateTime.MinValue;
+        private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
         private const int DebounceTimeoutMs = 100;
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue)
+        protected Task SetDateAsync(DateTime? date, bool updateValue)
+            => SetDateAsync(date, updateValue, false);
+
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
                 date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
             }
 
-            var now = DateTime.UtcNow;
+            var now = TimeProvider.GetUtcNow();
 
             /* See #7866 for more details
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
-             * debounces the value to the same value in a short time frame is ignored
+             * debounces the value to the same value in a short time frame is ignored. The debounce is ignored if
+             * forceUpdate is true
              */
-            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
+            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs && !forceUpdate)
             {
                 return;
             }
@@ -87,6 +90,12 @@ namespace MudBlazor
                 await BeginValidateAsync();
                 FieldChanged(_value);
             }
+            else if (forceUpdate)
+            {
+                // If the field is quickly cleared after an error: just reset and resubmit.
+                ResetConverterErrors();
+                await BeginValidateAsync();
+            }
         }
 
         protected override Task DateFormatChangedAsync(string? newFormat)
@@ -98,8 +107,11 @@ namespace MudBlazor
         protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
+            var hadConversionError = ConversionError;
+            var date = ConvertGet(value);
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(ConvertGet(value), false);
+            // If the date had a conversion error and is now null or empty forceUpdate is true
+            return SetDateAsync(date, false, forceUpdate: string.IsNullOrEmpty(value) && hadConversionError);
         }
 
         protected override string GetDayClasses(int month, DateTime day)
@@ -109,17 +121,19 @@ namespace MudBlazor
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
-                return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+                return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
             if (day == TimeProvider.GetLocalNow().Date)
                 return b.AddClass("mud-current mud-button-outlined")
                         .AddClass(
-                            $"mud-button-outlined-{Color.ToDescriptionString()} mud-{Color.ToDescriptionString()}-text")
+                            $"mud-button-outlined-{Color.ToStringFast(true)} mud-{Color.ToStringFast(true)}-text")
                         .Build();
             return b.Build();
         }
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
@@ -128,7 +142,7 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    await Task.Delay(ClosingDelay);
+                    await Task.Delay(TimeSpan.FromMilliseconds(ClosingDelay), TimeProvider);
                     await CloseAsync(false);
                 }
             }
@@ -140,29 +154,33 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected override async Task OnMonthSelectedAsync(DateTime month)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             PickerMonth = month;
             var nextView = GetNextView();
             if (nextView == null)
             {
+                var culture = GetCulture();
+                var calendar = culture.Calendar;
                 _selectedDate = _selectedDate.HasValue
                     ?
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
-                        GetCulture().Calendar.GetYear(month),
-                        GetCulture().Calendar.GetMonth(month),
-                        GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetHour(_selectedDate.Value),
-                        GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                        GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                        (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                        GetCulture().Calendar,
+                        calendar.GetYear(month),
+                        calendar.GetMonth(month),
+                        calendar.GetDayOfMonth(_selectedDate.Value),
+                        calendar.GetHour(_selectedDate.Value),
+                        calendar.GetMinute(_selectedDate.Value),
+                        calendar.GetSecond(_selectedDate.Value),
+                        (int)calendar.GetMilliseconds(_selectedDate.Value),
+                        calendar,
                         _selectedDate.Value.Kind)
                     //We can assume day here, as it was not set yet. If a fix value is set, it will be overridden in Submit
-                    : new DateTime(GetCulture().Calendar.GetYear(month),
-                        GetCulture().Calendar.GetMonth(month),
+                    : new DateTime(calendar.GetYear(month),
+                        calendar.GetMonth(month),
                         1,
-                        GetCulture().Calendar);
+                        calendar);
                 await SubmitAndCloseAsync();
             }
             else
@@ -177,9 +195,13 @@ namespace MudBlazor
         /// <param name="year"></param>
         protected override async Task OnYearClickedAsync(int year)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, GetCulture().Calendar.GetMonth(current), 1, GetCulture().Calendar);
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            PickerMonth = new DateTime(year, calendar.GetMonth(current), 1, calendar);
             var nextView = GetNextView();
             if (nextView == null)
             {
@@ -188,16 +210,16 @@ namespace MudBlazor
                     //everything has to be set because a value could already defined -> fix values can be ignored as they are set in submit anyway
                     new DateTime(
                         year,
-                        GetCulture().Calendar.GetMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                        GetCulture().Calendar.GetHour(_selectedDate.Value),
-                        GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                        GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                        (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                        GetCulture().Calendar,
+                        calendar.GetMonth(_selectedDate.Value),
+                        calendar.GetDayOfMonth(_selectedDate.Value),
+                        calendar.GetHour(_selectedDate.Value),
+                        calendar.GetMinute(_selectedDate.Value),
+                        calendar.GetSecond(_selectedDate.Value),
+                        (int)calendar.GetMilliseconds(_selectedDate.Value),
+                        calendar,
                         _selectedDate.Value.Kind)
                     //We can assume month and day here, as they were not set yet
-                    : new DateTime(year, 1, 1, GetCulture().Calendar);
+                    : new DateTime(year, 1, 1, calendar);
                 await SubmitAndCloseAsync();
             }
             else
@@ -220,16 +242,19 @@ namespace MudBlazor
             if (_selectedDate == null)
                 return;
 
-            if (FixYear.HasValue ||
-                FixMonth.HasValue || FixDay.HasValue)
-                _selectedDate = new DateTime(FixYear ?? GetCulture().Calendar.GetYear(_selectedDate.Value),
-                    FixMonth ?? GetCulture().Calendar.GetMonth(_selectedDate.Value),
-                    FixDay ?? GetCulture().Calendar.GetDayOfMonth(_selectedDate.Value),
-                    GetCulture().Calendar.GetHour(_selectedDate.Value),
-                    GetCulture().Calendar.GetMinute(_selectedDate.Value),
-                    GetCulture().Calendar.GetSecond(_selectedDate.Value),
-                    (int)GetCulture().Calendar.GetMilliseconds(_selectedDate.Value),
-                    GetCulture().Calendar);
+            if (FixYear.HasValue || FixMonth.HasValue || FixDay.HasValue)
+            {
+                var culture = GetCulture();
+                var calendar = culture.Calendar;
+                _selectedDate = new DateTime(FixYear ?? calendar.GetYear(_selectedDate.Value),
+                    FixMonth ?? calendar.GetMonth(_selectedDate.Value),
+                    FixDay ?? calendar.GetDayOfMonth(_selectedDate.Value),
+                    calendar.GetHour(_selectedDate.Value),
+                    calendar.GetMinute(_selectedDate.Value),
+                    calendar.GetSecond(_selectedDate.Value),
+                    (int)calendar.GetMilliseconds(_selectedDate.Value),
+                    calendar);
+            }
 
             await SetDateAsync(_selectedDate, true);
             _selectedDate = null;
@@ -254,12 +279,17 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? Date ?? TimeProvider.GetLocalNow().Date;
+            var date = StartMonth ?? Date ?? HighlightedDate ?? TimeProvider.GetLocalNow().Date;
             return date.StartOfMonth(GetCulture());
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
+            if (FixYear.HasValue)
+            {
+                return FixYear.Value;
+            }
+
             var date = Date ?? TimeProvider.GetLocalNow().Date;
             var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
             var calenderYear = GetCulture().Calendar.GetYear(date);
@@ -344,21 +374,7 @@ namespace MudBlazor
                                 MoveToPreviousYear();
                                 break;
                             case OpenTo.Month:
-                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
-                                var newMonth = currentMonth.AddMonths(-3);
-                                // move to last row months of current year when we overflow to previous year
-                                if (currentMonth.Year != newMonth.Year)
-                                {
-                                    var daysInMonth =
-                                        GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                                    var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
-                                    newMonth = new DateTime(currentMonth.Year,
-                                        monthsInYear - (3 - currentMonth.Month),
-                                        Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                                        GetCulture().Calendar);
-                                }
-
-                                HighlightedDate = _selectedDate = newMonth;
+                                MoveToPreviousMonth(3);
                                 break;
                             case OpenTo.Date:
                                 var currentDay = HighlightedDate ?? GetMonthStart(0);
@@ -393,21 +409,7 @@ namespace MudBlazor
                                 MoveToNextYear();
                                 break;
                             case OpenTo.Month:
-                                var currentMonth = HighlightedDate ?? GetMonthStart(0);
-                                var newMonth = currentMonth.AddMonths(3);
-                                // move to first row of months of current year when we overflow to previous year
-                                if (currentMonth.Year != newMonth.Year)
-                                {
-                                    var daysInMonth =
-                                        GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
-                                    var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
-                                    newMonth = new DateTime(currentMonth.Year,
-                                        3 - (monthsInYear - currentMonth.Month),
-                                        Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
-                                        GetCulture().Calendar);
-                                }
-
-                                HighlightedDate = _selectedDate = newMonth;
+                                MoveToNextMonth(3);
                                 break;
                             case OpenTo.Date:
                                 var currentDay = HighlightedDate ?? GetMonthStart(0);
@@ -469,7 +471,7 @@ namespace MudBlazor
                         {
                             await SubmitAsync();
                             await CloseAsync();
-                            _inputReference?.SetText(Text);
+                            _inputReference?.SetTextAsync(Text);
                         }
                     }
 
@@ -497,23 +499,26 @@ namespace MudBlazor
                     break;
                 default:
                     await SubmitAsync();
-                    _inputReference?.SetText(Text);
+                    _inputReference?.SetTextAsync(Text);
                     await CloseAsync();
                     break;
             }
         }
 
-        private void MoveToNextMonth()
+        private void MoveToNextMonth(int numberOfMonths = 1)
         {
+            if (FixMonth != null)
+                return;
             var currentMonth = HighlightedDate ?? GetMonthStart(0);
-            var newMonth = currentMonth.AddMonths(1);
+            var newMonth = currentMonth.AddMonths(numberOfMonths);
             // move to first month of current year when we overflow to next year
             if (newMonth.Year != currentMonth.Year)
             {
                 var daysInMonth =
                     GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
                 newMonth = new DateTime(currentMonth.Year,
-                    1,
+                    numberOfMonths - (monthsInYear - currentMonth.Month),
                     Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
                     GetCulture().Calendar);
             }
@@ -521,17 +526,20 @@ namespace MudBlazor
             HighlightedDate = _selectedDate = newMonth;
         }
 
-        private void MoveToPreviousMonth()
+        private void MoveToPreviousMonth(int numberOfMonths = 1)
         {
+            if (FixMonth != null)
+                return;
             var currentMonth = HighlightedDate ?? GetMonthStart(0);
-            var newMonth = currentMonth.AddMonths(-1);
+            var newMonth = currentMonth.AddMonths(-numberOfMonths);
             // move to last month of current year when we overflow to previous year
             if (currentMonth.Year != newMonth.Year)
             {
                 var daysInMonth =
                     GetCulture().Calendar.GetDaysInMonth(currentMonth.Year, currentMonth.Month);
+                var monthsInYear = GetCulture().Calendar.GetMonthsInYear(currentMonth.Year);
                 newMonth = new DateTime(currentMonth.Year,
-                    GetCulture().Calendar.GetMonthsInYear(currentMonth.Year),
+                    monthsInYear - (numberOfMonths - currentMonth.Month),
                     Math.Min(currentMonth.Day, daysInMonth), // handle different month lengths
                     GetCulture().Calendar);
             }
@@ -541,6 +549,8 @@ namespace MudBlazor
 
         private void MoveToNextYear()
         {
+            if (FixYear != null)
+                return;
             var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(1);
             if (GetCulture().Calendar.GetYear(newYear) > GetMaxYear())
                 return;
@@ -550,6 +560,8 @@ namespace MudBlazor
 
         private void MoveToPreviousYear()
         {
+            if (FixYear != null)
+                return;
             var newYear = (HighlightedDate ?? GetMonthStart(0)).AddYears(-1);
             if (GetCulture().Calendar.GetYear(newYear) < GetMinYear())
                 return;
@@ -579,10 +591,12 @@ namespace MudBlazor
         /// </summary>
         public async Task GoToDate(DateTime date, bool submitDate = true)
         {
-            PickerMonth = new DateTime(GetCulture().Calendar.GetYear(date),
-                GetCulture().Calendar.GetMonth(date),
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            PickerMonth = new DateTime(calendar.GetYear(date),
+                calendar.GetMonth(date),
                 1,
-                GetCulture().Calendar);
+                calendar);
             if (submitDate)
             {
                 await SetDateAsync(date, true);

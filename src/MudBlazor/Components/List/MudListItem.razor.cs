@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// An item within a <see cref="MudList{T}"/> component.
@@ -17,8 +17,11 @@ namespace MudBlazor
     {
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
+        private ElementReference _elementReference = new();
+        private string? _subscribedElementId;
+        internal string ElementId { get; } = Identifier.Create("list-item");
 
-        private ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _expandedState;
 
         public MudListItem()
         {
@@ -34,14 +37,17 @@ namespace MudBlazor
                 .AddClass("mud-list-item-gutters", GetGutters())
                 .AddClass("mud-list-item-clickable", GetClickable())
                 .AddClass("mud-ripple", Ripple && GetClickable())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToStringFast(true)}-text", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToStringFast(true)}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
 
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter]
         protected MudList<T>? MudList { get; set; }
@@ -227,6 +233,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Expanding)]
         public bool Expanded { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Expanded"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
@@ -289,12 +298,54 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            var effectiveElementId = GetEffectiveElementId();
+
+            if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
+            {
+                if (!string.IsNullOrEmpty(_subscribedElementId))
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                }
+
+                var options = new KeyInterceptorOptions(
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        // prevent scrolling page and move focus to previous item
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page and move focus to next item
+                        new("ArrowDown", preventDown: "key+none"),
+                        new("Home", preventDown: "key+none"),
+                        new("End", preventDown: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                        .OnKeyDown("Home", HandleHomeAsync)
+                        .OnKeyDown("End", HandleEndAsync)
+                        .OnKeyDown(" ", HandleSpaceAsync)
+                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+
+                _subscribedElementId = effectiveElementId;
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
             if (GetDisabled())
             {
                 return;
             }
+
+            MudList?.SetActiveItem(this);
             if (OnClickPreventDefault)
             {
                 await OnClick.InvokeAsync(eventArgs);
@@ -334,9 +385,65 @@ namespace MudBlazor
             }
         }
 
+        internal async Task FocusAsync()
+        {
+            await OnFocusAsync(new FocusEventArgs());
+            await _elementReference.FocusAsync();
+        }
+
+        internal bool IsEnabled() => !GetDisabled();
+
+        private async Task OnFocusAsync(FocusEventArgs _)
+        {
+            TopLevelList?.SetActiveItem(this);
+
+            if (SelectionMode == SelectionMode.SingleSelection && NestedList is null && TopLevelList is not null && !GetReadOnly())
+            {
+                await TopLevelList.SetSelectedValueAsync(GetValue());
+            }
+        }
+
+        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(), KeyEventKind.Down, args);
+
+        private string GetEffectiveElementId()
+        {
+            if (UserAttributes.TryGetValue("id", out var idValue) && idValue is not null)
+            {
+                var id = idValue.ToString();
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    return id;
+                }
+            }
+
+            return ElementId;
+        }
+
+        private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
+
+        private Task HandleArrowDownAsync() => MudList!.FocusAdjacentItemAsync(this, 1);
+
+        private Task HandleArrowUpAsync() => MudList!.FocusAdjacentItemAsync(this, -1);
+
+        private Task HandleHomeAsync() => MudList!.FocusBoundaryItemAsync(first: true);
+
+        private Task HandleEndAsync() => MudList!.FocusBoundaryItemAsync(first: false);
+
+        private Task HandleSpaceAsync() => OnKeyboardActivateAsync(activateLink: false);
+
+        private Task HandleEnterAsync()
+        {
+            if (HtmlTag == "a")
+            {
+                return Task.CompletedTask;
+            }
+
+            return OnKeyboardActivateAsync(activateLink: true);
+        }
+
         internal void SetSelected(bool selected)
         {
-            if (GetDisabled() || _selected == selected)
+            if (_selected == selected)
             {
                 return;
             }
@@ -357,7 +464,7 @@ namespace MudBlazor
 
         private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
 
-        private bool GetDense() => Dense ?? MudList?.Dense == true;
+        private bool GetDense() => Dense ?? (MudList?.Dense == true);
 
         private bool GetGutters() => Gutters ?? MudList?.Gutters ?? true;
 
@@ -376,6 +483,85 @@ namespace MudBlazor
             else
             {
                 await TopLevelList.SelectValueAsync(GetValue());
+            }
+        }
+
+        private string? GetRole()
+        {
+            return GetReadOnly() ? "listitem" : "option";
+        }
+
+        private string? GetAriaSelected()
+        {
+            if (GetReadOnly())
+            {
+                return null;
+            }
+
+            return _selected ? "true" : "false";
+        }
+
+        private string? GetAriaExpanded()
+        {
+            if (NestedList is null)
+            {
+                return null;
+            }
+
+            return _expandedState.Value ? "true" : "false";
+        }
+
+        private string? GetTabIndex()
+        {
+            if (GetDisabled())
+            {
+                return "-1";
+            }
+
+            if (GetReadOnly())
+            {
+                return HtmlTag == "a" ? null : "-1";
+            }
+
+            return MudList?.IsTabbable(this) == true ? "0" : "-1";
+        }
+
+        private async Task OnKeyboardActivateAsync(bool activateLink)
+        {
+            if (GetDisabled())
+            {
+                return;
+            }
+
+            if (NestedList is not null)
+            {
+                await _expandedState.SetValueAsync(!_expandedState.Value);
+                return;
+            }
+
+            if (TopLevelList is not null && !GetReadOnly())
+            {
+                var value = GetValue();
+
+                if (MultiSelection)
+                {
+                    await OnCheckboxChangedAsync();
+                }
+                else if (SelectionMode == SelectionMode.ToggleSelection)
+                {
+                    await TopLevelList.SetSelectedValueAsync(_selected ? default : value);
+                }
+                else
+                {
+                    await TopLevelList.SetSelectedValueAsync(value);
+                }
+            }
+
+            await OnClick.InvokeAsync(new MouseEventArgs());
+
+            if (activateLink && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            {
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
         }
 
@@ -405,13 +591,14 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            if (MudList is null)
-            {
-                return;
-            }
             try
             {
-                MudList.Unregister(this);
+                MudList?.Unregister(this);
+
+                if (IsJSRuntimeAvailable && !string.IsNullOrEmpty(_subscribedElementId))
+                {
+                    _ = KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                }
             }
             catch (Exception) { /*ignore*/ }
         }

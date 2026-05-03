@@ -1,0 +1,65 @@
+﻿@using MudBlazor
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h6">Fixed Anchors (Scroll down to see them fixed to viewport or select one)</MudText>
+        <MudSelect T="Origin" Label="Anchor" @bind-Value="_anchor" FitContent>
+            @foreach (Origin origin in Enum.GetValues(typeof(Origin)))
+            {
+                <MudSelectItem Value="@origin">@origin</MudSelectItem>
+            }
+        </MudSelect>
+        <MudFabMenu Fixed="true" Anchor="_anchor" Direction="@GetDirection(_anchor)" Color="Color.Error" StartIcon="@Icons.Material.Filled.Settings">
+            <MudFabMenuItem Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" />
+            <MudFabMenuItem Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Delete" />
+        </MudFabMenu>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudText Typo="Typo.h6">Directions</MudText>
+    </MudItem>
+    @foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+    {
+        <MudItem xs="4" Class="d-flex flex-column align-center justify-center pa-16" Style="height: 300px;">
+            <MudText Typo="Typo.subtitle1">@direction</MudText>
+            <MudFabMenu Direction="@direction" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">
+                <MudFabMenuItem Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" />
+                <MudFabMenuItem Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Delete" />
+                <MudFabMenuItem Color="Color.Info" StartIcon="@Icons.Material.Filled.Share" />
+            </MudFabMenu>
+        </MudItem>
+    }
+    
+    <MudItem xs="12" Class="mt-16">
+        <MudText Typo="Typo.h6">Extended FAB Menu</MudText>
+    </MudItem>
+    <MudItem xs="12" Class="d-flex justify-space-around pa-16">
+        <MudFabMenu Direction="Direction.Top" Label="Extended Top" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">
+            <MudFabMenuItem Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" />
+            <MudFabMenuItem Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Delete" />
+        </MudFabMenu>
+        
+        <MudFabMenu Direction="Direction.Right" Label="Extended Right" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">
+            <MudFabMenuItem Color="Color.Secondary" StartIcon="@Icons.Material.Filled.Edit" />
+            <MudFabMenuItem Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Delete" />
+        </MudFabMenu>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    private Origin _anchor = Origin.BottomRight;
+
+    private Direction GetDirection(Origin origin)
+    {
+        return origin switch
+        {
+            Origin.TopLeft or Origin.TopRight or Origin.TopCenter => Direction.Bottom,
+            Origin.BottomLeft or Origin.BottomRight or Origin.BottomCenter => Direction.Top,
+            Origin.CenterLeft => Direction.Right,
+            Origin.CenterRight => Direction.Left,
+            Origin.CenterCenter => Direction.End,
+            _ => Direction.Top
+        };
+    }
+}

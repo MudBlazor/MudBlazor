@@ -1,241 +1,193 @@
 # AGENTS.md - AI Coding Agent Guide for MudBlazor
 
-## What is MudBlazor?
+## Scope and Workflow
 
-MudBlazor is a comprehensive, production-ready Material Design component library for Blazor applications. This is a large-scale .NET project with:
-- **UI Framework:** Blazor (both Server and WebAssembly)
-- **Styling:** SCSS (compiled to CSS)
-- **JavaScript:** Minimal JS interop files in TScripts/
-- **Testing:** bUnit for component testing
-- **Size:** ~450 components, ~3,700+ unit tests, extensive documentation
+### Keep changes focused
+- Target specific projects only. Solution-wide commands are too slow unless explicitly requested.
+- Keep diffs small and focused. Avoid repo-wide rewrites unless explicitly asked.
+- Prefer targeted, non-breaking changes unless the task explicitly requires broader or breaking work.
+- If broader follow-up improvements are identified, suggest them for a separate PR instead of expanding the current diff.
+- Do not add new heavy dependencies or packages without approval.
+- Do not make speculative large changes when the intent is unclear. Ask a clarifying question or propose a short plan instead.
 
-The project follows Material Design guidelines and provides a complete set of UI components for building modern web applications with Blazor.
+### Default working rules
+- Follow `src/.editorconfig`.
+- Treat warnings as errors. Do not ignore analyzer warnings.
+- Do not run solution-wide commands unless explicitly requested.
+- Do not make `dotnet clean` part of the normal local loop. Use it only when incremental build state is clearly stale or corrupted.
+- If no code, project, test, docs app, or asset-pipeline inputs changed, do not call `dotnet`. Changes limited to files such as `README.md`, changelog text, issue templates, or other repo metadata do not require restore, build, test, or format.
+- Prefer a single scoped `dotnet build` or `dotnet test` command as the first verification step. Split build and test only when you will reuse the build outputs for multiple test runs.
+- Do not build `src/MudBlazor/MudBlazor.csproj` immediately before testing `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`; the test project already builds `MudBlazor`, `MudBlazor.UnitTests.Shared`, and `MudBlazor.UnitTests.Viewer`.
 
-## Prerequisites
+## Repository Layout
 
-- **.NET 10.0 SDK** (version 10.0.100 or later) - Required for building
-- Check your version: `dotnet --version`
-- The solution targets .NET 8.0, .NET 9.0, and .NET 10.0
+- `src/` contains the product code and nearly all project work. Expect the main library, docs app, tests, analyzers, benchmarks, and related support projects to live here.
+- `src/MudBlazor/` is the core component library. Most component, utility, styling, `TScripts`, and `wwwroot` changes land here.
+- `src/MudBlazor.UnitTests*` contains test projects and test support code. Look here for component tests, shared test infrastructure, viewer-only helpers, and docs-related tests.
+- `src/MudBlazor.Docs*` contains the documentation site, examples, and docs build support. Update docs here when component behavior or public API changes.
+- `src/MudBlazor.Analyzers*` contains analyzer, code-fix, and analyzer-test projects.
+- Repo-wide build configuration is centered in `src/`, especially `src/Directory.Build.*` and `src/.editorconfig`.
+- Tooling and automation live primarily in `tools/`, `.config/`, and `.github/`.
+- Treat `bin/`, `obj/`, `TestResults/`, generated files, and similar outputs as build artifacts unless the task explicitly targets them.
 
-## Dev Environment Tips
+## Environment Requirements
 
-### Build Commands (CRITICAL TIMINGS)
+- The required .NET SDK is defined in `global.json`; use that version to restore, build, and test this repository.
+- The library targets `net8.0`, `net9.0`, and `net10.0`.
+- Verify the active SDK with `dotnet --version`.
 
-**ALWAYS follow this exact sequence:**
+## Scoped Commands and Verification
 
-1. **Clean (when needed):**
-```bash
-dotnet clean src/MudBlazor.slnx
-```
-- Runs in ~2-3 seconds
-- Use when: Build failures occur, switching branches, or unexplained issues
-- No warnings or errors expected
+### Project targets
+- Components: `src/MudBlazor/MudBlazor.csproj` and `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`
+- Docs: `src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj`, `src/MudBlazor.Docs/MudBlazor.Docs.csproj`, `src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj`, and `src/MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj`
+- Docs tests: `src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj`
+- Analyzers and code fixes: `src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj`, `src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj`, and `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`
 
-2. **Build:**
-```bash
-dotnet build src/MudBlazor.slnx -c Release --nologo
-```
-- **Duration: ~2-2.5 minutes** (this is NORMAL - do NOT timeout before 150 seconds)
-- Builds 15+ projects including:
-  - MudBlazor (core library) - targets net8.0 and net9.0
-  - MudBlazor.Docs.Compiler - generates 745+ documentation files
-  - MudBlazor.UnitTests.Docs.Generator - generates test files
-  - Multiple doc hosting projects (Server, Wasm, WasmHost)
-  - Analyzers, source generators, and test projects
-- Expected output: "Build succeeded" with 0 warnings, 0 errors
-- JavaScript files are compiled: wwwroot/MudBlazor.min.js
-- SCSS is compiled to CSS automatically
-- **IMPORTANT:** The build generates files during compilation - this is expected and not an error
+### Restore
+Do not run restore automatically at the start of every session. Reuse existing assets in the working tree.
 
-3. **Test:**
-```bash
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-```
-- **Duration: ~1.5 minutes (90 seconds)** - do NOT timeout before 120 seconds
-- Runs 3,734+ tests (some skipped performance tests)
-- Expected output: "Passed! - Failed: 0, Passed: 3734, Skipped: 10"
-- **ALWAYS use `--no-build`** to avoid rebuilding (saves time)
-- Tests must pass before submitting PRs
+Run restore only when restore inputs changed, when the target project's `obj/project.assets.json` is missing, or when a `--no-restore` build or test fails because restore data is stale.
 
-### Running Docs Locally
+Restore only the project graph you are about to validate:
 
 ```bash
-dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
-```
-- Launches at https://localhost:5001 (or http://localhost:5000)
-- Best for debugging visual changes and testing components interactively
-
-### Build Troubleshooting
-
-**If build fails:**
-1. Run `dotnet clean src/MudBlazor.slnx` first
-2. Check that .NET 10.0 SDK is installed: `dotnet --version`
-3. Ensure you're in the repository root directory
-4. Check for file permission issues
-
-**If tests fail:**
-1. Ensure build completed successfully first
-2. Use `--no-build` flag to avoid rebuild
-3. Check that you haven't broken existing tests with your changes
-4. Review test output for specific failure reasons
-
-**If CI formatting check fails:**
-1. Run `dotnet format src/MudBlazor.slnx` to auto-fix formatting issues
-2. Commit the formatting changes
-3. Common issues: blank lines after attributes, missing UTF-8 BOM, incorrect indentation
-
-## Project Structure
-
-### Root Directory Layout
-```
-/home/runner/work/MudBlazor/MudBlazor/
-├── src/                      # All source code
-├── content/                  # Images and media assets
-├── tools/                    # PowerShell scripts for icon/CSS generation
-├── .github/                  # GitHub Actions workflows and config
-│   └── workflows/
-│       └── build-test-mudblazor.yml  # Main CI workflow
-├── CONTRIBUTING.md           # Detailed contribution guidelines
-├── README.md                 # Project overview and quick start
-├── AGENTS.md                 # This file - AI agent guide
-└── src/MudBlazor.slnx        # Main solution file
+dotnet restore src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
+dotnet restore src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj
+dotnet restore src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj
+dotnet restore src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
+dotnet tool restore --tool-manifest .config/dotnet-tools.json
 ```
 
-### Source Directory Structure
-```
-src/
-├── .editorconfig                      # C#/Razor code style (Roslyn defaults + MudBlazor overrides)
-├── Directory.Build.props              # MSBuild properties
-├── Directory.Build.targets            # MSBuild targets
-├── MudBlazor/                         # Core library
-│   ├── Components/                    # All Blazor components (.razor, .razor.cs)
-│   ├── Styles/                        # SCSS files
-│   │   ├── components/                # Component-specific styles
-│   │   ├── abstracts/                 # SCSS variables, mixins
-│   │   ├── utilities/                 # Utility classes
-│   │   └── MudBlazor.scss             # Main SCSS entry point
-│   ├── TScripts/                      # JavaScript interop files (checked by ESLint)
-│   ├── Enums/                         # Shared enumerations
-│   └── MudBlazor.csproj               # Core project file
-├── MudBlazor.Docs/                    # Documentation site components
-│   └── Pages/Components/              # Component documentation pages
-├── MudBlazor.Docs.Server/             # Server-side docs project (for local dev)
-├── MudBlazor.Docs.WasmHost/           # WASM docs project (for local dev)
-├── MudBlazor.Docs.Compiler/           # Auto-generates documentation files
-├── MudBlazor.UnitTests/               # bUnit tests
-│   └── Components/                    # Component test files
-├── MudBlazor.UnitTests.Viewer/        # Visual test runner
-│   └── TestComponents/                # Test components used by bUnit tests
-├── MudBlazor.UnitTests.Docs/          # Auto-generated tests from docs
-├── MudBlazor.Analyzers/               # Roslyn analyzers
-└── MudBlazor.SourceGenerator/         # Source generators
-```
+Re-run `dotnet restore` if any of these change:
+- `*.csproj`
+- `src/Directory.Build.*`
+- `Directory.Packages.props`, if added later
+- `NuGet.Config` or other NuGet restore configuration files, if added later
 
-### Important Configuration Files
-- **src/.editorconfig** - C# code style rules (Microsoft Roslyn defaults with MudBlazor team overrides)
-  - Instance fields: `_camelCase` with underscore prefix
-  - File header template required (copyright notice)
-  - CS4014 (unawaited async) set to ERROR
-  - BL0007 (parameter auto-properties) set to SUGGESTION
-- **src/Directory.Build.props** - Shared MSBuild properties
-- **src/Directory.Build.targets** - Shared MSBuild targets
-- **.github/workflows/build-test-mudblazor.yml** - CI/CD pipeline (builds, tests, ESLint, coverage)
+- If `.config/dotnet-tools.json` changes, run:
 
-## Testing Instructions
-
-### Running Tests
 ```bash
-# Build first (required)
-dotnet build src/MudBlazor.slnx -c Release --nologo
-
-# Run all unit tests (ALWAYS use --no-build to save time)
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-
-# Run specific test
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "TestName" --no-build -c Release
+dotnet tool restore --tool-manifest .config/dotnet-tools.json
 ```
 
-### Writing bUnit Tests
+- If `src/package.json` or `src/bun.lock` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
-**Critical Rules:**
-1. **Never save HTML elements from `Find()` or `FindAll()` in variables** - they become stale after interaction
-2. **Always use `InvokeAsync()` when setting component parameters or calling methods**
+### Default local loop for C# or Razor component changes
 
-**✅ GOOD Example:**
-```csharp
-var comp = ctx.RenderComponent<MudTextField<string>>();
-comp.Find("input").Change("Garfield");  // Query each time
-comp.Find("input").Blur();
-comp.FindComponent<MudTextField<string>>().Instance.Value.Should().NotBeNullOrEmpty();
+- For a single validation pass, prefer one filtered `dotnet test` command. This builds the component library plus the relevant test graph and runs the selected tests in one invocation.
+- Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
+
+```bash
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-restore /p:SkipBunCompile=true --nologo --blame-hang --blame-hang-timeout 30s
 ```
 
-**❌ BAD Example:**
-```csharp
-var textField = comp.Find("input");  // DON'T DO THIS
-textField.Change("Garfield");
-textField.Blur();  // Will fail - element is stale
+- If you expect to run multiple filtered test commands against the same edits, build once and then reuse the outputs with `--no-build`:
+
+```bash
+dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true --nologo
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~PopoverTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
 ```
 
-**Why it matters:** HTML elements become stale after any interaction that triggers a re-render.
+### Bun
+- Frontend asset builds use the local `bundotnet.cli` tool from `.config/dotnet-tools.json`, not a separately installed global Bun.
+- If Bun-related commands fail after tool or config changes, re-run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
+- `/p:SkipBunCompile=true` skips the Bun-driven frontend asset compilation steps that normally run during build.
+- Use it when the goal is to validate .NET, C#, or Razor changes and you do not need regenerated frontend assets as part of verification.
+- It is typically safe for C#-only changes, Razor logic or markup changes, test changes, and documentation-only changes.
+- Do not use it when changes touch `TScripts`, styles, CSS, SCSS, asset pipeline inputs, or tooling files that affect frontend bundles such as `src/package.json` or `src/bun.lock`.
+- Do not use it when the change depends on rebuilt generated JavaScript, CSS, or other static assets being present or up to date.
+- If you are unsure whether the build output depends on regenerated frontend assets, run the normal scoped build without `SkipBunCompile`.
 
-### Using InvokeAsync
+### Formatting
+Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch whitespace/newline/charset/etc mistakes. Do not run it repeatedly during the normal edit-build-test loop.
 
-**❌ BAD:**
-```csharp
-var textField = comp.FindComponent<MudTextField<string>>().Instance;
-textField.Value = "Garfield"; // WRONG - not on UI thread
+Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `--include MudBlazor/Components/List/MudListItem.razor.cs`.
+
+If `src/.editorconfig` changed, format the whole `src` tree:
+
+```bash
+dotnet format --no-restore
 ```
 
-**✅ GOOD:**
+### Choose the smallest valid verification loop
+- For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
+- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test` against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
+- For component `.cs` or `.razor` changes that only need compile validation: build `src/MudBlazor/MudBlazor.csproj` with `/p:SkipBunCompile=true`.
+- For `TScripts` or `Styles`: run a normal scoped project build.
+- For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
+- For docs example or API-page changes that need parity with CI, run `dotnet test src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
+- For analyzer or code-fix changes: prefer a single filtered `dotnet test` from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
+- Prefer the narrowest relevant test filter over running an entire test project.
+- Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
+
+## Component Authoring Rules
+
+### Parameters and state
+- Component parameters must be auto-properties only. Do not put logic in getters or setters.
+- Do not overwrite component parameters directly. Use the backing `ParameterState<T>` and update through `.Value` or `SetValueAsync`.
+- Do not set other component parameters via `@ref` (`BL0005`). Use declarative binding instead.
+- Use `ParameterState<T>` for parameter updates and change handlers.
+- Parameters managed through the parameter-state framework should be annotated with `[Parameter, ParameterState]`.
+
+### Styling and naming
+- Use `CssBuilder` for classes and styles.
+- Use CSS variables and design tokens. Do not hard-code colors.
+- Prefer positive parameter names. Avoid names like `DisableGutters`; prefer `Gutters`.
+
+### Public API documentation
+- Add XML `<summary>` documentation for all public properties.
+- Prefer concise summaries that describe behavior, not "Gets or sets..." boilerplate.
+- Add `<remarks>` for public parameters when useful, including the default value when relevant.
+- Add the appropriate `[Category(CategoryTypes....)]` attribute to public component parameters.
+
+Example:
+
 ```csharp
-var textField = comp.FindComponent<MudTextField<string>>().Instance;
-await comp.InvokeAsync(() => textField.Value = "Garfield");
-```
-
-**Why:** bUnit test logic is not running on the Blazor UI-thread.
-
-### Test Organization
-- Create test components in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
-- Write corresponding tests in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
-- Test logic, not complete HTML output or visual appearance
-- Add tests for any component containing C# logic
-- Assert initial state correctness
-- Test parameter changes and their effects
-- Test user interactions (clicks, input, etc.)
-- Verify EventCallback invocations
-
-## Critical Blazor Component Patterns
-
-### ParameterState Pattern (REQUIRED)
-
-**NEVER put logic in parameter getters/setters!** Use the ParameterState framework instead. This prevents unobserved async discards and update loops.
-
-**❌ BAD (FORBIDDEN):**
-```csharp
-private bool _expanded;
-
+/// <summary>
+/// Uses compact vertical padding.
+/// </summary>
+/// <remarks>
+/// Defaults to <c>false</c>.
+/// </remarks>
 [Parameter]
-public bool Expanded
-{
-    get => _expanded;
-    set
-    {
-        if (_expanded == value) return;
-        _expanded = value;
-        _ = UpdateHeight(); // UNOBSERVED ASYNC DISCARD - FORBIDDEN!
-        _ = ExpandedChanged.InvokeAsync(_expanded); // DANGEROUS!
-    }
-}
+[Category(CategoryTypes.Radio.Appearance)]
+public bool Dense { get; set; }
 ```
 
-**✅ GOOD (REQUIRED):**
+or
+
+```csharp
+/// <summary>
+/// Prevents interaction with background elements while this list is open.
+/// </summary>
+/// <remarks>
+/// Defaults to <see cref="PopoverOptions.ModalOverlay" />.
+/// </remarks>
+[Parameter]
+[Category(CategoryTypes.FormComponent.ListBehavior)]
+public bool? Modal { get; set; }
+```
+
+### Parameter registration pattern
+- Register parameters in the constructor with `CreateRegisterScope()`.
+- Use `.WithParameter(...)`, `.WithEventCallback(...)`, and `.WithChangeHandler(...)` where appropriate.
+- Put reaction logic in the change handler, not in the property setter.
+- Prefer method-group handlers for shared logic.
+
+Example:
+
 ```csharp
 private readonly ParameterState<bool> _expandedState;
 
 [Parameter]
-public bool Expanded { get; set; }  // Auto-property only
+public bool Expanded { get; set; }
 
-public MudCollapse()
+[Parameter]
+public EventCallback<bool> ExpandedChanged { get; set; }
+
+public MudExample()
 {
     using var registerScope = CreateRegisterScope();
     _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
@@ -244,304 +196,86 @@ public MudCollapse()
         .WithChangeHandler(OnExpandedChangedAsync);
 }
 
-private async Task OnExpandedChangedAsync()
-{
-    if (_isRendered)
-    {
-        _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
-        await UpdateHeightAsync(); // Properly awaited
-        _updateHeight = true;
-    }
-    await ExpandedChanged.InvokeAsync(_expandedState.Value); // Properly awaited
-}
-```
-
-### Never Overwrite Parameters
-
-**❌ BAD:**
-```csharp
-private Task ToggleAsync()
-{
-    Expanded = !Expanded; // DON'T OVERWRITE PARAMETERS!
-    return ExpandedChanged.InvokeAsync(Expanded);
-}
-```
-
-**✅ GOOD:**
-```csharp
 private Task ToggleAsync()
 {
     return _expandedState.SetValueAsync(!_expandedState.Value);
 }
 ```
 
-### Never Set External Component Parameters (BL0005 Warning)
+### Accessibility and behavior
+- Add `[CascadingParameter] public bool RightToLeft { get; set; }` when layout depends on direction.
+- Follow best ARIA practices without adding noise.
+- When generating HTML or ARIA attributes in component code, prefer fallback values so caller-provided attributes can override them whenever feasible; do not hard-force generated attributes unless the behavior truly requires it.
+- Ensure keyboard navigation works for interactive components.
+- Provide accessible names for interactive controls through a label, `aria-label`, or `aria-labelledby`.
+- Components with logic require bUnit tests and a docs page at `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`.
 
-**❌ BAD:**
-```razor
-<CalendarComponent @ref="@_calendarRef" />
-@code {
-    private CalendarComponent _calendarRef = null!;
-    private void Update()
-    {
-        _calendarRef.ShowOnlyOneCalendar = true; // BL0005 WARNING!
-    }
-}
-```
+## Docs Pages and Examples
 
-**✅ GOOD:**
-```razor
-<CalendarComponent ShowOnlyOneCalendar="@_showOnlyOne" />
-@code {
-    private bool _showOnlyOne;
-    private void Update()
-    {
-        _showOnlyOne = true; // Declarative approach
-    }
-}
-```
+- Keep docs in sync with component behavior, public APIs, and parameter changes.
+- Use `src/MudBlazor.Docs/Pages/Components/Button/ButtonPage.razor` or `src/MudBlazor.Docs/Pages/Components/Menu/MenuPage.razor` as a reference for component docs structure.
+- Start with basic usage, introduce common variants next, group related scenarios with `SectionSubGroups`, and leave advanced or edge-case behavior for the end.
+- Write each component page as a guided progression rather than a catalog dump. Use clear section titles and short descriptions that explain when and why a feature is useful.
+- Order examples from simple to complex. Start with a small canonical example, then add focused examples for common variants, composition patterns, binding, edge cases, and advanced behavior.
+- Keep examples in `src/MudBlazor.Docs/Pages/Components/<ComponentName>/Examples/` and name them after the component and scenario, such as `<ComponentName>SimpleExample`, `<ComponentName>DenseExample`, or `<ComponentName>TwoWayBindingExample`.
+- Do not leave orphaned example components under `Examples/`. Every example should be referenced by the docs page or removed.
+- Prefer minimal examples that demonstrate one concept at a time. Make them realistic enough to teach the workflow, but avoid extra state, styling, or unrelated component features that distract from the documented behavior.
+- Use meaningful labels and sample content in examples. Avoid `Item 1`, `Item 2`, or placeholder text unless the content is irrelevant to the behavior being demonstrated.
+- Reference example components from pages with `Code="@nameof(...)"` so renames stay compiler-checked.
+- Show code for simple, canonical examples by default. Also show code when the markup, binding, accessibility attribute, or event pattern is the behavior being taught. Collapse examples longer than 15 lines, and use `ShowCode="false"` on secondary examples when the rendered behavior is more important than repeating similar markup.
+- Use `CodeInline` for parameter, component, and member names in descriptions. Use `MudLink` for cross-links to related component pages when that helps users continue learning.
+- Descriptions and examples must agree with the component's actual defaults and current behavior. Verify ambiguous defaults against the component code or tests before documenting them.
+- Include practical guidance near the relevant example for accessibility-sensitive behavior, keyboard interaction, focus management, and other usage constraints. When prose mentions an accessibility requirement, the example should demonstrate it.
+- Docs examples are exercised by generated tests, so they must render without exceptions.
+- Generated docs tests are emitted as `Generated/*.generated.cs` files and must not be edited by hand.
+- `MudBlazor.UnitTests.Docs` does not generate docs tests in the default local build unless `GenerateDocsTests=true`.
 
-## Component Design Requirements
+## Breaking Changes and Compatibility
 
-### Must-Have Features
-- **RTL Support:** Use `[CascadingParameter] public bool RightToLeft { get; set; }` when necessary
-- **XML Documentation:** Add summary comments for all public properties
-- **Unit Tests:** Comprehensive tests for any component containing logic
-- **CssBuilder:** Use for classes and styles
-- **CSS Variables:** Use for styling (avoid hard-coded colors)
+- Avoid breaking changes whenever possible.
+- Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
+- If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
+- For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
 
-### Documentation Requirements
-- Add documentation page in `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`
-- Include examples ordered from simple to complex
-- Collapse examples with more than 15 lines by default
-- Add screenshots/videos for visual changes
+## Testing Rules
 
-## PR Guidelines
+### General testing guidance
+- Run the narrowest relevant test filter first.
+- Test logic rather than full HTML snapshots.
+- Prefer a fail-first workflow: add or update the test to fail for the target behavior before implementing the fix.
+- Keep tests isolated so they can run in parallel.
+- If a test modifies shared or static state, restore it in `[TearDown]`.
+- Use `[NonParallelizable]` only when isolation is not feasible.
+- Prefer `TimeProvider` or `FakeTimeProvider` over `Task.Delay`.
 
-### Title Format
-```
-<component name>: <short description in imperative> (<linked issue>)
-```
-Example: `DateRangePicker: Fix initializing DateRange with null values (#1997)`
+### bUnit rules
+- Never cache `Find()` or `FindAll()` results. Re-query after interactions.
+- Always use `InvokeAsync()` for parameter changes or method calls.
+- Prefer async interactions such as `ClickAsync`, `ChangeAsync`, `BlurAsync`, and `InputAsync` over sync methods.
 
-### PR Requirements
-- Single topic per PR (one feature/bug fix)
-- Target the `dev` branch
-- All tests must pass
-- Include unit tests for logic changes
-- No unnecessary refactoring
-- Link related issues using `Fixes #<issue>` (bugs) or `Closes #<issue>` (features)
-- Include screenshots/videos for visual changes
-- Code must be properly formatted per .editorconfig
+### Test locations and naming
+- Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.
+- Viewer test component file names should start with the component prefix, use correct component casing, and end with `Test`, optionally followed by an indexer such as `MenuTest1`.
+- Keep viewer test component file names at 40 characters or fewer. Prefer concise scenario names over long descriptive file names.
+- Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
+- Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
+- Test methods should be self-documenting and should not use XML documentation.
+- Helper methods in test classes should include XML documentation when they are non-trivial or reused.
+- When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
+- Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
+- Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
 
-### Branch Management
-- Use descriptive branches: `feature/my-new-feature` or `fix/my-bug-fix`
-- Keep branches up to date by merging `dev` (don't rebase)
-- Use draft PRs for work in progress
+## Code Style and Analyzer Rules
 
-## Build and Validation Workflow
+- Fix new warnings instead of suppressing them.
+- Comments should usually explain why a decision exists, not restate what the code already shows or describe straightforward mechanics.
+- Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
 
-### Development Workflow by Task Type
+## Change Checklist
 
-**For Component Changes:**
-1. Locate files:
-   - Component code: `src/MudBlazor/Components/<ComponentName>/`
-   - Component styles: `src/MudBlazor/Styles/components/_<componentname>.scss`
-   - Component tests: `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
-   - Test components: `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
-
-2. Make your changes (follow ParameterState pattern)
-
-3. Build and test iteratively:
-```bash
-dotnet build src/MudBlazor.slnx -c Release --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-```
-
-4. Before committing:
-```bash
-# Format code (REQUIRED)
-dotnet format src/MudBlazor.slnx
-```
-
-5. Trigger copilot code review and address all issues (REQUIRED for code changes)
-
-6. Run docs locally to verify (optional):
-```bash
-dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
-```
-
-**For Documentation Changes:**
-1. Edit in `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`
-2. Build to generate files (runs MudBlazor.Docs.Compiler):
-```bash
-dotnet build src/MudBlazor.slnx -c Release --nologo
-```
-3. Preview locally with docs server
-
-**For Test Changes:**
-1. Create test component in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`
-2. Write bUnit test in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`
-3. Build and run tests
-4. Debug visually if needed:
-```bash
-dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj
-```
-
-### Before Making Changes
-```bash
-# Always check initial state
-dotnet build src/MudBlazor.slnx -c Release --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-```
-
-### After Making Changes
-```bash
-# Clean if needed (switching branches or unexplained issues)
-dotnet clean src/MudBlazor.slnx
-
-# Format code (REQUIRED - MUST run before committing)
-dotnet format src/MudBlazor.slnx
-
-# Build
-dotnet build src/MudBlazor.slnx -c Release --nologo
-
-# Run tests
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-```
-
-**If you made code changes (not just documentation):**
-- MUST trigger a copilot code review and address all issues before finalizing the PR
-
-## Code Style Highlights
-
-### C# Naming Conventions (from .editorconfig)
-- **Instance fields:** `_camelCase` with underscore prefix
-- **Static fields:** `_camelCase` with underscore prefix
-- **Constants:** `PascalCase`
-- **Public properties/methods:** `PascalCase`
-- **Local variables/parameters:** `camelCase`
-- **Async methods:** Add `Async` suffix (e.g., `UpdateHeightAsync`)
-
-### Security Rules (BLOCKERS)
-- **Never** hard-code credentials, API keys, or secrets
-- **Never** use weak cryptographic algorithms (MD5, SHA-1, DES)
-- **Always** validate user input
-- **Always** sanitize data before using in HTML
-- **Never** use `eval`, `innerHTML` with user input
-- **Always** use secure cookies (HttpOnly, Secure flags)
-
-### Code Quality Rules
-- Maximum 7 parameters per function
-- Maximum cognitive complexity of 15
-- Maximum 4 return statements per function
-- No dead code or unused methods
-- No empty methods
-- Async methods must contain `await` or return `Task`
-- **No unobserved async discards** (`_ = SomeAsync()` is ERROR per CS4014)
-
-### Blazor-Specific Rules
-- Component parameters must be auto-properties (no logic in getter/setter)
-- Use ParameterState framework for parameter change handling
-- Support RTL layouts when necessary
-- Add XML summary comments for all public properties
-- Use `CssBuilder` for classes and styles
-- Use CSS variables for styling (no hard-coded colors)
-- Analyzer BL0007 set to `suggestion` (parameter auto-properties)
-- CS4014 set to `error` (unawaited async calls)
-- File header template required (copyright notice)
-
-## Common Pitfalls to Avoid
-
-1. **Logic in parameter setters** - Use ParameterState framework instead (see Critical Patterns)
-2. **Stale HTML element references in tests** - Always re-query with `Find()` instead of saving elements
-3. **Direct parameter assignment on component refs** - Use declarative binding (BL0005 warning)
-4. **Missing `InvokeAsync` in tests** - Required for parameter changes in bUnit tests
-5. **Breaking existing tests** - Run full test suite before submitting PR
-6. **Targeting wrong branch** - Always target `dev`, not `master`
-7. **Multiple topics in one PR** - Keep PRs focused on single issue
-8. **Build timeouts** - Set timeout to at least 180 seconds for builds, 120 seconds for tests
-9. **Missing `--no-build` flag** - Always use when running tests after a successful build
-10. **Forgetting to run `dotnet format`** - MUST run `dotnet format src/MudBlazor.slnx` before committing
-11. **Skipping code review** - MUST trigger copilot code review for any code changes and address all issues
-
-## Continuous Integration
-
-The GitHub Actions workflow (`.github/workflows/build-test-mudblazor.yml`) runs:
-1. **Build** - Compiles all 15+ projects
-2. **Test** - Runs 3,734+ unit tests
-3. **ESLint** - Checks JavaScript files in `src/MudBlazor/TScripts/`
-4. **Code Coverage** - Publishes to Codecov
-5. **Code Quality** - SonarCloud analysis
-6. **Security Scanning** - Dependency checks
-
-**All checks must pass before merging.**
-
-## Additional Resources
-
-- **CONTRIBUTING.md** - Detailed contribution guidelines
-- **README.md** - Quick start and installation
-- **Documentation Site** - https://mudblazor.com
-- **Discord** - https://discord.gg/mudblazor
-
-## Quick Reference
-
-```bash
-# Check .NET version
-dotnet --version  # Should be 10.0.100 or later
-
-# Full build and test cycle
-dotnet clean src/MudBlazor.slnx
-dotnet build src/MudBlazor.slnx -c Release --nologo  # ~2 minutes
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo  # ~1.5 minutes
-
-# Test specific component
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "ButtonTests" --no-build -c Release
-
-# Run docs locally (server mode - best for debugging)
-dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
-
-# Run test viewer (for visual debugging of tests)
-dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj
-
-# Pack for local testing
-dotnet pack src/MudBlazor/MudBlazor.csproj -c Release -o ./LocalNuGet -p:Version=8.0.0-custom
-```
-
-## Validation Steps Before PR
-
-**ALWAYS run this sequence before creating/updating a PR:**
-
-```bash
-# 1. Clean (if switching branches or weird issues)
-dotnet clean src/MudBlazor.slnx
-
-# 2. Format code (REQUIRED - MUST run before committing ANY changes)
-dotnet format src/MudBlazor.slnx
-# This MUST be run to ensure code formatting is correct
-# CI will fail if code is not properly formatted
-
-# 3. Build
-dotnet build src/MudBlazor.slnx -c Release --nologo
-# Expected: "Build succeeded" with 0 warnings, 0 errors in ~2 minutes
-
-# 4. Test
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build -c Release --nologo
-# Expected: "Passed! - Failed: 0, Passed: 3734+, Skipped: 10" in ~1.5 minutes
-
-# 5. (Optional) Test docs locally
-dotnet run --project src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
-```
-
-### Code Review Requirement
-
-**CRITICAL: If you made ANY code changes (not just documentation), you MUST:**
-1. Trigger a copilot code review before finalizing the PR
-2. Address all issues identified in the code review
-3. Re-run the code review if significant changes were made after the initial review
-
-**Documentation-only changes do not require a code review.**
-
----
-
-When in doubt, check the existing code patterns, follow the guidelines in CONTRIBUTING.md, and ask questions on Discord before implementing.
+Before finishing, verify all of the following:
+- Formatting was run for relevant changed files.
+- The relevant target project builds cleanly with no new warnings when code, docs app, analyzer, or asset inputs changed.
+- Tests were updated and run when behavior changed.
+- Docs were updated when component behavior or public API changed.
+- No new dependencies were added without approval.

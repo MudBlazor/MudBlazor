@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Slider;
 using NUnit.Framework;
@@ -51,7 +51,6 @@ namespace MudBlazor.UnitTests.Components
             IElement Slider() => comp.Find(".mud-slider");
             Slider().ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}" });
         }
-
 
         [Test]
         public void CheckVerticalClass()
@@ -131,10 +130,6 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedAttributes = new Dictionary<string, string>()
             {
-                { "aria-valuenow","120" },
-                { "aria-valuemin","100" },
-                { "aria-valuemax","200" },
-                { "role","slider" },
                 { "min","100" },
                 { "max","200" },
                 { "step","10" },
@@ -373,6 +368,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(0.0, 100.0, 50, "50")]
+        [TestCase(0.0, 100.0, 25, "25")]
+        [TestCase(0.0, 100.0, 0, "0")]
+        [TestCase(0.0, 100.0, 100, "100")]
+        public void ValueLabelPosition_Rtl(double min, double max, double value, string expectedPercentage)
+        {
+            var comp = Context.Render<MudSlider<double>>(x =>
+            {
+                x.Add(p => p.Max, max);
+                x.Add(p => p.Min, min);
+                x.Add(p => p.Value, value);
+                x.Add(p => p.ValueLabel, true);
+                x.AddCascadingValue("RightToLeft", true);
+            });
+
+            IElement ValueLabel() => comp.Find(".mud-slider-value-label");
+            ValueLabel().GetAttribute("style").Should().Be($"right:{expectedPercentage}%;");
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public async Task CheckInput(bool immediate)
@@ -388,17 +403,17 @@ namespace MudBlazor.UnitTests.Components
 
             IElement Input() => comp.Find(".mud-slider-input");
             IElement Filling() => comp.Find(".mud-slider-filled");
-            var eventArgs = new ChangeEventArgs { Value = "180" };
+            var value = "180";
 
             if (immediate == false)
             {
-                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().InputAsync(eventArgs));
-                await Input().ChangeAsync(eventArgs);
+                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().InputAsync(value));
+                await Input().ChangeAsync(value);
             }
             else
             {
-                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().ChangeAsync(eventArgs));
-                await Input().InputAsync(eventArgs);
+                Assert.ThrowsAsync<MissingEventHandlerException>(() => Input().ChangeAsync(value));
+                await Input().InputAsync(value);
             }
 
             Filling().GetAttribute("style").Should().Be($"width:80%;");

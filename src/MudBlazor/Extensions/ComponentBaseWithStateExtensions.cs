@@ -9,7 +9,6 @@ using MudBlazor.State;
 
 namespace MudBlazor.Extensions;
 
-#nullable enable
 /// <summary>
 /// Provides extension methods for <see cref="ComponentBaseWithState"/> components to facilitate accessing parameter states.
 /// </summary>

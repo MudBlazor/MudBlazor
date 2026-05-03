@@ -6,7 +6,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>
@@ -82,7 +81,6 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// </summary>
     protected readonly List<SvgLegend> Legends = [];
 
-    private const double WidthAdjustment = 50.0;
     protected const double Epsilon = 1e-6;
     /// <summary>
     /// The default width of the chart bounds.
@@ -100,7 +98,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The horizontal start space for the chart.
     /// </summary>
-    protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(_yAxisLabelSize?.Width ?? 0), 30);
+    protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(_yAxisLabelSize?.Width ?? 0), 30) + (ChartOptions?.YAxisTitle != null ? 20 : 0);
     /// <summary>
     /// The horizontal end space for the chart.
     /// </summary>
@@ -127,7 +125,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The palette used for the legends.
     /// </summary>
-    public override string[] LegendPalette => [.. (ChartOptions?.ChartPalette ?? []), .. OverlayChart?.LegendPalette ?? []];
+    public override string[] LegendPalette => [.. ChartOptions?.ChartPalette ?? [], .. OverlayChart?.LegendPalette ?? []];
 
     /// <summary>
     /// Gets or sets the content to be rendered as an overlay.
@@ -174,7 +172,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         base.OnParametersSet();
 
-        if (MatchBoundsToSize && _elementSize is null) return;
+        if (MatchBoundsToSize && _elementSize is null)
+        {
+            return;
+        }
 
         RebuildChart();
     }
@@ -231,11 +232,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
         {
             if (_elementSize is not null)
             {
-                _boundWidth = _elementSize.Width;
-                _boundHeight = _elementSize.Height;
+                _boundWidth = _elementSize.Width > 0
+                    ? _elementSize.Width
+                    : BoundWidthDefault;
+
+                _boundHeight = _elementSize.Height > 0
+                    ? _elementSize.Height
+                    : BoundHeightDefault;
             }
-            else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
+            else if (Width.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
+                && Height.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
                 && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
                 && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
@@ -338,7 +344,9 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected static string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
     {
         if (string.IsNullOrWhiteSpace(format))
+        {
             return string.Empty;
+        }
 
         return format
             .Replace("{{SERIES_NAME}}", series.Name)
@@ -354,17 +362,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     public void OnElementSizeChanged(ElementSize elementSize)
     {
         if (elementSize is null || elementSize.Timestamp <= _elementSize?.Timestamp)
-            return;
-
-        _elementSize = new ElementSize()
         {
-            Height = elementSize.Height,
-            Width = Math.Max(0, elementSize.Width - WidthAdjustment),
-            Timestamp = elementSize.Timestamp
-        };
+            return;
+        }
+
+        _elementSize = elementSize;
 
         if (!MatchBoundsToSize)
+        {
             return;
+        }
 
         if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
             Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)

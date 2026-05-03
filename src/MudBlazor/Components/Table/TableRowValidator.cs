@@ -4,7 +4,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A validator for rows within a <see cref="MudTable{T}"/>.
@@ -52,7 +51,6 @@ namespace MudBlazor
 
         void IForm.Update(IFormComponent formControl)
         {
-            //Validate(formControl);
         }
 
         protected HashSet<IFormComponent> _formControls = new();

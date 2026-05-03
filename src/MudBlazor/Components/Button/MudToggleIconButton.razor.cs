@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents a button consisting of an icon that can be toggled between two distinct states.
+/// An icon button that toggles between two distinct states, useful for on/off or favorite/unfavorite scenarios.
 /// </summary>
 /// <remarks>
 /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,

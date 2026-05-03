@@ -2,7 +2,6 @@
 
 namespace MudBlazor.Utilities.Converter.Base;
 
-#nullable enable
 /// <summary>
 /// Represents the result of a conversion attempt performed by a converter.
 /// </summary>

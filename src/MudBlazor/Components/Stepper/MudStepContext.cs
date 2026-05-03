@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides contextual information about a <see cref="MudStep"/> within a <see cref="MudStepper"/>.
 /// </summary>

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using MudBlazor.Charts;
 using NUnit.Framework;
 

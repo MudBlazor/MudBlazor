@@ -9,7 +9,6 @@ using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
-#nullable enable
 /// <summary>
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
@@ -104,7 +103,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterView, Task> parameterChangedHandler)
+    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterChangedContext, Task> parameterChangedHandler)
     {
         _parameterChangedHandler = new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler);
 
@@ -128,7 +127,7 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterView> parameterChangedHandler)
+    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterChangedContext> parameterChangedHandler)
     {
         _parameterChangedHandler = new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler);
 
@@ -186,9 +185,12 @@ internal class ParameterAttachBuilder<T>
     /// <exception cref="ArgumentNullException">Thrown when required parameters are not provided.</exception>
     public ParameterStateInternal<T> Attach()
     {
+        ArgumentNullException.ThrowIfNull(_metadata);
+        ArgumentNullException.ThrowIfNull(_getParameterValueFunc);
+
         return ParameterStateInternal<T>.Attach(
-            _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
-            _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
+            _metadata,
+            _getParameterValueFunc,
             _eventCallbackFunc,
             _parameterChangedHandler,
             _comparer

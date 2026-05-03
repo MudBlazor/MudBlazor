@@ -39,7 +39,7 @@
                 <DocsPageSection>
                     <SectionHeader Title="Spin Buttons">
                         <Description>
-                            By default, numeric fields display up/down spin buttons for easy value adjustment. Set <CodeInline>HideSpinButtons="true"</CodeInline> to hide these controls while preserving keyboard navigation (arrow keys) and manual input.
+                            By default, numeric fields display up/down spin buttons for easy value adjustment. Set <CodeInline>HideSpinButtons="true"</CodeInline> to hide these controls while preserving keyboard navigation (arrow keys), Shift + mouse wheel stepping, and manual input.
                         </Description>
                     </SectionHeader>
                     <SectionContent Class="demo-numericfield" Code="@nameof(NumericFieldHideButtonsExample)" ShowCode="false">
@@ -109,7 +109,7 @@
         <DocsPageSection>
             <SectionHeader Title="Mouse Wheel Support">
                 <Description>
-                    Enhance user experience by allowing value changes via mouse wheel. Hold Shift while scrolling to increment or decrement values by the configured step amount.
+                    Numeric fields respond to Shift + mouse wheel to increment or decrement values by the configured step amount without inheriting browser-specific wheel stepping behavior.
                     Use <CodeInline>InvertMouseWheel="true"</CodeInline> to reverse the scroll direction if desired.
                 </Description>
             </SectionHeader>

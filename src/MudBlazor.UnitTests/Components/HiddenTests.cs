@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
@@ -281,6 +281,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [NonParallelizable]
         public async Task TestSemaphore_RenderInParallel()
         {
             var jsRuntimeMock = new Mock<IJSRuntime>();

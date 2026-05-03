@@ -4,7 +4,12 @@
     {
         public IScrollListener Create(string? selector)
         {
-            return new MockScrollListener() { Selector = selector, };
+            return Create(selector, 100);
+        }
+
+        public IScrollListener Create(string? selector, int reportRateMs)
+        {
+            return new MockScrollListener { Selector = selector, ReportRateMs = reportRateMs };
         }
     }
 
@@ -14,6 +19,7 @@
     public class MockScrollListener : IScrollListener
     {
         public string? Selector { get; set; }
+        public int ReportRateMs { get; set; }
 
         public event EventHandler<ScrollEventArgs>? OnScroll;
 
@@ -22,8 +28,15 @@
             OnScroll?.Invoke(this, new ScrollEventArgs());
         }
 
-        public void Dispose()
+        public ValueTask<ScrollEventArgs> GetCurrentScrollDataAsync()
         {
+            return ValueTask.FromResult(new ScrollEventArgs());
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            return ValueTask.CompletedTask;
         }
     }
 
@@ -58,6 +71,7 @@
 
         public ValueTask UnlockScrollAsync(string elementId, string cssClass) => ValueTask.CompletedTask;
 
-        public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => ValueTask.CompletedTask;
+        public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+            ValueTask.CompletedTask;
     }
 }

@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
 namespace MudBlazor;
 
 /// <summary>
@@ -50,4 +49,8 @@ public enum ChartType
     /// Data is displayed as nodes connected by edges.
     /// </summary>
     Sankey,
+    /// <summary>
+    /// Data is displayed as individual points plotted by X and Y coordinates.
+    /// </summary>
+    ScatterPlot,
 }

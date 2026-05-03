@@ -1,4 +1,5 @@
-﻿<MudPopoverProvider />
+﻿@using System.Diagnostics
+<MudPopoverProvider />
 
 <MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true" DragDropColumnReordering="true" FilterMode="DataGridFilterMode.ColumnFilterRow" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
     <ToolBarContent>
@@ -30,8 +31,10 @@
     public void SwitchNameAgeCols()
     {
         var nameCol = _dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Name");
+        Debug.Assert(nameCol is not null);
         var nameIndex = _dataGrid.RenderedColumns.IndexOf(nameCol);
         var ageCol = _dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Age");
+        Debug.Assert(ageCol is not null);
         var ageIndex = _dataGrid.RenderedColumns.IndexOf(ageCol);
 
         _dataGrid.RenderedColumns.Remove(ageCol);

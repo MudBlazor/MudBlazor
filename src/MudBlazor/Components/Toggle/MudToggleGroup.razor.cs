@@ -10,15 +10,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// Maintains the selection of a group of <see cref="MudToggleItem{T}"/> components.
+    /// Toggle buttons grouped to select one or multiple values.
     /// </summary>
     /// <typeparam name="T">The type of item being toggled.</typeparam>
     /// <seealso cref="MudToggleItem{T}"/>
     /// <seealso cref="MudRadioGroup{T}"/>
     /// <seealso cref="MudRadio{T}"/>
+    /// <seealso cref="MudButtonGroup"/>
     public partial class MudToggleGroup<T> : MudComponentBase
     {
         public MudToggleGroup()
@@ -68,9 +68,9 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
-            .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-toggle-group-size-{Size.ToStringFast(true)}")
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"mud-toggle-group-{Color.ToDescriptionString()}")
+            .AddClass($"mud-toggle-group-{Color.ToStringFast(true)}")
             .AddClass("mud-toggle-group-outlined", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
@@ -161,6 +161,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
 
+        /// <summary>
+        /// Displays items right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 

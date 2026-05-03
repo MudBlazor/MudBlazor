@@ -1,8 +1,7 @@
 ﻿@page "/components/stack"
 
 <DocsPage>
-    <DocsPageHeader Title="Stack" Component="@nameof(MudStack)" SubTitle="Manages layout of its child items along the vertical or horizontal axis.">
-    </DocsPageHeader>
+    <DocsPageHeader Title="Stack" Component="@nameof(MudStack)" />
 
     <DocsPageContent>
 
@@ -59,6 +58,15 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(StackBreakExample)" ShowCode="false">
                 <StackBreakExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="HTML Tag">
+                <Description>Use the <CodeInline>@nameof(MudStack.HtmlTag)</CodeInline> property to choose which HTML element gets rendered by <CodeInline>@nameof(MudStack)</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackHtmlTagExample)">
+                <StackHtmlTagExample />
             </SectionContent>
         </DocsPageSection>
 

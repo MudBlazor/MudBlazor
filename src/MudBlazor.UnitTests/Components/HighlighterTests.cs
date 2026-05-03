@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using MudBlazor.Components.Highlighter;
 using MudBlazor.UnitTests.TestComponents.Highlighter;
 using NUnit.Framework;
@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
         private const string TEXT = "This is the first item";
 
         [Test]
-        public void ShouldSplitUsingHighlightedTextParameterTest()
+        public void ShouldSplitUsingHighlightedTextParameter()
         {
             var highlightedText = "item";
             var result = GetFragments(TEXT, highlightedText, null, out var regex).ToArray();
@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSplitUsingHighlightedTextsParameterWithOneElementTest()
+        public void ShouldSplitUsingHighlightedTextsParameterWithOneElement()
         {
             var highlightedTexts = new string[] { "item" };
             var result = GetFragments(TEXT, null, highlightedTexts, out var regex).ToArray();
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSplitUsingHighlightedTextsParameterWithMultipleElementsTest()
+        public void ShouldSplitUsingHighlightedTextsParameterWithMultipleElements()
         {
             var highlightedTexts = new string[] { "item", "the" };
             var result = GetFragments(TEXT, null, highlightedTexts, out var regex).ToArray();
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSplitUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElementTest()
+        public void ShouldSplitUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElement()
         {
             var highlightedTexts = new string[] { "the" };
             var result = GetFragments(TEXT, "item", highlightedTexts, out var regex).ToArray();
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSplitUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElementsTest()
+        public void ShouldSplitUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElements()
         {
             var highlightedTexts = new string[] { "first", "the" };
             var result = GetFragments(TEXT, "item", highlightedTexts, out var regex).ToArray();
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldUseUntilNextBoundaryTest()
+        public void ShouldUseUntilNextBoundary()
         {
             var highlightedText = "it";
             var result = GetFragments(TEXT, highlightedText, null, out var regex, false, true).ToArray();
@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldBeCaseSensitiveTest()
+        public void ShouldBeCaseSensitive()
         {
             var highlightedText = "It";
             var result = GetFragments(TEXT, highlightedText, null, out var regex, true, false).ToArray();
@@ -94,7 +94,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DontMessWithDuplicatedHighlightPatternsInHighlightedTextsParameterTest()
+        public void DontMessWithDuplicatedHighlightPatternsInHighlightedTextsParameter()
         {
             var highlightedTexts = new string[] { "item", "item" };
             var result = GetFragments(TEXT, null, highlightedTexts, out var regex).ToArray();
@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DontMessWithDuplicatedHighlightPatternsInHighlightedTextParameterAndHighlightedTextsParameterTest()
+        public void DontMessWithDuplicatedHighlightPatternsInHighlightedTextParameterAndHighlightedTextsParameter()
         {
             var highlightedTexts = new string[] { "item" };
             var result = GetFragments(TEXT, "item", highlightedTexts, out var regex).ToArray();
@@ -128,12 +128,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void GetFragments_NullOrEmptyText_ReturnsEmpty()
+        {
+            var nullResult = GetFragments(null, "test", null, out var nullRegex).ToArray();
+            nullResult.Should().BeEmpty();
+            nullRegex.Should().Be(string.Empty);
+
+            var emptyResult = GetFragments(string.Empty, "test", null, out var emptyRegex).ToArray();
+            emptyResult.Should().BeEmpty();
+            emptyRegex.Should().Be(string.Empty);
+        }
+
+        [Test]
         public void GetHtmlAwareFragments_NullOrEmptyText_ReturnsEmptyList()
         {
             var resultNull = GetHtmlAwareFragments(null, "any", null, out var outRegex, false, false);
             resultNull.Should().BeEmpty();
             outRegex.Should().Be(string.Empty);
-
 
             // Test with empty text
             var resultEmpty = GetHtmlAwareFragments(string.Empty, "any", null, out outRegex, false, false);
@@ -216,6 +227,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void GetHtmlAwareFragments_UnmatchedTag_ConvertsTagToTextAndPreservesText()
+        {
+            var text = "<b>unclosed text";
+            var fragments = GetHtmlAwareFragments(text, "missing", null, out var outRegex, caseSensitive: false, untilNextBoundary: false);
+
+            outRegex.Should().Be("((?:missing))");
+            var expectedSequence = new[]
+            {
+                new FragmentInfo("<b>", FragmentType.Text),
+                new FragmentInfo("unclosed text", FragmentType.Text)
+            };
+            fragments.Should().BeEquivalentTo(expectedSequence, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void GetHtmlAwareFragments_VoidElementWithoutTrailingSlash_RemainsMarkup()
+        {
+            var text = "Hi<br>there<img src='x'>";
+            var fragments = GetHtmlAwareFragments(text, "there", null, out var outRegex, caseSensitive: false, untilNextBoundary: false);
+
+            outRegex.Should().Be("((?:there))");
+            var expectedSequence = new[]
+            {
+                new FragmentInfo("Hi", FragmentType.Text),
+                new FragmentInfo("<br>", FragmentType.Markup),
+                new FragmentInfo("there", FragmentType.HighlightedText),
+                new FragmentInfo("<img src='x'>", FragmentType.Markup)
+            };
+            fragments.Should().BeEquivalentTo(expectedSequence, options => options.WithStrictOrdering());
+        }
+
+        [Test]
         public void GetFragments_WithManyTerms_ExercisesStringBuilderCaching()
         {
             var text = "The quick brown fox jumps over the lazy dog and repeats.";
@@ -226,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
             fragments1.Should().NotBeEmpty();
             outRegex1.Should().NotBeEmpty();
             outRegex1.Should().ContainAll(highlightedTexts1);
-            fragments1.Length.Should().Be(highlightedTexts1.Length * 2 - 1 + 2);
+            fragments1.Length.Should().Be((highlightedTexts1.Length * 2) - 1 + 2);
 
             var text2 = "Another test sentence with new words like example and cache.";
             var highlightedTexts2 = new[] { "sentence", "words", "example", "cache" };
@@ -235,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
             fragments2.Should().NotBeEmpty();
             outRegex2.Should().NotBeEmpty();
             outRegex2.Should().ContainAll(highlightedTexts2);
-            fragments2.Length.Should().Be(highlightedTexts2.Length * 2 - 1 + 2);
+            fragments2.Length.Should().Be((highlightedTexts2.Length * 2) - 1 + 2);
 
             var text3 = "No highlights here.";
             var fragments3 = GetFragments(text3, null, [], out var outRegex3, caseSensitive: false, untilNextBoundary: false).ToArray();
@@ -278,7 +321,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with regular text, no regex
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupUsingHighlightedTextParameterTest()
+        public void MudHighlighterMarkupUsingHighlightedTextParameter()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -290,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with multiple regular texts, no regex
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupUsingHighlightedTextsParameterWithOneElementTest()
+        public void MudHighlighterMarkupUsingHighlightedTextsParameterWithOneElement()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -302,7 +345,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with multiple regular texts, no regex
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupUsingHighlightedTextsParameterWithMultipleElementsTest()
+        public void MudHighlighterMarkupUsingHighlightedTextsParameterWithMultipleElements()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -314,7 +357,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with multiple regular text and a single regular text, no regex
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElementTest()
+        public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithOneElement()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -327,7 +370,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with multiple regular text and a single regular text, no regex
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElementsTest()
+        public void MudHighlighterMarkupUsingHighlightedTextParameterAndHighlightedTextsParameterWithMultipleElements()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -340,7 +383,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check nulls
         /// </summary>
         [Test]
-        public void MudHighlighter_Nulls_Test()
+        public void MudHighlighter_Nulls()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, null)
@@ -352,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with regex text, no regex
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupWithRegexTextTest()
+        public void MudHighlighterMarkupWithRegexText()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -364,7 +407,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with property 
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupUntilNextBoundaryTest()
+        public void MudHighlighterMarkupUntilNextBoundary()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, TEXT)
@@ -377,7 +420,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check markup with property 
         /// </summary>
         [Test]
-        public async Task MudHighlighterMarkupCaseSensitiveTest()
+        public async Task MudHighlighterMarkupCaseSensitive()
         {
             var comp = Context.Render<MudHighlighter>(parameters => parameters
                 .Add(x => x.Text, "This is this")
@@ -397,7 +440,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check RenderFragment output using Markup property 
         /// </summary>
         [Test]
-        public void MudHighlighterMarkupRenderFragmentTest()
+        public void MudHighlighterMarkupRenderFragment()
         {
             var searchFor = "mud";
             var markupText = $"<i>MudBlazor</i>";
@@ -600,6 +643,26 @@ namespace MudBlazor.UnitTests.Components
             );
 
             comp.Markup.Should().Contain("<mark class=\"my-custom-class\" >Highlight</mark> this");
+        }
+
+        [Test]
+        public void MudHighlighter_MarkupTrue_WithStyleAndUserAttributes_RendersEncodedAttributes()
+        {
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
+                .Add(p => p.Text, "Hello world")
+                .Add(p => p.HighlightedText, "Hello")
+                .Add(p => p.Markup, true)
+                .Add(p => p.Class, "custom-highlight")
+                .Add(p => p.Style, "background:red")
+                .AddUnmatched("data-test", "x&y")
+                .AddUnmatched("aria-label", "a&b"));
+
+            comp.Markup.Should().Contain("<mark");
+            comp.Markup.Should().Contain("class=\"custom-highlight\"");
+            comp.Markup.Should().Contain("style=\"background:red\"");
+            comp.Markup.Should().Contain("data-test=\"x&amp;y\"");
+            comp.Markup.Should().Contain("aria-label=\"a&amp;b\"");
+            comp.Markup.Should().Contain(">Hello</mark> world");
         }
 
         [Test]

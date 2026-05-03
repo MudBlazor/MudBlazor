@@ -4,85 +4,47 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
+using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Exceptions;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting time values.
+    /// Provides a simple way to select time values.
     /// </summary>
     /// <seealso cref="MudDatePicker"/>
     /// <seealso cref="MudDateRangePicker"/>
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
-        private const string Format24Hours = "HH:mm";
-        private const string Format12Hours = "hh:mm tt";
+        private OpenTo _currentView;
+        private string? _clockElementReferenceId;
+        private readonly SetTime _timeSet = new();
+        private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
 
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
+        [DynamicDependency(nameof(OnStickClick))]
+        [DynamicDependency(nameof(SelectTimeFromStick))]
         public MudTimePicker()
         {
-            Converter = Conversions.From<TimeSpan?, string?>(OnSet, OnGet);
             AdornmentIcon = Icons.Material.Filled.AccessTime;
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<bool>(nameof(AmPm))
+                .WithParameter(() => AmPm)
+                .WithChangeHandler(FormatChangedAsync);
+            registerScope.RegisterParameter<string?>(nameof(TimeFormat))
+                .WithParameter(() => TimeFormat)
+                .WithChangeHandler(FormatChangedAsync);
         }
-
-        private string OnSet(TimeSpan? timespan)
-        {
-            if (timespan == null)
-            {
-                return string.Empty;
-            }
-
-            var time = DateTime.Today.Add(timespan.Value);
-
-            return time.ToString(Format24Hours, GetCulture());
-        }
-
-        private TimeSpan? OnGet(string? value)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                return null;
-            }
-
-            if (DateTime.TryParseExact(value, Format24Hours, GetCulture(), DateTimeStyles.None, out var time))
-            {
-                return time.TimeOfDay;
-            }
-
-            var m = AmPmRegularExpression().Match(value);
-            if (m.Success)
-            {
-                if (DateTime.TryParseExact(value, Format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
-                {
-                    return time.TimeOfDay;
-                }
-            }
-            else
-            {
-                if (DateTime.TryParseExact(value, Format24Hours, CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
-                {
-                    return time.TimeOfDay;
-                }
-            }
-
-            HandleParsingError();
-            return null;
-        }
-
-        private static void HandleParsingError()
-        {
-            throw new ConversionException(LanguageResource.Converter_InvalidTimeSpan);
-        }
-
-        private bool _amPm = false;
-        private OpenTo _currentView;
-        private string _timeFormat = string.Empty;
 
         internal TimeSpan? TimeIntermediate { get; private set; }
 
@@ -147,24 +109,9 @@ namespace MudBlazor
         /// When <c>true</c>, hours 1-12 are displayed with an AM or PM marker.<br />
         /// When <c>false</c>, hours 0-23 are displayed.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool AmPm
-        {
-            get => _amPm;
-            set
-            {
-                if (value == _amPm)
-                {
-                    return;
-                }
-
-                _amPm = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public bool AmPm { get; set; }
 
         /// <summary>
         /// The format applied to time values.
@@ -178,24 +125,9 @@ namespace MudBlazor
         /// * <c>tt</c> for AM/PM markers.<br />
         /// For example: <c>h:mm tt</c> would display <c>6:32 PM</c>, and <c>HH:mm</c> would display <c>18:32</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string TimeFormat
-        {
-            get => _timeFormat;
-            set
-            {
-                if (_timeFormat == value)
-                {
-                    return;
-                }
-
-                _timeFormat = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public string TimeFormat { get; set; } = string.Empty;
 
         /// <summary>
         /// The currently selected time.
@@ -210,6 +142,12 @@ namespace MudBlazor
             get => _value;
             set => SetTimeAsync(value, true).CatchAndLog();
         }
+
+        /// <summary>
+        /// Occurs when <see cref="Time"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
         /// <summary>
         /// Sets the selected time value.
@@ -234,11 +172,6 @@ namespace MudBlazor
                 FieldChanged(_value);
             }
         }
-
-        /// <summary>
-        /// Occurs when <see cref="Time"/> has changed.
-        /// </summary>
-        [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
         /// <inheritdoc />
         protected override Task StringValueChangedAsync(string? value)
@@ -319,6 +252,8 @@ namespace MudBlazor
 
         private Task UpdateTimeAsync()
         {
+            if (GetReadOnlyState())
+                return Task.CompletedTask;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -404,32 +339,22 @@ namespace MudBlazor
 
         private string GetClockPinColor()
         {
-            return $"mud-picker-time-clock-pin mud-{Color.ToDescriptionString()}";
+            return $"mud-picker-time-clock-pin mud-{Color.ToStringFast(true)}";
         }
 
         private string GetClockPointerColor()
         {
-            if (PointerMoving)
-            {
-                return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
-            }
-            else
-            {
-                return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
-            }
+            return PointerMoving
+                ? $"mud-picker-time-clock-pointer mud-{Color.ToStringFast(true)}"
+                : $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToStringFast(true)}";
         }
 
         private string GetClockPointerThumbColor()
         {
             var deg = GetDeg();
-            if (deg % 30 == 0)
-            {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}";
-            }
-            else
-            {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
-            }
+            return deg % 30 == 0
+                ? $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToStringFast(true)}"
+                : $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToStringFast(true)}-text";
         }
 
         private string GetNumberColor(int value)
@@ -449,12 +374,12 @@ namespace MudBlazor
 
                 if (h == value)
                 {
-                    return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                    return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
                 }
             }
             else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
             {
-                return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
             }
 
             return "mud-clock-number";
@@ -526,24 +451,13 @@ namespace MudBlazor
             return $"{height}%;";
         }
 
-        private readonly SetTime _timeSet = new();
-        private int _initialHour;
-        private int _initialMinute;
-        private DotNetObjectReference<MudTimePicker>? _dotNetRef;
-        private string? _clockElementReferenceId;
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
             AdornmentAriaLabel ??= Localizer[LanguageResource.MudTimePicker_Open];
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
-            _initialHour = _timeSet.Hour;
-            _initialMinute = _timeSet.Minute;
-            _dotNetRef = DotNetObjectReference.Create(this);
         }
-
-        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
         protected ElementReference ClockElementReference { get; private set; }
 
@@ -557,34 +471,8 @@ namespace MudBlazor
             {
                 _clockElementReferenceId = ClockElementReference.Id;
 
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetReferenceLazy.Value);
             }
-        }
-
-        /// <inheritdoc />
-        protected override async ValueTask DisposeAsyncCore()
-        {
-            await base.DisposeAsyncCore();
-
-            if (IsJSRuntimeAvailable)
-            {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
-            }
-
-            _dotNetRef?.Dispose();
-        }
-
-        private void UpdateTimeSetFromTime()
-        {
-            if (TimeIntermediate == null)
-            {
-                _timeSet.Hour = 0;
-                _timeSet.Minute = 0;
-                return;
-            }
-
-            _timeSet.Hour = TimeIntermediate.Value.Hours;
-            _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
         /// <summary>
@@ -665,6 +553,19 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void UpdateTimeSetFromTime()
+        {
+            if (TimeIntermediate is null)
+            {
+                _timeSet.Hour = 0;
+                _timeSet.Minute = 0;
+                return;
+            }
+
+            _timeSet.Hour = TimeIntermediate.Value.Hours;
+            _timeSet.Minute = TimeIntermediate.Value.Minutes;
+        }
+
         private int HourAmPm(int hour)
         {
             if (AmPm)
@@ -673,7 +574,8 @@ namespace MudBlazor
                 {
                     return 0;
                 }
-                else if (IsPm && hour < 12)
+
+                if (IsPm && hour < 12)
                 {
                     return hour + 12;
                 }
@@ -697,6 +599,8 @@ namespace MudBlazor
             return value;
         }
 
+        private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+
         protected async Task SubmitAndCloseAsync()
         {
             if (PickerActions == null || AutoClose)
@@ -705,31 +609,31 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    await Task.Delay(ClosingDelay);
+                    await Task.Delay(TimeSpan.FromMilliseconds(ClosingDelay), TimeProvider);
                     await CloseAsync(false);
                 }
             }
         }
 
-        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
 
-            await base.OnHandleKeyDownAsync(obj);
+            await base.OnHandleKeyDownAsync(args);
 
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "ArrowRight":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
@@ -753,11 +657,11 @@ namespace MudBlazor
                 case "ArrowLeft":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
@@ -783,11 +687,11 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.AltKey)
+                    else if (args.AltKey)
                     {
                         Open = false;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(5);
                     }
@@ -802,7 +706,7 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(-5);
                     }
@@ -825,7 +729,7 @@ namespace MudBlazor
                     {
                         await SubmitAsync();
                         await CloseAsync();
-                        _inputReference?.SetText(Text);
+                        _inputReference?.SetTextAsync(Text);
                     }
 
                     break;
@@ -840,7 +744,7 @@ namespace MudBlazor
                         {
                             await SubmitAsync();
                             await CloseAsync();
-                            _inputReference?.SetText(Text);
+                            _inputReference?.SetTextAsync(Text);
                         }
                     }
 
@@ -857,7 +761,17 @@ namespace MudBlazor
                 return TimeFormat;
             }
 
-            return AmPm ? Format12Hours : Format24Hours;
+            return AmPm ? TimeSpanConverter.Format12Hours : TimeSpanConverter.Format24Hours;
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<TimeSpan?, string?> GetDefaultConverter()
+        {
+            return new TimeSpanConverter
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected Task ChangeMinuteAsync(int minute)
@@ -891,14 +805,33 @@ namespace MudBlazor
             }
         }
 
-        private record SetTime
+        private Task FormatChangedAsync()
+        {
+            Touched = true;
+            return SetTextAsync(ConvertSet(_value), false);
+        }
+
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            await base.DisposeAsyncCore();
+
+            if (IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
+            }
+        }
+
+        private sealed record SetTime
         {
             public int Hour { get; set; }
 
             public int Minute { get; set; }
         }
-
-        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-        private static partial Regex AmPmRegularExpression();
     }
 }

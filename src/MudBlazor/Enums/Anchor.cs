@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the edge of a container that a component will appear.
 /// </summary>
+[EnumExtensions]
 public enum Anchor
 {
     /// <summary>

@@ -2,7 +2,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A component which defines a common structure for multiple pages.

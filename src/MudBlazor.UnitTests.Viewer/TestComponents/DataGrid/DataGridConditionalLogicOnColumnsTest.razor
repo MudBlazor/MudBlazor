@@ -1,4 +1,5 @@
-﻿<MudDataGrid @ref="_grid" T="Model" Items="@_items">
+﻿@using System.Diagnostics
+<MudDataGrid @ref="_grid" T="Model" Items="@_items">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" Hidden="@_hideAge" />
@@ -24,6 +25,7 @@
     {
         if (_isColumnRemoved)
         {
+            Debug.Assert(_column is not null);
             // Add the column back
             _grid.RenderedColumns.Add(_column);
             _isColumnRemoved = false;
@@ -32,6 +34,7 @@
         {
             // Remove the column
             _column = _grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Age");
+            Debug.Assert(_column is not null);
             _grid.RenderedColumns.Remove(_column);
             _isColumnRemoved = true;
         }

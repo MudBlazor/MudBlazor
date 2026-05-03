@@ -7,7 +7,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a palette of colors used throughout the application.
     /// </summary>
@@ -226,7 +225,6 @@ namespace MudBlazor
         /// The light color for dividers.
         /// </summary>
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
-
 
         /// <summary>
         /// The color for skeletons.

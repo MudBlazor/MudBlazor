@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -159,7 +159,6 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
-
             container.ChildElementCount.Should().Be(1);
             var barContainer = container.Children[0];
 
@@ -220,8 +219,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(false)]
         [TestCase(true)]
+        public void RtlFlipClassOnlyOnHorizontalBars(bool isVertical)
+        {
+            var comp = Context.Render<MudProgressLinear>(x =>
+            {
+                x.Add(y => y.Vertical, isVertical);
+                x.Add(y => y.ChildContent, "<p>my content</p>");
+            });
+
+            var container = comp.Find(".mud-progress-linear");
+            container.ClassList.Should().NotContain("mud-flip-x-rtl");
+
+            var barContainer = comp.Find(".mud-progress-linear-bars");
+            if (isVertical)
+            {
+                barContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
+            }
+            else
+            {
+                barContainer.ClassList.Should().Contain("mud-flip-x-rtl");
+            }
+
+            var contentContainer = comp.Find(".mud-progress-linear-content");
+            contentContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
+            contentContainer.TextContent.Should().Be("my content");
+        }
+
+        [Test]
         [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForRounded(bool rounded)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
@@ -240,7 +268,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForStriped(bool striped)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
@@ -259,7 +287,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
@@ -330,7 +358,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForVertical(bool vertical)
         {
             var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
@@ -373,9 +401,55 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
+            container.GetAttribute("aria-busy").Should().Be("true");
             container.GetAttribute("aria-valuenow").Should().Be("75.3");
             container.GetAttribute("aria-valuemin").Should().Be("10.2");
             container.GetAttribute("aria-valuemax").Should().Be("125.22");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeFalse_WhenValueEqualsMax()
+        {
+            // When Value >= Max, aria-busy should be "false" (progress is complete)
+            var comp = Context.Render<MudProgressLinear>(x =>
+            {
+                x.Add(y => y.Value, 100);
+                x.Add(y => y.Min, 0);
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-linear");
+            container.GetAttribute("aria-busy").Should().Be("false");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeTrue_WhenValueLessThanMax()
+        {
+            // When Value < Max, aria-busy should be "true" (progress in progress)
+            var comp = Context.Render<MudProgressLinear>(x =>
+            {
+                x.Add(y => y.Value, 50);
+                x.Add(y => y.Min, 0);
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-linear");
+            container.GetAttribute("aria-busy").Should().Be("true");
+        }
+
+        [Test]
+        public void AriaBusy_ShouldBeTrue_WhenIndeterminate()
+        {
+            // When Indeterminate is true, aria-busy should always be "true"
+            var comp = Context.Render<MudProgressLinear>(x =>
+            {
+                x.Add(y => y.Indeterminate, true);
+                x.Add(y => y.Value, 100); // Even when Value >= Max
+                x.Add(y => y.Max, 100);
+            });
+
+            var container = comp.Find(".mud-progress-linear");
+            container.GetAttribute("aria-busy").Should().Be("true");
         }
     }
 }

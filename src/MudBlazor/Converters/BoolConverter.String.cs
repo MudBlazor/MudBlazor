@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class BoolConverter
 {
     internal sealed class StringConverter : IReversibleConverter<string?, bool?>
@@ -30,6 +29,6 @@ internal partial class BoolConverter
                 _ => null
             };
 
-        public static readonly StringConverter Instance = new();
+        public static StringConverter Instance { get; } = new();
     }
 }

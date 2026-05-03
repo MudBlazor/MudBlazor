@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-#nullable enable
     internal class Filter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
@@ -70,6 +69,10 @@ namespace MudBlazor
             _filterDefinition.Operator = operators.FirstOrDefault();
             _filterDefinition.Title = column.Title;
             _filterDefinition.Value = null;
+            if (_filterDefinition is FilterDefinition<T> filterDefinition)
+            {
+                filterDefinition.FilterFunction = null;
+            }
         }
 
         internal void StringValueChanged(string value)

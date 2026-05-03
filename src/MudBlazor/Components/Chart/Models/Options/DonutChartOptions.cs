@@ -14,7 +14,6 @@ public class DonutChartOptions : PieChartOptions
     /// </summary>
     public double DonutRingRatio { get; set; } = 0.25;
 
-
     public static implicit operator DonutChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

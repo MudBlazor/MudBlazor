@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents the theme settings for the MudBlazor user interface.
     /// </summary>

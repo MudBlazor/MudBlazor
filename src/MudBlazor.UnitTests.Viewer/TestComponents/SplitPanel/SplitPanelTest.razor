@@ -9,5 +9,7 @@
     [Parameter]
     public bool Horizontal { get; set; }
 
-    public Task ResetSizesAsync() => _panel.ResetSizesAsync();
+    public Task ResetDividerPositionAsync() => _panel.ResetDividerPositionAsync();
+    public Task SetDividerPositionAsync(int offset) => _panel.SetDividerPositionAsync(offset);
+    public Task<int> GetDividerPositionAsync() => _panel.GetDividerPositionAsync();
 }

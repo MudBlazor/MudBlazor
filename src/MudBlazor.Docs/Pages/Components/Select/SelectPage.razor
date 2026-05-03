@@ -1,10 +1,7 @@
 ﻿@page "/components/select"
 
 <DocsPage>
-    <DocsPageHeader Title="Select" Component="@nameof(MudSelect<T>)" SubTitle="Select fields allow users to provide information from a list of options.">
-        <Description>
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Select" Component="@nameof(MudSelect<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -107,8 +104,19 @@
         <DocsPageSection>
             <SectionHeader Title="Value presentation">
                 <Description>
-                    Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
-                    but the value that has been set is not in the list, it will also be displayed as text.
+                    Both the <CodeInline>ChildContent</CodeInline> (Render Fragment) and <CodeInline>ToStringFunc</CodeInline> can control how values are displayed.
+                    <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                        <div class="pl-2">
+                            When used on their own, either one determines how items appear in the dropdown list and how the selected value is displayed in the <CodeInline>MudSelect</CodeInline> input.
+                        </div>
+                    </MudBadge>
+                    <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                        <div class="pl-2">
+                            When both are used, <CodeInline>ChildContent</CodeInline> controls how items are rendered in the dropdown list, while <CodeInline>ToStringFunc</CodeInline> controls how the selected value is displayed.
+                        </div>
+                    </MudBadge>
+                    <br /><br />
+                    If neither is specified, the value’s default string representation is used.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(SelectPresentationExample)">
@@ -170,6 +178,10 @@
                     <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to select item (MultiSelect only)</MudText>
                     <MudText><CodeInline>Ctrl+A</CodeInline> key to toggle select all/clear all items (MultiSelect only)</MudText>
                     <MudText><CodeInline>Printable Characters</CodeInline> to highlight the first item in the list whose text starts with that character. Press again to move to the next item with the same starting character.</MudText>
+                    <MudText>
+                        Set <CodeInline>SelectionOnEnter="true"</CodeInline> to move the visual highlight with arrow keys, requiring an
+                        <CodeInline>Enter</CodeInline> press to confirm the selection.
+                    </MudText>
                     <br />
                     <MudText>*Disabled items cannot be selected by keys.</MudText>
                 </Description>
@@ -177,18 +189,6 @@
             <SectionContent ShowCode="false" Code="@nameof(SelectKeyboardNavigationExample)">
                 <SelectKeyboardNavigationExample />
             </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Popover Settings">
-                <Description>
-                    This component leverages <MudLink Href="/components/popover">MudPopover</MudLink> along with
-                    <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage its item list.
-                    You can configure certain aspects using <CodeInline>PopoverFixed</CodeInline> and <CodeInline>OverflowBehavior</CodeInline>,
-                    which sets default appearance and behavior properties.
-                    Learn more on the <MudLink Color="Color.Secondary" Href="/components/popover#individual-dropdown-settings">popover documentation page.</MudLink>
-                </Description>
-            </SectionHeader>
         </DocsPageSection>
 
     </DocsPageContent>

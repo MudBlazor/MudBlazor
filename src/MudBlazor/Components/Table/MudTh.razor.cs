@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A header cell which labels a column of data for a <see cref="MudTable{T}"/>.

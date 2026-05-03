@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.Charts;
 using NUnit.Framework;
 

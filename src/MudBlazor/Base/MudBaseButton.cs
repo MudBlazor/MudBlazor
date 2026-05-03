@@ -5,7 +5,6 @@ using static System.String;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a base class for designing button components.
     /// </summary>

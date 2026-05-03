@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -392,7 +392,7 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    public async Task Overlay_StartClosedTest()
+    public async Task Overlay_StartClosed()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>(MockBehavior.Loose);
 
@@ -414,7 +414,7 @@ public class OverlayTests : BunitTest
         var comp = Context.Render<OverlayScrollLockedTest>();
         // click the button opening dialog
         var button = comp.Find("button");
-        button.Click();
+        await button.ClickAsync();
         // verify dialog is open
         await comp.WaitForAssertionAsync(() => dialog.FindComponent<MudOverlay>().Should().NotBeNull());
 

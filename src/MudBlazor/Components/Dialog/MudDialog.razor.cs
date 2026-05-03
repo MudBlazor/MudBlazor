@@ -9,11 +9,10 @@ using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// An overlay providing the user with information, a choice, or other input.
+    /// Displays an overlay that prompts users to confirm an action or provide additional information.
     /// </summary>
     /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>
@@ -26,7 +25,7 @@ namespace MudBlazor
     {
         private IDialogReference? _reference;
         private readonly ParameterState<bool> _visibleState;
-        private SemaphoreSlim _showLock = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _showLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Creates a new instance.

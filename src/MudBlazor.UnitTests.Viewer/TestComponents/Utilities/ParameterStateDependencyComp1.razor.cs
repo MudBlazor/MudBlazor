@@ -21,9 +21,7 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
     [Parameter]
     public EventCallback<MudColor?> ValueChanged { get; set; }
 
-    public List<ParameterChangedEventArgs<string?>> TextChanges { get; } = new();
-
-    public List<ParameterChangedEventArgs<MudColor?>> ValueChanges { get; } = new();
+    public List<string> ParameterStateValues { get; } = [];
 
     public ParameterStateDependencyComp1()
     {
@@ -38,41 +36,23 @@ public partial class ParameterStateDependencyComp1 : MudComponentBase
             .WithChangeHandler(OnTextAndValueChangedHandlerAsync);
     }
 
-    private async Task OnTextAndValueChangedHandlerAsync(ParameterView parameterView)
+    private async Task OnTextAndValueChangedHandlerAsync(ParameterChangedContext context)
     {
-        var hasText = parameterView.TryGetValue<string?>(nameof(Text), out var text);
-        var hasValue = parameterView.TryGetValue<MudColor?>(nameof(Value), out var value);
-        switch (hasText, hasValue, text, value)
+        foreach (var value in context.ParameterStates.Dictionary?.Values ?? [])
         {
-            case (true, true, not null, null):
-                await _valueState.SetValueAsync(MudColor.Parse(text));
-                return;
-
-            case (true, true, null, not null):
-                await _textState.SetValueAsync(value.ToString(MudColorOutputFormats.Hex));
-                return;
-
-            case (true, true, not null, not null):
-                await _textState.SetValueAsync(value.ToString(MudColorOutputFormats.Hex));
-                return;
-
-            case (false, true, _, not null):
-                await _textState.SetValueAsync(value.ToString(MudColorOutputFormats.Hex));
-                return;
-
-            case (true, false, not null, _):
-                if (string.IsNullOrWhiteSpace(text))
-                {
-                    return;
-                }
-                await _valueState.SetValueAsync(MudColor.Parse(text));
-                return;
-
-            default:
-                await _textState.SetValueAsync(value?.ToString(MudColorOutputFormats.Hex));
-                await _valueState.SetValueAsync(value);
-                return;
+            ParameterStateValues.Add(value.ToString());
         }
 
+        var effectiveParameter = context.ResolveEffectiveParameter(_valueState, _textState, nameof(Value));
+        // Value
+        if (effectiveParameter is { IsParameter1: true })
+        {
+            await _textState.SetValueAsync(effectiveParameter.Parameter1Value?.ToString(MudColorOutputFormats.Hex));
+        }
+        // Text
+        if (effectiveParameter is { IsParameter2: true, Parameter2Value: not null })
+        {
+            await _valueState.SetValueAsync(MudColor.Parse(effectiveParameter.Parameter2Value));
+        }
     }
 }

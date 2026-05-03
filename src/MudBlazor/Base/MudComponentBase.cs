@@ -9,7 +9,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Represents a base class for designing MudBlazor components.
     /// </summary>

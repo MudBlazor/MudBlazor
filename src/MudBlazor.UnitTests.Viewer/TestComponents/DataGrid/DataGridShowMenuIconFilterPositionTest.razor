@@ -1,0 +1,23 @@
+<MudPopoverProvider />
+
+<MudDataGrid Items="@_items" T="Item" Filterable ShowMenuIcon FixedHeader Height="350px">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly List<Item> _items =
+    [
+        new() { Id = 1, Name = "One" },
+        new() { Id = 2, Name = "Two" }
+    ];
+
+    public class Item
+    {
+        public int Id { get; init; }
+
+        public required string Name { get; init; }
+    }
+}

@@ -6,9 +6,9 @@
 
 @inject InternalMudLocalizer Localizer
 
-@if (Column != null && !Column.HiddenState.Value)
+@if (!Column.HiddenState.Value)
 {
-    <th scope="col" class="@Classname" style="@Stylename" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
+    <th scope="col" class="@Classname" style="@Stylename" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (Column.filterable && Column.FilterTemplate != null)
         {
             @Column.FilterTemplate(Column.FilterContext)

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -32,6 +31,9 @@ namespace MudBlazor
                 .WithEventCallback(() => VisibleChanged)
                 .WithChangeHandler(OnVisibleChangedAsync);
         }
+
+        [CascadingParameter]
+        private MudDialogProvider? DialogProvider { get; set; }
 
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
@@ -182,6 +184,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<bool> VisibleChanged { get; set; }
+
+        internal bool IsButtonOrderReversed => DialogProvider?.ReverseMessageBoxButtonOrder ?? false;
 
         [MemberNotNullWhen(false, nameof(DialogInstance))]
         private bool IsInline => DialogInstance is null;

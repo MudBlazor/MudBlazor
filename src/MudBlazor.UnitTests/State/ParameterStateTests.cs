@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
@@ -133,11 +133,17 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        var snapshot = parameterState.CreateInvocationSnapshot();
+        var parameterStateValue = snapshot.GetParameterStateValue();
+        await snapshot.ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeTrue();
         parameterState.HasHandler.Should().BeTrue();
+        parameterStateValue.HasValue.Should().BeTrue();
+        parameterStateValue!.Value.Name.Should().Be(ParameterName);
+        parameterStateValue.Value.LastValue.Should().Be(InitialValue);
+        parameterStateValue.Value.Value.Should().Be(NewValue);
         parameterChangedHandlerMock.Changes.Should().BeEquivalentTo(new[]
         {
             new ParameterChangedEventArgs<int>(parameters, ParameterName, InitialValue, NewValue)
@@ -157,7 +163,7 @@ public class ParameterStateTests
             .Create<int>()
             .WithMetadata(new ParameterMetadata(ParameterName))
             .WithGetParameterValueFunc(() => InitialValue)
-            .WithParameterChangedHandler(args =>
+            .WithParameterChangedHandler((ParameterChangedEventArgs<int> args) =>
             {
                 changes++;
                 args.ParameterView.Contains<string>(OtherParameterName).Should().BeTrue();
@@ -173,11 +179,17 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        var snapshot = parameterState.CreateInvocationSnapshot();
+        var parameterStateValue = snapshot.GetParameterStateValue();
+        await snapshot.ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeTrue();
         parameterState.HasHandler.Should().BeTrue();
+        parameterStateValue.HasValue.Should().BeTrue();
+        parameterStateValue!.Value.Name.Should().Be(ParameterName);
+        parameterStateValue.Value.LastValue.Should().Be(InitialValue);
+        parameterStateValue.Value.Value.Should().Be(NewValue);
         changes.Should().Be(1);
     }
 
@@ -202,10 +214,13 @@ public class ParameterStateTests
 
         // Act
         var changed = parameterState.HasParameterChanged(parameters);
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        var snapshot = parameterState.CreateInvocationSnapshot();
+        var parameterStateValue = snapshot.GetParameterStateValue();
+        await snapshot.ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         changed.Should().BeFalse();
+        parameterStateValue.HasValue.Should().BeFalse();
         parameterState.HasHandler.Should().BeTrue();
         parameterChangedHandlerMock.Changes.Should().BeEmpty();
     }
@@ -225,7 +240,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync();
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty);
 
         // Assert
         parameterState.HasHandler.Should().BeTrue();
@@ -244,7 +259,7 @@ public class ParameterStateTests
             .Attach();
 
         // Act & Assert
-        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(); //Does nothing, we are making coverage happy
+        await parameterState.CreateInvocationSnapshot().ParameterChangeHandleAsync(ParameterChangedContext.Empty); //Does nothing, we are making coverage happy
         parameterState.HasHandler.Should().BeFalse();
     }
 

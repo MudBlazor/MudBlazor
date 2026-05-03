@@ -1,0 +1,34 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid T="Employee" Items="@_employees" ColumnResizeMode="ResizeMode.Column" HorizontalScrollbar="true">
+    <ColGroup>
+        <col style="width: 5%;" />
+        <col style="width: 30%;" />
+        <col style="width: 50%;" />
+        <col style="width: 15%;" />
+    </ColGroup>
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="ID" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Notes" CellStyle="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0;" />
+        <PropertyColumn Property="x => x.Salary" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Employee> _employees = new List<Employee>
+    {
+        new Employee { Id = 1, Name = "Alice Johnson", Notes = "Joined in 2020, works remotely, leads the frontend team and mentors junior developers.", Salary = 95_000 },
+        new Employee { Id = 2, Name = "Bob Smith", Notes = "10 years of experience in backend development, specialized in distributed systems.", Salary = 105_000 },
+        new Employee { Id = 3, Name = "Carol White", Notes = "Project manager with a background in agile methodologies and cross-functional team coordination.", Salary = 88_000 },
+        new Employee { Id = 4, Name = "David Brown", Notes = "Recently onboarded, still completing onboarding tasks and equipment setup.", Salary = 72_000 },
+    };
+
+    public class Employee
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Notes { get; set; } = string.Empty;
+        public int Salary { get; set; }
+    }
+}

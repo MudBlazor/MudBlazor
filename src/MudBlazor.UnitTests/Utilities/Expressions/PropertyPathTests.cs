@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         // ReSharper restore ClassNeverInstantiated.Local
 
         [Test]
-        public void PropertyPathTests_Visit_Valid_Test()
+        public void PropertyPathTests_Visit_Valid()
         {
             // Arrange
             Expression<Func<Employee, string>> exp1 = x => x.Name;

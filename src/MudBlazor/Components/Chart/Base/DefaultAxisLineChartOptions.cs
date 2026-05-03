@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>
@@ -30,6 +29,14 @@ public abstract class DefaultAxisLineChartOptions : DefaultAxisChartOptions, IAx
     /// Defaults to <c>false</c>
     /// </remarks>
     public bool YAxisRequireZeroPoint { get; set; }
+
+    /// <summary>
+    /// Prevent negative overshoots if all Y values are non-negative
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>
+    /// </remarks>
+    public bool ClampToZero { get; set; }
 
     /// <summary>
     /// The style of line to use for the chart <see cref="LineDisplayType.Line"/> or <see cref="LineDisplayType.Area"/>

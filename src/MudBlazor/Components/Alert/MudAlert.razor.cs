@@ -7,16 +7,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// Represents an alert used to display an important message which is statically embedded in the page content.
+    /// Displays an important message which is statically embedded in the page content.
     /// </summary>
     /// <seealso cref="SnackbarService"/>
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-alert")
-            .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
+            .AddClass($"mud-alert-{Variant.ToStringFast(true)}-{Severity.ToStringFast(true)}")
             .AddClass($"mud-dense", Dense)
             .AddClass($"mud-square", Square)
             .AddClass($"mud-elevation-{Elevation}")
@@ -24,7 +23,7 @@ namespace MudBlazor
             .Build();
 
         protected string ClassPosition => new CssBuilder("mud-alert-position")
-            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
+            .AddClass($"justify-{ConvertHorizontalAlignment(ContentAlignment).ToStringFast(true)}")
             .Build();
 
         /// <summary>
@@ -46,6 +45,9 @@ namespace MudBlazor
             };
         }
 
+        /// <summary>
+        /// Displays content right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -198,7 +200,7 @@ namespace MudBlazor
                     Severity.Success => Icons.Custom.Uncategorized.AlertSuccess,
                     Severity.Warning => Icons.Material.Outlined.ReportProblem,
                     Severity.Error => Icons.Material.Filled.ErrorOutline,
-                    _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
+                    _ => throw new InvalidOperationException($"Unsupported {nameof(Severity)} value: {Severity}."),
                 };
             }
         }

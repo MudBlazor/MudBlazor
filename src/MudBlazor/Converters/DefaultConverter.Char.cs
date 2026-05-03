@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class DefaultConverter
 {
     internal sealed class CharConverter : IReversibleConverter<char, string?>, IReversibleConverter<char?, string?>
@@ -30,6 +29,6 @@ internal partial class DefaultConverter
             return ConvertBack(input);
         }
 
-        public static readonly CharConverter Instance = new();
+        public static CharConverter Instance { get; } = new();
     }
 }

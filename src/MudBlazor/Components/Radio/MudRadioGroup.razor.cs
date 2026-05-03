@@ -3,14 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Converter;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A group of <see cref="MudRadio{T}"/> components.
@@ -19,12 +16,7 @@ namespace MudBlazor
     public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
     {
         private MudRadio<T>? _selectedRadio;
-        private HashSet<MudRadio<T>> _radios = new();
-
-        public MudRadioGroup()
-        {
-            Converter = new EmptyConverter<T?>();
-        }
+        private readonly HashSet<MudRadio<T>> _radios = new();
 
         protected string Classname =>
             new CssBuilder("mud-input-control-boolean-input")
@@ -213,6 +205,9 @@ namespace MudBlazor
 
             return base.ResetValueAsync();
         }
+
+        /// <inheritdoc />
+        protected override IConverter<T?, T?> GetDefaultConverter() => EmptyConverter<T?>.Instance;
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
         {

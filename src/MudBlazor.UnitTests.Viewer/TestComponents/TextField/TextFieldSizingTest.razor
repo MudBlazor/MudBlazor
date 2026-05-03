@@ -1,0 +1,68 @@
+﻿<p>General sizing regression matrix for <code>MudTextField</code>.</p>
+<p>Compare <code>Sizing.Fixed</code> and <code>Sizing.Auto</code> across variants, margins, labels, and disabled/empty states.</p>
+
+<div style="display:grid; grid-template-columns: 280px minmax(0,1fr) minmax(0,1fr); gap: 12px; align-items:start;">
+    <MudText Typo="Typo.subtitle2">Case</MudText>
+    <MudText Typo="Typo.subtitle2">Sizing.Fixed</MudText>
+    <MudText Typo="Typo.subtitle2">Sizing.Auto</MudText>
+
+    <MudText Typo="Typo.body2">Text, Margin.None, no label</MudText>
+    <MudTextField T="string" Margin="Margin.None" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.None" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.None, with label</MudText>
+    <MudTextField T="string" Margin="Margin.None" Label="Text fixed label" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.None" Label="Text auto label" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.Dense, no label</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.Dense, with label</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Label="Text dense fixed label" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Label="Text dense auto label" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.Dense, placeholder</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Placeholder="Text dense fixed placeholder" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Placeholder="Text dense auto placeholder" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.Dense, helper text</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" HelperText="Text dense fixed helper" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" HelperText="Text dense auto helper" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.Dense, disabled and empty</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Disabled="true" Label="Text dense fixed disabled" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Disabled="true" Label="Text dense auto disabled" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Text, Margin.Dense, multiline baseline</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Lines="2" Label="Text dense fixed lines=2" Variant="Variant.Text" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Lines="2" Label="Text dense auto lines=2" Variant="Variant.Text" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Outlined, Margin.None, empty</MudText>
+    <MudTextField T="string" Margin="Margin.None" Label="Outlined fixed empty" Variant="Variant.Outlined" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.None" Label="Outlined auto empty" Variant="Variant.Outlined" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Outlined, Margin.None, disabled and empty</MudText>
+    <MudTextField T="string" Margin="Margin.None" Disabled="true" Label="Outlined fixed disabled" Variant="Variant.Outlined" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.None" Disabled="true" Label="Outlined auto disabled" Variant="Variant.Outlined" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Outlined, Margin.Dense, disabled and empty</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Disabled="true" Label="Outlined dense fixed disabled" Variant="Variant.Outlined" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Disabled="true" Label="Outlined dense auto disabled" Variant="Variant.Outlined" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Filled, Margin.None, empty</MudText>
+    <MudTextField T="string" Margin="Margin.None" Label="Filled fixed empty" Variant="Variant.Filled" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.None" Label="Filled auto empty" Variant="Variant.Filled" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Filled, Margin.None, disabled and empty</MudText>
+    <MudTextField T="string" Margin="Margin.None" Disabled="true" Label="Filled fixed disabled" Variant="Variant.Filled" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.None" Disabled="true" Label="Filled auto disabled" Variant="Variant.Filled" Sizing="InputSizing.Auto" />
+
+    <MudText Typo="Typo.body2">Filled, Margin.Dense, disabled and empty</MudText>
+    <MudTextField T="string" Margin="Margin.Dense" Disabled="true" Label="Filled dense fixed disabled" Variant="Variant.Filled" Sizing="InputSizing.Fixed" />
+    <MudTextField T="string" Margin="Margin.Dense" Disabled="true" Label="Filled dense auto disabled" Variant="Variant.Filled" Sizing="InputSizing.Auto" />
+</div>
+
+@code {
+    public static string __description__ = "General MudTextField sizing regression matrix comparing Sizing.Fixed and Sizing.Auto across variants and states.";
+}

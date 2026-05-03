@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Alert;
 using NUnit.Framework;
 
@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Components
     public class AlertTests : BunitTest
     {
         [Test]
-        public async Task AlertTest()
+        public async Task Alert()
         {
             var comp = Context.Render<MudAlert>(parameters => parameters.Add(x => x.Icon, Icons.Custom.Brands.MudBlazor));
 
@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AlertTest_Click()
+        public async Task Alert_Click()
         {
             var comp = Context.Render<AlertClickTest>();
             var alert = comp.FindComponent<MudAlert>();

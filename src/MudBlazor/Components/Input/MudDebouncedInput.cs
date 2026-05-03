@@ -4,7 +4,6 @@ using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A base class for designing input components which update after a delay.
     /// </summary>
@@ -21,6 +20,9 @@ namespace MudBlazor
                 .WithComparer(DoubleEpsilonEqualityComparer.Default)
                 .WithChangeHandler(OnDebounceIntervalChangedAsync);
         }
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
         /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
@@ -45,7 +47,7 @@ namespace MudBlazor
             var suppressTextUpdate = !updateValue
                                      && DebounceInterval > 0
                                      && _debouncer is not null
-                                     && (!ReadValue?.Equals(ConvertGet(ReadText)) ?? false);
+                                     && _debouncer.IsPending;
 
             return suppressTextUpdate
                 ? Task.CompletedTask
@@ -75,6 +77,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        protected override async Task ValidateValue()
+        {
+            if (await SynchronizePendingValueForValidationAsync())
+            {
+                return;
+            }
+
+            await base.ValidateValue();
+        }
+
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -100,7 +113,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value));
+                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), false, TimeProvider);
             }
             else
             {
@@ -111,6 +124,29 @@ namespace MudBlazor
                     await _debouncer.UpdateIntervalAsync(TimeSpan.FromMilliseconds(args.Value));
                 }
             }
+        }
+
+        private async Task<bool> SynchronizePendingValueForValidationAsync()
+        {
+            if (DebounceInterval <= 0 || _debouncer is null || !_debouncer.IsPending)
+            {
+                return false;
+            }
+
+            var pendingValue = ConvertGet(ReadText);
+            var pendingValueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, pendingValue);
+
+            await _debouncer.CancelAsync();
+
+            if (!pendingValueChanged)
+            {
+                return false;
+            }
+
+            // SetValueAndUpdateTextAsync already triggers FieldChanged and BeginValidateAsync,
+            // so the synced validation happens there and this call can stop.
+            await SetValueAndUpdateTextAsync(pendingValue, updateText: false);
+            return true;
         }
 
         private Task OnDebouncedUpdate()

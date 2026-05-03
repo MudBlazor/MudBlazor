@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask
@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
     public class MultiMaskTests
     {
         [Test]
-        public void MultiMask_Test()
+        public void MultiMask()
         {
             var mask = new MultiMask("0000 0000 0000 0000",
                 new MaskOption("American Express", "0000 000000 00000", @"^(34|37)"),

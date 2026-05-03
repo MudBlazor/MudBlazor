@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Badge;
 using NUnit.Framework;
@@ -35,7 +35,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task BadgeTest_Click()
+        public async Task Badge_Click()
         {
             var comp = Context.Render<BadgeClickTest>();
             var badge = comp.FindComponent<MudBadge>();

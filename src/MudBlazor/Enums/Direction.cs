@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    [EnumExtensions]
     public enum Direction
     {
         [Description("bottom")]

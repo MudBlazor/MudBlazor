@@ -1,0 +1,87 @@
+﻿<MudPaper Class="pa-4">
+    <MudStack Spacing="2">
+        <MudNumericField Label="Days" Variant="Variant.Outlined" Step="1" Immediate="true" @bind-Value="_days" />
+
+        <MudRadioGroup @bind-Value="SelectedOption">
+            <MudRadio Value="@(InterpolationOption.NaturalSpline)" Color="Color.Primary">NaturalSpline</MudRadio>
+            <MudRadio Value="@(InterpolationOption.EndSlope)" Color="Color.Primary">EndSlope</MudRadio>
+            <MudRadio Value="@(InterpolationOption.Periodic)" Color="Color.Primary">Periodic</MudRadio>
+            <MudRadio Value="@(InterpolationOption.Straight)" Color="Color.Primary">Straight</MudRadio>
+        </MudRadioGroup>
+
+        <MudSwitch @bind-Value="Clamp" Color="Color.Primary" Label="Clamp To Zero" />
+
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="GenerateData">Generate</MudButton>
+        
+        <MudPaper Height="560px" Elevation="0">
+            @if (_isLoading)
+            {
+                <MudText Typo="Typo.h3">Loading...</MudText>
+            }
+            else
+            {
+                <MudChart T="double" ChartType="ChartType.Line" ChartLabels="_labels" ChartSeries="_datasets" ChartOptions="@_options" Width="800px" Height="500px" />
+            }
+        </MudPaper>
+        
+        @foreach (ChartSeries<double> chart in _datasets)
+        {
+            <MudText>
+                @($"{chart.Name}: ")
+                @foreach (double value in chart.Data)
+                {
+                    @($"{Math.Round(value, 1)} ")
+                }
+            </MudText>
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    private readonly Random _rng = new();
+    public bool Clamp { get; set; } = false;
+    public InterpolationOption SelectedOption { get; set; }
+    private bool _isLoading = true;
+    private int _days = 14;
+    private string[] _labels = Array.Empty<string>();
+    private List<ChartSeries<double>> _datasets = [];
+
+    private LineChartOptions _options => new()
+    {
+        InterpolationOption = SelectedOption,
+        ClampToZero = Clamp
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GenerateData();
+    }
+
+    private async Task GenerateData()
+    {
+        _isLoading = true;
+
+        await Task.Delay(2000);
+
+        DateTime start = DateTime.Today.AddDays(-_days + 1);
+        _labels = Enumerable.Range(0, _days)
+            .Select(i => start.AddDays(i).ToString("MMM d"))
+            .ToArray();
+
+        _datasets = [
+            new ChartSeries<double> { Name = "Example", Data = MakeSeries(_days) }
+        ];
+
+        _isLoading = false;
+    }
+
+    private double[] MakeSeries(int days)
+    {
+        double[] result = new double[days];
+        for (int i = 0; i < days; i++)
+        {
+            result[i] = _rng.NextDouble() * 100;
+        }
+        return result;
+    }
+}

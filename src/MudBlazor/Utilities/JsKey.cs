@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Utilities;
 
-#nullable enable
 /// <summary>
 /// Contains all Javascript key code strings (using e.code standard).
 /// </summary>
@@ -114,5 +113,8 @@ public enum JsKey
     BracketLeft,
     Backslash,
     BracketRight,
-    Quote
+    Quote,
+    NumpadEnter,
+    NumpadEqual,
+    NumpadComma
 }

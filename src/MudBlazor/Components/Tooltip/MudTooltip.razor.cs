@@ -1,19 +1,24 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A small popup which provides more information.
+    /// Displays additional context when users hover over or focus on an element.
     /// </summary>
     public partial class MudTooltip : MudComponentBase
     {
+        private int _parentUpdateCount;
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
+
         public MudTooltip()
         {
             using var registerScope = CreateRegisterScope();
@@ -30,10 +35,10 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass("d-flex")
             .AddClass("mud-tooltip-default", Color == Color.Default)
-            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToStringFast(true)}")
             .AddClass("mud-tooltip-arrow", Arrow)
-            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"mud-border-{Color.ToStringFast(true)}", Arrow && Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
             .AddClass(Class)
             .Build();
 
@@ -213,6 +218,14 @@ namespace MudBlazor
         internal bool ShowToolTip()
         {
             return !Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
+        }
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            unchecked { _parentUpdateCount++; }
+
+            return base.SetParametersAsync(parameters);
         }
 
         /// <inheritdoc />

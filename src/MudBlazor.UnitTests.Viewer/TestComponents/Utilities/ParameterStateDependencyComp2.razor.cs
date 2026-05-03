@@ -21,9 +21,9 @@ public partial class ParameterStateDependencyComp2 : MudComponentBase
     [Parameter]
     public EventCallback<MudColor?> ValueChanged { get; set; }
 
-    public List<ParameterChangedEventArgs<string?>> TextChanges { get; } = new();
+    public List<ParameterChangedEventArgs<string?>> TextChanges { get; } = [];
 
-    public List<ParameterChangedEventArgs<MudColor?>> ValueChanges { get; } = new();
+    public List<ParameterChangedEventArgs<MudColor?>> ValueChanges { get; } = [];
 
     public ParameterStateDependencyComp2()
     {

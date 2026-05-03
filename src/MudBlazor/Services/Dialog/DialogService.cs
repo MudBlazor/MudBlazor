@@ -6,14 +6,13 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// A service for managing <see cref="MudDialog"/> components.
+    /// Service used to create, show, and close MudBlazor dialogs.
     /// </summary>
     /// <remarks>
-    /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
+    /// Register this service and include a <see cref="MudDialogProvider"/> in your layout so dialogs can render and respond to close requests.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
     /// <seealso cref="MudDialogContainer"/>
@@ -24,10 +23,13 @@ namespace MudBlazor
     public class DialogService : IDialogService
     {
         /// <summary>
-        /// This internal wrapper component prevents overwriting parameters of once instantiated dialog instances.
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// Internal wrapper component that prevents overwriting parameters on existing dialog instances.
         /// </summary>
-        private class DialogHelperComponent : IComponent
+        /// <remarks>
+        /// This keeps dialog content stable while the parent fragment re-renders.
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
+        /// </remarks>
+        private sealed class DialogHelperComponent : IComponent
         {
             private const string ChildContent = nameof(ChildContent);
             private RenderFragment? _renderFragment;
@@ -79,6 +81,12 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
         public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogParameters parameters) where T : IComponent
         {
             return ShowAsync<T>(title, parameters, DialogOptions.Default);
@@ -92,34 +100,34 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component)
         {
-            return ShowAsync(contentComponent, string.Empty, DialogParameters.Default, DialogOptions.Default);
+            return ShowAsync(component, string.Empty, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title)
         {
-            return ShowAsync(contentComponent, title, DialogParameters.Default, DialogOptions.Default);
+            return ShowAsync(component, title, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogOptions options)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options)
         {
-            return ShowAsync(contentComponent, title, DialogParameters.Default, options);
+            return ShowAsync(component, title, DialogParameters.Default, options);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters)
         {
-            return ShowAsync(contentComponent, title, parameters, DialogOptions.Default);
+            return ShowAsync(component, title, parameters, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title,
+        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title,
             DialogParameters parameters, DialogOptions options)
         {
-            var dialogReference = await ShowCoreAsync(contentComponent, title, parameters, options);
+            var dialogReference = await ShowCoreAsync(component, title, parameters, options);
 
             //Do not wait forever, what if render fails because of some internal exception and we will never release the method.
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -215,7 +223,7 @@ namespace MudBlazor
             }
 
             var dialogReference = CreateReference();
-
+            dialogReference.InjectOptions(options);
             var dialogContent = DialogHelperComponent.Wrap(builder =>
             {
                 var i = 0;

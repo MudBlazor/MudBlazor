@@ -7,7 +7,6 @@ using MudBlazor.State.Builder;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// The <see cref="ParameterState{T}"/> automatically manages parameter value changes for <see cref="ParameterAttribute"/> as part of
 /// MudBlazor's ParameterState framework. For details and usage please read CONTRIBUTING.md

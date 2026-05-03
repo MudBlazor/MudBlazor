@@ -1,5 +1,5 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using AwesomeAssertions;
+using Bunit;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -18,6 +18,7 @@ namespace MudBlazor.UnitTests.Components
             stack.Justify.Should().BeNull();
             stack.AlignItems.Should().BeNull();
             stack.StretchItems.Should().BeNull();
+            stack.HtmlTag.Should().Be("div");
         }
 
         [Test]
@@ -220,7 +221,6 @@ namespace MudBlazor.UnitTests.Components
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });
         }
 
-
         [Test]
         [TestCase(StretchItems.Start, "start")]
         [TestCase(StretchItems.End, "end")]
@@ -255,8 +255,45 @@ namespace MudBlazor.UnitTests.Components
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"flex-{expectedClass}", "gap-3" });
         }
+
+        [Test]
+        public void HtmlTagSetToUlRendersUlElement()
+        {
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.HtmlTag, "ul"));
+            var stackElement = stack.Find("ul.d-flex");
+
+            stackElement.Should().NotBeNull();
+            stackElement.HasAttribute("role").Should().BeFalse();
+        }
+
+        [Test]
+        public void DefaultStackRendersDivElementWithGroupRole()
+        {
+            var stack = Context.Render<MudStack>();
+            var stackElement = stack.Find("div.d-flex");
+
+            stackElement.Should().NotBeNull();
+            stackElement.GetAttribute("role").Should().Be("group");
+        }
+
+        [Test]
+        public void UserSuppliedRoleOverridesDefaultRoleForDiv()
+        {
+            var divStack = Context.Render<MudStack>(parameters => parameters
+                .AddUnmatched("role", "list"));
+            var divElement = divStack.Find("div.d-flex");
+
+            divElement.GetAttribute("role").Should().Be("list");
+        }
+
+        [Test]
+        public void SemanticTagDoesNotRenderRoleAttribute()
+        {
+            var semanticStack = Context.Render<MudStack>(parameters => parameters
+                .Add(c => c.HtmlTag, "ul"));
+            var semanticElement = semanticStack.Find("ul.d-flex");
+
+            semanticElement.HasAttribute("role").Should().BeFalse();
+        }
     }
 }
-
-
-

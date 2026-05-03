@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Utilities
         /// Verfies the standard log messages are logged correctly
         /// </summary>
         [Test]
-        public void LoggerIsCreatedTest()
+        public void LoggerIsCreated()
         {
             var provider = new MockLoggerProvider();
             var logger = provider.CreateLogger(GetType().FullName) as MockLogger;

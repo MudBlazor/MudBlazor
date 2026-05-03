@@ -4,8 +4,8 @@
 
 using System.Globalization;
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
@@ -21,46 +21,46 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public void PieChartSelectionTest()
+        public async Task PieChartSelection()
         {
             var comp = Context.Render<PieChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-serie")[0].Click();
+            await comp.FindAll("path.mud-chart-serie")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("path.mud-chart-serie")[3].Click();
+            await comp.FindAll("path.mud-chart-serie")[3].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
         [Test]
-        public void DonutChartSelectionTest()
+        public async Task DonutChartSelection()
         {
             var comp = Context.Render<DonutChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-serie")[0].Click();
+            await comp.FindAll("path.mud-chart-serie")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("path.mud-chart-serie")[3].Click();
+            await comp.FindAll("path.mud-chart-serie")[3].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
         [Test]
-        public void LineChartSelectionTest()
+        public async Task LineChartSelection()
         {
             var comp = Context.Render<LineChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-line")[0].Click();
+            await comp.FindAll("path.mud-chart-line")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("path.mud-chart-line")[1].Click();
+            await comp.FindAll("path.mud-chart-line")[1].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
         [Test]
-        public void BarChartSelectionTest()
+        public async Task BarChartSelection()
         {
             var comp = Context.Render<BarChartSelectionTest>();
             // print the generated html
@@ -71,13 +71,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("tspan").InnerHtml.Trim().Should().Be("40");
 
             // now click something and see that the selected index changes:
-            comp.FindAll("path.mud-chart-bar")[0].Click();
+            await comp.FindAll("path.mud-chart-bar")[0].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
 
             comp.FindAll("path.mud-chart-bar")[10].MouseOver();
             comp.Find("tspan").InnerHtml.Trim().Should().Be("24");
 
-            comp.FindAll("path.mud-chart-bar")[10].Click();
+            await comp.FindAll("path.mud-chart-bar")[10].ClickAsync();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
@@ -385,9 +385,13 @@ namespace MudBlazor.UnitTests.Components
 
             var options = new HeatMapChartOptions();
             if (position is XAxisLabelPosition xPos)
+            {
                 options.XAxisLabelPosition = xPos;
+            }
             else if (position is YAxisLabelPosition yPos)
+            {
                 options.YAxisLabelPosition = yPos;
+            }
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.HeatMap)
@@ -442,7 +446,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Font size should be calculated based on cell dimensions
             fontSize.Should().NotBeNull();
-            double.Parse(fontSize).Should().BeGreaterThan(0);
+            double.Parse(fontSize, CultureInfo.InvariantCulture).Should().BeGreaterThan(0);
         }
 
         [Test]
@@ -636,9 +640,13 @@ namespace MudBlazor.UnitTests.Components
             IChartOptions options = new ChartOptions();
 
             if (chart == ChartType.Line)
+            {
                 options = new LineChartOptions() { InterpolationOption = InterpolationOption.Periodic };
+            }
             else if (chart == ChartType.Timeseries)
+            {
                 options = new TimeSeriesChartOptions() { InterpolationOption = InterpolationOption.Periodic };
+            }
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                               .Add(p => p.ChartType, chart)
@@ -648,7 +656,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void HeatmapChart_CanHideSeries_Test()
+        public async Task HeatmapChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {
@@ -676,35 +684,35 @@ namespace MudBlazor.UnitTests.Components
             seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be initially unchecked");
 
             // Initial state assertions for heatmap cells (rects)
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
 
             // Hide Sensor Alpha series
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            await seriesCheckboxes[0].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Sensor Alpha checkbox should be unchecked after hiding");
             chartSeries[0].Visible.Should().BeFalse("Sensor Alpha Visible property should be false after hiding");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
 
             // Show Sensor Alpha series again
-            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            await seriesCheckboxes[0].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Sensor Alpha checkbox should be checked after re-showing");
             chartSeries[0].Visible.Should().BeTrue("Sensor Alpha Visible property should be true after re-showing");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
 
             // Show Sensor Gamma series (initially hidden)
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            await seriesCheckboxes[2].ChangeAsync(true);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Sensor Gamma checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Sensor Gamma Visible property should be true after showing");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
 
             // Hide Sensor Gamma series again
-            comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+            await seriesCheckboxes[2].ChangeAsync(false);
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be unchecked after hiding again");
             chartSeries[2].Visible.Should().BeFalse("Sensor Gamma Visible property should be false after hiding again");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
         }
 
         public record YAxisTestCase(Func<double, string> YAxisToStringFunc, string ExpectedValue);
@@ -721,7 +729,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test, TestCaseSource(nameof(YAxisFuncs))]
         [SetCulture("en-US")]
-        public void YAxisToStringFuncTest(YAxisTestCase testCase)
+        public void YAxisToStringFunc(YAxisTestCase testCase)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
@@ -733,6 +741,181 @@ namespace MudBlazor.UnitTests.Components
             var yaxis = comp.FindAll("g.mud-charts-yaxis");
             yaxis.Should().NotBeNull();
             yaxis[0].Children[0].InnerHtml.Trim().Should().Be(testCase.ExpectedValue);
+        }
+
+        [Test]
+        public void RadarChart_FillOpacity_Should_RenderInvariant_InDifferentCultures()
+        {
+            var originalCulture = CultureInfo.CurrentCulture;
+            var originalUiCulture = CultureInfo.CurrentUICulture;
+
+            try
+            {
+                var noNbCulture = new CultureInfo("nb-NO");
+                CultureInfo.CurrentCulture = noNbCulture;
+                CultureInfo.CurrentUICulture = noNbCulture;
+
+                var noNbComp = Context.Render<MudChart<double>>(parameters => parameters
+                    .Add(p => p.ChartType, ChartType.Radar)
+                    .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                    {
+                        new() { Name = "Series 1", Data = new([10, 20, 30]) }
+                    })
+                    .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+                    .Add(p => p.ChartOptions, new RadarChartOptions
+                    {
+                        FillOpacity = 0.4,
+                        AggregationOption = AggregationOption.GroupByDataSet
+                    })
+                );
+
+                var noNbOpacity = noNbComp.Find("path.mud-chart-serie").GetAttribute("fill-opacity");
+
+                CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+                CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+
+                var invariantComp = Context.Render<MudChart<double>>(parameters => parameters
+                    .Add(p => p.ChartType, ChartType.Radar)
+                    .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                    {
+                        new() { Name = "Series 1", Data = new([10, 20, 30]) }
+                    })
+                    .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+                    .Add(p => p.ChartOptions, new RadarChartOptions
+                    {
+                        FillOpacity = 0.4,
+                        AggregationOption = AggregationOption.GroupByDataSet
+                    })
+                );
+
+                var invariantOpacity = invariantComp.Find("path.mud-chart-serie").GetAttribute("fill-opacity");
+
+                noNbOpacity.Should().Be("0.4");
+                invariantOpacity.Should().Be("0.4");
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = originalCulture;
+                CultureInfo.CurrentUICulture = originalUiCulture;
+            }
+        }
+
+        [Test]
+        public void BarChart_LongValues_ShouldNotRoundDown()
+        {
+            var chartSeries = new List<ChartSeries<long>>()
+            {
+                new() { Name = "A", Data = new long[] { 3 } },
+                new() { Name = "B", Data = new long[] { 324 } },
+            };
+            string[] xAxisLabels = { "DataPoint" };
+
+            var comp = Context.Render<MudChart<long>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.Height, "550px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new BarChartOptions
+                {
+                    YAxisTicks = 10,
+                    YAxisLines = true,
+                    MaxNumYAxisTicks = 50
+                })
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(2);
+
+            var barA = bars[0];
+            var dA = barA.GetAttribute("d").Split(' ');
+
+            dA[2].Should().NotBe(dA[5], "Bar A should have a non-zero height for value 3");
+
+            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
+            yAxisLabels.Select(x => x.TextContent).Should().Contain("330", "Y-axis should extend to 330 for value 324 with ticks of 10");
+        }
+
+        [Test]
+        public void LineChart_LongValues_ShouldNotRoundDown()
+        {
+            var chartSeries = new List<ChartSeries<long>>()
+            {
+                new() { Name = "A", Data = new long[] { 3, 324 } },
+            };
+            string[] xAxisLabels = { "D1", "D2" };
+
+            var comp = Context.Render<MudChart<long>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "550px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    YAxisTicks = 10,
+                    MaxNumYAxisTicks = 50
+                })
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
+            yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
+
+            var circles = comp.FindAll("circle.mud-chart-point");
+            circles.Count.Should().Be(2);
+
+            var cyValues = circles
+                .Select(c => double.Parse(c.GetAttribute("cy")!, CultureInfo.InvariantCulture))
+                .ToList();
+
+            cyValues[0].Should().NotBe(cyValues[1]);
+            cyValues[0].Should().BeGreaterThan(cyValues[1]);
+        }
+
+        [Test]
+        public void StackedBarChart_LongValues_ShouldNotRoundDown()
+        {
+            var chartSeries = new List<ChartSeries<long>>()
+            {
+                new() { Name = "A", Data = new long[] { 3 } },
+                new() { Name = "B", Data = new long[] { 324 } },
+            };
+            string[] xAxisLabels = { "DataPoint" };
+
+            var comp = Context.Render<MudChart<long>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.Height, "550px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartOptions, new StackedBarChartOptions
+                {
+                    YAxisTicks = 10,
+                    MaxNumYAxisTicks = 50
+                })
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
+            yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
+
+            var barPaths = comp.FindAll("path.mud-chart-bar");
+            barPaths.Should().NotBeEmpty("stacked bar chart should render bar paths");
+            var smallSegmentPath = barPaths.First();
+            var dAttribute = smallSegmentPath.GetAttribute("d");
+            dAttribute.Should().NotBeNullOrWhiteSpace("bar path should have a valid 'd' attribute");
+
+            var numericChars = dAttribute!
+                .Select(c => char.IsDigit(c) || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E' ? c : ' ')
+                .ToArray();
+            var numericParts = new string(numericChars)
+                .Split((char[])null!, StringSplitOptions.RemoveEmptyEntries);
+            var coordinates = numericParts
+                .Select(p => double.Parse(p, CultureInfo.InvariantCulture))
+                .ToList();
+            var yCoordinates = coordinates
+                .Skip(1)
+                .Where((_, index) => index % 2 == 0)
+                .ToList();
+
+            yCoordinates.Count.Should().BeGreaterThan(0, "bar path should contain Y coordinates");
+            yCoordinates.Distinct().Count().Should().BeGreaterThan(1, "small stacked segment should have non-zero height (different Y coordinates)");
         }
     }
 }

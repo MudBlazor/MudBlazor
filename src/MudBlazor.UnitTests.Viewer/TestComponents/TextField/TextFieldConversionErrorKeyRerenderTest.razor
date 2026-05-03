@@ -1,0 +1,50 @@
+﻿@using MudBlazor.Utilities.Exceptions
+
+<MudTextField T="Pod"
+              Value="@Value"
+              ValueChanged="@OnValueChangedAsync"
+              Immediate="true"
+              OnlyValidateIfDirty="true"
+              Converter="@Converter"
+              OnKeyDown="@OnKeyDownAsync" />
+
+<MudText>@Value?.Value</MudText>
+
+@code {
+    public Pod? Value { get; set; }
+
+    public PodConverter Converter { get; } = new();
+
+    private Task OnValueChangedAsync(Pod? value)
+    {
+        Value = value;
+        return Task.CompletedTask;
+    }
+
+    private static Task OnKeyDownAsync(KeyboardEventArgs args) => Task.CompletedTask;
+
+    public sealed class Pod
+    {
+        public string? Value { get; set; }
+    }
+
+    public sealed class PodConverter : IReversibleConverter<Pod?, string?>
+    {
+        public string? Convert(Pod? input) => input?.Value;
+
+        public Pod? ConvertBack(string? input)
+        {
+            if (input is not null && input.Length < 7)
+            {
+                throw new ConversionException("Error message");
+            }
+
+            return input is null
+                ? null
+                : new Pod
+                {
+                    Value = input
+                };
+        }
+    }
+}

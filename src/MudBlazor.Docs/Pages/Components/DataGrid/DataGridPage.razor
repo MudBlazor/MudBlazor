@@ -1,7 +1,11 @@
 ﻿@page "/components/datagrid"
 
 <DocsPage>
-    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)" />
+    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)">
+        <Description>
+            For a simpler, template-driven table with responsive breakpoint layout, see <MudLink Href="/components/table">MudTable</MudLink>.
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
@@ -77,19 +81,28 @@
         <DocsPageSection>
             <SectionHeader Title="Editing">
                 <Description>
-                    The <CodeInline Tag>MudDataGrid</CodeInline> component supports data editing. To enable it, set <CodeInline>ReadOnly</CodeInline> to 
-                    <CodeInline>false</CodeInline> and choose an <CodeInline>EditMode</CodeInline>: either <CodeInline>DataGridEditMode.Form</CodeInline> 
-                    (popup form) or <CodeInline>DataGridEditMode.Cell</CodeInline> (Excel-style inline editing).
+                    Enable editing with <CodeInline>ReadOnly="false"</CodeInline>. Use <CodeInline>DataGridEditMode.Form</CodeInline> for dialog editing or <CodeInline>DataGridEditMode.Cell</CodeInline> for inline editing.
                     <br /><br />
-                    Changes trigger <CodeInline>CommittedItemChanges</CodeInline> and update the data source <CodeInline>Items</CodeInline>. To disable 
-                    editing for a column, set <CodeInline>Editable</CodeInline> to <CodeInline>false</CodeInline>. To make a field optional, set 
-                    <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline>.
+
+                    Edit events:
+                    <ul>
+                        <li><span class="mr-2">&bull;</span><CodeInline>StartedEditingItem</CodeInline>: editing begins</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>FormFieldChanged</CodeInline>: a field changes in form mode</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>CommittedItemChanges</CodeInline>: runs before applying changes</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>CommittedItemChanged</CodeInline>: runs after a successful commit</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>CanceledEditingItem</CodeInline>: editing is canceled</li>
+                    </ul>
+
+                    In form mode, <CodeInline>CommittedItemChanges</CodeInline> receives the edited copy and returns <CodeInline>Close</CodeInline> to save or <CodeInline>KeepOpen</CodeInline> to keep the dialog open. In this example, a negative Molar mass keeps the form open.
                     <br /><br />
-                    By default, each editable cell uses a suitable input component. You can override this with an <CodeInline Tag>EditTemplate</CodeInline> 
-                    for full control, see the <CodeInline>Position</CodeInline> column example below.
-                    <br />
-                    To add and edit a new row programmatically, call <CodeInline>SetEditingItemAsync</CodeInline> with an instance of type <CodeInline>T</CodeInline> 
-                    for Form style or just add the item to <CodeInline>Items</CodeInline> for cell style.
+
+                    Set <CodeInline>Editable</CodeInline> to <CodeInline>false</CodeInline> to disable editing for a column. Set <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline> to make a field optional.
+                    <br /><br />
+
+                    Editable cells use a matching input by default. Use an <CodeInline Tag>EditTemplate</CodeInline> for custom editors. In cell mode, standard columns commit automatically, but controls inside an <CodeInline Tag>EditTemplate</CodeInline> must handle commits in their value-changed callback.
+                    <br /><br />
+
+                    To add and edit a new row programmatically, call <CodeInline>SetEditingItemAsync</CodeInline> with a new <CodeInline>T</CodeInline> instance in form mode. In cell mode, add the new item directly to <CodeInline>Items</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridEditingExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -183,35 +196,83 @@
         <DocsPageSection>
             <SectionHeader Title="Filtering">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several different <CodeInline>DataGridFilterMode</CodeInline>s by setting the <CodeInline>FilterMode</CodeInline> property.
-                    <CodeInline>DataGridFilterMode.Simple</CodeInline> is the default where all filters are managed in one popover in the data grid. It allows you to
-                    set multiple filters at one time for multiple different columns. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline> mode, there is a dedicated popover for
-                    each column. Lastly, <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> allows you to inline the filtering behavior directly into the data grid.
+                    <CodeInline>&lt;MudDataGrid></CodeInline> supports filtering with several <CodeInline>DataGridFilterMode</CodeInline> settings through the <CodeInline>FilterMode</CodeInline> parameter.
+                    <br>
+                    • <CodeInline>Simple</CodeInline> is the <b>default</b>. All filters are managed in a single popover, and you can set multiple filters across multiple columns.
+                    <br>
+                    • <CodeInline>ColumnFilterMenu</CodeInline> provides a dedicated popover for each column.
+                    <br>
+                    • <CodeInline>ColumnFilterRow</CodeInline> places the filtering UI inline in the grid.
                     <br><br>
-                    Is it possible to define the case sensitivity when filtering string values by setting the parameter <CodeInline>FilterCaseSensitivity</CodeInline>.
+                    String filtering case sensitivity can be configured globally with <CodeInline>FilterCaseSensitivity</CodeInline>.
+                    <br><br>
+                    For backend data scenarios, see <MudLink Href="/components/datagrid#server-side-filtering-sorting-and-pagination">Server Side Filtering, Sorting and Pagination</MudLink>.
+                    <br /><br/>
+                    QuickFilter is shown in <MudLink Href="/components/datagrid#advanced-data-grid">Advanced Data Grid</MudLink>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridFilteringExample />
-            </SectionContent>
+
+            <DocsPageSection>
+                <SectionHeader Title="Basic">
+                    <Description>
+                        This example demonstrates the built-in filtering UI using the same items and paging setup. Use it to compare each <CodeInline>DataGridFilterMode</CodeInline> option and see how <CodeInline>FilterCaseSensitivity</CodeInline> affects string filtering.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridFilteringExample />
+                </SectionContent>
+            </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Simple FilterTemplate">
+                    <Description>
+                        In <CodeInline>DataGridFilterMode.Simple</CodeInline>, you can keep the built-in simple filter panel and customize a column with <CodeInline>&lt;Column&gt;.&lt;FilterTemplate&gt;</CodeInline>, or replace the panel with <CodeInline>&lt;MudDataGrid&gt;.&lt;FilterTemplate&gt;</CodeInline>. This example uses a toggle to switch between those two approaches.
+                        <br /><br />
+                        <CodeInline>&lt;MudDataGrid&gt;.&lt;FilterTemplate&gt;</CodeInline> receives <CodeInline>MudDataGrid&lt;T&gt;</CodeInline>, while <CodeInline>&lt;Column&gt;.&lt;FilterTemplate&gt;</CodeInline> receives <CodeInline>FilterContext&lt;T&gt;</CodeInline>. <CodeInline>FilterContext&lt;T&gt;</CodeInline> provides the active filter definition and actions to apply, clear, or close the current filter UI. These actions operate on the filter UI surface that owns the template.
+                        <br /><br />
+                        The Category column template maps selected values to the active filter definition and applies a custom <CodeInline>FilterFunction</CodeInline> for multi-select matching. The grid template replaces the built-in panel and syncs the custom Name and Category inputs to the grid filters. For exact member details, see the API section.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridFilterTemplateSimpleModeExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridFilterTemplateSimpleModeExample />
+                </SectionContent>
+            </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Row and Menu FilterTemplate">
+                    <Description>
+                        <CodeInline>&lt;Column&gt;.&lt;FilterTemplate&gt;</CodeInline> also works in <CodeInline>DataGridFilterMode.ColumnFilterRow</CodeInline> and <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline>. These modes also use <CodeInline>FilterContext&lt;T&gt;</CodeInline>, so the same context shape is reused while <CodeInline>Actions</CodeInline> operate on the currently rendered filter UI.
+                        <br /><br />
+                        This example keeps the built-in filter behavior for most columns and overrides one column with a custom multi-select filter. In <CodeInline>DataGridFilterMode.ColumnFilterMenu</CodeInline>, the filter is applied manually through the grid so the menu can stay open while selections change. For exact member details, see the <MudLink Href="/api/muddatagrid">API</MudLink> section.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridAdvancedFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridAdvancedFilteringExample />
+                </SectionContent>
+            </DocsPageSection>
+
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Advanced Filtering">
+            <SectionHeader Title="Row Selection">
                 <Description>
-                    It is possible to customize filtering by utilizing the <CodeInline>&lt;FilterTemplate></CodeInline> available on the <CodeInline>&lt;MudDataGrid></CodeInline>
-                    as well as each <CodeInline>&lt;Column></CodeInline>. In the example below, the Sign column is customized.
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> component supports both single and multi-row selection.<br><br>
+                    Selection can be triggered either by row clicks or by checkboxes.<br>
+                    Row clicks are enabled by default via the <CodeInline>SelectOnRowClick</CodeInline> property (default: <CodeInline>true</CodeInline>). 
+                    This allows users to select a row by clicking anywhere on it.<br>
+                    To provide visual feedback and explicit selection controls, add a <CodeInline>SelectColumn</CodeInline> in the <CodeInline>&lt;Columns></CodeInline> definition. 
+                    This renders a checkbox for each row.<br><br>
+                    When using <CodeInline>SelectColumn</CodeInline> checkboxes, built-in accessible labels are provided by default and can be overridden with <CodeInline>AriaLabelFunc</CodeInline>.
                     <br><br>
-                    Inside the <CodeInline>&lt;FilterTemplate></CodeInline> on the data grid while using <CodeInline>DataGridFilterMode.Simple</CodeInline>, the context is set to the
-                    data grid's FilterDefinitions to allow for customizing the filtering behavior.
+                    Use the <CodeInline>MultiSelection</CodeInline> property (default: <CodeInline>false</CodeInline>) to control whether users can select one or multiple rows.
+                    Single selection is enabled by default.
                     <br><br>
-                    When using the <CodeInline>&lt;FilterTemplate></CodeInline> in the column specific filter modes, the context is a <CodeInline>DataGridFilterMode.Simple</CodeInline>
-                    which gives access to several helpful properties and actions. For example, the current <CodeInline>FilterDefinition</CodeInline> related to the column is available as well
-                    as several actions to make it easier to implement custom filter behavior such as <CodeInline>ApplyFilter</CodeInline> and <CodeInline>ClearFilter</CodeInline>.
+                    To disable selection for specific rows, use the <CodeInline>DisabledFunc</CodeInline> parameter on the <CodeInline>SelectColumn</CodeInline>.<br>
+                    For example, rows 5 and 10 can be disabled by returning true for those rows in the function.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridAdvancedFilteringExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridAdvancedFilteringExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridSelectionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridSelectionExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -244,6 +305,24 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Column Sizing">
+                <Description>
+                    Use the <CodeInline>&lt;ColGroup></CodeInline> render fragment to set the initial widths of each column.
+                    Widths can be expressed as percentages (e.g. <CodeInline>width: 20%</CodeInline>) or fixed values (e.g. <CodeInline>width: 120px</CodeInline>).
+                    When columns are also resizable, these values serve as the initial widths before the user drags the resize handles.
+                    <br><br>
+                    To prevent long text from wrapping inside a cell, apply <CodeInline>white-space: nowrap</CodeInline> via the column's
+                    <CodeInline>CellStyle</CodeInline> parameter. Combine it with <CodeInline>overflow: hidden</CodeInline> and
+                    <CodeInline>text-overflow: ellipsis</CodeInline> (and <CodeInline>max-width: 0</CodeInline> to make the ellipsis
+                    work together with a percentage-based column width) for a cleaner truncated display.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnSizingExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnSizingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Resizing">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to resize columns interactively when
@@ -251,6 +330,7 @@
                     There are two modes for resizing: <CodeInline>ResizeMode.Container</CodeInline> and <CodeInline>ResizeMode.Column</CodeInline>.
                     <CodeInline>ResizeMode.Container</CodeInline> resizes the entire data grid while <CodeInline>ResizeMode.Column</CodeInline> only resizes
                     columns using available space within the data grid.
+                    Initial column widths for resizable grids can be set using <CodeInline>&lt;ColGroup></CodeInline> as shown in the Column Sizing example above.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridResizeExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -382,6 +462,7 @@
                 <DataGridColumReorderingExample />
             </SectionContent>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Columns Panel">
                 <Description>

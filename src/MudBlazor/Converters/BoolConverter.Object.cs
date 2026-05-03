@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 internal partial class BoolConverter
 {
     internal sealed class ObjectBoolConverter : IReversibleConverter<object?, bool?>
@@ -37,6 +36,6 @@ internal partial class BoolConverter
             return value;
         }
 
-        public static readonly ObjectBoolConverter Instance = new();
+        public static ObjectBoolConverter Instance { get; } = new();
     }
 }

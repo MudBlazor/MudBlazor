@@ -5,7 +5,6 @@ using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Justification.BarGroup;
 
-#nullable enable
 namespace MudBlazor.Charts
 {
     /// <summary>
@@ -47,9 +46,12 @@ namespace MudBlazor.Charts
         public override void RebuildChart()
         {
             // shared plot points should be initialized before generating overlay charts
-            if (IsOverlayChart && SharedData is null) return;
+            if (IsOverlayChart && SharedData is null)
+            {
+                return;
+            }
 
-            Series = (ChartContainer != null && ChartReference is MudChart<T>)
+            Series = ChartContainer != null && ChartReference is MudChart<T>
                 ? ChartContainer.ChartSeries
                 : ChartSeries;
 
@@ -82,7 +84,7 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
@@ -96,22 +98,18 @@ namespace MudBlazor.Charts
         private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
             var yAxisTicks = ChartOptions?.YAxisTicks;
-            if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
-                gridYUnits = T.CreateSaturating(yAxisTicks.Value);
-            else
-                gridYUnits = T.CreateSaturating(20);
+            gridYUnits = T.CreateSaturating(yAxisTicks is > 0 ? yAxisTicks.Value : 20);
 
-            var allValues = Series.SelectMany(series => series.Data.Values);
-
-            if (allValues.Any())
+            var allValues = Series.SelectMany(series => series.Data.Values).ToArray();
+            if (allValues.Length != 0)
             {
                 var minY = allValues.Min();
                 var maxY = ChartOptions?.YAxisSuggestedMax is null
                     ? allValues.Max()
                     : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), allValues.Max());
 
-                lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
-                var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
+                lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
+                var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // Safeguard against too many gridlines
@@ -120,8 +118,8 @@ namespace MudBlazor.Charts
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= T.CreateSaturating(2);
-                    lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
-                    highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
+                    lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
+                    highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
 
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
@@ -154,20 +152,11 @@ namespace MudBlazor.Charts
             for (var i = 0; i < numVerticalLines; i++)
             {
                 var x = barGroupPositions.Length == 0 ? 0 : barGroupPositions[i];
-                var line = new SvgPath()
-                {
-                    Index = i,
-                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
-                };
+                var line = new SvgPath { Index = i, Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}" };
                 VerticalLines.Add(line);
 
                 var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
-                var lineValue = new SvgText()
-                {
-                    X = x + (_barGroupWidth / 2) - ((_barGap * spaces) / 2) - leftShift,
-                    Y = _boundHeight - 10,
-                    Value = xLabels
-                };
+                var lineValue = new SvgText { X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift, Y = _boundHeight - 10, Value = xLabels };
                 VerticalValues.Add(lineValue);
             }
         }
@@ -191,10 +180,10 @@ namespace MudBlazor.Charts
                     var gridValueX = groupStartX + (i * (_barWidth + _barGap)) + (_barWidth / 2);
 
                     var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
-                    var barHeight = (double.CreateSaturating((dataValue / gridYUnits)) - lowestHorizontalLine) * verticalSpace;
+                    var barHeight = ((double.CreateSaturating(dataValue) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = _boundHeight - VerticalStartSpace - double.CreateSaturating(barHeight);
 
-                    var bar = new SvgPath()
+                    var bar = new SvgPath
                     {
                         Index = i,
                         Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
@@ -212,7 +201,10 @@ namespace MudBlazor.Charts
         {
             var dataSetCount = Series.Count;
 
-            if (dataSetCount == 0) return [];
+            if (dataSetCount == 0)
+            {
+                return [];
+            }
 
             var context = new BarGroupContext
             {
@@ -235,7 +227,10 @@ namespace MudBlazor.Charts
 
         private int CalculateSpaceWidth(double horizontalSpace, int groupCount)
         {
-            if (groupCount <= 1) return 0;
+            if (groupCount <= 1)
+            {
+                return 0;
+            }
 
             var spaceCount = groupCount - 1;
             var remainingWidth = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - ((_barGroupWidth + (_barWidth / 2)) * groupCount);
@@ -266,14 +261,17 @@ namespace MudBlazor.Charts
 
             _barWidth = Math.Max(MinBarWidth, groupWidthRelative * barWidthRelative);
             _barGap = seriesCount > 1 ? groupWidthRelative * barWidthRelative * ChartOptions!.BarSpacingRatio : 0;
-            _barGroupWidth = Math.Max(MinBarWidth * seriesCount - 2, groupWidthRelative - _barWidth);
+            _barGroupWidth = Math.Max((MinBarWidth * seriesCount) - 2, groupWidthRelative - _barWidth);
         }
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+
+        private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            {
                 chart.StateHasChanged();
+            }
         }
 
         private void OnBarMouseOut()
@@ -281,7 +279,9 @@ namespace MudBlazor.Charts
             _hoveredBar = null;
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            {
                 chart.StateHasChanged();
+            }
         }
     }
 }

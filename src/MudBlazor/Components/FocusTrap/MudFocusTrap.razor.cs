@@ -6,10 +6,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A component which prevents the keyboard focus from cycling out of its child content.
+    /// Prevents the keyboard focus from cycling out of its child content. Typically used within dropdown selectors and modal dialogs.
     /// </summary>
     /// <remarks>
     /// Typically used within dialogs and other overlays.
@@ -93,17 +92,17 @@ namespace MudBlazor
             }
         }
 
-        private Task OnBottomFocusAsync(FocusEventArgs args)
+        private Task OnBottomFocusAsync()
         {
             return FocusLastAsync();
         }
 
-        private Task OnBumperFocusAsync(FocusEventArgs args)
+        private Task OnBumperFocusAsync()
         {
             return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
         }
 
-        private Task OnRootFocusAsync(FocusEventArgs args)
+        private Task OnRootFocusAsync()
         {
             return FocusFallbackAsync();
         }
@@ -118,7 +117,7 @@ namespace MudBlazor
             HandleKeyEvent(args);
         }
 
-        private Task OnTopFocusAsync(FocusEventArgs args)
+        private Task OnTopFocusAsync()
         {
             return FocusFirstAsync();
         }

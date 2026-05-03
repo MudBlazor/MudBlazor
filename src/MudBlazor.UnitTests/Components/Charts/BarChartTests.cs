@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
@@ -77,10 +77,10 @@ namespace MudBlazor.UnitTests.Charts
             legend.Should().NotBeNull(because: "we have a legend");
             legend.FindAll(LEGEND_CSS_SELECTOR).Should().HaveCount(chartSeries.Count, because: "the number series should match the legend item count");
             // click second item of legend (because SelectedIndex starts with 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(1).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1, because: "second legend item was clicked");
             // click first item of legend (to check, if get's back to 0)
-            legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().Click();
+            await legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().ClickAsync();
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0, because: "first legend item was clicked");
 
             if (chartSeries.Count <= 3)
@@ -95,13 +95,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 34 270.8333 L 34 172.5\"");
+                    .Contain("d=\"M 34 261 L 34 143\"");
             }
 
             if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 569.5 270.8333 L 569.5 74.1667\"");
+                    .Contain("d=\"M 569.5 261 L 569.5 25\"");
             }
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
@@ -153,13 +153,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 34.183 270.8333 L 34.183 172.5\"");
+                    .Contain("d=\"M 34.183 261 L 34.183 143\"");
             }
 
             if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 569.2941 270.8333 L 569.2941 74.1667\"");
+                    .Contain("d=\"M 569.2941 261 L 569.2941 25\"");
             }
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
@@ -229,7 +229,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public async Task BarChart_CanHideSeries_Test()
+        public async Task BarChart_CanHideSeries()
         {
             var chartSeries = new List<ChartSeries<double>>()
             {

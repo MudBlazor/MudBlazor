@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using System.Reflection;
+using AwesomeAssertions;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Utilities.Debounce;
 using NUnit.Framework;
 
@@ -43,7 +45,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_MultipleCallsOutsideInterval_ExecutesMultipleTimes()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
         var counter = 0;
         Task Invoke()
         {
@@ -52,18 +55,20 @@ public class DebounceDispatcherTests
             return Task.CompletedTask;
         }
 
-        // Act
-        await debounceDispatcher.DebounceAsync(Invoke);
+        // Act & Assert
+        var task1 = debounceDispatcher.DebounceAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task1;
         counter.Should().Be(1);
 
-        await Task.Delay(150);
-        await debounceDispatcher.DebounceAsync(Invoke);
+        var task2 = debounceDispatcher.DebounceAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task2;
         counter.Should().Be(2);
 
-        await Task.Delay(150);
-        await debounceDispatcher.DebounceAsync(Invoke);
-
-        // Assert
+        var task3 = debounceDispatcher.DebounceAsync(Invoke);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task3;
         counter.Should().Be(3);
     }
 
@@ -71,7 +76,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_SingleCall_ExecutesAfterInterval()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
         var executed = false;
         Task Invoke()
         {
@@ -82,6 +88,7 @@ public class DebounceDispatcherTests
         // Act
         var task = debounceDispatcher.DebounceAsync(Invoke);
         executed.Should().BeFalse();
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
         await task;
 
         // Assert
@@ -111,7 +118,8 @@ public class DebounceDispatcherTests
     public void DebounceAsync_ExceptionInAction_PropagatesException()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(50);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(50, false, timeProvider);
         Task ThrowingAction()
         {
             throw new InvalidOperationException("Test exception");
@@ -119,7 +127,12 @@ public class DebounceDispatcherTests
 
         // Act & Assert
         var exception = Assert.ThrowsAsync<InvalidOperationException>(
-            () => debounceDispatcher.DebounceAsync(ThrowingAction));
+            async () =>
+            {
+                var task = debounceDispatcher.DebounceAsync(ThrowingAction);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(50));
+                await task;
+            });
         exception!.Message.Should().Be("Test exception");
     }
 
@@ -205,7 +218,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public void DebounceAsync_Dispose_CancelsPendingOperation()
+    public async Task DebounceAsync_Dispose_CancelsPendingOperation()
     {
         // Arrange
         var debounceDispatcher = new DebounceDispatcher(1000);
@@ -221,7 +234,7 @@ public class DebounceDispatcherTests
         debounceDispatcher.Dispose();
 
         // Assert - should complete silently without throwing
-        task.Wait(100);
+        await task.WaitAsync(TimeSpan.FromSeconds(5));
         executed.Should().BeFalse();
     }
 
@@ -243,7 +256,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_ExternalCancellationDuringDebounce_CancelsCorrectly()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(200);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(200, false, timeProvider);
         using var cts = new CancellationTokenSource();
         var executed = false;
 
@@ -256,13 +270,14 @@ public class DebounceDispatcherTests
         // Act - Start debounce with external cancellation token
         var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
 
-        // Cancel the external token while debounce is pending
-        await Task.Delay(50, CancellationToken.None);
+        // Cancel the external token while debounce is pending.
+        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
         // ReSharper disable once MethodHasAsyncOverload
         cts.Cancel();
 
-        // Wait a bit more to ensure debounce would have completed if not cancelled
-        await Task.Delay(200, CancellationToken.None);
+        // Advance enough time so the debounce would have run if not cancelled.
+        timeProvider.Advance(TimeSpan.FromMilliseconds(200));
+        await task;
 
         // Assert - Should not have executed due to cancellation
         executed.Should().BeFalse();
@@ -273,7 +288,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_LeadingMode_ExternalCancellationAfterImmediate_DoesNotAffectExecution()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(200, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(200, leading: true, timeProvider);
         using var cts = new CancellationTokenSource();
         var executionCount = 0;
 
@@ -291,12 +307,13 @@ public class DebounceDispatcherTests
         var task = debounceDispatcher.DebounceAsync(TrackingAction, cts.Token);
 
         // Cancel the token during the debounce wait
-        await Task.Delay(50, CancellationToken.None);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
         // ReSharper disable once MethodHasAsyncOverload
         cts.Cancel();
 
-        // Wait to ensure debounce completes
-        await Task.Delay(200, CancellationToken.None);
+        // Advance enough time so the debounce would have run if not cancelled.
+        timeProvider.Advance(TimeSpan.FromMilliseconds(200));
+        await task;
 
         // Assert - Second call should not have executed due to cancellation
         executionCount.Should().Be(1);
@@ -385,7 +402,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_LongRunningAction_DoesNotBlockSubsequentCalls()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(50);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(50, false, timeProvider);
         var firstStarted = new TaskCompletionSource<bool>();
         var firstCanComplete = new TaskCompletionSource<bool>();
 
@@ -399,6 +417,7 @@ public class DebounceDispatcherTests
 
         // Act
         var firstTask = debounceDispatcher.DebounceAsync(LongRunningAction);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
         await firstStarted.Task; // Wait for first action to start
 
         // Allow first to complete
@@ -406,8 +425,9 @@ public class DebounceDispatcherTests
         await firstTask;
 
         // Now start a new debounce - should work fine
-        await Task.Delay(100); // Wait for interval to pass
-        await debounceDispatcher.DebounceAsync(QuickAction);
+        var secondTask = debounceDispatcher.DebounceAsync(QuickAction);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
+        await secondTask;
 
         // Assert - If we got here, it worked
         Assert.Pass();
@@ -417,31 +437,29 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_LeadingMode_ExecutesImmediatelyOnFirstCall()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
         var executionCount = 0;
-        var executionTimes = new List<DateTime>();
 
         Task TrackingAction()
         {
-            executionTimes.Add(DateTime.UtcNow);
             Interlocked.Increment(ref executionCount);
             return Task.CompletedTask;
         }
 
         // Act
-        var startTime = DateTime.UtcNow;
         await debounceDispatcher.DebounceAsync(TrackingAction);
 
         // Assert - First call should execute immediately
         executionCount.Should().Be(1);
-        (executionTimes[0] - startTime).TotalMilliseconds.Should().BeLessThan(50);
     }
 
     [Test]
     public async Task DebounceAsync_LeadingMode_DebounceSubsequentCalls()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -455,12 +473,16 @@ public class DebounceDispatcherTests
         executionCount.Should().Be(1);
 
         // Rapid subsequent calls within interval should be debounced
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task1 = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task2 = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task3 = debounceDispatcher.DebounceAsync(TrackingAction);
 
-        // Wait for debounce to complete
-        await Task.Delay(150);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+
+        // Wait for all debounced tasks to complete
+        await task1;
+        await task2;
+        await task3;
 
         // Assert - Should have executed twice (first immediate, last after debounce)
         executionCount.Should().Be(2);
@@ -470,7 +492,8 @@ public class DebounceDispatcherTests
     public async Task UpdateInterval_ChangesDebounceInterval()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(1000);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(1000, false, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -483,10 +506,10 @@ public class DebounceDispatcherTests
         await debounceDispatcher.UpdateIntervalAsync(100);
 
         // Start debounce with new interval
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task = debounceDispatcher.DebounceAsync(TrackingAction);
 
-        // Wait for the new shorter interval
-        await Task.Delay(150);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task;
 
         // Assert - Should have executed with the new interval
         executionCount.Should().Be(1);
@@ -496,7 +519,8 @@ public class DebounceDispatcherTests
     public async Task UpdateInterval_PreservesPendingDebounce()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(200);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(200, false, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -506,14 +530,15 @@ public class DebounceDispatcherTests
         }
 
         // Act - Start debounce
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task = debounceDispatcher.DebounceAsync(TrackingAction);
 
         // Update interval while debounce is pending (doesn't cancel the pending debounce)
-        await Task.Delay(50);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
         await debounceDispatcher.UpdateIntervalAsync(300);
 
         // Wait for original interval to complete
-        await Task.Delay(200);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(200));
+        await task;
 
         // Assert - Should have executed with original interval since update doesn't cancel pending
         executionCount.Should().Be(1);
@@ -557,7 +582,8 @@ public class DebounceDispatcherTests
     public async Task UpdateInterval_MultipleUpdates_UsesLatestInterval()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(1000);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(1000, false, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -572,10 +598,11 @@ public class DebounceDispatcherTests
         await debounceDispatcher.UpdateIntervalAsync(100);
 
         // Start debounce
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
+        var task = debounceDispatcher.DebounceAsync(TrackingAction);
 
         // Wait for the final interval
-        await Task.Delay(150);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task;
 
         // Assert - Should use latest interval (100ms)
         executionCount.Should().Be(1);
@@ -607,7 +634,7 @@ public class DebounceDispatcherTests
             var i1 = i;
             tasks.Add(Task.Run(async () =>
             {
-                await debounceDispatcher.UpdateIntervalAsync(100 + i1 * 10);
+                await debounceDispatcher.UpdateIntervalAsync(100 + (i1 * 10));
                 // ReSharper restore AccessToDisposedClosure
             }));
         }
@@ -623,7 +650,8 @@ public class DebounceDispatcherTests
     public async Task UpdateInterval_WithLeadingMode_UsesNewIntervalForSubsequentCalls()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(1000, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(1000, leading: true, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -640,7 +668,7 @@ public class DebounceDispatcherTests
         await debounceDispatcher.UpdateIntervalAsync(100);
 
         // Wait for new interval to pass
-        await Task.Delay(150);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
 
         // Next call should execute immediately with new interval
         await debounceDispatcher.DebounceAsync(TrackingAction);
@@ -653,7 +681,8 @@ public class DebounceDispatcherTests
     public async Task UpdateInterval_FromTimeSpan_WorksCorrectly()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(TimeSpan.FromSeconds(10));
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(TimeSpan.FromSeconds(10), false, timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -665,8 +694,9 @@ public class DebounceDispatcherTests
         // Act - Update using TimeSpan
         await debounceDispatcher.UpdateIntervalAsync(TimeSpan.FromMilliseconds(100));
 
-        _ = debounceDispatcher.DebounceAsync(TrackingAction);
-        await Task.Delay(150);
+        var task = debounceDispatcher.DebounceAsync(TrackingAction);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
+        await task;
 
         // Assert
         executionCount.Should().Be(1);
@@ -676,7 +706,8 @@ public class DebounceDispatcherTests
     public async Task DebounceAsync_LeadingMode_ResetsAfterInterval()
     {
         // Arrange
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true);
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider: timeProvider);
         var executionCount = 0;
 
         Task TrackingAction()
@@ -686,16 +717,276 @@ public class DebounceDispatcherTests
         }
 
         // Act - First call executes immediately
-        await debounceDispatcher.DebounceAsync(TrackingAction);
+        var task1 = debounceDispatcher.DebounceAsync(TrackingAction);
+        await task1;
         executionCount.Should().Be(1);
 
         // Wait for interval to pass
-        await Task.Delay(150);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(150));
 
         // Next call should execute immediately again
-        await debounceDispatcher.DebounceAsync(TrackingAction);
+        var task2 = debounceDispatcher.DebounceAsync(TrackingAction);
+        await task2;
 
         // Assert
         executionCount.Should().Be(2);
+    }
+
+    [Test]
+    public async Task DebounceAsync_IsPending_TracksDelayWindowOnly()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+        var actionGate = new TaskCompletionSource<bool>();
+
+        async Task BlockingAction() => await actionGate.Task;
+
+        // Act
+        var task = debounceDispatcher.DebounceAsync(BlockingAction);
+        await Task.Yield();
+
+        // Assert - pending during delay
+        debounceDispatcher.IsPending.Should().BeTrue();
+
+        // advance debounce interval to begin action execution
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        var pendingCleared = await WaitUntilAsync(() => !debounceDispatcher.IsPending, TimeSpan.FromSeconds(1));
+
+        // Assert - pending cleared once delay elapses, even while action is still running
+        pendingCleared.Should().BeTrue();
+        debounceDispatcher.IsPending.Should().BeFalse();
+
+        actionGate.SetResult(true);
+        await task;
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task DebounceAsync_IsPending_ClearsAfterCancellation()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+
+        // Act
+        var task = debounceDispatcher.DebounceAsync(() => Task.CompletedTask);
+        await Task.Yield();
+        debounceDispatcher.IsPending.Should().BeTrue();
+
+        await debounceDispatcher.CancelAsync();
+        await task;
+
+        // Assert
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task Cancel_Swallows_AggregateException_From_Callbacks()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        // create CTS by starting a debounce
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
+
+        // register a callback that throws when Cancel() is called
+        cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
+
+        // Cancel should swallow exceptions
+        var act = () => dispatcher.Cancel();
+
+        act.Should().NotThrow();
+    }
+
+    [Test]
+    public async Task Cancel_Swallows_ObjectDisposedException_When_CtsDisposed()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
+
+        // Dispose the CTS to simulate race
+        cts.Dispose();
+
+        var act = () => dispatcher.Cancel();
+
+        act.Should().NotThrow();
+    }
+
+    [Test]
+    [Explicit]
+    public async Task Cancel_Race_Stress_NoUnhandledExceptions()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
+
+        var tasks = new Task[100];
+        for (var i = 0; i < tasks.Length; i++)
+        {
+            tasks[i] = Task.Run(async () =>
+            {
+                var debounceTask = dispatcher.DebounceAsync(() => Task.CompletedTask);
+                // ReSharper disable once MethodHasAsyncOverload
+                dispatcher.Cancel();
+                await debounceTask;
+            });
+        }
+
+        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(10));
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task CancelAsync_Swallows_AggregateException_From_Callbacks()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        // create CTS by starting a debounce
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
+
+        // register a callback that throws when Cancel() is called
+        cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
+
+        // Cancel should swallow exceptions
+        var act = () => dispatcher.CancelAsync();
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task CancelAsync_Swallows_ObjectDisposedException_When_CtsDisposed()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
+
+        // Dispose the CTS to simulate race
+        cts.Dispose();
+
+        var act = () => dispatcher.CancelAsync();
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    [Explicit]
+    public async Task CancelAsync_Race_Stress_NoUnhandledExceptions()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
+
+        var tasks = new Task[100];
+        for (var i = 0; i < tasks.Length; i++)
+        {
+            tasks[i] = Task.Run(async () =>
+            {
+                var debounceTask = dispatcher.DebounceAsync(() => Task.CompletedTask);
+                await dispatcher.CancelAsync();
+                await debounceTask;
+            });
+        }
+
+        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(10));
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task Dispose_Swallows_AggregateException_From_Callbacks()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        // create CTS by starting a debounce
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
+
+        // register a callback that throws when Cancel() is called
+        cts.Token.Register(() => throw new InvalidOperationException("callback fail"));
+
+        // Cancel should swallow exceptions
+        var act = () => dispatcher.Dispose();
+
+        act.Should().NotThrow();
+    }
+
+    [Test]
+    public async Task Dispose_Swallows_ObjectDisposedException_When_CtsDisposed()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(200));
+
+        _ = dispatcher.DebounceAsync(() => Task.CompletedTask);
+        var cts = await WaitForPrivateCtsAsync(dispatcher);
+
+        // Dispose the CTS to simulate race
+        cts.Dispose();
+
+        var act = () => dispatcher.Dispose();
+
+        act.Should().NotThrow();
+    }
+
+    [Test]
+    public async Task Dispose_ConcurrentWithDebounceCalls_DoesNotHangOrThrow()
+    {
+        var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
+
+        var workers = Enumerable.Range(0, 100)
+            .Select(_ => Task.Run(async () =>
+            {
+                await dispatcher.DebounceAsync(() => Task.CompletedTask);
+            }))
+            .ToArray();
+
+        var disposer = Task.Run(() => dispatcher.Dispose());
+
+        var act = async () => await Task.WhenAll(workers.Append(disposer)).WaitAsync(TimeSpan.FromSeconds(5));
+
+        await act.Should().NotThrowAsync();
+    }
+
+    private static CancellationTokenSource? GetPrivateCts(object dispatcher)
+    {
+        var field = dispatcher.GetType().GetField("_cancellationTokenSource", BindingFlags.NonPublic | BindingFlags.Instance);
+        return (CancellationTokenSource?)field?.GetValue(dispatcher);
+    }
+
+    private static async Task<CancellationTokenSource> WaitForPrivateCtsAsync(object dispatcher)
+    {
+        var timeoutTask = Task.Delay(TimeSpan.FromSeconds(1));
+        while (!timeoutTask.IsCompleted)
+        {
+            var cts = GetPrivateCts(dispatcher);
+            if (cts is not null)
+            {
+                return cts;
+            }
+
+            await Task.Yield();
+        }
+
+        Assert.Fail("Timed out waiting for DebounceDispatcher to create its cancellation token source.");
+        return null!;
+    }
+
+    private static async Task<bool> WaitUntilAsync(Func<bool> condition, TimeSpan timeout)
+    {
+        var timeoutTask = Task.Delay(timeout);
+        while (!timeoutTask.IsCompleted)
+        {
+            if (condition())
+            {
+                return true;
+            }
+
+            await Task.Yield();
+        }
+
+        return condition();
     }
 }

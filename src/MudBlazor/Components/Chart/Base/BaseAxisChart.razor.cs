@@ -8,7 +8,6 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor.Charts;
 
 /// <summary>
@@ -20,6 +19,8 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TChartOptions : IAxisChartOptions, new()
 {
+    private const int AxisTitleOffset = 0;
+
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -107,6 +108,13 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
     public double ViewBoxHeight { get; set; }
+
+    /// <summary>
+    /// Make the chart fill the parent
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public bool MatchBoundsToSize { get; set; }
 
     /// <summary>
     /// The child content of the component.

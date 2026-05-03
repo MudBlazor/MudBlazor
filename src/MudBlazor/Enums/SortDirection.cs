@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the direction that search results are sorted by.
 /// </summary>
+[EnumExtensions]
 public enum SortDirection
 {
     /// <summary>

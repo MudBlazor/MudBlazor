@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void GetFullPathOfMemberTest()
+        public void GetFullPathOfMember()
         {
             var model = new TestClass();
 

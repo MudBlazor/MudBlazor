@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A line-shaped indicator of progress for an ongoing operation.
@@ -27,12 +26,23 @@ namespace MudBlazor
                 .AddClass($"mud-progress-linear-striped", Striped)
                 .AddClass($"mud-progress-indeterminate", Indeterminate)
                 .AddClass($"mud-progress-linear-buffer", Buffer && !Indeterminate)
-                .AddClass($"mud-progress-linear-{Size.ToDescriptionString()}")
-                .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
+                .AddClass($"mud-progress-linear-{Size.ToStringFast(true)}")
+                .AddClass($"mud-progress-linear-color-{Color.ToStringFast(true)}")
+                .AddClass("mud-progress-linear-background", ShowBackground)
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
-                .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
+                .Build();
+
+        /// <summary>
+        /// The CSS classes for the internal bars container.
+        /// </summary>
+        /// <remarks>
+        /// Horizontal progress bars are mirrored in RTL layouts so the fill direction remains correct, while vertical bars do not require mirroring.
+        /// </remarks>
+        protected string BarsClassname =>
+            new CssBuilder("mud-progress-linear-bars")
+                .AddClass("mud-flip-x-rtl", !Vertical)
                 .Build();
 
         /// <summary>
@@ -152,6 +162,16 @@ namespace MudBlazor
         [Parameter, ParameterState]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
+
+        /// <summary>
+        /// Shows a background for the portion of the progress bar that has not yet been filled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool ShowBackground { get; set; } = true;
 
         public MudProgressLinear()
         {

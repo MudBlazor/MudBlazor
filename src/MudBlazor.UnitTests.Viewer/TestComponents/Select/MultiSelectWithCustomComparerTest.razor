@@ -23,7 +23,7 @@
 
     private HashSet<Coffee?> _selected = new(Comparer);
 
-    private void SelectedChanged(IEnumerable<Coffee?>? newSelected)
+    private void SelectedChanged(IReadOnlyCollection<Coffee?>? newSelected)
     {
         _selected.Clear();
         if (newSelected is not null)
