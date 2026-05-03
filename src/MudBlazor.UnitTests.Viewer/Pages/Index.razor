@@ -11,7 +11,7 @@
         <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Never" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
             <div class="test-viewer-drawer-inner">
                 <div class="test-viewer-sidebar-header">
-                    <MudText Typo="Typo.subtitle1" Class="test-viewer-title">MudBlazor Test Viewer</MudText>
+                    <MudText Class="test-viewer-title">MudBlazor Test Viewer</MudText>
                     <MudSpacer />
                     <MudTooltip Text="@ThemeLabel">
                         <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
@@ -83,10 +83,6 @@
     </MudRTLProvider>
 </MudLayout>
 <style>
-    .test-viewer-title {
-        color: var(--mud-palette-text-primary);
-    }
-
     .test-viewer-drawer {
         overflow: hidden;
     }
@@ -95,10 +91,11 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        padding-top: 4px;
     }
 
     .test-viewer-sidebar-header {
-        padding: 0 12px 0 12px;
+        padding: 0 16px 0 16px;
         display: flex;
         align-items: center;
     }
@@ -156,15 +153,15 @@
     }
 
     .test-viewer-main {
-        padding: 0 12px 12px 12px;
+        padding: 0 16px 16px 16px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         height: 100vh;
     }
 
     .test-viewer-header {
-        padding: 12px 4px 0 4px;
+        padding: 16px 4px 0 4px;
     }
 
     .test-viewer-surface {

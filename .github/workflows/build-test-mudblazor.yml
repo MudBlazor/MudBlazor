@@ -77,7 +77,22 @@ jobs:
           project-path: ${{ matrix.project-path }}
 
       - name: Test ${{ matrix.project-path }}
-        run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
+        run: |
+          dotnet test \
+          --project ${{ matrix.project-path }} \
+          -c Release \
+          --no-build \
+          --hangdump \
+          --hangdump-timeout 60s \
+          --coverlet \
+          --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute" \
+          --coverlet-exclude-by-attribute "CompilerGeneratedAttribute" \
+          --coverlet-exclude-by-file "**/*.g.cs" \
+          --coverlet-include "[MudBlazor]*" \
+          --coverlet-skip-auto-props \
+          --report-spekt-junit \
+          --report-spekt-junit-filename junit.xml \
+          --results-directory ${{ matrix.project-path }}/TestResults
 
       - name: Extract project name
         id: project
@@ -91,8 +106,8 @@ jobs:
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
           path: |
-            ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
-            ${{ matrix.project-path }}/junit.xml
+            ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+            ${{ matrix.project-path }}/TestResults/junit.xml
 
   upload-codecov:
     needs: build-test

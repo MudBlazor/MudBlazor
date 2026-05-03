@@ -137,10 +137,11 @@ public class ChartSizingTests : BunitTest
 
         await comp.InvokeAsync(() => chartBase.OnElementSizeChanged(largerSize));
 
-        await Task.Delay(300);
-
-        svg = comp.Find("svg");
-        svg.GetAttribute("viewBox").Should().Be("0 0 700 400");
+        await comp.WaitForAssertionAsync(() =>
+        {
+            var svg = comp.Find("svg");
+            svg.GetAttribute("viewBox").Should().Be("0 0 700 400");
+        });
     }
 
     [Test]
@@ -178,10 +179,11 @@ public class ChartSizingTests : BunitTest
 
         await comp.InvokeAsync(() => chartBase.OnElementSizeChanged(largerSize));
 
-        await Task.Delay(300);
-
-        svg = comp.Find("svg");
-        svg.GetAttribute("viewBox").Should().Be("0 0 800 400");
+        await comp.WaitForAssertionAsync(() =>
+        {
+            var svg = comp.Find("svg");
+            svg.GetAttribute("viewBox").Should().Be("0 0 800 400");
+        });
     }
 
     [Test]

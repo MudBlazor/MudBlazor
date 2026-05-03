@@ -6267,8 +6267,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridServerHierarchyTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerHierarchyTest.Model>>();
 
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
-            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.Loading.Should().BeFalse();
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "Ira");
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "Anders");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Ira");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Anders");
+                comp.Markup.Should().Contain("uid = Ira|27|Success|");
+                comp.Markup.Should().Contain("uid = Anders|24|Error|");
+            });
 
             comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
             comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
@@ -6296,7 +6304,14 @@ namespace MudBlazor.UnitTests.Components
                 await nextButton.ClickAsync();
             });
 
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.Loading.Should().BeFalse();
+                dataGrid.Instance.CurrentPage.Should().Be(1);
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "ScarletKuro");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "ScarletKuro");
+                comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|");
+            });
 
             comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
             comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
