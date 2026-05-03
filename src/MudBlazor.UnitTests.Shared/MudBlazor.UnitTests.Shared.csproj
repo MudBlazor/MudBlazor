@@ -11,7 +11,7 @@
   
   <ItemGroup>
     <PackageReference Include="bunit" Version="2.7.2" />
-    <PackageReference Include="nunit" Version="4.5.1" />
+    <PackageReference Include="nunit" Version="4.6.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.5.0" />
   </ItemGroup>
