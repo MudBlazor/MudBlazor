@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Docs.Services;
 [TestFixture]
 public sealed class SearchServiceTests
 {
-    private static IApiLinkService CreateService() => new ApiLinkService(new MenuService(), new SearchService());
+    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService(), new SearchService());
 
     [TestCase("data gri", "components/datagrid")]
     [TestCase("muddatagrid", "components/datagrid")]
@@ -27,7 +27,7 @@ public sealed class SearchServiceTests
     [TestCase("breakpoint providr", "components/breakpointprovider")]
     public async Task Search_ReturnsTopResultForPartialOrMisspelledTitle(string search, string expectedLink)
     {
-        var service = CreateService();
+        var service = CreateApiLinkService();
 
         var results = await service.Search(search);
 
@@ -46,7 +46,7 @@ public sealed class SearchServiceTests
     [TestCase("current app content", "components/dialog")]
     public async Task Search_ReturnsTopResultForPartialOrMisspelledSubtitle(string search, string expectedLink)
     {
-        var service = CreateService();
+        var service = CreateApiLinkService();
 
         var results = await service.Search(search);
 
@@ -65,7 +65,7 @@ public sealed class SearchServiceTests
     [TestCase("date", "components/datepicker")]
     public async Task Search_ReturnsTopResultForAmbiguousMatches(string search, string expectedLink)
     {
-        var service = CreateService();
+        var service = CreateApiLinkService();
 
         var results = await service.Search(search);
 
