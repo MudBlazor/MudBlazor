@@ -4,8 +4,10 @@
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="#" Filterable="false" />
         <PropertyColumn Property="x => x.Customer" />
-        <PropertyColumn Property="x => x.PlacedAt" Title="Placed" Format="yyyy-MM-dd HH:mm" />
-        <PropertyColumn Property="x => x.DueDate" Title="Due" Format="yyyy-MM-dd" />
+        <PropertyColumn Property="x => x.PlacedAt" Title="Placed" Format="yyyy-MM-dd HH:mm"
+                        HeaderStyle="min-width: 360px" />
+        <PropertyColumn Property="x => x.DueDate" Title="Due" Format="yyyy-MM-dd"
+                        HeaderStyle="min-width: 200px" />
         <PropertyColumn Property="x => x.Total" Format="C" Filterable="false" />
     </Columns>
     <PagerContent>

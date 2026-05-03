@@ -3163,6 +3163,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinitionWithNull)); // Test adding DateTime filter with null value
             dateTimeFilterDefinitionWithNull.Value.Should().BeNull();
 
+            // Regression: time picked before any date should survive a Filter<T> re-instantiation
+            // (which happens on every render of the filter panel) and be combined when the date arrives.
+            dateTimeFilterDefinition.Value = null;
+            var stagedTime = new TimeSpan(10, 30, 0);
+            var stagedDate = new DateTime(2024, 6, 15);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(stagedTime));
+            // Simulate re-render: brand new Filter<T> instance for the same definition.
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => internalFilter.DateValueChanged(stagedDate));
+            dateTimeFilterDefinition.Value.Should().Be(stagedDate.Add(stagedTime));
+
             // test internal filter class for dateonly data type.
             var dateOnlyInput = DateOnly.FromDateTime(DateTime.UtcNow);
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);

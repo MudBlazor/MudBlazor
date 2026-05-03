@@ -695,6 +695,12 @@ namespace MudBlazor
         [Parameter]
         public bool FilterPickerEditable { get; set; }
 
+        // Times entered before a date is picked, keyed by FilterDefinition.Id. Filter<T> is a plain
+        // class instantiated per render of the filter panel, so its own _valueTime field doesn't
+        // survive across renders. Hosting the staging dictionary on the grid (which does survive)
+        // lets a time picked first persist until DateValueChanged combines it with the date.
+        internal Dictionary<Guid, TimeSpan?> _stagedFilterTimes = new();
+
         /// <summary>
         /// The template used to display each filter.
         /// </summary>

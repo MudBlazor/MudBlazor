@@ -47,7 +47,9 @@ namespace MudBlazor
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDateTimeForPicker = _filterDefinition.Value == null ? null : dateTime;
-                _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
+                _valueTime = _filterDefinition.Value == null
+                    ? (_dataGrid._stagedFilterTimes.TryGetValue(_filterDefinition.Id, out var staged) ? staged : null)
+                    : dateTime.TimeOfDay;
             }
             else if (fieldType.IsDateOnly)
             {
@@ -118,6 +120,7 @@ namespace MudBlazor
                 }
 
                 _filterDefinition.Value = date;
+                _dataGrid._stagedFilterTimes.Remove(_filterDefinition.Id);
             }
             else
                 _filterDefinition.Value = null;
@@ -140,6 +143,13 @@ namespace MudBlazor
                 }
 
                 _filterDefinition.Value = date;
+                _dataGrid._stagedFilterTimes.Remove(_filterDefinition.Id);
+            }
+            else
+            {
+                // No date yet — stash the time on the grid so the next Filter<T> re-instantiation
+                // (and the eventual DateValueChanged) can combine them.
+                _dataGrid._stagedFilterTimes[_filterDefinition.Id] = value;
             }
 
             _dataGrid.GroupItems();
