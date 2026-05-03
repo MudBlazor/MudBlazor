@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace MudBlazor.Analyzers;
 
 /// <summary>
-/// Code fix provider for MUD0003: replaces an unsupported TValue on
+/// Code fix provider for MUD0003: replaces an unsupported T on
 /// MudDatePicker / MudDateRangePicker / DateRange with one of the three
 /// supported nullable date types.
 /// </summary>

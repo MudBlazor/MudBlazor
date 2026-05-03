@@ -8,13 +8,13 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for a range of dates.
     /// </summary>
-    /// <typeparam name="TValue">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
-    /// <seealso cref="MudDatePicker{TValue}"/>
-    public partial class MudDateRangePicker<TValue> : MudBaseDatePicker<TValue>
+    /// <typeparam name="T">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
+    /// <seealso cref="MudDatePicker{T}"/>
+    public partial class MudDateRangePicker<T> : MudBaseDatePicker<T>
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
         private DateTime? _firstDate, _secondDate, _minValidDate, _maxValidDate;
-        private DateRange<TValue>? _dateRange;
+        private DateRange<T>? _dateRange;
         private Range<string>? _rangeText;
 
         /// <summary>
@@ -95,14 +95,14 @@ namespace MudBlazor
         /// Occurs when <see cref="DateRange"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<DateRange<TValue>?> DateRangeChanged { get; set; }
+        public EventCallback<DateRange<T>?> DateRangeChanged { get; set; }
 
         /// <summary>
         /// The currently selected date range.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public DateRange<TValue>? DateRange
+        public DateRange<T>? DateRange
         {
             get => _dateRange;
             set => SetDateRangeAsync(value, true).CatchAndLog();
@@ -112,13 +112,13 @@ namespace MudBlazor
         /// Enables capture for disabled dates within the selected date range.
         /// </summary>
         /// <remarks>
-        /// By default, it will always ignore disabled dates. This parameter will take effect when <see cref="MudBaseDatePicker{TValue}.IsDateDisabledFunc"/> is set.
+        /// By default, it will always ignore disabled dates. This parameter will take effect when <see cref="MudBaseDatePicker{T}.IsDateDisabledFunc"/> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
-        protected async Task SetDateRangeAsync(DateRange<TValue>? range, bool updateValue)
+        protected async Task SetDateRangeAsync(DateRange<T>? range, bool updateValue)
         {
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
@@ -256,7 +256,7 @@ namespace MudBlazor
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
-        protected override bool HasValue(TValue? value) => value is not null;
+        protected override bool HasValue(T? value) => value is not null;
 
         protected override bool IsDayDisabled(DateTime date)
         {
@@ -347,14 +347,14 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private DateRange<TValue>? ParseDateRangeValue(string? value)
+        private DateRange<T>? ParseDateRangeValue(string? value)
         {
-            return DateRange<TValue>.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
+            return DateRange<T>.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
-        private DateRange<TValue>? ParseDateRangeValue(string? start, string? end)
+        private DateRange<T>? ParseDateRangeValue(string? start, string? end)
         {
-            return DateRange<TValue>.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
+            return DateRange<T>.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
         }
 
         protected override Task OnPickerClosedAsync()
@@ -496,7 +496,7 @@ namespace MudBlazor
             if (_firstDate == null || _secondDate == null)
                 return;
 
-            await SetDateRangeAsync(new DateRange<TValue>(FromDateTime(_firstDate), FromDateTime(_secondDate)), true);
+            await SetDateRangeAsync(new DateRange<T>(FromDateTime(_firstDate), FromDateTime(_secondDate)), true);
 
             _firstDate = null;
             _secondDate = null;
@@ -572,7 +572,7 @@ namespace MudBlazor
         /// <see cref="NormalizeDate"/>
         /// <param name="range">The date range to normalize</param>
         /// <returns>Normalized date range or null</returns>
-        private DateRange<TValue>? NormalizeDateRange(DateRange<TValue>? range)
+        private DateRange<T>? NormalizeDateRange(DateRange<T>? range)
         {
             if (range is null)
                 return null;
@@ -580,7 +580,7 @@ namespace MudBlazor
             var start = NormalizeDate(ToDateTime(range.Start));
             var end = NormalizeDate(ToDateTime(range.End));
 
-            return new DateRange<TValue>(FromDateTime(start), FromDateTime(end));
+            return new DateRange<T>(FromDateTime(start), FromDateTime(end));
         }
 
     }

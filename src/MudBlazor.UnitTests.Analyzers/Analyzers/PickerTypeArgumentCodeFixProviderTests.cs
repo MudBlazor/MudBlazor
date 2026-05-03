@@ -35,7 +35,7 @@ class C
     MudDatePicker<System.DateTime?> _p;
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", "string");
         var test = new VerifyCS.Test
         {
             TestCode = source,
@@ -65,7 +65,7 @@ class C
     MudDatePicker<System.DateOnly?> _p;
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", "string");
         var test = new VerifyCS.Test
         {
             TestCode = source,
@@ -95,7 +95,7 @@ class C
     MudDatePicker<System.DateTimeOffset?> _p;
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", "string");
         var test = new VerifyCS.Test
         {
             TestCode = source,

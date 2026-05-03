@@ -2,27 +2,27 @@
 
 <MudGrid>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker TValue="DateTime" Label="DateTime" @bind-DateRange="_dateTimeRange" />
+        <MudDateRangePicker T="DateTime" Label="DateTime" @bind-DateRange="_dateTimeRange" />
         <MudText Class="mt-2">@FormatRange(_dateTimeRange?.Start, _dateTimeRange?.End, "yyyy-MM-dd")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker TValue="DateOnly" Label="DateOnly" @bind-DateRange="_dateOnlyRange" />
+        <MudDateRangePicker T="DateOnly" Label="DateOnly" @bind-DateRange="_dateOnlyRange" />
         <MudText Class="mt-2">@FormatRange(_dateOnlyRange?.Start, _dateOnlyRange?.End, "yyyy-MM-dd")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker TValue="DateTimeOffset" Label="DateTimeOffset" @bind-DateRange="_dateTimeOffsetRange" />
+        <MudDateRangePicker T="DateTimeOffset" Label="DateTimeOffset" @bind-DateRange="_dateTimeOffsetRange" />
         <MudText Class="mt-2">@FormatRange(_dateTimeOffsetRange?.Start, _dateTimeOffsetRange?.End, "yyyy-MM-dd zzz")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker TValue="DateTime?" Label="DateTime?" @bind-DateRange="_dateTimeRangeNullable" />
+        <MudDateRangePicker T="DateTime?" Label="DateTime?" @bind-DateRange="_dateTimeRangeNullable" />
         <MudText Class="mt-2">@FormatRange(_dateTimeRangeNullable?.Start, _dateTimeRangeNullable?.End, "yyyy-MM-dd")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker TValue="DateOnly?" Label="DateOnly?" @bind-DateRange="_dateOnlyRangeNullable" />
+        <MudDateRangePicker T="DateOnly?" Label="DateOnly?" @bind-DateRange="_dateOnlyRangeNullable" />
         <MudText Class="mt-2">@FormatRange(_dateOnlyRangeNullable?.Start, _dateOnlyRangeNullable?.End, "yyyy-MM-dd")</MudText>
     </MudItem>
     <MudItem xs="12" md="4">
-        <MudDateRangePicker TValue="DateTimeOffset?" Label="DateTimeOffset?" @bind-DateRange="_dateTimeOffsetRangeNullable" />
+        <MudDateRangePicker T="DateTimeOffset?" Label="DateTimeOffset?" @bind-DateRange="_dateTimeOffsetRangeNullable" />
         <MudText Class="mt-2">@FormatRange(_dateTimeOffsetRangeNullable?.Start, _dateTimeOffsetRangeNullable?.End, "yyyy-MM-dd zzz")</MudText>
     </MudItem>
 </MudGrid>

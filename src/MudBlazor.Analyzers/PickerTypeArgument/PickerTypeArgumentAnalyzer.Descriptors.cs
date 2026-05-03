@@ -9,7 +9,7 @@ namespace MudBlazor.Analyzers;
 public sealed partial class PickerTypeArgumentAnalyzer
 {
     /// <summary>
-    /// MUD0003: Unsupported TValue on MudDatePicker, MudDateRangePicker, or DateRange.
+    /// MUD0003: Unsupported T on MudDatePicker, MudDateRangePicker, or DateRange.
     /// </summary>
     public const string DiagnosticId = "MUD0003";
 
@@ -22,7 +22,7 @@ public sealed partial class PickerTypeArgumentAnalyzer
     private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.MUD0003Description), Resources.ResourceManager, typeof(Resources));
 
     /// <summary>
-    /// Diagnostic descriptor for MUD0003: Unsupported TValue on date picker components.
+    /// Diagnostic descriptor for MUD0003: Unsupported T on date picker components.
     /// </summary>
     public static readonly DiagnosticDescriptor Descriptor = new(
         id: DiagnosticId,

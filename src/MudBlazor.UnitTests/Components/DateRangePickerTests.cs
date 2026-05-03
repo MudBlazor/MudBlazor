@@ -1463,7 +1463,7 @@ namespace MudBlazor.UnitTests.Components
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
         }
 
-        #region Per-TValue smoke tests (DateOnly, DateTimeOffset)
+        #region Per-T smoke tests (DateOnly, DateTimeOffset)
 
         [Test]
         public async Task MudDateRangePicker_DateOnly_RoundTrip()

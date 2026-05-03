@@ -62,7 +62,7 @@ class C
     MudDatePicker<{{|#0:{type}|}}> _p;
 }}
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<TValue>", type);
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", type);
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -77,7 +77,7 @@ class C
     MudDateRangePicker<{|#0:string|}> _p;
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDateRangePicker<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDateRangePicker<T>", "string");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -92,7 +92,7 @@ class C
     DateRange<{|#0:string|}> _r;
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("DateRange<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("DateRange<T>", "string");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -108,7 +108,7 @@ class C
     Type _t = typeof(MudDatePicker<{|#0:string|}>);
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", "string");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 
@@ -123,7 +123,7 @@ class C
     object _o = new MudDatePicker<{|#0:string|}>();
 }
 ";
-        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<TValue>", "string");
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", "string");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 }

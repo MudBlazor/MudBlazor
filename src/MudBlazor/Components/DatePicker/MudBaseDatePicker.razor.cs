@@ -9,48 +9,48 @@ namespace MudBlazor
     /// <summary>
     /// Represents a base class for designing date picker components.
     /// </summary>
-    /// <typeparam name="TValue">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
-    public abstract partial class MudBaseDatePicker<TValue> : MudPicker<TValue>
+    /// <typeparam name="T">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
+    public abstract partial class MudBaseDatePicker<T> : MudPicker<T>
     {
-        protected static readonly Type _underlyingType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        protected static readonly Type _underlyingType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
 
         /// <summary>
-        /// Convert a public-API <typeparamref name="TValue"/> value into a <see cref="DateTime"/> for internal calendar math.
+        /// Convert a public-API <typeparamref name="T"/> value into a <see cref="DateTime"/> for internal calendar math.
         /// </summary>
-        protected static DateTime? ToDateTime(TValue? value)
+        protected static DateTime? ToDateTime(T? value)
         {
             if (value is null) return null;
             if (_underlyingType == typeof(DateTime))       return (DateTime)(object)value;
             if (_underlyingType == typeof(DateOnly))       return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
             if (_underlyingType == typeof(DateTimeOffset)) return ((DateTimeOffset)(object)value).DateTime;
-            throw new InvalidOperationException($"MudBaseDatePicker does not support TValue = {typeof(TValue)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
+            throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
         }
 
         /// <summary>
-        /// Convert a public-API <typeparamref name="TValue"/> limit (<see cref="MinDate"/>/<see cref="MaxDate"/>) into a <see cref="DateTime"/>.
-        /// Treats <c>default(TValue)</c> as "no limit set" so unconstrained-TValue pickers don't apply a bogus year-1 limit when the user leaves the parameter unset.
+        /// Convert a public-API <typeparamref name="T"/> limit (<see cref="MinDate"/>/<see cref="MaxDate"/>) into a <see cref="DateTime"/>.
+        /// Treats <c>default(T)</c> as "no limit set" so unconstrained-T pickers don't apply a bogus year-1 limit when the user leaves the parameter unset.
         /// </summary>
-        protected static DateTime? ToDateTimeLimit(TValue? value)
+        protected static DateTime? ToDateTimeLimit(T? value)
         {
             if (value is null) return null;
-            if (EqualityComparer<TValue?>.Default.Equals(value, default)) return null;
+            if (EqualityComparer<T?>.Default.Equals(value, default)) return null;
             return ToDateTime(value);
         }
 
         /// <summary>
-        /// Convert an internal <see cref="DateTime"/> back to <typeparamref name="TValue"/>.
+        /// Convert an internal <see cref="DateTime"/> back to <typeparamref name="T"/>.
         /// For <see cref="DateTimeOffset"/>, the picker-local offset (<see cref="TimeProvider.GetLocalNow"/>) is used unless a concrete subclass preserves the user's original offset.
         /// </summary>
-        protected TValue? FromDateTime(DateTime? value)
+        protected T? FromDateTime(DateTime? value)
         {
             if (value is null) return default;
-            if (_underlyingType == typeof(DateTime))       return (TValue)(object)value.Value;
-            if (_underlyingType == typeof(DateOnly))       return (TValue)(object)DateOnly.FromDateTime(value.Value);
-            if (_underlyingType == typeof(DateTimeOffset)) return (TValue)(object)new DateTimeOffset(value.Value, TimeProvider.GetLocalNow().Offset);
-            throw new InvalidOperationException($"MudBaseDatePicker does not support TValue = {typeof(TValue)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
+            if (_underlyingType == typeof(DateTime))       return (T)(object)value.Value;
+            if (_underlyingType == typeof(DateOnly))       return (T)(object)DateOnly.FromDateTime(value.Value);
+            if (_underlyingType == typeof(DateTimeOffset)) return (T)(object)new DateTimeOffset(value.Value, TimeProvider.GetLocalNow().Offset);
+            throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
         }
 
         protected MudBaseDatePicker()
@@ -78,14 +78,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public TValue? MaxDate { get; set; }
+        public T? MaxDate { get; set; }
 
         /// <summary>
         /// The minimum selectable date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public TValue? MinDate { get; set; }
+        public T? MinDate { get; set; }
 
         /// <summary>
         /// The initial view to display.
@@ -133,7 +133,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public TValue? PickerMonth
+        public T? PickerMonth
         {
             get => FromDateTime(_picker_month);
             set
@@ -161,7 +161,7 @@ namespace MudBlazor
         /// Occurs when <see cref="PickerMonth"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<TValue?> PickerMonthChanged { get; set; }
+        public EventCallback<T?> PickerMonthChanged { get; set; }
 
         /// <summary>
         /// The delay, in milliseconds, before closing the picker after a value is selected.
@@ -200,7 +200,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public TValue? StartMonth { get; set; }
+        public T? StartMonth { get; set; }
 
         /// <summary>
         /// Shows week numbers at the start of each week.
@@ -242,7 +242,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public Func<TValue, bool> IsDateDisabledFunc { get; set; } = _ => false;
+        public Func<T, bool> IsDateDisabledFunc { get; set; } = _ => false;
 
         /// <summary>
         /// The function which returns CSS classes for a date.
@@ -252,7 +252,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Func<TValue, string>? AdditionalDateClassesFunc { get; set; }
+        public Func<T, string>? AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// The icon for the button that navigates to the previous month or year.
@@ -603,9 +603,9 @@ namespace MudBlazor
         /// <summary>
         /// Shift array and cycle around from the end
         /// </summary>
-        private static T[] Shift<T>(T[] array, int positions)
+        private static TItem[] Shift<TItem>(TItem[] array, int positions)
         {
-            var copy = new T[array.Length];
+            var copy = new TItem[array.Length];
             Array.Copy(array, 0, copy, array.Length - positions, positions);
             Array.Copy(array, positions, copy, 0, array.Length - positions);
             return copy;
@@ -876,9 +876,9 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override IConverter<TValue?, string?> GetDefaultConverter()
+        protected override IConverter<T?, string?> GetDefaultConverter()
         {
-            return new DefaultConverter<TValue?>
+            return new DefaultConverter<T?>
             {
                 Culture = GetCulture,
                 Format = GetFormat

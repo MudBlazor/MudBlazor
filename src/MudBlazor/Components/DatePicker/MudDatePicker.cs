@@ -8,9 +8,9 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for dates.
     /// </summary>
-    /// <typeparam name="TValue">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
-    /// <seealso cref="MudDateRangePicker{TValue}"/>
-    public class MudDatePicker<TValue> : MudBaseDatePicker<TValue>
+    /// <typeparam name="T">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
+    /// <seealso cref="MudDateRangePicker{T}"/>
+    public class MudDatePicker<T> : MudBaseDatePicker<T>
     {
         private DateTime? _selectedDate;
 
@@ -18,14 +18,14 @@ namespace MudBlazor
         /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<TValue> DateChanged { get; set; }
+        public EventCallback<T> DateChanged { get; set; }
 
         /// <summary>
         /// The currently selected date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public TValue? Date
+        public T? Date
         {
             get => _value;
             set => SetDateAsync(value, true).CatchAndLog();
@@ -34,10 +34,10 @@ namespace MudBlazor
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
         private const int DebounceTimeoutMs = 100;
 
-        protected Task SetDateAsync(TValue? date, bool updateValue)
+        protected Task SetDateAsync(T? date, bool updateValue)
             => SetDateAsync(date, updateValue, false);
 
-        protected async Task SetDateAsync(TValue? date, bool updateValue, bool forceUpdate)
+        protected async Task SetDateAsync(T? date, bool updateValue, bool forceUpdate)
         {
             // DateTime.Kind preservation only matters when the underlying type is DateTime.
             if (_underlyingType == typeof(DateTime) && _value is not null && date is not null)
@@ -57,7 +57,7 @@ namespace MudBlazor
              * debounces the value to the same value in a short time frame is ignored. The debounce is ignored if
              * forceUpdate is true
              */
-            if (EqualityComparer<TValue?>.Default.Equals(_value, date) && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs && !forceUpdate)
+            if (EqualityComparer<T?>.Default.Equals(_value, date) && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs && !forceUpdate)
             {
                 return;
             }
@@ -67,7 +67,7 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (!EqualityComparer<TValue?>.Default.Equals(_value, date) || (date is null && Text != null))
+            if (!EqualityComparer<T?>.Default.Equals(_value, date) || (date is null && Text != null))
             {
                 Touched = true;
 
@@ -608,7 +608,7 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the defined date.
         /// </summary>
-        public async Task GoToDate(TValue date, bool submitDate = true)
+        public async Task GoToDate(T date, bool submitDate = true)
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;

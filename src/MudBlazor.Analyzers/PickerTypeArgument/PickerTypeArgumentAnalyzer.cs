@@ -9,8 +9,8 @@ using Microsoft.CodeAnalysis.CSharp;
 namespace MudBlazor.Analyzers;
 
 /// <summary>
-/// Analyzer that enforces a whitelisted TValue on <c>MudDatePicker&lt;TValue&gt;</c>,
-/// <c>MudDateRangePicker&lt;TValue&gt;</c>, and <c>DateRange&lt;TValue&gt;</c>.
+/// Analyzer that enforces a whitelisted T on <c>MudDatePicker&lt;T&gt;</c>,
+/// <c>MudDateRangePicker&lt;T&gt;</c>, and <c>DateRange&lt;T&gt;</c>.
 /// Permitted: <c>DateTime</c>, <c>DateOnly</c>, <c>DateTimeOffset</c>, and their nullable variants.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -111,8 +111,8 @@ public sealed partial class PickerTypeArgumentAnalyzer : DiagnosticAnalyzer
             var typeArgument = typeSymbol.TypeArguments[0];
 
             // Skip when the type argument is itself an open type parameter
-            // (e.g. the picker's own class declaration `MudDatePicker<TValue> : MudBaseDatePicker<TValue>`,
-            // `seealso cref="MudDatePicker{TValue}"`, or any other place where TValue isn't a concrete type yet).
+            // (e.g. the picker's own class declaration `MudDatePicker<T> : MudBaseDatePicker<T>`,
+            // `seealso cref="MudDatePicker{T}"`, or any other place where T isn't a concrete type yet).
             // The diagnostic only fires for closed generics.
             if (typeArgument is ITypeParameterSymbol)
             {
@@ -124,7 +124,7 @@ public sealed partial class PickerTypeArgumentAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
-            // Build a friendly type name for the message — e.g. "MudDatePicker<TValue>".
+            // Build a friendly type name for the message — e.g. "MudDatePicker<T>".
             var componentName = typeSymbol.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
             // Report at the type-argument's syntax location for a tight IDE squiggle.

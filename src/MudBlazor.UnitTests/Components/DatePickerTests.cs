@@ -2070,7 +2070,7 @@ namespace MudBlazor.UnitTests.Components
             return comp;
         }
 
-        #region Per-TValue smoke tests (DateOnly, DateTimeOffset)
+        #region Per-T smoke tests (DateOnly, DateTimeOffset)
 
         [Test]
         public async Task MudDatePicker_DateOnly_RoundTrip()
@@ -2124,6 +2124,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, target));
 
             captured.Should().Be(target);
+        }
+
+        [Test]
+        public async Task MudDatePicker_NonNullableT_DefaultMinMax_DoesNotDisableAllDays()
+        {
+            // Regression: when T is a non-nullable value type (e.g. DateTime, DateOnly),
+            // unset MinDate/MaxDate equal default(T) (year 1). Without ToDateTimeLimit,
+            // every calendar day compares > MaxDate and renders disabled.
+            var comp = Context.Render<MudDatePicker<DateOnly>>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static));
+
+            var dayButtons = comp.FindAll("button.mud-picker-calendar-day").ToList();
+            dayButtons.Should().NotBeEmpty();
+            dayButtons.Any(b => !b.HasAttribute("disabled")).Should().BeTrue(
+                "at least one day must be selectable when no MinDate/MaxDate is set");
         }
 
         #endregion
