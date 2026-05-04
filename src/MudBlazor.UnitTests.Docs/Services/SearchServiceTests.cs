@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AwesomeAssertions;
@@ -16,9 +15,6 @@ public sealed class SearchServiceTests
 {
     private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService());
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Exact title – the full component name typed verbatim
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("dialog", "components/dialog")]
     [TestCase("badge", "components/badge")]
     [TestCase("avatar", "components/avatar")]
@@ -48,9 +44,6 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Title – typos, partials, and out-of-order words
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("data gri", "components/datagrid")]           // partial two-word
     [TestCase("muddatagrid", "components/datagrid")]        // component-name prefix
     [TestCase("snakbar", "components/snackbar")]            // missing 'c'
@@ -84,9 +77,6 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Subtitle – words or phrases found in a component's description
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("filter", "components/table")]                // partial word in subtitle
     [TestCase("filterble", "components/table")]             // typo in subtitle word
     [TestCase("templets", "getting-started/wireframes")]    // typo in subtitle word
@@ -116,10 +106,6 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Weird inputs – emojis, Unicode, junk, XSS-style strings, long inputs, etc.
-    // All of these must not throw and must return an empty result set (no match).
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase(" ")]                                      // single space
     [TestCase("   ")]                                    // multiple spaces
     [TestCase("\t")]                                     // tab character
@@ -150,10 +136,6 @@ public sealed class SearchServiceTests
         results.Should().BeEmpty();
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Weird inputs that still contain a recognisable component name.
-    // The service should return a match despite the surrounding noise.
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("BUTTON", "components/button")]                  // all-caps
     [TestCase("Button", "components/button")]                  // title-case
     [TestCase("  button  ", "components/button")]              // leading/trailing spaces
@@ -173,9 +155,6 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Edge cases – empty, null, and whitespace-only queries
-    // ──────────────────────────────────────────────────────────────────────────
     [Test]
     public async Task Search_ReturnsNoResultsForEmptyString()
     {
@@ -196,34 +175,34 @@ public sealed class SearchServiceTests
         results.Should().BeEmpty();
     }
 
-    [Test]
-    public async Task Search_NeverThrowsForAnyInput()
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("\0")]
+    [TestCase("\u0000\uFFFF")]
+    [TestCase("😀😁😂🤣😃😄😅😆😉😊")]
+    [TestCase("\u202E reversed")]       // Right-to-Left Override
+    [TestCase("\uFEFF button")]         // BOM prefix
+    [TestCase("\u200B button")]         // zero-width space
+    [TestCase("button\u0000dialog")]    // embedded null
+    [TestCase("café")]                  // composed accent
+    [TestCase("cafe\u0301")]            // decomposed accent (combining ´)
+    public async Task Search_NeverThrowsForAnyInput(string input)
     {
         var service = CreateApiLinkService();
 
-        // Samples covering emoji, surrogates, null char, overlong, control chars, RLO.
-        var adversarialInputs = new List<string>
-        {
-            (string)null,
-            string.Empty,
-            " ",
-            "\0",
-            "\u0000\uFFFF",
-            new string('a', 10_000),
-            "😀😁😂🤣😃😄😅😆😉😊",
-            "\u202E reversed",                          // Right-to-Left Override
-            "\uFEFF button",                            // BOM prefix
-            "\u200B button",                            // zero-width space
-            "button\u0000dialog",                       // embedded null
-            "café",                                     // composed accent
-            "cafe\u0301",                               // decomposed accent (combining ´)
-        };
+        var act = async () => await service.Search(input);
 
-        foreach (var input in adversarialInputs)
-        {
-            var act = async () => await service.Search(input);
-            await act.Should().NotThrowAsync();
-        }
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task Search_NeverThrowsForOverlongInput()
+    {
+        var service = CreateApiLinkService();
+
+        var act = async () => await service.Search(new string('a', 10_000));
+
+        await act.Should().NotThrowAsync();
     }
 }
-
