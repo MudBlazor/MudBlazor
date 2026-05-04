@@ -255,7 +255,7 @@ namespace MudBlazor.Docs.Services
         private static void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
         {
             if (!string.IsNullOrWhiteSpace(keyword))
-                entry.Keywords.Add(keyword.ToLowerInvariant());
+                entry.Keywords.Add(keyword);
         }
 
         /// <inheritdoc />

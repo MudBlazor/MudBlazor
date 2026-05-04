@@ -17,7 +17,7 @@ public class ApiLinkServiceEntry
     public string? ComponentName => ComponentType?.Name.Replace("`1", "<T>");
 
     /// <summary>
-    /// Lower-cased keywords that the search index uses to find this entry.
+    /// Keywords that the search index uses to find this entry.
     /// </summary>
     internal List<string> Keywords { get; } = [];
 

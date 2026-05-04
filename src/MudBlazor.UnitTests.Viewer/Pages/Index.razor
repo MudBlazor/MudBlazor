@@ -447,7 +447,7 @@
             token.ThrowIfCancellationRequested();
 
             const int defaultLimit = 20;
-            var results = SearchService.Search(_entries, e => e.Name, e => e.Category, query);
+            var results = SearchService.Search(_entries, e => new[] { e.Name, e.Category }, query);
             _filteredEntries = _showAllResults ? [.. results] : [.. results.Take(defaultLimit)];
             _remainingResultsCount = _showAllResults ? 0 : Math.Max(0, results.Count - _filteredEntries.Length);
 

@@ -107,10 +107,10 @@ public sealed class SearchServiceTests
     [TestCase("autocomplete", "Autocomplete")]
     public void Search_ReturnsTopMatch_ForExactQuery(string query, string expected)
     {
-        var results = Service.Search(SyntheticIndex, query);
+        var results = Service.Search(SyntheticIndex, e => [e.Key], query);
 
         results.Should().NotBeEmpty();
-        results.First().Should().Be(expected);
+        results.First().Value.Should().Be(expected);
     }
 
     [TestCase("dialoq")]    // typo
@@ -118,7 +118,7 @@ public sealed class SearchServiceTests
     [TestCase("autoc")]     // prefix
     public void Search_ReturnsMatch_ForTypoedOrPartialQuery(string query)
     {
-        var results = Service.Search(SyntheticIndex, query);
+        var results = Service.Search(SyntheticIndex, e => [e.Key], query);
 
         results.Should().NotBeEmpty();
     }
@@ -127,7 +127,7 @@ public sealed class SearchServiceTests
     public void Search_ReturnsEmpty_ForQueryTooDistantFromAnyKeyword()
     {
         // "btn" is three edits away from "button" so it should not match
-        var results = Service.Search(SyntheticIndex, "btn");
+        var results = Service.Search(SyntheticIndex, e => [e.Key], "btn");
 
         results.Should().BeEmpty();
     }
@@ -159,11 +159,10 @@ public sealed class SearchServiceTests
     [TestCase("cafe\u0301")]       // decomposed accent (combining ´) — no component match
     public void Search_NeverThrowsAndReturnsEmpty_ForWeirdInput(string input)
     {
-        IReadOnlyList<string> results;
-        var act = () => results = Service.Search(SyntheticIndex, input);
+        var act = () => Service.Search(SyntheticIndex, e => [e.Key], input);
 
         act.Should().NotThrow();
-        Service.Search(SyntheticIndex, input).Should().BeEmpty();
+        Service.Search(SyntheticIndex, e => [e.Key], input).Should().BeEmpty();
     }
 
     // Inputs that contain real words (like "button") prefixed by Unicode noise;
@@ -174,7 +173,7 @@ public sealed class SearchServiceTests
     [TestCase("\u0000\uFFFF")]       // null + high-code-point character
     public void Search_NeverThrows_ForUnicodeNoisyInput(string input)
     {
-        var act = () => Service.Search(SyntheticIndex, input);
+        var act = () => Service.Search(SyntheticIndex, e => [e.Key], input);
 
         act.Should().NotThrow();
     }
@@ -184,10 +183,10 @@ public sealed class SearchServiceTests
     {
         var input = new string('a', 10_000);
 
-        var act = () => Service.Search(SyntheticIndex, input);
+        var act = () => Service.Search(SyntheticIndex, e => [e.Key], input);
 
         act.Should().NotThrow();
-        Service.Search(SyntheticIndex, input).Should().BeEmpty();
+        Service.Search(SyntheticIndex, e => [e.Key], input).Should().BeEmpty();
     }
 
     [TestCase("BUTTON")]
@@ -200,7 +199,7 @@ public sealed class SearchServiceTests
     [TestCase("Tooltip")]
     public void Search_ReturnsResults_RegardlessOfCasing(string query)
     {
-        var results = Service.Search(SyntheticIndex, query);
+        var results = Service.Search(SyntheticIndex, e => [e.Key], query);
 
         results.Should().NotBeEmpty();
     }

@@ -31,43 +31,6 @@ internal sealed class SearchService : ISearchService
     internal const int MinScore = 65;
 
     /// <inheritdoc />
-    public int GetScore(string target, string query) =>
-        ComputeScore(target.ToLowerInvariant().AsSpan(), query.ToLowerInvariant().AsSpan());
-
-    /// <summary>
-    /// Searches a keyword index and returns matching items ordered by relevance.
-    /// Multiple keywords can map to the same item; the highest score per item wins.
-    /// </summary>
-    /// <remarks>
-    /// Keywords in <paramref name="index"/> must already be lower-cased.
-    /// </remarks>
-    public IReadOnlyList<T> Search<T>(IEnumerable<KeyValuePair<string, T>> index, string query) where T : notnull
-    {
-        if (string.IsNullOrWhiteSpace(query))
-            return [];
-
-        var q = query.ToLowerInvariant();
-        var scores = new Dictionary<T, int>();
-
-        foreach (var (keyword, item) in index)
-        {
-            var score = ComputeScore(keyword.AsSpan(), q.AsSpan());
-            if (score < MinScore)
-                continue;
-
-            if (!scores.TryGetValue(item, out var best) || score > best)
-                scores[item] = score;
-        }
-
-        return [.. scores.OrderByDescending(x => x.Value).Select(x => x.Key)];
-    }
-
-    /// <summary>
-    /// Searches a collection of items by iterating each item's pre-lowercased keyword list,
-    /// returning matching items ordered by relevance.
-    /// Multiple keywords per item are supported; the highest score per item wins.
-    /// </summary>
-    /// <remarks>Keywords returned by <paramref name="getKeywords"/> must already be lower-cased.</remarks>
     public IReadOnlyList<T> Search<T>(IEnumerable<T> items, Func<T, IEnumerable<string>> getKeywords, string query) where T : notnull
     {
         if (string.IsNullOrWhiteSpace(query))
@@ -80,7 +43,10 @@ internal sealed class SearchService : ISearchService
         {
             foreach (var keyword in getKeywords(item))
             {
-                var score = ComputeScore(keyword.AsSpan(), q.AsSpan());
+                if (string.IsNullOrWhiteSpace(keyword))
+                    continue;
+
+                var score = ComputeScore(keyword.ToLowerInvariant().AsSpan(), q.AsSpan());
                 if (score < MinScore)
                     continue;
 
@@ -90,41 +56,6 @@ internal sealed class SearchService : ISearchService
         }
 
         return [.. scores.OrderByDescending(x => x.Value).Select(x => x.Key)];
-    }
-
-    /// <summary>
-    /// Searches a collection by primary name and optional secondary field, returning
-    /// matching items ordered by relevance then by name.
-    /// </summary>
-    public IReadOnlyList<T> Search<T>(
-        IEnumerable<T> items, Func<T, string> getName, Func<T, string?> getSecondary, string query)
-    {
-        if (string.IsNullOrWhiteSpace(query))
-            return [];
-
-        return [.. items
-            .Select(item => (item, score: ComputeScore(getName(item), getSecondary(item), query)))
-            .Where(x => x.score >= MinScore)
-            .OrderByDescending(x => x.score)
-            .ThenBy(x => getName(x.item), StringComparer.OrdinalIgnoreCase)
-            .Select(x => x.item)];
-    }
-
-    /// <summary>
-    /// Scores a search entry that has both a primary target (e.g. name) and an optional
-    /// secondary target (e.g. category). The secondary signal can only boost the primary
-    /// score; it never penalises it.
-    /// </summary>
-    internal static int ComputeScore(string primaryTarget, string? secondaryTarget, string query)
-    {
-        var q = query.ToLowerInvariant().AsSpan();
-        var nameScore = ComputeScore(primaryTarget.ToLowerInvariant().AsSpan(), q);
-        var categoryScore = string.IsNullOrWhiteSpace(secondaryTarget)
-            ? 0
-            : ComputeScore(secondaryTarget.ToLowerInvariant().AsSpan(), q);
-
-        // Category can boost but never penalise the name score.
-        return nameScore + (int)Math.Round(Math.Max(0, categoryScore - nameScore) * 0.07);
     }
 
     /// <summary>
