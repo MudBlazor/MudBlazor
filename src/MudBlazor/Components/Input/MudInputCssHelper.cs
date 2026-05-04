@@ -41,6 +41,7 @@ internal static class MudInputCssHelper
             .AddClass($"mud-input-root-{baseInput.Variant.ToStringFast(true)}")
             .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToStringFast(true)}", baseInput.Adornment != Adornment.None)
             .AddClass($"mud-input-root-margin-{baseInput.Margin.ToStringFast(true)}", () => baseInput.Margin != Margin.None)
+            .AddClass($"mud-input-align-{baseInput.TextAlign.ToStringFast(true)}", baseInput.TextAlign != Align.Inherit)
             .AddClass(baseInput.Class)
             .Build();
 
