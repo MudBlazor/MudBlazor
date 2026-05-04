@@ -9,8 +9,7 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly List<KeyValuePair<string, ApiLinkServiceEntry>> _entries = [];
-        private readonly Dictionary<string, ApiLinkServiceEntry> _entryByLink = [];
+        private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
                 new ApiLinkServiceEntry
@@ -220,16 +219,13 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
 
             // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_searchService.Search(_entries, text));
+            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_searchService.Search(_entries.Values, e => e.Keywords, text));
         }
 
         /// <inheritdoc />
         public IReadOnlyCollection<ApiLinkServiceEntry> GetAllEntries()
         {
-            return _entries.Select(kvp => kvp.Value)
-                .Distinct()
-                .OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            return [.. _entries.Values.OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)];
         }
 
         /// <inheritdoc />
@@ -243,20 +239,21 @@ namespace MudBlazor.Docs.Services
         /// </summary>
         private void AddEntry(ApiLinkServiceEntry entry)
         {
-            AddKeyword(entry, entry.Title);
-            AddKeyword(entry, entry.SubTitle);
-            AddKeyword(entry, entry.ComponentName);
-            AddKeyword(entry, entry.Link);
-            if (!string.IsNullOrWhiteSpace(entry.Link))
-                _entryByLink[entry.Link.ToLowerInvariant()] = entry;
+            var key = entry.Link.ToLowerInvariant();
+            if (!_entries.ContainsKey(key))
+                _entries[key] = entry;
+
+            var stored = _entries[key];
+            AddKeyword(stored, entry.Title);
+            AddKeyword(stored, entry.SubTitle);
+            AddKeyword(stored, entry.ComponentName);
+            AddKeyword(stored, entry.Link);
         }
 
-        private void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
+        private static void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
         {
             if (!string.IsNullOrWhiteSpace(keyword))
-            {
-                _entries.Add(new KeyValuePair<string, ApiLinkServiceEntry>(keyword.ToLowerInvariant(), entry));
-            }
+                entry.Keywords.Add(keyword.ToLowerInvariant());
         }
 
         /// <inheritdoc />
@@ -332,10 +329,8 @@ namespace MudBlazor.Docs.Services
 
         private void RegisterAliasKeyword(string link, string? alias)
         {
-            if (_entryByLink.TryGetValue(link.ToLowerInvariant(), out var entry))
-            {
+            if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
                 AddKeyword(entry, alias);
-            }
         }
 
         /// <summary>

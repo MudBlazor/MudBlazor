@@ -26,6 +26,16 @@ internal interface ISearchService
     IReadOnlyList<T> Search<T>(IEnumerable<KeyValuePair<string, T>> index, string query) where T : notnull;
 
     /// <summary>
+    /// Searches a collection of items by iterating each item's pre-lowercased keyword list,
+    /// returning matching items ordered by relevance.
+    /// Multiple keywords per item are supported; the highest score per item wins.
+    /// </summary>
+    /// <remarks>
+    /// Keywords returned by <paramref name="getKeywords"/> must already be lower-cased.
+    /// </remarks>
+    IReadOnlyList<T> Search<T>(IEnumerable<T> items, Func<T, IEnumerable<string>> getKeywords, string query) where T : notnull;
+
+    /// <summary>
     /// Searches a collection by primary name and optional secondary field, returning
     /// matching items ordered by relevance then by name.
     /// </summary>

@@ -63,6 +63,36 @@ internal sealed class SearchService : ISearchService
     }
 
     /// <summary>
+    /// Searches a collection of items by iterating each item's pre-lowercased keyword list,
+    /// returning matching items ordered by relevance.
+    /// Multiple keywords per item are supported; the highest score per item wins.
+    /// </summary>
+    /// <remarks>Keywords returned by <paramref name="getKeywords"/> must already be lower-cased.</remarks>
+    public IReadOnlyList<T> Search<T>(IEnumerable<T> items, Func<T, IEnumerable<string>> getKeywords, string query) where T : notnull
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return [];
+
+        var q = query.ToLowerInvariant();
+        var scores = new Dictionary<T, int>();
+
+        foreach (var item in items)
+        {
+            foreach (var keyword in getKeywords(item))
+            {
+                var score = ComputeScore(keyword.AsSpan(), q.AsSpan());
+                if (score < MinScore)
+                    continue;
+
+                if (!scores.TryGetValue(item, out var best) || score > best)
+                    scores[item] = score;
+            }
+        }
+
+        return [.. scores.OrderByDescending(x => x.Value).Select(x => x.Key)];
+    }
+
+    /// <summary>
     /// Searches a collection by primary name and optional secondary field, returning
     /// matching items ordered by relevance then by name.
     /// </summary>
