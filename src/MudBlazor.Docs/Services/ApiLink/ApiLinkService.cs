@@ -9,7 +9,7 @@ namespace MudBlazor.Docs.Services
 #nullable enable
     public class ApiLinkService : IApiLinkService
     {
-        private readonly Dictionary<string, ApiLinkServiceEntry> _entries = [];
+        private readonly List<KeyValuePair<string, ApiLinkServiceEntry>> _entries = [];
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
                 new ApiLinkServiceEntry
@@ -222,7 +222,7 @@ namespace MudBlazor.Docs.Services
         /// <inheritdoc />
         public IReadOnlyCollection<ApiLinkServiceEntry> GetAllEntries()
         {
-            return _entries.Values
+            return _entries.Select(kvp => kvp.Value)
                 .Distinct()
                 .OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -249,7 +249,7 @@ namespace MudBlazor.Docs.Services
         {
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                _entries[keyword.ToLowerInvariant()] = entry;
+                _entries.Add(new KeyValuePair<string, ApiLinkServiceEntry>(keyword.ToLowerInvariant(), entry));
             }
         }
 
@@ -326,7 +326,9 @@ namespace MudBlazor.Docs.Services
 
         private void RegisterAliasKeyword(string link, string? alias)
         {
-            if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
+            var key = link.ToLowerInvariant();
+            var entry = _entries.FirstOrDefault(kvp => kvp.Key == key).Value;
+            if (entry is not null)
             {
                 AddKeyword(entry, alias);
             }

@@ -177,6 +177,65 @@ public sealed class ApiLinkServiceTests
     }
 
     // ──────────────────────────────────────────────────────────────────────────
+    // Group subtitle – items whose title does not contain the query but whose
+    // group subtitle does; all members of the group should appear in results
+    // ──────────────────────────────────────────────────────────────────────────
+    [Test]
+    public async Task Search_ReturnsGroupMembersMatchedByGroupSubtitle()
+    {
+        var service = CreateApiLinkService();
+
+        // "flex" is a clear partial match for the "Flexbox" group subtitle.
+        // Items like Order, Gap, and Align Content don't mention "flex" in
+        // their own titles, but they all belong to the Flexbox group and should
+        // therefore appear in search results.
+        var results = await service.Search("flex");
+        var links = results.Select(r => r.Link).ToList();
+
+        links.Should().Contain("utilities/order");
+        links.Should().Contain("utilities/gap");
+        links.Should().Contain("utilities/align-content");
+        links.Should().Contain("utilities/align-items");
+        links.Should().Contain("utilities/align-self");
+        links.Should().Contain("utilities/justify-content");
+    }
+
+    [Test]
+    public async Task Search_ReturnsGroupMembersMatchedByGroupSubtitleTypo()
+    {
+        var service = CreateApiLinkService();
+
+        // A small typo in the group name ("flexx" vs "flexbox") — the extra x
+        // still has a reasonable edit distance and the prefix "flex" should still
+        // surface the Flexbox group members.
+        var results = await service.Search("flexx");
+        var links = results.Select(r => r.Link).ToList();
+
+        links.Should().Contain("utilities/order");
+        links.Should().Contain("utilities/gap");
+    }
+
+    [Test]
+    public async Task Search_ReturnsGroupMembersMatchedByFullGroupSubtitle()
+    {
+        var service = CreateApiLinkService();
+
+        // Typing the full group name "flexbox" should return all members.
+        var results = await service.Search("flexbox");
+        var links = results.Select(r => r.Link).ToList();
+
+        links.Should().Contain("utilities/order");
+        links.Should().Contain("utilities/gap");
+        links.Should().Contain("utilities/align-content");
+        links.Should().Contain("utilities/align-items");
+        links.Should().Contain("utilities/align-self");
+        links.Should().Contain("utilities/justify-content");
+        links.Should().Contain("utilities/enable-flex");
+        links.Should().Contain("utilities/flex-direction");
+        links.Should().Contain("utilities/flex-wrap");
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
     // Guard – empty/null/whitespace queries always return no results
     // ──────────────────────────────────────────────────────────────────────────
     [Test]
