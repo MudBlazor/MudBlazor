@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AwesomeAssertions;
@@ -116,31 +117,54 @@ public sealed class SearchServiceTests
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // Ambiguous – short prefixes or single words that compete with similar names
+    // Weird inputs – emojis, Unicode, junk, XSS-style strings, long inputs, etc.
+    // All of these must not throw and must return an empty result set (no match).
     // ──────────────────────────────────────────────────────────────────────────
-    [TestCase("table", "components/table")]                     // Table vs SimpleTable vs DataGrid
-    [TestCase("pagination", "components/pagination")]           // Pagination vs AppBar (has prev/next)
-    [TestCase("butt", "components/button")]                     // Button vs ButtonGroup vs IconButton
-    [TestCase("select", "components/select")]                   // Select vs Autocomplete
-    [TestCase("simple table", "components/simpletable")]        // SimpleTable vs Table
-    [TestCase("button g", "components/buttongroup")]            // ButtonGroup vs Button
-    [TestCase("icon b", "components/iconbutton")]               // IconButton vs Icons
-    [TestCase("nav", "components/navmenu")]                     // NavMenu vs NavLink vs NavGroup
-    [TestCase("data g", "components/datagrid")]                 // DataGrid vs Grid
-    [TestCase("date", "components/datepicker")]                 // DatePicker vs DateRangePicker
-    [TestCase("color p", "components/colorpicker")]             // ColorPicker vs Color (features)
-    [TestCase("time p", "components/timepicker")]               // TimePicker vs Timeline vs TimeSeries
-    [TestCase("autoc", "components/autocomplete")]              // Autocomplete vs Select
-    [TestCase("checkb", "components/checkbox")]                 // Checkbox vs Check...
-    [TestCase("snack", "components/snackbar")]                  // Snackbar vs Alert
-    [TestCase("button", "components/button")]                   // Button vs ButtonGroup vs IconButton vs FAB
-    [TestCase("icon", "components/icons")]                      // Icons vs Icon Button vs Toggle Icon Button
-    [TestCase("toggle", "components/togglegroup")]              // Toggle Group vs Toggle Icon Button
-    [TestCase("chip", "components/chips")]                      // Chips vs Chip Set
-    [TestCase("date range", "components/daterangepicker")]      // DateRangePicker vs DatePicker
-    [TestCase("bar chart", "components/barchart")]              // BarChart vs StackedBarChart
-    [TestCase("grid", "components/grid")]                       // Grid (layout) vs DataGrid
-    public async Task Search_ReturnsTopResultForAmbiguousMatches(string search, string expectedLink)
+    [TestCase(" ")]                                      // single space
+    [TestCase("   ")]                                    // multiple spaces
+    [TestCase("\t")]                                     // tab character
+    [TestCase("\n")]                                     // newline
+    [TestCase("\r\n")]                                   // Windows newline
+    [TestCase("🎨")]                                     // emoji
+    [TestCase("🔘 🎨 🖼️")]                              // multiple emojis
+    [TestCase("中文")]                                   // Chinese characters
+    [TestCase("العربية")]                               // Arabic script
+    [TestCase("日本語")]                                 // Japanese
+    [TestCase("한국어")]                                 // Korean
+    [TestCase("Ωμέγα")]                                  // Greek
+    [TestCase("zzzzzzzzzzzzzzz")]                        // long nonsense
+    [TestCase("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")] // 99 x's
+    [TestCase("<script>alert('xss')</script>")]          // XSS attempt
+    [TestCase("'; DROP TABLE components; --")]           // SQL injection style
+    [TestCase("{}[]()!@#$%^&*")]                         // punctuation barrage
+    [TestCase("\0\0\0")]                                 // null characters
+    [TestCase("123456789")]                              // digits only
+    [TestCase("aaaaaaaaa")]                              // repeated letter (no match)
+    [TestCase("qqqqqq")]                                 // another repeated letter
+    public async Task Search_ReturnsNoResultsForIrrelevantOrWeirdInput(string search)
+    {
+        var service = CreateApiLinkService();
+
+        var results = await service.Search(search);
+
+        results.Should().BeEmpty();
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Weird inputs that still contain a recognisable component name.
+    // The service should return a match despite the surrounding noise.
+    // ──────────────────────────────────────────────────────────────────────────
+    [TestCase("BUTTON", "components/button")]                  // all-caps
+    [TestCase("Button", "components/button")]                  // title-case
+    [TestCase("  button  ", "components/button")]              // leading/trailing spaces
+    [TestCase("button!", "components/button")]                 // trailing punctuation
+    [TestCase("button 🎨", "components/button")]               // emoji suffix
+    [TestCase("bütton", "components/button")]                  // accented character (ü → u edit)
+    [TestCase("DIALOG", "components/dialog")]                  // all-caps multi-char
+    [TestCase("SeLeCt", "components/select")]                  // mixed case
+    [TestCase("TOOLTIP", "components/tooltip")]                // all-caps
+    [TestCase("  slider  ", "components/slider")]              // padded with spaces
+    public async Task Search_ReturnsMatchDespiteNoisyInput(string search, string expectedLink)
     {
         var service = CreateApiLinkService();
 
@@ -148,4 +172,58 @@ public sealed class SearchServiceTests
 
         results.First().Link.Should().Be(expectedLink);
     }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Edge cases – empty, null, and whitespace-only queries
+    // ──────────────────────────────────────────────────────────────────────────
+    [Test]
+    public async Task Search_ReturnsNoResultsForEmptyString()
+    {
+        var service = CreateApiLinkService();
+
+        var results = await service.Search(string.Empty);
+
+        results.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Search_ReturnsNoResultsForNullString()
+    {
+        var service = CreateApiLinkService();
+
+        var results = await service.Search((string)null);
+
+        results.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task Search_NeverThrowsForAnyInput()
+    {
+        var service = CreateApiLinkService();
+
+        // Samples covering emoji, surrogates, null char, overlong, control chars, RLO.
+        var adversarialInputs = new List<string>
+        {
+            (string)null,
+            string.Empty,
+            " ",
+            "\0",
+            "\u0000\uFFFF",
+            new string('a', 10_000),
+            "😀😁😂🤣😃😄😅😆😉😊",
+            "\u202E reversed",                          // Right-to-Left Override
+            "\uFEFF button",                            // BOM prefix
+            "\u200B button",                            // zero-width space
+            "button\u0000dialog",                       // embedded null
+            "café",                                     // composed accent
+            "cafe\u0301",                               // decomposed accent (combining ´)
+        };
+
+        foreach (var input in adversarialInputs)
+        {
+            var act = async () => await service.Search(input);
+            await act.Should().NotThrowAsync();
+        }
+    }
 }
+
