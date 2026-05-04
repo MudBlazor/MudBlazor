@@ -340,6 +340,13 @@ namespace MudBlazor
         public bool ShrinkLabel { get; set; }
 
         /// <summary>
+        /// Sets horizontal text alignment within the input.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Align TextAlign { get; set; }
+
+        /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         [Parameter]
