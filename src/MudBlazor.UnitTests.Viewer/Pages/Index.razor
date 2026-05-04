@@ -442,8 +442,8 @@
                 return;
             }
 
-            const int threshold = 35;
             const int defaultLimit = 20;
+            var threshold = SearchService.MinScore;
             var showAllResults = _showAllResults;
 
             var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
@@ -454,7 +454,7 @@
             {
                 token.ThrowIfCancellationRequested();
                 var entry = _entries[i];
-                var score = GetSearchScore(query, entry);
+                var score = SearchService.ComputeScore(entry.Name, entry.Category, query);
                 if (score < threshold)
                 {
                     if (i % 25 == 0)
@@ -542,16 +542,6 @@
     {
         _showAllResults = true;
         StartSearch();
-    }
-
-    private int GetSearchScore(string query, TestEntry entry)
-    {
-        var q = query.ToLowerInvariant();
-        // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
-        var nameScore = SearchService.ComputeScore(entry.Name.ToLowerInvariant(), q);
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : SearchService.ComputeScore(entry.Category.ToLowerInvariant(), q);
-
-        return (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
     }
 
     private string GetEntryClass(TestEntry entry)

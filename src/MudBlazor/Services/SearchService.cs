@@ -23,9 +23,31 @@ internal sealed class SearchService : ISearchService
     private const int MaxQueryTokens = 16;
     private const int MaxTargetTokens = 64;
 
+    /// <summary>
+    /// The minimum score (0–100) for a result to be considered relevant.
+    /// </summary>
+    internal const int MinScore = 65;
+
     /// <inheritdoc />
     public int GetScore(string target, string query) =>
         ComputeScore(target.ToLowerInvariant().AsSpan(), query.ToLowerInvariant().AsSpan());
+
+    /// <summary>
+    /// Scores a search entry that has both a primary target (e.g. name) and an optional
+    /// secondary target (e.g. category). The secondary signal can only boost the primary
+    /// score; it never penalises it.
+    /// </summary>
+    internal static int ComputeScore(string primaryTarget, string? secondaryTarget, string query)
+    {
+        var q = query.ToLowerInvariant().AsSpan();
+        var nameScore = ComputeScore(primaryTarget.ToLowerInvariant().AsSpan(), q);
+        var categoryScore = string.IsNullOrWhiteSpace(secondaryTarget)
+            ? 0
+            : ComputeScore(secondaryTarget.ToLowerInvariant().AsSpan(), q);
+
+        // Category can boost but never penalise the name score.
+        return nameScore + (int)Math.Round(Math.Max(0, categoryScore - nameScore) * 0.07);
+    }
 
     /// <summary>
     /// Returns a score from 0–100 for how closely <paramref name="target"/> matches <paramref name="query"/>.
