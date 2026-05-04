@@ -10,6 +10,7 @@ namespace MudBlazor.Docs.Services
     public class ApiLinkService : IApiLinkService
     {
         private readonly List<KeyValuePair<string, ApiLinkServiceEntry>> _entries = [];
+        private readonly Dictionary<string, ApiLinkServiceEntry> _entryByLink = [];
         private readonly IReadOnlyCollection<ApiLinkServiceEntry> _featuredEntries =
             [
                 new ApiLinkServiceEntry
@@ -243,6 +244,8 @@ namespace MudBlazor.Docs.Services
             AddKeyword(entry, entry.SubTitle);
             AddKeyword(entry, entry.ComponentName);
             AddKeyword(entry, entry.Link);
+            if (!string.IsNullOrWhiteSpace(entry.Link))
+                _entryByLink[entry.Link.ToLowerInvariant()] = entry;
         }
 
         private void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
@@ -326,9 +329,7 @@ namespace MudBlazor.Docs.Services
 
         private void RegisterAliasKeyword(string link, string? alias)
         {
-            var key = link.ToLowerInvariant();
-            var entry = _entries.FirstOrDefault(kvp => kvp.Key == key).Value;
-            if (entry is not null)
+            if (_entryByLink.TryGetValue(link.ToLowerInvariant(), out var entry))
             {
                 AddKeyword(entry, alias);
             }
