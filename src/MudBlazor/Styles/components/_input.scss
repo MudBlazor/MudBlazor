@@ -553,3 +553,21 @@
 .mud-input-input-control {
   user-select: none;
 }
+
+.mud-input-align-left {
+  input, textarea {
+    text-align: left;
+  }
+}
+
+.mud-input-align-center {
+  input, textarea {
+    text-align: center;
+  }
+}
+
+.mud-input-align-right {
+  input, textarea {
+    text-align: right;
+  }
+}
