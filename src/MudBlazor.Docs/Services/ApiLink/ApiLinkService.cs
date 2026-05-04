@@ -197,11 +197,10 @@ namespace MudBlazor.Docs.Services
                 }
             ];
 
-        private readonly ISearchService _searchService;
+        private readonly ISearchService _searchService = new SearchService();
 
-        internal ApiLinkService(IMenuService menuService, ISearchService searchService)
+        public ApiLinkService(IMenuService menuService)
         {
-            _searchService = searchService;
             // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
             Register(menuService.Customization);

@@ -16,9 +16,6 @@ namespace MudBlazor.UnitTests.Services;
 [TestFixture]
 public sealed class SearchServiceTests
 {
-    // ──────────────────────────────────────────────────────────────────────────
-    // ComputeScore – exact, prefix, substring, and token-set behaviour
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("button", "button", 100)]             // exact match
     [TestCase("datepicker", "datepicker", 100)]     // exact match multi-word
     [TestCase("tooltip", "tooltip", 100)]           // exact match
@@ -59,9 +56,6 @@ public sealed class SearchServiceTests
         score.Should().Be(100);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // ComputeScore – typo tolerance (Damerau-Levenshtein)
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("snackbar", "snakbar")]       // missing 'c' (1 deletion)
     [TestCase("dialog", "dialoq")]          // q → g (1 substitution)
     [TestCase("tooltip", "tooltop")]        // i → o (1 substitution)
@@ -79,9 +73,6 @@ public sealed class SearchServiceTests
         score.Should().BeGreaterThanOrEqualTo(SearchService.MinScore);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // ComputeScore – token-set / word order independence
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("color picker", "picker color")]          // reversed
     [TestCase("data grid", "grid data")]                // reversed
     [TestCase("expansion panels", "panel expansion")]   // reversed partial
@@ -94,9 +85,6 @@ public sealed class SearchServiceTests
         score.Should().BeGreaterThanOrEqualTo(SearchService.MinScore);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Search<T> – keyword-index overload with a synthetic index
-    // ──────────────────────────────────────────────────────────────────────────
     private static readonly ISearchService Service = new SearchService();
 
     private static readonly IReadOnlyList<KeyValuePair<string, string>> SyntheticIndex =
@@ -128,25 +116,22 @@ public sealed class SearchServiceTests
     [TestCase("dialoq")]    // typo
     [TestCase("tooltop")]   // typo
     [TestCase("autoc")]     // prefix
-    [TestCase("btn")]       // not close enough
     public void Search_ReturnsMatch_ForTypoedOrPartialQuery(string query)
     {
-        // btn should NOT match (edit distance 3), but the typos and prefix should
-        if (query == "btn")
-        {
-            var r = Service.Search(SyntheticIndex, query);
-            r.Should().BeEmpty();
-        }
-        else
-        {
-            var results = Service.Search(SyntheticIndex, query);
-            results.Should().NotBeEmpty();
-        }
+        var results = Service.Search(SyntheticIndex, query);
+
+        results.Should().NotBeEmpty();
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Search<T> – weird/adversarial inputs must never throw and return empty
-    // ──────────────────────────────────────────────────────────────────────────
+    [Test]
+    public void Search_ReturnsEmpty_ForQueryTooDistantFromAnyKeyword()
+    {
+        // "btn" is three edits away from "button" so it should not match
+        var results = Service.Search(SyntheticIndex, "btn");
+
+        results.Should().BeEmpty();
+    }
+
     [TestCase(null)]
     [TestCase("")]
     [TestCase(" ")]
@@ -205,9 +190,6 @@ public sealed class SearchServiceTests
         Service.Search(SyntheticIndex, input).Should().BeEmpty();
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Search<T> – case-insensitivity
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("BUTTON")]
     [TestCase("Button")]
     [TestCase("bUtToN")]

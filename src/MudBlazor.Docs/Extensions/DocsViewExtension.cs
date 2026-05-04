@@ -38,10 +38,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<DiscordApiClient>();
             services.AddSingleton<NugetApiClient>();
             services.AddSingleton<GitHubApiClient>();
-            services.AddSingleton<ISearchService, SearchService>();
-            services.AddSingleton<IApiLinkService>(sp => new ApiLinkService(
-                sp.GetRequiredService<IMenuService>(),
-                sp.GetRequiredService<ISearchService>()));
+            services.AddSingleton<IApiLinkService, ApiLinkService>();
             services.AddSingleton<IMenuService, MenuService>();
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
             services.AddBlazoredLocalStorage();

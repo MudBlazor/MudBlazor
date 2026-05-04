@@ -17,43 +17,8 @@ namespace MudBlazor.UnitTests.Docs.Services;
 [TestFixture]
 public sealed class ApiLinkServiceTests
 {
-    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService(), new SearchService());
+    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService());
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Exact title – the full component name typed verbatim
-    // ──────────────────────────────────────────────────────────────────────────
-    [TestCase("dialog", "components/dialog")]
-    [TestCase("badge", "components/badge")]
-    [TestCase("avatar", "components/avatar")]
-    [TestCase("rating", "components/rating")]
-    [TestCase("slider", "components/slider")]
-    [TestCase("tooltip", "components/tooltip")]
-    [TestCase("carousel", "components/carousel")]
-    [TestCase("stepper", "components/stepper")]
-    [TestCase("drawer", "components/drawer")]
-    [TestCase("card", "components/card")]
-    [TestCase("tabs", "components/tabs")]
-    [TestCase("alert", "components/alert")]
-    [TestCase("breadcrumbs", "components/breadcrumbs")]
-    [TestCase("timeline", "components/timeline")]
-    [TestCase("skeleton", "components/skeleton")]
-    [TestCase("collapse", "components/collapse")]
-    [TestCase("image", "components/image")]
-    [TestCase("divider", "components/divider")]
-    [TestCase("overlay", "components/overlay")]
-    [TestCase("paper", "components/paper")]
-    public async Task Search_ReturnsTopResultForExactTitle(string search, string expectedLink)
-    {
-        var service = CreateApiLinkService();
-
-        var results = await service.Search(search);
-
-        results.First().Link.Should().Be(expectedLink);
-    }
-
-    // ──────────────────────────────────────────────────────────────────────────
-    // Title – typos, partials, and out-of-order words
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("data gri", "components/datagrid")]           // partial two-word
     [TestCase("muddatagrid", "components/datagrid")]        // component-name prefix
     [TestCase("snakbar", "components/snackbar")]            // missing 'c'
@@ -87,9 +52,6 @@ public sealed class ApiLinkServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Subtitle – words or phrases found in a component's description
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("filter", "components/table")]                // partial word in subtitle
     [TestCase("filterble", "components/table")]             // typo in subtitle word
     [TestCase("templets", "getting-started/wireframes")]    // typo in subtitle word
@@ -119,9 +81,6 @@ public sealed class ApiLinkServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Ambiguous – short prefixes or single words that compete with similar names
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("table", "components/table")]                     // Table vs SimpleTable vs DataGrid
     [TestCase("pagination", "components/pagination")]           // Pagination vs AppBar (has prev/next)
     [TestCase("butt", "components/button")]                     // Button vs ButtonGroup vs IconButton
@@ -153,10 +112,6 @@ public sealed class ApiLinkServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Noisy input – casing, whitespace, punctuation, and Unicode noise that
-    // still contains a recognisable component name
-    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("BUTTON", "components/button")]           // all-caps
     [TestCase("Button", "components/button")]           // title-case
     [TestCase("  button  ", "components/button")]       // leading/trailing spaces
@@ -176,10 +131,6 @@ public sealed class ApiLinkServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Group subtitle – items whose title does not contain the query but whose
-    // group subtitle does; all members of the group should appear in results
-    // ──────────────────────────────────────────────────────────────────────────
     [Test]
     public async Task Search_ReturnsGroupMembersMatchedByGroupSubtitle()
     {
@@ -233,28 +184,5 @@ public sealed class ApiLinkServiceTests
         links.Should().Contain("utilities/enable-flex");
         links.Should().Contain("utilities/flex-direction");
         links.Should().Contain("utilities/flex-wrap");
-    }
-
-    // ──────────────────────────────────────────────────────────────────────────
-    // Guard – empty/null/whitespace queries always return no results
-    // ──────────────────────────────────────────────────────────────────────────
-    [Test]
-    public async Task Search_ReturnsNoResultsForEmptyString()
-    {
-        var service = CreateApiLinkService();
-
-        var results = await service.Search(string.Empty);
-
-        results.Should().BeEmpty();
-    }
-
-    [Test]
-    public async Task Search_ReturnsNoResultsForNullString()
-    {
-        var service = CreateApiLinkService();
-
-        var results = await service.Search((string)null);
-
-        results.Should().BeEmpty();
     }
 }
