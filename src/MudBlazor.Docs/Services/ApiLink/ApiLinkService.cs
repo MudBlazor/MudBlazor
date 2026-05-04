@@ -236,14 +236,17 @@ namespace MudBlazor.Docs.Services
 
         /// <summary>
         /// Adds the specified entry to the search index.
+        /// If an entry with the same link already exists, the new entry's keywords are merged into it.
         /// </summary>
         private void AddEntry(ApiLinkServiceEntry entry)
         {
             var key = entry.Link.ToLowerInvariant();
-            if (!_entries.ContainsKey(key))
+            if (!_entries.TryGetValue(key, out var stored))
+            {
+                stored = entry;
                 _entries[key] = entry;
+            }
 
-            var stored = _entries[key];
             AddKeyword(stored, entry.Title);
             AddKeyword(stored, entry.SubTitle);
             AddKeyword(stored, entry.ComponentName);
