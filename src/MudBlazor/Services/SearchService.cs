@@ -104,7 +104,7 @@ internal sealed class SearchService : ISearchService
 
     // Score for a target that begins with the full query; longer surplus = lower score.
     private static int PrefixScore(int targetLen, int queryLen) =>
-        Math.Max(65, 100 - (targetLen - queryLen) * 3);
+        Math.Max(65, 100 - ((targetLen - queryLen) * 3));
 
     // Match every query token to its best target token (any order).
     // A mild coverage factor rewards queries that are more specific relative to the target.
@@ -148,7 +148,7 @@ internal sealed class SearchService : ISearchService
         // Mild coverage factor: prefer a target with the same number of tokens as
         // the query (e.g. "date picker" over "date range picker" for "date pikr").
         var coverage = Math.Min(1.0, (double)qRanges.Length / tRanges.Length);
-        return (int)(avg * (0.85 + 0.15 * coverage));
+        return (int)(avg * (0.85 + (0.15 * coverage)));
     }
 
     // Score for one query-token vs one target-token.
