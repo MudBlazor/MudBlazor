@@ -571,3 +571,21 @@
     text-align: right;
   }
 }
+
+.mud-input-align-justify {
+  input, textarea {
+    text-align: justify;
+  }
+}
+
+.mud-input-align-start {
+  input, textarea {
+    text-align: start;
+  }
+}
+
+.mud-input-align-end {
+  input, textarea {
+    text-align: end;
+  }
+}
