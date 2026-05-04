@@ -198,8 +198,11 @@ namespace MudBlazor.Docs.Services
                 }
             ];
 
-        public ApiLinkService(IMenuService menuService)
+        private readonly ISearchService _searchService;
+
+        internal ApiLinkService(IMenuService menuService, ISearchService searchService)
         {
+            _searchService = searchService;
             // TODO: Merge MenuService with ApiDocumentation.
             Register(menuService.Api); // this also registers components
             Register(menuService.Customization);
@@ -217,7 +220,7 @@ namespace MudBlazor.Docs.Services
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
 
             // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(SearchService.Search(_entries, text));
+            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_searchService.Search(_entries, text));
         }
 
         /// <inheritdoc />

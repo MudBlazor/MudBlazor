@@ -7,6 +7,10 @@
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Docs" />
+  </ItemGroup>
+
   <!--Analyzer Config-->
   <PropertyGroup>
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>

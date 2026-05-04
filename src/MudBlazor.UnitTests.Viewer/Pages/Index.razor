@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.Reflection
 @inject NavigationManager NavManager
+@inject ISearchService SearchService
 @implements IDisposable
 
 <MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />

@@ -7,7 +7,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// Calculates how closely a target string matches a search query.
+/// Provides full-text search over named items and keyword indexes.
 /// </summary>
 internal interface ISearchService
 {
@@ -15,4 +15,19 @@ internal interface ISearchService
     /// Returns a score from 0 to 100 indicating how well <paramref name="target"/> matches <paramref name="query"/>.
     /// </summary>
     int GetScore(string target, string query);
+
+    /// <summary>
+    /// Searches a keyword index and returns matching items ordered by relevance.
+    /// Multiple keywords can map to the same item; the highest score per item wins.
+    /// </summary>
+    /// <remarks>
+    /// Keywords in <paramref name="index"/> must already be lower-cased.
+    /// </remarks>
+    IReadOnlyList<T> Search<T>(IEnumerable<KeyValuePair<string, T>> index, string query) where T : notnull;
+
+    /// <summary>
+    /// Searches a collection by primary name and optional secondary field, returning
+    /// matching items ordered by relevance then by name.
+    /// </summary>
+    IReadOnlyList<T> Search<T>(IEnumerable<T> items, Func<T, string> getName, Func<T, string?> getSecondary, string query);
 }

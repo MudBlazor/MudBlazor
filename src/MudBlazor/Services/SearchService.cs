@@ -41,7 +41,7 @@ internal sealed class SearchService : ISearchService
     /// <remarks>
     /// Keywords in <paramref name="index"/> must already be lower-cased.
     /// </remarks>
-    internal static IReadOnlyList<T> Search<T>(IEnumerable<KeyValuePair<string, T>> index, string query) where T : notnull
+    public IReadOnlyList<T> Search<T>(IEnumerable<KeyValuePair<string, T>> index, string query) where T : notnull
     {
         if (string.IsNullOrWhiteSpace(query))
             return [];
@@ -66,7 +66,7 @@ internal sealed class SearchService : ISearchService
     /// Searches a collection by primary name and optional secondary field, returning
     /// matching items ordered by relevance then by name.
     /// </summary>
-    internal static IReadOnlyList<T> Search<T>(
+    public IReadOnlyList<T> Search<T>(
         IEnumerable<T> items, Func<T, string> getName, Func<T, string?> getSecondary, string query)
     {
         if (string.IsNullOrWhiteSpace(query))

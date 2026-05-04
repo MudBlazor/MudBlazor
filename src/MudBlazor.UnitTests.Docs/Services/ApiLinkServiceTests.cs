@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Docs.Services;
 [TestFixture]
 public sealed class ApiLinkServiceTests
 {
-    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService());
+    private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService(), new SearchService());
 
     // ──────────────────────────────────────────────────────────────────────────
     // Exact title – the full component name typed verbatim

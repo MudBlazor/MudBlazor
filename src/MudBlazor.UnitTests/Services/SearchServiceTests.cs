@@ -97,6 +97,8 @@ public sealed class SearchServiceTests
     // ──────────────────────────────────────────────────────────────────────────
     // Search<T> – keyword-index overload with a synthetic index
     // ──────────────────────────────────────────────────────────────────────────
+    private static readonly ISearchService Service = new SearchService();
+
     private static readonly IReadOnlyList<KeyValuePair<string, string>> SyntheticIndex =
     [
         new("button", "Button"),
@@ -117,7 +119,7 @@ public sealed class SearchServiceTests
     [TestCase("autocomplete", "Autocomplete")]
     public void Search_ReturnsTopMatch_ForExactQuery(string query, string expected)
     {
-        var results = SearchService.Search(SyntheticIndex, query);
+        var results = Service.Search(SyntheticIndex, query);
 
         results.Should().NotBeEmpty();
         results.First().Should().Be(expected);
@@ -132,12 +134,12 @@ public sealed class SearchServiceTests
         // btn should NOT match (edit distance 3), but the typos and prefix should
         if (query == "btn")
         {
-            var r = SearchService.Search(SyntheticIndex, query);
+            var r = Service.Search(SyntheticIndex, query);
             r.Should().BeEmpty();
         }
         else
         {
-            var results = SearchService.Search(SyntheticIndex, query);
+            var results = Service.Search(SyntheticIndex, query);
             results.Should().NotBeEmpty();
         }
     }
@@ -173,10 +175,10 @@ public sealed class SearchServiceTests
     public void Search_NeverThrowsAndReturnsEmpty_ForWeirdInput(string input)
     {
         IReadOnlyList<string> results;
-        var act = () => results = SearchService.Search(SyntheticIndex, input);
+        var act = () => results = Service.Search(SyntheticIndex, input);
 
         act.Should().NotThrow();
-        SearchService.Search(SyntheticIndex, input).Should().BeEmpty();
+        Service.Search(SyntheticIndex, input).Should().BeEmpty();
     }
 
     // Inputs that contain real words (like "button") prefixed by Unicode noise;
@@ -187,7 +189,7 @@ public sealed class SearchServiceTests
     [TestCase("\u0000\uFFFF")]       // null + high-code-point character
     public void Search_NeverThrows_ForUnicodeNoisyInput(string input)
     {
-        var act = () => SearchService.Search(SyntheticIndex, input);
+        var act = () => Service.Search(SyntheticIndex, input);
 
         act.Should().NotThrow();
     }
@@ -197,10 +199,10 @@ public sealed class SearchServiceTests
     {
         var input = new string('a', 10_000);
 
-        var act = () => SearchService.Search(SyntheticIndex, input);
+        var act = () => Service.Search(SyntheticIndex, input);
 
         act.Should().NotThrow();
-        SearchService.Search(SyntheticIndex, input).Should().BeEmpty();
+        Service.Search(SyntheticIndex, input).Should().BeEmpty();
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -216,7 +218,7 @@ public sealed class SearchServiceTests
     [TestCase("Tooltip")]
     public void Search_ReturnsResults_RegardlessOfCasing(string query)
     {
-        var results = SearchService.Search(SyntheticIndex, query);
+        var results = Service.Search(SyntheticIndex, query);
 
         results.Should().NotBeEmpty();
     }
