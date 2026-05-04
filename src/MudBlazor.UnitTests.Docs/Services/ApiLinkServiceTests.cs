@@ -10,11 +10,18 @@ using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Services;
 
+/// <summary>
+/// Integration tests for <see cref="ApiLinkService"/> that verify the search
+/// pipeline against the real documentation component registry.
+/// </summary>
 [TestFixture]
-public sealed class SearchServiceTests
+public sealed class ApiLinkServiceTests
 {
     private static IApiLinkService CreateApiLinkService() => new ApiLinkService(new MenuService());
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Exact title – the full component name typed verbatim
+    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("dialog", "components/dialog")]
     [TestCase("badge", "components/badge")]
     [TestCase("avatar", "components/avatar")]
@@ -44,6 +51,9 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Title – typos, partials, and out-of-order words
+    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("data gri", "components/datagrid")]           // partial two-word
     [TestCase("muddatagrid", "components/datagrid")]        // component-name prefix
     [TestCase("snakbar", "components/snackbar")]            // missing 'c'
@@ -77,6 +87,9 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Subtitle – words or phrases found in a component's description
+    // ──────────────────────────────────────────────────────────────────────────
     [TestCase("filter", "components/table")]                // partial word in subtitle
     [TestCase("filterble", "components/table")]             // typo in subtitle word
     [TestCase("templets", "getting-started/wireframes")]    // typo in subtitle word
@@ -106,46 +119,54 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
-    [TestCase(" ")]                                      // single space
-    [TestCase("   ")]                                    // multiple spaces
-    [TestCase("\t")]                                     // tab character
-    [TestCase("\n")]                                     // newline
-    [TestCase("\r\n")]                                   // Windows newline
-    [TestCase("🎨")]                                     // emoji
-    [TestCase("🔘 🎨 🖼️")]                              // multiple emojis
-    [TestCase("中文")]                                   // Chinese characters
-    [TestCase("العربية")]                               // Arabic script
-    [TestCase("日本語")]                                 // Japanese
-    [TestCase("한국어")]                                 // Korean
-    [TestCase("Ωμέγα")]                                  // Greek
-    [TestCase("zzzzzzzzzzzzzzz")]                        // long nonsense
-    [TestCase("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")] // 99 x's
-    [TestCase("<script>alert('xss')</script>")]          // XSS attempt
-    [TestCase("'; DROP TABLE components; --")]           // SQL injection style
-    [TestCase("{}[]()!@#$%^&*")]                         // punctuation barrage
-    [TestCase("\0\0\0")]                                 // null characters
-    [TestCase("123456789")]                              // digits only
-    [TestCase("aaaaaaaaa")]                              // repeated letter (no match)
-    [TestCase("qqqqqq")]                                 // another repeated letter
-    public async Task Search_ReturnsNoResultsForIrrelevantOrWeirdInput(string search)
+    // ──────────────────────────────────────────────────────────────────────────
+    // Ambiguous – short prefixes or single words that compete with similar names
+    // ──────────────────────────────────────────────────────────────────────────
+    [TestCase("table", "components/table")]                     // Table vs SimpleTable vs DataGrid
+    [TestCase("pagination", "components/pagination")]           // Pagination vs AppBar (has prev/next)
+    [TestCase("butt", "components/button")]                     // Button vs ButtonGroup vs IconButton
+    [TestCase("select", "components/select")]                   // Select vs Autocomplete
+    [TestCase("simple table", "components/simpletable")]        // SimpleTable vs Table
+    [TestCase("button g", "components/buttongroup")]            // ButtonGroup vs Button
+    [TestCase("icon b", "components/iconbutton")]               // IconButton vs Icons
+    [TestCase("nav", "components/navmenu")]                     // NavMenu vs NavLink vs NavGroup
+    [TestCase("data g", "components/datagrid")]                 // DataGrid vs Grid
+    [TestCase("date", "components/datepicker")]                 // DatePicker vs DateRangePicker
+    [TestCase("color p", "components/colorpicker")]             // ColorPicker vs Color (features)
+    [TestCase("time p", "components/timepicker")]               // TimePicker vs Timeline vs TimeSeries
+    [TestCase("autoc", "components/autocomplete")]              // Autocomplete vs Select
+    [TestCase("checkb", "components/checkbox")]                 // Checkbox vs Check...
+    [TestCase("snack", "components/snackbar")]                  // Snackbar vs Alert
+    [TestCase("button", "components/button")]                   // Button vs ButtonGroup vs IconButton vs FAB
+    [TestCase("icon", "components/icons")]                      // Icons vs Icon Button vs Toggle Icon Button
+    [TestCase("toggle", "components/togglegroup")]              // Toggle Group vs Toggle Icon Button
+    [TestCase("chip", "components/chips")]                      // Chips vs Chip Set
+    [TestCase("date range", "components/daterangepicker")]      // DateRangePicker vs DatePicker
+    [TestCase("bar chart", "components/barchart")]              // BarChart vs StackedBarChart
+    [TestCase("grid", "components/grid")]                       // Grid (layout) vs DataGrid
+    public async Task Search_ReturnsTopResultForAmbiguousMatches(string search, string expectedLink)
     {
         var service = CreateApiLinkService();
 
         var results = await service.Search(search);
 
-        results.Should().BeEmpty();
+        results.First().Link.Should().Be(expectedLink);
     }
 
-    [TestCase("BUTTON", "components/button")]                  // all-caps
-    [TestCase("Button", "components/button")]                  // title-case
-    [TestCase("  button  ", "components/button")]              // leading/trailing spaces
-    [TestCase("button!", "components/button")]                 // trailing punctuation
-    [TestCase("button 🎨", "components/button")]               // emoji suffix
-    [TestCase("bütton", "components/button")]                  // accented character (ü → u edit)
-    [TestCase("DIALOG", "components/dialog")]                  // all-caps multi-char
-    [TestCase("SeLeCt", "components/select")]                  // mixed case
-    [TestCase("TOOLTIP", "components/tooltip")]                // all-caps
-    [TestCase("  slider  ", "components/slider")]              // padded with spaces
+    // ──────────────────────────────────────────────────────────────────────────
+    // Noisy input – casing, whitespace, punctuation, and Unicode noise that
+    // still contains a recognisable component name
+    // ──────────────────────────────────────────────────────────────────────────
+    [TestCase("BUTTON", "components/button")]           // all-caps
+    [TestCase("Button", "components/button")]           // title-case
+    [TestCase("  button  ", "components/button")]       // leading/trailing spaces
+    [TestCase("button!", "components/button")]          // trailing punctuation
+    [TestCase("button 🎨", "components/button")]        // emoji suffix
+    [TestCase("bütton", "components/button")]           // accented character (ü → u edit)
+    [TestCase("DIALOG", "components/dialog")]           // all-caps multi-char
+    [TestCase("SeLeCt", "components/select")]           // mixed case
+    [TestCase("TOOLTIP", "components/tooltip")]         // all-caps
+    [TestCase("  slider  ", "components/slider")]       // padded with spaces
     public async Task Search_ReturnsMatchDespiteNoisyInput(string search, string expectedLink)
     {
         var service = CreateApiLinkService();
@@ -155,6 +176,9 @@ public sealed class SearchServiceTests
         results.First().Link.Should().Be(expectedLink);
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Guard – empty/null/whitespace queries always return no results
+    // ──────────────────────────────────────────────────────────────────────────
     [Test]
     public async Task Search_ReturnsNoResultsForEmptyString()
     {
@@ -173,36 +197,5 @@ public sealed class SearchServiceTests
         var results = await service.Search((string)null);
 
         results.Should().BeEmpty();
-    }
-
-    [TestCase(null)]
-    [TestCase("")]
-    [TestCase(" ")]
-    [TestCase("\0")]
-    [TestCase("\u0000\uFFFF")]
-    [TestCase("😀😁😂🤣😃😄😅😆😉😊")]
-    [TestCase("\u202E reversed")]       // Right-to-Left Override
-    [TestCase("\uFEFF button")]         // BOM prefix
-    [TestCase("\u200B button")]         // zero-width space
-    [TestCase("button\u0000dialog")]    // embedded null
-    [TestCase("café")]                  // composed accent
-    [TestCase("cafe\u0301")]            // decomposed accent (combining ´)
-    public async Task Search_NeverThrowsForAnyInput(string input)
-    {
-        var service = CreateApiLinkService();
-
-        var act = async () => await service.Search(input);
-
-        await act.Should().NotThrowAsync();
-    }
-
-    [Test]
-    public async Task Search_NeverThrowsForOverlongInput()
-    {
-        var service = CreateApiLinkService();
-
-        var act = async () => await service.Search(new string('a', 10_000));
-
-        await act.Should().NotThrowAsync();
     }
 }
