@@ -51,7 +51,8 @@
                           OnBlur="@OnBlurAsync"
                           ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
-                          Required="@Required">
+                          Required="@Required"
+                          TextAlign="@TextAlign">
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()
