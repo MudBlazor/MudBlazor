@@ -442,99 +442,19 @@
                 return;
             }
 
-            const int defaultLimit = 20;
-            var threshold = SearchService.MinScore;
-            var showAllResults = _showAllResults;
-
-            var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
-            List<(TestEntry Entry, int Score)>? all = showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
-            var totalMatchCount = 0;
-
-            for (var i = 0; i < _entries.Length; i++)
-            {
-                token.ThrowIfCancellationRequested();
-                var entry = _entries[i];
-                var score = SearchService.ComputeScore(entry.Name, entry.Category, query);
-                if (score < threshold)
-                {
-                    if (i % 25 == 0)
-                    {
-                        await Task.Yield();
-                    }
-                    continue;
-                }
-
-                totalMatchCount++;
-
-                if (all is not null)
-                {
-                    all.Add((entry, score));
-                }
-                else
-                {
-                    InsertTopK(top, (entry, score), defaultLimit);
-                }
-
-                if (i % 25 == 0)
-                {
-                    await Task.Yield();
-                }
-            }
-
+            await Task.Yield();
             token.ThrowIfCancellationRequested();
 
-            IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
-            var filteredEntries = final
-                .OrderByDescending(x => x.Score)
-                .ThenBy(x => x.Entry.Name)
-                .Select(x => x.Entry)
-                .ToArray();
+            const int defaultLimit = 20;
+            var results = SearchService.Search(_entries, e => e.Name, e => e.Category, query);
+            _filteredEntries = _showAllResults ? [.. results] : [.. results.Take(defaultLimit)];
+            _remainingResultsCount = _showAllResults ? 0 : Math.Max(0, results.Count - _filteredEntries.Length);
 
-            if (!showAllResults)
-            {
-                filteredEntries = filteredEntries.Take(defaultLimit).ToArray();
-                _remainingResultsCount = Math.Max(0, totalMatchCount - filteredEntries.Length);
-            }
-
-            _filteredEntries = filteredEntries;
             await InvokeAsync(StateHasChanged);
         }
         catch (OperationCanceledException)
         {
             // Ignore; newer search already started.
-        }
-    }
-
-    private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
-    {
-        if (list.Count == 0)
-        {
-            list.Add(candidate);
-            return;
-        }
-
-        var inserted = false;
-        for (var i = 0; i < list.Count; i++)
-        {
-            if (candidate.Score > list[i].Score)
-            {
-                list.Insert(i, candidate);
-                inserted = true;
-                break;
-            }
-        }
-
-        if (!inserted)
-        {
-            if (list.Count < k)
-            {
-                list.Add(candidate);
-            }
-        }
-
-        if (list.Count > k)
-        {
-            list.RemoveAt(list.Count - 1);
         }
     }
 

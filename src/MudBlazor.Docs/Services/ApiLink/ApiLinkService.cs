@@ -213,44 +213,10 @@ namespace MudBlazor.Docs.Services
         public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
-            }
-
-            // Case is ignored.
-            text = text.ToLowerInvariant();
 
             // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
-
-            // Calculate the ratios of all keywords to the search input.
-            // Both keyword (stored lowercase at registration) and text (lowercased above) are already lowercase.
-            var ratios = new Dictionary<ApiLinkServiceEntry, double>();
-            foreach (var (keyword, entry) in _entries)
-            {
-                var ratio = SearchService.ComputeScore(keyword.AsSpan(), text.AsSpan());
-
-                // Assign the highest ratio so far to the entry.
-                if (ratios.TryGetValue(entry, out var highestRatio))
-                {
-                    if (ratio > highestRatio)
-                    {
-                        ratios[entry] = ratio;
-                    }
-                }
-                else
-                {
-                    ratios.Add(entry, ratio);
-                }
-            }
-
-            // Return the most accurate and highest quality results.
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
-                ratios
-                .Where(x => x.Value >= SearchService.MinScore)
-                .OrderByDescending(x => x.Value)
-                .Select(x => x.Key)
-                .ToList()
-            );
+            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(SearchService.Search(_entries, text));
         }
 
         /// <inheritdoc />

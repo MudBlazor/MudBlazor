@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MudBlazor;
 
@@ -31,6 +33,52 @@ internal sealed class SearchService : ISearchService
     /// <inheritdoc />
     public int GetScore(string target, string query) =>
         ComputeScore(target.ToLowerInvariant().AsSpan(), query.ToLowerInvariant().AsSpan());
+
+    /// <summary>
+    /// Searches a keyword index and returns matching items ordered by relevance.
+    /// Multiple keywords can map to the same item; the highest score per item wins.
+    /// </summary>
+    /// <remarks>
+    /// Keywords in <paramref name="index"/> must already be lower-cased.
+    /// </remarks>
+    internal static IReadOnlyList<T> Search<T>(IEnumerable<KeyValuePair<string, T>> index, string query) where T : notnull
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return [];
+
+        var q = query.ToLowerInvariant();
+        var scores = new Dictionary<T, int>();
+
+        foreach (var (keyword, item) in index)
+        {
+            var score = ComputeScore(keyword.AsSpan(), q.AsSpan());
+            if (score < MinScore)
+                continue;
+
+            if (!scores.TryGetValue(item, out var best) || score > best)
+                scores[item] = score;
+        }
+
+        return [.. scores.OrderByDescending(x => x.Value).Select(x => x.Key)];
+    }
+
+    /// <summary>
+    /// Searches a collection by primary name and optional secondary field, returning
+    /// matching items ordered by relevance then by name.
+    /// </summary>
+    internal static IReadOnlyList<T> Search<T>(
+        IEnumerable<T> items, Func<T, string> getName, Func<T, string?> getSecondary, string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return [];
+
+        return [.. items
+            .Select(item => (item, score: ComputeScore(getName(item), getSecondary(item), query)))
+            .Where(x => x.score >= MinScore)
+            .OrderByDescending(x => x.score)
+            .ThenBy(x => getName(x.item), StringComparer.OrdinalIgnoreCase)
+            .Select(x => x.item)];
+    }
 
     /// <summary>
     /// Scores a search entry that has both a primary target (e.g. name) and an optional
