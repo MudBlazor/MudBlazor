@@ -2531,6 +2531,28 @@ namespace MudBlazor.UnitTests.Components
             auto.Instance.Modal.Should().BeNull();
         }
 
+        [Test]
+        public async Task TextAlign_Default_ShouldNotApplyAlignClass()
+        {
+            var comp = Context.Render<MudAutocomplete<string>>();
+
+            comp.Find("input").ClassList.Should()
+                .NotContain(c => c.StartsWith("mud-input-align-"));
+        }
+
+        [Test]
+        public async Task TextAlign_AllValues_ShouldApplyCorrectCssClass()
+        {
+            foreach (var align in Enum.GetValues<Align>().Where(a => a != Align.Inherit))
+            {
+                var comp = Context.Render<MudAutocomplete<string>>(p => p
+                    .Add(x => x.TextAlign, align));
+
+                comp.Find("input").ClassList.Should()
+                    .Contain($"mud-input-align-{align.ToStringFast(true)}");
+            }
+        }
+
         private sealed class CoerceValueElement
         {
             public string Name { get; set; } = string.Empty;
