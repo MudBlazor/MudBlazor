@@ -1998,5 +1998,27 @@ namespace MudBlazor.UnitTests.Components
             await textField.InsertTextAtCurrentCaretPositionAsync("test");
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudInput.insertAtCurrentCaretPosition", It.IsAny<object[]>()), Times.Exactly(1));
         }
+
+        [Test]
+        public async Task TextAlign_AllValues_ShouldApplyCorrectCssClass()
+        {
+            foreach (var align in Enum.GetValues<Align>().Where(a => a != Align.Inherit))
+            {
+                var comp = Context.Render<MudTextField<string>>(p => p
+                    .Add(x => x.TextAlign, align));
+
+                comp.Find("input").ClassList.Should()
+                    .Contain($"mud-input-align-{align.ToStringFast(true)}");
+            }
+        }
+
+        [Test]
+        public async Task TextAlign_Default_ShouldNotApplyAlignClass()
+        {
+            var comp = Context.Render<MudTextField<string>>();
+
+            comp.Find("input").ClassList.Should()
+                .NotContain(c => c.StartsWith("mud-input-align-"));
+        }
     }
 }
