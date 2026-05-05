@@ -344,7 +344,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Align TextAlign { get; set; }
+        public Align TextAlign { get; set; } = Align.Inherit;
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
