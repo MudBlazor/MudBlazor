@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="TextValue" Label="Text align left" TextAlign="Align.Left"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Text align right" TextAlign="Align.Right"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Text align center" TextAlign="Align.Center"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Text align justify" TextAlign="Align.Justify"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Text align start (RTL)" dir="rtl" TextAlign="Align.Start"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Text align end (RTL)" dir="rtl" TextAlign="Align.End"></MudTextField>
+
+@code{
+    public string TextValue { get; set; }
+}
