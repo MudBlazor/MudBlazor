@@ -554,38 +554,32 @@
   user-select: none;
 }
 
-.mud-input-align-left {
-  input, textarea {
-    text-align: left;
-  }
+input.mud-input-align-left,
+div.mud-input-align-left {
+  text-align: left;
 }
 
-.mud-input-align-center {
-  input, textarea {
-    text-align: center;
-  }
+input.mud-input-align-center,
+div.mud-input-align-center {
+  text-align: center;
 }
 
-.mud-input-align-right {
-  input, textarea {
-    text-align: right;
-  }
+input.mud-input-align-right,
+div.mud-input-align-right {
+  text-align: right;
 }
 
-.mud-input-align-justify {
-  input, textarea {
-    text-align: justify;
-  }
+input.mud-input-align-justify,
+div.mud-input-align-justify {
+  text-align: justify;
 }
 
-.mud-input-align-start {
-  input, textarea {
-    text-align: start;
-  }
+input.mud-input-align-start,
+div.mud-input-align-start {
+  text-align: start;
 }
 
-.mud-input-align-end {
-  input, textarea {
-    text-align: end;
-  }
+input.mud-input-align-end,
+div.mud-input-align-end {
+  text-align: end;
 }
