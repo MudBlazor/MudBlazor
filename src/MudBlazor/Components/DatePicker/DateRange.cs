@@ -10,8 +10,6 @@ namespace MudBlazor;
 /// <typeparam name="T">The date type bound by the range. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
 public sealed class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
 {
-    private static readonly Type _underlyingType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
     /// <summary>
     /// Creates a new instance.
     /// </summary>
@@ -26,6 +24,7 @@ public sealed class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
     /// <param name="end">The most recent date.</param>
     public DateRange(T? start, T? end) : base(start, end)
     {
+        PickerTypeSupport<T>.EnsureSupported();
     }
 
     /// <summary>
@@ -49,8 +48,8 @@ public sealed class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
     /// <returns>The formatted string.</returns>
     public string ToIsoDateString()
     {
-        var startDt = AsDateTime(Start);
-        var endDt = AsDateTime(End);
+        var startDt = PickerTypeSupport<T>.ToDateTime(Start);
+        var endDt = PickerTypeSupport<T>.ToDateTime(End);
         if (startDt is null || endDt is null)
         {
             return string.Empty;
@@ -129,16 +128,4 @@ public sealed class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
 
     public static bool operator !=(DateRange<T>? dateRange1, DateRange<T>? dateRange2) => !(dateRange1 == dateRange2);
 
-    /// <summary>
-    /// Convert <typeparamref name="T"/> to a <see cref="DateTime"/> for ISO formatting and other date helpers.
-    /// Mirrors <c>MudBaseDatePicker&lt;T&gt;.ToDateTime</c>.
-    /// </summary>
-    private static DateTime? AsDateTime(T? value)
-    {
-        if (value is null) return null;
-        if (_underlyingType == typeof(DateTime)) return (DateTime)(object)value;
-        if (_underlyingType == typeof(DateOnly)) return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
-        if (_underlyingType == typeof(DateTimeOffset)) return ((DateTimeOffset)(object)value).DateTime;
-        throw new InvalidOperationException($"DateRange does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
-    }
 }

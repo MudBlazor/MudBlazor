@@ -14,6 +14,10 @@ namespace MudBlazor
     {
         private DateTime? _selectedDate;
 
+        /// <inheritdoc />
+        protected override TimeSpan GetPreferredOffset()
+            => _value is DateTimeOffset dto ? dto.Offset : base.GetPreferredOffset();
+
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
@@ -282,6 +286,11 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
+            if (_underlyingType == typeof(T))
+            {
+                throw new InvalidOperationException($"Clear is not supported on a non-nullable picker (T = {typeof(T).Name}). Use a nullable T (e.g. {typeof(T).Name}?) for clearable pickers.");
+            }
+
             _selectedDate = null;
             await SetDateAsync(default, true);
 

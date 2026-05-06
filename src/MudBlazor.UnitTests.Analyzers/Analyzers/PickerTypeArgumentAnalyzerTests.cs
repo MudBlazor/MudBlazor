@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Testing;
 using MudBlazor.UnitTests.Analyzers.Verifiers;
 using NUnit.Framework;
 
@@ -124,6 +123,22 @@ class C
 }
 ";
         var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudDatePicker<T>", "string");
+        await VerifyCS.VerifyAnalyzerAsync(source, expected);
+    }
+
+    [Test]
+    public async Task InvalidTypeArgument_OnMudBaseDatePickerDerivation_ShouldReport()
+    {
+        // MudBaseDatePicker<T> is public abstract — external code can derive a closed-T subclass
+        // bypassing the analyzer if it only targets MudDatePicker / MudDateRangePicker / DateRange.
+        var source = @"
+using MudBlazor;
+
+abstract class MyPicker : MudBaseDatePicker<{|#0:string|}>
+{
+}
+";
+        var expected = VerifyCS.Diagnostic("MUD0003").WithLocation(0).WithArguments("MudBaseDatePicker<T>", "string");
         await VerifyCS.VerifyAnalyzerAsync(source, expected);
     }
 }

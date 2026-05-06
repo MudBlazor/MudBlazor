@@ -1944,7 +1944,12 @@ namespace MudBlazor
 
         private async Task ClearFiltersFromSimpleModeAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
-            FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
+            var ids = filterDefinitions.Select(d => d.Id).ToHashSet();
+            FilterDefinitions.RemoveAll(x => ids.Contains(x.Id));
+            foreach (var id in ids)
+            {
+                _stagedFilterTimes.Remove(id);
+            }
 
             await InvokeServerLoadFunc();
             GroupItems();
@@ -2016,6 +2021,7 @@ namespace MudBlazor
         {
             FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
+            _stagedFilterTimes.Clear();
             await InvokeServerLoadFunc();
             await NotifyFilterChangedAsync();
         }
@@ -2046,6 +2052,7 @@ namespace MudBlazor
 
             FilterDefinitions[index].Value = null;
             FilterDefinitions.RemoveAt(index);
+            if (id is { } guid) _stagedFilterTimes.Remove(guid);
             await InvokeServerLoadFunc();
             GroupItems();
             await NotifyFilterChangedAsync();
@@ -2511,7 +2518,12 @@ namespace MudBlazor
 
         private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
 
-        internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
+        internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p =>
+        {
+            var remove = p.Value == null && ValueRequired(p);
+            if (remove) _stagedFilterTimes.Remove(p.Id);
+            return remove;
+        });
         internal void SetFiltersMenuPosition(double top, double left)
         {
             _filtersMenuPosition = (top, left);

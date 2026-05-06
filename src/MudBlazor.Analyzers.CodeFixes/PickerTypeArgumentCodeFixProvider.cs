@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace MudBlazor.Analyzers;
 
@@ -74,8 +75,11 @@ public sealed class PickerTypeArgumentCodeFixProvider : CodeFixProvider
         }
 
         // newTypeFullName may end with '?' (nullable). SyntaxFactory.ParseTypeName handles that.
+        // Simplifier.Annotation triggers post-fix reduction so `using System;` files end up with
+        // `DateTime?` rather than the fully-qualified `System.DateTime?`.
         var newType = SyntaxFactory.ParseTypeName(newTypeFullName)
-            .WithTriviaFrom(generic.TypeArgumentList.Arguments[0]);
+            .WithTriviaFrom(generic.TypeArgumentList.Arguments[0])
+            .WithAdditionalAnnotations(Simplifier.Annotation);
 
         var newGeneric = generic.WithTypeArgumentList(
             SyntaxFactory.TypeArgumentList(SyntaxFactory.SingletonSeparatedList(newType)));

@@ -2127,6 +2127,83 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MudDatePicker_DateOnly_ClickDay_UpdatesDate()
+        {
+            // Coverage: exercise the OnDayClickedAsync → SubmitAsync → FromDateTime path for DateOnly,
+            // which the parameter-binding-only smoke tests above never reach.
+            var initial = new DateOnly(2024, 6, 15);
+            var comp = Context.Render<MudDatePicker<DateOnly?>>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Date, initial));
+
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("20")).ClickAsync();
+
+            comp.Instance.Date.Should().Be(new DateOnly(2024, 6, 20));
+        }
+
+        [Test]
+        public async Task MudDatePicker_DateTimeOffset_ClickDay_PreservesOriginalOffset()
+        {
+            // Bug: SubmitAsync calls FromDateTime which uses TimeProvider.GetLocalNow().Offset,
+            // so clicking a day on a host whose local offset differs from the bound value's offset
+            // silently shifts the bound value's Offset. Should be: preserve the original DateTimeOffset.Offset.
+            var fakeTimeProvider = new FakeTimeProvider();
+            fakeTimeProvider.SetLocalTimeZone(TimeZoneInfo.Utc);
+            Context.Services.AddSingleton<TimeProvider>(fakeTimeProvider);
+
+            var originalOffset = TimeSpan.FromMinutes(330); // +05:30 — distinct from the host (UTC) offset
+            var initial = new DateTimeOffset(2024, 6, 15, 10, 0, 0, originalOffset);
+
+            var comp = Context.Render<MudDatePicker<DateTimeOffset?>>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Date, initial));
+
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("20")).ClickAsync();
+
+            comp.Instance.Date.Should().NotBeNull();
+            comp.Instance.Date!.Value.Date.Should().Be(new DateTime(2024, 6, 20));
+            comp.Instance.Date.Value.Offset.Should().Be(originalOffset,
+                because: "clicking a day must not change the bound value's DateTimeOffset.Offset");
+        }
+
+        [Test]
+        public void MudDatePicker_UnsupportedT_ConstructorThrows()
+        {
+            // The MUD0003 analyzer is a warning, not an error — a consumer who suppresses or
+            // ignores it can still construct an unsupported-T picker. The runtime guard fails
+            // fast at construction with a message pointing back at the analyzer.
+            var act = () => Context.Render<MudDatePicker<int>>();
+            act.Should().Throw<Exception>().WithMessage("*MUD0003*");
+        }
+
+        [Test]
+        public async Task MudDatePicker_NonNullableT_ClearAsync_Throws()
+        {
+            // Bug: ClearAsync calls SetDateAsync(default, true). For non-nullable T = DateTime,
+            // default(T?) is the non-null default(DateTime) (year 1) — silently committing an
+            // invalid year-1 value rather than meaningfully clearing. Should throw with a clear
+            // message pointing the consumer at the nullable T option.
+            var comp = Context.Render<MudDatePicker<DateTime>>(parameters => parameters
+                .Add(p => p.Date, new DateTime(2024, 6, 15)));
+
+            var act = async () => await comp.InvokeAsync(() => comp.Instance.ClearAsync());
+
+            await act.Should().ThrowAsync<InvalidOperationException>(
+                because: "Clear has no meaningful semantics for a non-nullable T — use T = DateTime? if clearable");
+        }
+
+        [Test]
+        public async Task MudDatePicker_NullableT_ClearAsync_SetsDateToNull()
+        {
+            var comp = Context.Render<MudDatePicker<DateTime?>>(parameters => parameters
+                .Add(p => p.Date, new DateTime(2024, 6, 15)));
+
+            await comp.InvokeAsync(() => comp.Instance.ClearAsync());
+
+            comp.Instance.Date.Should().BeNull();
+        }
+
+        [Test]
         public async Task MudDatePicker_NonNullableT_DefaultMinMax_DoesNotDisableAllDays()
         {
             // Regression: when T is a non-nullable value type (e.g. DateTime, DateOnly),

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -7,6 +6,8 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
@@ -1624,6 +1625,55 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.DateRange.Should().NotBeNull();
             comp.Instance.DateRange.Start.Should().BeNull();
             comp.Instance.DateRange.End.Should().Be(end);
+        }
+
+        [Test]
+        public async Task MudDateRangePicker_DateOnly_ClickDays_UpdatesRange()
+        {
+            // Coverage: exercise the OnDayClickedAsync → SubmitAsync → FromDateTime path for DateOnly,
+            // which the parameter-binding-only smoke tests above never reach.
+            var initial = new DateRange<DateOnly?>(new DateOnly(2024, 6, 10), new DateOnly(2024, 6, 15));
+            var comp = Context.Render<MudDateRangePicker<DateOnly?>>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DateRange, initial));
+
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("20")).ClickAsync();
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("25")).ClickAsync();
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().Be(new DateOnly(2024, 6, 20));
+            comp.Instance.DateRange.End.Should().Be(new DateOnly(2024, 6, 25));
+        }
+
+        [Test]
+        public async Task MudDateRangePicker_DateTimeOffset_ClickDays_PreservesOriginalOffset()
+        {
+            // Bug: SubmitAsync calls FromDateTime which uses TimeProvider.GetLocalNow().Offset,
+            // so clicking days on a host whose local offset differs from the bound value's offset
+            // silently shifts both Start.Offset and End.Offset. Should preserve the original offset.
+            var fakeTimeProvider = new FakeTimeProvider();
+            fakeTimeProvider.SetLocalTimeZone(TimeZoneInfo.Utc);
+            Context.Services.AddSingleton<TimeProvider>(fakeTimeProvider);
+
+            var originalOffset = TimeSpan.FromMinutes(330); // +05:30
+            var initial = new DateRange<DateTimeOffset?>(
+                new DateTimeOffset(2024, 6, 10, 0, 0, 0, originalOffset),
+                new DateTimeOffset(2024, 6, 15, 0, 0, 0, originalOffset));
+
+            var comp = Context.Render<MudDateRangePicker<DateTimeOffset?>>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DateRange, initial));
+
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("20")).ClickAsync();
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("25")).ClickAsync();
+
+            comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().NotBeNull();
+            comp.Instance.DateRange.End.Should().NotBeNull();
+            comp.Instance.DateRange.Start!.Value.Offset.Should().Be(originalOffset,
+                because: "clicking days must not change the bound range's Start.Offset");
+            comp.Instance.DateRange.End!.Value.Offset.Should().Be(originalOffset,
+                because: "clicking days must not change the bound range's End.Offset");
         }
 
         #endregion

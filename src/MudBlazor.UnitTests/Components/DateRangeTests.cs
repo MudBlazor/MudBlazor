@@ -82,11 +82,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ToIsoDateString_UnsupportedT_Throws()
+        public void Constructor_UnsupportedT_Throws()
         {
-            var range = new DateRange<int?>(1, 2);
-            var act = () => range.ToIsoDateString();
-            act.Should().Throw<InvalidOperationException>();
+            var act = () => new DateRange<int?>(1, 2);
+            act.Should().Throw<InvalidOperationException>().WithMessage("*MUD0003*");
         }
 
         [Test]

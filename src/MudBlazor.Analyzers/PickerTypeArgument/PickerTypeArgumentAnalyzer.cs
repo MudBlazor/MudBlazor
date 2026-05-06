@@ -16,6 +16,7 @@ namespace MudBlazor.Analyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed partial class PickerTypeArgumentAnalyzer : DiagnosticAnalyzer
 {
+    private const string MudBaseDatePickerMetadataName = "MudBlazor.MudBaseDatePicker`1";
     private const string MudDatePickerMetadataName = "MudBlazor.MudDatePicker`1";
     private const string MudDateRangePickerMetadataName = "MudBlazor.MudDateRangePicker`1";
     private const string DateRangeMetadataName = "MudBlazor.DateRange`1";
@@ -33,17 +34,19 @@ public sealed partial class PickerTypeArgumentAnalyzer : DiagnosticAnalyzer
 
     private static void OnCompilationStart(CompilationStartAnalysisContext context)
     {
+        var baseDatePicker = context.Compilation.GetTypeByMetadataName(MudBaseDatePickerMetadataName);
         var datePicker = context.Compilation.GetTypeByMetadataName(MudDatePickerMetadataName);
         var dateRangePicker = context.Compilation.GetTypeByMetadataName(MudDateRangePickerMetadataName);
         var dateRange = context.Compilation.GetTypeByMetadataName(DateRangeMetadataName);
 
-        if (datePicker is null && dateRangePicker is null && dateRange is null)
+        if (baseDatePicker is null && datePicker is null && dateRangePicker is null && dateRange is null)
         {
             // Consumer's project doesn't reference the generic MudBlazor pickers — nothing to analyze.
             return;
         }
 
         var targetTypes = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+        if (baseDatePicker is not null) targetTypes.Add(baseDatePicker);
         if (datePicker is not null) targetTypes.Add(datePicker);
         if (dateRangePicker is not null) targetTypes.Add(dateRangePicker);
         if (dateRange is not null) targetTypes.Add(dateRange);

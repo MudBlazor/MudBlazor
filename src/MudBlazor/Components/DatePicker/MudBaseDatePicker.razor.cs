@@ -12,7 +12,7 @@ namespace MudBlazor
     /// <typeparam name="T">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
     public abstract partial class MudBaseDatePicker<T> : MudPicker<T>
     {
-        protected static readonly Type _underlyingType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+        protected static readonly Type _underlyingType = PickerTypeSupport<T>.UnderlyingType;
 
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
@@ -20,14 +20,7 @@ namespace MudBlazor
         /// <summary>
         /// Convert a public-API <typeparamref name="T"/> value into a <see cref="DateTime"/> for internal calendar math.
         /// </summary>
-        protected static DateTime? ToDateTime(T? value) => value switch
-        {
-            null => null,
-            DateTime dt => dt,
-            DateOnly d => d.ToDateTime(TimeOnly.MinValue),
-            DateTimeOffset dto => dto.DateTime,
-            _ => throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).")
-        };
+        protected static DateTime? ToDateTime(T? value) => PickerTypeSupport<T>.ToDateTime(value);
 
         /// <summary>
         /// Convert a public-API <typeparamref name="T"/> limit (<see cref="MinDate"/>/<see cref="MaxDate"/>) into a <see cref="DateTime"/>.
@@ -42,19 +35,19 @@ namespace MudBlazor
 
         /// <summary>
         /// Convert an internal <see cref="DateTime"/> back to <typeparamref name="T"/>.
-        /// For <see cref="DateTimeOffset"/>, the picker-local offset (<see cref="TimeProvider.GetLocalNow"/>) is used unless a concrete subclass preserves the user's original offset.
+        /// For <see cref="DateTimeOffset"/>, the offset returned by <see cref="GetPreferredOffset"/> is applied — overrides preserve the user's original offset.
         /// </summary>
-        protected T? FromDateTime(DateTime? value)
-        {
-            if (value is null) return default;
-            if (_underlyingType == typeof(DateTime)) return (T)(object)value.Value;
-            if (_underlyingType == typeof(DateOnly)) return (T)(object)DateOnly.FromDateTime(value.Value);
-            if (_underlyingType == typeof(DateTimeOffset)) return (T)(object)new DateTimeOffset(value.Value, TimeProvider.GetLocalNow().Offset);
-            throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
-        }
+        protected T? FromDateTime(DateTime? value) => PickerTypeSupport<T>.FromDateTime(value, GetPreferredOffset());
+
+        /// <summary>
+        /// Offset to apply when reconstructing a <see cref="DateTimeOffset"/> in <see cref="FromDateTime"/>.
+        /// Defaults to the picker-local offset; concrete pickers override to preserve the bound value's original offset.
+        /// </summary>
+        protected virtual TimeSpan GetPreferredOffset() => TimeProvider.GetLocalNow().Offset;
 
         protected MudBaseDatePicker()
         {
+            PickerTypeSupport<T>.EnsureSupported();
             _mudPickerCalendarContentElementId = Identifier.Create();
             Culture = CultureInfo.CurrentCulture;
 

@@ -17,6 +17,27 @@ namespace MudBlazor
         private DateRange<T>? _dateRange;
         private Range<string>? _rangeText;
 
+        /// <inheritdoc />
+        protected override TimeSpan GetPreferredOffset()
+        {
+            if (_dateRange is null)
+            {
+                return base.GetPreferredOffset();
+            }
+
+            if (_dateRange.Start is DateTimeOffset dtoStart)
+            {
+                return dtoStart.Offset;
+            }
+
+            if (_dateRange.End is DateTimeOffset dtoEnd)
+            {
+                return dtoEnd.Offset;
+            }
+
+            return base.GetPreferredOffset();
+        }
+
         /// <summary>
         /// Creates a new instance.
         /// </summary>
