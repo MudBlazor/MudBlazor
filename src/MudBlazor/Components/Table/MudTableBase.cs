@@ -628,7 +628,7 @@ namespace MudBlazor
         public float ItemSize { get; set; } = 50f;
 
         /// <summary>
-        /// The position of the pager when using pagination.
+        /// The position of the pager.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="PagerPosition.Bottom"/>.
