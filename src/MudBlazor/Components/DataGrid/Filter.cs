@@ -47,9 +47,14 @@ namespace MudBlazor
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDateTimeForPicker = _filterDefinition.Value == null ? null : dateTime;
-                _valueTime = _filterDefinition.Value == null
-                    ? (_dataGrid._stagedFilterTimes.TryGetValue(_filterDefinition.Id, out var staged) ? staged : null)
-                    : dateTime.TimeOfDay;
+                if (_filterDefinition.Value == null)
+                {
+                    _valueTime = _dataGrid._stagedFilterTimes.TryGetValue(_filterDefinition.Id, out var staged) ? staged : null;
+                }
+                else
+                {
+                    _valueTime = dateTime.TimeOfDay;
+                }
             }
             else if (fieldType.IsDateOnly)
             {

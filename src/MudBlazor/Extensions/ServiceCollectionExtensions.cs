@@ -236,20 +236,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds the date operations services required by the date pickers.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorDateOperations(this IServiceCollection services)
-        {
-            services.TryAddSingleton<IDateConverter<DateOnly>, DateOnlyConverter>();
-            services.TryAddSingleton<IDateConverter<DateTime>, DateTimeConverter>();
-            services.TryAddSingleton<IDateConverter<DateTimeOffset>, DateTimeOffsetConverter>();
-
-            return services;
-        }
-
-        /// <summary>
         /// Adds the services required for translations.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -339,7 +325,6 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudBlazorPointerEventsNoneService()
-                .AddMudBlazorDateOperations()
                 .AddMudLocalization();
         }
 
@@ -420,7 +405,6 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudBlazorPointerEventsNoneService()
-                .AddMudBlazorDateOperations()
                 .AddMudLocalization();
         }
 

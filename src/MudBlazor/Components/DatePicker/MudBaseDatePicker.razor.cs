@@ -20,14 +20,14 @@ namespace MudBlazor
         /// <summary>
         /// Convert a public-API <typeparamref name="T"/> value into a <see cref="DateTime"/> for internal calendar math.
         /// </summary>
-        protected static DateTime? ToDateTime(T? value)
+        protected static DateTime? ToDateTime(T? value) => value switch
         {
-            if (value is null) return null;
-            if (_underlyingType == typeof(DateTime)) return (DateTime)(object)value;
-            if (_underlyingType == typeof(DateOnly)) return ((DateOnly)(object)value).ToDateTime(TimeOnly.MinValue);
-            if (_underlyingType == typeof(DateTimeOffset)) return ((DateTimeOffset)(object)value).DateTime;
-            throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).");
-        }
+            null => null,
+            DateTime dt => dt,
+            DateOnly d => d.ToDateTime(TimeOnly.MinValue),
+            DateTimeOffset dto => dto.DateTime,
+            _ => throw new InvalidOperationException($"MudBaseDatePicker does not support T = {typeof(T)}. Use DateTime, DateOnly, or DateTimeOffset (or their nullable variants).")
+        };
 
         /// <summary>
         /// Convert a public-API <typeparamref name="T"/> limit (<see cref="MinDate"/>/<see cref="MaxDate"/>) into a <see cref="DateTime"/>.
@@ -316,7 +316,7 @@ namespace MudBlazor
                 {
                     var culture = GetCulture();
                     var calendar = culture.Calendar;
-                    PickerMonth = FromDateTime(new DateTime(calendar.GetYear(dateTime.Value), calendar.GetMonth(dateTime.Value), 1, calendar));
+                    PickerMonth = FromDateTime(new DateTime(calendar.GetYear(dateTime.Value), calendar.GetMonth(dateTime.Value), 1, 0, 0, 0, 0, calendar, DateTimeKind.Unspecified));
                 }
             }
             if (OpenTo == OpenTo.Date && FixDay.HasValue && FixMonth.HasValue)
@@ -542,7 +542,7 @@ namespace MudBlazor
         protected virtual Task OnYearClickedAsync(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = FromDateTime(new DateTime(year, current.Month, 1, GetCulture().Calendar));
+            PickerMonth = FromDateTime(new DateTime(year, current.Month, 1, 0, 0, 0, 0, GetCulture().Calendar, DateTimeKind.Unspecified));
             var nextView = GetNextView();
             if (nextView != null)
             {

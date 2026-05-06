@@ -89,8 +89,9 @@ namespace MudBlazor
                     var dt = ToDateTime(date)!.Value;
                     PickerMonth = FromDateTime(new DateTime(GetCulture().Calendar.GetYear(dt),
                         GetCulture().Calendar.GetMonth(dt),
-                        1,
-                        GetCulture().Calendar));
+                        1, 0, 0, 0, 0,
+                        GetCulture().Calendar,
+                        DateTimeKind.Unspecified));
                 }
 
                 _value = date;
@@ -219,7 +220,7 @@ namespace MudBlazor
             var current = GetMonthStart(0);
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            PickerMonth = FromDateTime(new DateTime(year, calendar.GetMonth(current), 1, calendar));
+            PickerMonth = FromDateTime(new DateTime(year, calendar.GetMonth(current), 1, 0, 0, 0, 0, calendar, DateTimeKind.Unspecified));
             var nextView = GetNextView();
             if (nextView == null)
             {
@@ -599,8 +600,9 @@ namespace MudBlazor
             {
                 PickerMonth = FromDateTime(new DateTime(GetCulture().Calendar.GetYear(dateDt.Value),
                     GetCulture().Calendar.GetMonth(dateDt.Value),
-                    1,
-                    GetCulture().Calendar));
+                    1, 0, 0, 0, 0,
+                    GetCulture().Calendar,
+                    DateTimeKind.Unspecified));
                 ScrollToYearAsync().CatchAndLog();
             }
         }
@@ -617,8 +619,9 @@ namespace MudBlazor
             {
                 PickerMonth = FromDateTime(new DateTime(calendar.GetYear(dt.Value),
                     calendar.GetMonth(dt.Value),
-                    1,
-                    calendar));
+                    1, 0, 0, 0, 0,
+                    calendar,
+                    DateTimeKind.Unspecified));
             }
             if (submitDate)
             {

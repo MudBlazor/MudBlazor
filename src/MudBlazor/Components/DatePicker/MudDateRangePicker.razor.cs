@@ -153,7 +153,7 @@ namespace MudBlazor
                 if (range is { Start: not null } && StartMonth is null)
                 {
                     var startDt = ToDateTime(range.Start)!.Value;
-                    PickerMonth = FromDateTime(new DateTime(GetCulture().Calendar.GetYear(startDt), GetCulture().Calendar.GetMonth(startDt), 1, GetCulture().Calendar));
+                    PickerMonth = FromDateTime(new DateTime(GetCulture().Calendar.GetYear(startDt), GetCulture().Calendar.GetMonth(startDt), 1, 0, 0, 0, 0, GetCulture().Calendar, DateTimeKind.Unspecified));
                 }
 
                 _dateRange = range;
@@ -163,7 +163,7 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     ResetConverterErrors();
-                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
+                    if (_dateRange == null || (_dateRange.Start is null && _dateRange.End is null))
                     {
                         _rangeText = null;
                         await SetTextAsync(null, false);

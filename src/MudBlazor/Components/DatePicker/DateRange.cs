@@ -8,7 +8,7 @@ namespace MudBlazor;
 /// Represents a date range used by a <see cref="MudDateRangePicker{T}"/>.
 /// </summary>
 /// <typeparam name="T">The date type bound by the range. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
-public class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
+public sealed class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
 {
     private static readonly Type _underlyingType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
