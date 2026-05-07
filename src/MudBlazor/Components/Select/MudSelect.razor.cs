@@ -609,6 +609,7 @@ namespace MudBlazor
 
                 if (MultiSelectionTextFunc is not null)
                 {
+                    Touched = true;
                     await SetCustomizedTextAsync(
                         text,
                         selectedConvertedValues: converted,
@@ -617,6 +618,7 @@ namespace MudBlazor
                 }
                 else
                 {
+                    Touched = true;
                     await SetTextAndUpdateValueAsync(text, updateValue: false);
                 }
 
@@ -641,7 +643,7 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(value);
 
-                await SetValueAndUpdateTextAsync(value);
+                await SetValueFromUserAsync(value);
                 _elementReference.SetText(ReadText).CatchAndLog();
             }
 
@@ -656,7 +658,7 @@ namespace MudBlazor
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
-                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
+                await SetValueFromUserAsync((T?)(object?)ReadText, updateText: false);
             }
 
             await InvokeAsync(StateHasChanged);
@@ -965,12 +967,14 @@ namespace MudBlazor
 
             if (MultiSelectionTextFunc != null)
             {
+                Touched = true;
                 await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
                     selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
             {
+                Touched = true;
                 await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
             }
 
@@ -982,7 +986,7 @@ namespace MudBlazor
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
-                SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
+                SetValueFromUserAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
             }
         }
 
@@ -1046,7 +1050,7 @@ namespace MudBlazor
                     {
                         _selectedValues.Clear();
                         _selectedValues.Add(item.Value);
-                        await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                        await SetValueFromUserAsync(item.Value, updateText: true);
                     }
 
                     await HighlightItemAsync(item);
@@ -1201,7 +1205,7 @@ namespace MudBlazor
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
-                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                await SetValueFromUserAsync(item.Value, updateText: true);
                 await UpdateSelectedValuesStateAsync();
             }
 
@@ -1227,7 +1231,7 @@ namespace MudBlazor
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
-                await SetValueAndUpdateTextAsync(item.Value, updateText: true);
+                await SetValueFromUserAsync(item.Value, updateText: true);
             }
 
             await HighlightItemAsync(item);
@@ -1514,11 +1518,6 @@ namespace MudBlazor
             if (_multiSelectionText != text)
             {
                 _multiSelectionText = text;
-                if (!string.IsNullOrWhiteSpace(_multiSelectionText))
-                {
-                    Touched = true;
-                }
-
                 if (updateValue)
                 {
                     await UpdateValuePropertyAsync(false);

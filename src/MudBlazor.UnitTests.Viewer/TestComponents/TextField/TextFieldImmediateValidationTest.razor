@@ -1,0 +1,32 @@
+<MudForm ValidationDelay="0">
+    <MudTextField T="string"
+                  id="immediate-text-field"
+                  @bind-Value="Value"
+                  Immediate="true"
+                  Validation="@((Func<string?, IEnumerable<string>>)Validate)" />
+</MudForm>
+
+<MudButton id="set-external-value"
+           OnClick="@(() => SetValue("external"))">
+    Set external value
+</MudButton>
+
+@code {
+    public static string __description__ = "Tracks validation calls for immediate text field updates with @bind-Value and parent-driven value changes.";
+
+    public int ValidationCallCount { get; private set; }
+
+    public string? Value { get; private set; }
+
+    private IEnumerable<string> Validate(string? value)
+    {
+        ValidationCallCount++;
+        return Array.Empty<string>();
+    }
+
+    public void SetValue(string? value)
+    {
+        Value = value;
+        StateHasChanged();
+    }
+}

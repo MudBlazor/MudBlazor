@@ -289,7 +289,7 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
-        private Task OnMaskedValueChangedAsync(string s) => SetTextAndUpdateValueAsync(s);
+        private Task OnMaskedValueChangedAsync(string s) => SetTextFromUserAsync(s);
 
         private string GetCounterText() => Counter switch
         {

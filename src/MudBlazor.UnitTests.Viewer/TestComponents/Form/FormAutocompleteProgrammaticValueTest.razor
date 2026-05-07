@@ -1,0 +1,36 @@
+<MudPopoverProvider />
+
+<MudForm>
+    <MudAutocomplete T="string"
+                     Label="Autocomplete"
+                     @bind-Value="Value"
+                     SearchFunc="Search"
+                     DebounceInterval="0" />
+</MudForm>
+
+<MudButton id="set-autocomplete-value"
+           OnClick="@(() => SetValue("Alpha"))">
+    Set autocomplete value
+</MudButton>
+
+@code {
+    public static string __description__ = "Sets an autocomplete value from the parent after render to verify touched state remains unchanged until user interaction.";
+
+    private static readonly string[] _items = ["Alpha", "Beta"];
+
+    public string? Value { get; private set; }
+
+    private static Task<IEnumerable<string>> Search(string? text, CancellationToken cancellationToken)
+    {
+        var values = string.IsNullOrWhiteSpace(text)
+            ? _items
+            : _items.Where(x => x.Contains(text, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<string>>(values);
+    }
+
+    public void SetValue(string? value)
+    {
+        Value = value;
+        StateHasChanged();
+    }
+}

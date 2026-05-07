@@ -1121,6 +1121,56 @@ namespace MudBlazor.UnitTests.Components
             fileUploadInstance.Files.Name.Should().Be(fileName);
         }
 
+        [Test]
+        public async Task Form_Should_NotBeTouched_When_SelectValue_IsSetProgrammatically()
+        {
+            var comp = Context.Render<FormSelectProgrammaticValueTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            form.IsTouched.Should().BeFalse();
+
+            await comp.Find("#set-select-value").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                select.Instance.ReadValue.Should().Be("Alpha");
+                select.Instance.ReadText.Should().Be("Alpha");
+                form.IsTouched.Should().BeFalse();
+            });
+
+            await select.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => select.Instance.Touched.Should().BeTrue());
+        }
+
+        [Test]
+        public async Task Form_Should_NotBeTouched_When_AutocompleteValue_IsSetProgrammatically()
+        {
+            var comp = Context.Render<FormAutocompleteProgrammaticValueTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+
+            form.IsTouched.Should().BeFalse();
+
+            await comp.Find("#set-autocomplete-value").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                autocomplete.Instance.ReadValue.Should().Be("Alpha");
+                autocomplete.Instance.ReadText.Should().Be("Alpha");
+                form.IsTouched.Should().BeFalse();
+            });
+
+            await autocomplete.Find("input").InputAsync("Be");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await comp.Find("div.mud-list-item").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => autocomplete.Instance.Touched.Should().BeTrue());
+        }
+
         /// <summary>
         /// Testing the functionality of the EditForm example from the docs.
         /// </summary>

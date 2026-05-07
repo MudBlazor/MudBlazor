@@ -567,6 +567,8 @@ namespace MudBlazor
                 // #1 needs to close before SetValueAndUpdateTextAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
                 // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
                 _open = false;
+                var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, value);
+                Touched = true;
 
                 await SetValueAndUpdateTextAsync(value);
 
@@ -583,7 +585,11 @@ namespace MudBlazor
 
                 _debounceTimer?.Dispose();
 
-                await BeginValidateAsync();
+                if (valueChanged)
+                {
+                    FieldChanged(value);
+                    await BeginValidateAsync();
+                }
 
                 if (!_isCleared)
                 {
@@ -1114,11 +1120,13 @@ namespace MudBlazor
             if (_items?.Length > 0)
                 _items = [];
             _open = true;
+            Touched = true;
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedListItemIndex = 0;
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
+            FieldChanged(default(T));
             await BeginValidateAsync();
         }
         internal async Task AdornmentClickHandlerAsync()
@@ -1274,7 +1282,7 @@ namespace MudBlazor
             if (text == null)
                 return;
 
-            await SetTextAndUpdateValueAsync(text, true);
+            await SetTextFromUserAsync(text, true);
         }
 
         private async Task ListItemOnClickAsync(T item)

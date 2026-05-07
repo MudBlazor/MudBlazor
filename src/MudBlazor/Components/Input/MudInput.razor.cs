@@ -185,14 +185,14 @@ namespace MudBlazor
             _isFocused = true;
             _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
-            await SetTextAndUpdateValueAsync(args);
+            await SetTextFromUserAsync(args);
         }
 
         protected async Task OnChange(string? args)
         {
             _internalText = args;
             await OnInternalInputChanged.InvokeAsync(args);
-            await SetTextAndUpdateValueAsync(args);
+            await SetTextFromUserAsync(args);
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace MudBlazor
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
+            await SetTextFromUserAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }

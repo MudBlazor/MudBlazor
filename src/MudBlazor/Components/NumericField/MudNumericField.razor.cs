@@ -241,7 +241,7 @@ namespace MudBlazor
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
-                await SetValueAndUpdateTextAsync(value, true);
+                await SetValueFromUserAsync(value, true);
             return true; //Don't show errors
         }
 
@@ -281,13 +281,13 @@ namespace MudBlazor
                         nextValue = Min;
                 }
 
-                await SetValueAndUpdateTextAsync(ConstrainBoundaries(nextValue).value);
+                await SetValueFromUserAsync(ConstrainBoundaries(nextValue).value);
                 await _elementReference.SetText(ReadText);
             }
             catch (OverflowException)
             {
                 // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
-                await SetValueAndUpdateTextAsync(factor > 0 ? Max : Min, true);
+                await SetValueFromUserAsync(factor > 0 ? Max : Min, true);
             }
         }
 
@@ -514,7 +514,7 @@ namespace MudBlazor
 
         private async Task OnInputValueChanged(string text)
         {
-            await SetTextAndUpdateValueAsync(text);
+            await SetTextFromUserAsync(text);
 
             // Keep formatted text in sync when using formatted input mode.
             // This also covers onchange updates that can occur around blur timing.

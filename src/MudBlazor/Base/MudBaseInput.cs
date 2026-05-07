@@ -545,9 +545,20 @@ namespace MudBlazor
             {
                 await UpdateTextPropertyAsync(false);
             }
+        }
 
-            FieldChanged(value);
-            await BeginValidateAsync();
+        protected virtual async Task SetValueFromUserAsync(T? value, bool updateText = true, bool force = false)
+        {
+            var valueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, value);
+            Touched = true;
+
+            await SetValueAndUpdateTextAsync(value, updateText, force);
+
+            if (valueChanged || force)
+            {
+                FieldChanged(value);
+                await BeginValidateAsync();
+            }
         }
 
         private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
@@ -567,7 +578,7 @@ namespace MudBlazor
 
             // Notify the form that the field has changed and trigger re-validation
             // Only do this after the field has been touched.
-            if (wasTouched)
+            if (wasTouched && !arg.IsChildOriginatedChange)
             {
                 FieldChanged(arg.Value);
                 await BeginValidateAsync();
@@ -783,11 +794,6 @@ namespace MudBlazor
 
             _validated = false;
 
-            if (!string.IsNullOrEmpty(text))
-            {
-                Touched = true;
-            }
-
             await _textState.SetValueAsync(text);
             if (updateValue)
             {
@@ -795,14 +801,23 @@ namespace MudBlazor
             }
         }
 
+        protected virtual async Task SetTextFromUserAsync(string? text, bool updateValue = true)
+        {
+            var textChanged = ReadText != text;
+            Touched = true;
+
+            await SetTextAndUpdateValueAsync(text, updateValue);
+
+            if (textChanged && updateValue)
+            {
+                FieldChanged(ReadValue);
+                await BeginValidateAsync();
+            }
+        }
+
         private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
             _validated = false;
-
-            if (!string.IsNullOrEmpty(arg.Value))
-            {
-                Touched = true;
-            }
 
             // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
             // But only if Value is not also being set in the same parameter update

@@ -76,6 +76,17 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        protected override Task SetTextFromUserAsync(string? text, bool updateValue = true)
+        {
+            if (!updateValue || DebounceInterval <= 0 || _debouncer is null)
+            {
+                return base.SetTextFromUserAsync(text, updateValue);
+            }
+
+            Touched = true;
+            return SetTextAndUpdateValueAsync(text, updateValue);
+        }
+
         /// <inheritdoc />
         protected override async Task ValidateValue()
         {
@@ -143,9 +154,9 @@ namespace MudBlazor
                 return false;
             }
 
-            // SetValueAndUpdateTextAsync already triggers FieldChanged and BeginValidateAsync,
-            // so the synced validation happens there and this call can stop.
             await SetValueAndUpdateTextAsync(pendingValue, updateText: false);
+            FieldChanged(pendingValue);
+            await base.ValidateValue();
             return true;
         }
 
@@ -153,7 +164,13 @@ namespace MudBlazor
         {
             return InvokeAsync(async () =>
             {
+                var previousValue = ReadValue;
                 await base.UpdateValuePropertyAsync(false);
+                if (!EqualityComparer<T?>.Default.Equals(previousValue, ReadValue))
+                {
+                    FieldChanged(ReadValue);
+                    await BeginValidateAsync();
+                }
                 await OnDebounceIntervalElapsed.InvokeAsync(ReadText);
             });
         }

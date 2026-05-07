@@ -277,6 +277,30 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        [Test]
+        public async Task TextField_ImmediateBoundValue_Should_Validate_Once_Per_Input()
+        {
+            var comp = Context.Render<TextFieldImmediateValidationTest>();
+
+            await comp.Find("#immediate-text-field").InputAsync("a");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCallCount.Should().Be(1));
+
+            await comp.Find("#immediate-text-field").InputAsync("ab");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCallCount.Should().Be(2));
+        }
+
+        [Test]
+        public async Task TextField_ExternalValueChange_Should_Revalidate_Once_After_User_Input()
+        {
+            var comp = Context.Render<TextFieldImmediateValidationTest>();
+
+            await comp.Find("#immediate-text-field").InputAsync("a");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCallCount.Should().Be(1));
+
+            await comp.Find("#set-external-value").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCallCount.Should().Be(2));
+        }
+
         /// <summary>
         /// Label and placeholder should not overlap.
         /// When placeholder is set, label should shrink
@@ -375,6 +399,24 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("B");
             textfield.ReadValue.Should().Be("By");
             textfield.ReadText.Should().Be("B");
+        }
+
+        [Test]
+        public async Task TextField_ProgrammaticTextAndValue_Should_NotSetTouched_UntilUserInput()
+        {
+            var comp = Context.Render<MudTextField<string>>();
+            var textField = comp.Instance;
+
+            textField.Touched.Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "value"));
+            textField.Touched.Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Text, "text"));
+            textField.Touched.Should().BeFalse();
+
+            await comp.Find("input").ChangeAsync("user input");
+            textField.Touched.Should().BeTrue();
         }
 
         [Test]
