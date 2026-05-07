@@ -634,7 +634,7 @@ namespace MudBlazor
         /// Defaults to <see cref="PagerPosition.Bottom"/>.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
+        [Category(CategoryTypes.Table.Pagination)]
         public PagerPosition PagerPosition { get; set; } = PagerPosition.Bottom;
 
         /// <summary>
