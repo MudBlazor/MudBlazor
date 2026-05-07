@@ -28,7 +28,7 @@ namespace MudBlazor.Docs.Components
         private bool _displayView;
         private string _componentName;
         private bool _renderAds;
-        private bool _adBlockerDetected;
+        private bool? _adBlockerDetected;
         [Inject] NavigationManager NavigationManager { get; set; }
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
@@ -101,14 +101,16 @@ namespace MudBlazor.Docs.Components
             {
                 _renderAds = true;
                 StateHasChanged();
+                return;
+            }
 
-                // Carbon Ads injects '#carbonads' only after carbon.js fetches and runs.
-                // Probe after a short wait so we can show a fallback message when
-                // the script is being blocked by an ad blocker or network filter.
+            if (_renderAds && !_adBlockerDetected.HasValue)
+            {
+                // The ad script is rendered by the follow-up render; sampling earlier would confuse normal Blazor render timing with ad blocking.
                 var blocked = await AdBlockDetection.IsAdBlockedAsync();
-                if (blocked && !_adBlockerDetected)
+                _adBlockerDetected = blocked;
+                if (blocked)
                 {
-                    _adBlockerDetected = true;
                     StateHasChanged();
                 }
             }

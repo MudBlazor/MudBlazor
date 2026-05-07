@@ -44,7 +44,7 @@
         {
             <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js" data-consent-category="carbon"></MudElement>
         }
-        @if (_adBlockerDetected)
+        @if (_adBlockerDetected == true)
         {
             <MudAlert Severity="Severity.Error" Class="ma-4" Elevation="1">
                 <MudText Typo="Typo.subtitle2" GutterBottom="true">Support MudBlazor</MudText>
