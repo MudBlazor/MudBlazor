@@ -1369,6 +1369,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterChangedColumnFilterRowApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            var filterInput = dataGrid.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await dataGrid.Find(".column-filter-menu button").ClickAsync();
+            var operators = popoverProvider.FindComponents<MudMenuItem>();
+            await operators[1].Find(".mud-menu-item").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+
+            await dataGrid.Find(".filter-button.clear").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(3);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridFilterChangedColumnFilterMenuApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>(parameters => parameters
+                .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            var filterInput = comp.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            await comp.Find(".apply-filter-button").ClickAsync();
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".clear-filter-button").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridCommittedItemChangedOccursAfterSourceItemUpdateInFormEdit()
         {
             var comp = Context.Render<DataGridCommittedItemChangedTest>();

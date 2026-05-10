@@ -584,6 +584,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -603,6 +604,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -620,6 +622,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -659,6 +662,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
