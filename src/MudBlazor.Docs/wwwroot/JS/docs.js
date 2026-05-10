@@ -20,7 +20,18 @@ class MudBlazorDocs {
         element.scrollIntoView({ block: 'center', behavior: 'smooth' })
     }
 
-    // Bait-only detection avoids treating slow, no-fill, or unavailable Carbon responses as blocking.
+    // Detects whether an ad blocker (or network filter) is preventing
+    // Carbon Ads from rendering in the docs page.
+    // Strategy:
+    //   1. Inject a hidden bait element using class names from common
+    //      ad-blocker filter lists (EasyList) and check whether it gets
+    //      hidden/removed by element-hiding cosmetic filters.
+    //   2. Check whether Carbon Ads injected its '#carbonads' container.
+    //      Network-level blockers don't hide the bait but do prevent
+    //      the carbon.js script from running at all.
+    // Resolves true if either signal indicates the ad was blocked.
+    // The wait gives the ad-blocker time to act and the carbon.js
+    // script time to load on slow connections.
     detectAdBlock(waitMilliseconds) {
         return new Promise((resolve) => {
             const bait = document.createElement('div');
@@ -45,9 +56,11 @@ class MudBlazorDocs {
                 } catch (e) {
                     baitBlocked = false;
                 }
-
                 bait.remove();
-                resolve(baitBlocked);
+
+                const carbonLoaded = !!document.getElementById('carbonads');
+
+                resolve(baitBlocked || !carbonLoaded);
             }, wait);
         });
     }
