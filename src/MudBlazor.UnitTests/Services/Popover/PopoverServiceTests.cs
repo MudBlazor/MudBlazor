@@ -226,7 +226,8 @@ public class PopoverServiceTests
         var timeProvider = new FakeTimeProvider();
         timeProvider.SetUtcNow(new DateTime(2024, 4, 5, 6, 7, 8, DateTimeKind.Utc));
         var popover = new PopoverMock { Open = true };
-        var service = CreateService(jsRuntimeMock, timeProvider: timeProvider);
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = CreateService(jsRuntimeMock, options, timeProvider);
 
         // Act
         await service.CreatePopoverAsync(popover);

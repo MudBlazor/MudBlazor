@@ -744,7 +744,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task CurrentDate_ShouldBeMarked()
         {
             var timeProvider = new FakeTimeProvider();
-            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 12, 0, 0, DateTimeKind.Utc));
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
             var currentDate = timeProvider.GetLocalNow().Date;
             var comp = await OpenPicker();
@@ -754,7 +754,10 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the marked date is the current date
             await comp.Find("button.mud-current").ClickAsync();
-            await comp.Find("button.mud-range-start-selected").ClickAsync();
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
+            var completeRangeTask = comp.Find("button.mud-range-start-selected").ClickAsync();
+            timeProvider.Advance(TimeSpan.FromMilliseconds(picker.ClosingDelay));
+            await completeRangeTask;
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
         }
 
