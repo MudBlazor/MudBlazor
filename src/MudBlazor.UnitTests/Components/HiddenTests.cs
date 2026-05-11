@@ -285,9 +285,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var secondCallStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var continueGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var gateReleased = false;
             var listenForResizeCallCount = 0;
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+            void ReleaseGate()
+            {
+                if (gateReleased)
+                {
+                    return;
+                }
+
+                continueGate.SetResult();
+                gateReleased = true;
+            }
 
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
@@ -315,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
             try
             {
                 await secondCallStarted.Task.WaitAsync(TimeSpan.FromSeconds(1));
-                continueGate.TrySetResult();
+                ReleaseGate();
 
                 await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
                 await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
@@ -324,7 +336,10 @@ namespace MudBlazor.UnitTests.Components
             }
             finally
             {
-                continueGate.TrySetResult();
+                if (!gateReleased)
+                {
+                    continueGate.TrySetResult();
+                }
             }
         }
     }
