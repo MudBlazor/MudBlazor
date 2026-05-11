@@ -611,7 +611,7 @@ public class PopoverServiceTests
         $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
         $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
         $"since the {nameof(PopoverJsInterop.DisposeAsync)} does it.")]
-    public async Task DisposeAsync_ShouldClearActivePopoversAndFireOnBatchTimerElapsedAsync()
+    public async Task DisposeAsync_ShouldClearActivePopoversWithoutOnBatchTimerElapsedAsync()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
@@ -641,7 +641,7 @@ public class PopoverServiceTests
                 It.Is<IReadOnlyCollection<MudPopoverHolder>>(items => items.Count == 2),
                 It.IsAny<CancellationToken>()),
             Times.Never,
-            "The periodic handler method was not called.");
+            "The periodic handler method should not be called after disposal.");
     }
 
     [Test]
