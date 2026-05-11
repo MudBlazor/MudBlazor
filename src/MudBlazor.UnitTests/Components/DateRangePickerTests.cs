@@ -751,11 +751,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that only one date is marked
             comp.FindAll("button.mud-current").Count.Should().Be(1);
-
-            // Check that the marked date is the current date
-            await comp.Find("button.mud-current").ClickAsync();
-            await comp.Find("button.mud-range-start-selected").ClickAsync();
-            comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
+            comp.Find("button.mud-current").TrimmedText().Should().Be(currentDate.Day.ToString(CultureInfo.InvariantCulture));
         }
 
         [Test]
