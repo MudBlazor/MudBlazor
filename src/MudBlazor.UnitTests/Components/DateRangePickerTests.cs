@@ -747,11 +747,18 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
             timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
             var currentDate = timeProvider.GetLocalNow().Date;
-            var comp = await OpenPicker();
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static));
+            var currentDay = currentDate.Day.ToString(CultureInfo.InvariantCulture);
 
             // Check that only one date is marked
             comp.FindAll("button.mud-current").Count.Should().Be(1);
-            comp.Find("button.mud-current").TrimmedText().Should().Be(currentDate.Day.ToString(CultureInfo.InvariantCulture));
+            comp.Find("button.mud-current").TrimmedText().Should().Be(currentDay);
+
+            await comp.InvokeAsync(() => comp.Instance.ClickDayAsync(currentDate));
+            await comp.InvokeAsync(() => comp.Instance.ClickDayAsync(currentDate));
+
+            comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
         }
 
         [Test]
@@ -1478,6 +1485,8 @@ namespace MudBlazor.UnitTests.Components
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
+
+            public Task ClickDayAsync(DateTime date) => OnDayClickedAsync(date);
         }
     }
     public static class DatePickerRenderedFragmentExtensions
