@@ -61,7 +61,7 @@ public static class MudGlobal
     /// </remarks>
     public static Action<Exception>? UnhandledExceptionHandler
     {
-        get => _unhandledExceptionHandlerOverrideIsSet.Value ? _unhandledExceptionHandlerOverride.Value : DefaultUnhandledExceptionHandler;
+        get => GetUnhandledExceptionHandler();
         set
         {
             _unhandledExceptionHandlerOverride.Value = value;
