@@ -8,36 +8,27 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
-        private static readonly object UnhandledExceptionHandlerLock = new object();
+        private static readonly SemaphoreSlim s_unhandledExceptionHandlerLock = new(1, 1);
         private Action<Exception> _originalExceptionHandler = null!;
-        private bool _lockAcquired;
 
         [SetUp]
         public void SetUp()
         {
-            Monitor.Enter(UnhandledExceptionHandlerLock);
-            _lockAcquired = true;
-            try
-            {
-                _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
-            }
-            catch
-            {
-                Monitor.Exit(UnhandledExceptionHandlerLock);
-                _lockAcquired = false;
-                throw;
-            }
+            s_unhandledExceptionHandlerLock.Wait();
+            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
         }
 
         [TearDown]
         public void TearDown()
         {
             MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
-            if (_lockAcquired)
-            {
-                Monitor.Exit(UnhandledExceptionHandlerLock);
-                _lockAcquired = false;
-            }
+            s_unhandledExceptionHandlerLock.Release();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            s_unhandledExceptionHandlerLock.Dispose();
         }
 
         private async Task AsyncTaskExceptionGenerator(string errorMessage)
@@ -58,6 +49,10 @@ namespace MudBlazor.UnitTests.Extensions
             throw new Exception(errorMessage);
         }
 
+        /// <summary>
+        /// Starts a fire-and-forget operation and returns the forwarded exception message.
+        /// </summary>
+        /// <param name="startOperation">Starts the operation under test after the handler is registered.</param>
         private static async Task<string> CaptureUnhandledExceptionMessageAsync(Action startOperation)
         {
             var exceptionSource = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
