@@ -8,13 +8,14 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
-        private static readonly SemaphoreSlim UnhandledExceptionHandlerLock = new(1, 1);
+        private static readonly Lock UnhandledExceptionHandlerLock = new();
+        private System.Threading.Lock.Scope _unhandledExceptionHandlerScope;
         private Action<Exception> _originalExceptionHandler = null!;
 
         [SetUp]
-        public async Task SetUp()
+        public void SetUp()
         {
-            await UnhandledExceptionHandlerLock.WaitAsync();
+            _unhandledExceptionHandlerScope = UnhandledExceptionHandlerLock.EnterScope();
             _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
         }
 
@@ -22,7 +23,7 @@ namespace MudBlazor.UnitTests.Extensions
         public void TearDown()
         {
             MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
-            UnhandledExceptionHandlerLock.Release();
+            _unhandledExceptionHandlerScope.Dispose();
         }
 
         private async Task AsyncTaskExceptionGenerator(string errorMessage)
@@ -79,7 +80,8 @@ namespace MudBlazor.UnitTests.Extensions
             MudGlobal.UnhandledExceptionHandler = null;
             var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
             task.CatchAndLog();
-            (await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5)))).Should().Be(task, "the test task should complete in time");
+            await task.ContinueWith(_ => { }, TaskScheduler.Default).WaitAsync(TimeSpan.FromSeconds(5));
+            task.IsCompleted.Should().BeTrue();
         }
     }
 }
