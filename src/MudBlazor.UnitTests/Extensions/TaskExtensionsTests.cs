@@ -41,10 +41,10 @@ namespace MudBlazor.UnitTests.Extensions
             throw new Exception(errorMessage);
         }
 
-        private static async Task<string> CaptureUnhandledExceptionAsync(Action<Action<Exception>> setHandler, Action invoke)
+        private static async Task<string> CaptureUnhandledExceptionAsync(Action<Action<Exception>> configureHandler, Action invoke)
         {
             var exceptionTaskSource = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-            setHandler(ex => exceptionTaskSource.TrySetResult(ex.Message));
+            configureHandler(ex => exceptionTaskSource.TrySetResult(ex.Message));
 
             invoke();
 
