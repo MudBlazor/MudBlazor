@@ -765,9 +765,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = await OpenPicker();
 
             comp.FindAll("button.mud-current").Count.Should().Be(1);
-            comp.Find("button.mud-current").InnerHtml.Should().Contain("4");
-            comp.Find(".mud-button-month").InnerHtml.Should().Contain("April");
-            comp.Find(".mud-button-year").InnerHtml.Should().Contain("2003");
+            comp.Find("button.mud-current").TrimmedText().Should().Be("4");
+            comp.Find(".mud-button-month").TrimmedText().Should().Contain("April");
+            comp.Find(".mud-button-year").TrimmedText().Should().Be("2003");
         }
 
         [Test]
