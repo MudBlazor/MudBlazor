@@ -7,6 +7,8 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
@@ -173,6 +175,68 @@ namespace MudBlazor.UnitTests.Components
             // Pointer moves to menu, still need to open
             await Menu().PointerEnterAsync(new PointerEventArgs());
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
+        }
+
+        [Test]
+        public async Task HoverDelay_UsesComponentParameterBeforeGlobalDefault()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            MudGlobal.MenuDefaults.HoverDelay = 300;
+            var hoverDelay = 75;
+
+            var comp = Context.Render<MenuTestMouseOver>(parameters => parameters.Add(x => x.HoverDelay, hoverDelay));
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            var menuElement = comp.Find("div.mud-menu");
+
+            var openTask = menuElement.PointerEnterAsync(new PointerEventArgs());
+            menu.GetState(x => x.Open).Should().BeFalse();
+            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay - 1));
+            menu.GetState(x => x.Open).Should().BeFalse();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(1));
+            await openTask;
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+
+            var closeTask = menuElement.PointerLeaveAsync(new PointerEventArgs());
+            menu.GetState(x => x.Open).Should().BeTrue();
+            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay - 1));
+            menu.GetState(x => x.Open).Should().BeTrue();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(1));
+            await closeTask;
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
+        }
+
+        [Test]
+        public async Task HoverDelay_UsesGlobalDefaultWhenParameterIsUnset()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var hoverDelay = 125;
+            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
+
+            var comp = Context.Render<MenuTestMouseOver>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            var menuElement = comp.Find("div.mud-menu");
+
+            var openTask = menuElement.PointerEnterAsync(new PointerEventArgs());
+            menu.GetState(x => x.Open).Should().BeFalse();
+            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay - 1));
+            menu.GetState(x => x.Open).Should().BeFalse();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(1));
+            await openTask;
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+
+            var closeTask = menuElement.PointerLeaveAsync(new PointerEventArgs());
+            menu.GetState(x => x.Open).Should().BeTrue();
+            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay - 1));
+            menu.GetState(x => x.Open).Should().BeTrue();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(1));
+            await closeTask;
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
         }
 
         [Test]
