@@ -77,5 +77,10 @@ public static class MudGlobal
     /// Otherwise, returns the default console-based handler.
     /// </remarks>
     internal static Action<Exception>? GetUnhandledExceptionHandler()
-        => _unhandledExceptionHandlerOverrideIsSet.Value ? _unhandledExceptionHandlerOverride.Value : DefaultUnhandledExceptionHandler;
+    {
+        var isOverrideSet = _unhandledExceptionHandlerOverrideIsSet.Value;
+        var handler = _unhandledExceptionHandlerOverride.Value;
+
+        return isOverrideSet ? handler : DefaultUnhandledExceptionHandler;
+    }
 }

@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public async Task Task_AndForget_ShouldUseHandlerFromCurrentAsyncFlow()
         {
-            async Task<string> RunInParallelAsync(string expectedMessage)
+            async Task<string> RunInSeparateFlowAsync(string expectedMessage)
             {
                 return await Task.Run(async () =>
                 {
@@ -114,8 +114,8 @@ namespace MudBlazor.UnitTests.Extensions
             }
 
             var results = await Task.WhenAll(
-                RunInParallelAsync("Something bad is about to happen in flow 1 ..."),
-                RunInParallelAsync("Something bad is about to happen in flow 2 ..."));
+                RunInSeparateFlowAsync("Something bad is about to happen in flow 1 ..."),
+                RunInSeparateFlowAsync("Something bad is about to happen in flow 2 ..."));
 
             results.Should().BeEquivalentTo(new[]
             {
