@@ -291,7 +291,7 @@ namespace MudBlazor
         public int? HoverDelay { get; set; }
 
         /// <summary>
-        /// The origin point for the menu's anchor. If set, overrides Nested Menus, and PositionatCursor Anchor points.
+        /// The origin point for the menu's anchor. If set, overrides Nested Menus, and PositionAtCursor anchor points.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
