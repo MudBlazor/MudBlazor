@@ -219,6 +219,23 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task CreatePopoverAsync_ShouldUseInjectedTimeProviderForActivationDate()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var timeProvider = new FakeTimeProvider();
+        timeProvider.SetUtcNow(new DateTime(2024, 4, 5, 6, 7, 8, DateTimeKind.Utc));
+        var popover = new PopoverMock { Open = true };
+        var service = CreateService(jsRuntimeMock, timeProvider: timeProvider);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+
+        // Assert
+        service.ActivePopovers.Single().ActivationDate.Should().Be(timeProvider.GetLocalNow().DateTime);
+    }
+
+    [Test]
     public async Task UpdatePopoverAsync_ShouldThrowWheNullPopover()
     {
         // Arrange

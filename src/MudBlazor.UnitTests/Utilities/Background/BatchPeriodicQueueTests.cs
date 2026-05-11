@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 using MudBlazor.Utilities.Background.Batch;
 using NUnit.Framework;
@@ -23,8 +24,9 @@ public class BatchPeriodicQueueTests
         var stoppingTokenSource = new CancellationTokenSource();
         var signalEvent = new ManualResetEventSlim(false);
         var period = TimeSpan.FromSeconds(0.5);
+        var timeProvider = new FakeTimeProvider();
         var mockHandler = new Mock<IBatchTimerHandler<int>>();
-        using var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period);
+        using var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period, timeProvider);
 
         // Configure the periodic timer to execute immediately
         mockHandler
@@ -39,8 +41,10 @@ public class BatchPeriodicQueueTests
             batchPeriodicQueue.QueueItem(expectedItem);
         }
 
-        // Wait for the timer to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
-        var signalEventWaitTime = period.Add(TimeSpan.FromMinutes(2));
+        timeProvider.Advance(period);
+
+        // Wait for the timer to be signaled, consider test failed if we didn't receive signal quickly after time advances
+        var signalEventWaitTime = TimeSpan.FromSeconds(1);
         var eventSignaled = signalEvent.Wait(signalEventWaitTime);
 
         // Assert
@@ -56,7 +60,7 @@ public class BatchPeriodicQueueTests
     }
 
     [Test]
-    public void Dispose_ShouldNotOccurWithExpectedItems()
+    public async Task Dispose_ShouldNotOccurWithExpectedItems()
     {
         // Define the expected items
         var expectedItems = new List<int> { 1, 2, 3 };
@@ -64,8 +68,9 @@ public class BatchPeriodicQueueTests
         // Arrange
         var signalEvent = new ManualResetEventSlim(false);
         var period = TimeSpan.FromSeconds(0.5);
+        var timeProvider = new FakeTimeProvider();
         var mockHandler = new Mock<IBatchTimerHandler<int>>();
-        var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period);
+        var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period, timeProvider);
 
         // Configure the periodic timer to execute immediately
         mockHandler
@@ -74,15 +79,17 @@ public class BatchPeriodicQueueTests
             .Callback(signalEvent.Set);
 
         // Act
+        await batchPeriodicQueue.StartAsync();
         foreach (var expectedItem in expectedItems)
         {
             batchPeriodicQueue.QueueItem(expectedItem);
         }
 
         batchPeriodicQueue.Dispose();
+        timeProvider.Advance(period);
 
         // Wait for the event to be signaled, let's not add time as the even won't be ever received
-        var eventSignaled = signalEvent.Wait(period);
+        var eventSignaled = signalEvent.Wait(TimeSpan.FromSeconds(1));
 
         // Assert
         eventSignaled.Should().BeFalse();

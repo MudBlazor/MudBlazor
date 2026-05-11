@@ -25,11 +25,12 @@ internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
     /// </summary>
     /// <param name="handler">The batch timer handler.</param>
     /// <param name="period">The time period for triggering batch execution.</param>
-    public BatchPeriodicQueue(IBatchTimerHandler<T> handler, TimeSpan period)
+    /// <param name="timeProvider">The time provider used by the periodic timer.</param>
+    public BatchPeriodicQueue(IBatchTimerHandler<T> handler, TimeSpan period, TimeProvider? timeProvider = null)
     {
         _handler = handler;
         _items = new ConcurrentQueue<T>();
-        _periodicTimer = new PeriodicTimer(period);
+        _periodicTimer = new PeriodicTimer(period, timeProvider ?? TimeProvider.System);
     }
 
     /// <summary>

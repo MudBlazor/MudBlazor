@@ -7,6 +7,8 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
@@ -741,7 +743,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CurrentDate_ShouldBeMarked()
         {
-            var currentDate = DateTime.Now.Date;
+            var timeProvider = new FakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var currentDate = timeProvider.GetLocalNow().Date;
             var comp = await OpenPicker();
 
             // Check that only one date is marked
