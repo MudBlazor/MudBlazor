@@ -104,8 +104,8 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
         IBrowserViewportObserver? newObserver;
-        BrowserViewportSubscription subscription = default!;
-        var foundExistingSubscription = false;
+        BrowserViewportSubscription? subscription = null;
+        var existingSubscriptionFound = false;
         var semaphoreEntered = false;
 
         try
@@ -119,7 +119,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             }
 
             subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-            foundExistingSubscription = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
+            existingSubscriptionFound = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
         }
         catch (OperationCanceledException) when (_disposed)
         {
@@ -133,7 +133,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             }
         }
 
-        if (!foundExistingSubscription)
+        if (!existingSubscriptionFound)
         {
             if (fireImmediately)
             {
@@ -141,6 +141,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
                 var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
                 var latestBreakpoint = await GetCurrentBreakpointAsync();
                 // Notify only current subscription
+                ArgumentNullException.ThrowIfNull(subscription);
                 ArgumentNullException.ThrowIfNull(newObserver);
                 await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
             }
