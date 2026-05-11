@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Extensions
     public class TaskExtensionsTests
     {
         private static readonly TimeSpan ExceptionForwardingTimeout = TimeSpan.FromSeconds(5);
-        private static readonly TaskCreationOptions AsyncFlowOptions = TaskCreationOptions.RunContinuationsAsynchronously;
+        private static readonly TaskCreationOptions ContinuationOptions = TaskCreationOptions.RunContinuationsAsynchronously;
         private Action<Exception> _originalExceptionHandler = null!;
         private bool _restoreDefaultHandler;
 
@@ -149,12 +149,12 @@ namespace MudBlazor.UnitTests.Extensions
             Action<Exception> flow1Handler = ex => flow1ErrorMessage = ex.Message;
             Action<Exception> flow2Handler = ex => flow2ErrorMessage = ex.Message;
 
-            var flow1Ready = new TaskCompletionSource(AsyncFlowOptions);
-            var flow2Ready = new TaskCompletionSource(AsyncFlowOptions);
+            var flow1HandlerSet = new TaskCompletionSource(ContinuationOptions);
+            var flow2HandlerSet = new TaskCompletionSource(ContinuationOptions);
 
             await Task.WhenAll(
-                Task.Run(() => RunFlowAsync("flow 1", flow1Handler, flow1Ready, flow2Ready.Task, () => flow1ErrorMessage, AsyncTaskExceptionGenerator)),
-                Task.Run(() => RunFlowAsync("flow 2", flow2Handler, flow2Ready, flow1Ready.Task, () => flow2ErrorMessage, AsyncTaskExceptionGenerator)));
+                Task.Run(() => RunFlowAsync("flow 1", flow1Handler, flow1HandlerSet, flow2HandlerSet.Task, () => flow1ErrorMessage, AsyncTaskExceptionGenerator)),
+                Task.Run(() => RunFlowAsync("flow 2", flow2Handler, flow2HandlerSet, flow1HandlerSet.Task, () => flow2ErrorMessage, AsyncTaskExceptionGenerator)));
 
             flow1ErrorMessage.Should().Be("flow 1");
             flow2ErrorMessage.Should().Be("flow 2");
