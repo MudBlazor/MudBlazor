@@ -69,9 +69,4 @@ public static class MudGlobal
         }
     }
 
-    internal static void ClearUnhandledExceptionHandler()
-    {
-        _unhandledExceptionHandler.Value = null;
-        _unhandledExceptionHandlerIsSet.Value = false;
-    }
 }

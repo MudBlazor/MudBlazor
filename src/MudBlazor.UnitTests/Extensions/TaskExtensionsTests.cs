@@ -7,18 +7,6 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-            MudGlobal.ClearUnhandledExceptionHandler();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            MudGlobal.ClearUnhandledExceptionHandler();
-        }
-
         private static async Task AsyncTaskExceptionGenerator(string errorMessage)
         {
             await Task.Yield();
@@ -50,12 +38,37 @@ namespace MudBlazor.UnitTests.Extensions
             return await exceptionTaskSource.Task;
         }
 
+        /// <summary>
+        /// Runs a test operation without inheriting async-local state from the calling test flow.
+        /// </summary>
+        private static Task<TValue> RunInCleanExecutionContext<TValue>(Func<Task<TValue>> action)
+        {
+            using (ExecutionContext.SuppressFlow())
+            {
+                return Task.Run(action);
+            }
+        }
+
+        /// <summary>
+        /// Runs a test operation without inheriting async-local state from the calling test flow.
+        /// </summary>
+        private static Task RunInCleanExecutionContext(Func<Task> action)
+        {
+            using (ExecutionContext.SuppressFlow())
+            {
+                return Task.Run(action);
+            }
+        }
+
         [Test]
         [CancelAfter(5000)]
         public async Task Task_AndForget_ShouldForwardExceptionToGlobalHandler()
         {
-            var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
-            var errorMessage = await CaptureUnhandledException(() => task.CatchAndLog());
+            var errorMessage = await RunInCleanExecutionContext(() =>
+            {
+                var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
+                return CaptureUnhandledException(() => task.CatchAndLog());
+            });
 
             errorMessage.Should().Be("Something bad is about to happen ...");
         }
@@ -64,8 +77,11 @@ namespace MudBlazor.UnitTests.Extensions
         [CancelAfter(5000)]
         public async Task ValueTask_AndForget_ShouldForwardExceptionToGlobalHandler()
         {
-            var task = AsyncValueTaskExceptionGenerator("Something bad is about to happen ...");
-            var errorMessage = await CaptureUnhandledException(() => task.CatchAndLog());
+            var errorMessage = await RunInCleanExecutionContext(() =>
+            {
+                var task = AsyncValueTaskExceptionGenerator("Something bad is about to happen ...");
+                return CaptureUnhandledException(() => task.CatchAndLog());
+            });
 
             errorMessage.Should().Be("Something bad is about to happen ...");
         }
@@ -74,8 +90,11 @@ namespace MudBlazor.UnitTests.Extensions
         [CancelAfter(5000)]
         public async Task ValueTask_T_AndForget_ShouldForwardExceptionToGlobalHandler()
         {
-            var task = AsyncValueTaskExceptionGenerator<bool>("Something bad is about to happen ...");
-            var errorMessage = await CaptureUnhandledException(() => task.CatchAndLog());
+            var errorMessage = await RunInCleanExecutionContext(() =>
+            {
+                var task = AsyncValueTaskExceptionGenerator<bool>("Something bad is about to happen ...");
+                return CaptureUnhandledException(() => task.CatchAndLog());
+            });
 
             errorMessage.Should().Be("Something bad is about to happen ...");
         }
@@ -84,29 +103,34 @@ namespace MudBlazor.UnitTests.Extensions
         [CancelAfter(5000)]
         public async Task Task_AndForget_ShouldNotFailIfGlobalHandlerIsNull()
         {
-            MudGlobal.UnhandledExceptionHandler = null;
-            var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
-            task.CatchAndLog();
+            await RunInCleanExecutionContext(async () =>
+            {
+                MudGlobal.UnhandledExceptionHandler = null;
+                var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
+                task.CatchAndLog();
 
-            var exception = Assert.ThrowsAsync<Exception>(async () => await task);
-            exception!.Message.Should().Be("Something bad is about to happen ...");
+                var exception = Assert.ThrowsAsync<Exception>(async () => await task);
+                exception!.Message.Should().Be("Something bad is about to happen ...");
+            });
         }
 
         [Test]
-        public void UnhandledExceptionHandler_ShouldReturnDefaultConsoleHandlerWhenUnset()
+        public async Task UnhandledExceptionHandler_ShouldReturnDefaultConsoleHandlerWhenUnset()
         {
-            MudGlobal.UnhandledExceptionHandler.Should().BeSameAs(MudGlobal.DefaultUnhandledExceptionHandler);
+            var handler = await RunInCleanExecutionContext(() => Task.FromResult(MudGlobal.UnhandledExceptionHandler));
+
+            handler.Should().BeSameAs(MudGlobal.DefaultUnhandledExceptionHandler);
         }
 
         [Test]
         [CancelAfter(5000)]
         public async Task Task_AndForget_ShouldUseHandlerFromCurrentAsyncFlow()
         {
-            static async Task<string> RunInSeparateFlow(string expectedMessage)
+            static Task<string> RunInSeparateFlow(string expectedMessage)
             {
-                return await Task.Run(async () =>
+                return RunInCleanExecutionContext(() =>
                 {
-                    return await CaptureUnhandledException(() => AsyncTaskExceptionGenerator(expectedMessage).CatchAndLog());
+                    return CaptureUnhandledException(() => AsyncTaskExceptionGenerator(expectedMessage).CatchAndLog());
                 });
             }
 
