@@ -15,6 +15,11 @@ namespace MudBlazor;
 /// </summary>
 public static class MudGlobal
 {
+    private static readonly AsyncLocal<bool> _unhandledExceptionHandlerOverrideIsSet = new();
+    private static readonly AsyncLocal<Action<Exception>?> _unhandledExceptionHandlerOverride = new();
+
+    internal static readonly Action<Exception> DefaultUnhandledExceptionHandler = exception => Console.Write(exception);
+
     /// <summary>
     /// Default settings for <see cref="MudMenu"/>.
     /// <br/>
@@ -54,5 +59,16 @@ public static class MudGlobal
     /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
     /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
     /// </remarks>
-    public static Action<Exception> UnhandledExceptionHandler { get; set; } = (exception) => Console.Write(exception);
+    public static Action<Exception>? UnhandledExceptionHandler
+    {
+        get => _unhandledExceptionHandlerOverrideIsSet.Value ? _unhandledExceptionHandlerOverride.Value : DefaultUnhandledExceptionHandler;
+        set
+        {
+            _unhandledExceptionHandlerOverride.Value = value;
+            _unhandledExceptionHandlerOverrideIsSet.Value = true;
+        }
+    }
+
+    internal static Action<Exception>? GetUnhandledExceptionHandler()
+        => _unhandledExceptionHandlerOverrideIsSet.Value ? _unhandledExceptionHandlerOverride.Value : DefaultUnhandledExceptionHandler;
 }

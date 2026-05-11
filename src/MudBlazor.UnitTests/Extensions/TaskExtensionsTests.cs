@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿#nullable enable
+
+using System.Diagnostics;
 using AwesomeAssertions;
 using NUnit.Framework;
 
@@ -6,10 +8,9 @@ namespace MudBlazor.UnitTests.Extensions
 {
 
     [TestFixture]
-    [NonParallelizable]
     public class TaskExtensionsTests
     {
-        private Action<Exception> _originalExceptionHandler = null!;
+        private Action<Exception>? _originalExceptionHandler;
 
         [SetUp]
         public void SetUp()
@@ -44,7 +45,7 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public async Task Task_AndForget_ShouldForwardExceptionToGlobalHandler()
         {
-            string errorMessage = null;
+            string? errorMessage = null;
             MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
             var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
             task.CatchAndLog();
@@ -63,7 +64,7 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public async Task ValueTask_AndForget_ShouldForwardExceptionToGlobalHandler()
         {
-            string errorMessage = null;
+            string? errorMessage = null;
             MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
             var task = AsyncValueTaskExceptionGenerator("Something bad is about to happen ...");
             task.CatchAndLog();
@@ -82,7 +83,7 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public async Task ValueTask_T_AndForget_ShouldForwardExceptionToGlobalHandler()
         {
-            string errorMessage = null;
+            string? errorMessage = null;
             MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
             var task = AsyncValueTaskExceptionGenerator<bool>("Something bad is about to happen ...");
             task.CatchAndLog();
@@ -113,6 +114,43 @@ namespace MudBlazor.UnitTests.Extensions
                     Assert.Fail("The test task did not end in time, this should not happen!");
                 }
             }
+        }
+
+        [Test]
+        public async Task Task_AndForget_ShouldUseHandlerFromCurrentAsyncFlow()
+        {
+            async Task<string> RunInParallelAsync(string expectedMessage)
+            {
+                return await Task.Run(async () =>
+                {
+                    string? errorMessage = null;
+                    MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
+
+                    AsyncTaskExceptionGenerator(expectedMessage).CatchAndLog();
+
+                    var t = Stopwatch.StartNew();
+                    while (errorMessage == null)
+                    {
+                        await Task.Delay(10);
+                        if (t.Elapsed > TimeSpan.FromSeconds(5))
+                        {
+                            Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
+                        }
+                    }
+
+                    return errorMessage!;
+                });
+            }
+
+            var results = await Task.WhenAll(
+                RunInParallelAsync("Something bad is about to happen in flow 1 ..."),
+                RunInParallelAsync("Something bad is about to happen in flow 2 ..."));
+
+            results.Should().BeEquivalentTo(new[]
+            {
+                "Something bad is about to happen in flow 1 ...",
+                "Something bad is about to happen in flow 2 ..."
+            });
         }
     }
 }

@@ -25,7 +25,7 @@ namespace MudBlazor
             {
                 if (!ignoreExceptions)
                 {
-                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
+                    MudGlobal.GetUnhandledExceptionHandler()?.Invoke(ex);
                 }
             }
         }
@@ -45,7 +45,7 @@ namespace MudBlazor
             {
                 if (!ignoreExceptions)
                 {
-                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
+                    MudGlobal.GetUnhandledExceptionHandler()?.Invoke(ex);
                 }
             }
         }
@@ -65,7 +65,7 @@ namespace MudBlazor
             {
                 if (!ignoreExceptions)
                 {
-                    MudGlobal.UnhandledExceptionHandler?.Invoke(ex);
+                    MudGlobal.GetUnhandledExceptionHandler()?.Invoke(ex);
                 }
             }
         }
