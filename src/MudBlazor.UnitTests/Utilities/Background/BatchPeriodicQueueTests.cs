@@ -22,17 +22,19 @@ public class BatchPeriodicQueueTests
 
         // Arrange
         var stoppingTokenSource = new CancellationTokenSource();
-        var signalEvent = new ManualResetEventSlim(false);
+        var batchElapsed = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var period = TimeSpan.FromSeconds(0.5);
         var timeProvider = new FakeTimeProvider();
         var mockHandler = new Mock<IBatchTimerHandler<int>>();
         using var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period, timeProvider);
 
-        // Configure the periodic timer to execute immediately
         mockHandler
             .Setup(h => h.OnBatchTimerElapsedAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
+            .Returns((IReadOnlyCollection<int> items, CancellationToken _) =>
+            {
+                batchElapsed.TrySetResult(items);
+                return Task.CompletedTask;
+            });
 
         // Act
         await batchPeriodicQueue.StartAsync(stoppingTokenSource.Token);
@@ -42,13 +44,10 @@ public class BatchPeriodicQueueTests
         }
 
         timeProvider.Advance(period);
-
-        // Wait for the timer to be signaled, consider test failed if we didn't receive signal quickly after time advances
-        var signalEventWaitTime = TimeSpan.FromSeconds(1);
-        var eventSignaled = signalEvent.Wait(signalEventWaitTime);
+        var processedItems = await batchElapsed.Task;
 
         // Assert
-        eventSignaled.Should().BeTrue();
+        processedItems.VerifyItemsMatch(expectedItems).Should().BeTrue();
         batchPeriodicQueue.Count.Should().Be(0);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it creates a linked token via CancellationTokenSource.CreateLinkedTokenSource, therefore the reference won't match
         mockHandler.Verify(
@@ -66,17 +65,19 @@ public class BatchPeriodicQueueTests
         var expectedItems = new List<int> { 1, 2, 3 };
 
         // Arrange
-        var signalEvent = new ManualResetEventSlim(false);
+        var batchElapsed = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var period = TimeSpan.FromSeconds(0.5);
         var timeProvider = new FakeTimeProvider();
         var mockHandler = new Mock<IBatchTimerHandler<int>>();
         var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period, timeProvider);
 
-        // Configure the periodic timer to execute immediately
         mockHandler
             .Setup(h => h.OnBatchTimerElapsedAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
+            .Returns((IReadOnlyCollection<int> items, CancellationToken _) =>
+            {
+                batchElapsed.TrySetResult(items);
+                return Task.CompletedTask;
+            });
 
         // Act
         await batchPeriodicQueue.StartAsync();
@@ -87,12 +88,10 @@ public class BatchPeriodicQueueTests
 
         batchPeriodicQueue.Dispose();
         timeProvider.Advance(period);
-
-        // Wait for the event to be signaled, let's not add time as the even won't be ever received
-        var eventSignaled = signalEvent.Wait(TimeSpan.FromSeconds(1));
+        await batchPeriodicQueue.ExecuteTask!;
 
         // Assert
-        eventSignaled.Should().BeFalse();
+        batchElapsed.Task.IsCompleted.Should().BeFalse();
         batchPeriodicQueue.Count.Should().Be(3);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it case of DisposeAsync the token will be default
         mockHandler.Verify(
