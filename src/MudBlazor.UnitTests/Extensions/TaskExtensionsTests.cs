@@ -41,6 +41,12 @@ namespace MudBlazor.UnitTests.Extensions
             throw new Exception(errorMessage);
         }
 
+        /// <summary>
+        /// Configures the current async-flow handler, invokes the fire-and-forget operation, and waits for the forwarded exception message.
+        /// </summary>
+        /// <param name="configureHandler">Sets the handler that should receive the forwarded exception for the current test flow.</param>
+        /// <param name="invoke">Starts the fire-and-forget operation under test.</param>
+        /// <returns>The exception message captured by the configured handler.</returns>
         private static async Task<string> CaptureUnhandledExceptionAsync(Action<Action<Exception>> configureHandler, Action invoke)
         {
             var exceptionTaskSource = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);

@@ -69,6 +69,13 @@ public static class MudGlobal
         }
     }
 
+    /// <summary>
+    /// Resolves the unhandled exception handler for the current async flow.
+    /// </summary>
+    /// <remarks>
+    /// Returns the async-local override when one has been assigned for the current flow, including an explicit <see langword="null"/> override.
+    /// Otherwise, returns the default console-based handler.
+    /// </remarks>
     internal static Action<Exception>? GetUnhandledExceptionHandler()
         => _unhandledExceptionHandlerOverrideIsSet.Value ? _unhandledExceptionHandlerOverride.Value : DefaultUnhandledExceptionHandler;
 }
