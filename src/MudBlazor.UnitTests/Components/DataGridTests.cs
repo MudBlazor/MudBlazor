@@ -1481,10 +1481,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridServerSideSortable()
         {
-            // Disable simulated load on server side:
-            TestComponents.DataGrid.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
-
-            var comp = Context.Render<DataGridServerSideSortableTest>();
+            var comp = Context.Render<DataGridServerSideSortableTest>(parameters =>
+                parameters.Add(x => x.ServerDelay, TimeSpan.Zero));
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerSideSortableTest.Item>>();
 
             var cells = dataGrid.FindAll("td");
