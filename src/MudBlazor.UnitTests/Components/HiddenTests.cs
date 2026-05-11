@@ -291,11 +291,7 @@ namespace MudBlazor.UnitTests.Components
                 .ReturnsAsync(new BrowserWindowSize { Height = 1080, Width = 1920 });
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-                .Returns(async () =>
-                {
-                    await Task.Delay(200);
-                    return Mock.Of<IJSVoidResult>();
-                })
+                .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200))
                 .Verifiable();
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))

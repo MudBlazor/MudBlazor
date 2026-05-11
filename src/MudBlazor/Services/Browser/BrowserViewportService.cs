@@ -105,25 +105,35 @@ internal sealed class BrowserViewportService : IBrowserViewportService
 
         IBrowserViewportObserver? newObserver;
         BrowserViewportSubscription subscription;
-        var alreadySubscribed = false;
+        var foundExistingSubscription = false;
+        var semaphoreEntered = false;
 
-        await _subscriptionSemaphore.WaitAsync();
         try
         {
+            await _subscriptionSemaphore.WaitAsync(_cancellationToken);
+            semaphoreEntered = true;
+
             if (_disposed)
             {
                 return;
             }
 
             subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-            alreadySubscribed = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
+            foundExistingSubscription = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
+        }
+        catch (OperationCanceledException) when (_disposed)
+        {
+            return;
         }
         finally
         {
-            _subscriptionSemaphore.Release();
+            if (semaphoreEntered)
+            {
+                _subscriptionSemaphore.Release();
+            }
         }
 
-        if (!alreadySubscribed)
+        if (!foundExistingSubscription)
         {
             if (fireImmediately)
             {
