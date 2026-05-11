@@ -105,7 +105,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
 
         IBrowserViewportObserver? newObserver;
         BrowserViewportSubscription subscription;
-        var observerAlreadySubscribed = false;
+        var alreadySubscribed = false;
 
         await _subscriptionSemaphore.WaitAsync();
         try
@@ -116,14 +116,14 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             }
 
             subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-            observerAlreadySubscribed = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
+            alreadySubscribed = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
         }
         finally
         {
             _subscriptionSemaphore.Release();
         }
 
-        if (!observerAlreadySubscribed)
+        if (!alreadySubscribed)
         {
             if (fireImmediately)
             {
@@ -277,6 +277,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             // Do not send our CancellationTokenSource as it was cancelled.
             await _resizeListenerInterop.DisposeAsync(CancellationToken.None);
 
+            _subscriptionSemaphore.Dispose();
             _cancellationTokenSource.Dispose();
         }
     }

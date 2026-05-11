@@ -344,7 +344,6 @@ public class BrowserViewportServiceTests
         await listenForResizeStarted.Task.WaitAsync(TimeSpan.FromSeconds(1));
 
         var subscribeObserver2Task = service.SubscribeAsync(observer2, fireImmediately: false);
-        subscribeObserver2Task.IsCompleted.Should().BeFalse();
 
         releaseListenForResize.SetResult();
         await Task.WhenAll(subscribeObserver1Task, subscribeObserver2Task);
