@@ -393,7 +393,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets the resolved hover delay value, using the global default when not explicitly set.
         /// </summary>
-        protected int GetHoverDelay() => HoverDelay ?? MudGlobal.MenuDefaults.HoverDelay;
+        internal int GetHoverDelay() => HoverDelay ?? MudGlobal.MenuDefaults.HoverDelay;
 
         /// <summary>
         /// Gets the transition duration for the popover, using dense menus to disable animations.
