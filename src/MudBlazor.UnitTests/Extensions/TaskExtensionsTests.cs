@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Extensions
         public void SetUp()
         {
             _restoreDefaultHandler = MudGlobal.UnhandledExceptionHandler is null;
-            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler ?? null!;
+            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler ?? (_ => { });
         }
 
         [TearDown]
