@@ -281,6 +281,16 @@ namespace MudBlazor
         public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
+        /// The delay in milliseconds before hover opens or closes this menu.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses <see cref="MudGlobal.MenuDefaults.HoverDelay"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupBehavior)]
+        public int? HoverDelay { get; set; }
+
+        /// <summary>
         /// The origin point for the menu's anchor. If set, overrides Nested Menus, and PositionatCursor Anchor points.
         /// </summary>
         /// <remarks>
@@ -379,6 +389,11 @@ namespace MudBlazor
         /// TODO: Once .NET 8 support is dropped, consider using constructor injection (available in .NET 9+) to set defaults directly.
         /// </remarks>
         protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
+
+        /// <summary>
+        /// Gets the resolved hover delay value, using the global default when not explicitly set.
+        /// </summary>
+        protected int GetHoverDelay() => HoverDelay ?? MudGlobal.MenuDefaults.HoverDelay;
 
         /// <summary>
         /// Gets the transition duration for the popover, using dense menus to disable animations.
@@ -697,13 +712,15 @@ namespace MudBlazor
                 return;
             }
 
-            if (MudGlobal.MenuDefaults.HoverDelay > 0)
+            var hoverDelay = GetHoverDelay();
+
+            if (hoverDelay > 0)
             {
                 _hoverCts = new();
 
                 try
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _hoverCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(hoverDelay), TimeProvider, _hoverCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -738,13 +755,15 @@ namespace MudBlazor
             }
 
             // Add a delay if one is configured.
-            if (MudGlobal.MenuDefaults.HoverDelay > 0)
+            var hoverDelay = GetHoverDelay();
+
+            if (hoverDelay > 0)
             {
                 _leaveCts = new();
 
                 try
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _leaveCts.Token);
+                    await Task.Delay(TimeSpan.FromMilliseconds(hoverDelay), TimeProvider, _leaveCts.Token);
                 }
                 catch (TaskCanceledException)
                 {
