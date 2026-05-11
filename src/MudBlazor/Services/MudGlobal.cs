@@ -15,12 +15,6 @@ namespace MudBlazor;
 /// </summary>
 public static class MudGlobal
 {
-    private static readonly AsyncLocal<bool> _scopedUnhandledExceptionHandlerOverrideIsSet = new();
-    private static readonly AsyncLocal<Action<Exception>?> _scopedUnhandledExceptionHandlerOverride = new();
-    private static Action<Exception>? _unhandledExceptionHandler = DefaultUnhandledExceptionHandler;
-
-    internal static readonly Action<Exception> DefaultUnhandledExceptionHandler = exception => Console.Write(exception);
-
     /// <summary>
     /// Default settings for <see cref="MudMenu"/>.
     /// <br/>
@@ -60,43 +54,5 @@ public static class MudGlobal
     /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
     /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
     /// </remarks>
-    public static Action<Exception>? UnhandledExceptionHandler
-    {
-        get => _unhandledExceptionHandler;
-        set => _unhandledExceptionHandler = value;
-    }
-
-    /// <summary>
-    /// Resolves the unhandled exception handler for the current async flow.
-    /// </summary>
-    /// <remarks>
-    /// Returns the async-local override when one has been assigned for the current flow, including an explicit <see langword="null"/> override.
-    /// Otherwise, returns the process-wide <see cref="UnhandledExceptionHandler"/>.
-    /// </remarks>
-    internal static Action<Exception>? GetUnhandledExceptionHandler()
-    {
-        var isOverrideSet = _scopedUnhandledExceptionHandlerOverrideIsSet.Value;
-        var handler = _scopedUnhandledExceptionHandlerOverride.Value;
-
-        return isOverrideSet ? handler : UnhandledExceptionHandler;
-    }
-
-    /// <summary>
-    /// Overrides the unhandled exception handler for the current async flow.
-    /// </summary>
-    /// <param name="handler">The handler to use for the current async flow, or <see langword="null"/> to suppress handling in that flow.</param>
-    internal static void SetScopedUnhandledExceptionHandlerOverride(Action<Exception>? handler)
-    {
-        _scopedUnhandledExceptionHandlerOverride.Value = handler;
-        _scopedUnhandledExceptionHandlerOverrideIsSet.Value = true;
-    }
-
-    /// <summary>
-    /// Clears the unhandled exception handler override for the current async flow.
-    /// </summary>
-    internal static void ClearScopedUnhandledExceptionHandlerOverride()
-    {
-        _scopedUnhandledExceptionHandlerOverride.Value = null;
-        _scopedUnhandledExceptionHandlerOverrideIsSet.Value = false;
-    }
+    public static Action<Exception> UnhandledExceptionHandler { get; set; } = (exception) => Console.Write(exception);
 }
