@@ -129,24 +129,9 @@ namespace MudBlazor.UnitTests.Extensions
             var flow1Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var flow2Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            async Task RunFlowAsync(string errorMessage, Action<Exception> handler, TaskCompletionSource ready, Func<string> getCapturedMessage)
-            {
-                MudGlobal.UnhandledExceptionHandler = handler;
-                ready.SetResult();
-
-                await Task.WhenAll(flow1Ready.Task, flow2Ready.Task);
-
-                MudGlobal.UnhandledExceptionHandler.Should().BeSameAs(handler);
-
-                AsyncTaskExceptionGenerator(errorMessage).CatchAndLog();
-
-                (await WaitUntilAsync(() => !string.IsNullOrEmpty(getCapturedMessage()), TimeSpan.FromSeconds(5)))
-                    .Should().BeTrue("the exception should be forwarded within the current async flow");
-            }
-
             await Task.WhenAll(
-                Task.Run(() => RunFlowAsync("flow 1", flow1Handler, flow1Ready, () => flow1ErrorMessage)),
-                Task.Run(() => RunFlowAsync("flow 2", flow2Handler, flow2Ready, () => flow2ErrorMessage)));
+                Task.Run(() => RunFlowAsync("flow 1", flow1Handler, flow1Ready, flow2Ready.Task, () => flow1ErrorMessage, AsyncTaskExceptionGenerator)),
+                Task.Run(() => RunFlowAsync("flow 2", flow2Handler, flow2Ready, flow1Ready.Task, () => flow2ErrorMessage, AsyncTaskExceptionGenerator)));
 
             flow1ErrorMessage.Should().Be("flow 1");
             flow2ErrorMessage.Should().Be("flow 2");
@@ -176,6 +161,30 @@ namespace MudBlazor.UnitTests.Extensions
             {
                 Console.SetOut(originalOut);
             }
+        }
+
+        /// <summary>
+        /// Applies an exception handler within a dedicated async flow and verifies it remains active after synchronizing with a concurrent peer flow.
+        /// </summary>
+        /// <param name="errorMessage">The exception message expected to be observed by the provided handler.</param>
+        /// <param name="handler">The handler instance that should remain isolated to the current async flow.</param>
+        /// <param name="ready">Signals when the current flow has set its handler.</param>
+        /// <param name="otherFlowReady">Waits for the peer flow to set its handler before verifying isolation.</param>
+        /// <param name="getCapturedMessage">Returns the message captured by the current flow's handler.</param>
+        /// <param name="exceptionGenerator">Produces the fire-and-forget task used to trigger the handler.</param>
+        private static async Task RunFlowAsync(string errorMessage, Action<Exception> handler, TaskCompletionSource ready, Task otherFlowReady, Func<string> getCapturedMessage, Func<string, Task> exceptionGenerator)
+        {
+            MudGlobal.UnhandledExceptionHandler = handler;
+            ready.SetResult();
+
+            await otherFlowReady;
+
+            MudGlobal.UnhandledExceptionHandler.Should().BeSameAs(handler);
+
+            exceptionGenerator(errorMessage).CatchAndLog();
+
+            (await WaitUntilAsync(() => !string.IsNullOrEmpty(getCapturedMessage()), TimeSpan.FromSeconds(5)))
+                .Should().BeTrue("the exception should be forwarded within the current async flow");
         }
 
         /// <summary>

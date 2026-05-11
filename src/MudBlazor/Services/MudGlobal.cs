@@ -17,7 +17,7 @@ namespace MudBlazor;
 /// </summary>
 public static class MudGlobal
 {
-    private static readonly Action<Exception> DefaultUnhandledExceptionHandler = exception => Console.Write(exception);
+    private static readonly Action<Exception> DefaultUnhandledExceptionHandler = ex => Console.Write(ex);
     private static readonly AsyncLocal<Action<Exception>?> CurrentUnhandledExceptionHandler = new();
 
     /// <summary>
