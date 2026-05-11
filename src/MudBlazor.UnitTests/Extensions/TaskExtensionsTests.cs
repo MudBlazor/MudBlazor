@@ -8,21 +8,36 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
-        private static readonly object UnhandledExceptionHandlerLock = new();
+        private static readonly object UnhandledExceptionHandlerLock = new object();
         private Action<Exception> _originalExceptionHandler = null!;
+        private bool _lockAcquired;
 
         [SetUp]
         public void SetUp()
         {
             Monitor.Enter(UnhandledExceptionHandlerLock);
-            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
+            _lockAcquired = true;
+            try
+            {
+                _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
+            }
+            catch
+            {
+                Monitor.Exit(UnhandledExceptionHandlerLock);
+                _lockAcquired = false;
+                throw;
+            }
         }
 
         [TearDown]
         public void TearDown()
         {
             MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
-            Monitor.Exit(UnhandledExceptionHandlerLock);
+            if (_lockAcquired)
+            {
+                Monitor.Exit(UnhandledExceptionHandlerLock);
+                _lockAcquired = false;
+            }
         }
 
         private async Task AsyncTaskExceptionGenerator(string errorMessage)
@@ -79,8 +94,11 @@ namespace MudBlazor.UnitTests.Extensions
             MudGlobal.UnhandledExceptionHandler = null;
             var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
             task.CatchAndLog();
-            await task.ContinueWith(_ => { }, TaskScheduler.Default).WaitAsync(TimeSpan.FromSeconds(5));
-            task.IsCompleted.Should().BeTrue();
+            await task
+                .Awaiting(x => x.WaitAsync(TimeSpan.FromSeconds(5)))
+                .Should()
+                .ThrowAsync<Exception>()
+                .WithMessage("Something bad is about to happen ...");
         }
     }
 }
