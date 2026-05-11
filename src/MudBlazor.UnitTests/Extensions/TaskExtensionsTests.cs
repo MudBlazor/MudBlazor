@@ -120,8 +120,8 @@ namespace MudBlazor.UnitTests.Extensions
         [Test]
         public async Task UnhandledExceptionHandler_ShouldBeIsolatedAcrossConcurrentAsyncFlows()
         {
-            string? flow1ErrorMessage = null;
-            string? flow2ErrorMessage = null;
+            string flow1ErrorMessage = null;
+            string flow2ErrorMessage = null;
 
             Action<Exception> flow1Handler = ex => flow1ErrorMessage = ex.Message;
             Action<Exception> flow2Handler = ex => flow2ErrorMessage = ex.Message;
@@ -129,7 +129,7 @@ namespace MudBlazor.UnitTests.Extensions
             var flow1Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var flow2Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
-            async Task RunFlowAsync(string errorMessage, Action<Exception> handler, TaskCompletionSource ready, Func<string?> getCapturedMessage)
+            async Task RunFlowAsync(string errorMessage, Action<Exception> handler, TaskCompletionSource ready, Func<string> getCapturedMessage)
             {
                 MudGlobal.UnhandledExceptionHandler = handler;
                 ready.SetResult();
