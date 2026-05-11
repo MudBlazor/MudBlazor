@@ -12,18 +12,21 @@ namespace MudBlazor.UnitTests.Extensions
     public class TaskExtensionsTests
     {
         private static readonly TimeSpan ExceptionForwardingTimeout = TimeSpan.FromSeconds(5);
+        private static readonly TaskCreationOptions AsyncFlowTaskCreationOptions = TaskCreationOptions.RunContinuationsAsynchronously;
         private Action<Exception> _originalExceptionHandler = null!;
+        private bool _restoreDefaultHandler;
 
         [SetUp]
         public void SetUp()
         {
-            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
+            _restoreDefaultHandler = MudGlobal.UnhandledExceptionHandler is null;
+            _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler ?? null!;
         }
 
         [TearDown]
         public void TearDown()
         {
-            MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
+            MudGlobal.UnhandledExceptionHandler = _restoreDefaultHandler ? null : _originalExceptionHandler;
         }
 
         private async Task AsyncTaskExceptionGenerator(string errorMessage)
@@ -102,19 +105,35 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public async Task Task_AndForget_ShouldNotFailIfGlobalHandlerIsNull()
+        public async Task Task_AndForget_ShouldFallbackToDefaultHandlerIfGlobalHandlerIsNull()
         {
+            using var writer = new StringWriter();
+            var originalOut = Console.Out;
+
+            Console.SetOut(writer);
             MudGlobal.UnhandledExceptionHandler = null;
-            var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
-            task.CatchAndLog();
-            var t = Stopwatch.StartNew();
-            while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
+
+            try
             {
-                await Task.Delay(10);
-                if (t.Elapsed > ExceptionForwardingTimeout)
+                var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
+                task.CatchAndLog();
+                var t = Stopwatch.StartNew();
+                while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
                 {
-                    Assert.Fail("The test task did not end in time, this should not happen!");
+                    await Task.Delay(10);
+                    if (t.Elapsed > ExceptionForwardingTimeout)
+                    {
+                        Assert.Fail("The test task did not end in time, this should not happen!");
+                    }
                 }
+
+                var consoleOutput = writer.ToString();
+                consoleOutput.Should().Contain("Something bad is about to happen ...");
+                consoleOutput.Should().Contain(nameof(Exception));
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
             }
         }
 
@@ -127,8 +146,8 @@ namespace MudBlazor.UnitTests.Extensions
             Action<Exception> flow1Handler = ex => flow1ErrorMessage = ex.Message;
             Action<Exception> flow2Handler = ex => flow2ErrorMessage = ex.Message;
 
-            var flow1Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            var flow2Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var flow1Ready = new TaskCompletionSource(AsyncFlowTaskCreationOptions);
+            var flow2Ready = new TaskCompletionSource(AsyncFlowTaskCreationOptions);
 
             await Task.WhenAll(
                 Task.Run(() => RunFlowAsync("flow 1", flow1Handler, flow1Ready, flow2Ready.Task, () => flow1ErrorMessage, AsyncTaskExceptionGenerator)),
@@ -136,32 +155,15 @@ namespace MudBlazor.UnitTests.Extensions
 
             flow1ErrorMessage.Should().Be("flow 1");
             flow2ErrorMessage.Should().Be("flow 2");
-            MudGlobal.UnhandledExceptionHandler.Should().BeSameAs(_originalExceptionHandler);
+            MudGlobal.UnhandledExceptionHandler.Should().BeNull();
         }
 
         [Test]
-        public void UnhandledExceptionHandler_ShouldFallbackToDefaultConsoleHandler_WhenUnset()
+        public void UnhandledExceptionHandler_ShouldBeNull_WhenUnset()
         {
-            using var writer = new StringWriter();
-            var originalOut = Console.Out;
+            MudGlobal.UnhandledExceptionHandler = null;
 
-            Console.SetOut(writer);
-
-            try
-            {
-                MudGlobal.UnhandledExceptionHandler = null;
-
-                var exception = new InvalidOperationException("Fallback message");
-                MudGlobal.UnhandledExceptionHandler(exception);
-
-                var consoleOutput = writer.ToString();
-                consoleOutput.Should().Contain("Fallback message");
-                consoleOutput.Should().Contain(nameof(InvalidOperationException));
-            }
-            finally
-            {
-                Console.SetOut(originalOut);
-            }
+            MudGlobal.UnhandledExceptionHandler.Should().BeNull();
         }
 
         /// <summary>

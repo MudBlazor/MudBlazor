@@ -52,16 +52,21 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// The handler for unhandled MudBlazor component exceptions.
+    /// The async-flow-local handler override for unhandled MudBlazor component exceptions.
     /// </summary>
     /// <remarks>
     /// Exceptions which use this handler are typically rare, such as errors which occur during a "fire-and-forget" <see cref="Task"/> which cannot be awaited.<br />
-    /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
+    /// When this property is <see langword="null"/>, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
     /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
     /// </remarks>
-    public static Action<Exception> UnhandledExceptionHandler
+    public static Action<Exception>? UnhandledExceptionHandler
     {
-        get => CurrentUnhandledExceptionHandler.Value ?? DefaultUnhandledExceptionHandler;
+        get => CurrentUnhandledExceptionHandler.Value;
         set => CurrentUnhandledExceptionHandler.Value = value;
+    }
+
+    internal static void HandleUnhandledException(Exception exception)
+    {
+        (CurrentUnhandledExceptionHandler.Value ?? DefaultUnhandledExceptionHandler).Invoke(exception);
     }
 }
