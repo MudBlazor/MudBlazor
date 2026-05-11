@@ -22,7 +22,7 @@ public class BatchPeriodicQueueTests
 
         // Arrange
         var stoppingTokenSource = new CancellationTokenSource();
-        var batchElapsed = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var batchCompletion = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var period = TimeSpan.FromSeconds(0.5);
         var timeProvider = new FakeTimeProvider();
         var mockHandler = new Mock<IBatchTimerHandler<int>>();
@@ -32,7 +32,7 @@ public class BatchPeriodicQueueTests
             .Setup(h => h.OnBatchTimerElapsedAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
             .Returns((IReadOnlyCollection<int> items, CancellationToken _) =>
             {
-                batchElapsed.TrySetResult(items);
+                batchCompletion.TrySetResult(items);
                 return Task.CompletedTask;
             });
 
@@ -44,7 +44,7 @@ public class BatchPeriodicQueueTests
         }
 
         timeProvider.Advance(period);
-        var processedItems = await batchElapsed.Task;
+        var processedItems = await batchCompletion.Task;
 
         // Assert
         processedItems.VerifyItemsMatch(expectedItems).Should().BeTrue();
@@ -65,7 +65,7 @@ public class BatchPeriodicQueueTests
         var expectedItems = new List<int> { 1, 2, 3 };
 
         // Arrange
-        var batchElapsed = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var batchCompletion = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
         var period = TimeSpan.FromSeconds(0.5);
         var timeProvider = new FakeTimeProvider();
         var mockHandler = new Mock<IBatchTimerHandler<int>>();
@@ -75,7 +75,7 @@ public class BatchPeriodicQueueTests
             .Setup(h => h.OnBatchTimerElapsedAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
             .Returns((IReadOnlyCollection<int> items, CancellationToken _) =>
             {
-                batchElapsed.TrySetResult(items);
+                batchCompletion.TrySetResult(items);
                 return Task.CompletedTask;
             });
 
@@ -91,7 +91,7 @@ public class BatchPeriodicQueueTests
         await batchPeriodicQueue.ExecuteTask!;
 
         // Assert
-        batchElapsed.Task.IsCompleted.Should().BeFalse();
+        batchCompletion.Task.IsCompleted.Should().BeFalse();
         batchPeriodicQueue.Count.Should().Be(3);
         //NB! Use It.IsAny<CancellationToken>() instead of stoppingTokenSource.Token because it case of DisposeAsync the token will be default
         mockHandler.Verify(
