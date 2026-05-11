@@ -9,6 +9,9 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
+        /// <summary>
+        /// Captures console output for a test and signals when text is written.
+        /// </summary>
         private sealed class SignalingStringWriter : StringWriter
         {
             private readonly TaskCompletionSource<string> _writeTaskSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
