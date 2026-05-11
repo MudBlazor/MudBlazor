@@ -281,9 +281,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [NonParallelizable]
         public async Task TestSemaphore_RenderInParallel()
         {
+            var secondListenForResizeStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var continueListenForResize = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var listenForResizeCallCount = 0;
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
@@ -292,7 +294,16 @@ namespace MudBlazor.UnitTests.Components
                 .ReturnsAsync(new BrowserWindowSize { Height = 1080, Width = 1920 });
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-                .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
+                .Returns(async () =>
+                {
+                    if (Interlocked.Increment(ref listenForResizeCallCount) == 2)
+                    {
+                        secondListenForResizeStarted.TrySetResult();
+                    }
+
+                    await continueListenForResize.Task.WaitAsync(TimeSpan.FromSeconds(1));
+                    return Mock.Of<IJSVoidResult>();
+                }).Verifiable();
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>);
@@ -301,10 +312,21 @@ namespace MudBlazor.UnitTests.Components
 
             var component = Context.Render<RenderMultipleHiddenInParallel>();
 
-            await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+            try
+            {
+                await secondListenForResizeStarted.Task.WaitAsync(TimeSpan.FromSeconds(1));
+                continueListenForResize.TrySetResult();
+
+                await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+                await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+                await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+                await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
+                listenForResizeCallCount.Should().BeGreaterThan(1);
+            }
+            finally
+            {
+                continueListenForResize.TrySetResult();
+            }
         }
     }
 }
