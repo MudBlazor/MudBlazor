@@ -11,6 +11,7 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
+        private static readonly TimeSpan ExceptionForwardingTimeout = TimeSpan.FromSeconds(5);
         private Action<Exception> _originalExceptionHandler = null!;
 
         [SetUp]
@@ -54,7 +55,7 @@ namespace MudBlazor.UnitTests.Extensions
             while (errorMessage == null)
             {
                 await Task.Delay(10);
-                if (t.Elapsed > TimeSpan.FromSeconds(5))
+                if (t.Elapsed > ExceptionForwardingTimeout)
                 {
                     Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
                 }
@@ -73,7 +74,7 @@ namespace MudBlazor.UnitTests.Extensions
             while (errorMessage == null)
             {
                 await Task.Delay(10);
-                if (t.Elapsed > TimeSpan.FromSeconds(5))
+                if (t.Elapsed > ExceptionForwardingTimeout)
                 {
                     Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
                 }
@@ -92,7 +93,7 @@ namespace MudBlazor.UnitTests.Extensions
             while (errorMessage == null)
             {
                 await Task.Delay(10);
-                if (t.Elapsed > TimeSpan.FromSeconds(5))
+                if (t.Elapsed > ExceptionForwardingTimeout)
                 {
                     Assert.Fail("The exception wasn't forwarded to the global exception handler in time!");
                 }
@@ -110,7 +111,7 @@ namespace MudBlazor.UnitTests.Extensions
             while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
             {
                 await Task.Delay(10);
-                if (t.Elapsed > TimeSpan.FromSeconds(5))
+                if (t.Elapsed > ExceptionForwardingTimeout)
                 {
                     Assert.Fail("The test task did not end in time, this should not happen!");
                 }
@@ -183,7 +184,7 @@ namespace MudBlazor.UnitTests.Extensions
 
             exceptionGenerator(errorMessage).CatchAndLog();
 
-            (await WaitUntilAsync(() => !string.IsNullOrEmpty(getCapturedMessage()), TimeSpan.FromSeconds(5)))
+            (await WaitUntilAsync(() => !string.IsNullOrEmpty(getCapturedMessage()), ExceptionForwardingTimeout))
                 .Should().BeTrue("the exception should be forwarded within the current async flow");
         }
 
