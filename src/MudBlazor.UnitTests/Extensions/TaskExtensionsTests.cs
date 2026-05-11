@@ -8,14 +8,13 @@ namespace MudBlazor.UnitTests.Extensions
     [TestFixture]
     public class TaskExtensionsTests
     {
-        private static readonly Lock UnhandledExceptionHandlerLock = new();
-        private System.Threading.Lock.Scope _unhandledExceptionHandlerScope;
+        private static readonly object UnhandledExceptionHandlerLock = new();
         private Action<Exception> _originalExceptionHandler = null!;
 
         [SetUp]
         public void SetUp()
         {
-            _unhandledExceptionHandlerScope = UnhandledExceptionHandlerLock.EnterScope();
+            Monitor.Enter(UnhandledExceptionHandlerLock);
             _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
         }
 
@@ -23,7 +22,7 @@ namespace MudBlazor.UnitTests.Extensions
         public void TearDown()
         {
             MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
-            _unhandledExceptionHandlerScope.Dispose();
+            Monitor.Exit(UnhandledExceptionHandlerLock);
         }
 
         private async Task AsyncTaskExceptionGenerator(string errorMessage)
