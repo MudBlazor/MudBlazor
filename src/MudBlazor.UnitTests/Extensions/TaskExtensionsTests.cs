@@ -10,11 +10,13 @@ namespace MudBlazor.UnitTests.Extensions
     {
         private static readonly SemaphoreSlim s_unhandledExceptionHandlerLock = new(1, 1);
         private Action<Exception> _originalExceptionHandler = null!;
+        private bool _lockAcquired;
 
         [SetUp]
         public void SetUp()
         {
-            s_unhandledExceptionHandlerLock.Wait();
+            _lockAcquired = s_unhandledExceptionHandlerLock.Wait(TimeSpan.FromSeconds(5));
+            _lockAcquired.Should().BeTrue("the test fixture should acquire exclusive access to MudGlobal.UnhandledExceptionHandler");
             _originalExceptionHandler = MudGlobal.UnhandledExceptionHandler;
         }
 
@@ -22,7 +24,11 @@ namespace MudBlazor.UnitTests.Extensions
         public void TearDown()
         {
             MudGlobal.UnhandledExceptionHandler = _originalExceptionHandler;
-            s_unhandledExceptionHandlerLock.Release();
+            if (_lockAcquired)
+            {
+                s_unhandledExceptionHandlerLock.Release();
+                _lockAcquired = false;
+            }
         }
 
         [OneTimeTearDown]
@@ -89,11 +95,11 @@ namespace MudBlazor.UnitTests.Extensions
             MudGlobal.UnhandledExceptionHandler = null;
             var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
             task.CatchAndLog();
-            await task
-                .Awaiting(x => x.WaitAsync(TimeSpan.FromSeconds(5)))
-                .Should()
-                .ThrowAsync<Exception>()
-                .WithMessage("Something bad is about to happen ...");
+            (await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5)))).Should().Be(task);
+            task.IsFaulted.Should().BeTrue();
+            task.Exception.Should().NotBeNull();
+            task.Exception!.InnerExceptions.Should().ContainSingle()
+                .Which.Message.Should().Be("Something bad is about to happen ...");
         }
     }
 }
