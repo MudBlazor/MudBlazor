@@ -7,6 +7,8 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
@@ -741,7 +743,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CurrentDate_ShouldBeMarked()
         {
-            var currentDate = DateTime.Now.Date;
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+            var currentDate = timeProvider.GetLocalNow().Date;
             var comp = await OpenPicker();
 
             // Check that only one date is marked
@@ -751,6 +756,22 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button.mud-current").ClickAsync();
             await comp.Find("button.mud-range-start-selected").ClickAsync();
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
+        }
+
+        [Test]
+        [SetCulture("en-US")]
+        public async Task DateRangePicker_CustomTimeProvider()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+
+            var comp = await OpenPicker();
+
+            comp.FindAll("button.mud-current").Count.Should().Be(1);
+            comp.Find("button.mud-current").InnerHtml.Should().Contain("4");
+            comp.Find(".mud-button-month").InnerHtml.Should().Contain("April");
+            comp.Find(".mud-button-year").InnerHtml.Should().Contain("2003");
         }
 
         [Test]

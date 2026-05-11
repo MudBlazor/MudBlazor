@@ -356,6 +356,7 @@ namespace MudBlazor
 
         protected override string GetDayClasses(int month, DateTime day)
         {
+            var today = TimeProvider.GetLocalNow().Date;
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
@@ -373,7 +374,7 @@ namespace MudBlazor
                 return b
                     .AddClass("mud-range")
                     .AddClass("mud-range-between")
-                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == DateTime.Today)
+                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == today)
                     .Build();
             }
 
@@ -410,14 +411,14 @@ namespace MudBlazor
 
             if (_firstDate?.Date < day)
             {
-                return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
+                return b.AddClass("mud-range", _secondDate is null && day != today)
                     .AddClass("mud-range-selection")
                     .AddClass($"mud-range-selection-{Color.ToStringFast(true)}", _firstDate is not null)
-                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == DateTime.Today)
+                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == today)
                     .Build();
             }
 
-            if (day == DateTime.Today)
+            if (day == today)
             {
                 return b.AddClass("mud-current")
                     .AddClass($"mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}")
@@ -502,7 +503,7 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
+            var date = StartMonth ?? DateRange?.Start ?? TimeProvider.GetLocalNow().Date;
             return date.StartOfMonth(GetCulture());
         }
 
@@ -518,7 +519,7 @@ namespace MudBlazor
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
-            var date = DateRange?.Start ?? DateTime.Today;
+            var date = DateRange?.Start ?? TimeProvider.GetLocalNow().Date;
             var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
             var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
