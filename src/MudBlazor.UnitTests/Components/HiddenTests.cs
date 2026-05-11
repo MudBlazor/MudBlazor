@@ -285,20 +285,18 @@ namespace MudBlazor.UnitTests.Components
         {
             var secondCallStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var continueGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            var gateReleased = false;
             var listenForResizeCallCount = 0;
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
 
             void ReleaseGate()
             {
-                if (gateReleased)
+                if (continueGate.Task.IsCompleted)
                 {
                     return;
                 }
 
                 continueGate.SetResult();
-                gateReleased = true;
             }
 
             jsRuntimeMock
@@ -336,7 +334,7 @@ namespace MudBlazor.UnitTests.Components
             }
             finally
             {
-                if (!gateReleased)
+                if (!continueGate.Task.IsCompleted)
                 {
                     continueGate.TrySetResult();
                 }
