@@ -127,6 +127,9 @@ namespace MudBlazor.UnitTests.Extensions
                     }
                 }
 
+                (await WaitUntilAsync(() => !string.IsNullOrEmpty(writer.ToString()), ExceptionForwardingTimeout))
+                    .Should().BeTrue("the default console handler should write the exception details");
+
                 var consoleOutput = writer.ToString();
                 consoleOutput.Should().Contain("Something bad is about to happen ...");
                 consoleOutput.Should().Contain(nameof(Exception));
