@@ -556,6 +556,7 @@ public class PopoverServiceTests
     }
 
     [Test]
+    [CancelAfter(5000)]
     public async Task CreatePopoverAsync_UpdatePopoverAsync_DestroyPopoverAsync_ShouldInvokeJS()
     {
         // Arrange
@@ -649,6 +650,7 @@ public class PopoverServiceTests
     }
 
     [Test]
+    [CancelAfter(5000)]
     public async Task DisposeAsync_ShouldCancelDetachRange()
     {
         // Arrange

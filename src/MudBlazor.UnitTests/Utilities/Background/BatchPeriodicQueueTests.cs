@@ -15,6 +15,7 @@ namespace MudBlazor.UnitTests.Utilities.Background;
 public class BatchPeriodicQueueTests
 {
     [Test]
+    [CancelAfter(5000)]
     public async Task PeriodicExecution_ShouldOccurWithExpectedItems()
     {
         // Define the expected items
