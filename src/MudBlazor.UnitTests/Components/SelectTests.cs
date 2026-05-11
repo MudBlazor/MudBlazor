@@ -1,7 +1,9 @@
-﻿using AngleSharp.Dom;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
@@ -131,44 +133,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [NonParallelizable]
         public async Task Select_KeyDown_WhileClosed()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
+            var quickSearchInterval = TimeSpan.FromMilliseconds(200);
+
+            Task KeyDownAsync(string key) => comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = key, Type = "keydown" }));
 
             //open menu on keydown
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
+            await KeyDownAsync("t");
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //cycle through matching results
-            await Task.Delay(210);
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
+            timeProvider.Advance(quickSearchInterval + TimeSpan.FromMilliseconds(10));
+            await KeyDownAsync("t");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Texas"));
-            await Task.Delay(210);
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
+            timeProvider.Advance(quickSearchInterval + TimeSpan.FromMilliseconds(10));
+            await KeyDownAsync("t");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //multi-string search
-            await Task.Delay(210);
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "c", Type = "keydown" }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "l", Type = "keydown" }));
+            timeProvider.Advance(quickSearchInterval + TimeSpan.FromMilliseconds(10));
+            await KeyDownAsync("c");
+            await KeyDownAsync("o");
+            await KeyDownAsync("l");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Colorado"));
 
             //paused search
-            await Task.Delay(210);
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
+            timeProvider.Advance(quickSearchInterval + TimeSpan.FromMilliseconds(10));
+            await KeyDownAsync("i");
+            await KeyDownAsync("o");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Iowa"));
 
-            await Task.Delay(210);
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
-            await Task.Delay(210);
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
+            timeProvider.Advance(quickSearchInterval + TimeSpan.FromMilliseconds(10));
+            await KeyDownAsync("i");
+            timeProvider.Advance(quickSearchInterval + TimeSpan.FromMilliseconds(10));
+            await KeyDownAsync("o");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Ohio"));
         }
 
