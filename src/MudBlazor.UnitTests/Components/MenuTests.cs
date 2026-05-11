@@ -760,7 +760,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Menu_PointerEvents_ShowHide_WithDebounce()
         {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
+            // This method uses CatchAndLog to allow async events to run synchronously so we can test timing
             // Set a predictable hover delay for testing
             var hoverDelay = 300;
 
@@ -802,7 +802,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Menu_PointerEvents_MultipleLevels()
         {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
+            // This method uses CatchAndLog to allow async events to run synchronously so we can test timing
             // Set a predictable hover delay for testing
             var hoverDelay = 300;
 
@@ -840,7 +840,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Menu_PointerEvents_RapidMovement()
         {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
+            // This method uses CatchAndLog to allow async events to run synchronously so we can test timing
             // Set a predictable hover delay for testing
             var hoverDelay = 300;
 
