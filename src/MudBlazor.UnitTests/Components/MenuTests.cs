@@ -19,20 +19,6 @@ namespace MudBlazor.UnitTests.Components
     [NonParallelizable]
     public class MenuTests : BunitTest
     {
-        private int _originalHoverDelay;
-
-        [SetUp]
-        public void StoreMenuDefaults()
-        {
-            _originalHoverDelay = MudGlobal.MenuDefaults.HoverDelay;
-        }
-
-        [TearDown]
-        public void RestoreMenuDefaults()
-        {
-            MudGlobal.MenuDefaults.HoverDelay = _originalHoverDelay;
-        }
-
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -182,8 +168,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            MudGlobal.MenuDefaults.HoverDelay = 300;
-            var hoverDelay = 75;
+            var globalHoverDelay = MudGlobal.MenuDefaults.HoverDelay;
+            var hoverDelay = globalHoverDelay + 50;
 
             var comp = Context.Render<MenuTestMouseOver>(parameters => parameters.Add(x => x.HoverDelay, hoverDelay));
             var menu = comp.FindComponent<MudMenu>().Instance;
@@ -191,7 +177,10 @@ namespace MudBlazor.UnitTests.Components
 
             var openTask = menuElement.PointerEnterAsync(new PointerEventArgs());
             menu.GetState(x => x.Open).Should().BeFalse();
-            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay - 1));
+            timeProvider.Advance(TimeSpan.FromMilliseconds(globalHoverDelay));
+            menu.GetState(x => x.Open).Should().BeFalse();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay - globalHoverDelay - 1));
             menu.GetState(x => x.Open).Should().BeFalse();
 
             timeProvider.Advance(TimeSpan.FromMilliseconds(1));
@@ -213,8 +202,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = new FakeTimeProvider();
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            var hoverDelay = 125;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
+            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
 
             var comp = Context.Render<MenuTestMouseOver>();
             var menu = comp.FindComponent<MudMenu>().Instance;
@@ -243,8 +231,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MouseOver_Click_ShouldKeepMenuOpen()
         {
             var hoverDelay = 200;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
-            var comp = Context.Render<MenuTestMouseOver>();
+            var comp = Context.Render<MenuTestMouseOver>(parameters => parameters.Add(x => x.HoverDelay, hoverDelay));
             var menu = comp.FindComponent<MudMenu>().Instance;
 
             // Enter opens the menu (after a delay).
@@ -776,9 +763,8 @@ namespace MudBlazor.UnitTests.Components
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
             // Set a predictable hover delay for testing
             var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
 
-            var comp = Context.Render<MenuWithNestingTest>();
+            var comp = Context.Render<MenuWithNestingTest>(parameters => parameters.Add(x => x.HoverDelay, hoverDelay));
 
             // Open the main menu first
             await comp.Find("button:contains('1')").ClickAsync();
@@ -819,9 +805,8 @@ namespace MudBlazor.UnitTests.Components
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
             // Set a predictable hover delay for testing
             var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
 
-            var comp = Context.Render<MenuWithNestingTest>();
+            var comp = Context.Render<MenuWithNestingTest>(parameters => parameters.Add(x => x.HoverDelay, hoverDelay));
 
             // Open the main menu first
             await comp.Find("button:contains('1')").ClickAsync();
@@ -858,9 +843,8 @@ namespace MudBlazor.UnitTests.Components
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
             // Set a predictable hover delay for testing
             var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
 
-            var comp = Context.Render<MenuWithNestingTest>();
+            var comp = Context.Render<MenuWithNestingTest>(parameters => parameters.Add(x => x.HoverDelay, hoverDelay));
 
             // Open the main menu first
             await comp.Find("button:contains('1')").ClickAsync();
