@@ -7,8 +7,6 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
@@ -743,10 +741,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CurrentDate_ShouldBeMarked()
         {
-            var timeProvider = new FakeTimeProvider();
-            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 12, 0, 0, DateTimeKind.Utc));
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
-            var currentDate = timeProvider.GetLocalNow().Date;
+            var currentDate = DateTime.Now.Date;
             var comp = await OpenPicker();
 
             // Check that only one date is marked
@@ -754,10 +749,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Check that the marked date is the current date
             await comp.Find("button.mud-current").ClickAsync();
-            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
-            var completeRangeTask = comp.Find("button.mud-range-start-selected").ClickAsync();
-            timeProvider.Advance(TimeSpan.FromMilliseconds(picker.ClosingDelay));
-            await completeRangeTask;
+            await comp.Find("button.mud-range-start-selected").ClickAsync();
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
         }
 

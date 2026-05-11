@@ -306,7 +306,7 @@ namespace MudBlazor
                 return calendar.MinSupportedDateTime;
             }
 
-            var baseDate = _picker_month ?? GetToday().StartOfMonth(culture);
+            var baseDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
 
             var year = FixYear ?? calendar.GetYear(baseDate);
             var startMonth = FixMonth ?? calendar.GetMonth(baseDate);
@@ -333,7 +333,7 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var monthStartDate = _picker_month ?? GetToday().StartOfMonth(culture);
+            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
             return calendar.AddMonths(monthStartDate, month).EndOfMonth(culture);
         }
 
@@ -675,7 +675,7 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (MinDate.HasValue)
                 return calendar.GetYear(MinDate.Value);
-            return calendar.GetYear(GetToday()) - 100;
+            return calendar.GetYear(DateTime.Today) - 100;
         }
 
         protected int GetMaxYear()
@@ -684,10 +684,8 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (MaxDate.HasValue)
                 return calendar.GetYear(MaxDate.Value);
-            return calendar.GetYear(GetToday()) + 100;
+            return calendar.GetYear(DateTime.Today) + 100;
         }
-
-        protected DateTime GetToday() => TimeProvider.GetLocalNow().Date;
 
         private string? GetYearClasses(int year)
         {
@@ -790,7 +788,7 @@ namespace MudBlazor
 
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var today = GetToday();
+            var today = TimeProvider.GetLocalNow().Date;
 
             var year = FixYear ?? calendar.GetYear(today);
             var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);

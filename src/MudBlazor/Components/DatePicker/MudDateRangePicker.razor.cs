@@ -373,7 +373,7 @@ namespace MudBlazor
                 return b
                     .AddClass("mud-range")
                     .AddClass("mud-range-between")
-                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == GetToday())
+                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == DateTime.Today)
                     .Build();
             }
 
@@ -410,14 +410,14 @@ namespace MudBlazor
 
             if (_firstDate?.Date < day)
             {
-                return b.AddClass("mud-range", _secondDate is null && day != GetToday())
+                return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
                     .AddClass("mud-range-selection")
                     .AddClass($"mud-range-selection-{Color.ToStringFast(true)}", _firstDate is not null)
-                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == GetToday())
+                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == DateTime.Today)
                     .Build();
             }
 
-            if (day == GetToday())
+            if (day == DateTime.Today)
             {
                 return b.AddClass("mud-current")
                     .AddClass($"mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}")
@@ -502,7 +502,7 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? DateRange?.Start ?? GetToday();
+            var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
             return date.StartOfMonth(GetCulture());
         }
 
@@ -518,7 +518,7 @@ namespace MudBlazor
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
-            var date = DateRange?.Start ?? GetToday();
+            var date = DateRange?.Start ?? DateTime.Today;
             var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
             var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;
