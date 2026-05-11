@@ -1,28 +1,24 @@
 ﻿@namespace MudBlazor
 @inherits MudFab
 
-<MudElement @bind-Ref="@_elementReference"
-            HtmlTag="@HtmlTag"
-            Class="@Classname"
-            Style="@Style"
-            @attributes="UserAttributes"
-            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
-            type="@ButtonType.ToStringFast(true)"
-            href="@Href"
-            target="@Target"
-            rel="@GetRel()"
-            disabled="@GetDisabledState()"
-            ClickPropagation="true"
-            role="menuitem">
-    <span class="mud-fab-label">
-        @if (!string.IsNullOrWhiteSpace(StartIcon))
-        {
-            <MudIcon Disabled="@Disabled" Icon="@StartIcon" Color="@IconColor" Size="@IconSize" />
-        }
-        @Label
-        @if (!string.IsNullOrWhiteSpace(EndIcon))
-        {
-            <MudIcon Disabled="@Disabled" Icon="@EndIcon" Color="@IconColor" Size="@IconSize" />
-        }
-    </span>
-</MudElement>
+<MudFab Class="@Classname"
+        Style="@Style"
+        Color="@Color"
+        Size="@Size"
+        StartIcon="@StartIcon"
+        EndIcon="@EndIcon"
+        IconColor="@IconColor"
+        IconSize="@IconSize"
+        Label="@Label"
+        ButtonType="@ButtonType"
+        Href="@Href"
+        Target="@Target"
+        HtmlTag="@HtmlTag"
+        Rel="@Rel"
+        Disabled="@Disabled"
+        ClickPropagation="true"
+        DropShadow="@DropShadow"
+        Ripple="@Ripple"
+        @attributes="@UserAttributes"
+        @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+        role="menuitem"/>
