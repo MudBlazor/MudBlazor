@@ -104,7 +104,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
         IBrowserViewportObserver? newObserver;
-        BrowserViewportSubscription subscription;
+        BrowserViewportSubscription subscription = default!;
         var foundExistingSubscription = false;
         var semaphoreEntered = false;
 

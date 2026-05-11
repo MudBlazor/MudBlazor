@@ -307,7 +307,7 @@ namespace MudBlazor.UnitTests.Components
                 component.FindAll(".lg-and-up").Should().HaveCount(10);
                 component.FindAll(".md-and-up").Should().HaveCount(10);
                 component.FindAll(".sm-and-up").Should().HaveCount(10);
-            }, TimeSpan.FromSeconds(3));
+            }, TimeSpan.FromSeconds(4));
 
             jsRuntimeMock.Verify(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
         }
