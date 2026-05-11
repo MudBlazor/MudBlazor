@@ -129,6 +129,9 @@ namespace MudBlazor.UnitTests.Extensions
             var flow1Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var flow2Ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
+            /// <summary>
+            /// Applies a handler inside a dedicated async flow and verifies that the flow keeps using it after coordination with a concurrent peer.
+            /// </summary>
             async Task RunFlowAsync(string errorMessage, Action<Exception> handler, TaskCompletionSource ready, Func<string> getCapturedMessage)
             {
                 MudGlobal.UnhandledExceptionHandler = handler;
@@ -178,6 +181,9 @@ namespace MudBlazor.UnitTests.Extensions
             }
         }
 
+        /// <summary>
+        /// Polls until the specified condition becomes true or the timeout elapses.
+        /// </summary>
         private static async Task<bool> WaitUntilAsync(Func<bool> condition, TimeSpan timeout)
         {
             var timeoutTask = Task.Delay(timeout);
