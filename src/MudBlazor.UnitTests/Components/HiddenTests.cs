@@ -283,21 +283,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestSemaphore_RenderInParallel()
         {
-            var secondCallStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            var continueGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            var listenForResizeCallCount = 0;
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
-
-            void ReleaseGate()
-            {
-                if (continueGate.Task.IsCompleted)
-                {
-                    return;
-                }
-
-                continueGate.SetResult();
-            }
 
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
@@ -306,14 +293,10 @@ namespace MudBlazor.UnitTests.Components
                 .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
                 .Returns(async () =>
                 {
-                    if (Interlocked.Increment(ref listenForResizeCallCount) == 2)
-                    {
-                        secondCallStarted.TrySetResult();
-                    }
-
-                    await continueGate.Task.WaitAsync(TimeSpan.FromSeconds(1));
+                    await Task.Delay(200);
                     return Mock.Of<IJSVoidResult>();
-                }).Verifiable();
+                })
+                .Verifiable();
             jsRuntimeMock
                 .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
                 .ReturnsAsync(Mock.Of<IJSVoidResult>);
@@ -322,23 +305,15 @@ namespace MudBlazor.UnitTests.Components
 
             var component = Context.Render<RenderMultipleHiddenInParallel>();
 
-            try
+            await component.WaitForAssertionAsync(() =>
             {
-                await secondCallStarted.Task.WaitAsync(TimeSpan.FromSeconds(1));
-                ReleaseGate();
+                component.FindAll(".xl").Should().HaveCount(10);
+                component.FindAll(".lg-and-up").Should().HaveCount(10);
+                component.FindAll(".md-and-up").Should().HaveCount(10);
+                component.FindAll(".sm-and-up").Should().HaveCount(10);
+            }, TimeSpan.FromSeconds(3));
 
-                await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-                await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-                await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-                await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            }
-            finally
-            {
-                if (!continueGate.Task.IsCompleted)
-                {
-                    continueGate.TrySetResult();
-                }
-            }
+            jsRuntimeMock.Verify(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
         }
     }
 }

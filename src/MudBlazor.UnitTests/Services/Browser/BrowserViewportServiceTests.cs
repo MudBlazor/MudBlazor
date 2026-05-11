@@ -319,6 +319,42 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
+    public async Task SubscribeAsync_DifferentObserversWithSameOptionsInParallel_ShouldHaveOneJSListener()
+    {
+        // Arrange
+        var listenForResizeStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseListenForResize = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .Returns(async () =>
+            {
+                listenForResizeStarted.TrySetResult();
+                await releaseListenForResize.Task;
+                return Mock.Of<IJSVoidResult>();
+            });
+
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var observerOptions = new ResizeOptions();
+        var observer1 = new BrowserViewportObserverMock(observerOptions);
+        var observer2 = new BrowserViewportObserverMock(observerOptions);
+
+        // Act
+        var subscribeObserver1Task = service.SubscribeAsync(observer1, fireImmediately: false);
+        await listenForResizeStarted.Task.WaitAsync(TimeSpan.FromSeconds(1));
+
+        var subscribeObserver2Task = service.SubscribeAsync(observer2, fireImmediately: false);
+        subscribeObserver2Task.IsCompleted.Should().BeFalse();
+
+        releaseListenForResize.SetResult();
+        await Task.WhenAll(subscribeObserver1Task, subscribeObserver2Task);
+
+        // Assert
+        service.ObserversCount.Should().Be(2);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
     public async Task SubscribeAsync_DifferentObserversWithDifferentOptions_ShouldHaveMultipleJSListener()
     {
         // Arrange

@@ -22,6 +22,7 @@ namespace MudBlazor;
 internal sealed class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;
+    private readonly SemaphoreSlim _subscriptionSemaphore = new(1, 1);
     private readonly CancellationToken _cancellationToken;
     private readonly ResizeListenerInterop _resizeListenerInterop;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -102,9 +103,27 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         // Safe to modify now
         optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
-        var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+        IBrowserViewportObserver? newObserver;
+        BrowserViewportSubscription subscription;
+        var observerAlreadySubscribed = false;
 
-        if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out var newObserver))
+        await _subscriptionSemaphore.WaitAsync();
+        try
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+            observerAlreadySubscribed = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
+        }
+        finally
+        {
+            _subscriptionSemaphore.Release();
+        }
+
+        if (!observerAlreadySubscribed)
         {
             if (fireImmediately)
             {
@@ -112,6 +131,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
                 var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
                 var latestBreakpoint = await GetCurrentBreakpointAsync();
                 // Notify only current subscription
+                ArgumentNullException.ThrowIfNull(newObserver);
                 await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
             }
         }
