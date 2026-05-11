@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Extensions
     public class TaskExtensionsTests
     {
         private static readonly TimeSpan ExceptionForwardingTimeout = TimeSpan.FromSeconds(5);
-        private static readonly TaskCreationOptions AsyncFlowTaskCreationOptions = TaskCreationOptions.RunContinuationsAsynchronously;
+        private static readonly TaskCreationOptions AsyncFlowOptions = TaskCreationOptions.RunContinuationsAsynchronously;
         private Action<Exception> _originalExceptionHandler = null!;
         private bool _restoreDefaultHandler;
 
@@ -149,8 +149,8 @@ namespace MudBlazor.UnitTests.Extensions
             Action<Exception> flow1Handler = ex => flow1ErrorMessage = ex.Message;
             Action<Exception> flow2Handler = ex => flow2ErrorMessage = ex.Message;
 
-            var flow1Ready = new TaskCompletionSource(AsyncFlowTaskCreationOptions);
-            var flow2Ready = new TaskCompletionSource(AsyncFlowTaskCreationOptions);
+            var flow1Ready = new TaskCompletionSource(AsyncFlowOptions);
+            var flow2Ready = new TaskCompletionSource(AsyncFlowOptions);
 
             await Task.WhenAll(
                 Task.Run(() => RunFlowAsync("flow 1", flow1Handler, flow1Ready, flow2Ready.Task, () => flow1ErrorMessage, AsyncTaskExceptionGenerator)),
