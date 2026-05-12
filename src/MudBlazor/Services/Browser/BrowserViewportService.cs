@@ -27,6 +27,8 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
     private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
+    // Intentionally not disposed. Disposing SemaphoreSlim while waiters exist can surface ObjectDisposedException paths.
+    private readonly SemaphoreSlim _subscriptionLock = new(1, 1);
 
     private BrowserWindowSize? _latestWindowSize;
     // ReSharper disable once NotAccessedField.Local
@@ -95,25 +97,25 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             return;
         }
 
-        // Always clone the ResizeOptions, regardless of the circumstances.
-        // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
-        // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
-        var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
-        // Safe to modify now
-        optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
-
-        var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-
-        if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out var newObserver))
+        var registration = await RegisterSubscriptionAsync(observer);
+        if (registration is null || _disposed)
         {
-            if (fireImmediately)
-            {
-                // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
-                var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
-                var latestBreakpoint = await GetCurrentBreakpointAsync();
-                // Notify only current subscription
-                await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
-            }
+            return;
+        }
+
+        var (subscription, registeredObserver, observerAlreadySubscribed) = registration.Value;
+        if (observerAlreadySubscribed)
+        {
+            return;
+        }
+
+        if (fireImmediately)
+        {
+            // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
+            var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
+            var latestBreakpoint = await GetCurrentBreakpointAsync();
+            // Notify only current subscription
+            await registeredObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
         }
     }
 
@@ -149,10 +151,34 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             return;
         }
 
-        var subscription = await RemoveJavaScriptListener(observerId);
-        if (subscription is not null)
+        if (!await TryEnterSubscriptionLockAsync())
         {
-            _observerManager.Unsubscribe(subscription);
+            return;
+        }
+
+        try
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            var subscription = await RemoveJavaScriptListener(observerId);
+            if (subscription is not null)
+            {
+                _observerManager.Unsubscribe(subscription);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            if (!_disposed)
+            {
+                throw;
+            }
+        }
+        finally
+        {
+            _subscriptionLock.Release();
         }
     }
 
@@ -247,6 +273,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         {
             _disposed = true;
             await _cancellationTokenSource.CancelAsync();
+
             _observerManager.Clear();
 
             if (_dotNetReferenceLazy.IsValueCreated)
@@ -274,6 +301,70 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     }
 
     private DotNetObjectReference<BrowserViewportService> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+
+    private async Task<bool> TryEnterSubscriptionLockAsync()
+    {
+        try
+        {
+            await _subscriptionLock.WaitAsync(_cancellationToken);
+            return true;
+        }
+        catch (OperationCanceledException)
+        {
+            if (!_disposed)
+            {
+                throw;
+            }
+
+            return false;
+        }
+    }
+
+    private async Task<(BrowserViewportSubscription Subscription, IBrowserViewportObserver Observer, bool ObserverAlreadySubscribed)?> RegisterSubscriptionAsync(IBrowserViewportObserver observer)
+    {
+        if (!await TryEnterSubscriptionLockAsync())
+        {
+            return null;
+        }
+
+        try
+        {
+            if (_disposed)
+            {
+                return null;
+            }
+
+            // Always clone the ResizeOptions, regardless of the circumstances.
+            // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
+            // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
+            var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
+            // Safe to modify now
+            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
+
+            var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+            if (_disposed)
+            {
+                return null;
+            }
+
+            var observerAlreadySubscribed = _observerManager.TryGetOrAddSubscription(subscription, observer, out var subscribedObserver);
+
+            return (subscription, subscribedObserver, observerAlreadySubscribed);
+        }
+        catch (OperationCanceledException)
+        {
+            if (!_disposed)
+            {
+                throw;
+            }
+
+            return null;
+        }
+        finally
+        {
+            _subscriptionLock.Release();
+        }
+    }
 
     private async Task<BrowserViewportSubscription> CreateJavaScriptListener(ResizeOptions clonedOptions, Guid observerId)
     {
