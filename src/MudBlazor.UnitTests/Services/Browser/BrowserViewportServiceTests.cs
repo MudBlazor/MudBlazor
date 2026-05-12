@@ -319,6 +319,50 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
+    [CancelAfter(1000)]
+    public async Task SubscribeAsync_ConcurrentObserversWithSameOptions_UsesOneJavaScriptListener()
+    {
+        // Arrange
+        const int observerCount = 50;
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var observerOptions = new ResizeOptions();
+        var observers = Enumerable.Range(0, observerCount)
+            .Select(_ => new BrowserViewportObserverMock(observerOptions))
+            .ToArray();
+        var listenStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseListen = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .Returns(async (string _, CancellationToken cancellationToken, object[] _) =>
+            {
+                listenStarted.TrySetResult();
+                await releaseListen.Task.WaitAsync(cancellationToken);
+
+                return Mock.Of<IJSVoidResult>();
+            });
+
+        // Act
+        var subscribeTasks = observers
+            .Select(observer => Task.Run(async () => await service.SubscribeAsync(observer, fireImmediately: false)))
+            .ToArray();
+        await listenStarted.Task;
+
+        releaseListen.SetResult();
+        await Task.WhenAll(subscribeTasks);
+
+        // Assert
+        service.ObserversCount.Should().Be(observerCount);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
+        observers
+            .Select(observer => service.GetInternalSubscription(observer)!.JavaScriptListenerId)
+            .Distinct()
+            .Should()
+            .ContainSingle();
+    }
+
+    [Test]
     public async Task SubscribeAsync_DifferentObserversWithDifferentOptions_ShouldHaveMultipleJSListener()
     {
         // Arrange
@@ -482,6 +526,61 @@ public class BrowserViewportServiceTests
         // Assert
         service.ObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+    }
+
+    [Test]
+    [CancelAfter(1000)]
+    public async Task UnsubscribeAsync_WaitsForInFlightSubscribeBeforeCancelingListener()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var delayedListenStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseDelayedListen = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var listenCallCount = 0;
+
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .Returns(async (string _, CancellationToken cancellationToken, object[] _) =>
+            {
+                if (Interlocked.Increment(ref listenCallCount) == 1)
+                {
+                    return Mock.Of<IJSVoidResult>();
+                }
+
+                delayedListenStarted.TrySetResult();
+                await releaseDelayedListen.Task.WaitAsync(cancellationToken);
+
+                return Mock.Of<IJSVoidResult>();
+            });
+
+        var observer1 = new BrowserViewportObserverMock(new ResizeOptions { ReportRate = 1 });
+        var observer2 = new BrowserViewportObserverMock(new ResizeOptions { ReportRate = 2 });
+        await service.SubscribeAsync(observer1, fireImmediately: false);
+
+        // Act
+        var subscribeTask = Task.Run(async () => await service.SubscribeAsync(observer2, fireImmediately: false));
+        await delayedListenStarted.Task;
+
+        var unsubscribeStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var unsubscribeTask = Task.Run(async () =>
+        {
+            unsubscribeStarted.TrySetResult();
+            await service.UnsubscribeAsync(observer1);
+        });
+        await unsubscribeStarted.Task;
+
+        // Assert
+        unsubscribeTask.IsCompleted.Should().BeFalse();
+        service.GetInternalSubscription(observer1).Should().NotBeNull();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+
+        releaseDelayedListen.SetResult();
+        await Task.WhenAll(subscribeTask, unsubscribeTask);
+
+        service.GetInternalSubscription(observer1).Should().BeNull();
+        service.GetInternalSubscription(observer2).Should().NotBeNull();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]
@@ -659,4 +758,5 @@ public class BrowserViewportServiceTests
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(0);
     }
+
 }
