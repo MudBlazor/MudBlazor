@@ -345,7 +345,7 @@ public class BrowserViewportServiceTests
             Assert.That(service.ObserversCount, Is.EqualTo(observers.Length));
             Assert.That(jsRuntime.ListenForResizeCallCount, Is.EqualTo(1));
             Assert.That(subscriptions, Has.None.Null);
-            Assert.That(subscriptions.Select(subscription => subscription!.JavaScriptListenerId).Distinct(), Has.Count.EqualTo(1));
+            Assert.That(subscriptions.Select(subscription => subscription!.JavaScriptListenerId).Distinct().Count(), Is.EqualTo(1));
         });
     }
 
