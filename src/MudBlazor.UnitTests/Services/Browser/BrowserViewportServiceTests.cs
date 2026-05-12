@@ -319,6 +319,37 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
+    [CancelAfter(1000)]
+    public async Task SubscribeAsync_ConcurrentObserversWithSameOptions_UsesOneJavaScriptListener()
+    {
+        // Arrange
+        var jsRuntime = new TrackingJsRuntime();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntime);
+        var observers = Enumerable.Range(0, 50)
+            .Select(_ => new BrowserViewportObserverMock(new ResizeOptions()))
+            .ToArray();
+
+        // Act
+        var subscribeTask = Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: false)));
+        await jsRuntime.WaitForListenForResizeAsync();
+        jsRuntime.ReleaseListenForResize();
+        await subscribeTask;
+
+        var subscriptions = observers
+            .Select(observer => service.GetInternalSubscription(observer))
+            .ToArray();
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(service.ObserversCount, Is.EqualTo(observers.Length));
+            Assert.That(jsRuntime.ListenForResizeCallCount, Is.EqualTo(1));
+            Assert.That(subscriptions, Has.None.Null);
+            Assert.That(subscriptions.Select(subscription => subscription!.JavaScriptListenerId).Distinct(), Has.Count.EqualTo(1));
+        });
+    }
+
+    [Test]
     public async Task SubscribeAsync_DifferentObserversWithDifferentOptions_ShouldHaveMultipleJSListener()
     {
         // Arrange
@@ -658,5 +689,44 @@ public class BrowserViewportServiceTests
         // Asset
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(0);
+    }
+
+    private sealed class TrackingJsRuntime : IJSRuntime
+    {
+        private static readonly IJSVoidResult JsVoidResultInstance = new JsVoidResult();
+        private readonly TaskCompletionSource<bool> _listenForResizeStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly TaskCompletionSource<bool> _releaseListenForResize = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int _listenForResizeCallCount;
+
+        public int ListenForResizeCallCount => _listenForResizeCallCount;
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, object?[]? args)
+            => InvokeAsync<TValue>(identifier, CancellationToken.None, args);
+
+        public ValueTask<TValue> InvokeAsync<TValue>(string identifier, CancellationToken cancellationToken, object?[]? args)
+        {
+            return identifier switch
+            {
+                "mudResizeListenerFactory.listenForResize" => ListenForResizeAsync<TValue>(cancellationToken),
+                "mudResizeListener.getBrowserWindowSize" => new ValueTask<TValue>((TValue)(object)new BrowserWindowSize { Height = 1080, Width = 1920 }),
+                "mudResizeListenerFactory.cancelListener" or "mudResizeListenerFactory.dispose" => new ValueTask<TValue>((TValue)(object)JsVoidResultInstance),
+                _ => throw new NotSupportedException($"Unsupported JS identifier: {identifier}")
+            };
+        }
+
+        public Task WaitForListenForResizeAsync() => _listenForResizeStarted.Task;
+
+        public void ReleaseListenForResize() => _releaseListenForResize.TrySetResult(true);
+
+        private async ValueTask<TValue> ListenForResizeAsync<TValue>(CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref _listenForResizeCallCount);
+            _listenForResizeStarted.TrySetResult(true);
+            await _releaseListenForResize.Task.WaitAsync(cancellationToken);
+
+            return (TValue)(object)JsVoidResultInstance;
+        }
+
+        private sealed class JsVoidResult : IJSVoidResult;
     }
 }

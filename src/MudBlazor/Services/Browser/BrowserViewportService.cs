@@ -25,6 +25,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     private readonly CancellationToken _cancellationToken;
     private readonly ResizeListenerInterop _resizeListenerInterop;
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly SemaphoreSlim _subscriptionLock = new(1, 1);
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
     private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
 
@@ -102,18 +103,41 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         // Safe to modify now
         optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
-        var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+        BrowserViewportSubscription subscription;
+        IBrowserViewportObserver newObserver;
+        bool wasExisting;
 
-        if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out var newObserver))
+        try
         {
-            if (fireImmediately)
+            await _subscriptionLock.WaitAsync(_cancellationToken);
+        }
+        catch (OperationCanceledException) when (_disposed)
+        {
+            return;
+        }
+
+        try
+        {
+            if (_disposed)
             {
-                // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
-                var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
-                var latestBreakpoint = await GetCurrentBreakpointAsync();
-                // Notify only current subscription
-                await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
+                return;
             }
+
+            subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+            wasExisting = _observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver);
+        }
+        finally
+        {
+            _subscriptionLock.Release();
+        }
+
+        if (!wasExisting && fireImmediately)
+        {
+            // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
+            var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
+            var latestBreakpoint = await GetCurrentBreakpointAsync();
+            // Notify only current subscription
+            await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
         }
     }
 
@@ -149,10 +173,33 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             return;
         }
 
-        var subscription = await RemoveJavaScriptListener(observerId);
-        if (subscription is not null)
+        BrowserViewportSubscription? subscription;
+
+        try
         {
-            _observerManager.Unsubscribe(subscription);
+            await _subscriptionLock.WaitAsync(_cancellationToken);
+        }
+        catch (OperationCanceledException) when (_disposed)
+        {
+            return;
+        }
+
+        try
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            subscription = await RemoveJavaScriptListener(observerId);
+            if (subscription is not null)
+            {
+                _observerManager.Unsubscribe(subscription);
+            }
+        }
+        finally
+        {
+            _subscriptionLock.Release();
         }
     }
 
