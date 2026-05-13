@@ -97,27 +97,31 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudFocusTrap>(parameters => parameters.Add(x => x.DefaultFocus, DefaultFocus.None));
             var root = comp.Find("div.mud-focus-trap");
             var trapChildren = root.Children;
-            var initialRenderCount = comp.RenderCount;
+            var renderCountBeforeKeyEvent = comp.RenderCount;
 
             await root.KeyDownAsync(new KeyboardEventArgs { Key = "Tab", ShiftKey = true });
 
-            comp.RenderCount.Should().Be(initialRenderCount);
+            comp.RenderCount.Should().Be(renderCountBeforeKeyEvent);
 
             await trapChildren[1].FocusAsync();
 
             await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudElementRef.focusLast", 1));
 
+            renderCountBeforeKeyEvent = comp.RenderCount;
+
             await root.KeyUpAsync(new KeyboardEventArgs { Key = "Tab" });
 
-            comp.RenderCount.Should().Be(initialRenderCount);
+            comp.RenderCount.Should().Be(renderCountBeforeKeyEvent);
 
             await trapChildren[4].FocusAsync();
 
             await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudElementRef.focusFirst", 1));
 
+            renderCountBeforeKeyEvent = comp.RenderCount;
+
             await root.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
 
-            comp.RenderCount.Should().Be(initialRenderCount);
+            comp.RenderCount.Should().Be(renderCountBeforeKeyEvent);
 
             await trapChildren[1].FocusAsync();
 
@@ -154,7 +158,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudFocusTrap>(parameters => parameters.Add(x => x.DefaultFocus, DefaultFocus.None));
 
-            comp.Dispose();
+            comp.Instance.Dispose();
 
             Context.JSInterop.VerifyInvoke("mudElementRef.restoreFocus", 1);
         }
@@ -164,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudFocusTrap>(parameters => parameters.Add(x => x.Disabled, true));
 
-            comp.Dispose();
+            comp.Instance.Dispose();
 
             GetInvocationCount("mudElementRef.restoreFocus").Should().Be(0);
         }
