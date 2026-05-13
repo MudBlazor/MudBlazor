@@ -60,6 +60,7 @@ internal static class MudComponentUnknownParametersAnalyzerFixture
 
         return referencePaths
             .Select(path => MetadataReference.CreateFromFile(path))
+            .Cast<MetadataReference>()
             .ToImmutableArray();
     }
 }

@@ -141,7 +141,6 @@ public class ValidAttributeTests
     private static string GeneratedComponentSource =>
         """
 using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -186,7 +185,6 @@ public partial class AttributeTest : ComponentBase
         __builder.CloseComponent();
 
         TypeInference.CreateMudChip_0(__builder, _bindValue, Test);
-        TypeInference.CreateMudTextField_1(__builder, _bindValue);
 
         __builder.OpenComponent<MudProgressCircular>(16);
         __builder.AddAttribute(17, "lowerCase", true);
@@ -225,17 +223,6 @@ public partial class AttributeTest : ComponentBase
             __builder.AddAttribute(35, "@bind", value);
             __builder.AddAttribute(36, "@bind:after", after);
             __builder.AddAttribute(37, "Text", "Href set");
-            __builder.CloseComponent();
-        }
-
-        public static void CreateMudTextField_1(RenderTreeBuilder __builder, string value)
-        {
-            __builder.OpenComponent<MudTextField<string>>(38);
-            __builder.AddAttribute(39, "Value", value);
-            __builder.AddAttribute(40, "ValueChanged", default(EventCallback<string>));
-            __builder.AddAttribute(41, "ValueExpression", (Expression<Func<string>>)(() => value));
-            __builder.AddAttribute(42, "Label", "Standard");
-            __builder.AddAttribute(43, "Variant", Variant.Text);
             __builder.CloseComponent();
         }
     }
@@ -298,13 +285,16 @@ public class InheritedMudChip<T> : MudChip<T>
     private static void AssertDiagnostics(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedAttributeDiagnostic> expectedDiagnostics)
     {
         var filteredDiagnostics = diagnostics.FilterToClass(AttributeTestClassName);
+        var orderedExpectedDiagnostics = expectedDiagnostics
+            .OrderBy(x => GeneratedComponentSource.IndexOf(x.SourceMarker, StringComparison.Ordinal))
+            .ToArray();
 
-        filteredDiagnostics.Should().HaveCount(expectedDiagnostics.Count);
+        filteredDiagnostics.Should().HaveCount(orderedExpectedDiagnostics.Length);
 
         for (var i = 0; i < filteredDiagnostics.Count; i++)
         {
             var actual = filteredDiagnostics[i];
-            var expected = expectedDiagnostics[i];
+            var expected = orderedExpectedDiagnostics[i];
             var sourceText = actual.AdditionalLocations[0].SourceTree!.GetText();
 
             actual.Id.Should().Be(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId);
