@@ -21,6 +21,9 @@ namespace MudBlazor.UnitTests.Services.Browser;
 [TestFixture]
 public class BrowserViewportServiceTests
 {
+    /// <summary>
+    /// Simulates slow JavaScript interop so concurrent subscriptions overlap during listener creation.
+    /// </summary>
     private const int SimulatedJsLatencyMs = 200;
 
     [Test]
