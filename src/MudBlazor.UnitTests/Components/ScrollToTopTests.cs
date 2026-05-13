@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using MudBlazor.Interop;
 using NUnit.Framework;
+using System.Reflection;
 
 namespace MudBlazor.UnitTests.Components;
 
@@ -13,13 +14,17 @@ namespace MudBlazor.UnitTests.Components;
 public class ScrollToTopTests : BunitTest
 {
     [Test]
-    public void OnAfterRender_CreatesScrollListenerOnce_WithConfiguredSelector()
+    public async Task OnAfterRender_CreatesScrollListenerOnce_WithConfiguredSelector()
     {
         var (component, listener, _, factory) = RenderScrollToTop(parameters => parameters
             .Add(x => x.Selector, "#target"));
 
-        component.SetParametersAndRender(parameters => parameters
-            .Add(x => x.Selector, "#updated"));
+        listener.RaiseScroll(new ScrollEventArgs { NodeName = "DIV", ScrollTop = 500 });
+
+        await component.WaitForAssertionAsync(() =>
+        {
+            component.Find("span").ClassList.Should().Contain("visible");
+        });
 
         factory.CreateSelectors.Should().ContainSingle().Which.Should().Be("#target");
         factory.CreateWithReportRateCallCount.Should().Be(0);
@@ -65,7 +70,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public async Task ScrollEvent_UsesDocumentTopOffset_AndInvokesOnScroll()
     {
-        ScrollEventArgs? receivedArgs = null;
+        ScrollEventArgs receivedArgs = null;
         var (component, listener, _, _) = RenderScrollToTop(parameters => parameters
             .Add(x => x.TopOffset, 100)
             .Add(x => x.OnScroll, (ScrollEventArgs args) => receivedArgs = args));
@@ -82,6 +87,29 @@ public class ScrollToTopTests : BunitTest
         {
             receivedArgs.Should().BeSameAs(scrollEventArgs);
             component.Find("span").ClassList.Should().Contain("visible");
+        });
+    }
+
+    [Test]
+    public async Task ScrollEvent_IgnoresDocumentEvents_WithoutBoundingClientRect()
+    {
+        ScrollEventArgs receivedArgs = null;
+        var (component, listener, _, _) = RenderScrollToTop(parameters => parameters
+            .Add(x => x.TopOffset, 100)
+            .Add(x => x.OnScroll, (ScrollEventArgs args) => receivedArgs = args));
+
+        var scrollEventArgs = new ScrollEventArgs
+        {
+            NodeName = "#document"
+        };
+
+        listener.RaiseScroll(scrollEventArgs);
+
+        await component.WaitForAssertionAsync(() =>
+        {
+            receivedArgs.Should().BeSameAs(scrollEventArgs);
+            component.Find("span").ClassList.Should().Contain("hidden");
+            component.Find("span").ClassList.Should().NotContain("visible");
         });
     }
 
@@ -122,6 +150,17 @@ public class ScrollToTopTests : BunitTest
     }
 
     [Test]
+    public async Task Click_UsesNullSelector_WhenNoSelectorWasConfigured()
+    {
+        var (component, _, scrollManagerMock, _) = RenderScrollToTop(parameters => parameters
+            .Add(x => x.Selector, " "));
+
+        await component.Find("span").ClickAsync();
+
+        scrollManagerMock.Verify(x => x.ScrollToTopAsync(null, ScrollBehavior.Smooth), Times.Once);
+    }
+
+    [Test]
     public async Task DisposeAsync_UnsubscribesAndDisposesScrollListener()
     {
         var (component, listener, _, _) = RenderScrollToTop();
@@ -134,7 +173,34 @@ public class ScrollToTopTests : BunitTest
         listener.DisposeCallCount.Should().Be(1);
     }
 
-    private (IRenderedComponent<MudScrollToTop> Component, FakeScrollListener Listener, Mock<IScrollManager> ScrollManagerMock, FakeScrollListenerFactory Factory) RenderScrollToTop(Action<ComponentParameterCollectionBuilder<MudScrollToTop>>? configure = null)
+    [Test]
+    public async Task DisposeAsync_WithoutScrollListener_DoesNothing()
+    {
+        var component = new MudScrollToTop();
+
+        await component.DisposeAsync();
+    }
+
+    [Test]
+    public async Task OnButtonClick_UsesNullSelector_WhenListenerIsNotInitialized()
+    {
+        var component = new MudScrollToTop();
+        var scrollManagerMock = new Mock<IScrollManager>();
+
+        typeof(MudScrollToTop)
+            .GetProperty("ScrollManager", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(component, scrollManagerMock.Object);
+
+        var onButtonClick = typeof(MudScrollToTop)
+            .GetMethod("OnButtonClick", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+        var task = (Task)onButtonClick.Invoke(component, [new MouseEventArgs()]);
+        await task;
+
+        scrollManagerMock.Verify(x => x.ScrollToTopAsync(null, ScrollBehavior.Smooth), Times.Once);
+    }
+
+    private (IRenderedComponent<MudScrollToTop> Component, FakeScrollListener Listener, Mock<IScrollManager> ScrollManagerMock, FakeScrollListenerFactory Factory) RenderScrollToTop(Action<ComponentParameterCollectionBuilder<MudScrollToTop>> configure = null)
     {
         var listener = new FakeScrollListener();
         var factory = new FakeScrollListenerFactory(listener);
@@ -154,18 +220,18 @@ public class ScrollToTopTests : BunitTest
 
     private sealed class FakeScrollListenerFactory(FakeScrollListener listener) : IScrollListenerFactory
     {
-        public List<string?> CreateSelectors { get; } = [];
+        public List<string> CreateSelectors { get; } = [];
 
         public int CreateWithReportRateCallCount { get; private set; }
 
-        public IScrollListener Create(string? selector)
+        public IScrollListener Create(string selector)
         {
             CreateSelectors.Add(selector);
             listener.Selector = selector;
             return listener;
         }
 
-        public IScrollListener Create(string? selector, int reportRateMs)
+        public IScrollListener Create(string selector, int reportRateMs)
         {
             CreateWithReportRateCallCount++;
             CreateSelectors.Add(selector);
@@ -177,9 +243,9 @@ public class ScrollToTopTests : BunitTest
 
     private sealed class FakeScrollListener : IScrollListener
     {
-        private EventHandler<ScrollEventArgs>? _onScroll;
+        private EventHandler<ScrollEventArgs> _onScroll;
 
-        public string? Selector { get; set; }
+        public string Selector { get; set; }
 
         public int ReportRateMs { get; set; }
 
