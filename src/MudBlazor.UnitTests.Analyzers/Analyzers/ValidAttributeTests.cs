@@ -227,6 +227,12 @@ public class ValidAttributeTests : BunitTest
         }
     }
 
+    /// <summary>
+    /// Creates generated-style C# that mirrors the RenderTreeBuilder patterns consumed by the analyzer.
+    /// </summary>
+    /// <remarks>
+    /// The structure is intentionally explicit so analyzer assertions stay stable without depending on SDK Razor output.
+    /// </remarks>
     private static string CreateGeneratedSource() =>
         """
         using System;
@@ -399,6 +405,12 @@ public class ValidAttributeTests : BunitTest
         }
         """;
 
+    /// <summary>
+    /// Creates a generated-style source that includes a checksum pragma for Razor path mapping coverage.
+    /// </summary>
+    /// <remarks>
+    /// The checksum payload is synthetic because this test only verifies that diagnostics map back to the Razor file path.
+    /// </remarks>
     private static string CreateMappedLocationSource() =>
         """
         // The checksum payload is intentionally synthetic; only the mapped Razor path matters for this test.
