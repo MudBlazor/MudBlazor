@@ -233,6 +233,7 @@ public class ValidAttributeTests : BunitTest
     /// <remarks>
     /// The structure is intentionally explicit so analyzer assertions stay stable without depending on SDK Razor output.
     /// </remarks>
+    /// <returns>Generated C# source for the main unknown-attribute analyzer scenarios.</returns>
     private static string CreateGeneratedSource() =>
         """
         using System;
@@ -411,6 +412,7 @@ public class ValidAttributeTests : BunitTest
     /// <remarks>
     /// The checksum payload is synthetic because this test only verifies that diagnostics map back to the Razor file path.
     /// </remarks>
+    /// <returns>Generated C# source with a mapped Razor file path.</returns>
     private static string CreateMappedLocationSource() =>
         """
         // The checksum payload is intentionally synthetic; only the mapped Razor path matters for this test.

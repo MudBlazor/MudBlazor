@@ -25,6 +25,7 @@ internal static class AnalyzerCompilationFactory
     /// <param name="allowedAttributePattern">The analyzer option that controls which unknown attributes are allowed.</param>
     /// <param name="allowedAttributeList">An optional explicit allow-list for <c>HTMLAttributes</c> mode.</param>
     /// <param name="sourcePath">The logical source path used for the syntax tree.</param>
+    /// <returns>The analyzer diagnostics reported for the supplied source.</returns>
     internal static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(
         string source,
         MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern allowedAttributePattern,
@@ -59,12 +60,13 @@ internal static class AnalyzerCompilationFactory
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
         trustedPlatformAssemblies.Should().NotBeNullOrWhiteSpace("Trusted platform assemblies should be available for test compilation");
 
-        return trustedPlatformAssemblies!
+        var references = trustedPlatformAssemblies!
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
             .Append(typeof(Microsoft.AspNetCore.Components.ComponentBase).Assembly.Location)
             .Distinct(StringComparer.OrdinalIgnoreCase)
-            .Select(path => (MetadataReference)MetadataReference.CreateFromFile(path))
-            .ToImmutableArray();
+            .Select(path => MetadataReference.CreateFromFile(path));
+
+        return [.. references];
     }
 }
 #nullable restore
