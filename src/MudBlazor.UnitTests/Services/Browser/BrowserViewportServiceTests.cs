@@ -21,6 +21,8 @@ namespace MudBlazor.UnitTests.Services.Browser;
 [TestFixture]
 public class BrowserViewportServiceTests
 {
+    private const int SimulatedJsLatencyMs = 200;
+
     [Test]
     public async Task SubscribeAsync_WithObserver_NoFireImmediately()
     {
@@ -331,7 +333,7 @@ public class BrowserViewportServiceTests
             .ReturnsAsync(new BrowserWindowSize { Width = 1920, Height = 1080 });
         jsRuntimeMock
             .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-            .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200));
+            .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(SimulatedJsLatencyMs));
 
         // Act
         await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(TimeSpan.FromSeconds(5));
@@ -364,7 +366,7 @@ public class BrowserViewportServiceTests
             .ReturnsAsync(new BrowserWindowSize { Width = 1920, Height = 1080 });
         jsRuntimeMock
             .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-            .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200));
+            .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(SimulatedJsLatencyMs));
 
         // Act
         await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(TimeSpan.FromSeconds(5));
