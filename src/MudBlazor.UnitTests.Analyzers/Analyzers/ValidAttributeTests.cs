@@ -401,6 +401,7 @@ public class ValidAttributeTests : BunitTest
 
     private static string CreateMappedLocationSource() =>
         """
+        // The checksum payload is intentionally synthetic; only the mapped Razor path matters for this test.
         #pragma checksum "MappedAttributeTest.razor" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "1234567890ABCDEF1234567890ABCDEF12345678"
         using Microsoft.AspNetCore.Components;
         using Microsoft.AspNetCore.Components.Rendering;
