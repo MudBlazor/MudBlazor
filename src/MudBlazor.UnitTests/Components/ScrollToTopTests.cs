@@ -14,7 +14,7 @@ namespace MudBlazor.UnitTests.Components;
 public class ScrollToTopTests : BunitTest
 {
     [Test]
-    public async Task OnAfterRender_CreatesScrollListenerOnce_WithConfiguredSelector()
+    public async Task InitializesScrollListenerOnce_WithConfiguredSelector()
     {
         var (component, listener, _, factory) = RenderScrollToTop(parameters => parameters
             .Add(x => x.Selector, "#target"));
@@ -32,7 +32,7 @@ public class ScrollToTopTests : BunitTest
     }
 
     [Test]
-    public void OnAfterRender_UsesNullSelector_WhenSelectorIsWhitespace()
+    public void InitializesScrollListener_WithNullSelector_WhenSelectorIsWhitespace()
     {
         var (_, listener, _, factory) = RenderScrollToTop(parameters => parameters
             .Add(x => x.Selector, "   "));
@@ -174,7 +174,7 @@ public class ScrollToTopTests : BunitTest
     }
 
     [Test]
-    public async Task DisposeAsync_WithoutScrollListener_DoesNothing()
+    public async Task DisposeWithoutScrollListener_DoesNothing()
     {
         var component = new MudScrollToTop();
 
@@ -182,7 +182,7 @@ public class ScrollToTopTests : BunitTest
     }
 
     [Test]
-    public async Task OnButtonClick_UsesNullSelector_WhenListenerIsNotInitialized()
+    public async Task ScrollsToTop_WithNullSelector_WhenListenerIsNotInitialized()
     {
         var component = new MudScrollToTop();
         var scrollManagerMock = new Mock<IScrollManager>();
@@ -200,6 +200,9 @@ public class ScrollToTopTests : BunitTest
         scrollManagerMock.Verify(x => x.ScrollToTopAsync(null, ScrollBehavior.Smooth), Times.Once);
     }
 
+    /// <summary>
+    /// Renders <see cref="MudScrollToTop"/> with a fake scroll listener and mocked scroll manager.
+    /// </summary>
     private (IRenderedComponent<MudScrollToTop> Component, FakeScrollListener Listener, Mock<IScrollManager> ScrollManagerMock, FakeScrollListenerFactory Factory) RenderScrollToTop(Action<ComponentParameterCollectionBuilder<MudScrollToTop>> configure = null)
     {
         var listener = new FakeScrollListener();
