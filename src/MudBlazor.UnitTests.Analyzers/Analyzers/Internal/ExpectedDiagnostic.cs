@@ -1,4 +1,8 @@
-﻿using AwesomeAssertions;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 
 namespace MudBlazor.UnitTests.Analyzers.Internal;
@@ -6,29 +10,57 @@ namespace MudBlazor.UnitTests.Analyzers.Internal;
 extern alias MudBlazorAnalyzer;
 
 #nullable enable
-internal sealed record ExpectedDiagnostic(string AttributeName, string ComponentName)
+internal class ExpectedDiagnostic
 {
-    internal static void Compare(
-        IReadOnlyList<Diagnostic> diagnostics,
-        IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics,
-        string expectedClassName)
+    internal ExpectedDiagnostic(DiagnosticDescriptor descriptor, FileLinePositionSpan position, string message)
     {
-        diagnostics.Should().HaveCount(expectedDiagnostics.Count);
+        Descriptor = descriptor;
+        Position = position;
+        Message = message;
+    }
 
+    internal DiagnosticDescriptor Descriptor { get; }
+
+    internal FileLinePositionSpan Position { get; }
+
+    internal string Message { get; }
+
+    internal static List<Diagnostic> FilterToClass(IEnumerable<Diagnostic> diagnostics, string? className)
+    {
+        var results = new List<Diagnostic>();
         foreach (var diagnostic in diagnostics)
         {
-            diagnostic.Id.Should().Be(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId);
-            diagnostic.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]
-                .Should().Be(expectedClassName);
+            if (diagnostic.Properties.TryGetValue(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey, out var cn)
+                && string.Equals(cn, className))
+            {
+                results.Add(diagnostic);
+            }
         }
 
-        foreach (var expectedDiagnostic in expectedDiagnostics)
+        return results;
+    }
+
+    private static IOrderedEnumerable<Diagnostic> SortToFileOrder(IReadOnlyList<Diagnostic> fileLinePositions)
+    {
+        return fileLinePositions
+            .OrderBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Line)
+            .ThenBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Character);
+    }
+
+    internal static void Compare(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
+    {
+        diagnostics.Count.Should().Be(expectedDiagnostics.Count);
+        var orderedDiagnostics = SortToFileOrder(diagnostics);
+
+        for (var i = 0; i < orderedDiagnostics.Count(); i++)
         {
-            diagnostics.Should().ContainSingle(x =>
-                x.GetMessage().StartsWith(
-                    $"Illegal Attribute '{expectedDiagnostic.AttributeName}' on '{expectedDiagnostic.ComponentName}'",
-                    StringComparison.Ordinal));
+            TestMessage(orderedDiagnostics.ElementAt(i), expectedDiagnostics[i]);
         }
+    }
+
+    private static void TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostic)
+    {
+        diagnostic.GetMessage().Should().StartWith(expectedDiagnostic.Message);
     }
 }
 #nullable restore

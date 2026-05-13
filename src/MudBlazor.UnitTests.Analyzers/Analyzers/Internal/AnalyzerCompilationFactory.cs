@@ -49,6 +49,7 @@ internal static class AnalyzerCompilationFactory
         var references = trustedPlatformAssemblies!
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
             .Append(typeof(Microsoft.AspNetCore.Components.ComponentBase).Assembly.Location)
+            .Append(typeof(MudBlazor.MudComponentBase).Assembly.Location)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .Select(path => MetadataReference.CreateFromFile(path));
 
