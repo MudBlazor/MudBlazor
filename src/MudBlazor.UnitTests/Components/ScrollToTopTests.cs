@@ -173,12 +173,8 @@ public class ScrollToTopTests : BunitTest
     }
 
     /// <summary>
-    /// Renders <see cref="MudScrollToTop"/> with fake scroll infrastructure for behavior tests.
+    /// Renders <see cref="MudScrollToTop"/> with fake scroll infrastructure.
     /// </summary>
-    /// <remarks>
-    /// The returned tuple includes the rendered component, the fake listener used to raise scroll events,
-    /// the mocked <see cref="IScrollManager"/>, and the factory that captures listener initialization.
-    /// </remarks>
     private (IRenderedComponent<MudScrollToTop> Component, FakeScrollListener Listener, Mock<IScrollManager> ScrollManagerMock, FakeScrollListenerFactory Factory) RenderScrollToTopWithFakes(Action<ComponentParameterCollectionBuilder<MudScrollToTop>> configure = null)
     {
         var listener = new FakeScrollListener();
