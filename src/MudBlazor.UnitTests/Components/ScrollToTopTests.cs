@@ -15,7 +15,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public async Task InitializesScrollListenerOnce_WithConfiguredSelector()
     {
-        var (component, listener, _, factory) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, listener, _, factory) = RenderTestComponent(parameters => parameters
             .Add(x => x.Selector, "#target"));
 
         listener.RaiseScroll(new ScrollEventArgs { NodeName = "DIV", ScrollTop = 500 });
@@ -33,7 +33,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public void InitializesScrollListener_WithNullSelector_WhenSelectorIsWhitespace()
     {
-        var (_, listener, _, factory) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (_, listener, _, factory) = RenderTestComponent(parameters => parameters
             .Add(x => x.Selector, "   "));
 
         factory.CreateSelectors.Should().ContainSingle().Which.Should().BeNull();
@@ -43,7 +43,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public async Task ScrollEvent_UsesDefaultVisibilityClasses_WhenCrossingTopOffset()
     {
-        var (component, listener, _, _) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, listener, _, _) = RenderTestComponent(parameters => parameters
             .Add(x => x.TopOffset, 100));
 
         component.Find("span").ClassList.Should().Contain("hidden");
@@ -70,7 +70,7 @@ public class ScrollToTopTests : BunitTest
     public async Task ScrollEvent_UsesDocumentTopOffset_AndInvokesOnScroll()
     {
         ScrollEventArgs receivedArgs = null;
-        var (component, listener, _, _) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, listener, _, _) = RenderTestComponent(parameters => parameters
             .Add(x => x.TopOffset, 100)
             .Add(x => x.OnScroll, (ScrollEventArgs args) => receivedArgs = args));
 
@@ -93,7 +93,7 @@ public class ScrollToTopTests : BunitTest
     public async Task ScrollEvent_IgnoresDocumentEvents_WithoutBoundingClientRect()
     {
         ScrollEventArgs receivedArgs = null;
-        var (component, listener, _, _) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, listener, _, _) = RenderTestComponent(parameters => parameters
             .Add(x => x.TopOffset, 100)
             .Add(x => x.OnScroll, (ScrollEventArgs args) => receivedArgs = args));
 
@@ -115,7 +115,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public async Task ScrollEvent_UsesConfiguredVisibilityClasses()
     {
-        var (component, listener, _, _) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, listener, _, _) = RenderTestComponent(parameters => parameters
             .Add(x => x.TopOffset, 100)
             .Add(x => x.VisibleCssClass, "is-visible")
             .Add(x => x.HiddenCssClass, "is-hidden"));
@@ -137,7 +137,7 @@ public class ScrollToTopTests : BunitTest
     public async Task Click_ScrollsToTop_WithConfiguredBehavior_AndInvokesOnClick()
     {
         var clicked = false;
-        var (component, _, scrollManagerMock, _) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, _, scrollManagerMock, _) = RenderTestComponent(parameters => parameters
             .Add(x => x.Selector, "#target")
             .Add(x => x.ScrollBehavior, ScrollBehavior.Auto)
             .Add(x => x.OnClick, (MouseEventArgs _) => clicked = true));
@@ -151,7 +151,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public async Task Click_UsesNullSelector_WhenNoSelectorWasConfigured()
     {
-        var (component, _, scrollManagerMock, _) = RenderScrollToTopWithTestDoubles(parameters => parameters
+        var (component, _, scrollManagerMock, _) = RenderTestComponent(parameters => parameters
             .Add(x => x.Selector, " "));
 
         await component.Find("span").ClickAsync();
@@ -162,7 +162,7 @@ public class ScrollToTopTests : BunitTest
     [Test]
     public async Task Dispose_UnsubscribesAndDisposesScrollListener()
     {
-        var (component, listener, _, _) = RenderScrollToTopWithTestDoubles();
+        var (component, listener, _, _) = RenderTestComponent();
 
         listener.SubscriptionCount.Should().Be(1);
 
@@ -175,7 +175,7 @@ public class ScrollToTopTests : BunitTest
     /// <summary>
     /// Renders <see cref="MudScrollToTop"/> with fake scroll infrastructure.
     /// </summary>
-    private (IRenderedComponent<MudScrollToTop> Component, FakeScrollListener Listener, Mock<IScrollManager> ScrollManagerMock, FakeScrollListenerFactory Factory) RenderScrollToTopWithTestDoubles(Action<ComponentParameterCollectionBuilder<MudScrollToTop>> configure = null)
+    private (IRenderedComponent<MudScrollToTop> Component, FakeScrollListener Listener, Mock<IScrollManager> ScrollManagerMock, FakeScrollListenerFactory Factory) RenderTestComponent(Action<ComponentParameterCollectionBuilder<MudScrollToTop>> configure = null)
     {
         var listener = new FakeScrollListener();
         var factory = new FakeScrollListenerFactory(listener);
@@ -193,6 +193,9 @@ public class ScrollToTopTests : BunitTest
         return (component, listener, scrollManagerMock, factory);
     }
 
+    /// <summary>
+    /// Creates the scroll listener test double used by these tests.
+    /// </summary>
     private sealed class FakeScrollListenerFactory(FakeScrollListener scrollListener) : IScrollListenerFactory
     {
         private bool _created;
@@ -230,6 +233,9 @@ public class ScrollToTopTests : BunitTest
         }
     }
 
+    /// <summary>
+    /// Tracks subscriptions and allows tests to raise scroll events manually.
+    /// </summary>
     private sealed class FakeScrollListener : IScrollListener
     {
         private EventHandler<ScrollEventArgs> _onScroll;
