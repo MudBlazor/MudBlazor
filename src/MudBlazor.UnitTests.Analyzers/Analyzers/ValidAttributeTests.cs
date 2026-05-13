@@ -1,8 +1,9 @@
-﻿using AwesomeAssertions;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-using MudBlazor.Analyzers.TestComponents;
 using MudBlazor.UnitTests.Analyzers.Internal;
 using NUnit.Framework;
 
@@ -12,280 +13,310 @@ extern alias MudBlazorAnalyzer;
 
 #nullable enable
 [TestFixture]
-//[Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
-public class ValidAttributeTests : BunitTest
+public class ValidAttributeTests
 {
-    private static ProjectCompilation Workspace { get; set; } = null!;
+    private const string AttributeTestClassName = "MudBlazor.UnitTests.Analyzers.Generated.AttributeTest";
 
-    private static DiagnosticAnalyzer Analyzer { get; } = new MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer();
+    private static IReadOnlyList<Diagnostic> LowerCaseAttributesDiagnostics { get; set; } = null!;
 
-    private static IEnumerable<Diagnostic> LowerCaseAttributesDiagnostics { get; set; } = null!;
+    private static IReadOnlyList<Diagnostic> DefaultAttributesListDiagnostics { get; set; } = null!;
 
-    private static IEnumerable<Diagnostic> DefaultAttributesListDiagnostics { get; set; } = null!;
+    private static IReadOnlyList<Diagnostic> CustomAttributesListDiagnostics { get; set; } = null!;
 
-    private static IEnumerable<Diagnostic> CustomAttributesListDiagnostics { get; set; } = null!;
+    private static IReadOnlyList<Diagnostic> DataAndAriaAttributesDiagnostics { get; set; } = null!;
 
-    private static IEnumerable<Diagnostic> DataAndAriaAttributesDiagnostics { get; set; } = null!;
+    private static IReadOnlyList<Diagnostic> NoAttributesDiagnostics { get; set; } = null!;
 
-    private static IEnumerable<Diagnostic> NoAttributesDiagnostics { get; set; } = null!;
-    private static IEnumerable<Diagnostic> AnyAttributesDiagnostics { get; set; } = null!;
+    private static IReadOnlyList<Diagnostic> AnyAttributesDiagnostics { get; set; } = null!;
 
-    private static ExpectedDiagnostic IllegalAttributeOffsetXOnMudAutocomplete { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(63, 12), new LinePosition(63, 62)),
-        "Illegal Attribute 'OffsetX' on 'MudAutocomplete'");
+    private static IReadOnlyList<ExpectedAttributeDiagnostic> LowerCaseExpectedDiagnostics { get; } =
+    [
+        new("OffsetX", "MudAutocomplete", "LowerCase", "AddAttribute(1, \"OffsetX\""),
+        new("Text", "MudSlider", "LowerCase", "AddAttribute(5, \"Text\""),
+        new("Avatar", "InheritedMudChip", "LowerCase", "AddAttribute(8, \"Avatar\""),
+        new("Image", "MudAvatar", "LowerCase", "AddComponentParameter(11, \"Image\""),
+        new("Minimum", "MudProgressLinear", "LowerCase", "AddAttribute(13, \"Minimum\""),
+        new("Dense", "MudToggleGroup", "LowerCase", "AddAttribute(15, \"Dense\""),
+        new("@bind", "MudChip", "LowerCase", "AddAttribute(35, \"@bind\""),
+        new("@bind:after", "MudChip", "LowerCase", "AddAttribute(36, \"@bind:after\""),
+        new("UpperCase", "MudProgressCircular", "LowerCase", "AddAttribute(18, \"UpperCase\""),
+        new("Inert", "MudRadio", "LowerCase", "AddAttribute(25, \"Inert\""),
+        new("RequiredErrorChanged", "MudCheckBox", "LowerCase", "AddAttribute(29, \"RequiredErrorChanged\""),
+        new("AvatarClass", "MudChip", "LowerCase", "AddAttribute(32, \"AvatarClass\""),
+        new("ValueChanged", "MudChip", "LowerCase", "AddAttribute(33, \"ValueChanged\"")
+    ];
 
-    private static ExpectedDiagnostic IllegalAttributeiconOnMudFab { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(67, 12), new LinePosition(67, 60)),
-        "Illegal Attribute 'icon' on 'MudFab'");
+    private static IReadOnlyList<ExpectedAttributeDiagnostic> DefaultListExpectedDiagnostics { get; } =
+    [
+        new("OffsetX", "MudAutocomplete", "HTMLAttributes", "AddAttribute(1, \"OffsetX\""),
+        new("icon", "MudFab", "HTMLAttributes", "AddAttribute(3, \"icon\""),
+        new("Text", "MudSlider", "HTMLAttributes", "AddAttribute(5, \"Text\""),
+        new("Avatar", "InheritedMudChip", "HTMLAttributes", "AddAttribute(8, \"Avatar\""),
+        new("Image", "MudAvatar", "HTMLAttributes", "AddComponentParameter(11, \"Image\""),
+        new("Minimum", "MudProgressLinear", "HTMLAttributes", "AddAttribute(13, \"Minimum\""),
+        new("Dense", "MudToggleGroup", "HTMLAttributes", "AddAttribute(15, \"Dense\""),
+        new("@bind", "MudChip", "HTMLAttributes", "AddAttribute(35, \"@bind\""),
+        new("@bind:after", "MudChip", "HTMLAttributes", "AddAttribute(36, \"@bind:after\""),
+        new("lowerCase", "MudProgressCircular", "HTMLAttributes", "AddAttribute(17, \"lowerCase\""),
+        new("UpperCase", "MudProgressCircular", "HTMLAttributes", "AddAttribute(18, \"UpperCase\""),
+        new("unknownAttribute", "MudRadio", "HTMLAttributes", "AddAttribute(23, \"unknownAttribute\""),
+        new("Inert", "MudRadio", "HTMLAttributes", "AddAttribute(25, \"Inert\""),
+        new("customattribute", "MudRadio", "HTMLAttributes", "AddAttribute(26, \"customattribute\""),
+        new("customAttribute2", "MudRadio", "HTMLAttributes", "AddAttribute(27, \"customAttribute2\""),
+        new("RequiredErrorChanged", "MudCheckBox", "HTMLAttributes", "AddAttribute(29, \"RequiredErrorChanged\""),
+        new("AvatarClass", "MudChip", "HTMLAttributes", "AddAttribute(32, \"AvatarClass\""),
+        new("ValueChanged", "MudChip", "HTMLAttributes", "AddAttribute(33, \"ValueChanged\"")
+    ];
 
-    private static ExpectedDiagnostic IllegalAttributeTextOnMudSlider { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(71, 12), new LinePosition(71, 60)),
-        "Illegal Attribute 'Text' on 'MudSlider'");
+    private static IReadOnlyList<ExpectedAttributeDiagnostic> CustomListExpectedDiagnostics { get; } =
+    [
+        new("OffsetX", "MudAutocomplete", "HTMLAttributes", "AddAttribute(1, \"OffsetX\""),
+        new("icon", "MudFab", "HTMLAttributes", "AddAttribute(3, \"icon\""),
+        new("Text", "MudSlider", "HTMLAttributes", "AddAttribute(5, \"Text\""),
+        new("Avatar", "InheritedMudChip", "HTMLAttributes", "AddAttribute(8, \"Avatar\""),
+        new("Image", "MudAvatar", "HTMLAttributes", "AddComponentParameter(11, \"Image\""),
+        new("Minimum", "MudProgressLinear", "HTMLAttributes", "AddAttribute(13, \"Minimum\""),
+        new("Dense", "MudToggleGroup", "HTMLAttributes", "AddAttribute(15, \"Dense\""),
+        new("@bind", "MudChip", "HTMLAttributes", "AddAttribute(35, \"@bind\""),
+        new("@bind:after", "MudChip", "HTMLAttributes", "AddAttribute(36, \"@bind:after\""),
+        new("lowerCase", "MudProgressCircular", "HTMLAttributes", "AddAttribute(17, \"lowerCase\""),
+        new("UpperCase", "MudProgressCircular", "HTMLAttributes", "AddAttribute(18, \"UpperCase\""),
+        new("unknownAttribute", "MudRadio", "HTMLAttributes", "AddAttribute(23, \"unknownAttribute\""),
+        new("hidden", "MudRadio", "HTMLAttributes", "AddAttribute(24, \"hidden\""),
+        new("Inert", "MudRadio", "HTMLAttributes", "AddAttribute(25, \"Inert\""),
+        new("RequiredErrorChanged", "MudCheckBox", "HTMLAttributes", "AddAttribute(29, \"RequiredErrorChanged\""),
+        new("AvatarClass", "MudChip", "HTMLAttributes", "AddAttribute(32, \"AvatarClass\""),
+        new("ValueChanged", "MudChip", "HTMLAttributes", "AddAttribute(33, \"ValueChanged\"")
+    ];
 
-    private static ExpectedDiagnostic IllegalAttributeAvatarOnInheritedMudChip { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(84, 12), new LinePosition(84, 61)),
-        "Illegal Attribute 'Avatar' on 'InheritedMudChip'");
+    private static IReadOnlyList<ExpectedAttributeDiagnostic> DataAndAriaExpectedDiagnostics { get; } =
+    [
+        new("OffsetX", "MudAutocomplete", "DataAndAria", "AddAttribute(1, \"OffsetX\""),
+        new("icon", "MudFab", "DataAndAria", "AddAttribute(3, \"icon\""),
+        new("Text", "MudSlider", "DataAndAria", "AddAttribute(5, \"Text\""),
+        new("Avatar", "InheritedMudChip", "DataAndAria", "AddAttribute(8, \"Avatar\""),
+        new("Image", "MudAvatar", "DataAndAria", "AddComponentParameter(11, \"Image\""),
+        new("Minimum", "MudProgressLinear", "DataAndAria", "AddAttribute(13, \"Minimum\""),
+        new("Dense", "MudToggleGroup", "DataAndAria", "AddAttribute(15, \"Dense\""),
+        new("@bind", "MudChip", "DataAndAria", "AddAttribute(35, \"@bind\""),
+        new("@bind:after", "MudChip", "DataAndAria", "AddAttribute(36, \"@bind:after\""),
+        new("lowerCase", "MudProgressCircular", "DataAndAria", "AddAttribute(17, \"lowerCase\""),
+        new("UpperCase", "MudProgressCircular", "DataAndAria", "AddAttribute(18, \"UpperCase\""),
+        new("unknownAttribute", "MudRadio", "DataAndAria", "AddAttribute(23, \"unknownAttribute\""),
+        new("hidden", "MudRadio", "DataAndAria", "AddAttribute(24, \"hidden\""),
+        new("Inert", "MudRadio", "DataAndAria", "AddAttribute(25, \"Inert\""),
+        new("customattribute", "MudRadio", "DataAndAria", "AddAttribute(26, \"customattribute\""),
+        new("customAttribute2", "MudRadio", "DataAndAria", "AddAttribute(27, \"customAttribute2\""),
+        new("RequiredErrorChanged", "MudCheckBox", "DataAndAria", "AddAttribute(29, \"RequiredErrorChanged\""),
+        new("AvatarClass", "MudChip", "DataAndAria", "AddAttribute(32, \"AvatarClass\""),
+        new("ValueChanged", "MudChip", "DataAndAria", "AddAttribute(33, \"ValueChanged\"")
+    ];
 
-    private static ExpectedDiagnostic IllegalAttributeImageOnMudAvatar { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(107, 16), new LinePosition(107, 66)),
-        "Illegal Attribute 'Image' on 'MudAvatar'");
+    private static IReadOnlyList<ExpectedAttributeDiagnostic> NoAttributesExpectedDiagnostics { get; } =
+    [
+        new("OffsetX", "MudAutocomplete", "None", "AddAttribute(1, \"OffsetX\""),
+        new("icon", "MudFab", "None", "AddAttribute(3, \"icon\""),
+        new("Text", "MudSlider", "None", "AddAttribute(5, \"Text\""),
+        new("Avatar", "InheritedMudChip", "None", "AddAttribute(8, \"Avatar\""),
+        new("Image", "MudAvatar", "None", "AddComponentParameter(11, \"Image\""),
+        new("Minimum", "MudProgressLinear", "None", "AddAttribute(13, \"Minimum\""),
+        new("Dense", "MudToggleGroup", "None", "AddAttribute(15, \"Dense\""),
+        new("@bind", "MudChip", "None", "AddAttribute(35, \"@bind\""),
+        new("@bind:after", "MudChip", "None", "AddAttribute(36, \"@bind:after\""),
+        new("lowerCase", "MudProgressCircular", "None", "AddAttribute(17, \"lowerCase\""),
+        new("UpperCase", "MudProgressCircular", "None", "AddAttribute(18, \"UpperCase\""),
+        new("data-animation", "MudRadio", "None", "AddAttribute(20, \"data-animation\""),
+        new("aria-disabled", "MudRadio", "None", "AddAttribute(21, \"aria-disabled\""),
+        new("role", "MudRadio", "None", "AddAttribute(22, \"role\""),
+        new("unknownAttribute", "MudRadio", "None", "AddAttribute(23, \"unknownAttribute\""),
+        new("hidden", "MudRadio", "None", "AddAttribute(24, \"hidden\""),
+        new("Inert", "MudRadio", "None", "AddAttribute(25, \"Inert\""),
+        new("customattribute", "MudRadio", "None", "AddAttribute(26, \"customattribute\""),
+        new("customAttribute2", "MudRadio", "None", "AddAttribute(27, \"customAttribute2\""),
+        new("RequiredErrorChanged", "MudCheckBox", "None", "AddAttribute(29, \"RequiredErrorChanged\""),
+        new("AvatarClass", "MudChip", "None", "AddAttribute(32, \"AvatarClass\""),
+        new("ValueChanged", "MudChip", "None", "AddAttribute(33, \"ValueChanged\"")
+    ];
 
-    private static ExpectedDiagnostic IllegalAttributeMinimumOnMudProgressLinear { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(113, 12), new LinePosition(113, 63)),
-        "Illegal Attribute 'Minimum' on 'MudProgressLinear'");
+    private static string GeneratedComponentSource =>
+        """
+using System;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using MudBlazor;
 
-    private static ExpectedDiagnostic IllegalAttributeDenseOnMudToggleGroup { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(125, 12), new LinePosition(125, 64)),
-        "Illegal Attribute 'Dense' on 'MudToggleGroup'");
+namespace MudBlazor.UnitTests.Analyzers.Generated;
 
-    private static ExpectedDiagnostic IllegalAttributebindOnMudChip { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(180, 12), new LinePosition(180, 13)),
-        "Illegal Attribute '@bind' on 'MudChip'");
+public partial class AttributeTest : ComponentBase
+{
+    private string _bindValue = "y";
 
-    private static ExpectedDiagnostic IllegalAttributebindafterOnMudChip { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(198, 12), new LinePosition(198, 70)),
-        "Illegal Attribute '@bind:after' on 'MudChip'");
+    protected override void BuildRenderTree(RenderTreeBuilder __builder)
+    {
+        __builder.OpenComponent<MudAutocomplete<string>>(0);
+        __builder.AddAttribute(1, "OffsetX", 5);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributelowerCaseOnMudProgressCircular { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(228, 12), new LinePosition(228, 66)),
-        "Illegal Attribute 'lowerCase' on 'MudProgressCircular'");
+        __builder.OpenComponent<MudFab>(2);
+        __builder.AddAttribute(3, "icon", "dd");
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributeUpperCaseOnMudProgressCircular { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(229, 12), new LinePosition(229, 66)),
-        "Illegal Attribute 'UpperCase' on 'MudProgressCircular'");
+        __builder.OpenComponent<MudSlider<int>>(4);
+        __builder.AddAttribute(5, "Text", true);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributedataanimationOnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(233, 12), new LinePosition(233, 70)),
-        "Illegal Attribute 'data-animation' on 'MudRadio'");
+        __builder.OpenComponent<InheritedMudChip<string>>(6);
+        __builder.AddAttribute(7, "Text", "Href set");
+        __builder.AddAttribute(8, "Avatar", string.Empty);
+        __builder.AddAttribute(9, "AvatarClass", _bindValue);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributeariadisabledOnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(234, 12), new LinePosition(234, 73)),
-        "Illegal Attribute 'aria-disabled' on 'MudRadio'");
+        __builder.OpenComponent<MudAvatar>(10);
+        __builder.AddComponentParameter(11, "Image", "y");
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributeroleOnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(235, 12), new LinePosition(235, 63)),
-        "Illegal Attribute 'role' on 'MudRadio'");
+        __builder.OpenComponent<MudProgressLinear>(12);
+        __builder.AddAttribute(13, "Minimum", 0);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributeunknownOnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(239, 12), new LinePosition(239, 76)),
-        "Illegal Attribute 'unknownAttribute' on 'MudRadio'");
+        __builder.OpenComponent<MudToggleGroup<string>>(14);
+        __builder.AddAttribute(15, "Dense", true);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributehiddenOnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(243, 12), new LinePosition(243, 62)),
-        "Illegal Attribute 'hidden' on 'MudRadio'");
+        TypeInference.CreateMudChip_0(__builder, _bindValue, Test);
+        TypeInference.CreateMudTextField_1(__builder, _bindValue);
 
-    private static ExpectedDiagnostic IllegalAttributeInertOnMudRadio { get; set; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(247, 12), new LinePosition(247, 62)),
-        "Illegal Attribute 'Inert' on 'MudRadio'");
+        __builder.OpenComponent<MudProgressCircular>(16);
+        __builder.AddAttribute(17, "lowerCase", true);
+        __builder.AddAttribute(18, "UpperCase", true);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributecustomattributeOnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(251, 12), new LinePosition(251, 72)),
-        "Illegal Attribute 'customattribute' on 'MudRadio'");
+        __builder.OpenComponent<MudRadio<string>>(19);
+        __builder.AddAttribute(20, "data-animation", "a");
+        __builder.AddAttribute(21, "aria-disabled", "false");
+        __builder.AddAttribute(22, "role", "test");
+        __builder.AddAttribute(23, "unknownAttribute", "false");
+        __builder.AddAttribute(24, "hidden", true);
+        __builder.AddAttribute(25, "Inert", true);
+        __builder.AddAttribute(26, "customattribute", true);
+        __builder.AddAttribute(27, "customAttribute2", true);
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributecustomAttribute2OnMudRadio { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(255, 14), new LinePosition(255, 73)),
-        "Illegal Attribute 'customAttribute2' on 'MudRadio'");
+        __builder.OpenComponent<MudCheckBox<bool>>(28);
+        __builder.AddAttribute(29, "RequiredErrorChanged", default(EventCallback<string>));
+        __builder.CloseComponent();
 
-    private static ExpectedDiagnostic IllegalAttributeErrorTextChangedOnMudCheckBox { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(303, 8), new LinePosition(303, 75)),
-        "Illegal Attribute 'RequiredErrorChanged' on 'MudCheckBox'");
+        __builder.OpenComponent<MudChip<string>>(30);
+        __builder.AddAttribute(31, "Text", "Href set");
+        __builder.AddAttribute(32, "AvatarClass", _bindValue);
+        __builder.AddAttribute(33, "ValueChanged", default(EventCallback<string>));
+        __builder.CloseComponent();
+    }
 
-    private static ExpectedDiagnostic IllegalAttributeAvatarClassOnMudChip { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(318, 8), new LinePosition(318, 70)),
-        "Illegal Attribute 'AvatarClass' on 'MudChip'");
+    private Task Test() => Task.CompletedTask;
 
-    private static ExpectedDiagnostic IllegalAttributeValueChangedOnMudChip { get; } = new(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.AttributeDescriptor,
-        new FileLinePositionSpan($"{nameof(AttributeTest)}_razor.g.cs", new LinePosition(328, 8), new LinePosition(328, 71)),
-        "Illegal Attribute 'ValueChanged' on 'MudChip'");
+    internal static class TypeInference
+    {
+        public static void CreateMudChip_0(RenderTreeBuilder __builder, string value, Func<Task> after)
+        {
+            __builder.OpenComponent<MudChip<string>>(34);
+            __builder.AddAttribute(35, "@bind", value);
+            __builder.AddAttribute(36, "@bind:after", after);
+            __builder.AddAttribute(37, "Text", "Href set");
+            __builder.CloseComponent();
+        }
+
+        public static void CreateMudTextField_1(RenderTreeBuilder __builder, string value)
+        {
+            __builder.OpenComponent<MudTextField<string>>(38);
+            __builder.AddAttribute(39, "Value", value);
+            __builder.AddAttribute(40, "ValueChanged", default(EventCallback<string>));
+            __builder.AddAttribute(41, "ValueExpression", (Expression<Func<string>>)(() => value));
+            __builder.AddAttribute(42, "Label", "Standard");
+            __builder.AddAttribute(43, "Variant", Variant.Text);
+            __builder.CloseComponent();
+        }
+    }
+}
+
+public class InheritedMudChip<T> : MudChip<T>
+{
+    [Parameter]
+    public string? AvatarClass { get; set; }
+}
+""";
 
     [OneTimeSetUp]
     public static async Task OneTimeSetup()
     {
-        Workspace = await ProjectCompilation.CreateAsync(Util.ProjectPath());
-        Workspace.Should().NotBeNull("Workspace null");
-
-        LowerCaseAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase, Workspace.AdditionalTexts));
-        DefaultAttributesListDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, Workspace.AdditionalTexts));
-        CustomAttributesListDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, Workspace.AdditionalTexts, "customattribute,customAttribute2"));
-        DataAndAriaAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria, Workspace.AdditionalTexts));
-        NoAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None, Workspace.AdditionalTexts));
-        AnyAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any, Workspace.AdditionalTexts));
-    }
-
-    [OneTimeTearDown]
-    public static void Cleanup()
-    {
-        Workspace.Dispose();
+        LowerCaseAttributesDiagnostics = await MudComponentUnknownParametersAnalyzerFixture.RunAsync(GeneratedComponentSource, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase);
+        DefaultAttributesListDiagnostics = await MudComponentUnknownParametersAnalyzerFixture.RunAsync(GeneratedComponentSource, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes);
+        CustomAttributesListDiagnostics = await MudComponentUnknownParametersAnalyzerFixture.RunAsync(GeneratedComponentSource, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, "customattribute,customAttribute2");
+        DataAndAriaAttributesDiagnostics = await MudComponentUnknownParametersAnalyzerFixture.RunAsync(GeneratedComponentSource, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria);
+        NoAttributesDiagnostics = await MudComponentUnknownParametersAnalyzerFixture.RunAsync(GeneratedComponentSource, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
+        AnyAttributesDiagnostics = await MudComponentUnknownParametersAnalyzerFixture.RunAsync(GeneratedComponentSource, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any);
     }
 
     [Test]
     public void AllowLowerCaseAttributes()
     {
-        var diagnostics = LowerCaseAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
-
-        var expectedDiagnostics = new List<ExpectedDiagnostic>([
-            IllegalAttributeOffsetXOnMudAutocomplete,
-            IllegalAttributeTextOnMudSlider,
-            IllegalAttributeAvatarOnInheritedMudChip,
-            IllegalAttributeImageOnMudAvatar,
-            IllegalAttributeMinimumOnMudProgressLinear,
-            IllegalAttributeDenseOnMudToggleGroup,
-            IllegalAttributebindOnMudChip,
-            IllegalAttributebindafterOnMudChip,
-            IllegalAttributeUpperCaseOnMudProgressCircular,
-            IllegalAttributeInertOnMudRadio,
-            IllegalAttributeErrorTextChangedOnMudCheckBox,
-            IllegalAttributeAvatarClassOnMudChip,
-            IllegalAttributeValueChangedOnMudChip
-        ]);
-
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        AssertDiagnostics(LowerCaseAttributesDiagnostics, LowerCaseExpectedDiagnostics);
     }
 
     [Test]
     public void AllowDefaultListAttributes()
     {
-        var diagnostics = DefaultAttributesListDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
-
-        var expectedDiagnostics = new List<ExpectedDiagnostic>([
-            IllegalAttributeOffsetXOnMudAutocomplete,
-            IllegalAttributeiconOnMudFab,
-            IllegalAttributeTextOnMudSlider,
-            IllegalAttributeAvatarOnInheritedMudChip,
-            IllegalAttributeImageOnMudAvatar,
-            IllegalAttributeMinimumOnMudProgressLinear,
-            IllegalAttributeDenseOnMudToggleGroup,
-            IllegalAttributebindOnMudChip,
-            IllegalAttributebindafterOnMudChip,
-            IllegalAttributelowerCaseOnMudProgressCircular,
-            IllegalAttributeUpperCaseOnMudProgressCircular,
-            IllegalAttributeunknownOnMudRadio,
-            IllegalAttributeInertOnMudRadio,
-            IllegalAttributecustomattributeOnMudRadio,
-            IllegalAttributecustomAttribute2OnMudRadio,
-            IllegalAttributeErrorTextChangedOnMudCheckBox,
-            IllegalAttributeAvatarClassOnMudChip,
-            IllegalAttributeValueChangedOnMudChip]);
-
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        AssertDiagnostics(DefaultAttributesListDiagnostics, DefaultListExpectedDiagnostics);
     }
 
     [Test]
     public void AllowCustomListAttributes()
     {
-        var diagnostics = CustomAttributesListDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
-
-        var expectedDiagnostics = new List<ExpectedDiagnostic>([
-            IllegalAttributeOffsetXOnMudAutocomplete,
-            IllegalAttributeiconOnMudFab,
-            IllegalAttributeTextOnMudSlider,
-            IllegalAttributeAvatarOnInheritedMudChip,
-            IllegalAttributeImageOnMudAvatar,
-            IllegalAttributeMinimumOnMudProgressLinear,
-            IllegalAttributeDenseOnMudToggleGroup,
-            IllegalAttributebindOnMudChip,
-            IllegalAttributebindafterOnMudChip,
-            IllegalAttributelowerCaseOnMudProgressCircular,
-            IllegalAttributeUpperCaseOnMudProgressCircular,
-            IllegalAttributeunknownOnMudRadio,
-            IllegalAttributehiddenOnMudRadio,
-            IllegalAttributeInertOnMudRadio,
-            IllegalAttributeErrorTextChangedOnMudCheckBox,
-            IllegalAttributeAvatarClassOnMudChip,
-            IllegalAttributeValueChangedOnMudChip]);
-
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        AssertDiagnostics(CustomAttributesListDiagnostics, CustomListExpectedDiagnostics);
     }
 
     [Test]
     public void AllowDataAndAriaAttributes()
     {
-        var diagnostics = DataAndAriaAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
-
-        var expectedDiagnostics = new List<ExpectedDiagnostic>([
-            IllegalAttributeOffsetXOnMudAutocomplete,
-            IllegalAttributeiconOnMudFab,
-            IllegalAttributeTextOnMudSlider,
-            IllegalAttributeAvatarOnInheritedMudChip,
-            IllegalAttributeImageOnMudAvatar,
-            IllegalAttributeMinimumOnMudProgressLinear,
-            IllegalAttributeDenseOnMudToggleGroup,
-            IllegalAttributebindOnMudChip,
-            IllegalAttributebindafterOnMudChip,
-            IllegalAttributelowerCaseOnMudProgressCircular,
-            IllegalAttributeUpperCaseOnMudProgressCircular,
-            IllegalAttributeunknownOnMudRadio,
-            IllegalAttributehiddenOnMudRadio,
-            IllegalAttributeInertOnMudRadio,
-            IllegalAttributecustomattributeOnMudRadio,
-            IllegalAttributecustomAttribute2OnMudRadio,
-            IllegalAttributeErrorTextChangedOnMudCheckBox,
-            IllegalAttributeAvatarClassOnMudChip,
-            IllegalAttributeValueChangedOnMudChip]);
-
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        AssertDiagnostics(DataAndAriaAttributesDiagnostics, DataAndAriaExpectedDiagnostics);
     }
 
     [Test]
     public void AllowNoAttributes()
     {
-        var diagnostics = NoAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
-
-        var expectedDiagnostics = new List<ExpectedDiagnostic>([
-            IllegalAttributeOffsetXOnMudAutocomplete,
-            IllegalAttributeiconOnMudFab,
-            IllegalAttributeTextOnMudSlider,
-            IllegalAttributeAvatarOnInheritedMudChip,
-            IllegalAttributeImageOnMudAvatar,
-            IllegalAttributeMinimumOnMudProgressLinear,
-            IllegalAttributeDenseOnMudToggleGroup,
-            IllegalAttributebindOnMudChip,
-            IllegalAttributebindafterOnMudChip,
-            IllegalAttributelowerCaseOnMudProgressCircular,
-            IllegalAttributeUpperCaseOnMudProgressCircular,
-            IllegalAttributedataanimationOnMudRadio,
-            IllegalAttributeariadisabledOnMudRadio,
-            IllegalAttributeroleOnMudRadio,
-            IllegalAttributeunknownOnMudRadio,
-            IllegalAttributehiddenOnMudRadio,
-            IllegalAttributeInertOnMudRadio,
-            IllegalAttributecustomattributeOnMudRadio,
-            IllegalAttributecustomAttribute2OnMudRadio,
-            IllegalAttributeErrorTextChangedOnMudCheckBox,
-            IllegalAttributeAvatarClassOnMudChip,
-            IllegalAttributeValueChangedOnMudChip]);
-
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        AssertDiagnostics(NoAttributesDiagnostics, NoAttributesExpectedDiagnostics);
     }
 
     [Test]
     public void AllowAnyAttributes()
     {
-        var diagnostics = AnyAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
-
-        var expectedDiagnostics = new List<ExpectedDiagnostic>([]);
-
-        ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
+        AnyAttributesDiagnostics.Should().BeEmpty();
     }
+
+    private static void AssertDiagnostics(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedAttributeDiagnostic> expectedDiagnostics)
+    {
+        var filteredDiagnostics = diagnostics.FilterToClass(AttributeTestClassName);
+
+        filteredDiagnostics.Should().HaveCount(expectedDiagnostics.Count);
+
+        for (var i = 0; i < filteredDiagnostics.Count; i++)
+        {
+            var actual = filteredDiagnostics[i];
+            var expected = expectedDiagnostics[i];
+            var sourceText = actual.AdditionalLocations[0].SourceTree!.GetText();
+
+            actual.Id.Should().Be(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId);
+            actual.GetMessage().Should().Contain($"Illegal Attribute '{expected.AttributeName}' on '{expected.ComponentName}'");
+            actual.GetMessage().Should().Contain(expected.Pattern);
+            actual.Properties.Should().ContainKey(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey);
+            actual.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey].Should().Be(AttributeTestClassName);
+            actual.AdditionalLocations.Should().ContainSingle();
+            sourceText.ToString(actual.AdditionalLocations[0].SourceSpan).Should().Contain(expected.SourceMarker);
+        }
+    }
+
+    private sealed record ExpectedAttributeDiagnostic(string AttributeName, string ComponentName, string Pattern, string SourceMarker);
 }
 #nullable restore
