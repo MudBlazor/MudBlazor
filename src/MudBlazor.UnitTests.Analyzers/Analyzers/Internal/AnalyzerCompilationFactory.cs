@@ -3,6 +3,8 @@ using System.Text;
 using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 
 namespace MudBlazor.UnitTests.Analyzers.Internal;
 
@@ -48,7 +50,7 @@ internal static class AnalyzerCompilationFactory
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
             .Append(typeof(Microsoft.AspNetCore.Components.ComponentBase).Assembly.Location)
             .Distinct(StringComparer.OrdinalIgnoreCase)
-            .Select(MetadataReference.CreateFromFile)
+            .Select(path => (MetadataReference)MetadataReference.CreateFromFile(path))
             .ToImmutableArray();
     }
 }

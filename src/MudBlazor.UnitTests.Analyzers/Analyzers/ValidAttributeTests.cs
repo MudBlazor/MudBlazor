@@ -211,21 +211,19 @@ public class ValidAttributeTests : BunitTest
     {
         diagnostics.Should().HaveCount(expectations.Count);
 
-        var orderedDiagnostics = diagnostics
-            .OrderBy(x => x.AdditionalLocations[0].GetLineSpan().StartLinePosition.Line)
-            .ThenBy(x => x.AdditionalLocations[0].GetLineSpan().StartLinePosition.Character)
-            .ToArray();
-
-        for (var i = 0; i < orderedDiagnostics.Length; i++)
+        foreach (var diagnostic in diagnostics)
         {
-            var diagnostic = orderedDiagnostics[i];
-            var expectation = expectations[i];
-
             diagnostic.Id.Should().Be(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId);
             diagnostic.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]
                 .Should().Be(AttributeTestClassName);
-            diagnostic.GetMessage().Should().StartWith(
-                $"Illegal Attribute '{expectation.AttributeName}' on '{expectation.ComponentName}'");
+        }
+
+        foreach (var expectation in expectations)
+        {
+            diagnostics.Should().ContainSingle(x =>
+                x.GetMessage().StartsWith(
+                    $"Illegal Attribute '{expectation.AttributeName}' on '{expectation.ComponentName}'",
+                    StringComparison.Ordinal));
         }
     }
 
