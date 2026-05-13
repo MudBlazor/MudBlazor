@@ -28,6 +28,7 @@ public class BrowserViewportServiceTests
     /// Used only by the parallel subscription tests that need a predictable overlap window.
     /// </remarks>
     private const int SimulatedJsLatencyMs = 200;
+    private static readonly TimeSpan ParallelSubscribeTimeout = TimeSpan.FromSeconds(5);
 
     [Test]
     public async Task SubscribeAsync_WithObserver_NoFireImmediately()
@@ -342,7 +343,7 @@ public class BrowserViewportServiceTests
             .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(SimulatedJsLatencyMs));
 
         // Act
-        await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(TimeSpan.FromSeconds(5));
+        await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(ParallelSubscribeTimeout);
 
         // Assert
         var subscriptions = observers.Select(observer => service.GetInternalSubscription(observer)).ToArray();
@@ -375,7 +376,7 @@ public class BrowserViewportServiceTests
             .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(SimulatedJsLatencyMs));
 
         // Act
-        await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(TimeSpan.FromSeconds(5));
+        await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(ParallelSubscribeTimeout);
 
         // Assert
         var subscriptions1 = observers1.Select(observer => service.GetInternalSubscription(observer)).ToArray();
