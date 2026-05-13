@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+using System.Collections.Immutable;
+using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using MudBlazor.UnitTests.Analyzers.Internal;
 using NUnit.Framework;
@@ -82,110 +83,53 @@ public class ValidAttributeTests : BunitTest
         new("customAttribute2", "MudRadio")
     ];
 
-    private static IEnumerable<Diagnostic> LowerCaseAttributesDiagnostics { get; set; } = null!;
+    [Test]
+    public Task AllowLowerCaseAttributes() =>
+        AssertGeneratedDiagnosticsAsync(
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase,
+            _lowerCaseDiagnostics);
 
-    private static IEnumerable<Diagnostic> DefaultAttributesListDiagnostics { get; set; } = null!;
-
-    private static IEnumerable<Diagnostic> CustomAttributesListDiagnostics { get; set; } = null!;
-
-    private static IEnumerable<Diagnostic> DataAndAriaAttributesDiagnostics { get; set; } = null!;
-
-    private static IEnumerable<Diagnostic> NoAttributesDiagnostics { get; set; } = null!;
-
-    private static IEnumerable<Diagnostic> AnyAttributesDiagnostics { get; set; } = null!;
-
-    private static IEnumerable<Diagnostic> MappedLocationDiagnostics { get; set; } = null!;
-
-    [OneTimeSetUp]
-    public static async Task OneTimeSetup()
-    {
-        LowerCaseAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateGeneratedSource(),
-            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase);
-
-        DefaultAttributesListDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateGeneratedSource(),
-            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes);
-
-        CustomAttributesListDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateGeneratedSource(),
+    [Test]
+    public Task AllowDefaultListAttributes() =>
+        AssertGeneratedDiagnosticsAsync(
             MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes,
+            _defaultAttributesDiagnostics);
+
+    [Test]
+    public Task AllowCustomListAttributes() =>
+        AssertGeneratedDiagnosticsAsync(
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes,
+            _customAttributesDiagnostics,
             "customattribute,customAttribute2");
 
-        DataAndAriaAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateGeneratedSource(),
-            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria);
+    [Test]
+    public Task AllowDataAndAriaAttributes() =>
+        AssertGeneratedDiagnosticsAsync(
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria,
+            _dataAndAriaDiagnostics);
 
-        NoAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateGeneratedSource(),
-            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
+    [Test]
+    public Task AllowNoAttributes() =>
+        AssertGeneratedDiagnosticsAsync(
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None,
+            _noAttributesDiagnostics);
 
-        AnyAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateGeneratedSource(),
+    [Test]
+    public async Task AllowAnyAttributes()
+    {
+        var diagnostics = await GetGeneratedDiagnosticsAsync(
             MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any);
 
-        MappedLocationDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
-            CreateMappedLocationSource(),
-            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None,
-            sourcePath: "MappedAttributeTest.razor.g.cs");
+        diagnostics.Should().BeEmpty();
     }
 
     [Test]
-    public void AllowLowerCaseAttributes()
+    public async Task FilterToClassUsesDiagnosticClassNameProperty()
     {
-        ExpectedDiagnostic.Compare(
-            LowerCaseAttributesDiagnostics.FilterToClass(AttributeTestClassName),
-            _lowerCaseDiagnostics,
-            AttributeTestClassName);
-    }
-
-    [Test]
-    public void AllowDefaultListAttributes()
-    {
-        ExpectedDiagnostic.Compare(
-            DefaultAttributesListDiagnostics.FilterToClass(AttributeTestClassName),
-            _defaultAttributesDiagnostics,
-            AttributeTestClassName);
-    }
-
-    [Test]
-    public void AllowCustomListAttributes()
-    {
-        ExpectedDiagnostic.Compare(
-            CustomAttributesListDiagnostics.FilterToClass(AttributeTestClassName),
-            _customAttributesDiagnostics,
-            AttributeTestClassName);
-    }
-
-    [Test]
-    public void AllowDataAndAriaAttributes()
-    {
-        ExpectedDiagnostic.Compare(
-            DataAndAriaAttributesDiagnostics.FilterToClass(AttributeTestClassName),
-            _dataAndAriaDiagnostics,
-            AttributeTestClassName);
-    }
-
-    [Test]
-    public void AllowNoAttributes()
-    {
-        ExpectedDiagnostic.Compare(
-            NoAttributesDiagnostics.FilterToClass(AttributeTestClassName),
-            _noAttributesDiagnostics,
-            AttributeTestClassName);
-    }
-
-    [Test]
-    public void AllowAnyAttributes()
-    {
-        AnyAttributesDiagnostics.Should().BeEmpty();
-    }
-
-    [Test]
-    public void FilterToClassUsesDiagnosticClassNameProperty()
-    {
-        var attributeTestDiagnostics = NoAttributesDiagnostics.FilterToClass(AttributeTestClassName);
-        var secondaryDiagnostics = NoAttributesDiagnostics.FilterToClass(SecondaryAttributeTestClassName);
+        var diagnostics = await GetGeneratedDiagnosticsAsync(
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
+        var attributeTestDiagnostics = diagnostics.FilterToClass(AttributeTestClassName);
+        var secondaryDiagnostics = diagnostics.FilterToClass(SecondaryAttributeTestClassName);
 
         attributeTestDiagnostics.Should().HaveCount(_noAttributesDiagnostics.Length);
         secondaryDiagnostics.Should().ContainSingle();
@@ -197,9 +141,13 @@ public class ValidAttributeTests : BunitTest
     }
 
     [Test]
-    public void UsesMappedRazorLocationWhenChecksumPragmaExists()
+    public async Task UsesMappedRazorLocationWhenChecksumPragmaExists()
     {
-        var diagnostic = MappedLocationDiagnostics.Should().ContainSingle().Subject;
+        var diagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(
+            CreateMappedLocationSource(),
+            MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None,
+            sourcePath: "MappedAttributeTest.razor.g.cs");
+        var diagnostic = diagnostics.Should().ContainSingle().Subject;
 
         diagnostic.Id.Should().Be(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId);
         diagnostic.Location.GetLineSpan().Path.Should().Be("MappedAttributeTest.razor");
@@ -208,6 +156,29 @@ public class ValidAttributeTests : BunitTest
         diagnostic.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]
             .Should().Be(AttributeTestClassName);
         diagnostic.GetMessage().Should().StartWith("Illegal Attribute 'OffsetX' on 'MudAutocomplete'");
+    }
+
+    private static async Task AssertGeneratedDiagnosticsAsync(
+        MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern allowedAttributePattern,
+        IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics,
+        string customAllowedAttributes = "")
+    {
+        var diagnostics = await GetGeneratedDiagnosticsAsync(allowedAttributePattern, customAllowedAttributes);
+
+        ExpectedDiagnostic.Compare(
+            diagnostics.FilterToClass(AttributeTestClassName),
+            expectedDiagnostics,
+            AttributeTestClassName);
+    }
+
+    private static Task<ImmutableArray<Diagnostic>> GetGeneratedDiagnosticsAsync(
+        MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern allowedAttributePattern,
+        string customAllowedAttributes = "")
+    {
+        return AnalyzerCompilationFactory.GetDiagnosticsAsync(
+            CreateGeneratedSource(),
+            allowedAttributePattern,
+            customAllowedAttributes);
     }
 
     private static string CreateGeneratedSource() =>
