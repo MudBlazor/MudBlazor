@@ -449,6 +449,8 @@ public class ValidAttributeTests : BunitTest
     /// <summary>
     /// Expected attribute/component pair for an analyzer diagnostic assertion.
     /// </summary>
+    /// <param name="AttributeName">The attribute name expected in the diagnostic message.</param>
+    /// <param name="ComponentName">The component tag name expected in the diagnostic message.</param>
     private sealed record DiagnosticExpectation(string AttributeName, string ComponentName);
 }
 #nullable restore

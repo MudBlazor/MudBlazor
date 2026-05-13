@@ -55,6 +55,7 @@ internal static class AnalyzerCompilationFactory
     /// <summary>
     /// Creates metadata references from the trusted platform assemblies for the current test runtime.
     /// </summary>
+    /// <returns>An immutable array of metadata references used by the in-memory analyzer compilation.</returns>
     private static ImmutableArray<MetadataReference> CreateMetadataReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
