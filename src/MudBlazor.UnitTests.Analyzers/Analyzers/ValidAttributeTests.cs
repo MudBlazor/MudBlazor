@@ -444,6 +444,9 @@ public class ValidAttributeTests : BunitTest
         }
         """;
 
+    /// <summary>
+    /// Expected attribute/component pair for an analyzer diagnostic assertion.
+    /// </summary>
     private sealed record DiagnosticExpectation(string AttributeName, string ComponentName);
 }
 #nullable restore

@@ -57,7 +57,7 @@ internal static class AnalyzerCompilationFactory
     private static ImmutableArray<MetadataReference> CreateMetadataReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        trustedPlatformAssemblies.Should().NotBeNullOrWhiteSpace("trusted platform assemblies should be available");
+        trustedPlatformAssemblies.Should().NotBeNullOrWhiteSpace("Trusted platform assemblies should be available for test compilation");
 
         return trustedPlatformAssemblies!
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
