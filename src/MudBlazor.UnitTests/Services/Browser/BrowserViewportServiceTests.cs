@@ -24,6 +24,9 @@ public class BrowserViewportServiceTests
     /// <summary>
     /// Simulates slow JavaScript interop so concurrent subscriptions overlap during listener creation.
     /// </summary>
+    /// <remarks>
+    /// Used only by the parallel subscription tests that need a predictable overlap window.
+    /// </remarks>
     private const int SimulatedJsLatencyMs = 200;
 
     [Test]
