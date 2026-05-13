@@ -20,7 +20,7 @@ internal static class MudComponentUnknownParametersAnalyzerFixture
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(
             generatedComponentSource,
-            new CSharpParseOptions(LanguageVersion.Preview),
+            new CSharpParseOptions(LanguageVersion.CSharp12),
             path: "/Generated/AttributeTest.generated.cs");
 
         var compilation = CSharpCompilation.Create(
@@ -29,6 +29,7 @@ internal static class MudComponentUnknownParametersAnalyzerFixture
             references: _references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
 
+        // Ensure the generated-style fixture compiles cleanly before analyzer assertions run.
         compilation.GetDiagnostics().Where(x => x.Severity == DiagnosticSeverity.Error).Should().BeEmpty();
 
         var diagnostics = await compilation.WithAnalyzers(

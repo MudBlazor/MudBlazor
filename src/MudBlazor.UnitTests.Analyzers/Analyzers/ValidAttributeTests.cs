@@ -15,7 +15,7 @@ extern alias MudBlazorAnalyzer;
 [TestFixture]
 public class ValidAttributeTests
 {
-    private const string AttributeTestClassName = "MudBlazor.UnitTests.Analyzers.Generated.GeneratedAttributeTestComponent";
+    private const string GeneratedComponentTypeName = "MudBlazor.UnitTests.Analyzers.Generated.GeneratedAttributeTestComponent";
 
     private static IReadOnlyList<Diagnostic> LowerCaseAttributesDiagnostics { get; set; } = null!;
 
@@ -284,7 +284,7 @@ public class InheritedMudChip<T> : MudChip<T>
 
     private static void AssertDiagnostics(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedAttributeDiagnostic> expectedDiagnostics)
     {
-        var filteredDiagnostics = diagnostics.FilterToClass(AttributeTestClassName);
+        var filteredDiagnostics = diagnostics.FilterToClass(GeneratedComponentTypeName);
         var orderedExpectedDiagnostics = expectedDiagnostics
             .OrderBy(x => GeneratedComponentSource.IndexOf(x.SourceMarker, StringComparison.Ordinal))
             .ToArray();
@@ -301,7 +301,7 @@ public class InheritedMudChip<T> : MudChip<T>
             actual.GetMessage().Should().Contain($"Illegal Attribute '{expected.AttributeName}' on '{expected.ComponentName}'");
             actual.GetMessage().Should().Contain(expected.Pattern);
             actual.Properties.Should().ContainKey(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey);
-            actual.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey].Should().Be(AttributeTestClassName);
+            actual.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey].Should().Be(GeneratedComponentTypeName);
             actual.AdditionalLocations.Should().ContainSingle();
             sourceText.ToString(actual.AdditionalLocations[0].SourceSpan).Should().Contain(expected.SourceMarker);
         }
