@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using MudBlazor.UnitTests.Analyzers.Internal;

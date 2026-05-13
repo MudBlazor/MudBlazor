@@ -1,4 +1,4 @@
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 
 namespace MudBlazor.UnitTests.Analyzers.Internal;
