@@ -14,7 +14,7 @@ public class ValidAttributeTests : BunitTest
     private const string AttributeTestClassName = "MudBlazor.Analyzers.TestInputs.AttributeTest";
     private const string SecondaryAttributeTestClassName = "MudBlazor.Analyzers.TestInputs.SecondaryAttributeTest";
 
-    private static readonly DiagnosticExpectation[] _coreDiagnostics =
+    private static readonly ExpectedDiagnostic[] _coreDiagnostics =
     [
         new("OffsetX", "MudAutocomplete"),
         new("Text", "MudSlider"),
@@ -27,14 +27,14 @@ public class ValidAttributeTests : BunitTest
         new("ValueChanged", "MudChip")
     ];
 
-    private static readonly DiagnosticExpectation[] _lowerCaseDiagnostics =
+    private static readonly ExpectedDiagnostic[] _lowerCaseDiagnostics =
     [
         .. _coreDiagnostics,
         new("UpperCase", "MudProgressCircular"),
         new("Inert", "MudRadio")
     ];
 
-    private static readonly DiagnosticExpectation[] _defaultAttributesDiagnostics =
+    private static readonly ExpectedDiagnostic[] _defaultAttributesDiagnostics =
     [
         .. _coreDiagnostics,
         new("lowerCase", "MudProgressCircular"),
@@ -45,7 +45,7 @@ public class ValidAttributeTests : BunitTest
         new("customAttribute2", "MudRadio")
     ];
 
-    private static readonly DiagnosticExpectation[] _customAttributesDiagnostics =
+    private static readonly ExpectedDiagnostic[] _customAttributesDiagnostics =
     [
         .. _coreDiagnostics,
         new("lowerCase", "MudProgressCircular"),
@@ -55,7 +55,7 @@ public class ValidAttributeTests : BunitTest
         new("Inert", "MudRadio")
     ];
 
-    private static readonly DiagnosticExpectation[] _dataAndAriaDiagnostics =
+    private static readonly ExpectedDiagnostic[] _dataAndAriaDiagnostics =
     [
         .. _coreDiagnostics,
         new("lowerCase", "MudProgressCircular"),
@@ -67,7 +67,7 @@ public class ValidAttributeTests : BunitTest
         new("customAttribute2", "MudRadio")
     ];
 
-    private static readonly DiagnosticExpectation[] _noAttributesDiagnostics =
+    private static readonly ExpectedDiagnostic[] _noAttributesDiagnostics =
     [
         .. _coreDiagnostics,
         new("lowerCase", "MudProgressCircular"),
@@ -133,41 +133,46 @@ public class ValidAttributeTests : BunitTest
     [Test]
     public void AllowLowerCaseAttributes()
     {
-        AssertDiagnostics(
+        ExpectedDiagnostic.Compare(
             LowerCaseAttributesDiagnostics.FilterToClass(AttributeTestClassName),
-            _lowerCaseDiagnostics);
+            _lowerCaseDiagnostics,
+            AttributeTestClassName);
     }
 
     [Test]
     public void AllowDefaultListAttributes()
     {
-        AssertDiagnostics(
+        ExpectedDiagnostic.Compare(
             DefaultAttributesListDiagnostics.FilterToClass(AttributeTestClassName),
-            _defaultAttributesDiagnostics);
+            _defaultAttributesDiagnostics,
+            AttributeTestClassName);
     }
 
     [Test]
     public void AllowCustomListAttributes()
     {
-        AssertDiagnostics(
+        ExpectedDiagnostic.Compare(
             CustomAttributesListDiagnostics.FilterToClass(AttributeTestClassName),
-            _customAttributesDiagnostics);
+            _customAttributesDiagnostics,
+            AttributeTestClassName);
     }
 
     [Test]
     public void AllowDataAndAriaAttributes()
     {
-        AssertDiagnostics(
+        ExpectedDiagnostic.Compare(
             DataAndAriaAttributesDiagnostics.FilterToClass(AttributeTestClassName),
-            _dataAndAriaDiagnostics);
+            _dataAndAriaDiagnostics,
+            AttributeTestClassName);
     }
 
     [Test]
     public void AllowNoAttributes()
     {
-        AssertDiagnostics(
+        ExpectedDiagnostic.Compare(
             NoAttributesDiagnostics.FilterToClass(AttributeTestClassName),
-            _noAttributesDiagnostics);
+            _noAttributesDiagnostics,
+            AttributeTestClassName);
     }
 
     [Test]
@@ -203,28 +208,6 @@ public class ValidAttributeTests : BunitTest
         diagnostic.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]
             .Should().Be(AttributeTestClassName);
         diagnostic.GetMessage().Should().StartWith("Illegal Attribute 'OffsetX' on 'MudAutocomplete'");
-    }
-
-    private static void AssertDiagnostics(
-        IReadOnlyList<Diagnostic> diagnostics,
-        IReadOnlyList<DiagnosticExpectation> expectations)
-    {
-        diagnostics.Should().HaveCount(expectations.Count);
-
-        foreach (var diagnostic in diagnostics)
-        {
-            diagnostic.Id.Should().Be(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId);
-            diagnostic.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]
-                .Should().Be(AttributeTestClassName);
-        }
-
-        foreach (var expectation in expectations)
-        {
-            diagnostics.Should().ContainSingle(x =>
-                x.GetMessage().StartsWith(
-                    $"Illegal Attribute '{expectation.AttributeName}' on '{expectation.ComponentName}'",
-                    StringComparison.Ordinal));
-        }
     }
 
     /// <summary>
@@ -446,9 +429,5 @@ public class ValidAttributeTests : BunitTest
         }
         """;
 
-    /// <summary>
-    /// Expected attribute/component pair for an analyzer diagnostic assertion.
-    /// </summary>
-    private sealed record DiagnosticExpectation(string AttributeName, string ComponentName);
 }
 #nullable restore
