@@ -15,7 +15,7 @@ extern alias MudBlazorAnalyzer;
 [TestFixture]
 public class ValidAttributeTests
 {
-    private const string AttributeTestClassName = "MudBlazor.UnitTests.Analyzers.Generated.AttributeTest";
+    private const string AttributeTestClassName = "MudBlazor.UnitTests.Analyzers.Generated.GeneratedAttributeTestComponent";
 
     private static IReadOnlyList<Diagnostic> LowerCaseAttributesDiagnostics { get; set; } = null!;
 
@@ -148,7 +148,7 @@ using MudBlazor;
 
 namespace MudBlazor.UnitTests.Analyzers.Generated;
 
-public partial class AttributeTest : ComponentBase
+public partial class GeneratedAttributeTestComponent : ComponentBase
 {
     private string _bindValue = "y";
 
