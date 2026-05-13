@@ -319,6 +319,72 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
+    public async Task SubscribeAsync_DifferentObserversWithSameOptionsInParallel_ShouldHaveOneJSListenerAndNotifyImmediately()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var observers = Enumerable.Range(0, 20).Select(_ => new BrowserViewportObserverMock(new ResizeOptions())).ToArray();
+
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(new BrowserWindowSize { Width = 1920, Height = 1080 });
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200));
+
+        // Act
+        await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(TimeSpan.FromSeconds(5));
+
+        // Assert
+        var subscriptions = observers.Select(observer => service.GetInternalSubscription(observer)).ToArray();
+        subscriptions.Should().NotContainNulls();
+        subscriptions.Select(subscription => subscription!.JavaScriptListenerId).Distinct().Should().ContainSingle();
+        observers.Should().OnlyContain(observer => observer.Notifications.Count == 1);
+        observers.Should().OnlyContain(observer => observer.Notifications[0].IsImmediate);
+        observers.Should().OnlyContain(observer => observer.Notifications[0].Breakpoint == Breakpoint.Xl);
+        service.ObserversCount.Should().Be(observers.Length);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
+    public async Task SubscribeAsync_DifferentObserversWithDifferentOptionsInParallel_ShouldHaveOneJSListenerPerOptionGroup()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var options1 = new ResizeOptions { ReportRate = 1, EnableLogging = true };
+        var options2 = new ResizeOptions { ReportRate = 2, NotifyOnBreakpointOnly = false };
+        var observers1 = Enumerable.Range(0, 10).Select(_ => new BrowserViewportObserverMock(options1)).ToArray();
+        var observers2 = Enumerable.Range(0, 10).Select(_ => new BrowserViewportObserverMock(options2)).ToArray();
+        var observers = observers1.Concat(observers2).ToArray();
+
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(new BrowserWindowSize { Width = 1920, Height = 1080 });
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200));
+
+        // Act
+        await Task.WhenAll(observers.Select(observer => service.SubscribeAsync(observer, fireImmediately: true))).WaitAsync(TimeSpan.FromSeconds(5));
+
+        // Assert
+        var subscriptions1 = observers1.Select(observer => service.GetInternalSubscription(observer)).ToArray();
+        var subscriptions2 = observers2.Select(observer => service.GetInternalSubscription(observer)).ToArray();
+
+        subscriptions1.Should().NotContainNulls();
+        subscriptions2.Should().NotContainNulls();
+        subscriptions1.Select(subscription => subscription!.JavaScriptListenerId).Distinct().Should().ContainSingle();
+        subscriptions2.Select(subscription => subscription!.JavaScriptListenerId).Distinct().Should().ContainSingle();
+        subscriptions1[0]!.JavaScriptListenerId.Should().NotBe(subscriptions2[0]!.JavaScriptListenerId);
+        observers.Should().OnlyContain(observer => observer.Notifications.Count == 1);
+        observers.Should().OnlyContain(observer => observer.Notifications[0].IsImmediate);
+        service.ObserversCount.Should().Be(observers.Length);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(2));
+    }
+
+    [Test]
     public async Task SubscribeAsync_DifferentObserversWithDifferentOptions_ShouldHaveMultipleJSListener()
     {
         // Arrange

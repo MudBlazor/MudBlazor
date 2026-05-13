@@ -25,6 +25,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     private readonly CancellationToken _cancellationToken;
     private readonly ResizeListenerInterop _resizeListenerInterop;
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly SemaphoreSlim _subscribeLock = new(1, 1);
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
     private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
 
@@ -90,30 +91,44 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     {
         ArgumentNullException.ThrowIfNull(observer);
 
-        if (_disposed)
+        BrowserViewportSubscription? subscription = null;
+        IBrowserViewportObserver? newObserver = null;
+        var shouldFireImmediately = false;
+
+        await _subscribeLock.WaitAsync();
+        try
         {
-            return;
+            if (_disposed)
+            {
+                return;
+            }
+
+            // Always clone the ResizeOptions, regardless of the circumstances.
+            // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
+            // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
+            var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
+            // Safe to modify now
+            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
+
+            subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+
+            if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out newObserver))
+            {
+                shouldFireImmediately = fireImmediately;
+            }
+        }
+        finally
+        {
+            _subscribeLock.Release();
         }
 
-        // Always clone the ResizeOptions, regardless of the circumstances.
-        // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
-        // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
-        var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
-        // Safe to modify now
-        optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
-
-        var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-
-        if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out var newObserver))
+        if (shouldFireImmediately)
         {
-            if (fireImmediately)
-            {
-                // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
-                var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
-                var latestBreakpoint = await GetCurrentBreakpointAsync();
-                // Notify only current subscription
-                await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
-            }
+            // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
+            var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
+            var latestBreakpoint = await GetCurrentBreakpointAsync();
+            // Notify only current subscription
+            await newObserver!.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription!.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
         }
     }
 
