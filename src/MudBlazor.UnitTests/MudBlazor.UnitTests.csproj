@@ -21,7 +21,7 @@
     <PackageReference Include="coverlet.MTP" Version="10.0.0" />
     <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
-    <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.2.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
   </ItemGroup>
