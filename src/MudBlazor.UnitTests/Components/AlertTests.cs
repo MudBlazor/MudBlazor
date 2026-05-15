@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Alert;
 using NUnit.Framework;
 
@@ -32,5 +33,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(1));
         }
 
+        [Test]
+        public void Alert_DefaultContentAlignment_ShouldBeStart()
+        {
+            var comp = Context.Render<MudAlert>();
+            comp.Instance.ContentAlignment.Should().Be(HorizontalAlignment.Start);
+        }
+
+        [Test]
+        public void Alert_RTL_DefaultAlignment_ShouldRenderJustifyStart()
+        {
+            var comp = Context.Render<MudAlert>(p => p.AddCascadingValue("RightToLeft", true));
+            var positionDiv = comp.Find(".mud-alert-position");
+            positionDiv.ClassList.Should().Contain("justify-start");
+            positionDiv.ClassList.Should().NotContain("justify-end");
+        }
     }
 }
