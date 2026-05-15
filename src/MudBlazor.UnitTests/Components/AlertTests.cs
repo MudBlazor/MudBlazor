@@ -4,7 +4,6 @@
 
 using AwesomeAssertions;
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Alert;
 using NUnit.Framework;
 
