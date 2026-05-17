@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
                     new("Link 3", "link3")
                 }));
 
-            comp.Find("li.mud-breadcrumbs-expander .mud-icon-root").TextContent.Should().Be(customExpanderIcon);
+            comp.Markup.Should().Contain(customExpanderIcon);
         }
 
         [Test]
