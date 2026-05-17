@@ -436,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MessageBox_Show_ForwardsParametersToDialog()
         {
-            var expectedOptions = new DialogOptions
+            var dialogOptions = new DialogOptions
             {
                 BackgroundClass = "custom-background",
                 CloseOnEscapeKey = true
@@ -473,11 +473,11 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.CancelButton, cancelButton)
             );
 
-            var result = await inlineMessageBox.Instance.ShowAsync(expectedOptions);
+            var result = await inlineMessageBox.Instance.ShowAsync(dialogOptions);
 
             result.Should().BeTrue();
             capturedTitle.Should().Be("Title parameter");
-            capturedOptions.Should().BeSameAs(expectedOptions);
+            capturedOptions.Should().BeSameAs(dialogOptions);
             capturedOptions.BackgroundClass.Should().Be("custom-background");
             capturedOptions.CloseOnEscapeKey.Should().BeTrue();
             capturedParameters.Should().NotBeNull();
@@ -493,7 +493,7 @@ namespace MudBlazor.UnitTests.Components
             capturedParameters[nameof(MudMessageBox.CancelText)].Should().Be("Ignored cancel");
             capturedParameters[nameof(MudMessageBox.CancelButton)].Should().BeSameAs(cancelButton);
 
-            dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>("Title parameter", It.IsAny<DialogParameters>(), expectedOptions), Times.Once);
+            dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>("Title parameter", It.IsAny<DialogParameters>(), dialogOptions), Times.Once);
         }
 
         [TestCase(null, null)]
@@ -602,6 +602,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var dialogServiceMock = new Mock<IDialogService>();
             var dialogReference = new DialogReference(Guid.NewGuid(), dialogServiceMock.Object);
+            // Pre-complete the dialog result so ShowAsync can return immediately in these isolated tests.
             dialogReference.Dismiss(dialogResult);
 
             dialogServiceMock
