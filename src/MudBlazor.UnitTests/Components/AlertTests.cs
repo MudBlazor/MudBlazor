@@ -84,14 +84,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task Alert_ShowCloseIcon_ShouldRenderButtonAndInvokeCallback()
         {
             var callbackCount = 0;
-            MudAlert callbackAlert = default!;
+            MudAlert capturedAlert = default!;
             var comp = Context.Render<MudAlert>(parameters => parameters
                 .Add(x => x.ShowCloseIcon, true)
                 .Add(x => x.CloseIcon, Icons.Material.Filled.Add)
                 .Add(x => x.CloseIconClicked, (MudAlert alert) =>
                 {
                     callbackCount++;
-                    callbackAlert = alert;
+                    capturedAlert = alert;
                 }));
 
             var closeButton = comp.Find("button.mud-alert-close-button");
@@ -102,27 +102,27 @@ namespace MudBlazor.UnitTests.Components
             await closeButton.ClickAsync(new MouseEventArgs());
 
             callbackCount.Should().Be(1);
-            callbackAlert.Should().BeSameAs(comp.Instance);
+            capturedAlert.Should().BeSameAs(comp.Instance);
         }
 
         [Test]
         public async Task Alert_Click_ShouldInvokeOnClickCallback()
         {
             var clickCount = 0;
-            MouseEventArgs callbackArgs = default!;
+            MouseEventArgs capturedArgs = default!;
             var comp = Context.Render<MudAlert>(parameters => parameters
                 .Add(x => x.OnClick, (MouseEventArgs args) =>
                 {
                     clickCount++;
-                    callbackArgs = args;
+                    capturedArgs = args;
                 }));
 
             await comp.Find(".mud-alert").ClickAsync(new MouseEventArgs { ClientX = 12, ClientY = 24 });
 
             clickCount.Should().Be(1);
-            callbackArgs.Should().NotBeNull();
-            callbackArgs.ClientX.Should().Be(12);
-            callbackArgs.ClientY.Should().Be(24);
+            capturedArgs.Should().NotBeNull();
+            capturedArgs.ClientX.Should().Be(12);
+            capturedArgs.ClientY.Should().Be(24);
         }
 
         [Test]
