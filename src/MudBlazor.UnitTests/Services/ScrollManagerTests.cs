@@ -23,10 +23,10 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.scrollTo", args =>
             args.Length == 4 &&
-            args[0] as string == "#list" &&
+            (args[0] as string) == "#list" &&
             (int)args[1] == 10 &&
             (int)args[2] == 20 &&
-            args[3] as string == "smooth");
+            (args[3] as string) == "smooth");
 
         await _service.ScrollToAsync("#list", 10, 20, ScrollBehavior.Smooth);
 
@@ -38,8 +38,8 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.scrollIntoView", args =>
             args.Length == 2 &&
-            args[0] as string == ".target" &&
-            args[1] as string == "auto");
+            (args[0] as string) == ".target" &&
+            (args[1] as string) == "auto");
 
         await _service.ScrollIntoViewAsync(".target", ScrollBehavior.Auto);
 
@@ -54,7 +54,7 @@ public class ScrollManagerTests
             args[0] == null &&
             (int)args[1] == 0 &&
             (int)args[2] == 0 &&
-            args[3] as string == "auto");
+            (args[3] as string) == "auto");
 
         await _service.ScrollToTopAsync(null);
 
@@ -66,8 +66,8 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.scrollToBottom", args =>
             args.Length == 2 &&
-            args[0] as string == "messages" &&
-            args[1] as string == "smooth");
+            (args[0] as string) == "messages" &&
+            (args[1] as string) == "smooth");
 
         await _service.ScrollToBottomAsync("messages", ScrollBehavior.Smooth);
 
@@ -79,7 +79,7 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.scrollToYear", args =>
             args.Length == 1 &&
-            args[0] as string == "year-2026");
+            (args[0] as string) == "year-2026");
 
         await _service.ScrollToYearAsync("year-2026");
 
@@ -91,7 +91,7 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.scrollToListItem", args =>
             args.Length == 1 &&
-            args[0] as string == "item-42");
+            (args[0] as string) == "item-42");
 
         await _service.ScrollToListItemAsync("item-42");
 
@@ -103,12 +103,12 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.lockScroll", args =>
             args.Length == 2 &&
-            args[0] as string == "#dialog" &&
-            args[1] as string == "locked");
+            (args[0] as string) == "#dialog" &&
+            (args[1] as string) == "locked");
         SetupVoidInvocation("mudScrollManager.unlockScroll", args =>
             args.Length == 2 &&
-            args[0] as string == "#dialog" &&
-            args[1] as string == "locked");
+            (args[0] as string) == "#dialog" &&
+            (args[1] as string) == "locked");
 
         await _service.LockScrollAsync("#dialog", "locked");
         await _service.UnlockScrollAsync("#dialog", "locked");
@@ -121,11 +121,11 @@ public class ScrollManagerTests
     {
         SetupVoidInvocation("mudScrollManager.scrollToVirtualizedItem", args =>
             args.Length == 5 &&
-            args[0] as string == "table" &&
+            (args[0] as string) == "table" &&
             (int)args[1] == 7 &&
             (double)args[2] == 42.5 &&
-            args[3] as string == "row-7" &&
-            args[4] as string == "smooth");
+            (args[3] as string) == "row-7" &&
+            (args[4] as string) == "smooth");
 
         await _service.ScrollToVirtualizedItemAsync("table", 7, 42.5, "row-7", ScrollBehavior.Smooth);
 

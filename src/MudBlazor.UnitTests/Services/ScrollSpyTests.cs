@@ -25,8 +25,8 @@ public class ScrollSpyTests
     {
         SetupVoidInvocation("mudScrollSpy.spying", args =>
             args.Length == 3 &&
-            args[1] as string == "#container" &&
-            args[2] as string == "section-class");
+            (args[1] as string) == "#container" &&
+            (args[2] as string) == "section-class");
 
         await _service.StartSpying("#container", "section-class");
 
@@ -38,7 +38,7 @@ public class ScrollSpyTests
     {
         SetupVoidInvocation("mudScrollSpy.scrollToSection", args =>
             args.Length == 1 &&
-            args[0] as string == "details");
+            (args[0] as string) == "details");
 
         await _service.ScrollToSection("#details");
 
@@ -51,7 +51,7 @@ public class ScrollSpyTests
     {
         SetupVoidInvocation("mudScrollSpy.scrollToSection", args =>
             args.Length == 1 &&
-            args[0] as string == "api");
+            (args[0] as string) == "api");
 
         await _service.ScrollToSection(new Uri("https://mudblazor.test/docs#api"));
 
@@ -64,7 +64,7 @@ public class ScrollSpyTests
     {
         SetupVoidInvocation("mudScrollSpy.activateSection", args =>
             args.Length == 1 &&
-            args[0] as string == "examples");
+            (args[0] as string) == "examples");
 
         await _service.SetSectionAsActive("#examples");
 
