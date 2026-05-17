@@ -434,7 +434,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MessageBox_Show_ForwardsParametersToDialogService()
+        public async Task MessageBox_Show_ForwardsParametersToDialog()
         {
             var expectedOptions = new DialogOptions
             {
@@ -526,7 +526,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MessageBox_VisibleParameter_OpensAndClosesTheDialog()
+        public async Task MessageBox_VisibleParameter_OpensAndClosesDialog()
         {
             var provider = Context.Render<MudDialogProvider>();
             var visibleStateTest = Context.Render<MessageBoxVisibleStateTest>();

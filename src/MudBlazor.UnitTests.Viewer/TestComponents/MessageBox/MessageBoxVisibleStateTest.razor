@@ -1,7 +1,7 @@
-<MudButton Class="open-message-box" OnClick="OpenMessageBox">Open</MudButton>
-<MudButton Class="close-message-box" OnClick="CloseMessageBox">Close</MudButton>
+<MudButton Class="open-message-box" OnClick="OpenMessageBox">Show Message Box</MudButton>
+<MudButton Class="close-message-box" OnClick="CloseMessageBox">Hide Message Box</MudButton>
 
-<MudMessageBox @bind-Visible="_visible" Title="Visible title" Message="Visible message" />
+<MudMessageBox @bind-Visible="_visible" Title="Confirm Action" Message="Are you sure you want to proceed?" />
 
 @code {
     private bool _visible;
