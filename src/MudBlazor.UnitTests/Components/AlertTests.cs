@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(HorizontalAlignment.Right, true, "justify-start")]
         [TestCase(HorizontalAlignment.Left, false, "justify-start")]
         [TestCase(HorizontalAlignment.Left, true, "justify-end")]
-        public void Alert_ContentAlignment_ShouldRenderExpectedJustification(HorizontalAlignment contentAlignment, bool rightToLeft, string expectedClass)
+        public void Alert_ContentAlignment_RendersCorrectJustifyClass(HorizontalAlignment contentAlignment, bool rightToLeft, string expectedClass)
         {
             var comp = Context.Render<MudAlert>(parameters =>
             {
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Alert_ShowCloseIcon_ShouldRenderButtonAndInvokeCallback()
         {
             var callbackCount = 0;
-            MudAlert capturedAlert = default!;
+            MudAlert capturedAlert = null!;
             var comp = Context.Render<MudAlert>(parameters => parameters
                 .Add(x => x.ShowCloseIcon, true)
                 .Add(x => x.CloseIcon, Icons.Material.Filled.Add)
@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Alert_Click_ShouldInvokeOnClickCallback()
         {
             var clickCount = 0;
-            MouseEventArgs capturedArgs = default!;
+            MouseEventArgs capturedArgs = null!;
             var comp = Context.Render<MudAlert>(parameters => parameters
                 .Add(x => x.OnClick, (MouseEventArgs args) =>
                 {
