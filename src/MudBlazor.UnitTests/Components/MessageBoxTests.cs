@@ -2,6 +2,8 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -428,5 +430,188 @@ namespace MudBlazor.UnitTests.Components
             await provider.Find(".mud-message-box__yes-button").ClickAsync();
             (await messageBoxTask).Should().BeTrue();
         }
+
+        [Test]
+        public async Task InlineMessageBox_ShowAsync_Should_ForwardParametersToDialogService()
+        {
+            var expectedOptions = new DialogOptions
+            {
+                BackgroundClass = "custom-background",
+                CloseOnEscapeKey = true
+            };
+
+            DialogParameters? capturedParameters = null;
+            string? capturedTitle = null;
+            DialogOptions? capturedOptions = null;
+
+            var dialogServiceMock = CreateDialogServiceMock(DialogResult.Ok(true), (title, parameters, options) =>
+            {
+                capturedTitle = title;
+                capturedParameters = parameters;
+                capturedOptions = options;
+            });
+
+            var titleContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<span class=\"custom-title\">Preferred title</span>"));
+            var messageContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<div class=\"custom-message\">Preferred message</div>"));
+            var yesButton = CreateButtonFragment("custom-yes", "Yes");
+            var noButton = CreateButtonFragment("custom-no", "No");
+            var cancelButton = CreateButtonFragment("custom-cancel", "Cancel");
+
+            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
+                .Add(x => x.Title, "Ignored title")
+                .Add(x => x.TitleContent, titleContent)
+                .Add(x => x.Message, "Ignored message")
+                .Add(x => x.MarkupMessage, (MarkupString)"<b>Ignored markup</b>")
+                .Add(x => x.MessageContent, messageContent)
+                .Add(x => x.YesText, "Ignored yes")
+                .Add(x => x.YesButton, yesButton)
+                .Add(x => x.NoText, "Ignored no")
+                .Add(x => x.NoButton, noButton)
+                .Add(x => x.CancelText, "Ignored cancel")
+                .Add(x => x.CancelButton, cancelButton)
+            );
+
+            var result = await inlineMessageBox.Instance.ShowAsync(expectedOptions);
+
+            result.Should().BeTrue();
+            capturedTitle.Should().Be("Ignored title");
+            capturedOptions.Should().BeSameAs(expectedOptions);
+            capturedParameters.Should().NotBeNull();
+            capturedParameters![nameof(MudMessageBox.Title)].Should().Be("Ignored title");
+            capturedParameters[nameof(MudMessageBox.TitleContent)].Should().BeSameAs(titleContent);
+            capturedParameters[nameof(MudMessageBox.Message)].Should().Be("Ignored message");
+            capturedParameters[nameof(MudMessageBox.MarkupMessage)].Should().Be((MarkupString)"<b>Ignored markup</b>");
+            capturedParameters[nameof(MudMessageBox.MessageContent)].Should().BeSameAs(messageContent);
+            capturedParameters[nameof(MudMessageBox.YesText)].Should().Be("Ignored yes");
+            capturedParameters[nameof(MudMessageBox.YesButton)].Should().BeSameAs(yesButton);
+            capturedParameters[nameof(MudMessageBox.NoText)].Should().Be("Ignored no");
+            capturedParameters[nameof(MudMessageBox.NoButton)].Should().BeSameAs(noButton);
+            capturedParameters[nameof(MudMessageBox.CancelText)].Should().Be("Ignored cancel");
+            capturedParameters[nameof(MudMessageBox.CancelButton)].Should().BeSameAs(cancelButton);
+
+            dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>("Ignored title", It.IsAny<DialogParameters>(), expectedOptions), Times.Once);
+        }
+
+        [TestCase(null, null)]
+        [TestCase("cancel", null)]
+        [TestCase("invalid", null)]
+        [TestCase("false", false)]
+        [TestCase("true", true)]
+        public async Task InlineMessageBox_ShowAsync_Should_MapDialogResults(string resultKind, bool? expectedResult)
+        {
+            var dialogResult = resultKind switch
+            {
+                null => null,
+                "cancel" => DialogResult.Cancel(),
+                "invalid" => DialogResult.Ok("not-a-bool"),
+                "false" => DialogResult.Ok(false),
+                "true" => DialogResult.Ok(true),
+                _ => throw new ArgumentOutOfRangeException(nameof(resultKind))
+            };
+
+            CreateDialogServiceMock(dialogResult);
+
+            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
+                .Add(x => x.Title, "Title")
+                .Add(x => x.Message, "Message")
+            );
+
+            var result = await inlineMessageBox.Instance.ShowAsync();
+
+            result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void InlineMessageBox_VisibleParameter_Should_ShowAndCloseThroughDialogService()
+        {
+            var dialogServiceMock = CreateDialogServiceMock(DialogResult.Ok(true));
+
+            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
+                .Add(x => x.Visible, false)
+            );
+
+            inlineMessageBox.SetParametersAndRender(parameters => parameters.Add(x => x.Visible, true));
+
+            inlineMessageBox.WaitForAssertion(() =>
+                dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>(null, It.IsAny<DialogParameters>(), null), Times.Once));
+
+            inlineMessageBox.SetParametersAndRender(parameters => parameters.Add(x => x.Visible, false));
+
+            inlineMessageBox.WaitForAssertion(() =>
+                dialogServiceMock.Verify(x => x.Close(It.IsAny<IDialogReference>()), Times.Once));
+        }
+
+        [TestCase(".custom-cancel", null)]
+        [TestCase(".custom-no", false)]
+        [TestCase(".custom-yes", true)]
+        public async Task InlineMessageBox_Should_PreferCustomContentAndButtons(string buttonSelector, bool? expectedResult)
+        {
+            var provider = Context.Render<MudDialogProvider>();
+
+            var titleContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<span class=\"custom-title\">Preferred title</span>"));
+            var messageContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<div class=\"custom-message\">Preferred message</div>"));
+
+            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
+                .Add(x => x.Title, "Ignored title")
+                .Add(x => x.TitleContent, titleContent)
+                .Add(x => x.Message, "Ignored message")
+                .Add(x => x.MarkupMessage, (MarkupString)"<b>Ignored markup</b>")
+                .Add(x => x.MessageContent, messageContent)
+                .Add(x => x.YesButton, CreateButtonFragment("custom-yes", "Custom yes"))
+                .Add(x => x.NoButton, CreateButtonFragment("custom-no", "Custom no"))
+                .Add(x => x.CancelButton, CreateButtonFragment("custom-cancel", "Custom cancel"))
+            );
+
+            Task<bool?> messageBoxTask = null!;
+            await inlineMessageBox.InvokeAsync(() =>
+            {
+                messageBoxTask = inlineMessageBox.Instance.ShowAsync();
+            });
+
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.Find(".custom-title").TrimmedText().Should().Be("Preferred title");
+                provider.Find(".custom-message").TrimmedText().Should().Be("Preferred message");
+            });
+
+            provider.Find("div.mud-dialog-title").TextContent.Should().NotContain("Ignored title");
+            provider.Find("div.mud-dialog-content").TextContent.Should().NotContain("Ignored message");
+            provider.Find("div.mud-dialog-content").TextContent.Should().NotContain("Ignored markup");
+
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].ClassList.Should().Contain("custom-cancel");
+            buttons[1].ClassList.Should().Contain("custom-no");
+            buttons[2].ClassList.Should().Contain("custom-yes");
+
+            await provider.Find(buttonSelector).ClickAsync();
+
+            (await messageBoxTask).Should().Be(expectedResult);
+        }
+
+        private Mock<IDialogService> CreateDialogServiceMock(DialogResult? dialogResult, Action<string?, DialogParameters, DialogOptions?>? onShow = null)
+        {
+            var dialogServiceMock = new Mock<IDialogService>();
+            var dialogReference = new DialogReference(Guid.NewGuid(), dialogServiceMock.Object);
+            dialogReference.Dismiss(dialogResult);
+
+            dialogServiceMock
+                .Setup(x => x.ShowAsync<MudMessageBox>(It.IsAny<string?>(), It.IsAny<DialogParameters>(), It.IsAny<DialogOptions?>()))
+                .Callback<string?, DialogParameters, DialogOptions?>((title, parameters, options) => onShow?.Invoke(title, parameters, options))
+                .ReturnsAsync(dialogReference);
+
+            Context.Services.RemoveAll<IDialogService>();
+            Context.Services.AddSingleton(dialogServiceMock.Object);
+
+            return dialogServiceMock;
+        }
+
+        private static RenderFragment CreateButtonFragment(string cssClass, string text) => builder =>
+        {
+            builder.OpenComponent<MudButton>(0);
+            builder.AddAttribute(1, nameof(MudButton.Class), cssClass);
+            builder.AddAttribute(2, nameof(MudButton.ChildContent), (RenderFragment)(childBuilder => childBuilder.AddContent(3, text)));
+            builder.CloseComponent();
+        };
     }
 }
