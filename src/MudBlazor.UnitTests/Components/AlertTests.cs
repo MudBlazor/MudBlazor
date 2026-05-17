@@ -84,7 +84,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Alert_ShowCloseIcon_ShouldRenderButtonAndInvokeCallback()
         {
             var callbackCount = 0;
-            MudAlert? callbackAlert = null;
+            MudAlert callbackAlert = default!;
             var comp = Context.Render<MudAlert>(parameters => parameters
                 .Add(x => x.ShowCloseIcon, true)
                 .Add(x => x.CloseIcon, Icons.Material.Filled.Add)
@@ -109,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Alert_Click_ShouldInvokeOnClickCallback()
         {
             var clickCount = 0;
-            MouseEventArgs? callbackArgs = null;
+            MouseEventArgs callbackArgs = default!;
             var comp = Context.Render<MudAlert>(parameters => parameters
                 .Add(x => x.OnClick, (MouseEventArgs args) =>
                 {
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
 
             clickCount.Should().Be(1);
             callbackArgs.Should().NotBeNull();
-            callbackArgs!.ClientX.Should().Be(12);
+            callbackArgs.ClientX.Should().Be(12);
             callbackArgs.ClientY.Should().Be(24);
         }
 
@@ -131,6 +131,24 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudAlert>(parameters => parameters.Add(x => x.ContentAlignment, HorizontalAlignment.Right));
 
             comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-end");
+        }
+
+        [Test]
+        public void Alert_RTL_RightAlignment_ShouldRenderJustifyStart()
+        {
+            var comp = Context.Render<MudAlert>(parameters => parameters
+                .AddCascadingValue("RightToLeft", true)
+                .Add(x => x.ContentAlignment, HorizontalAlignment.Right));
+
+            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-start");
+        }
+
+        [Test]
+        public void Alert_LeftAlignment_ShouldRenderJustifyStart()
+        {
+            var comp = Context.Render<MudAlert>(parameters => parameters.Add(x => x.ContentAlignment, HorizontalAlignment.Left));
+
+            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-start");
         }
 
         [Test]
