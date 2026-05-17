@@ -619,13 +619,16 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="cssClass">The CSS class applied to the generated element.</param>
         /// <param name="text">The text content rendered inside the element.</param>
         /// <returns>A render fragment that outputs the requested markup.</returns>
-        private static RenderFragment CreateMarkupFragment(string cssClass, string text) => builder =>
+        private static RenderFragment CreateMarkupFragment(string cssClass, string text)
         {
-            builder.OpenElement(0, "span");
-            builder.AddAttribute(1, "class", cssClass);
-            builder.AddContent(2, text);
-            builder.CloseElement();
-        };
+            return builder =>
+            {
+                builder.OpenElement(0, "span");
+                builder.AddAttribute(1, "class", cssClass);
+                builder.AddContent(2, text);
+                builder.CloseElement();
+            };
+        }
 
         /// <summary>
         /// Creates a <see cref="MudButton"/> fragment used to exercise custom MessageBox button rendering and activation.
@@ -633,12 +636,15 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="cssClass">The CSS class applied to the generated button.</param>
         /// <param name="text">The button label.</param>
         /// <returns>A render fragment that renders the requested button.</returns>
-        private static RenderFragment CreateButtonFragment(string cssClass, string text) => builder =>
+        private static RenderFragment CreateButtonFragment(string cssClass, string text)
         {
-            builder.OpenComponent<MudButton>(0);
-            builder.AddAttribute(1, nameof(MudButton.Class), cssClass);
-            builder.AddAttribute(2, nameof(MudButton.ChildContent), (RenderFragment)(childBuilder => childBuilder.AddContent(3, text)));
-            builder.CloseComponent();
-        };
+            return builder =>
+            {
+                builder.OpenComponent<MudButton>(0);
+                builder.AddAttribute(1, nameof(MudButton.Class), cssClass);
+                builder.AddAttribute(2, nameof(MudButton.ChildContent), (RenderFragment)(childBuilder => childBuilder.AddContent(3, text)));
+                builder.CloseComponent();
+            };
+        }
     }
 }
