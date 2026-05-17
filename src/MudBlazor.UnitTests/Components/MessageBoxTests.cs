@@ -434,7 +434,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task InlineMessageBox_ShowAsync_Should_ForwardParametersToDialogService()
+        public async Task MessageBox_ShowAsync_Should_ForwardParametersToDialogService()
         {
             var expectedOptions = new DialogOptions
             {
@@ -499,7 +499,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("invalid", null)]
         [TestCase("false", false)]
         [TestCase("true", true)]
-        public async Task InlineMessageBox_ShowAsync_Should_MapDialogResults(string resultKind, bool? expectedResult)
+        public async Task MessageBox_ShowAsync_Should_MapDialogResults(string resultKind, bool? expectedResult)
         {
             var dialogResult = resultKind switch
             {
@@ -524,7 +524,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task InlineMessageBox_VisibleParameter_Should_OpenAndCloseTheDialog()
+        public async Task MessageBox_VisibleParameter_Should_OpenAndCloseTheDialog()
         {
             var provider = Context.Render<MudDialogProvider>();
             var visibleStateTest = Context.Render<MessageBoxVisibleStateTest>();
@@ -545,7 +545,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(".custom-cancel", null)]
         [TestCase(".custom-no", false)]
         [TestCase(".custom-yes", true)]
-        public async Task InlineMessageBox_Should_PreferCustomContentAndButtons(string buttonSelector, bool? expectedResult)
+        public async Task MessageBox_Should_PreferCustomContentAndButtons(string buttonSelector, bool? expectedResult)
         {
             var provider = Context.Render<MudDialogProvider>();
 
@@ -563,7 +563,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.CancelButton, CreateButtonFragment("custom-cancel", "Custom cancel"))
             );
 
-            Task<bool?> messageBoxTask = null!;
+            Task<bool?> messageBoxTask = null;
             await inlineMessageBox.InvokeAsync(() =>
             {
                 messageBoxTask = inlineMessageBox.Instance.ShowAsync();
