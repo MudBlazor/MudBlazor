@@ -31,10 +31,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task ScrollEvent_UsesScrollTopToToggleVisibilityAndRaiseCallback()
         {
             var scrollListenerFactory = new TestScrollListenerFactory();
-            ScrollEventArgs callbackArgs = null;
+            ScrollEventArgs receivedScrollArgs = null;
             var component = RenderScrollToTop(scrollListenerFactory, parameters => parameters
                 .Add(x => x.TopOffset, 50)
-                .Add(x => x.OnScroll, EventCallback.Factory.Create<ScrollEventArgs>(this, args => callbackArgs = args)));
+                .Add(x => x.OnScroll, EventCallback.Factory.Create<ScrollEventArgs>(this, args => receivedScrollArgs = args)));
 
             component.Find("span").ClassList.Should().Contain("hidden");
             component.Instance.Visible.Should().BeFalse();
@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 component.Instance.Visible.Should().BeTrue();
                 component.Find("span").ClassList.Should().Contain("visible");
-                callbackArgs.Should().BeSameAs(visibleEventArgs);
+                receivedScrollArgs.Should().BeSameAs(visibleEventArgs);
             });
 
             scrollListenerFactory.Listener.RaiseScroll(new ScrollEventArgs
@@ -103,14 +103,14 @@ namespace MudBlazor.UnitTests.Components
         public async Task Click_ScrollsToTopUsingListenerSelectorAndRaisesOnClick()
         {
             var scrollListenerFactory = new TestScrollListenerFactory();
-            MouseEventArgs clickArgs = null;
+            MouseEventArgs receivedClickArgs = null;
             var scrollManager = new TestScrollManager();
             var component = RenderScrollToTop(
                 scrollListenerFactory,
                 parameters => parameters
                     .Add(x => x.Selector, "#scroll-host")
                     .Add(x => x.ScrollBehavior, ScrollBehavior.Auto)
-                    .Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, args => clickArgs = args)),
+                    .Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, args => receivedClickArgs = args)),
                 scrollManager);
 
             await component.Find("span.mud-scroll-to-top").ClickAsync();
@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
             scrollManager.ScrollToTopCalls.Should().ContainSingle();
             scrollManager.ScrollToTopCalls[0].Selector.Should().Be("#scroll-host");
             scrollManager.ScrollToTopCalls[0].ScrollBehavior.Should().Be(ScrollBehavior.Auto);
-            clickArgs.Should().NotBeNull();
+            receivedClickArgs.Should().NotBeNull();
         }
 
         [Test]

@@ -75,14 +75,14 @@ public class ScrollSpyTests
     [Test]
     public void SectionChangeOccured_UpdatesCenteredSectionAndRaisesEvent()
     {
-        ScrollSectionCenteredEventArgs eventArgs = null;
-        _service.ScrollSectionSectionCentered += (_, args) => eventArgs = args;
+        ScrollSectionCenteredEventArgs capturedEventArgs = null;
+        _service.ScrollSectionSectionCentered += (_, args) => capturedEventArgs = args;
 
         _service.SectionChangeOccured("usage");
 
         _service.CenteredSection.Should().Be("usage");
-        eventArgs.Should().NotBeNull();
-        eventArgs.Id.Should().Be("usage");
+        capturedEventArgs.Should().NotBeNull();
+        capturedEventArgs.Id.Should().Be("usage");
     }
 
     [Test]
