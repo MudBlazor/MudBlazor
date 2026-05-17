@@ -434,7 +434,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MessageBox_ShowAsync_ForwardsParametersToDialogService()
+        public async Task MessageBox_Show_ForwardsParametersToDialogService()
         {
             var expectedOptions = new DialogOptions
             {
@@ -499,7 +499,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("invalid", null)]
         [TestCase("false", false)]
         [TestCase("true", true)]
-        public async Task MessageBox_ShowAsync_MapsDialogResults(string resultKind, bool? expectedResult)
+        public async Task MessageBox_Show_MapsDialogResults(string resultKind, bool? expectedResult)
         {
             var dialogResult = resultKind switch
             {
