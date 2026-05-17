@@ -2,8 +2,7 @@ name: AutoTriage (Backlog)
 
 on:
   schedule:
-    - cron: "0 6 * * 1-6"
-    - cron: "0 6 * * 0"
+    - cron: "0 6 * * *"
   workflow_dispatch:
     inputs:
       issues:
@@ -62,7 +61,31 @@ jobs:
 
       - uses: actions/checkout@v6
 
+      - name: Determine backlog triage mode
+        id: triage-mode
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" != "schedule" ]]; then
+            echo "extended_run=false" >> "$GITHUB_OUTPUT"
+            echo "cache_enabled=false" >> "$GITHUB_OUTPUT"
+            echo "max_fast_runs=20" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          day_of_month="$(date -u +%-d)"
+
+          if (( day_of_month % 3 == 0 )); then
+            echo "extended_run=true" >> "$GITHUB_OUTPUT"
+            echo "cache_enabled=true" >> "$GITHUB_OUTPUT"
+            echo "max_fast_runs=100" >> "$GITHUB_OUTPUT"
+          else
+            echo "extended_run=false" >> "$GITHUB_OUTPUT"
+            echo "cache_enabled=false" >> "$GITHUB_OUTPUT"
+            echo "max_fast_runs=20" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Cache triage DB
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || steps.triage-mode.outputs.cache_enabled == 'true' }}
         id: cache-db
         uses: actions/cache@v5
         with:
@@ -77,9 +100,9 @@ jobs:
           issues: ${{ github.event.inputs.issues }}
           prompt-path: .github/AutoTriage.prompt
           dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
-          max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || (github.event.schedule == '0 6 * * 0' && 100 || 20) }}
-          context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || github.event.schedule == '0 6 * * 0' }}
-          extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || github.event.schedule == '0 6 * * 0' }}
+          max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || steps.triage-mode.outputs.max_fast_runs }}
+          context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || steps.triage-mode.outputs.cache_enabled == 'true' }}
+          extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || steps.triage-mode.outputs.extended_run == 'true' }}
           model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-3.1-flash-lite' }}
           model-pro: ${{ github.event_name == 'workflow_dispatch' && inputs['model-pro'] || 'gemini-3-flash-preview' }}
           db-path: triage-db.json
