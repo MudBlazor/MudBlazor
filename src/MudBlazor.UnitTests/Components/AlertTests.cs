@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Alert;
 using NUnit.Framework;
 
@@ -46,6 +47,100 @@ namespace MudBlazor.UnitTests.Components
             var positionDiv = comp.Find(".mud-alert-position");
             positionDiv.ClassList.Should().Contain("justify-start");
             positionDiv.ClassList.Should().NotContain("justify-end");
+        }
+
+        [Test]
+        public void Alert_RootClass_ShouldReflectAppearanceParameters()
+        {
+            var comp = Context.Render<MudAlert>(parameters => parameters
+                .Add(x => x.Severity, Severity.Warning)
+                .Add(x => x.Variant, Variant.Filled)
+                .Add(x => x.Dense, true)
+                .Add(x => x.Square, true)
+                .Add(x => x.Elevation, 4)
+                .Add(x => x.Class, "custom-alert"));
+
+            var alert = comp.Find(".mud-alert");
+
+            alert.ClassList.Should().Contain("mud-alert-filled-warning");
+            alert.ClassList.Should().Contain("mud-dense");
+            alert.ClassList.Should().Contain("mud-square");
+            alert.ClassList.Should().Contain("mud-elevation-4");
+            alert.ClassList.Should().Contain("custom-alert");
+        }
+
+        [Test]
+        public void Alert_NoIcon_ShouldNotRenderIcon()
+        {
+            var comp = Context.Render<MudAlert>(parameters => parameters
+                .Add(x => x.NoIcon, true)
+                .AddChildContent("Alert content"));
+
+            comp.FindAll(".mud-alert-icon").Should().BeEmpty();
+            comp.Find(".mud-alert-message").TextContent.Should().Be("Alert content");
+        }
+
+        [Test]
+        public async Task Alert_ShowCloseIcon_ShouldRenderButtonAndInvokeCallback()
+        {
+            var callbackCount = 0;
+            MudAlert? callbackAlert = null;
+            var comp = Context.Render<MudAlert>(parameters => parameters
+                .Add(x => x.ShowCloseIcon, true)
+                .Add(x => x.CloseIcon, Icons.Material.Filled.Add)
+                .Add(x => x.CloseIconClicked, (MudAlert alert) =>
+                {
+                    callbackCount++;
+                    callbackAlert = alert;
+                }));
+
+            var closeButton = comp.Find("button.mud-alert-close-button");
+
+            comp.Markup.Should().Contain(Icons.Material.Filled.Add);
+            closeButton.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+
+            await closeButton.ClickAsync(new MouseEventArgs());
+
+            callbackCount.Should().Be(1);
+            callbackAlert.Should().BeSameAs(comp.Instance);
+        }
+
+        [Test]
+        public async Task Alert_Click_ShouldInvokeOnClickCallback()
+        {
+            var clickCount = 0;
+            MouseEventArgs? callbackArgs = null;
+            var comp = Context.Render<MudAlert>(parameters => parameters
+                .Add(x => x.OnClick, (MouseEventArgs args) =>
+                {
+                    clickCount++;
+                    callbackArgs = args;
+                }));
+
+            await comp.Find(".mud-alert").ClickAsync(new MouseEventArgs { ClientX = 12, ClientY = 24 });
+
+            clickCount.Should().Be(1);
+            callbackArgs.Should().NotBeNull();
+            callbackArgs!.ClientX.Should().Be(12);
+            callbackArgs.ClientY.Should().Be(24);
+        }
+
+        [Test]
+        public void Alert_RightAlignment_ShouldRenderJustifyEnd()
+        {
+            var comp = Context.Render<MudAlert>(parameters => parameters.Add(x => x.ContentAlignment, HorizontalAlignment.Right));
+
+            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-end");
+        }
+
+        [Test]
+        public void Alert_RTL_LeftAlignment_ShouldRenderJustifyEnd()
+        {
+            var comp = Context.Render<MudAlert>(parameters => parameters
+                .AddCascadingValue("RightToLeft", true)
+                .Add(x => x.ContentAlignment, HorizontalAlignment.Left));
+
+            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-end");
         }
     }
 }
