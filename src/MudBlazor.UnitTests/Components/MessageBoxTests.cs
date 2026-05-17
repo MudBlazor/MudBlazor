@@ -460,7 +460,7 @@ namespace MudBlazor.UnitTests.Components
             var cancelButton = CreateButtonFragment("custom-cancel", "Cancel");
 
             var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
-                .Add(x => x.Title, "Ignored title")
+                .Add(x => x.Title, "Title parameter")
                 .Add(x => x.TitleContent, titleContent)
                 .Add(x => x.Message, "Ignored message")
                 .Add(x => x.MarkupMessage, (MarkupString)"<b>Ignored markup</b>")
@@ -476,10 +476,12 @@ namespace MudBlazor.UnitTests.Components
             var result = await inlineMessageBox.Instance.ShowAsync(expectedOptions);
 
             result.Should().BeTrue();
-            capturedTitle.Should().Be("Ignored title");
+            capturedTitle.Should().Be("Title parameter");
             capturedOptions.Should().BeSameAs(expectedOptions);
+            capturedOptions.BackgroundClass.Should().Be("custom-background");
+            capturedOptions.CloseOnEscapeKey.Should().BeTrue();
             capturedParameters.Should().NotBeNull();
-            capturedParameters![nameof(MudMessageBox.Title)].Should().Be("Ignored title");
+            capturedParameters![nameof(MudMessageBox.Title)].Should().Be("Title parameter");
             capturedParameters[nameof(MudMessageBox.TitleContent)].Should().BeSameAs(titleContent);
             capturedParameters[nameof(MudMessageBox.Message)].Should().Be("Ignored message");
             capturedParameters[nameof(MudMessageBox.MarkupMessage)].Should().Be((MarkupString)"<b>Ignored markup</b>");
@@ -491,7 +493,7 @@ namespace MudBlazor.UnitTests.Components
             capturedParameters[nameof(MudMessageBox.CancelText)].Should().Be("Ignored cancel");
             capturedParameters[nameof(MudMessageBox.CancelButton)].Should().BeSameAs(cancelButton);
 
-            dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>("Ignored title", It.IsAny<DialogParameters>(), expectedOptions), Times.Once);
+            dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>("Title parameter", It.IsAny<DialogParameters>(), expectedOptions), Times.Once);
         }
 
         [TestCase(null, null)]
@@ -553,7 +555,7 @@ namespace MudBlazor.UnitTests.Components
             var messageContent = CreateMarkupFragment("custom-message", "Preferred message");
 
             var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
-                .Add(x => x.Title, "Ignored title")
+                .Add(x => x.Title, "Fallback title")
                 .Add(x => x.TitleContent, titleContent)
                 .Add(x => x.Message, "Ignored message")
                 .Add(x => x.MarkupMessage, (MarkupString)"<b>Ignored markup</b>")
@@ -575,7 +577,7 @@ namespace MudBlazor.UnitTests.Components
                 provider.Find(".custom-message").TrimmedText().Should().Be("Preferred message");
             });
 
-            provider.Find("div.mud-dialog-title").TextContent.Should().NotContain("Ignored title");
+            provider.Find("div.mud-dialog-title").TextContent.Should().NotContain("Fallback title");
             provider.Find("div.mud-dialog-content").TextContent.Should().NotContain("Ignored message");
             provider.Find("div.mud-dialog-content").TextContent.Should().NotContain("Ignored markup");
 
