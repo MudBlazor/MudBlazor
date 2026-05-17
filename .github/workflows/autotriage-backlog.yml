@@ -2,7 +2,8 @@ name: AutoTriage (Backlog)
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 6 * * 1-6"
+    - cron: "0 6 * * 0"
   workflow_dispatch:
     inputs:
       issues:
@@ -23,12 +24,12 @@ on:
         description: "Enable context caching"
         type: boolean
         required: false
-        default: true
+        default: false
       extended:
         description: "Enable extended analysis"
         type: boolean
         required: false
-        default: true
+        default: false
       model-fast:
         description: "Fast model"
         type: string
@@ -76,9 +77,9 @@ jobs:
           issues: ${{ github.event.inputs.issues }}
           prompt-path: .github/AutoTriage.prompt
           dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
-          max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || 20 }}
-          context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || true }}
-          extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || true }}
+          max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || (github.event.schedule == '0 6 * * 0' && 100 || 20) }}
+          context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || github.event.schedule == '0 6 * * 0' }}
+          extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || github.event.schedule == '0 6 * * 0' }}
           model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-3.1-flash-lite' }}
           model-pro: ${{ github.event_name == 'workflow_dispatch' && inputs['model-pro'] || 'gemini-3-flash-preview' }}
           db-path: triage-db.json
