@@ -453,8 +453,8 @@ namespace MudBlazor.UnitTests.Components
                 capturedOptions = options;
             });
 
-            var titleContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<span class=\"custom-title\">Preferred title</span>"));
-            var messageContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<div class=\"custom-message\">Preferred message</div>"));
+            var titleContent = CreateMarkupFragment("custom-title", "Preferred title");
+            var messageContent = CreateMarkupFragment("custom-message", "Preferred message");
             var yesButton = CreateButtonFragment("custom-yes", "Yes");
             var noButton = CreateButtonFragment("custom-no", "No");
             var cancelButton = CreateButtonFragment("custom-cancel", "Cancel");
@@ -549,8 +549,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var provider = Context.Render<MudDialogProvider>();
 
-            var titleContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<span class=\"custom-title\">Preferred title</span>"));
-            var messageContent = (RenderFragment)(builder => builder.AddMarkupContent(0, "<div class=\"custom-message\">Preferred message</div>"));
+            var titleContent = CreateMarkupFragment("custom-title", "Preferred title");
+            var messageContent = CreateMarkupFragment("custom-message", "Preferred message");
 
             var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
                 .Add(x => x.Title, "Ignored title")
@@ -590,6 +590,12 @@ namespace MudBlazor.UnitTests.Components
             (await messageBoxTask).Should().Be(expectedResult);
         }
 
+        /// <summary>
+        /// Replaces the dialog service with a mock that returns a predefined result for <see cref="MudMessageBox"/> dialogs.
+        /// </summary>
+        /// <param name="dialogResult">The result returned from the mocked dialog reference.</param>
+        /// <param name="onShow">An optional callback used to inspect the title, parameters, and options passed to the dialog service.</param>
+        /// <returns>The configured dialog service mock.</returns>
         private Mock<IDialogService> CreateDialogServiceMock(DialogResult dialogResult, Action<string, DialogParameters, DialogOptions> onShow = null)
         {
             var dialogServiceMock = new Mock<IDialogService>();
@@ -607,6 +613,26 @@ namespace MudBlazor.UnitTests.Components
             return dialogServiceMock;
         }
 
+        /// <summary>
+        /// Creates a simple markup fragment with a CSS class and text content for title or message assertions.
+        /// </summary>
+        /// <param name="cssClass">The CSS class applied to the generated element.</param>
+        /// <param name="text">The text content rendered inside the element.</param>
+        /// <returns>A render fragment that outputs the requested markup.</returns>
+        private static RenderFragment CreateMarkupFragment(string cssClass, string text) => builder =>
+        {
+            builder.OpenElement(0, "span");
+            builder.AddAttribute(1, "class", cssClass);
+            builder.AddContent(2, text);
+            builder.CloseElement();
+        };
+
+        /// <summary>
+        /// Creates a <see cref="MudButton"/> fragment used to exercise custom MessageBox button rendering and activation.
+        /// </summary>
+        /// <param name="cssClass">The CSS class applied to the generated button.</param>
+        /// <param name="text">The button label.</param>
+        /// <returns>A render fragment that renders the requested button.</returns>
         private static RenderFragment CreateButtonFragment(string cssClass, string text) => builder =>
         {
             builder.OpenComponent<MudButton>(0);
