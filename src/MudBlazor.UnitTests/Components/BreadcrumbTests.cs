@@ -57,12 +57,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void MudBreadcrumbs_ShouldApplyClassStyleAndUserAttributesToOrderedList()
+        public void MudBreadcrumbs_ShouldApplyCustomClassToOrderedList()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
                 .Add(x => x.Class, "custom-breadcrumbs")
-                .Add(x => x.Style, "color: red;")
-                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["data-testid"] = "breadcrumbs" })
                 .Add(x => x.Items, new List<BreadcrumbItem>
                 {
                     new("Link 1", "link1"),
@@ -72,7 +70,35 @@ namespace MudBlazor.UnitTests.Components
             var list = comp.Find("ol.mud-breadcrumbs");
             list.ClassList.Should().Contain("mud-typography-body1");
             list.ClassList.Should().Contain("custom-breadcrumbs");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldApplyStyleToOrderedList()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Style, "color: red;")
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            var list = comp.Find("ol.mud-breadcrumbs");
             list.GetAttribute("style").Should().Be("color: red;");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldApplyUserAttributesToOrderedList()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["data-testid"] = "breadcrumbs" })
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            var list = comp.Find("ol.mud-breadcrumbs");
             list.GetAttribute("data-testid").Should().Be("breadcrumbs");
         }
 
