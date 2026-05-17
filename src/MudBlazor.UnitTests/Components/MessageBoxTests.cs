@@ -2,7 +2,9 @@
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MudBlazor.UnitTests.TestComponents.MessageBox;
 using Moq;
 using NUnit.Framework;
 
@@ -440,9 +442,9 @@ namespace MudBlazor.UnitTests.Components
                 CloseOnEscapeKey = true
             };
 
-            DialogParameters? capturedParameters = null;
-            string? capturedTitle = null;
-            DialogOptions? capturedOptions = null;
+            DialogParameters capturedParameters = null;
+            string capturedTitle = null;
+            DialogOptions capturedOptions = null;
 
             var dialogServiceMock = CreateDialogServiceMock(DialogResult.Ok(true), (title, parameters, options) =>
             {
@@ -522,23 +524,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void InlineMessageBox_VisibleParameter_Should_ShowAndCloseThroughDialogService()
+        public async Task InlineMessageBox_VisibleParameter_Should_OpenAndCloseTheDialog()
         {
-            var dialogServiceMock = CreateDialogServiceMock(DialogResult.Ok(true));
+            var provider = Context.Render<MudDialogProvider>();
+            var visibleStateTest = Context.Render<MessageBoxVisibleStateTest>();
 
-            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
-                .Add(x => x.Visible, false)
-            );
+            provider.Markup.Trim().Should().BeEmpty();
 
-            inlineMessageBox.SetParametersAndRender(parameters => parameters.Add(x => x.Visible, true));
+            await visibleStateTest.Find(".open-message-box").ClickAsync();
 
-            inlineMessageBox.WaitForAssertion(() =>
-                dialogServiceMock.Verify(x => x.ShowAsync<MudMessageBox>(null, It.IsAny<DialogParameters>(), null), Times.Once));
+            await provider.WaitForAssertionAsync(() =>
+                provider.Find(".mud-message-box").Should().NotBeNull());
 
-            inlineMessageBox.SetParametersAndRender(parameters => parameters.Add(x => x.Visible, false));
+            await visibleStateTest.Find(".close-message-box").ClickAsync();
 
-            inlineMessageBox.WaitForAssertion(() =>
-                dialogServiceMock.Verify(x => x.Close(It.IsAny<IDialogReference>()), Times.Once));
+            await provider.WaitForAssertionAsync(() =>
+                provider.Markup.Trim().Should().BeEmpty());
         }
 
         [TestCase(".custom-cancel", null)]
@@ -589,15 +590,15 @@ namespace MudBlazor.UnitTests.Components
             (await messageBoxTask).Should().Be(expectedResult);
         }
 
-        private Mock<IDialogService> CreateDialogServiceMock(DialogResult? dialogResult, Action<string?, DialogParameters, DialogOptions?>? onShow = null)
+        private Mock<IDialogService> CreateDialogServiceMock(DialogResult dialogResult, Action<string, DialogParameters, DialogOptions> onShow = null)
         {
             var dialogServiceMock = new Mock<IDialogService>();
             var dialogReference = new DialogReference(Guid.NewGuid(), dialogServiceMock.Object);
             dialogReference.Dismiss(dialogResult);
 
             dialogServiceMock
-                .Setup(x => x.ShowAsync<MudMessageBox>(It.IsAny<string?>(), It.IsAny<DialogParameters>(), It.IsAny<DialogOptions?>()))
-                .Callback<string?, DialogParameters, DialogOptions?>((title, parameters, options) => onShow?.Invoke(title, parameters, options))
+                .Setup(x => x.ShowAsync<MudMessageBox>(It.IsAny<string>(), It.IsAny<DialogParameters>(), It.IsAny<DialogOptions>()))
+                .Callback<string, DialogParameters, DialogOptions>((title, parameters, options) => onShow?.Invoke(title, parameters, options))
                 .ReturnsAsync(dialogReference);
 
             Context.Services.RemoveAll<IDialogService>();

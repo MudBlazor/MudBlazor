@@ -1,0 +1,12 @@
+<MudButton Class="open-message-box" OnClick="OpenMessageBox">Open</MudButton>
+<MudButton Class="close-message-box" OnClick="CloseMessageBox">Close</MudButton>
+
+<MudMessageBox @bind-Visible="_visible" Title="Visible title" Message="Visible message" />
+
+@code {
+    private bool _visible;
+
+    private void OpenMessageBox() => _visible = true;
+
+    private void CloseMessageBox() => _visible = false;
+}
