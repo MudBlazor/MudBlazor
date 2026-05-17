@@ -40,13 +40,22 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ContentAlignment.Should().Be(HorizontalAlignment.Start);
         }
 
-        [Test]
-        public void Alert_RTL_DefaultAlignment_ShouldRenderJustifyStart()
+        [TestCase(HorizontalAlignment.Start, false, "justify-start")]
+        [TestCase(HorizontalAlignment.Start, true, "justify-start")]
+        [TestCase(HorizontalAlignment.Right, false, "justify-end")]
+        [TestCase(HorizontalAlignment.Right, true, "justify-start")]
+        [TestCase(HorizontalAlignment.Left, false, "justify-start")]
+        [TestCase(HorizontalAlignment.Left, true, "justify-end")]
+        public void Alert_ContentAlignment_ShouldRenderExpectedJustification(HorizontalAlignment contentAlignment, bool rightToLeft, string expectedClass)
         {
-            var comp = Context.Render<MudAlert>(p => p.AddCascadingValue("RightToLeft", true));
+            var comp = Context.Render<MudAlert>(parameters =>
+            {
+                parameters.AddCascadingValue("RightToLeft", rightToLeft);
+                parameters.Add(x => x.ContentAlignment, contentAlignment);
+            });
+
             var positionDiv = comp.Find(".mud-alert-position");
-            positionDiv.ClassList.Should().Contain("justify-start");
-            positionDiv.ClassList.Should().NotContain("justify-end");
+            positionDiv.ClassList.Should().Contain(expectedClass);
         }
 
         [Test]
@@ -125,40 +134,5 @@ namespace MudBlazor.UnitTests.Components
             capturedArgs.ClientY.Should().Be(24);
         }
 
-        [Test]
-        public void Alert_RightAlignment_ShouldRenderJustifyEnd()
-        {
-            var comp = Context.Render<MudAlert>(parameters => parameters.Add(x => x.ContentAlignment, HorizontalAlignment.Right));
-
-            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-end");
-        }
-
-        [Test]
-        public void Alert_RTL_RightAlignment_ShouldRenderJustifyStart()
-        {
-            var comp = Context.Render<MudAlert>(parameters => parameters
-                .AddCascadingValue("RightToLeft", true)
-                .Add(x => x.ContentAlignment, HorizontalAlignment.Right));
-
-            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-start");
-        }
-
-        [Test]
-        public void Alert_LeftAlignment_ShouldRenderJustifyStart()
-        {
-            var comp = Context.Render<MudAlert>(parameters => parameters.Add(x => x.ContentAlignment, HorizontalAlignment.Left));
-
-            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-start");
-        }
-
-        [Test]
-        public void Alert_RTL_LeftAlignment_ShouldRenderJustifyEnd()
-        {
-            var comp = Context.Render<MudAlert>(parameters => parameters
-                .AddCascadingValue("RightToLeft", true)
-                .Add(x => x.ContentAlignment, HorizontalAlignment.Left));
-
-            comp.Find(".mud-alert-position").ClassList.Should().Contain("justify-end");
-        }
     }
 }
