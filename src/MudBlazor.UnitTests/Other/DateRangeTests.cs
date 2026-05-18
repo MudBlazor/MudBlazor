@@ -12,35 +12,6 @@ namespace MudBlazor.UnitTests.Other;
 [TestFixture]
 public class DateRangeTests
 {
-    // A simple reversible converter that round-trips DateTime? <-> string via ISO 8601.
-    private sealed class DateTimeConverter : IReversibleConverter<DateTime?, string?>
-    {
-        public string? Convert(DateTime? input) => input?.ToString("yyyy-MM-dd");
-
-        public DateTime? ConvertBack(string? input) =>
-            string.IsNullOrEmpty(input) ? null : DateTime.Parse(input);
-    }
-
-    // A converter whose ConvertBack always fails.
-    private sealed class FailingConverter : IReversibleConverter<DateTime?, string?>
-    {
-        public string? Convert(DateTime? input) => null;
-
-        public DateTime? ConvertBack(string? input) =>
-            throw new ConversionException("ERR", ["bad"]);
-    }
-
-    // A converter whose ConvertBack succeeds for null but fails for any non-null input.
-    private sealed class PartiallyFailingConverter : IReversibleConverter<DateTime?, string?>
-    {
-        public string? Convert(DateTime? input) => null;
-
-        public DateTime? ConvertBack(string? input) =>
-            string.IsNullOrEmpty(input) ? null : throw new ConversionException("ERR", ["bad"]);
-    }
-
-    // ── ToString(converter) ───────────────────────────────────────────────────
-
     [Test]
     public void ToString_NullStart_ReturnsEmptyString()
     {
@@ -65,8 +36,6 @@ public class DateRangeTests
         Assert.That(result, Does.Contain("2024-01-01").And.Contain("2024-06-01"));
     }
 
-    // ── ToIsoDateString() ─────────────────────────────────────────────────────
-
     [Test]
     public void ToIsoDateString_NullStart_ReturnsEmptyString()
     {
@@ -80,8 +49,6 @@ public class DateRangeTests
         var range = new DateRange(new DateTime(2024, 1, 1), null);
         Assert.That(range.ToIsoDateString(), Is.Empty);
     }
-
-    // ── TryParse(string, converter) ───────────────────────────────────────────
 
     [Test]
     public void TryParse_InvalidRangeFormat_ReturnsFalse()
@@ -99,8 +66,6 @@ public class DateRangeTests
         Assert.That(result, Is.Null);
     }
 
-    // ── TryParse(start, end, converter) ──────────────────────────────────────
-
     [Test]
     public void TryParse_EndParseFailure_ReturnsFalse()
     {
@@ -112,7 +77,6 @@ public class DateRangeTests
     [Test]
     public void TryParse_StartParseFailure_ReturnsFalse()
     {
-        // End succeeds (null → null), start throws.
         var ok = DateRange.TryParse("not-a-date", null, new PartiallyFailingConverter(), out var result);
         Assert.That(ok, Is.False);
         Assert.That(result, Is.Null);
@@ -127,8 +91,6 @@ public class DateRangeTests
         Assert.That(result!.Start, Is.EqualTo(new DateTime(2024, 1, 1)));
         Assert.That(result.End, Is.EqualTo(new DateTime(2024, 6, 1)));
     }
-
-    // ── Equality operators ────────────────────────────────────────────────────
 
     [Test]
     public void EqualityOperator_BothNull_ReturnsTrue()
@@ -171,8 +133,6 @@ public class DateRangeTests
         Assert.That(range.Equals(null), Is.False);
     }
 
-    // ── GetHashCode ───────────────────────────────────────────────────────────
-
     [Test]
     public void GetHashCode_EqualRanges_ReturnsSameHash()
     {
@@ -188,5 +148,38 @@ public class DateRangeTests
         var hash1 = range.GetHashCode();
         var hash2 = range.GetHashCode();
         Assert.That(hash1, Is.EqualTo(hash2));
+    }
+
+    /// <summary>
+    /// A simple reversible converter that round-trips DateTime? <-> string via ISO 8601.
+    /// </summary>
+    private sealed class DateTimeConverter : IReversibleConverter<DateTime?, string?>
+    {
+        public string? Convert(DateTime? input) => input?.ToString("yyyy-MM-dd");
+
+        public DateTime? ConvertBack(string? input) =>
+            string.IsNullOrEmpty(input) ? null : DateTime.Parse(input);
+    }
+
+    /// <summary>
+    /// A converter whose ConvertBack always fails.
+    /// </summary>
+    private sealed class FailingConverter : IReversibleConverter<DateTime?, string?>
+    {
+        public string? Convert(DateTime? input) => null;
+
+        public DateTime? ConvertBack(string? input) =>
+            throw new ConversionException("ERR", ["bad"]);
+    }
+
+    /// <summary>
+    /// A converter whose ConvertBack succeeds for null but fails for any non-null input.
+    /// </summary>
+    private sealed class PartiallyFailingConverter : IReversibleConverter<DateTime?, string?>
+    {
+        public string? Convert(DateTime? input) => null;
+
+        public DateTime? ConvertBack(string? input) =>
+            string.IsNullOrEmpty(input) ? null : throw new ConversionException("ERR", ["bad"]);
     }
 }
