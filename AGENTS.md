@@ -247,7 +247,7 @@ private Task ToggleAsync()
 - Keep tests isolated so they can run in parallel.
 - If a test modifies shared or static state, restore it in `[TearDown]`.
 - Use `[NonParallelizable]` only when isolation is not feasible.
-- Tests must not add fixed sleeps, blocking waits, polling waits, local wall-clock hang guards, or fire-and-forget async behavior. Use fake time, direct awaits, `TaskCompletionSource` gates, bUnit renderer waits, and framework-level cancellation instead.
+- Tests must not add fixed sleeps, blocking waits, polling waits, local wall-clock hang guards, or fire-and-forget async behavior. Disallowed patterns include `Task.Delay` as a sleep, `Thread.Sleep`, `.Wait()`, `.Result`, `GetAwaiter().GetResult()`, `WaitAsync(TimeSpan)`, `Task.WhenAny(..., Task.Delay(...))`, and `CatchAndLog` to drive assertions. Use fake time, direct awaits, `TaskCompletionSource` gates, bUnit renderer waits, and framework-level cancellation instead.
 - When an awaited gate could hang, use `[CancelAfter]` and await it with `TestContext.CurrentContext.CancellationToken`, such as `task.WaitAsync(TestContext.CurrentContext.CancellationToken)`.
 - In bUnit component tests, register fake time with `Context.AddFakeTimeProvider()` before rendering. In lower-level unit tests, pass `FakeTimeProvider` directly to the subject under test.
 
