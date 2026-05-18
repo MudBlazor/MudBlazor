@@ -18,6 +18,9 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MenuTests : BunitTest
     {
+        private static readonly MethodInfo PointerEnterAsyncMethod = GetRequiredMethod("PointerEnterAsync");
+        private static readonly MethodInfo PointerLeaveAsyncMethod = GetRequiredMethod("PointerLeaveAsync");
+
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -1174,26 +1177,23 @@ namespace MudBlazor.UnitTests.Components
             return timeProvider;
         }
 
-        private static void AdvanceTime(FakeTimeProvider timeProvider, int milliseconds)
-        {
-            timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds));
-        }
-
         private async Task AdvanceTimeAsync(FakeTimeProvider timeProvider, int milliseconds)
         {
-            AdvanceTime(timeProvider, milliseconds);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds));
             await Context.Renderer.Dispatcher.InvokeAsync(() => Task.CompletedTask);
         }
 
-        private Task InvokePointerEnterAsync(MudMenu menu) => InvokePointerEventAsync(menu, "PointerEnterAsync");
+        private Task InvokePointerEnterAsync(MudMenu menu) => InvokePointerEventAsync(menu, PointerEnterAsyncMethod);
 
-        private Task InvokePointerLeaveAsync(MudMenu menu) => InvokePointerEventAsync(menu, "PointerLeaveAsync");
+        private Task InvokePointerLeaveAsync(MudMenu menu) => InvokePointerEventAsync(menu, PointerLeaveAsyncMethod);
 
-        private Task InvokePointerEventAsync(MudMenu menu, string methodName)
+        private Task InvokePointerEventAsync(MudMenu menu, MethodInfo method)
             => Context.Renderer.Dispatcher.InvokeAsync(() =>
-                (Task)typeof(MudMenu)
-                    .GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance)!
-                    .Invoke(menu, new object[] { new PointerEventArgs() })!);
+                (Task)method.Invoke(menu, new object[] { new PointerEventArgs() })!);
+
+        private static MethodInfo GetRequiredMethod(string methodName)
+            => typeof(MudMenu).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance)
+               ?? throw new InvalidOperationException($"Expected MudMenu.{methodName}(PointerEventArgs) to exist.");
 
     }
 }
