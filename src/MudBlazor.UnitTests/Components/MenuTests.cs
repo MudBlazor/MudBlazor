@@ -133,16 +133,17 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuTestMouseOver>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
 
-            var pointerEnterTask = comp.Find("div.mud-menu").PointerEnterAsync();
+            var pointerEnterTask = InvokePointerEnterAsync(menu);
             comp.Markup.Should().NotContain("mud-popover-open");
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await pointerEnterTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
-            var pointerLeaveTask = comp.Find("div.mud-menu").PointerLeaveAsync();
+            var pointerLeaveTask = InvokePointerLeaveAsync(menu);
             comp.Markup.Should().Contain("mud-popover-open");
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await pointerLeaveTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
         }
@@ -153,22 +154,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuTestMouseOver>();
-
-            IElement Menu() => comp.Find(".mud-menu");
+            var menu = comp.FindComponent<MudMenu>().Instance;
             comp.Markup.Should().NotContain("mud-popover-open");
 
-            var firstEnterTask = Menu().PointerEnterAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            var firstEnterTask = InvokePointerEnterAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await firstEnterTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
-            var leaveTask = Menu().PointerLeaveAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            var leaveTask = InvokePointerLeaveAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await leaveTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
-            var secondEnterTask = Menu().PointerEnterAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            var secondEnterTask = InvokePointerEnterAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await secondEnterTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
         }
@@ -180,12 +180,9 @@ namespace MudBlazor.UnitTests.Components
             var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuTestMouseOver>();
             var menu = comp.FindComponent<MudMenu>().Instance;
-            IElement Menu() => comp.Find("div.mud-menu");
-            IElement MenuWrapper() => comp.Find("[data-testid='menu-wrapper']");
 
-            var enterTask = Menu().PointerEnterAsync();
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
-            await enterTask;
+            _ = InvokePointerEnterAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             await comp.Find("button.mud-button-root").ClickAsync();
@@ -194,17 +191,16 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button.mud-button-root").ClickAsync();
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            var menuLeaveTask = Menu().PointerLeaveAsync();
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
-            await menuLeaveTask;
+            _ = InvokePointerLeaveAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            await MenuWrapper().PointerEnterAsync(new PointerEventArgs());
+            _ = InvokePointerEnterAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            var wrapperLeaveTask = MenuWrapper().PointerLeaveAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
-            await wrapperLeaveTask;
+            _ = InvokePointerLeaveAsync(menu);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             await comp.Find("button.mud-button-root").ClickAsync();
@@ -707,27 +703,27 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuWithNestingTest>();
-            IElement MenuItem() => comp.Find("div.mud-menu:contains('1.3')");
+            MudMenu MenuItem() => comp.FindComponents<MudMenu>().Single(x => x.Instance.Label == "1.3").Instance;
 
             await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
-            var pointerEnterTask = MenuItem().PointerEnterAsync(new PointerEventArgs());
+            var pointerEnterTask = InvokePointerEnterAsync(MenuItem());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should not open immediately");
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay / 2);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay / 2);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should not open before hover delay");
 
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay - (MudGlobal.MenuDefaults.HoverDelay / 2));
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay - (MudGlobal.MenuDefaults.HoverDelay / 2));
             await pointerEnterTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should open after hover delay");
 
-            var pointerLeaveTask = MenuItem().PointerLeaveAsync(new PointerEventArgs());
+            var pointerLeaveTask = InvokePointerLeaveAsync(MenuItem());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should remain open immediately after pointer leave");
 
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay / 2);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay / 2);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should still be open before hide delay completes");
 
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay - (MudGlobal.MenuDefaults.HoverDelay / 2));
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay - (MudGlobal.MenuDefaults.HoverDelay / 2));
             await pointerLeaveTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should close after full hide delay (2x hover delay)");
         }
@@ -738,30 +734,30 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuWithNestingTest>();
-            IElement FirstLevelMenuItem() => comp.Find("div.mud-menu:contains('1.3')");
-            IElement SecondLevelMenuItem() => comp.Find("div.mud-menu:contains('2.1')");
+            MudMenu FirstLevelMenuItem() => comp.FindComponents<MudMenu>().Single(x => x.Instance.Label == "1.3").Instance;
+            MudMenu SecondLevelMenuItem() => comp.FindComponents<MudMenu>().Single(x => x.Instance.Label == "2.1").Instance;
 
             await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
-            var firstLevelEnterTask = FirstLevelMenuItem().PointerEnterAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            var firstLevelEnterTask = InvokePointerEnterAsync(FirstLevelMenuItem());
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await firstLevelEnterTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "First level submenu should be open");
 
-            var secondLevelEnterTask = SecondLevelMenuItem().PointerEnterAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            var secondLevelEnterTask = InvokePointerEnterAsync(SecondLevelMenuItem());
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await secondLevelEnterTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(3, "Second level submenu should be open");
 
-            var secondLevelLeaveTask = SecondLevelMenuItem().PointerLeaveAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
+            var secondLevelLeaveTask = InvokePointerLeaveAsync(SecondLevelMenuItem());
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
             await secondLevelLeaveTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2,
                 "Second level should close but first level should remain open");
 
-            var firstLevelLeaveTask = FirstLevelMenuItem().PointerLeaveAsync(new PointerEventArgs());
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
+            var firstLevelLeaveTask = InvokePointerLeaveAsync(FirstLevelMenuItem());
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
             await firstLevelLeaveTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1,
                 "First level should close but main menu should remain open");
@@ -773,41 +769,41 @@ namespace MudBlazor.UnitTests.Components
         {
             var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuWithNestingTest>();
-            IElement MenuItem() => comp.Find("div.mud-menu:contains('1.3')");
+            MudMenu MenuItem() => comp.FindComponents<MudMenu>().Single(x => x.Instance.Label == "1.3").Instance;
 
             await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
             var enterThenLeaveTasks = new List<Task>
             {
-                MenuItem().PointerEnterAsync(new PointerEventArgs())
+                InvokePointerEnterAsync(MenuItem())
             };
 
-            AdvanceTime(timeProvider, 50);
-            enterThenLeaveTasks.Add(MenuItem().PointerLeaveAsync(new PointerEventArgs()));
-            AdvanceTime(timeProvider, 50);
-            enterThenLeaveTasks.Add(MenuItem().PointerEnterAsync(new PointerEventArgs()));
-            AdvanceTime(timeProvider, 50);
-            enterThenLeaveTasks.Add(MenuItem().PointerLeaveAsync(new PointerEventArgs()));
-            AdvanceTime(timeProvider, 50);
-            enterThenLeaveTasks.Add(MenuItem().PointerEnterAsync(new PointerEventArgs()));
+            await AdvanceTimeAsync(timeProvider, 50);
+            enterThenLeaveTasks.Add(InvokePointerLeaveAsync(MenuItem()));
+            await AdvanceTimeAsync(timeProvider, 50);
+            enterThenLeaveTasks.Add(InvokePointerEnterAsync(MenuItem()));
+            await AdvanceTimeAsync(timeProvider, 50);
+            enterThenLeaveTasks.Add(InvokePointerLeaveAsync(MenuItem()));
+            await AdvanceTimeAsync(timeProvider, 50);
+            enterThenLeaveTasks.Add(InvokePointerEnterAsync(MenuItem()));
 
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
             await Task.WhenAll(enterThenLeaveTasks);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2,
                 "Menu should open after rapid movement ending with pointer enter");
 
             var leaveThenEnterTasks = new List<Task>
             {
-                MenuItem().PointerLeaveAsync(new PointerEventArgs())
+                InvokePointerLeaveAsync(MenuItem())
             };
 
-            AdvanceTime(timeProvider, 50);
-            leaveThenEnterTasks.Add(MenuItem().PointerEnterAsync(new PointerEventArgs()));
-            AdvanceTime(timeProvider, 50);
-            leaveThenEnterTasks.Add(MenuItem().PointerLeaveAsync(new PointerEventArgs()));
+            await AdvanceTimeAsync(timeProvider, 50);
+            leaveThenEnterTasks.Add(InvokePointerEnterAsync(MenuItem()));
+            await AdvanceTimeAsync(timeProvider, 50);
+            leaveThenEnterTasks.Add(InvokePointerLeaveAsync(MenuItem()));
 
-            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
+            await AdvanceTimeAsync(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
             await Task.WhenAll(leaveThenEnterTasks);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1,
                 "Menu should close after rapid movement ending with pointer leave");
@@ -1182,5 +1178,22 @@ namespace MudBlazor.UnitTests.Components
         {
             timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds));
         }
+
+        private async Task AdvanceTimeAsync(FakeTimeProvider timeProvider, int milliseconds)
+        {
+            AdvanceTime(timeProvider, milliseconds);
+            await Context.Renderer.Dispatcher.InvokeAsync(() => Task.CompletedTask);
+        }
+
+        private Task InvokePointerEnterAsync(MudMenu menu) => InvokePointerEventAsync(menu, "PointerEnterAsync");
+
+        private Task InvokePointerLeaveAsync(MudMenu menu) => InvokePointerEventAsync(menu, "PointerLeaveAsync");
+
+        private Task InvokePointerEventAsync(MudMenu menu, string methodName)
+            => Context.Renderer.Dispatcher.InvokeAsync(() =>
+                (Task)typeof(MudMenu)
+                    .GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .Invoke(menu, new object[] { new PointerEventArgs() })!);
+
     }
 }
