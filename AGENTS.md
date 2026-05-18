@@ -247,12 +247,15 @@ private Task ToggleAsync()
 - Keep tests isolated so they can run in parallel.
 - If a test modifies shared or static state, restore it in `[TearDown]`.
 - Use `[NonParallelizable]` only when isolation is not feasible.
-- Prefer `TimeProvider` or `FakeTimeProvider` over `Task.Delay`.
+- Tests must not add fixed sleeps, blocking waits, polling waits, local wall-clock hang guards, or fire-and-forget async behavior. Use fake time, direct awaits, `TaskCompletionSource` gates, bUnit renderer waits, and framework-level cancellation instead.
+- When an awaited gate could hang, use `[CancelAfter]` and await it with `TestContext.CurrentContext.CancellationToken`, such as `task.WaitAsync(TestContext.CurrentContext.CancellationToken)`.
+- In bUnit component tests, register fake time with `Context.AddFakeTimeProvider()` before rendering. In lower-level unit tests, pass `FakeTimeProvider` directly to the subject under test.
 
 ### bUnit rules
 - Never cache `Find()` or `FindAll()` results. Re-query after interactions.
 - Always use `InvokeAsync()` for parameter changes or method calls.
 - Prefer async interactions such as `ClickAsync`, `ChangeAsync`, `BlurAsync`, and `InputAsync` over sync methods.
+- For fake-time bUnit flows, dispatch the event, advance the fake time directly, and use bUnit renderer waits for render observation.
 
 ### Test locations and naming
 - Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.

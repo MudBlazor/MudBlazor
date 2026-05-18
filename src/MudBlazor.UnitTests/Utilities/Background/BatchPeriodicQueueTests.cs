@@ -45,7 +45,7 @@ public class BatchPeriodicQueueTests
         }
 
         timeProvider.Advance(period);
-        var processedItems = await batchCompletion.Task;
+        var processedItems = await batchCompletion.Task.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Assert
         processedItems.VerifyItemsMatch(expectedItems).Should().BeTrue();

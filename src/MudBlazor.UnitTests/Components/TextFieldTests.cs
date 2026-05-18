@@ -7,7 +7,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -174,6 +173,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInTextField()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
             var textField = comp.Instance;
             var input = comp.Find("input");
@@ -189,10 +189,11 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
-            await Task.Delay(100);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             textField.ReadValue.Should().BeNull();
 
             //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
         }
 
@@ -246,8 +247,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextField_Should_ValidatePendingValueImmediatelyWhenFormIsValidated()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedTextFieldFormValidationSyncTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1279,8 +1279,7 @@ namespace MudBlazor.UnitTests.Components
         [Ignore("Randomly fails under heavy loads.")]
         public async Task DebouncedTextFieldRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
@@ -1328,8 +1327,7 @@ namespace MudBlazor.UnitTests.Components
         [Ignore("Randomly fails under heavy loads.")]
         public async Task DebouncedTextFieldFormatChangeRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;

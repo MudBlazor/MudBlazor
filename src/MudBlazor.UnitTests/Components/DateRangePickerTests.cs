@@ -7,8 +7,6 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.Utilities;
@@ -743,8 +741,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CurrentDate_ShouldBeMarked()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
             var currentDate = timeProvider.GetLocalNow().Date;
             var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
@@ -765,8 +762,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DateRangePicker_CustomTimeProvider()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
 
             var comp = await OpenPicker();
