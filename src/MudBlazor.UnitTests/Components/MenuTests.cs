@@ -18,9 +18,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MenuTests : BunitTest
     {
-        private static readonly MethodInfo PointerEnterAsyncMethod = GetRequiredMethod("PointerEnterAsync");
-        private static readonly MethodInfo PointerLeaveAsyncMethod = GetRequiredMethod("PointerLeaveAsync");
-
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -1183,16 +1180,25 @@ namespace MudBlazor.UnitTests.Components
             await Context.Renderer.Dispatcher.InvokeAsync(() => Task.CompletedTask);
         }
 
-        private Task InvokePointerEnterAsync(MudMenu menu) => InvokePointerEventAsync(menu, PointerEnterAsyncMethod);
+        private Task InvokePointerEnterAsync(MudMenu menu) => InvokePointerEventAsync(menu, "PointerEnterAsync");
 
-        private Task InvokePointerLeaveAsync(MudMenu menu) => InvokePointerEventAsync(menu, PointerLeaveAsyncMethod);
+        private Task InvokePointerLeaveAsync(MudMenu menu) => InvokePointerEventAsync(menu, "PointerLeaveAsync");
 
-        private Task InvokePointerEventAsync(MudMenu menu, MethodInfo method)
+        private Task InvokePointerEventAsync(MudMenu menu, string methodName)
             => Context.Renderer.Dispatcher.InvokeAsync(() =>
-                (Task)method.Invoke(menu, new object[] { new PointerEventArgs() })!);
+            {
+                var result = GetRequiredMethod(methodName).Invoke(menu, new object[] { new PointerEventArgs() });
+                return result as Task
+                    ?? throw new InvalidOperationException($"Expected MudMenu.{methodName} to return a Task.");
+            });
 
         private static MethodInfo GetRequiredMethod(string methodName)
-            => typeof(MudMenu).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance)
+            => typeof(MudMenu).GetMethod(
+                   methodName,
+                   BindingFlags.NonPublic | BindingFlags.Instance,
+                   null,
+                   new[] { typeof(PointerEventArgs) },
+                   null)
                ?? throw new InvalidOperationException($"Expected MudMenu.{methodName}(PointerEventArgs) to exist.");
 
     }
