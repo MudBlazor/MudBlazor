@@ -7,6 +7,8 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
@@ -126,77 +128,86 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [CancelAfter(5000)]
         public async Task MouseOver_PointerLeave_ShouldClose()
         {
+            var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuTestMouseOver>();
 
-            // Briefly hover over the button and wait for it to open.
-            await comp.Find("div.mud-menu").PointerEnterAsync();
+            var pointerEnterTask = comp.Find("div.mud-menu").PointerEnterAsync();
+            comp.Markup.Should().NotContain("mud-popover-open");
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await pointerEnterTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
-            // Close it again and wait for that to happen.
-            await comp.Find("div.mud-menu").PointerLeaveAsync();
+            var pointerLeaveTask = comp.Find("div.mud-menu").PointerLeaveAsync();
+            comp.Markup.Should().Contain("mud-popover-open");
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await pointerLeaveTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
         }
 
         [Test]
+        [CancelAfter(5000)]
         public async Task MouseOver_Hover_ShouldOpenMenu()
         {
+            var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuTestMouseOver>();
 
             IElement Menu() => comp.Find(".mud-menu");
             comp.Markup.Should().NotContain("mud-popover-open");
 
-            // Pointer over to menu to open popover
-            await Menu().PointerEnterAsync(new PointerEventArgs());
+            var firstEnterTask = Menu().PointerEnterAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await firstEnterTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
 
-            // Popover open, captures pointer
-            await Menu().PointerLeaveAsync(new PointerEventArgs());
+            var leaveTask = Menu().PointerLeaveAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await leaveTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().NotContain("mud-popover-open"));
 
-            // Pointer moves to menu, still need to open
-            await Menu().PointerEnterAsync(new PointerEventArgs());
+            var secondEnterTask = Menu().PointerEnterAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await secondEnterTask;
             await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
         }
 
         [Test]
+        [CancelAfter(5000)]
         public async Task MouseOver_Click_ShouldKeepMenuOpen()
         {
-            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
+            var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuTestMouseOver>();
             var menu = comp.FindComponent<MudMenu>().Instance;
+            IElement Menu() => comp.Find("div.mud-menu");
+            IElement MenuWrapper() => comp.Find("[data-testid='menu-wrapper']");
 
-            // Enter opens the menu (after a delay).
-            await comp.Find("div.mud-menu").PointerEnterAsync();
+            var enterTask = Menu().PointerEnterAsync();
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await enterTask;
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            // Clicking the button should close the menu.
             await comp.Find("button.mud-button-root").ClickAsync();
-            // Check that the component is closed
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
 
-            // Clicking the button again should open the menu indefinitely.
             await comp.Find("button.mud-button-root").ClickAsync();
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            // Leaving the menu should no longer close it.
-            await comp.Find("div.mud-menu").PointerLeaveAsync();
-            await Task.Delay(hoverDelay + 100);
+            var menuLeaveTask = Menu().PointerLeaveAsync();
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await menuLeaveTask;
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            // Hover the list shouldn't change anything.
-            await comp.Find("[data-testid='menu-wrapper']").PointerEnterAsync(new PointerEventArgs());
+            await MenuWrapper().PointerEnterAsync(new PointerEventArgs());
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            // Leave the list shouldn't change anything.
-            await comp.Find("[data-testid='menu-wrapper']").PointerLeaveAsync(new PointerEventArgs());
-            await Task.Delay(hoverDelay + 100);
+            var wrapperLeaveTask = MenuWrapper().PointerLeaveAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await wrapperLeaveTask;
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
-            // Clicking the button should now close the menu.
             await comp.Find("button.mud-button-root").ClickAsync();
-            // Check that the component is closed
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
         }
 
@@ -691,122 +702,113 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [CancelAfter(5000)]
         public async Task Menu_PointerEvents_ShowHide_WithDebounce()
         {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
-
+            var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuWithNestingTest>();
+            IElement MenuItem() => comp.Find("div.mud-menu:contains('1.3')");
 
-            // Open the main menu first
             await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
-            // 1. Test SHOW debounce behavior
-            // Trigger pointer enter on submenu item
-            var menuItem = comp.Find("div.mud-menu:contains('1.3')");
-
-            // Immediately after hover, submenu should not be visible yet (debounce in effect)
-            menuItem.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
+            var pointerEnterTask = MenuItem().PointerEnterAsync(new PointerEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should not open immediately");
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay / 2);
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should not open before hover delay");
 
-            // After the hover delay, submenu should become visible
-            await Task.Delay(hoverDelay + 50);
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay - (MudGlobal.MenuDefaults.HoverDelay / 2));
+            await pointerEnterTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should open after hover delay");
 
-            // 2. Test HIDE debounce behavior
-
-            // Trigger pointer leave
-            menuItem.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-
-            // Immediately after leave, submenu should still be visible (hide debounce in effect)
+            var pointerLeaveTask = MenuItem().PointerLeaveAsync(new PointerEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should remain open immediately after pointer leave");
 
-            // Wait less than the delay
-            await Task.Delay(hoverDelay / 2);
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay / 2);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should still be open before hide delay completes");
 
-            // After the full delay, submenu should close
-            await Task.Delay(hoverDelay + 50);
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay - (MudGlobal.MenuDefaults.HoverDelay / 2));
+            await pointerLeaveTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should close after full hide delay (2x hover delay)");
         }
 
         [Test]
+        [CancelAfter(5000)]
         public async Task Menu_PointerEvents_MultipleLevels()
         {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
-
+            var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuWithNestingTest>();
+            IElement FirstLevelMenuItem() => comp.Find("div.mud-menu:contains('1.3')");
+            IElement SecondLevelMenuItem() => comp.Find("div.mud-menu:contains('2.1')");
 
-            // Open the main menu first
             await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
-            // Open first level submenu
-            var menuItem1 = comp.Find("div.mud-menu:contains('1.3')");
-            menuItem1.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(hoverDelay + 100);
+            var firstLevelEnterTask = FirstLevelMenuItem().PointerEnterAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await firstLevelEnterTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "First level submenu should be open");
 
-            // Open second level submenu
-            var menuItem2 = comp.Find("div.mud-menu:contains('2.1')");
-            menuItem2.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(hoverDelay + 100);
+            var secondLevelEnterTask = SecondLevelMenuItem().PointerEnterAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await secondLevelEnterTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(3, "Second level submenu should be open");
 
-            // Leaving second level should close only that level after delay
-            menuItem2.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay((hoverDelay * 2) + 100);
+            var secondLevelLeaveTask = SecondLevelMenuItem().PointerLeaveAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
+            await secondLevelLeaveTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2,
                 "Second level should close but first level should remain open");
 
-            // Leaving first level should close it after delay
-            menuItem1.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay((hoverDelay * 2) + 100);
+            var firstLevelLeaveTask = FirstLevelMenuItem().PointerLeaveAsync(new PointerEventArgs());
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
+            await firstLevelLeaveTask;
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1,
                 "First level should close but main menu should remain open");
         }
 
         [Test]
+        [CancelAfter(5000)]
         public async Task Menu_PointerEvents_RapidMovement()
         {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
-
+            var timeProvider = CreateFakeTimeProvider();
             var comp = Context.Render<MenuWithNestingTest>();
+            IElement MenuItem() => comp.Find("div.mud-menu:contains('1.3')");
 
-            // Open the main menu first
             await comp.Find("button:contains('1')").ClickAsync();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
 
-            var menuItem = comp.Find("div.mud-menu:contains('1.3')");
+            var enterThenLeaveTasks = new List<Task>
+            {
+                MenuItem().PointerEnterAsync(new PointerEventArgs())
+            };
 
-            // Simulate rapid mouse movement: enter -> leave -> enter -> leave -> enter
-            menuItem.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menuItem.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menuItem.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menuItem.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menuItem.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
+            AdvanceTime(timeProvider, 50);
+            enterThenLeaveTasks.Add(MenuItem().PointerLeaveAsync(new PointerEventArgs()));
+            AdvanceTime(timeProvider, 50);
+            enterThenLeaveTasks.Add(MenuItem().PointerEnterAsync(new PointerEventArgs()));
+            AdvanceTime(timeProvider, 50);
+            enterThenLeaveTasks.Add(MenuItem().PointerLeaveAsync(new PointerEventArgs()));
+            AdvanceTime(timeProvider, 50);
+            enterThenLeaveTasks.Add(MenuItem().PointerEnterAsync(new PointerEventArgs()));
 
-            // Final state should be "entering" so menu should open
-            await Task.Delay(hoverDelay + 50);
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay);
+            await Task.WhenAll(enterThenLeaveTasks);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2,
                 "Menu should open after rapid movement ending with pointer enter");
 
-            // Now rapid movement ending with leaving
-            menuItem.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menuItem.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menuItem.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
+            var leaveThenEnterTasks = new List<Task>
+            {
+                MenuItem().PointerLeaveAsync(new PointerEventArgs())
+            };
 
-            // Final state should be "leaving" so menu should close
-            await Task.Delay((hoverDelay * 2) + 50);
+            AdvanceTime(timeProvider, 50);
+            leaveThenEnterTasks.Add(MenuItem().PointerEnterAsync(new PointerEventArgs()));
+            AdvanceTime(timeProvider, 50);
+            leaveThenEnterTasks.Add(MenuItem().PointerLeaveAsync(new PointerEventArgs()));
+
+            AdvanceTime(timeProvider, MudGlobal.MenuDefaults.HoverDelay * 2);
+            await Task.WhenAll(leaveThenEnterTasks);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1,
                 "Menu should close after rapid movement ending with pointer leave");
         }
@@ -1167,6 +1169,18 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button:contains('1')").ClickAsync();
             var icon = comp.Find(".mud-menu-submenu-icon");
             icon.InnerHtml.Should().Contain("M14 7l-5 5 5 5V7z"); // ArrowLeft path
+        }
+
+        private FakeTimeProvider CreateFakeTimeProvider()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            return timeProvider;
+        }
+
+        private static void AdvanceTime(FakeTimeProvider timeProvider, int milliseconds)
+        {
+            timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds));
         }
     }
 }

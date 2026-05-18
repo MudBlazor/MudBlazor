@@ -14,9 +14,5 @@
 </ErrorBoundary>
 
 @code {
-    public async Task HandleClickAsync()
-    {
-        await Task.Delay(100);
-        throw new Exception("Something went wrong...");
-    }
+    public Task HandleClickAsync() => Task.FromException(new Exception("Something went wrong..."));
 }
