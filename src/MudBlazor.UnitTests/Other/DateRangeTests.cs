@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
@@ -16,16 +17,14 @@ public class DateRangeTests
     public void ToString_NullStart_ReturnsEmptyString()
     {
         var range = new DateRange(null, new DateTime(2024, 6, 1));
-        var result = range.ToString(new DateTimeConverter());
-        Assert.That(result, Is.Empty);
+        range.ToString(new DateTimeConverter()).Should().BeEmpty();
     }
 
     [Test]
     public void ToString_NullEnd_ReturnsEmptyString()
     {
         var range = new DateRange(new DateTime(2024, 1, 1), null);
-        var result = range.ToString(new DateTimeConverter());
-        Assert.That(result, Is.Empty);
+        range.ToString(new DateTimeConverter()).Should().BeEmpty();
     }
 
     [Test]
@@ -33,63 +32,63 @@ public class DateRangeTests
     {
         var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var result = range.ToString(new DateTimeConverter());
-        Assert.That(result, Does.Contain("2024-01-01").And.Contain("2024-06-01"));
+        result.Should().Contain("2024-01-01").And.Contain("2024-06-01");
     }
 
     [Test]
     public void ToIsoDateString_NullStart_ReturnsEmptyString()
     {
         var range = new DateRange(null, new DateTime(2024, 6, 1));
-        Assert.That(range.ToIsoDateString(), Is.Empty);
+        range.ToIsoDateString().Should().BeEmpty();
     }
 
     [Test]
     public void ToIsoDateString_NullEnd_ReturnsEmptyString()
     {
         var range = new DateRange(new DateTime(2024, 1, 1), null);
-        Assert.That(range.ToIsoDateString(), Is.Empty);
+        range.ToIsoDateString().Should().BeEmpty();
     }
 
     [Test]
     public void TryParse_InvalidRangeFormat_ReturnsFalse()
     {
         var ok = DateRange.TryParse("not-a-range", new DateTimeConverter(), out var result);
-        Assert.That(ok, Is.False);
-        Assert.That(result, Is.Null);
+        ok.Should().BeFalse();
+        result.Should().BeNull();
     }
 
     [Test]
     public void TryParse_NullValue_ReturnsFalse()
     {
         var ok = DateRange.TryParse((string?)null, new DateTimeConverter(), out var result);
-        Assert.That(ok, Is.False);
-        Assert.That(result, Is.Null);
+        ok.Should().BeFalse();
+        result.Should().BeNull();
     }
 
     [Test]
     public void TryParse_EndParseFailure_ReturnsFalse()
     {
         var ok = DateRange.TryParse("2024-01-01", "not-a-date", new FailingConverter(), out var result);
-        Assert.That(ok, Is.False);
-        Assert.That(result, Is.Null);
+        ok.Should().BeFalse();
+        result.Should().BeNull();
     }
 
     [Test]
     public void TryParse_StartParseFailure_ReturnsFalse()
     {
         var ok = DateRange.TryParse("not-a-date", null, new PartiallyFailingConverter(), out var result);
-        Assert.That(ok, Is.False);
-        Assert.That(result, Is.Null);
+        ok.Should().BeFalse();
+        result.Should().BeNull();
     }
 
     [Test]
     public void TryParse_BothValid_ReturnsTrue()
     {
         var ok = DateRange.TryParse("2024-01-01", "2024-06-01", new DateTimeConverter(), out var result);
-        Assert.That(ok, Is.True);
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result!.Start, Is.EqualTo(new DateTime(2024, 1, 1)));
-        Assert.That(result.End, Is.EqualTo(new DateTime(2024, 6, 1)));
+        ok.Should().BeTrue();
+        result.Should().NotBeNull();
+        result!.Start.Should().Be(new DateTime(2024, 1, 1));
+        result.End.Should().Be(new DateTime(2024, 6, 1));
     }
 
     [Test]
@@ -97,7 +96,7 @@ public class DateRangeTests
     {
         DateRange? a = null;
         DateRange? b = null;
-        Assert.That(a == b, Is.True);
+        (a == b).Should().BeTrue();
     }
 
     [Test]
@@ -105,8 +104,8 @@ public class DateRangeTests
     {
         var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         DateRange? b = null;
-        Assert.That(a == b, Is.False);
-        Assert.That(b == a, Is.False);
+        (a == b).Should().BeFalse();
+        (b == a).Should().BeFalse();
     }
 
     [Test]
@@ -114,7 +113,7 @@ public class DateRangeTests
     {
         var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var b = new DateRange(new DateTime(2023, 1, 1), new DateTime(2023, 6, 1));
-        Assert.That(a != b, Is.True);
+        (a != b).Should().BeTrue();
     }
 
     [Test]
@@ -122,15 +121,15 @@ public class DateRangeTests
     {
         var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var b = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        Assert.That(a != b, Is.False);
+        (a != b).Should().BeFalse();
     }
 
     [Test]
     public void Equals_NonDateRangeObject_ReturnsFalse()
     {
         var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        Assert.That(range.Equals("not a range"), Is.False);
-        Assert.That(range.Equals(null), Is.False);
+        range.Equals("not a range").Should().BeFalse();
+        range.Equals(null).Should().BeFalse();
     }
 
     [Test]
@@ -138,7 +137,7 @@ public class DateRangeTests
     {
         var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var b = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        Assert.That(a.GetHashCode(), Is.EqualTo(b.GetHashCode()));
+        a.GetHashCode().Should().Be(b.GetHashCode());
     }
 
     [Test]
@@ -147,7 +146,7 @@ public class DateRangeTests
         var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var hash1 = range.GetHashCode();
         var hash2 = range.GetHashCode();
-        Assert.That(hash1, Is.EqualTo(hash2));
+        hash1.Should().Be(hash2);
     }
 
     /// <summary>
