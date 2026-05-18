@@ -247,6 +247,24 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
+        public async Task InvokeAsyncWithErrorHandling_ShouldReturnFallbackValue_WhenUnsupportedJavaScriptRuntime()
+        {
+            // Arrange
+            var jsRuntime1 = new UnsupportedJavaScriptRuntime();
+            var jsRuntime2 = new RemoteJSRuntime();
+
+            // Act
+            var result1 = await jsRuntime1.InvokeAsyncWithErrorHandling("fallback1", "myMethod1", 42, "blub1");
+            var result2 = await jsRuntime2.InvokeAsyncWithErrorHandling("fallback2", "myMethod2", 43, "blub2");
+
+            // Assert
+            result1.success.Should().BeFalse();
+            result1.value.Should().Be("fallback1");
+            result2.success.Should().BeFalse();
+            result2.value.Should().Be("fallback2");
+        }
+
+        [Test]
         public async Task InvokeAsyncWithErrorHandling_WithToken_ShouldReturnFallbackValue_WhenUnsupportedJavaScriptRuntime()
         {
             // Arrange
