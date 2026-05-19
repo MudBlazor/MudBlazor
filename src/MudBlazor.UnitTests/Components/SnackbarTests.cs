@@ -693,9 +693,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PointerOverDoesNotRestartVisibleDuration()
         {
-            const int elapsedBeforeInteraction = 60;
-            const int remainingVisibleDuration = 40;
-
             // Set up the snackbar.
             await AddSnackbarAsync("ah, ah, ah, ah, stayin' alive", c =>
                 {
@@ -707,14 +704,17 @@ namespace MudBlazor.UnitTests.Components
 
             // Prove that the pointer entering the snackbar does not restart the duration from zero.
 
-            await AdvanceTimeAndRenderAsync(elapsedBeforeInteraction);
+            await AdvanceTimeAndRenderAsync(60);
             await _provider.Find(".mud-snackbar").PointerEnterAsync(new PointerEventArgs());
             await _provider.Find(".mud-snackbar").PointerLeaveAsync(new PointerEventArgs());
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TouchEnd();
 
-            await AdvanceTimeAndRenderAsync(remainingVisibleDuration - 1);
+            // Advance to just before the original 100 ms visible window expires.
+            await AdvanceTimeAndRenderAsync(39);
             AssertSnackbarCount(1);
+
+            // The final millisecond of the original window should close the snackbar.
             await AdvanceTimeAndRenderAsync(1);
             await WaitForSnackbarCountAsync(0);
         }
@@ -829,6 +829,9 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Adds a snackbar through the provider and returns the created instance.
         /// </summary>
+        /// <param name="message">The snackbar message to add.</param>
+        /// <param name="configure">The snackbar configuration callback.</param>
+        /// <returns>The created snackbar instance.</returns>
         private async Task<Snackbar> AddSnackbarAsync(string message, Action<SnackbarOptions> configure)
         {
             Snackbar snackbar = null;
@@ -840,6 +843,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Advances fake time for the current test and lets the snackbar renderer process timer callbacks.
         /// </summary>
+        /// <param name="milliseconds">The number of milliseconds to advance.</param>
         private async Task AdvanceTimeAndRenderAsync(int milliseconds)
         {
             await _provider.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds)));
@@ -848,6 +852,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Verifies the number of rendered snackbars.
         /// </summary>
+        /// <param name="expectedCount">The expected number of rendered snackbars.</param>
         private void AssertSnackbarCount(int expectedCount)
         {
             _provider.FindAll(".mud-snackbar").Count.Should().Be(expectedCount);
@@ -856,6 +861,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Waits until the rendered snackbar count matches the expected value.
         /// </summary>
+        /// <param name="expectedCount">The expected number of rendered snackbars.</param>
         private async Task WaitForSnackbarCountAsync(int expectedCount)
         {
             await _provider.WaitForAssertionAsync(() => AssertSnackbarCount(expectedCount));
@@ -864,6 +870,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Executes a close interaction and waits for the snackbar to be removed.
         /// </summary>
+        /// <param name="closeAction">The close interaction to execute.</param>
         private async Task CloseAndWaitForRemovalAsync(Func<Task> closeAction)
         {
             await closeAction();
