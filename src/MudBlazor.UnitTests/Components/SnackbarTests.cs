@@ -850,7 +850,8 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="milliseconds">The number of milliseconds to advance.</param>
         private async Task AdvanceTimeAndRenderAsync(int milliseconds)
         {
-            await _provider.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds)));
+            _timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds));
+            await _provider.InvokeAsync(() => Task.CompletedTask);
         }
 
         /// <summary>
@@ -868,7 +869,7 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="expectedCount">The expected number of rendered snackbars.</param>
         private async Task WaitForSnackbarCountAsync(int expectedCount)
         {
-            await _provider.WaitForAssertionAsync(() => AssertSnackbarCount(expectedCount));
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(expectedCount));
         }
 
         /// <summary>
