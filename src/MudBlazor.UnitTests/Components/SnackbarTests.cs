@@ -693,6 +693,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PointerOverDoesNotRestartVisibleDuration()
         {
+            const int elapsedBeforeInteraction = 60;
+            const int remainingVisibleDuration = 40;
+
             // Set up the snackbar.
             await AddSnackbarAsync("ah, ah, ah, ah, stayin' alive", c =>
                 {
@@ -704,13 +707,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Prove that the pointer entering the snackbar does not restart the duration from zero.
 
-            await AdvanceTimeAndRenderAsync(60);
+            await AdvanceTimeAndRenderAsync(elapsedBeforeInteraction);
             await _provider.Find(".mud-snackbar").PointerEnterAsync(new PointerEventArgs());
             await _provider.Find(".mud-snackbar").PointerLeaveAsync(new PointerEventArgs());
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TouchEnd();
 
-            await AdvanceTimeAndRenderAsync(39);
+            await AdvanceTimeAndRenderAsync(remainingVisibleDuration - 1);
             AssertSnackbarCount(1);
             await AdvanceTimeAndRenderAsync(1);
             await WaitForSnackbarCountAsync(0);
@@ -823,6 +826,9 @@ namespace MudBlazor.UnitTests.Components
             _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
         }
 
+        /// <summary>
+        /// Adds a snackbar through the provider and returns the created instance.
+        /// </summary>
         private async Task<Snackbar> AddSnackbarAsync(string message, Action<SnackbarOptions> configure)
         {
             Snackbar snackbar = null;
@@ -831,21 +837,33 @@ namespace MudBlazor.UnitTests.Components
             return snackbar;
         }
 
+        /// <summary>
+        /// Advances fake time for the current test and lets the snackbar renderer process timer callbacks.
+        /// </summary>
         private async Task AdvanceTimeAndRenderAsync(int milliseconds)
         {
             await _provider.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(milliseconds)));
         }
 
+        /// <summary>
+        /// Verifies the number of rendered snackbars.
+        /// </summary>
         private void AssertSnackbarCount(int expectedCount)
         {
             _provider.FindAll(".mud-snackbar").Count.Should().Be(expectedCount);
         }
 
+        /// <summary>
+        /// Waits until the rendered snackbar count matches the expected value.
+        /// </summary>
         private async Task WaitForSnackbarCountAsync(int expectedCount)
         {
             await _provider.WaitForAssertionAsync(() => AssertSnackbarCount(expectedCount));
         }
 
+        /// <summary>
+        /// Executes a close interaction and waits for the snackbar to be removed.
+        /// </summary>
         private async Task CloseAndWaitForRemovalAsync(Func<Task> closeAction)
         {
             await closeAction();
