@@ -710,7 +710,7 @@ namespace MudBlazor.UnitTests.Components
             _provider.Find(".mud-snackbar").TouchStart();
             _provider.Find(".mud-snackbar").TouchEnd();
 
-            // Advance to just before the original 100 ms visible window expires.
+            // Advance to 99 ms total elapsed time, just before the original 100 ms visible window expires.
             await AdvanceTimeAndRenderAsync(39);
             AssertSnackbarCount(1);
 
@@ -739,6 +739,8 @@ namespace MudBlazor.UnitTests.Components
                 });
 
             await _provider.Find(".mud-snackbar-action-button").ClickAsync();
+            snackbar.State.SnackbarState.Should().Be(SnackbarState.Hiding);
+            AssertSnackbarCount(1);
             await _provider.Find(".mud-snackbar-action-button").ClickAsync();
 
             successfulClicks.Should().Be(1);
@@ -767,6 +769,8 @@ namespace MudBlazor.UnitTests.Components
                 });
 
             await _provider.Find(".mud-snackbar").ClickAsync();
+            snackbar.State.SnackbarState.Should().Be(SnackbarState.Hiding);
+            AssertSnackbarCount(1);
             await _provider.Find(".mud-snackbar").ClickAsync();
 
             successfulClicks.Should().Be(1);
