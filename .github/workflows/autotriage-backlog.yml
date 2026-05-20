@@ -19,11 +19,6 @@ on:
         type: number
         required: false
         default: 20
-      context-caching:
-        description: "Enable context caching"
-        type: boolean
-        required: false
-        default: true
       extended:
         description: "Enable extended analysis"
         type: boolean
@@ -77,7 +72,6 @@ jobs:
           prompt-path: .github/AutoTriage.prompt
           dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
           max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || 20 }}
-          context-caching: ${{ github.event_name == 'workflow_dispatch' && inputs['context-caching'] || true }}
           extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || true }}
           model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-3.1-flash-lite' }}
           model-pro: ${{ github.event_name == 'workflow_dispatch' && inputs['model-pro'] || 'gemini-3.5-flash' }}
