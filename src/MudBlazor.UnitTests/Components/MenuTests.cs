@@ -14,23 +14,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class MenuTests : BunitTest
     {
-        private int _originalHoverDelay;
-
-        [SetUp]
-        public void StoreMenuDefaults()
-        {
-            _originalHoverDelay = MudGlobal.MenuDefaults.HoverDelay;
-        }
-
-        [TearDown]
-        public void RestoreMenuDefaults()
-        {
-            MudGlobal.MenuDefaults.HoverDelay = _originalHoverDelay;
-        }
-
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -178,8 +163,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MouseOver_Click_ShouldKeepMenuOpen()
         {
-            var hoverDelay = 200;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
+            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
             var comp = Context.Render<MenuTestMouseOver>();
             var menu = comp.FindComponent<MudMenu>().Instance;
 
@@ -710,9 +694,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Menu_PointerEvents_ShowHide_WithDebounce()
         {
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            // Set a predictable hover delay for testing
-            var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
+            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
 
             var comp = Context.Render<MenuWithNestingTest>();
 
@@ -753,9 +735,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Menu_PointerEvents_MultipleLevels()
         {
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            // Set a predictable hover delay for testing
-            var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
+            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
 
             var comp = Context.Render<MenuWithNestingTest>();
 
@@ -792,9 +772,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Menu_PointerEvents_RapidMovement()
         {
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            // Set a predictable hover delay for testing
-            var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
+            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
 
             var comp = Context.Render<MenuWithNestingTest>();
 

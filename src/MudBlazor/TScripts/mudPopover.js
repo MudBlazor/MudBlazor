@@ -511,14 +511,6 @@ window.mudpopoverHelper = {
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 
-                const effectiveClassListArray = selector && selector !== 'none'
-                    ? classListArray.map((className) => window.mudpopoverHelper.flipClassReplacements[selector]?.[className] || className)
-                    : classListArray;
-                const alignsHorizontallyToAnchor = effectiveClassListArray.some((className) =>
-                    className.startsWith('mud-popover-top-') || className.startsWith('mud-popover-bottom-'));
-                const alignsVerticallyToAnchor = effectiveClassListArray.some((className) =>
-                    className === 'mud-popover-center-left' || className === 'mud-popover-center-right');
-
                 if (isFlipOnOpen) { // store flip direction on open so it's not recalculated
                     if (!popoverContentNode.mudPopoverFliped) {
                         popoverContentNode.mudPopoverFliped = selector || 'none';
@@ -526,8 +518,7 @@ window.mudpopoverHelper = {
                 }
 
                 // ensure the left is inside bounds
-                if (!alignsHorizontallyToAnchor &&
-                    left + offsetX < window.mudpopoverHelper.overflowPadding && // it's starting left of the screen
+                if (left + offsetX < window.mudpopoverHelper.overflowPadding && // it's starting left of the screen
                     Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
                     left = window.mudpopoverHelper.overflowPadding;
                     // set offsetX to 0 to avoid double offset
@@ -535,8 +526,7 @@ window.mudpopoverHelper = {
                 }
 
                 // ensure the top is inside bounds
-                if (!alignsVerticallyToAnchor &&
-                    top + offsetY < window.mudpopoverHelper.overflowPadding && // it's starting above the screen
+                if (top + offsetY < window.mudpopoverHelper.overflowPadding && // it's starting above the screen
                     boundingRect.top >= 0 && // the popoverNode is still on screen
                     Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
                     top = window.mudpopoverHelper.overflowPadding;

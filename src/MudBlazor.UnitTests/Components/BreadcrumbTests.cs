@@ -57,6 +57,52 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudBreadcrumbs_ShouldApplyCustomClassToOrderedList()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Class, "custom-breadcrumbs")
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            var list = comp.Find("ol.mud-breadcrumbs");
+            list.ClassList.Should().Contain("mud-typography-body1");
+            list.ClassList.Should().Contain("custom-breadcrumbs");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldApplyStyleToOrderedList()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Style, "color: red;")
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            var list = comp.Find("ol.mud-breadcrumbs");
+            list.GetAttribute("style").Should().Be("color: red;");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldApplyUserAttributesToOrderedList()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["data-testid"] = "breadcrumbs" })
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            var list = comp.Find("ol.mud-breadcrumbs");
+            list.GetAttribute("data-testid").Should().Be("breadcrumbs");
+        }
+
+        [Test]
         public void MudBreadcrumbs_ShouldNotCollapseWhenItemCountEqualsMaxItems()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
@@ -91,6 +137,41 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(2);
             comp.FindAll("li.mud-breadcrumb-separator").Should().HaveCount(2);
             comp.Find("li.mud-breadcrumbs-expander").Should().NotBeNull();
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldRenderCustomExpanderIconWhenCollapsed()
+        {
+            var customExpanderIcon = Icons.Material.Filled.MoreHoriz;
+
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.MaxItems, (byte)2)
+                .Add(x => x.ExpanderIcon, customExpanderIcon)
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2"),
+                    new("Link 3", "link3")
+                }));
+
+            comp.Markup.Should().Contain(customExpanderIcon);
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldRenderCustomSeparatorTextWhenNoTemplateProvided()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Separator, ">")
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2"),
+                    new("Link 3", "link3")
+                }));
+
+            comp.FindAll("li.mud-breadcrumb-separator span")
+                .Should()
+                .OnlyContain(x => x.TextContent == ">");
         }
 
         [Test]
@@ -134,6 +215,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudBreadcrumbs_ShouldRenderDisabledItemsWithDisabledClass()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link 1", "link1"),
+                new("Link 2", "link2", disabled: true)
+            }));
+
+            comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(2);
+            comp.FindAll("li.mud-breadcrumb-item.mud-disabled").Should().ContainSingle();
+        }
+
+        [Test]
         public void MudBreadcrumbs_ShouldRenderHashHrefWhenItemHrefIsNull()
         {
             var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
@@ -142,6 +236,24 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             comp.Find("li.mud-breadcrumb-item > a").GetAttribute("href").Should().Be("#");
+        }
+
+        [Test]
+        public void BreadcrumbLink_ShouldRenderWithoutParentOrItem()
+        {
+            var comp = Context.Render<BreadcrumbLink>();
+
+            comp.Find("li.mud-breadcrumb-item > a").GetAttribute("href").Should().Be("#");
+            comp.Find("li.mud-breadcrumb-item").TextContent.Should().BeEmpty();
+            comp.FindAll("svg").Should().BeEmpty();
+        }
+
+        [Test]
+        public void BreadcrumbSeparator_ShouldRenderWithoutParent()
+        {
+            var comp = Context.Render<BreadcrumbSeparator>();
+
+            comp.Find("li.mud-breadcrumb-separator > span").TextContent.Should().BeEmpty();
         }
 
         [Test]

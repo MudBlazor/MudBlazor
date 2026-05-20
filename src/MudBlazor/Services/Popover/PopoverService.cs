@@ -71,7 +71,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         // Cache the token to avoid passing the CancellationTokenSource itself because it will throw once you access it after it's disposed
         _cancellationToken = _cancellationTokenSource.Token;
         _popoverJsInterop = new PopoverJsInterop(jsInterop);
-        _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay);
+        _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, timeProvider);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
     }
 

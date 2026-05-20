@@ -71,4 +71,20 @@ public class SnackbarServiceTests : BunitTest
         // Assert
         sut.ShownSnackbars.Should().ContainSingle().Which.SnackbarMessage.Text.Should().Be("Another message");
     }
+
+    [Test]
+    public void ShownSnackbars_ReturnsSnapshotWhenCollectionChanges()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        var sut = new SnackbarService(_navigationManager, timeProvider);
+        sut.Add("First message");
+
+        // Act
+        var snapshot = sut.ShownSnackbars;
+        sut.Add("Second message");
+
+        // Assert
+        snapshot.Select(x => x.SnackbarMessage.Text).Should().Equal("First message");
+    }
 }

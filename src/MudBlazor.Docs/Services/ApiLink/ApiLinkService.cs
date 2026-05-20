@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FuzzySharp;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -198,6 +197,8 @@ namespace MudBlazor.Docs.Services
                 }
             ];
 
+        private readonly ISearchService _searchService = new SearchService();
+
         public ApiLinkService(IMenuService menuService)
         {
             // TODO: Merge MenuService with ApiDocumentation.
@@ -214,52 +215,16 @@ namespace MudBlazor.Docs.Services
         public Task<IReadOnlyCollection<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-            {
                 return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>([]);
-            }
-
-            // Case is ignored.
-            text = text.ToLowerInvariant();
 
             // TODO: Merge ApiLinkServiceEntry _entries with DocumentedType ApiDocumentation.Types to combine both datasets efficiently.
-
-            // Calculate the ratios of all keywords to the search input.
-            var ratios = new Dictionary<ApiLinkServiceEntry, double>();
-            foreach (var (keyword, entry) in _entries)
-            {
-                var ratio = GetSearchMatchRatio(text, keyword);
-
-                // Assign the highest ratio so far to the entry.
-                if (ratios.TryGetValue(entry, out var highestRatio))
-                {
-                    if (ratio > highestRatio)
-                    {
-                        ratios[entry] = ratio;
-                    }
-                }
-                else
-                {
-                    ratios.Add(entry, ratio);
-                }
-            }
-
-            // Return the most accurate and highest quality results.
-            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(
-                ratios
-                .Where(x => x.Value > 65)
-                .OrderByDescending(x => x.Value)
-                .Select(x => x.Key)
-                .ToList()
-            );
+            return Task.FromResult<IReadOnlyCollection<ApiLinkServiceEntry>>(_searchService.Search(_entries.Values, e => e.Keywords, text));
         }
 
         /// <inheritdoc />
         public IReadOnlyCollection<ApiLinkServiceEntry> GetAllEntries()
         {
-            return _entries.Values
-                .Distinct()
-                .OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            return [.. _entries.Values.OrderBy(entry => entry.Title, StringComparer.OrdinalIgnoreCase)];
         }
 
         /// <inheritdoc />
@@ -269,37 +234,28 @@ namespace MudBlazor.Docs.Services
         }
 
         /// <summary>
-        /// Returns a value representing the match ratio of the search input to the keyword.
-        /// A higher ratio means a better match.
-        /// </summary>
-        /// <param name="search">The search query</param>
-        /// <param name="keyword">The keyword from an existing source</param>
-        private double GetSearchMatchRatio(string search, string keyword)
-        {
-            var ratio = Fuzz.Ratio(keyword, search);
-            var partialOutOfOrderRatio = Fuzz.PartialTokenSortRatio(keyword, search);
-            var averageRatio = (ratio + partialOutOfOrderRatio) / 2.0;
-
-            return averageRatio;
-        }
-
-        /// <summary>
         /// Adds the specified entry to the search index.
+        /// If an entry with the same link already exists, the new entry's keywords are merged into it.
         /// </summary>
         private void AddEntry(ApiLinkServiceEntry entry)
         {
-            AddKeyword(entry, entry.Title);
-            AddKeyword(entry, entry.SubTitle);
-            AddKeyword(entry, entry.ComponentName);
-            AddKeyword(entry, entry.Link);
+            var key = entry.Link.ToLowerInvariant();
+            if (!_entries.TryGetValue(key, out var stored))
+            {
+                stored = entry;
+                _entries[key] = entry;
+            }
+
+            AddKeyword(stored, entry.Title);
+            AddKeyword(stored, entry.SubTitle);
+            AddKeyword(stored, entry.ComponentName);
+            AddKeyword(stored, entry.Link);
         }
 
-        private void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
+        private static void AddKeyword(ApiLinkServiceEntry entry, string? keyword)
         {
             if (!string.IsNullOrWhiteSpace(keyword))
-            {
-                _entries[keyword.ToLowerInvariant()] = entry;
-            }
+                entry.Keywords.Add(keyword);
         }
 
         /// <inheritdoc />
@@ -352,6 +308,7 @@ namespace MudBlazor.Docs.Services
             {
                 if (entry.ComponentType is not null)
                 {
+                    RegisterAliasKeyword(entry.Link, entry.SubTitle);
                     continue;
                 }
 
@@ -372,12 +329,10 @@ namespace MudBlazor.Docs.Services
             }
         }
 
-        private void RegisterAliasKeyword(string link, string alias)
+        private void RegisterAliasKeyword(string link, string? alias)
         {
             if (_entries.TryGetValue(link.ToLowerInvariant(), out var entry))
-            {
                 AddKeyword(entry, alias);
-            }
         }
 
         /// <summary>

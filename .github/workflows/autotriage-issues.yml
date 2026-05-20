@@ -35,12 +35,12 @@ jobs:
             ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage issue
-        uses: danielchalmers/AutoTriage@v3
+        uses: danielchalmers/AutoTriage@v4
         with:
           issues: ${{ github.event.issue.number }}
           prompt-path: .github/AutoTriage.prompt
           model-fast: "" # skip fast pass
-          model-pro: gemini-3.1-pro-preview
+          model-pro: 'gemini-3.5-flash'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

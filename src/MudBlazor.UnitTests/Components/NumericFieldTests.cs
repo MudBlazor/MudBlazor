@@ -9,8 +9,6 @@ using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
@@ -944,8 +942,7 @@ namespace MudBlazor.UnitTests.Components
         [Ignore("Randomly fails or causes test-host hangs under heavy loads.")]
         public async Task DebouncedNumericFieldRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
@@ -993,8 +990,7 @@ namespace MudBlazor.UnitTests.Components
         [Ignore("Randomly fails or causes test-host hangs under heavy loads.")]
         public async Task DebouncedNumericFieldCultureChangeRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<NumericFieldCultureChangeTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;

@@ -77,17 +77,18 @@ dotnet tool restore --tool-manifest .config/dotnet-tools.json
 
 - For a single validation pass, prefer one filtered `dotnet test` command. This builds the component library plus the relevant test graph and runs the selected tests in one invocation.
 - Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
+- This repository uses Microsoft.Testing.Platform via `global.json`, so pass runner-specific options after `--` and prefer `--hangdump`/`--hangdump-timeout` instead of the older VSTest blame flags.
 
 ```bash
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-restore /p:SkipBunCompile=true --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
 ```
 
 - If you expect to run multiple filtered test commands against the same edits, build once and then reuse the outputs with `--no-build`:
 
 ```bash
 dotnet build src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true --nologo
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~MenuTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
-dotnet test src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --filter "FullyQualifiedName~PopoverTests" --no-build --no-restore --nologo --blame-hang --blame-hang-timeout 30s
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build --no-restore -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
+dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-build --no-restore -- --filter "FullyQualifiedName~PopoverTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
 ```
 
 ### Bun
@@ -113,12 +114,12 @@ dotnet format --no-restore
 
 ### Choose the smallest valid verification loop
 - For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
-- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test` against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
+- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test --project ... -- --filter ...` run against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
 - For component `.cs` or `.razor` changes that only need compile validation: build `src/MudBlazor/MudBlazor.csproj` with `/p:SkipBunCompile=true`.
 - For `TScripts` or `Styles`: run a normal scoped project build.
 - For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
-- For docs example or API-page changes that need parity with CI, run `dotnet test src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
-- For analyzer or code-fix changes: prefer a single filtered `dotnet test` from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
+- For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
+- For analyzer or code-fix changes: prefer a single filtered `dotnet test --project ... -- --filter ...` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
 - Prefer the narrowest relevant test filter over running an entire test project.
 - Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
 
@@ -244,14 +245,27 @@ private Task ToggleAsync()
 - Test logic rather than full HTML snapshots.
 - Prefer a fail-first workflow: add or update the test to fail for the target behavior before implementing the fix.
 - Keep tests isolated so they can run in parallel.
-- If a test modifies shared or static state, restore it in `[TearDown]`.
-- Use `[NonParallelizable]` only when isolation is not feasible.
-- Prefer `TimeProvider` or `FakeTimeProvider` over `Task.Delay`.
+- Async tests and async helpers must return `Task`, not `async void`.
+- Do not add mutable static state in tests or viewer test components.
+- If a test modifies shared or static state, restore it in `[TearDown]` and keep `[NonParallelizable]` until the shared-state dependency is removed.
+- Use `[NonParallelizable]` only when isolation is not feasible, and document the shared resource it protects.
+- Prefer fixed test data. Use random data only when randomness is the behavior under test or when the random source is seeded per test.
+- Prefer passing explicit culture into APIs or components. If a test must mutate culture, restore it and keep the test nonparallel until the mutation is removed.
+- Tests must not add fixed sleeps, sync-over-async waits, polling waits, local wall-clock hang guards, or fire-and-forget async behavior. Disallowed patterns include `Task.Delay` as a sleep, `Thread.Sleep`, blocking `Task`/`ValueTask` `.Wait()` or `.Result`, `GetAwaiter().GetResult()`, `WaitAsync(TimeSpan)`, `Task.WhenAny(..., Task.Delay(...))`, and `CatchAndLog` to drive assertions. Domain properties named `Result` are allowed. Use fake time, direct awaits, `TaskCompletionSource` gates, bUnit renderer waits, and framework-level cancellation instead.
+- Use `TaskCompletionSource` gates with `TaskCreationOptions.RunContinuationsAsynchronously`. When an awaited gate could hang, use `[CancelAfter]` and await it with `TestContext.CurrentContext.CancellationToken`, such as `task.WaitAsync(TestContext.CurrentContext.CancellationToken)`.
+- In bUnit component tests, register fake time with `Context.AddFakeTimeProvider()` before rendering. In lower-level unit tests, pass `FakeTimeProvider` directly to the subject under test.
+- Do not use `ConfigureAwait(false)` in bUnit component tests. Use it only in non-bUnit helper code when there is a specific context-free requirement.
+- In dialog tests, do not call `DialogService.ShowAsync` without rendering `MudDialogProvider` unless no-provider behavior is the subject of the test.
 
 ### bUnit rules
 - Never cache `Find()` or `FindAll()` results. Re-query after interactions.
 - Always use `InvokeAsync()` for parameter changes or method calls.
 - Prefer async interactions such as `ClickAsync`, `ChangeAsync`, `BlurAsync`, and `InputAsync` over sync methods.
+- Register or replace services before rendering the component or provider under test.
+- For fake-time bUnit flows, dispatch the event, advance the fake time directly, and use bUnit renderer waits for render observation.
+- Use `WaitForAssertion`, `WaitForState`, and `WaitForElement` only to observe renderer updates, not as timers. Custom wait timeouts should be rare and justified by the test scenario.
+- Prefer semantic assertions over broad markup assertions. Query specific elements, text, classes, ARIA attributes, or component state instead of asserting that the whole markup is empty or equal.
+- For JS interop behavior, prefer bUnit JSInterop or narrow recording fakes. Assert user-visible behavior first; if call counts matter, snapshot calls after initial render and assert only the delta caused by the action.
 
 ### Test locations and naming
 - Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.
@@ -259,6 +273,7 @@ private Task ToggleAsync()
 - Keep viewer test component file names at 40 characters or fewer. Prefer concise scenario names over long descriptive file names.
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
+- Viewer test components should expose explicit parameters, callbacks, or `TaskCompletionSource` gates for pending, loading, cancellation, or ordering flows instead of simulating latency with sleeps.
 - Test methods should be self-documenting and should not use XML documentation.
 - Helper methods in test classes should include XML documentation when they are non-trivial or reused.
 - When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
