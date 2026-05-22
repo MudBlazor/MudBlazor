@@ -98,22 +98,22 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 ### Step 3 — Compose the request comment
 - Post one concise checklist covering only the blocking items and requesting the minimum written context needed to make any links/visuals actionable.
 - You may add up to three optional suggestions prefaced with "It may help to include…" when they are directly relevant to this issue type.
-- Keep the tone neutral and collaborative; the goal is to accelerate maintainer review, not to flood the thread.
+- Keep the tone friendly, neutral, and collaborative; the goal is to accelerate maintainer review, not to flood the thread.
 
 ### Examples of helpful details (pick only what applies)
 - Bugs: brief written summary of the problem (required when only a link is provided), minimal reproduction (prefer `https://try.mudblazor.com/snippet/XXXX`), exact steps, expected vs. actual behavior, environment versions, last-known-good vs. first-broken release, relevant logs or visuals.
 - Visual/UI issues: screenshot or video plus written expected vs. actual behavior, browser/OS/zoom/DPI, theme or contrast settings, reproduction link/snippet.
 - Enhancements: problem statement and goal, why current behavior is insufficient, scope or constraints, comparable examples, related components, alternatives considered.
-- Pull Requests: explanation of what changed, why the change is needed, and the problem it resolves.
+- Pull Requests: explanation of what changed, why the change is needed, the problem it resolves, and for bug fixes, a linked issue, reproduction path, or test showing the bug.
 
 ### Missing Information Labeling
 
 Valid `needs:` labels and when to apply them:
 - `needs: changes`: A maintainer has asked for further modifications to be made to this pull request.
 - `needs: example`: A usage example is absent (e.g. reproduction link or code snippet) — logic is described but not shown.
-- `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes and rationale).
+- `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes, rationale, and linked context when needed).
 - `needs: tests`: A maintainer has explicitly asked for associated test cases to be added to this pull request.
-- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes.
+- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or visual changes. For PRs, static visual changes need screenshots and moving parts need video.
 
 Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
