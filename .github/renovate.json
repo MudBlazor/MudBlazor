@@ -11,10 +11,11 @@
         "dotnet-sdk"
     ],
     "labels": [
-        "dependency",
-        "build"
+        "dependency"
     ],
-    "commitMessagePrefix": "Build: ",
+    "commitMessagePrefix": "Dependency: ",
+    "commitMessageAction": "Update",
+    "commitMessageTopic": "{{depName}}",
     "vulnerabilityAlerts": {
         "enabled": true,
         "addLabels": [
@@ -25,6 +26,24 @@
         ]
     },
     "packageRules": [
+        {
+            "description": "Add tests label for dependency updates in test projects.",
+            "matchFileNames": [
+                "src/MudBlazor.UnitTests*/**/*.csproj"
+            ],
+            "addLabels": [
+                "tests"
+            ]
+        },
+        {
+            "description": "Add docs label for dependency updates in docs projects.",
+            "matchFileNames": [
+                "src/MudBlazor.Docs*/**/*.csproj"
+            ],
+            "addLabels": [
+                "docs"
+            ]
+        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"

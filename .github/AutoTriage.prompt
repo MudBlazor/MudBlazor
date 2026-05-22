@@ -43,6 +43,7 @@ Primary labels (apply best fit):
 
 Secondary labels (apply as many as needed; only when core focus):
 `accessibility`, `dependency`, `localization`, `security`, `performance`
+- Dependency update PRs should use the `dependency` label. Add `tests` as well when only test projects are updated, and add `docs` as well when only docs projects are updated.
 
 Environment Labels (apply at most one per category):
 `blazor: wasm`, `blazor: server`, `blazor: hybrid`, `browser: chromium`, `browser: safari`, `browser: firefox`, `device: mobile`
@@ -170,6 +171,7 @@ When NOT to edit:
 - Pull Requests Only:
   - Required shape: `<Prefix>: <concrete action + target/symptom>`.
   - Prefix selection order:
+    - Use `Dependency:` for dependency update PRs, including Renovate PRs that also carry `docs` or `tests` because the updated package is scoped to docs or test projects.
     - Use `Docs:`, `Tests:`, or `Build:` when that is the labeled primary focus.
     - Otherwise use the primary user-facing component/group being changed.
     - If a new helper component mainly supports an existing component workflow, keep the existing component as prefix (e.g. prefer `MudDropZone: Add custom drag handle support` over `MudDragHandle: Add new component`).

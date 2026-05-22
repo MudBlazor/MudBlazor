@@ -19,6 +19,4 @@ changelog:
           - build
           - docs
           - tests
-          - dependency
           - refactor
-          - performance
