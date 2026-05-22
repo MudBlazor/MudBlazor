@@ -111,9 +111,9 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 Valid `needs:` labels and when to apply them:
 - `needs: changes`: A maintainer has asked for further modifications to be made to this pull request.
 - `needs: example`: A usage example is absent (e.g. reproduction link or code snippet) — logic is described but not shown.
-- `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes, rationale, and linked context when needed).
+- `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes and rationale).
 - `needs: tests`: A maintainer has explicitly asked for associated test cases to be added to this pull request.
-- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or visual changes. For PRs, static visual changes need screenshots and moving parts need video.
+- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For PRs, static visual changes need screenshots and moving parts need video.
 
 Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
