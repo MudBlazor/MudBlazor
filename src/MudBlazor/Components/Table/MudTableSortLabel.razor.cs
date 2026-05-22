@@ -26,6 +26,12 @@ namespace MudBlazor
                 .AddClass("mud-direction-desc", _direction == SortDirection.Descending)
                 .Build();
 
+        protected string Stylename =>
+            new StyleBuilder()
+                .AddStyle("width", "100%", FullWidth)
+                .AddStyle(Style)
+                .Build();
+
         /// <summary>
         /// The current state of the <see cref="MudTable{T}"/> containing this sort label.
         /// </summary>
@@ -74,6 +80,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Expands this sort label to fill the available header width.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Sorting)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// The icon for the sort button.
