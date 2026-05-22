@@ -1,0 +1,46 @@
+﻿<MudTreeView T="string" Items="_treeItems" Virtualize="true" Height="@Height" MaxHeight="@MaxHeight">
+    <ItemTemplate>
+        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private readonly List<TreeItemData<string>> _treeItems = [];
+
+    [Parameter]
+    public string? Height { get; set; } = "200px";
+
+    [Parameter]
+    public string? MaxHeight { get; set; }
+
+    public IReadOnlyList<TreeItemData<string>> TreeItems => _treeItems;
+
+    protected override void OnInitialized()
+    {
+        _treeItems.Add(new TreeItemData<string>
+        {
+            Value = "Root",
+            Text = "Root",
+            Expanded = true,
+            Children =
+            [
+                new TreeItemData<string> { Value = "Child A", Text = "Child A" },
+                new TreeItemData<string>
+                {
+                    Value = "Child B",
+                    Text = "Child B",
+                    Children =
+                    [
+                        new TreeItemData<string> { Value = "Grandchild", Text = "Grandchild" }
+                    ]
+                }
+            ]
+        });
+
+        _treeItems.Add(new TreeItemData<string>
+        {
+            Value = "Other",
+            Text = "Other"
+        });
+    }
+}

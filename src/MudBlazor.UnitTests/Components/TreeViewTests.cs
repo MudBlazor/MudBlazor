@@ -712,6 +712,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewVirtualize_DataItems_UsesFlattenedVisibleItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+
+            var virtualize = comp.FindComponent<MudVirtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.Enabled.Should().BeTrue();
+            virtualize.Instance.Items.Should().NotBeNull();
+            virtualize.Instance.Items!.Select(x => x.Item.Value).Should().Equal("Root", "Child A", "Child B", "Other");
+            virtualize.Instance.Items!.Select(x => x.Depth).Should().Equal(0, 1, 1, 0);
+            comp.FindAll("li.mud-treeview-item")
+                .Select(x => x.GetAttribute("style") ?? string.Empty)
+                .Should()
+                .Contain(style => style.Contains("padding-inline-start:17px", StringComparison.Ordinal));
+            comp.FindAll("ul.mud-treeview-group").Should().BeEmpty();
+        }
+
+        [Test]
+        public void TreeViewVirtualize_DataItemsWithoutConstrainedHeight_UsesStandardRenderer()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Height, (string)null!));
+
+            comp.FindComponents<MudVirtualize<TreeViewItemContext<string>>>().Should().BeEmpty();
+            comp.FindAll("ul.mud-treeview-group").Should().NotBeEmpty();
+        }
+
+        [Test]
+        public void TreeViewVirtualize_DataItemsWithMaxHeight_UsesFlattenedVisibleItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Height, (string)null!)
+                .Add(x => x.MaxHeight, "200px"));
+
+            var virtualize = comp.FindComponent<MudVirtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.Enabled.Should().BeTrue();
+            virtualize.Instance.Items.Should().NotBeNull();
+            virtualize.Instance.Items!.Select(x => x.Item.Value).Should().Equal("Root", "Child A", "Child B", "Other");
+            virtualize.Instance.Items!.Select(x => x.Depth).Should().Equal(0, 1, 1, 0);
+        }
+
+        [Test]
         public async Task TreeViewServer()
         {
             var comp = Context.Render<TreeViewServerTest>();

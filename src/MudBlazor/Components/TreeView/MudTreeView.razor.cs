@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
@@ -179,6 +180,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// Renders only visible data items instead of all items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and only applies when <see cref="Items"/> and <see cref="ItemTemplate"/> are set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool Virtualize { get; set; }
 
         /// <summary>
         /// Sets a fixed height.
@@ -475,6 +486,43 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
             return SetSelectedValuesAsync(args.Value ?? Array.Empty<T>());
+        }
+
+        [MemberNotNullWhen(true, nameof(ItemTemplate), nameof(Items))]
+        private bool IsVirtualized =>
+            Virtualize
+            && ItemTemplate is not null
+            && Items is not null
+            && (!string.IsNullOrWhiteSpace(Height) || !string.IsNullOrWhiteSpace(MaxHeight));
+
+        private List<TreeViewItemContext<T>> GetVisibleItems()
+        {
+            var items = new List<TreeViewItemContext<T>>();
+
+            if (Items is not null)
+            {
+                AddVisibleItems(items, Items, 0);
+            }
+
+            return items;
+        }
+
+        private static void AddVisibleItems(List<TreeViewItemContext<T>> result, IEnumerable<ITreeItemData<T>> items, int depth)
+        {
+            foreach (var item in items)
+            {
+                if (!item.Visible)
+                {
+                    continue;
+                }
+
+                result.Add(new TreeViewItemContext<T>(item, depth));
+
+                if (item.Expanded && item.HasChildren)
+                {
+                    AddVisibleItems(result, item.Children, depth + 1);
+                }
+            }
         }
 
         private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)

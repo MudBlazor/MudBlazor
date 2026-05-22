@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
@@ -47,6 +48,12 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        protected string Stylename =>
+            new StyleBuilder()
+                .AddStyle("padding-inline-start", (CurrentItemDepth.GetValueOrDefault() * 17).ToString(CultureInfo.InvariantCulture) + "px", IsVirtualizedItem)
+                .AddStyle(Style)
+                .Build();
+
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
                 .AddClass("cursor-pointer", !GetDisabled() && (!GetReadOnly() || (GetExpandOnClick() && HasChildren())))
@@ -70,6 +77,11 @@ namespace MudBlazor
         // When the item comes from ItemTemplate, this links the component instance to its backing node object.
         [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
         private ITreeItemData<T>? CurrentItemData { get; set; }
+
+        [CascadingParameter(Name = MudTreeViewCascadingValues.ItemDepth)]
+        private int? CurrentItemDepth { get; set; }
+
+        private bool IsVirtualizedItem => CurrentItemDepth.HasValue;
 
         /// <summary>
         /// The value associated with this item.
