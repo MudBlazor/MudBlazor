@@ -2855,13 +2855,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TableSortLabelFullWidthAddsWidthStyle()
+        public void TableSortLabelFullWidthAddsFullWidthClass()
         {
             var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
                 .Add(p => p.FullWidth, true)
             );
 
-            comp.Find("span.mud-table-sort-label").GetAttribute("style").Should().Contain("width:100%");
+            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
         }
 
         private Mock<IScrollManager> _mockScrollManager = null!;

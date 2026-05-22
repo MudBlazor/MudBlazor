@@ -16,6 +16,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-table-sort-label")
                 .AddClass("mud-clickable", Enabled)
+                .AddClass("mud-table-sort-label-full-width", FullWidth)
                 .AddClass(Class)
                 .Build();
 
@@ -28,7 +29,6 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("width", "100%", FullWidth)
                 .AddStyle(Style)
                 .Build();
 
