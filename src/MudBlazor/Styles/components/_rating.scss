@@ -1,5 +1,7 @@
 .mud-rating-root {
   display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
   color: #ffb400;
 
   &:focus-visible, &:active {
