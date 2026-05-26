@@ -49,6 +49,7 @@ namespace MudBlazor
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private (double Top, double Left) _filtersMenuPosition = (0, 0);
         private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -1969,6 +1970,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2490,6 +2492,7 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus ?? FilterDefinitions.FirstOrDefault()?.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
