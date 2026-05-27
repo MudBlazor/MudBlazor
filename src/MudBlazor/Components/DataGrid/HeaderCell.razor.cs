@@ -535,6 +535,7 @@ namespace MudBlazor
         {
             Debug.Assert(DataGrid is not null);
             var filterDefinition = Column?.FilterContext.FilterDefinition;
+
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
             {
                 var filterDefinitionToFocus = DataGrid.FilterDefinitions
@@ -548,6 +549,12 @@ namespace MudBlazor
 
                 DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
                 DataGrid.OpenFilters(filterDefinitionToFocus.Id);
+            }
+            else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
+            {
+                _filtersMenuPosition = (args.PageY, args.PageX);
+                _filtersMenuVisible = true;
+                DataGrid.DropContainerHasChanged();
             }
         }
 

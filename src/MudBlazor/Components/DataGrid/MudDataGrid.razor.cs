@@ -2490,7 +2490,7 @@ namespace MudBlazor
         /// <summary>
         /// Opens the filter panel.
         /// </summary>
-        public void OpenFilters()
+        public void OpenFilters(Guid? filterDefinitionIdToFocus = null)
         {
             _filterDefinitionIdToFocus = filterDefinitionIdToFocus ?? FilterDefinitions.FirstOrDefault()?.Id;
             _filtersMenuVisible = true;
