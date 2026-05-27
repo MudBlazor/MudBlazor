@@ -2980,6 +2980,84 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_OpenFilters_WithFilterDefinitionId_SetsAutoFocusOnMatchingFilter()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam"
+            };
+
+            var ageFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 30
+            };
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(nameFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(ageFilterDefinition));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters(ageFilterDefinition.Id));
+
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(2);
+
+            var filterFieldSelects = comp.FindComponents<MudSelect<Column<DataGridFiltersTest.Model>>>()
+                .Where(x => x.Instance.Class == "filter-field")
+                .ToArray();
+
+            filterFieldSelects.Should().HaveCount(2);
+            filterFieldSelects.Count(x => x.Instance.AutoFocus).Should().Be(1);
+            filterFieldSelects[0].Instance.AutoFocus.Should().BeFalse();
+            filterFieldSelects[1].Instance.AutoFocus.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task DataGrid_OpenFilters_WithoutFilterDefinitionId_SetsAutoFocusOnFirstFilter()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam"
+            };
+
+            var ageFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.GetColumnByPropertyName("Age"),
+                Operator = FilterOperator.Number.GreaterThan,
+                Value = 30
+            };
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(nameFilterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(ageFilterDefinition));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(2);
+
+            var filterFieldSelects = comp.FindComponents<MudSelect<Column<DataGridFiltersTest.Model>>>()
+                .Where(x => x.Instance.Class == "filter-field")
+                .ToArray();
+
+            filterFieldSelects.Should().HaveCount(2);
+            filterFieldSelects.Count(x => x.Instance.AutoFocus).Should().Be(1);
+            filterFieldSelects[0].Instance.AutoFocus.Should().BeTrue();
+            filterFieldSelects[1].Instance.AutoFocus.Should().BeFalse();
+        }
+
+        [Test]
         public async Task DataGridCloseFilters()
         {
             var comp = Context.Render<DataGridFiltersTest>();

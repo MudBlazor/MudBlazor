@@ -149,23 +149,23 @@ else if (Column != null && !Column.HiddenState.Value)
         {
             <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose />
             <MudPopover UserAttributes="@PositionAttributes" Open="@_filtersMenuVisible" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup mud-popover-position-override">
-                            @if (Column.FilterTemplate != null)
-                            {
-                                @Column.FilterTemplate(Column.FilterContext)
-                            }
-                            else
-                            {
-                                <MudGrid>
-                                    <MudItem xs="12">
-                                        @DataGrid?.Filter(Column.FilterContext.FilterDefinition!, Column)
-                                    </MudItem>
-                                    <MudItem xs="12" Class="d-flex justify-end">
-                                        <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
-                                        <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">@Localizer[LanguageResource.MudDataGrid_Filter]</MudButton>
-                                    </MudItem>
-                                </MudGrid>
-                            }
-                </MudPopover>
+                @if (Column.FilterTemplate != null)
+                {
+                    @Column.FilterTemplate(Column.FilterContext)
+                }
+                else
+                {
+                    <MudGrid>
+                        <MudItem xs="12">
+                            @DataGrid?.Filter(Column.FilterContext.FilterDefinition!, Column)
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex justify-end">
+                            <MudButton Class="clear-filter-button" OnClick="@ClearFilterAsync">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
+                            <MudButton Class="apply-filter-button" Color="@Color.Primary" OnClick="@ApplyFilterAsync">@Localizer[LanguageResource.MudDataGrid_Filter]</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                }
+            </MudPopover>
         }
         </text>;
     }

@@ -561,6 +561,7 @@ namespace MudBlazor
         internal void OpenFilters(MouseEventArgs args)
         {
             Debug.Assert(DataGrid is not null);
+
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
             {
                 var filterDefinitionToFocus = DataGrid.FilterDefinitions
