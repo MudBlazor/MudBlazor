@@ -64,6 +64,7 @@
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover UserAttributes="@FiltersPositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;" MaxHeight="400">
+                                                <div @onkeydown="OnFiltersMenuKeyDownAsync">
                                                 @if (FilterTemplate == null)
                                                 {
                                                     <MudStack>
@@ -83,6 +84,7 @@
                                                 {
                                                     @FilterTemplate(this)
                                                 }
+                                                </div>
                                             </MudPopover>
                                         </th>
                                     </tr>

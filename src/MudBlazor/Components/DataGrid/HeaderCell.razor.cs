@@ -667,6 +667,13 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
+        private Task OnFiltersMenuKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key == "Escape"
+                ? CloseFilterAsync()
+                : Task.CompletedTask;
+        }
+
         /// <summary>
         /// Closes the filter UI owned by this header cell.
         /// </summary>
