@@ -3096,6 +3096,71 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSimpleFilterNonEscapeDoesNotCloseFiltersPanel()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await dataGrid.FindAll(".filter-button")[0].ClickAsync();
+
+            comp.FindAll(".filters-panel").Should().HaveCount(1);
+
+            var input = comp.Find(".filters-panel .filter-input input");
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".filters-panel").Should().HaveCount(1);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringEscapeOnPopupWrapperClosesFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+
+            comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+
+            var popupWrapper = comp.Find(".column-filter-popup").QuerySelector("div");
+            popupWrapper.Should().NotBeNull();
+
+            await popupWrapper!.KeyDownAsync(new KeyboardEventArgs
+            {
+                Key = "Escape",
+                Type = "keydown"
+            });
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringNonEscapeOnPopupWrapperDoesNotCloseFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+
+            await comp.Find(".filter-button").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            });
+
+            var popupWrapper = comp.Find(".column-filter-popup.mud-popover-open > div");
+
+            await popupWrapper.KeyDownAsync(new KeyboardEventArgs
+            {
+                Key = "Enter",
+                Type = "keydown"
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            });
+        }
+
+        [Test]
         public async Task DataGridFilters()
         {
             var comp = Context.Render<DataGridFiltersTest>();
