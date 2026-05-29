@@ -637,11 +637,21 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       }
 
       .mud-table-pagination-actions {
-        .mud-button-root:first-child {
+        // MudTablePager renders the navigation buttons as direct children.
+        > .mud-button-root:first-child {
           display: none;
         }
 
-        .mud-button-root:last-child {
+        > .mud-button-root:last-child {
+          display: none;
+        }
+
+        // MudDataGridPager renders the navigation buttons through MudPagination's list items.
+        .mud-pagination-item:first-child {
+          display: none;
+        }
+
+        .mud-pagination-item:last-child {
           display: none;
         }
       }
