@@ -50,6 +50,18 @@ namespace MudBlazor.UnitTests.Components
             label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
         }
 
+        [Test]
+        public void TextFieldLabelUsesTitleAttribute()
+        {
+            const string labelText = "A very long text field label";
+
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Label, labelText));
+
+            var label = comp.Find(".mud-input-label");
+            label.Attributes.GetNamedItem("title")?.Value.Should().Be(labelText);
+        }
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
