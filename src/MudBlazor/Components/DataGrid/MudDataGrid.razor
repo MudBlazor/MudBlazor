@@ -64,7 +64,6 @@
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover UserAttributes="@FiltersPositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;" MaxHeight="400">
-                                                <div @onkeydown="OnFiltersMenuKeyDownAsync">
                                                 @if (FilterTemplate == null)
                                                 {
                                                     <MudStack>
@@ -84,7 +83,6 @@
                                                 {
                                                     @FilterTemplate(this)
                                                 }
-                                                </div>
                                             </MudPopover>
                                         </th>
                                     </tr>
@@ -472,12 +470,12 @@
                             @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
                                 <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                              Immediate="true" Class="filter-input" />
+                                              Immediate="true" Class="filter-input" OnKeyDown="OnFiltersMenuKeyDownAsync" />
                             }
                             else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
                                 <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                                 Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
+                                                 Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" OnKeyDown="OnFiltersMenuKeyDownAsync" />
                             }
                             else if (fieldType.IsEnum)
                             {
@@ -517,7 +515,7 @@
                             else if (fieldType.IsGuid)
                             {
                                 <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                              Immediate="true" Class="filter-input"/>
+                                              Immediate="true" Class="filter-input" OnKeyDown="OnFiltersMenuKeyDownAsync" />
                             }
                         </MudItem>
                     }

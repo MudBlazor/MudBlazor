@@ -3131,6 +3131,7 @@ namespace MudBlazor.UnitTests.Components
 
             // click the Add Filter button in the filters panel to add a filter
             await comp.FindAll(".filters-panel > button")[0].ClickAsync();
+       
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
