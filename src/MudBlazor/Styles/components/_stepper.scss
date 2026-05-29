@@ -122,6 +122,8 @@
 
       > .mud-stepper-nav > .mud-step {
         flex-basis: 175px;
+        overflow: hidden;
+        min-width: 0;
       }
 
       > .mud-stepper-nav > .mud-step > .mud-step-label {
@@ -136,6 +138,14 @@
         .mud-step-label-content {
           margin-top: 12px;
           text-align: center;
+          min-width: 0;
+          overflow: hidden;
+
+          .mud-step-label-content-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
       }
 
