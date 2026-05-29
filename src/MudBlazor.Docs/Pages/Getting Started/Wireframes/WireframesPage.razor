@@ -1,0 +1,199 @@
+﻿@page "/getting-started/wireframes"
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Wireframes" SubTitle="These small templates, or as we call them, wireframes, can be copied directly from here or just be used for inspiration." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudText>These wireframes are designed to speed up the process of creating new projects and demonstrate different ways to work with MudBlazor components.</MudText>
+            <MudText>They are only a starting point and meant for you to build upon.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Main Layouts" />
+            <MudGrid Class="my-4">
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout1"))">
+                        <div class="wf-appbar wf-drawer-open-left rounded-tr">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-drawer rounded-l mud-elevation-1"></div>
+                        <div class="wf-content"></div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Drawer left + top appbar</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Layout1WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout2"))">
+                        <div class="wf-appbar rounded-tr">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-drawer rounded-l mud-elevation-1"></div>
+                        <div class="wf-content"></div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Top appbar with clipped drawer</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Layout2WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout3"))">
+                        <div class="wf-appbar rounded-tr">
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-content"></div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Appbar Only</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Layout3WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Custom Content" />
+            <MudGrid Class="my-4">
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/content1"))">
+                        <div class="wf-appbar wf-drawer-open-left rounded-tr">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-drawer rounded-l mud-elevation-1"></div>
+                        <div class="wf-content">
+                            <div class="d-flex mt-1">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="25px" />
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="25px" />
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="25px" />
+                            </div>
+                            <div class="d-flex my-2">
+                                <div>
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="124px" Height="25px" />
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 mt-1 rounded-sm" Width="124px" Height="25px" />
+                                </div>
+                                <div>
+                                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="124px" Height="100%" />
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="40px" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Dashboard Grid</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Content1WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/content2"))">
+                        <div class="wf-appbar rounded-tr">
+                            <MudSkeleton Height="12px" Width="50px" />
+                        </div>
+                        <div class="wf-content">
+                            <div class="d-flex justify-center mt-4">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="50px" Height="8px" />
+                            </div>
+                            <div class="d-flex justify-center mt-2">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="150px" Height="4px" />
+                            </div>
+                            <div class="d-flex justify-center mt-1">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="120px" Height="4px" />
+                            </div>
+                            <div class="d-flex mt-2 mx-12">
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="70px" />
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="70px" />
+                                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="70px" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Pricing</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Content2WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/content3"))">
+                        <div class="wf-appbar rounded-tr">
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-content">
+                            <div class="d-flex justify-center">
+                                <div class="d-flex mt-6">
+                                    <div class="mx-1">
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="50px" Height="8px" />
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 mt-1 rounded-sm" Width="150px" Height="8px" />
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 mt-1 rounded-sm" Width="150px" Height="8px" />
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 mt-1 rounded-sm" Width="150px" Height="8px" />
+                                        <div class="d-flex mt-1">
+                                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="8px" />
+                                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="8px" />
+                                        </div>
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 mt-1 rounded-sm" Width="150px" Height="8px" />
+                                        <div class="d-flex mt-1">
+                                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="8px" />
+                                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="8px" />
+                                        </div>
+                                        <div class="d-flex justify-center">
+                                            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 mt-3 rounded-sm" Width="50px" Height="8px" />
+                                        </div>
+                                    </div>
+                                    <div class="mx-1">
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="30px" Height="8px" />
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm mt-2" Width="50px" Height="80px" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Checkout</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Content3WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+    </DocsPageContent>
+    <MudOverlay Visible="visible" DarkBackground="true" ZIndex="9999" >
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            <MudPaper Class="docs-section-wireframe" Elevation="24">
+                <MudIconButton Class="close-button" Icon="@Icons.Material.Filled.Close" Color="Color.Secondary" OnClick="@(e => ToggleOverlay(false))"/>
+                <div class="wireframe-code-container">
+                    <SectionContent Code="@exampleCode"/>
+                </div>
+            </MudPaper>
+        </MudContainer>
+    </MudOverlay>
+</DocsPage>
+
+@code {
+    [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+
+    private bool visible;
+    private string exampleCode;
+
+    public void NavigateToWireFrame(string wireframe)
+    {
+        UriHelper.NavigateTo(wireframe);
+    }
+
+    public void ToggleOverlay(bool value, string code = null)
+    {
+        exampleCode = code;
+        visible = value;
+    }
+}

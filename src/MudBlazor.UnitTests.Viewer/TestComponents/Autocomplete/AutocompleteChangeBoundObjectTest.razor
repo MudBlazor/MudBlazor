@@ -1,0 +1,66 @@
+﻿<MudGrid>
+    <MudItem xs="12" sm="4">
+        <MudAutocomplete T="string" Label="US States" @bind-Value="@_activeStringHolder.StringValue" SearchFunc="@Search1"
+                         ResetValueOnEmptyText="@_resetValueOnEmptyText"
+                         CoerceText="@_coerceText" CoerceValue="@_coerceValue" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudButton Class="toggle-value-button" OnClick="@(()=>ToggleValue())" Variant="Variant.Outlined">Toggle Value</MudButton>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Change Bound Object Value of Autocomplete. Should display value of new/updated bound value";
+    private readonly bool _resetValueOnEmptyText = false;
+    private readonly bool _coerceText = true;
+    private readonly bool _coerceValue = true;
+
+    private readonly StringHolder _stringHolder1 = new() { StringValue = "Florida" };
+    private readonly StringHolder _stringHolder2 = new() { StringValue = "Georgia" };
+    private StringHolder _activeStringHolder = null!;
+    private readonly string[] _states =
+    [
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
+
+    private sealed class StringHolder
+    {
+        public string? StringValue { get; set; }
+    }
+
+    private void ToggleValue()
+    {
+        _activeStringHolder = _activeStringHolder.Equals(_stringHolder1) ? _stringHolder2 : _stringHolder1;
+        
+        StateHasChanged();
+    }
+
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    protected override void OnInitialized()
+    {
+        _activeStringHolder = _stringHolder1;
+    }
+}

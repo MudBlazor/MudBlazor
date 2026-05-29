@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" ApplyDropClassesOnDragStarted="_applyDropClassesOnDragStarted" ItemsSelector="@((item,dropzone) => item.Place == dropzone)" CanDropClass="mud-border-success" NoDropClass="mud-border-error" ItemDropped="ItemUpdated" Class="d-flex flex-column flex-grow-1">
+    <ChildContent>
+        <div class="d-flex flex-wrap justify-space-between">
+            <MudDropZone T="DropItem" Identifier="Fridge" CanDrop="@((item) => false)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8">
+                <MudText Typo="Typo.h6" Class="mb-4">Fridge</MudText>
+            </MudDropZone>
+            <MudDropZone T="DropItem" Identifier="Dinner" CanDrop="@((item) => item.IsPicked == false && item.IsRotten == false)" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-6 ma-8 flex-grow-1">
+                <MudText Typo="Typo.h6" Class="mb-4">Soup</MudText>
+            </MudDropZone>
+            <MudDropZone T="DropItem" Identifier="Trash" CanDrop="@((item) => item.IsPicked == false && item.IsRotten == true)" Class="rounded-lg border-2 border-dashed mud-border-lines-default pa-6 ma-8 flex-grow-1">
+                <MudText Typo="Typo.h6" Class="mb-4">Trash</MudText>
+            </MudDropZone>
+        </div>
+        <MudToolBar>
+            <MudCheckBox @bind-Value="_applyDropClassesOnDragStarted" Label="Apply Drop Classes On Drag Started" />
+            <MudSpacer/>
+            <MudButton OnClick="Reset">Reset</MudButton>
+        </MudToolBar>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Height="54px" Width="54px" Class="pa-2" Elevation="0">
+            <MudBadge Visible="@(context.IsRotten ? true : false)" Overlap="true" Icon="@Icons.Custom.Uncategorized.Bacteria" Color="Color.Dark">
+                <MudIcon Icon="@context.Icon" Color="@context.Color" Size="Size.Large"/>
+            </MudBadge>
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+	private bool _applyDropClassesOnDragStarted = false;
+
+	private void Reset()
+	{
+		foreach (var item in _items)
+		{
+			item.Place = "Fridge";
+			item.IsPicked = false;
+		}
+	}
+
+	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+	{
+		dropItem.Item.IsPicked = true;
+		dropItem.Item.Place = dropItem.DropzoneIdentifier;
+	}
+
+	private List<DropItem> _items = new()
+		{
+			new DropItem() { Icon = @Icons.Custom.Uncategorized.FoodApple, Color = Color.Error, IsRotten = false, Place = "Fridge" },
+		    new DropItem() { Icon = @Icons.Custom.Uncategorized.Baguette, Color = Color.Warning, IsRotten = false, Place = "Fridge" },
+		    new DropItem() { Icon = @Icons.Custom.Uncategorized.Sausage, Color = Color.Secondary, IsRotten = true, Place = "Fridge" },
+		    new DropItem() { Icon = @Icons.Custom.Uncategorized.WaterMelon, Color = Color.Success, IsRotten = false, Place = "Fridge" },
+		    new DropItem() { Icon = @Icons.Custom.Uncategorized.Fish, Color = Color.Info, IsRotten = true, Place = "Fridge" },
+		};
+
+	public class DropItem
+	{
+		public string Icon { get; init; }
+	    public Color Color { get; init; }
+	    public bool IsRotten { get; set; }
+		public bool IsPicked { get; set; }
+		public string Place { get; set; }
+	}
+}

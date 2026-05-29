@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@mask1" Label="MAC Address"  HelperText="@mask1.Mask"
+                      @bind-Value="mac1"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@mask2" Label="MAC with Placeholder" HelperText="@mask2.Mask"
+                      @bind-Value="mac2"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        MAC Address: <b>@mac1</b>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        Cleaned MAC Address: <b>@mac2</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string mac1, mac2;
+
+    public PatternMask mask1 = new PatternMask("##:##:##:##:##:##") { 
+        MaskChars = new[] { new MaskChar('#', @"[0-9a-fA-F]") } 
+    };
+
+    public PatternMask mask2 = new PatternMask("XX-XX-XX-XX-XX-XX") { 
+        MaskChars = new[] { new MaskChar('X', @"[0-9a-fA-F]") },
+        Placeholder = '_',
+        CleanDelimiters = true,
+        Transformation = AllUpperCase
+    };
+    
+    // transform lower-case chars into upper-case chars
+    private static char AllUpperCase(char c) => c.ToString().ToUpperInvariant()[0];
+
+}

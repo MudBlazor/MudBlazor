@@ -1,0 +1,79 @@
+﻿@namespace MudBlazor.Docs.Wireframes
+@layout WireframeContentLayout2
+@page "/getting-started/wireframes/content3"
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Checkout</MudText>
+    <MudGrid Spacing="12" Class="mt-16">
+        <MudItem xs="7">
+            <MudText Typo="Typo.h5" GutterBottom="true">Billing address</MudText>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Email" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Mobile number" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Personal number" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" Label="First name" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" Label="Last name" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField T="string" Label="Address" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" Label="Postal code" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTextField T="string" Label="Postal Area" />
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudButton Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" Size="Size.Large" Class="mt-8">Continue to Payment</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="5">
+            <MudText Typo="Typo.h5" GutterBottom="true">Cart</MudText>
+            <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
+                <MudList T="string">
+                    <MudListItem Icon="@Icons.Material.Filled.ContentCut">
+                        <div class="d-flex">
+                            <MudText>Scissor - Big</MudText>
+                            <MudText HtmlTag="span" Class="ml-auto">$5</MudText>
+                        </div>
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.AirplanemodeActive">
+                        <div class="d-flex">
+                            <MudText>Model Airplane</MudText>
+                            <MudText Class="ml-auto">$20</MudText>
+                        </div>
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Create">
+                        <div class="d-flex">
+                            <MudText>Plastic Glue</MudText>
+                            <MudText Class="ml-auto">$12</MudText>
+                        </div>
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.ColorLens">
+                        <div class="d-flex">
+                            <MudText>Color set - Modern planes</MudText>
+                            <MudText Class="ml-auto">$16</MudText>
+                        </div>
+                    </MudListItem>
+                </MudList>
+                <div class="mt-auto">
+                    <MudDivider />
+                    <div class="d-flex pa-4">
+                        <MudText>Total:</MudText>
+                        <MudText Class="ml-auto"><b>$53</b></MudText>
+                    </div>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

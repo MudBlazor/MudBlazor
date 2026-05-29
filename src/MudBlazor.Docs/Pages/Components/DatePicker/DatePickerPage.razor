@@ -1,0 +1,257 @@
+﻿@page "/components/datepicker"
+
+<DocsPage>
+    <DocsPageHeader Title="Date Picker" Component="@nameof(MudDatePicker)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Date</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerBasicUsageExample)" ShowCode="false">
+                <DatePickerBasicUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Input Masking">
+                <Description>
+                    By setting the <CodeInline>Mask</CodeInline> parameter, an editable DatePicker can be used with any suitable
+                    <MudLink Href="/features/masking">input mask</MudLink>, preferably a <CodeInline>DateMask</CodeInline> which
+                    has built-in date awareness. But other masks like <CodeInline>PatternMask</CodeInline> will work as well, even
+                    if they allow to input invalid dates. Make sure the <CodeInline>DateFormat</CodeInline> fits the mask!
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerMaskExample)" ShowCode="false">
+                <DatePickerMaskExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Text Parsing">
+                <Description>
+                    By setting the <CodeInline>ImmediateText</CodeInline> parameter to true, an editable DatePicker's <CodeInline>Date</CodeInline> can be
+                    set manually by parsing the user's text as they type.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerTextParseExample)" ShowCode="false" FullWidth="false">
+                <DatePickerTextParseExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Read Only">
+                <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerReadOnlyExample)" ShowCode="false" FullWidth="false">
+                <DatePickerReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disable or customize days">
+                <Description>
+                    By setting the <CodeInline>IsDateDisabledFunc</CodeInline> parameter, it's possible to disable specific days and
+                    by setting the <CodeInline>AdditionalDateClassesFunc</CodeInline> parameter it's possible to apply a custom class to specific days.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerDisableCustomizeDaysExample)" ShowCode="false" FullWidth="false">
+                <DatePickerDisableCustomizeDaysExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Action Buttons">
+                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerActionButtonsExample)" ShowCode="false">
+                <DatePickerActionButtonsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Internationalization">
+                <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DatePicker will use culture-specific month names, weekday names and even different calendars.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerInternationalizationExample)" ShowCode="false">
+                <DatePickerInternationalizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dialog Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerDialogExample)">
+                <DatePickerDialogExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Static Mode">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DatePickerStaticExample)">
+                <DatePickerStaticExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Different views">
+                <Description>By default, it opens to Date, but can be set to Year or Month.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerViewsExample)">
+                <DatePickerViewsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Colors">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(DatePickerColorExample)">
+                <DatePickerColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Elevation">
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DatePickerElevationExample)">
+                <DatePickerElevationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Go To Date">
+                <Description>
+                    <CodeInline>GoToDate</CodeInline> method helps to control the component programmatically. With <CodeInline>GoToDate</CodeInline>, users can navigate between dates with or without submitting. Works with all picker variants.
+                    <br />
+                    This example shows the possible usage of <CodeInline>GoToDate</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerGoToDateExample)" DarkenBackground="true" ShowCode="false">
+                <DatePickerGoToDateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fixed Values Usage">
+                <Description>
+                    You can set fixed values for day, month or year via <CodeInline>FixDay</CodeInline>, <CodeInline>FixMonth</CodeInline> and <CodeInline>FixYear</CodeInline>, default value is null for all of them.
+                    This in combination with the <CodeInline>OpenTo</CodeInline> parameter allows for Year-Month Pickers, where the user only selects those two values or Month-Day Pickers where the year is already given.
+                    This changes the behaviour of the picker so only views that can be set are displayed.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerFixedValuesExample)" ShowCode="false">
+                <DatePickerFixedValuesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Range Picker Usage">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DateRangePickerUsageExample)" ShowCode="false">
+                <DateRangePickerUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    <MudText Class="mb-2">
+                        Interacting with the <CodeInline>MudDatePicker</CodeInline> accepts the following keyboard shortcuts:
+                    </MudText>
+                    <MudSimpleTable Outlined="true"
+                                    Hover="true">
+                        <thead>
+                        <tr>
+                            <th>Keys</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <CodeInline>Enter</CodeInline>
+                            </td>
+                            <td>Opens picker or submit value from picker</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Space</CodeInline>
+                            </td>
+                            <td>Opens picker</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Backspace</CodeInline>
+                            </td>
+                            <td>Go back to previous view or closes picker without submitting value</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Escape</CodeInline>
+                            </td>
+                            <td>Closes picker without submitting value</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>ArrowLeft</CodeInline>
+                            </td>
+                            <td>Decrement month/date in respective view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>ArrowRight</CodeInline>
+                            </td>
+                            <td>Increment month/date in respective view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>ArrowUp</CodeInline>
+                            </td>
+                            <td>Decrement year in year view<br/>Move to date/month by row up in respective view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>ArrowDown</CodeInline>
+                            </td>
+                            <td>Increment year in year view<br/>Move to date/month by row down in respective view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Shift+ArrowLeft</CodeInline>
+                            </td>
+                            <td>Decrement month in date/month view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Shift+ArrowRight</CodeInline>
+                            </td>
+                            <td>Increment month in date view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Shift+ArrowUp</CodeInline>
+                            </td>
+                            <td>Decrement year in month/date view</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Shift+ArrowDown</CodeInline>
+                            </td>
+                            <td>Increment year in month/date view</td>
+                        </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

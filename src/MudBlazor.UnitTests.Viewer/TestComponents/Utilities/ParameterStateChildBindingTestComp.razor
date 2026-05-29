@@ -1,0 +1,9 @@
+﻿@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<MudButton id="@($"childBtn{Id}")" OnClick="ToggleAsync">@(_expandedState.Value ? "Show" : "Hide")</MudButton>
+
+@if (_expandedState.Value)
+{
+    <MudAlert id="@($"childAlert{Id}")">@($"Oh my! We got secret content{Id}!")</MudAlert>
+}

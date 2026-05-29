@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenOverlay">Show overlay</MudButton>
+
+<MudOverlay @bind-Visible="_visible" DarkBackground="true" ZIndex="@(_setZIndex ? 9999 : 5)" AutoClose="true"/>
+
+<div>
+    <MudSwitch @bind-Value="_withPopover" Label="With Popover" />
+    @if (_withPopover)
+    {
+        <MudPopover Open="_visible" AnchorOrigin="Origin.BottomLeft">
+            <MudText Typo="Typo.h6">This Is a Popover</MudText>
+        </MudPopover>
+    }
+</div>
+<MudSwitch @bind-Value="_setZIndex" Label="Set ZIndex to 9999" />
+
+@code {
+    private bool _visible;
+    private bool _setZIndex = true;
+    private bool _withPopover;
+
+    public void OpenOverlay()
+    {
+        _visible = true;
+    }
+} 

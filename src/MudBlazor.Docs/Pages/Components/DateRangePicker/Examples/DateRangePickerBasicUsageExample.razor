@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack AlignItems="AlignItems.Center" Style="width:650px; height:450px">
+    <MudDateRangePicker PickerVariant="@_variant" @bind-DateRange="@_dateRange" Margin="Margin.Dense" />
+    <MudSpacer />
+    <MudToggleGroup T="PickerVariant" SelectionMode="SelectionMode.SingleSelection" Value="@_variant" ValueChanged="@OnValueChanged" 
+                    Color="Color.Primary" CheckMark="true" FixedContent="true">
+        <MudToggleItem Value="@(PickerVariant.Inline)" Text="Inline" />
+        <MudToggleItem Value="@(PickerVariant.Dialog)" Text="Dialog" />
+        <MudToggleItem Value="@(PickerVariant.Static)" Text="Static" />
+    </MudToggleGroup>
+</MudStack>
+
+@code {
+    private PickerVariant _variant = PickerVariant.Static;
+    private DateRange _dateRange { get; set; }
+
+    private void OnValueChanged(PickerVariant variant)
+    {
+        _dateRange = null;
+        _variant = variant;
+    }
+}

@@ -1,0 +1,16 @@
+﻿<MudPopoverProvider />
+
+<MudPaper>
+    <MudTable Items="@_viewModel.Items"
+              Dense="true" Hover="true"
+              FixedHeader="true"
+              SortLabel="Sort By"
+              @bind-RowsPerPage="@RowsPerPage">
+        <RowTemplate>
+            <MudTd DataLabel="Text">@context.Text</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</MudPaper>

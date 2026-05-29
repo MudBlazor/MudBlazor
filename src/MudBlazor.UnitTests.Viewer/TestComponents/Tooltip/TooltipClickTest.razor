@@ -1,0 +1,11 @@
+﻿<MudPopoverProvider />
+
+<MudTooltip Text="@TooltipTextContent" ShowOnClick="true" Placement="Placement.Start">
+    <MudButton id="my-tooltip-content">My Button</MudButton>
+</MudTooltip>
+
+@code {
+	[Parameter]
+    public string? TooltipTextContent { get; set; }
+}
+

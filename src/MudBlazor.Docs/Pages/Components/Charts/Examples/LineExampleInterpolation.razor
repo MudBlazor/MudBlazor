@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" ChartLabels="@ChartLabels" Width="100%" Height="350" ChartOptions="_options"></MudChart>
+    <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
+    <MudMenu Label="Interpolation Algorithm" FullWidth="true">
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.Straight)">Straight</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.NaturalSpline)">Natural Spline</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.EndSlope)">End Slope</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.Periodic)">Periodic</MudMenuItem>
+    </MudMenu>
+    <MudCheckBox T="bool" ValueChanged="(v)=> _options.ShowDataMarkers = v" Label="Show Data Markers"></MudCheckBox>
+</div>
+
+@code {
+    private LineChartOptions _options = new LineChartOptions();
+    public List<ChartSeries<double>> Series = new List<ChartSeries<double>>()
+    {
+        new ChartSeries<double>() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries<double>() { Name = "Series 2", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+    };
+    public string[] ChartLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    Random random = new Random();
+    protected override void OnInitialized()
+    {
+        _options.InterpolationOption = InterpolationOption.NaturalSpline;
+        _options.YAxisFormat = "c2";
+    }
+
+    public void RandomizeData()
+    {
+        foreach (var series in Series)
+        {
+            for (int i = 0; i < series.Data.Values.Count; i++)
+            {
+                series.Data[i].Y = random.NextDouble() * 100 + 10;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    void OnClickMenu(InterpolationOption interpolationOption)
+    {
+        _options.InterpolationOption = interpolationOption;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudProgressLinear Color="Color.Primary" Value="@Value" Class="my-7" />
+<MudProgressLinear Color="Color.Secondary" Value="@Value" Class="my-7" />
+
+@code {
+    private bool _disposed;
+
+    public int Value { get; set; }
+
+    public async Task SimulateProgressAsync()
+    {
+        Value = 0;
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
+            StateHasChanged();
+            await Task.Delay(500);
+
+        } while (Value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
+}

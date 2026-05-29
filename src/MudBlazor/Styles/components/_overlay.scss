@@ -1,0 +1,65 @@
+.mud-overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  display: flex;
+  position: fixed;
+  transition: .3s cubic-bezier(.25,.8,.5,1),z-index 1ms;
+  z-index: 5;
+
+  &.mud-overlay-absolute {
+    position: absolute;
+  }
+
+  & .mud-overlay-scrim {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-color: transparent;
+    background-color: transparent;
+    animation: mud-animation-fadein ease 0.15s;
+    -webkit-animation: mud-animation-fadein ease 0.15s;
+    -moz-animation: mud-animation-fadein ease 0.15s;
+    -o-animation: mud-animation-fadein ease 0.15s;
+
+    &.mud-overlay-dark {
+      border-color: var(--mud-palette-overlay-dark);
+      background-color: var(--mud-palette-overlay-dark);
+    }
+
+    &.mud-overlay-light {
+      border-color: var(--mud-palette-overlay-light);
+      background-color: var(--mud-palette-overlay-light);
+    }
+
+    &:hover {
+      cursor: default;
+    }
+  }
+
+  & .mud-overlay-content {
+    position: relative;
+  }
+
+  &.mud-overlay-popover {
+    z-index: var(--mud-zindex-popover);
+  }
+
+  &.mud-overlay-dialog {
+    z-index: calc(var(--mud-zindex-dialog) + 1);
+  }
+
+  &.mud-overlay-drawer {
+    z-index: calc(var(--mud-zindex-appbar) + 1); //<-- Yes this is correct we want to display it on top of the Appbar
+  }
+}

@@ -1,0 +1,141 @@
+﻿@page "/components/checkbox"
+
+<DocsPage>
+    <DocsPageHeader Title="Check Box" Component="@nameof(MudCheckBox<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Checkboxes">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxBasicExample)">
+                <CheckboxBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Color">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxColorExample)">
+                <CheckboxColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Labels">
+                <Description>
+                    Text can be added using the <CodeInline>Label</CodeInline> property and its
+                    position can be specified using the <CodeInline>LabelPlacement</CodeInline> property
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxLabelExample)">
+                <CheckboxLabelExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxIconExample)">
+                <CheckboxIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dense">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxDenseExample)">
+                <CheckboxDenseExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxSizeExample)">
+                <CheckboxSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Aria">
+                <Description>
+                    The checkbox uses a <CodeInline Tag>label</CodeInline> element that wraps the input, which by default assigns any text provided via 
+                    the <CodeInline>Label</CodeInline> property as the accessible name for the checkbox. If this behavior doesn't suit your layout or 
+                    accessibility needs, you can use the <CodeInline>AriaLabel</CodeInline> property to explicitly set the accessible name. This overrides 
+                    the default labeling behavior and works independently of the <CodeInline>Label</CodeInline> or <CodeInline>ChildContent</CodeInline> properties.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxAriaExample)">
+                <CheckboxAriaExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Indeterminate State">
+                <Description>
+                    When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
+                    <br />
+                    In addition, the different states when the checkbox is clicked are the following (with a starting <CodeInline>null</CodeInline> value):
+                    <br />
+                    Indeterminate, True, False, True, False...
+                    <br />
+                    It is not possible to obtain the Indeterminate state again unless you reset the value to <CodeInline>Null</CodeInline>.
+                    Alternatively, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxIndeterminateExample)">
+                <CheckboxIndeterminateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Binding Checkbox Against Different Data Types">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent  Code="CheckboxConversionExample" ShowCode="false">
+                <CheckboxConversionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Content Placement">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxContentPlacementExample)" ShowCode="false">
+                <CheckboxContentPlacementExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ReadOnly Mode">
+                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> stops the checkbox control from listening to user input.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxReadOnlyExample)" ShowCode="false" Block="true">
+                <CheckboxReadOnlyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard Navigation">
+                <Description>
+                    <MudText>MudCheckBox supports keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>Space</CodeInline> key to toggle between true/false/(when TriState is true) indeterminate</MudText>
+                    <MudText><CodeInline>Delete</CodeInline> key to set unchecked</MudText>
+                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> keys to set checked</MudText>
+                    <MudText><CodeInline>Backspace</CodeInline> key to set indeterminate (only when TriState is true)</MudText>
+                    <MudText>*Disabled or ReadOnly checkboxes cannot be changed by keys.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxKeyboardNavigationExample)" ShowCode="false">
+                <CheckboxKeyboardNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

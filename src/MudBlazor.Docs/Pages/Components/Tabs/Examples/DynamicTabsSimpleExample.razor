@@ -1,0 +1,103 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDynamicTabs @ref="@_dynamicTabs" @bind-ActivePanelIndex="@_userIndex"
+                AddTab="@OnAddTab" CloseTab="@OnCloseTab"
+                AddIconToolTip="Click to add a new tab" CloseIconToolTip="Close tab. All data will be lost"
+                TabPanelsClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer>
+    @foreach (var tab in _userTabs)
+    {
+        <MudTabPanel ID="@tab.Id" Text="@tab.Label" ShowCloseIcon="@tab.ShowCloseIcon">@tab.Content</MudTabPanel>
+    }
+</MudDynamicTabs>
+<MudButton OnClick="@RestoreUserTabs">Restore</MudButton>
+<MudSwitch T="bool" Color="Color.Primary" Value="@_showCloseIcon" ValueChanged="@ToggleShowCloseIcon">@($"Show {TabWithToggableCloseIcon}'s close icon")</MudSwitch>
+<MudText>UserTabs index: @_userIndex / DynamicTabs ActivePanelIndex: @_userIndex</MudText>
+<MudText>UserTabs.Count: @_userTabs.Count / DynamicTabs Panels.Count: @_dynamicTabs.Panels.Count</MudText>
+
+@code {
+    private int _userIndex;
+    private bool _showCloseIcon;
+    private bool _stateHasChanged;
+    private List<TabView> _userTabs = [];
+    private MudDynamicTabs _dynamicTabs = null!;
+    private const string TabWithToggableCloseIcon = "Tab B";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RestoreUserTabs();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (_stateHasChanged)
+        {
+            _stateHasChanged = false;
+            StateHasChanged();
+        }
+    }
+
+    private void RestoreUserTabs()
+    {
+        _userTabs =
+        [
+            new TabView { Id = Guid.NewGuid(), Label = "Tab A", Content = "Tab A content" },
+            new TabView { Id = Guid.NewGuid(), Label = TabWithToggableCloseIcon, Content = $"{TabWithToggableCloseIcon} content", ShowCloseIcon = _showCloseIcon },
+            new TabView { Id = Guid.NewGuid(), Label = "Tab C", Content = "Tab C content" }
+        ];
+        // Start on 2nd tab: "Tab B"
+        _userIndex = 1;
+        _stateHasChanged = true;
+    }
+
+    private void ToggleShowCloseIcon(bool show)
+    {
+        var tab = _userTabs.FirstOrDefault(t => t.Label == TabWithToggableCloseIcon);
+        if (tab is not null)
+        {
+            tab.ShowCloseIcon = show;
+        }
+
+        _showCloseIcon = show;
+    }
+
+    private void AddTab(Guid id)
+    {
+        _userTabs.Add(new TabView { Id = id, Label = "dynamic tab", Content = $"Tab ID: {id}" });
+        // Automatically switch to the new tab.
+        _userIndex = _userTabs.Count - 1;
+        _stateHasChanged = true;
+    }
+
+    private void OnAddTab() => AddTab(Guid.NewGuid());
+
+    private void RemoveTab(Guid id)
+    {
+        var tabView = _userTabs.FirstOrDefault(t => t.Id == id);
+        if (tabView is not null)
+        {
+            _userTabs.Remove(tabView);
+            _stateHasChanged = true;
+        }
+    }
+
+    private void OnCloseTab(MudTabPanel panel)
+    {
+        if (panel.ID is Guid id)
+        {
+            RemoveTab(id);
+        }
+    }
+
+    public class TabView
+    {
+        public required Guid Id { get; init; }
+
+        public required string Label { get; init; }
+
+        public required string Content { get; init; }
+
+        public bool ShowCloseIcon { get; set; } = true;
+    }
+}

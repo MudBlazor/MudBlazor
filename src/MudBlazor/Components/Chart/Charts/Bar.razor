@@ -1,0 +1,120 @@
+﻿@namespace MudBlazor.Charts
+
+@inherits MudAxisChartBase<T, BarChartOptions>
+
+@typeparam T
+
+@if (!IsOverlayChart)
+{
+    <div @attributes="UserAttributes" class="@Classname">
+        <BaseAxisChart T="T" 
+                       TChartOptions="BarChartOptions"
+                       AxisChanged="AxisChanged"
+                       ElementRefChanged="SetElementReference"
+                       Width="@Width"
+                       Height="@Height"
+                       ViewBoxWidth="_boundWidth"
+                       ViewBoxHeight="_boundHeight"
+                       @bind-XAxisLabelSize="XAxisLabelSize"
+                       @bind-YAxisLabelSize="YAxisLabelSize"
+                       MatchBoundsToSize="@MatchBoundsToSize"
+                       ChartClass="mud-chart-bar"
+                       ChartSeries="@ChartSeries"
+                       ChartLabels="@ChartLabels"
+                       ChartOptions="@ChartOptions"
+                       ChartType="@ChartType"
+                       XAxisTitle="@ChartOptions?.XAxisTitle"
+                       YAxisTitle="@ChartOptions?.YAxisTitle"
+                       SeriesContent="@RenderBars()"
+                       TooltipContent="@RenderTooltip()"
+                       ChildContent="@OverlayContent"
+                       CustomGraphics="@CustomGraphics"
+                       HoveredSegment="@_hoveredBar"
+                       HorizontalLines="@HorizontalLines"
+                       VerticalLines="@VerticalLines"
+                       HorizontalValues="@HorizontalValues"
+                       VerticalValues="@VerticalValues"
+                       UserAttributes="@UserAttributes" />
+
+        <Legend T="T" Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+                ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+    </div>
+}
+
+@code {
+    private RenderFragment RenderBars() => builder =>
+    {
+        var seq = 0;
+
+        foreach (var bar in _bars)
+        {
+            if (!Series[bar.Index].Visible)
+                continue;
+
+            var color = ChartOptions!.ChartPalette?.Length > 0
+                ? ChartOptions.ChartPalette[bar.Index % ChartOptions.ChartPalette.Length]
+                : string.Empty;
+
+            builder.OpenElement(seq++, "path");
+            builder.AddAttribute(seq++, "class", "mud-chart-bar");
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(bar.Index)));
+            builder.AddAttribute(seq++, "fill", color);
+            builder.AddAttribute(seq++, "stroke", color);
+            builder.AddAttribute(seq++, "stroke-width", _barWidth.ToStr());
+            builder.AddAttribute(seq++, "d", bar.Data);
+            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create(this, () => OnBarMouseOver(bar)));
+            builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnBarMouseOut));
+            builder.CloseElement();
+        }
+    };
+
+    private RenderFragment RenderTooltip() => builder =>
+    {
+        if (_hoveredBar is null)
+            return;
+
+        var seq = 0;
+
+        var color = ChartOptions!.ChartPalette?.Length > 0
+                        ? ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                        : string.Empty;
+
+        var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(_hoveredBar) is { } pos
+            ? (pos.X, pos.Y)
+            : (_hoveredBar.LabelX, _hoveredBar.LabelY);
+
+        if (TooltipTemplate is not null)
+        {
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-chart-tooltip");
+            builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToStr()},{tooltipY.ToStr()})");
+            builder.AddContent(seq++, TooltipTemplate((_hoveredBar, color)));
+            builder.CloseElement();
+        }
+        else
+        {
+            var series = Series[_hoveredBar.Index];
+            var tooltipTitleFormat = series.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
+            var tooltipSubtitleFormat = series.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
+
+            if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
+            {
+                var tooltipTitle = FormatTooltipText(tooltipTitleFormat, series, _hoveredBar);
+                var tooltipSubtitle = FormatTooltipText(tooltipSubtitleFormat, series, _hoveredBar);
+
+                builder.OpenComponent<ChartTooltip>(seq++);
+                builder.AddAttribute(seq++, "Title", tooltipTitle);
+                builder.AddAttribute(seq++, "Subtitle", tooltipSubtitle);
+                builder.AddAttribute(seq++, "Color", color);
+                builder.AddAttribute(seq++, "X", tooltipX);
+                builder.AddAttribute(seq++, "Y", tooltipY);
+                builder.CloseComponent();
+            }
+        }
+    };
+
+    private RenderFragment Chart =>@<g class="mud-charts-bar-series">
+                                        @RenderBars()
+                                        @RenderTooltip()
+                                    </g>;
+}

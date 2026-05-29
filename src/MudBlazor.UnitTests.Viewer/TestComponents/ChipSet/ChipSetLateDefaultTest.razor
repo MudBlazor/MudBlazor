@@ -1,0 +1,26 @@
+﻿<MudChipSet T="string" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection" CheckMark>
+    @if (_extraItem)
+    {
+        <MudChip Value="@("Extra Chip")" Default="true" />
+    }
+    <MudChip Value="@("Primary")" Default="true"/>
+</MudChipSet>
+
+Add chips
+<MudIconButton id="enable-button" Icon="@Icons.Material.Filled.Add" OnClick="Enable">Enable</MudIconButton>
+
+<br />
+@if (_selectedValues is { Count: > 0 }) {
+    <MudText>@string.Join(", ", _selectedValues.OrderBy(x => x))</MudText>
+}
+else {
+    <MudText>Nothing selected</MudText>
+}
+
+@code
+{ 
+    private bool _extraItem;
+    private IReadOnlyCollection<string>? _selectedValues;
+
+    public void Enable() => _extraItem = !_extraItem;
+}

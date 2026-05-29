@@ -1,0 +1,11 @@
+﻿<MudForm ValidationDelay="0">
+    <MudDatePicker Required="true" @bind-Date="Date">
+    </MudDatePicker>
+</MudForm>
+
+@code {
+    public static string __description__ = "Form should validate date picker's date.";
+
+    [Parameter]
+    public DateTime? Date { get; set; }
+}

@@ -1,0 +1,30 @@
+﻿@inject ISnackbar SnackbarService
+
+<MudButton OnClick="@ShowDefault">Show default snackbar</MudButton>
+
+@code {
+    public static string __description__ = "Show snackbar that has custom configured error icon";
+
+    private const string MessageText = "All your base are belong to us";
+    private const string ActionText = "I Surrender";
+
+    protected override void OnInitialized()
+    {
+        SnackbarService.Configuration.PositionClass = Defaults.Classes.Position.BottomEnd;
+        SnackbarService.Configuration.PreventDuplicates = false;
+        SnackbarService.Configuration.ShowCloseIcon = true;
+        SnackbarService.Configuration.RequireInteraction = true;
+        SnackbarService.Configuration.ErrorIcon = @Icons.Material.Filled.ReportGmailerrorred;
+        SnackbarService.Configuration.IconSize = Size.Large;
+
+        base.OnInitialized();
+    }
+
+    private void ShowDefault()
+    {
+        SnackbarService.Add(MessageText, Severity.Error, options =>
+        {
+            options.Action = ActionText;
+        });
+    }
+}

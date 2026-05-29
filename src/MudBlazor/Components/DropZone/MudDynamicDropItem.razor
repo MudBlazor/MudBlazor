@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<CascadingValue Value="this" IsFixed="true">
+    <div class="@Classname" style="@Stylename"
+         id="@_id"
+         index="@Index"
+         @attributes="UserAttributes"
+         draggable="@IsEffectivelyDraggable.ToString().ToLowerInvariant()"
+         @ondragstart="DragStartedAsync"
+         @ontouchstart="OnTouchStart"
+         @ontouchend="OnTouchEnd"
+         @ontouchmove="OnTouchMove"
+         @ondragend="DragEndedAsync"
+         @ondragenter="HandleDragEnter"
+         @ondragleave="HandleDragLeave">
+
+        @if (!HideContent)
+        {
+            @ChildContent
+        }
+    </div>
+</CascadingValue>

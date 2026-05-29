@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px">
+    <MudList T="string" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection" ReadOnly="@ReadOnly" CheckBoxColor="Color.Tertiary">
+        <MudListSubheader>
+            Select your favourite drinks:
+        </MudListSubheader>
+        <MudListItem Text="Milk" />
+        <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
+        <MudListItem Text="Teas">
+            <NestedList>
+                <MudListItem Text="English Tea" Value='"Earl Grey"' />
+                <MudListItem Text="Chinese Tea" Value='"Gunpowder Tea"' />
+                <MudListItem Text="Bubble Tea" />
+            </NestedList>
+        </MudListItem>
+        <MudListItem Text="Coffees">
+            <NestedList>
+                <MudListItem Text="Irish Coffee" />
+                <MudListItem Text="Double Espresso" />
+                <MudListItem Text="Cafe Latte" />
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>
+
+<MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
+    <MudChipSet T="string" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection" Color="Color.Tertiary" Variant="Variant.Text">
+        <MudChip Text="Milk"/>
+        <MudChip Text="Carbonated H²O"/>
+        <MudChip Text="Earl Grey"/>
+        <MudChip Text="Gunpowder Tea" />
+        <MudChip Text="Bubble Tea" />
+        <MudChip Text="Irish Coffee" />
+        <MudChip Text="Double Espresso"/>
+        <MudChip Text="Cafe Latte"/>
+    </MudChipSet>
+    <MudSwitch @bind-Value="ReadOnly" Color="Color.Info">ReadOnly</MudSwitch>    
+</MudStack>
+
+@code
+{
+    public IReadOnlyCollection<string> SelectedValues = ["Milk", "Cafe Latte"];
+    public bool ReadOnly;
+}

@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudNumericField @bind-Value="_normal" Label="Normal" HelperText="@_normal.ToString()" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="_immediate" Immediate="true" Label="Immediate" HelperText="@_immediate.ToString()" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="_debounced" DebounceInterval="500" OnDebounceIntervalElapsed="HandleIntervalElapsed" Label="Debounced" HelperText="@_debounced.ToString()" Variant="Variant.Outlined"  />
+
+@code {
+    double _normal;
+    double _immediate;
+    double _debounced;
+
+    void HandleIntervalElapsed(string debouncedText)
+    {
+        // At this stage, interval has elapsed.
+    }
+}

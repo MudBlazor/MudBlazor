@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem sm="12" md="6">
+        <MudRadioGroup @bind-Value="SelectedOption1" ReadOnly="ReadOnly">
+            <MudRadio Value="@("Radio 1")">Radio 1</MudRadio>
+            <MudRadio Value="@("Radio 2")">Radio 2</MudRadio>
+            <MudRadio Value="@("Radio 3")">Radio 3</MudRadio>
+            <MudRadio Value="@("Radio 4")">Radio 4</MudRadio>
+        </MudRadioGroup>
+        <MudSwitch @bind-Value="ReadOnly" Color="Color.Primary" Label="ReadOnly" />
+        <MudText>Selected Option 1: @SelectedOption1</MudText>
+    </MudItem>
+    <MudItem sm="12" md="6">
+        <MudRadioGroup @bind-Value="SelectedOption2" Disabled="Disabled">
+            <MudRadio Value="@("Radio 1")">Radio 1</MudRadio>
+            <MudRadio Value="@("Radio 2")">Radio 2</MudRadio>
+            <MudRadio Value="@("Radio 3")">Radio 3</MudRadio>
+            <MudRadio Value="@("Radio 4")">Radio 4</MudRadio>
+        </MudRadioGroup>
+        <MudSwitch @bind-Value="Disabled" Color="Color.Primary" Label="Disabled" />
+        <MudText>Selected Option 2: @SelectedOption2</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string SelectedOption1 { get; set; }
+    public string SelectedOption2 { get; set; }
+    public bool Disabled { get; set; }
+    public bool ReadOnly { get; set; }
+}

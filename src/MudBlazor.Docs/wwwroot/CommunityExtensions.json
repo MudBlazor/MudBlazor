@@ -1,0 +1,107 @@
+[
+  {
+    "CategoryComment": "// Valid Categories are Components, Utility, Style, Other,",
+    "Category": "Invalid selections are ignored, Valid options are: Components, Utility, Style, or Other",
+    "Name": "The name of your extension, avoid super long names if possible.",
+    "Description": "A brief description of what the extension does for MudBlazor users",
+    "Link": "Your preferred landing page, users will have this link and a link to github automatically generated",
+    "GitHubUserPath": "Your github user",
+    "GitHubRepoPath": "Your github repo"
+  },
+  {
+    "Category": "Style",
+    "Name": "MudX Theme Creator",
+    "Description": "Blazor Theme Creator site for MudBlazor library. This app is designed to be used to create and export themes for MudBlazor, not as part of your application.",
+    "Link": "https://themes.mudx.org",
+    "GitHubUserPath": "MudXtra",
+    "GitHubRepoPath": "MudXThemeCreator"
+  },
+  {
+    "Category": "Components",
+    "Name": "MudBlazor Markdown",
+    "Description": "A Markdown Component for MudBlazor.",
+    "Link": "https://github.com/MyNihongo/MudBlazor.Markdown",
+    "GitHubUserPath": "MyNihongo",
+    "GitHubRepoPath": "MudBlazor.Markdown"
+  },
+  {
+    "Category": "Components",
+    "Name": "CodeBeam MudBlazor Extensions",
+    "Description": "MudExtensions has 30+ components and utilities from the core library contributors. There are both unique and extended components that add additional features on current Mud components.",
+    "Link": "https://codebeam-mudextensions.pages.dev/",
+    "GitHubUserPath": "CodeBeamOrg",
+    "GitHubRepoPath": "CodeBeam.MudBlazor.Extensions"
+  },
+  {
+    "Category": "Components",
+    "Name": "Fgilde MudBlazor Extensions",
+    "Description": "MudBlazor.Extensions is a convenient package that extends the capabilities of the MudBlazor component library. There are both unique and extended components and utilities that add additional features on current Mud components.",
+    "Link": "https://mudblazor-extensions.pages.dev/",
+    "GitHubUserPath": "fgilde",
+    "GitHubRepoPath": "MudBlazor.Extensions"
+  },
+  {
+    "Category": "Components",
+    "Name": "Fgilde MudEx RichTextEditor",
+    "Description": "MudExRichTextEditor is a custom reusable control that allows us to easily consume Quill combining in a MudBlazor project Features with MudBlazor Theme Support. This compnent also works without a MudBlazor Project.",
+    "Link": "https://github.com/fgilde/MudExRichTextEditor",
+    "GitHubUserPath": "fgilde",
+    "GitHubRepoPath": "MudExRichTextEditor"
+  },
+  {
+    "Category": "Components",
+    "Name": "Static Input (for SSR)",
+    "Description": "Tailored specifically for Static Server-Side Rendered (static SSR) pages. It offers seamless integration for some of MudBlazor's Component design into your static application pages. Focusing particularly on components designed for forms and edit forms, in situations where interactive components are not feasible.",
+    "Link": "https://github.com/0phois/MudBlazor.StaticInput",
+    "GitHubUserPath": "0phois",
+    "GitHubRepoPath": "MudBlazor.StaticInput"
+  },
+  {
+    "Category": "Components",
+    "Name": "Heron MudCalendar",
+    "Description": "A simple but powerful calendar component for MudBlazor. Calendar includes multiple views (month, week, work week, and day), customizable events, and easy integration with your existing MudBlazor project.",
+    "Link": "https://github.com/danheron/Heron.MudCalendar",
+    "GitHubUserPath": "danheron",
+    "GitHubRepoPath": "Heron.MudCalendar"
+  },
+  {
+    "Category": "Style",
+    "Name": "MudBlocks",
+    "Description": "A collection of MudBlazor blocks. Predefined, reusable UI elements or layouts designed to simplify development by combining multiple components into cohesive sections; such as headers, footers, forms, cards, or dashboards.",
+    "Link": "https://mudblocks.cc/",
+    "GitHubUserPath": "mouse0270",
+    "GitHubRepoPath": "mudblocks"
+  },
+  {
+    "Category": "Components",
+    "Name": "MudBlazor PdfViewer",
+    "Description": "A component for displaying and manipulating PDF documents.",
+    "Link": "https://mudpdf.info",
+    "GitHubUserPath": "tgothorp",
+    "GitHubRepoPath": "MudBlazor.PdfViewer"
+  },
+  {
+    "Category": "Utility",
+    "Name": "FormCraft",
+    "Description": "A powerful, type-safe dynamic form library for Blazor applications with fluent API design. Provides seamless integration with MudBlazor components, enabling developers to build complex forms with minimal code.",
+    "Link": "https://phmatray.github.io/FormCraft",
+    "GitHubUserPath": "phmatray",
+    "GitHubRepoPath": "FormCraft"
+  },
+  {
+    "Category": "Components",
+    "Name": "MudX Extensions",
+    "Description": "A collection of components designed for MudBlazor. SecurityCode for seamless verification code input, Outline for scrollspy navigation, CodeBlock for Prism.js highlighting, and more.",
+    "Link": "https://mudx.org",
+    "GitHubUserPath": "MudXtra",
+    "GitHubRepoPath": "MudX"
+  },
+  {
+    "Category": "Utility",
+    "Name": "Mud MCP",
+    "Description": "A local MCP (Model Context Protocol) server that lets AI assistants query MudBlazor documentation (components, parameters, examples) through structured tools.",
+    "Link": "https://github.com/mcbodge/MudMCP",
+    "GitHubUserPath": "mcbodge",
+    "GitHubRepoPath": "MudMCP"
+  }
+]

@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @ref="multilineReference" T="string" Label="Manual focus" Variant="Variant.Filled" Text="@sampleText" Lines="3" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.CenterFocusWeak" OnAdornmentClick="@(() => multilineReference.FocusAsync())"  />
+<MudTextField @ref="singleLineReference" T="string" Label="Manual focus" Variant="Variant.Filled" Text="@sampleText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.CenterFocusWeak" OnAdornmentClick="@(() => singleLineReference.FocusAsync())" />
+
+@code
+{
+    private MudTextField<string> multilineReference;
+    private MudTextField<string> singleLineReference;
+
+    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+}

@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex mb-4">
+    <MudCheckBox @bind-Value="Disabled" Label="Disabled"></MudCheckBox>
+    <MudSelect @bind-Value="DefaultFocus" Label="Default Focus" Dense="true" Class="ml-4">
+        <MudSelectItem Value="DefaultFocus.None">None</MudSelectItem>
+        <MudSelectItem Value="DefaultFocus.Element">Element</MudSelectItem>
+        <MudSelectItem Value="DefaultFocus.FirstChild">FirstChild</MudSelectItem>
+        <MudSelectItem Value="DefaultFocus.LastChild">LastChild</MudSelectItem>
+    </MudSelect>
+</div>
+
+<MudTextField T="string" Variant="Variant.Outlined"></MudTextField>
+
+<MudPaper Class="pa-4">
+    <MudFocusTrap Disabled="Disabled" DefaultFocus="DefaultFocus">
+        <MudTextField T="string" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField T="string" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField T="string" Variant="Variant.Outlined"></MudTextField>
+    </MudFocusTrap>
+</MudPaper>
+
+<MudTextField T="string" Variant="Variant.Outlined"></MudTextField>
+
+@code {
+
+    bool Disabled { get; set; }
+
+    DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+ }

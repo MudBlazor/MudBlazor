@@ -1,0 +1,11 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudLink OnClick="Count" Href="/components/link#onclick">Count and go</MudLink>
+<MudLink OnClick="Count">Count</MudLink>
+<MudText>Counter: @counter</MudText>
+
+@code {
+    private int counter = 0;
+
+    private void Count() => counter++;
+}

@@ -1,0 +1,65 @@
+﻿@page "/utilities/border-radius"
+@page "/features/border-radius"
+
+<DocsPage>
+    <DocsPageHeader Title="Border Radius" SubTitle="Use border classes to quickly change border-radius." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Borders_BorderRadius/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Default Radius">
+                <Description>
+                    <MudText>When using the classes without any size ending, it will apply the current theme's default border-radius.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BorderRadiusDefaultExample)">
+                <BorderRadiusDefaultExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Pill and Circle">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BorderRadiusPillnCircleExample)">
+                <BorderRadiusPillnCircleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Remove Border Radius">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BorderRadiusRemoveExample)">
+                <BorderRadiusRemoveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Different strengths">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BorderRadiusSizeExample)">
+                <BorderRadiusSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Rounding Sides">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BorderRadiusSidesExample)">
+                <BorderRadiusSidesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Rounding Corners">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(BorderRadiusCornerExample)">
+                <BorderRadiusCornerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

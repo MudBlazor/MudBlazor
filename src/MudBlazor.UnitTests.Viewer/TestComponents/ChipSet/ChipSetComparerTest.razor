@@ -1,0 +1,51 @@
+﻿<MudGrid>
+    <MudItem xs="12">
+        <MudChipSet T="Coffee" SelectionMode="SelectionMode.MultiSelection" CheckMark SelectedValues="@Selected" SelectedValuesChanged="SelectedChanged" Comparer="@_comparer">
+            <MudChip T="Coffee" Text="Cappuccino" Value="@(new Coffee("cap","Cappuccino"))" />
+            <MudChip T="Coffee" Text="Cafe Latte" Value="@(new Coffee("lat","Cafe Latte"))" />
+            <MudChip T="Coffee" Text="Espresso" Value="@(new Coffee("esp","Espresso"))" />
+            <MudChip T="Coffee" Text="Irish Coffee" Value="@(new Coffee("ire","Irish Coffee"))" />
+        </MudChipSet>
+    </MudItem>
+    <MudItem xs="12">
+        <MudButton OnClick="SetSelection">Set Selection</MudButton>
+    </MudItem>
+    <br />
+    <p class="sel">
+        Selection: @(string.Join(", ", Selected.Select(x => x.Name).OrderBy(x => x)))
+    </p>
+</MudGrid>
+
+@code {
+    public static string __description__ = "The comparer should be used to compare coffee objects in chipset";
+    
+    private readonly CoffeeComparer _comparer = new();
+    private IReadOnlyCollection<Coffee> Selected { get; set; } = Array.Empty<Coffee>();
+
+    private void SelectedChanged(IEnumerable<Coffee> newSelected)
+    {
+        Selected = newSelected.ToHashSet();
+    }
+
+    private void SetSelection()
+    {
+        Selected = 
+        [
+            new Coffee("lat", "Cafe Latte!"),
+            new Coffee("esp", "Espresso!")
+        ];
+    }
+
+    private class Coffee(string key, string name)
+    {
+        public string Key { get; } = key;
+        public string Name { get; } = name;
+    }
+
+    private class CoffeeComparer : IEqualityComparer<Coffee>
+    {
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
+        public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
+    }
+}
+

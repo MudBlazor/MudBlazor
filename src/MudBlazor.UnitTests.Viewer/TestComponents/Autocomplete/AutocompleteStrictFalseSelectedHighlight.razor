@@ -1,0 +1,32 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete T="string" SearchFunc="@Search" ItemDisabledFunc="@ItemDisabledFunc" @bind-Value="@_fruit" Strict="false" />
+
+@code {
+    private string? _fruit;
+
+	private readonly string[] _fruits =
+    [
+        "apple",
+		"banana",
+		"pear",
+		"carrot",
+		"cherry",
+		"raspberry",
+		"peach"
+    ];
+
+	public Func<string, bool> ItemDisabledFunc = text => text.Equals("carrot", StringComparison.InvariantCulture);
+
+    public async Task<IEnumerable<string>> Search(string text, CancellationToken token)
+    {
+		await Task.Delay(100, token);
+
+		if (string.IsNullOrWhiteSpace(text))
+		{
+			return _fruits;
+		}
+
+		return _fruits.Where(x => x.Contains(text, StringComparison.InvariantCulture));
+	}
+}

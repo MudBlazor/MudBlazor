@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMenu>
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@context.ToggleAsync">Button</MudButton>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
+    </ChildContent>
+</MudMenu>
+
+<MudMenu>
+    <ActivatorContent>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="@(() => context.ToggleAsync())">Chip</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
+    </ChildContent>
+</MudMenu>
+
+<MudMenu>
+    <ActivatorContent>
+        <div @onclick="@context.ToggleAsync" style="cursor: pointer">
+            <MudAvatar>
+                <MudImage Src="images/toiletvisit.jpg" />
+            </MudAvatar>
+        </div>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
+    </ChildContent>
+</MudMenu>
+

@@ -1,0 +1,29 @@
+@using System.Globalization
+
+<MudPopoverProvider />
+
+<MudDataGrid Items="@_items"
+    Filterable="true"
+    ReadOnly="@false"
+    EditMode="@DataGridEditMode.Cell"
+    EditTrigger="@DataGridEditTrigger.OnRowClick"
+    FilterMode="@DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Amount" Culture="@CultureInfo.InvariantCulture" />
+        <PropertyColumn Property="x => x.Total" Culture="@(new CultureInfo("es-ES"))"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Sam", 56, 3.5, 5.2), 
+        new("Alicia", 54, 3.6, 4.8), 
+        new("Ira", 27, 3.9, 6.2),
+        new("John", 32, 4.2, 3.2)
+    };
+
+    public record Model(string Name, int? Age, double? Amount, double? Total);
+}

@@ -1,0 +1,17 @@
+﻿@import '../../abstracts/variables';
+
+@mixin flex-wrap ($breakpoint) {
+  .flex-#{$breakpoint}wrap {
+    flex-wrap: wrap !important;
+  }
+
+  .flex-#{$breakpoint}nowrap {
+    flex-wrap: nowrap !important;
+  }
+
+  .flex-#{$breakpoint}wrap-reverse {
+    flex-wrap: wrap-reverse !important;
+  }
+}
+
+@include flex-wrap("");

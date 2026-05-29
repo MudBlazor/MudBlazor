@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Height="200px" Style="overflow:hidden; position:relative;">
+    <MudDrawerContainer Class="mud-height-full">
+        <MudDrawer @bind-Open="@_open" Fixed="false" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="true" Breakpoint="Breakpoint.None">
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">Store</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LibraryBooks">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Group">Community</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <div class="d-flex justify-center align-center mud-height-full">
+            <MudButton OnClick="@ToggleDrawer" Color="Color.Primary">Toggle</MudButton>
+        </div>
+    </MudDrawerContainer>
+</MudPaper>
+
+@code
+{ 
+    private bool _open = false;
+
+    private void ToggleDrawer()
+    {
+        _open = !_open;
+    } 
+}

@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex">
+    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="Kg" Class="mx-8" />
+    <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+</div>
+<div class="d-flex">
+    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentText="Kg" Class="mx-8" />
+    <MudTextField  @bind-Value="Password" Label="Password"  Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+</div>
+<div class="d-flex">
+    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+    <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" Class="mx-8" />
+    <MudTextField  @bind-Value="Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" />
+</div>
+
+@code {
+    public double? Amount { get; set; }
+    public int? Weight { get; set; }
+    public string Password { get; set;} = "superstrong123";
+
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+}

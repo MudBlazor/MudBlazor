@@ -1,0 +1,33 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data
+@using MudBlazor.Examples.Data.Models
+@inject IPeriodicTableService _periodicTableService
+
+<MudTable Items="_elements" Hover="true" SortLabel="Sort By">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)" Enabled="false">Unsortable Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Position)">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Molar)">Mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Unsortable Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<Element> _elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _elements = await _periodicTableService.GetElements();
+    }
+}
+
+

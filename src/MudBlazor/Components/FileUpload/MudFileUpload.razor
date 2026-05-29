@@ -1,0 +1,91 @@
+﻿@inherits MudFormComponent<T, string>
+@typeparam T
+@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Forms
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
+
+<MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        @for (var index = 1; index <= _numberOfActiveFileInputs; index++)
+        {
+            var localIndex = index;
+            <InputFile @key="@localIndex"
+                       OnChange="OnChangeAsync"
+                       class="@GetInputClass(localIndex)"
+                       style="@InputStyle"
+                       hidden="@(Hidden && !_draggingState.Value ? "" : null)"
+                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                       accept="@Accept"
+                       disabled="@(GetDisabledState())"
+                       @attributes="UserAttributes"
+                       @ondragenter="OnDragEnterAsync"
+                       @ondrop="OnDropAsync"
+                       @ondragleave="OnDragLeaveAsync"
+                       @ondragend="OnDragEndAsync"
+                       id="@GetInputId(localIndex)"
+                       required="@Required"
+                       aria-required="@Required.ToString().ToLowerInvariant()" />
+        }
+        @if (CustomContent == null)
+        {
+            @if (DragAndDrop)
+            {
+                <button type="button"
+                        class="@DragClass"
+                        disabled="@GetDisabledState()"
+                        @onclick="OnDragAreaClickAsync"
+                        @ondragenter="OnDragEnterAsync">
+                    <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
+                    <MudText Color="@(GetDisabledState() ? Color.Inherit : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
+                </button>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           Disabled="GetDisabledState()"
+                           OnClick="@OpenFilePickerAsync">
+                    @Localizer[Resources.LanguageResource.MudFileUpload_Button]
+                </MudButton>
+            }
+        }
+        else
+        {
+            <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
+                <div class="mud-file-upload-custom-content">
+                    @CustomContent(this)
+                </div>
+            </CascadingValue>
+        }
+
+        @if (SelectedTemplate != null)
+        {
+            <div class="mud-file-upload-files">
+                @SelectedTemplate(_filesState.Value)
+            </div>
+        }
+        else
+        {
+            <div class="mud-file-upload-files mud-file-upload-files-default-template">
+                <!-- Make sure there is at least one file -->
+                @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
+                {
+                    <span class="mud-file-upload-filelist">
+                        @foreach (var file in GetFilenames())
+                        {
+                            <MudChip T="string"
+                                     Color="Color.Secondary"
+                                     Disabled="GetDisabledState()"
+                                     Text="@file"
+                                     CloseIcon="@Icons.Material.Outlined.Close"
+                                     OnClose="@(() => OnFileChipCloseAsync(file))" />
+                        }
+                    </span>
+                }
+            </div>
+        }
+    </InputContent>
+</MudInputControl>

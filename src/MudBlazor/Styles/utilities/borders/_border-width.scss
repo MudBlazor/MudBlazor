@@ -1,0 +1,24 @@
+﻿$border-widths: ( "-0": 0px,"": 1px, "-2": 2px, "-4": 4px, "-8": 8px );
+$border-width-directions: ("t": top, "r": right, "b": bottom, "l": left);
+
+@each $name, $value in $border-widths {
+  .border#{$name} {
+    border-width: $value !important;
+  }
+
+  @each $direction, $suffix in $border-width-directions {
+    .border-#{$direction}#{$name} {
+      border-#{$suffix}-width: $value !important;
+    }
+  }
+
+  .border-x#{$name} {
+    border-left-width: $value !important;
+    border-right-width: $value !important;
+  }
+
+  .border-y#{$name} {
+    border-top-width: $value !important;
+    border-bottom-width: $value !important;
+  }
+}

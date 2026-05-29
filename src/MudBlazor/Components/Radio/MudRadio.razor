@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudBooleanInput<T>
+
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <label class="@LabelClassname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDownAsync" @onclick:stopPropagation="@StopClickPropagation">
+            <span class="@IconClassname">
+                <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" type="radio" class="mud-radio-input" checked="@Checked" name="@MudRadioGroup?.Name" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" @onclick="OnClickAsync" />
+                <MudIcon Disabled="@Disabled" Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
+            </span>
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <MudText HtmlTag="span" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
+            }
+            @if (ChildContent is not null)
+            {
+                <MudText HtmlTag="span" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
+                    @ChildContent
+                </MudText>
+            }
+            @if (AriaLabel is not null)
+            {
+                <span id="@_ariaId" class="mud-sr-only">
+                    @AriaLabel
+                </span>
+            }
+        </label>
+    </InputContent>
+</MudInputControl>

@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Drawing
+@using System.Globalization;
+@using System.Text.Json
+@using Color = MudBlazor.Color
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Point"
+                      Variant="Variant.Outlined"
+                      @bind-Value="_point"
+                      Immediate="true"
+                      Converter="_pointConverter"/>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Mirrored point" 
+                      Variant="Variant.Outlined"  
+                      @bind-Value="_point" 
+                      Immediate="true"
+                      Converter="_pointConverter" />
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    private Point _point;
+    private readonly IConverter<Point, string> _pointConverter = Conversions.From(
+        (Point x) => $"[{x.X}, {x.Y}]",
+        x =>
+        {
+            var tmp = JsonSerializer.Deserialize<int[]>(x);
+            return new Point(tmp[0], tmp[1]);
+        });
+}

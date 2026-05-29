@@ -1,0 +1,21 @@
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable T="int" Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true" SelectOnRowClick="false" OnRowClick="@OnRowClick">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+<MudText>Clicked: @_count</MudText>
+
+@code {
+    public static string __description__ = "A row-click should not toggle the checkbox.";
+
+    private int _count;
+    private readonly int[] _items = [0, 1, 2];
+    private HashSet<int> _selectedItems = [];
+
+    private Task OnRowClick()
+    {
+        ++_count;
+        return Task.CompletedTask;
+    }
+}

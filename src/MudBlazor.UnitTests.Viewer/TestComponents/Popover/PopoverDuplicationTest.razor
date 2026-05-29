@@ -1,0 +1,27 @@
+﻿<MudPopoverProvider />
+<MudPopoverProvider />
+
+<div class="popoverparent">
+    <p>Some Text</p>
+    <MudPopover Open="_open">
+        <MudText>Popover content</MudText>
+    </MudPopover>
+</div>
+
+@code {
+    public static string __description__ = "Duplicate MudPopoverProviders should throw";
+
+    private bool _open;
+
+    public Task Open()
+    {
+        _open = true;
+        return InvokeAsync(StateHasChanged);
+    }
+
+    public Task Close()
+    {
+        _open = false;
+        return InvokeAsync(StateHasChanged);
+    }
+}

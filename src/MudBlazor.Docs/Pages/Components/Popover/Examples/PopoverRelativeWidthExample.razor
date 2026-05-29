@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<div style="width: 250px;">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth OnClick="@ToggleOpen">Open</MudButton>
+    <MudPopover Open="@_open" Class="pa-4" Fixed="true" RelativeWidth="@_dropdownWidth" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+        <MudText>Content of the popover can be anything.</MudText>
+        <MudButton OnClick="@ToggleOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+    </MudPopover>
+</div>
+
+<div style="width: 250px; margin-left: 150px;">
+    <MudSelect T="DropdownWidth" Label="Dropdown Width" @bind-Value="@_dropdownWidth">
+        <MudSelectItem Value="@DropdownWidth.Relative">Relative</MudSelectItem>
+        <MudSelectItem Value="@DropdownWidth.Adaptive">Adaptive</MudSelectItem>
+        <MudSelectItem Value="@DropdownWidth.Ignore">Ignore</MudSelectItem>
+    </MudSelect>
+</div>
+
+@code{
+    private bool _open;
+
+    private DropdownWidth _dropdownWidth = DropdownWidth.Ignore;
+
+    private void ToggleOpen() => _open = !_open;
+}

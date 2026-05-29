@@ -1,0 +1,22 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <EditForm Model="_model">
+            <DataAnnotationsValidator />
+            <MudTextField For="@(() => _model.Value)" Label="Short string" @bind-Value="_model.Value" />
+        </EditForm>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Test use of data attributes accessible using `For` bound expression.";
+
+    private readonly TestModel _model = new();
+
+    private class TestModel
+    {
+        [StringLength(3, ErrorMessage = "Should not be longer than 3")]
+        public string? Value { get; set; }
+    }
+}

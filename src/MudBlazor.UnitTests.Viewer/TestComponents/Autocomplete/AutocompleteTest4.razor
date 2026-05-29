@@ -1,0 +1,26 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
+                 @bind-Value="@StateDetails" Variant="Variant.Outlined" 
+                 Margin="Margin.Dense" ResetValueOnEmptyText="true" />
+
+@code {
+    public static string __description__ = "Autocomplete should show 'Assam' even without a ToStringFunc.";
+
+    public State StateDetails { get; set; } = new() { StateName = "Assam"};
+
+    public async Task<IEnumerable<State>> SearchStateAsync(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        return Array.Empty<State>();
+    }
+
+    public class State
+    {
+        public required string StateName { get; init; }
+
+        public override string ToString() => StateName;
+    }
+}

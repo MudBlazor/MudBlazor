@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+<MudButton OnClick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
+    Options dialog
+</MudButton>
+
+@code {
+
+    private Task OpenDialogAsync()
+    {
+        return DialogService.ShowAsync<DialogSetOptionsExample_Dialog>("Options Dialog");
+    }
+}

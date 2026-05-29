@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="_normalText" HelperText="@_normalText" Label="Normal" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"/>
+<MudTextField Immediate="true" @bind-Value="_immediateText" HelperText="@_immediateText" Label="Immediate" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+<MudTextField DebounceInterval="500" OnDebounceIntervalElapsed="HandleIntervalElapsed" @bind-Value="_debouncedText" HelperText="@_debouncedText" Label="Debounced" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+
+@code {
+    string _normalText = "w";
+    string _immediateText = "t";
+    string _debouncedText = "f";
+
+    void HandleIntervalElapsed(string debouncedText)
+    {
+        // at this stage, interval has elapsed
+    }
+}

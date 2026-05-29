@@ -1,0 +1,17 @@
+﻿<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("John", 45), 
+        new("Johanna", 23), 
+        new("Steve", 32)
+    };
+
+    public record Model(string Name, int Age);
+}

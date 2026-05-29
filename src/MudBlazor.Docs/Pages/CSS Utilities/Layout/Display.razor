@@ -1,0 +1,66 @@
+﻿@page "/utilities/display"
+@page "/features/display"
+
+<DocsPage>
+    <DocsPageHeader Title="Display" SubTitle="The display classes help you set the display type or change it upon viewport." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Layout_Display/>
+        </DocsPageSection>
+        
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Block"/>
+                    <SectionContent Code="@nameof(DisplayDblockExample)">
+                        <DisplayDblockExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Inline"/>
+                    <SectionContent Code="@nameof(DisplayDinlineExample)">
+                        <DisplayDinlineExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Visibility">
+                <Description>Display an element based on the current viewport. The same breakpoint classes apply from the bottom up. That means <CodeInline>.d-none</CodeInline> applies to all breakpoints, but <CodeInline>.d-md-none</CodeInline> will only apply to <CodeInline>md</CodeInline> and up.</Description>
+            </SectionHeader>
+            <MudSimpleTable Outlined="true" Hover="true">
+                <thead>
+                    <tr><th>Screen size</th> <th>Class</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Hidden on all</td> <td><CodeInline>.d-none</CodeInline></td></tr>
+                    <tr><td>Hidden only on xs</td> <td><CodeInline>.d-none .d-sm-flex</CodeInline></td></tr>
+                    <tr><td>Hidden only on sm</td> <td><CodeInline>.d-sm-none .d-md-flex</CodeInline></td></tr>
+                    <tr><td>Hidden only on md</td> <td><CodeInline>.d-md-none .d-lg-flex</CodeInline></td></tr>
+                    <tr><td>Hidden only on lg</td> <td><CodeInline>.d-lg-none .d-xl-flex</CodeInline></td></tr>
+                    <tr><td>Hidden only on xl</td> <td><CodeInline>.d-xl-none .d-xxl-flex</CodeInline></td></tr>
+                    <tr><td>Hidden only on xxl</td> <td><CodeInline>.d-xxl-none</CodeInline></td></tr>
+                    <tr><td>Visible on all</td> <td><CodeInline>.d-flex</CodeInline></td></tr>
+                    <tr><td>Visible only on xs</td> <td><CodeInline>.d-flex .d-sm-none</CodeInline></td></tr>
+                    <tr><td>Visible only on sm</td> <td><CodeInline>.d-none .d-sm-flex .d-md-none</CodeInline></td></tr>
+                    <tr><td>Visible only on md</td> <td><CodeInline>.d-none .d-md-flex .d-lg-none</CodeInline></td></tr>
+                    <tr><td>Visible only on lg</td> <td><CodeInline>.d-none .d-lg-flex .d-xl-none</CodeInline></td></tr>
+                    <tr><td>Visible only on xl</td> <td><CodeInline>.d-none .d-xl-flex .d-xxl-none</CodeInline></td></tr>
+                    <tr><td>Visible only on xxl</td> <td><CodeInline>.d-none .d-xxl-flex</CodeInline></td></tr>
+                </tbody>
+            </MudSimpleTable>
+            <SectionContent DarkenBackground="true" Class="mt-6" Code="@nameof(DisplayVisibilyExample)">
+                <DisplayVisibilyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

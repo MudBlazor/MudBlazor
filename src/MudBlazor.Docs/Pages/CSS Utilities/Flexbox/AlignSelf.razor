@@ -1,0 +1,64 @@
+﻿@page "/utilities/align-self"
+
+<DocsPage>
+    <DocsPageHeader Title="Align Self" SubTitle="Controlling how an individual flex or grid item is positioned along its container's cross axis." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_AlignSelf/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Start">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignSelfStartExample)" HighLight="align-self-start">
+                        <AlignSelfStartExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Center">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignSelfCenterExample)" HighLight="align-self-center">
+                        <AlignSelfCenterExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="End">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignSelfEndExample)" HighLight="align-self-end">
+                        <AlignSelfEndExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Stretch">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignSelfStretchExample)" HighLight="align-self-stretch">
+                        <AlignSelfStretchExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="align-self-md-end"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

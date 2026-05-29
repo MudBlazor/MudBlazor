@@ -1,0 +1,28 @@
+﻿@page "/components/toggleiconbutton"
+
+<DocsPage>
+    <DocsPageHeader Title="Toggle Icon Button" Component="@nameof(MudToggleIconButton)" />
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>Use two-way binding <CodeInline>@(@"@bind-Toggle=""...""")</CodeInline> to update a value in the parent component.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ToggleIconButtonTwoWayBindingExample)">
+                <ToggleIconButtonTwoWayBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Without Binding">
+                <Description>You may act on the toggled state by using the <CodeInline>Toggled</CodeInline> EventCallback instead of a two-way binding.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ToggleIconButtonEventCallbackExample)" ShowCode="false">
+                <ToggleIconButtonEventCallbackExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+
+</DocsPage>

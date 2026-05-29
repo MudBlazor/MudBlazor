@@ -1,0 +1,60 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
+                 @bind-Value="@StateDetails" Variant="Variant.Outlined" 
+                 Margin="Margin.Dense" ResetValueOnEmptyText="true" Strict="false" ToStringFunc="@ToStringFunc" />
+
+<MudAutocomplete Label="State" SearchFunc="@SearchStateToStringAsync"
+                 @bind-Value="@StateDetails2" Variant="Variant.Outlined"
+                 Margin="Margin.Dense" ResetValueOnEmptyText="true" Strict="false" />
+
+@code {
+    public static string __description__ = "Autocomplete should show the dropdown when an item is selected and the string matches ToString or ToStringFunc.";
+    
+    public State? StateDetails { get; set; }
+
+    public State? StateDetails2 { get; set; }
+
+    public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
+    {
+        await Task.Delay(5, token);
+        if (string.IsNullOrEmpty(value))
+            return _states.Select(x => new State(x));
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new State(x));
+    }
+
+    public async Task<IEnumerable<State?>> SearchStateToStringAsync(string value, CancellationToken token)
+    {
+        await Task.Delay(5, token);
+        if (string.IsNullOrEmpty(value))
+            return _states.Select(x => new StateToString(x));
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new StateToString(x));
+    }
+
+    private readonly string[] _states =
+    [
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
+
+    private static string? ToStringFunc(State? s) => s?.StateName;
+
+    public record StateToString(string StateName) : State(StateName)
+    {
+        public override string ToString() => StateName;
+    }
+
+    public record State(string StateName);
+}

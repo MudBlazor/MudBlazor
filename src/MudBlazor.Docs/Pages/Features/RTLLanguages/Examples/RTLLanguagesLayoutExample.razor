@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudRTLProvider RightToLeft="@_rightToLeft">
+    <MudCard Class="mb-2" Style="width: 400px">
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <MudAvatar Color="Color.Secondary">@Localizer("CardAvatarLetter")</MudAvatar>
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">@Localizer("CardHeader")</MudText>
+                <MudText Typo="Typo.body2">@Localizer("CardSubHeader")</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardMedia Image="_content/MudBlazor.Docs/images/pilars.jpg" Height="250" />
+        <MudCardContent>
+            <MudText Typo="Typo.body2">@Localizer("CardDescription")</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+            <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+        </MudCardActions>
+    </MudCard>
+</MudRTLProvider>
+<MudSwitch @bind-Value="_rightToLeft" Label="Toggle Right to Left" Color="Color.Primary"/>
+
+@code {
+    private bool _rightToLeft = true;
+
+    //This translation is for demonstration purposes only. In a real application, you should use a IStringLocalizer etc.
+    private string Localizer(string key)
+    {
+        //This is just a google translation. If you have a better translation, feel free to share it with us  :)
+        if (key.Equals("CardAvatarLetter"))
+            return _rightToLeft ? "ا" : "I";
+        else if (key.Equals("CardHeader"))
+            return _rightToLeft ? "استريا كرواتيا" : "Istra Croatia";
+        else if (key.Equals("CardSubHeader"))
+            return _rightToLeft ? "شبه الجزيرة في أوروبا" : "Peninsula in Europe";
+        else if (key.Equals("CardDescription"))
+            return _rightToLeft ? "التقطت هذه الصورة في قرية صغيرة في استرا كرواتيا" : "This photo was taken in a small village in Istra Croatia.";
+        return "";
+    }
+}

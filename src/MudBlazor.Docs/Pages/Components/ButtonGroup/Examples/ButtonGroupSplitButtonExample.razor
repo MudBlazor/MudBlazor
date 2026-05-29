@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined">
+    <MudButton>@_buttonText</MudButton>
+    <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;">
+        <MudMenuItem OnClick="() => SetButtonText(0)">Reply</MudMenuItem>
+        <MudMenuItem OnClick="() => SetButtonText(1)">Reply All</MudMenuItem>
+        <MudMenuItem OnClick="() => SetButtonText(2)">Forward</MudMenuItem>
+        <MudMenuItem OnClick="() => SetButtonText(3)">Reply & Delete</MudMenuItem>
+    </MudMenu>
+</MudButtonGroup>
+@code {
+    private string _buttonText = "Reply";
+
+    private void SetButtonText(int id)
+    {
+        switch (id)
+        {
+            case 0: _buttonText = "Reply";
+                break;
+            case 1:
+                _buttonText = "Reply All";
+                break;
+            case 2:
+                _buttonText = "Forward";
+                break;
+            case 3:
+                _buttonText = "Reply & Delete";
+                break;
+        }
+    }
+}

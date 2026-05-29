@@ -1,0 +1,44 @@
+﻿@page "/features/elevation"
+
+<DocsPage>
+    <DocsPageHeader Title="Elevation" SubTitle="Elevation is the relative distance between two surfaces along the z-axis.">
+        <Description>What this means in practice is that you can use a shadow on a material surface to elevate it from another material surface visually.</Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    Below, we are using different levels of elevation in two different ways. All our components that have elevation also have the <CodeInline>Elevation</CodeInline> property where the elevation level (shadow) can be set.<br />
+                    The same elevation types can be used with our predefined CSS classes.
+                    <br /><MudAlert Dense="true" Class="mt-2" Severity="Severity.Info"><b>Note:</b> Elevation is disabled when a component supports and uses the <CodeInline>Outlined</CodeInline> property.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ElevationUsageExample)">
+                <ElevationUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+         <DocsPageSection>
+            <SectionHeader Title="Playground">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(ElevationPlaygroundExample)" ShowCode="false">
+                <ElevationPlaygroundExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Elevation Levels">
+                <Description>
+                    Every component that has the <CodeInline>Elevation</CodeInline> property takes values in the range of 0 - 25, or you can access them with the CSS classes displayed below.
+                    <br /><MudAlert Dense="true" Class="mt-2" Severity="Severity.Info"><b>Note:</b> Elevation 25 is a custom value past the original 0-24 values from Material Design, and it is intended to not continue the increasing values of the others.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ElevationAllExample)" ShowCode="false">
+                <ElevationAllExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

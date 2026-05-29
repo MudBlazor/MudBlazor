@@ -1,0 +1,46 @@
+﻿@page "/mud/community/contribution"
+@using MudBlazor.Docs.Utilities
+
+<PageTitle>Contribution - MudBlazor</PageTitle>
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Contribution" />
+    <DocsPageContent>
+        @if (string.IsNullOrEmpty(_contribution))
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudStack Spacing="2" Class="mud-typography mud-typography-body1 docs-contribution-markdown">
+                @((MarkupString)GetBody(_contribution))
+            </MudStack>
+        }
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+    private string _contribution;
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/CONTRIBUTING.md");
+        _contribution = await response.Content.ReadAsStringAsync();
+    }
+
+    private string GetBody(string value)
+    {
+        var html = MarkdownToHtml.Parse(
+            value,
+            new Uri(NavigationManager.Uri, UriKind.RelativeOrAbsolute),
+            MarkdownToHtml.RenderMode.ContributionPageRender);
+
+        return html;
+    }
+}

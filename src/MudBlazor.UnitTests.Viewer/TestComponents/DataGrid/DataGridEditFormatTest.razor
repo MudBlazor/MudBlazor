@@ -1,0 +1,36 @@
+﻿@using System.Globalization
+
+<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@EditMode" EditTrigger="@EditTrigger">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.MolarMass" Culture="@CultureInfo.InvariantCulture" Format="@_numberFormat" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ =  "A test viewer for visibility testing of Culture and Format in edit mode";
+
+    private readonly string _numberFormat = "N2";
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new() { Name = "Helium", MolarMass = 4.0026 },
+        new() { Name = "Lithium", MolarMass = 6.94 },
+        new() { Name = "Beryllium", MolarMass = 9.0122 }
+    };
+
+    [Parameter]
+    public DataGridEditMode EditMode { get; set; } = DataGridEditMode.Cell;
+
+    private DataGridEditTrigger EditTrigger => EditMode == DataGridEditMode.Form
+        ? DataGridEditTrigger.OnRowClick
+        : DataGridEditTrigger.Manual;
+
+    public class Model
+    {
+        public required string Name { get; set; }
+
+        public required double MolarMass { get; set; }
+    }
+}

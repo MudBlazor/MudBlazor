@@ -1,0 +1,75 @@
+﻿@page "/components/field"
+
+<DocsPage>
+    <DocsPageHeader Title="Field" Component="@nameof(MudField)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    MudField provides the foundation for creating custom input controls with consistent styling and behavior.
+                    It offers the same visual variants as <MudLink Href="/components/textfield">text fields</MudLink> and
+                    <MudLink Href="/components/numericfield">numeric fields</MudLink> while allowing you to embed any custom content.
+                    Fields support labels, helper text, validation states, and adornments just like other input components.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FieldBasicExample)" ShowCode="false">
+                <FieldBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Layout & Styling">
+                <Description>
+                    Customize the field's appearance and spacing to fit your design requirements.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Content Padding">
+                        <Description>
+                            Set <CodeInline>InnerPadding="false"</CodeInline> to minimize the internal padding around your content.
+                            This is particularly useful when embedding components that need to fill the available space, such as radio groups or custom controls.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(FieldMinimizePaddingExample)" ShowCode="false">
+                        <FieldMinimizePaddingExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Advanced Usage">
+                <Description>
+                    <MudText HtmlTag="p">
+                        Build custom input controls by leveraging MudField's flexible content system.
+                        When <CodeInline>ChildContent</CodeInline> is null, the label automatically becomes a placeholder,
+                        enabling dynamic behavior based on content or adornment.
+                    </MudText>
+                    <MudText HtmlTag="p">
+                        Use the <CodeInline>ShrinkLabel</CodeInline> parameter to override this behavior:
+                        when set to <CodeInline>true</CodeInline>, the label remains inside the field regardless of state,
+                        which is useful when you want to suppress automatic shrinking without causing the content to re-render
+                        or you want to maintain a custom portion of your ChildContent such as an extra ending adornment.
+                    </MudText>
+                    <MudText HtmlTag="p">
+                        Anytime the <CodeInline Tag="true">MudField</CodeInline> has focus within the label will shrink and
+                        not act as a placeholder.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FieldLabelPlaceholderExample)" ShowCode="false">
+                <FieldLabelPlaceholderExample />
+            </SectionContent>
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                <strong>Related Components:</strong> For ready-made input controls, see <MudLink Href="/components/textfield">TextField</MudLink> and
+                <MudLink Href="/components/numericfield">NumericField</MudLink> which are built nearly identical to <CodeInline Tag="true">MudField</CodeInline>,
+                except they have a built-in <c>input</c>.
+            </MudAlert>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

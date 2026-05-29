@@ -1,0 +1,46 @@
+﻿@import '../abstracts/variables';
+
+.mud-toolbar {
+  display: flex;
+  position: relative;
+  align-items: center;
+  --mud-internal-toolbar-height: 56px;
+  height: var(--mud-internal-toolbar-height);
+}
+
+.mud-toolbar-gutters {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width:$breakpoint-xs) and (orientation: landscape) {
+  .mud-toolbar {
+    --mud-internal-toolbar-height: 48px;
+  }
+}
+
+@media (min-width:$breakpoint-sm) {
+  .mud-toolbar {
+    --mud-internal-toolbar-height: 64px;
+  }
+
+  .mud-toolbar-gutters {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+.mud-toolbar-dense {
+  --mud-internal-toolbar-height: 48px;
+}
+
+.mud-toolbar.mud-toolbar-wrap-content {
+  height: auto;
+  min-height: var(--mud-internal-toolbar-height);
+  flex-wrap: wrap;
+
+  &.mud-toolbar-appbar {
+    //This might need to be uppercased to be ignored by sass.
+    min-height: Min(var(--mud-appbar-height), var(--mud-internal-toolbar-height));
+  }
+}

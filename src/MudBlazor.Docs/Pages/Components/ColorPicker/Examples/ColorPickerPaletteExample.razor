@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
+
+<MudColorPicker PickerVariant="PickerVariant.Static" ColorPickerView="ColorPickerView.Palette" Palette="_customPalette" />
+
+@code {
+    private readonly IEnumerable<MudColor> _customPalette = new List<IEnumerable<MudColor>>
+    {
+        MudColor.GenerateTintShadePalette("#DC143C", shadeStep: 0),
+        MudColor.GenerateTintShadePalette("#1E90FF", tintStep: 0),
+        // Reverse for illustrative purposes
+        MudColor.GenerateTintShadePalette("#8E24AA").Reverse(),
+        MudColor.GenerateAnalogousPalette("#40E0D0"),
+        MudColor.GenerateGradientPalette("#1E90FF", "#32CD32"),
+        MudColor.GenerateMultiGradientPalette(["#FF4500", "#32CD32", "#8A2BE2"])
+    }.SelectMany(palette => palette);
+}

@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor
+
+<li aria-hidden="true" class="mud-breadcrumb-separator mud-ltr mud-flip-x-rtl">
+    @if (Parent?.SeparatorTemplate is null)
+    {
+        <span>@Parent?.Separator</span>
+    }
+    else
+    {
+        @Parent?.SeparatorTemplate
+    }
+</li>

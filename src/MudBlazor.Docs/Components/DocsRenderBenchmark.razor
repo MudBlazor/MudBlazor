@@ -1,0 +1,32 @@
+﻿@using System.Diagnostics
+
+@if (IsTestEnvironment)
+{
+    <div class="mt-1" style="font-size:9px; color:silver;">
+        Rendered in @_renderMs ms
+    </div>
+}
+
+@code {
+
+    [Inject] public NavigationManager NavMan { get; set; }
+    [CascadingParameter] public DocsPage DocsPage { get; set; }
+
+    public bool IsTestEnvironment => NavMan.BaseUri.Contains("localhost") || NavMan.Uri.Contains("dev.mudblazor.com");
+
+    private double _renderMs;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (DocsPage != null)
+            DocsPage.Rendered += OnDocsPageRendered;
+    }
+
+    private void OnDocsPageRendered(Stopwatch stopwatch)
+    {
+        _renderMs = stopwatch.ElapsedMilliseconds;
+        //Console.WriteLine($"### {NavMan.ToBaseRelativePath(NavMan.Uri)} rendered in {_renderMs}ms");
+        StateHasChanged();
+    }
+}

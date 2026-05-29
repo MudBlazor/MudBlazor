@@ -1,0 +1,74 @@
+﻿@using System.ComponentModel
+@using System.Runtime.CompilerServices
+<MudPaper>
+    <MudTable Items="@_viewModel.Items"
+              Dense="true" Hover="true"
+              FixedHeader="true"
+              Filter="new Func<Item, bool>(ViewModel.Filter)"
+              SortLabel="Sort By">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Item, object>(x => x.Text)">Text</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Text">@context.Text</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</MudPaper>
+
+@code
+{
+    public static string __description__ = "Setting items delayed should work well and update pager also.";
+
+    private readonly ViewModel _viewModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _viewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await _viewModel.LoadItemsAsync().ConfigureAwait(false);
+        await base.OnInitializedAsync();
+    }
+
+    private sealed class Item
+    {
+        public required string Text { get; init; }
+    }
+
+    private sealed class ViewModel : INotifyPropertyChanged
+    {
+        private List<Item> _items = [];
+
+        public static bool Filter(Item arg) { return true; }
+
+        public List<Item> Items
+        {
+            get => _items;
+            private set
+            {
+                _items = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public async Task LoadItemsAsync()
+        {
+            var list = new List<Item>();
+            //delay to simulate web service call
+            await Task.Delay(50).ConfigureAwait(false);
+            for (int i = 0; i < 20; i++)
+            {
+                list.Add(new Item { Text = i.ToString() });
+            }
+            Items = list;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}

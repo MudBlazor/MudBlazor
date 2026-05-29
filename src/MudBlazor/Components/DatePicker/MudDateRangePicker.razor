@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor
+@inherits MudBaseDatePicker
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
+
+@Render
+
+@code{
+
+    protected override RenderFragment InputContent=>
+        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
+                          ErrorText="@ErrorTextState.Value" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
+                          @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
+               <InputContent>
+                   <MudRangeInput @ref="_rangeInput"
+                                  @attributes="UserAttributes"
+                                  InputType="@InputType.Text"
+                                  Class="@PickerInputClassname"
+                                  Style="@Style"
+                                  Variant="@Variant"
+                                  ReadOnly="@(!Editable)"
+                                  Label="@Label"
+                                  @bind-Value="@RangeText"
+                                  Disabled="@GetDisabledState()"
+                                  Adornment="@Adornment"
+                                  AdornmentIcon="@AdornmentIcon"
+                                  AdornmentColor="@AdornmentColor"
+                                  IconSize="@IconSize"
+                                  OnAdornmentClick="ToggleStateAsync"
+                                  Required="@Required"
+                                  RequiredError="@RequiredError"
+                                  Error="@ErrorState.Value"
+                                  ErrorText="@ErrorTextState.Value"
+                                  Margin="@Margin"
+                                  AdornmentAriaLabel="@AdornmentAriaLabel"
+                                  PlaceholderStart="@PlaceholderStart"
+                                  PlaceholderEnd="@PlaceholderEnd"
+                                  StartInputAriaLabel="@(Localizer[LanguageResource.MudDateRangePicker_Start])"
+                                  EndInputAriaLabel="@(Localizer[LanguageResource.MudDateRangePicker_End])"
+                                  SeparatorIcon="@SeparatorIcon"
+                                  Clearable="@(Clearable && !GetReadOnlyState())"
+                                  ClearIcon="@ClearIcon"
+                                  Underline="@Underline"
+                                  ShrinkLabel="@ShrinkLabel"
+                                  InputId="@InputId" />
+               </InputContent>
+           </MudInputControl>;
+
+}

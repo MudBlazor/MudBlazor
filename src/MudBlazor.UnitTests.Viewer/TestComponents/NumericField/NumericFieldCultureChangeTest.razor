@@ -1,0 +1,53 @@
+﻿@using System.Globalization
+
+<MudNumericField @bind-Value="@Value"
+                 Culture="@Culture"
+                 Format="@Format"
+                 Immediate="@true"
+                 DebounceInterval="@DebounceInterval"
+                 Required="@true"
+                 RequiredError="Enter the number of stars"/>
+ 
+<MudButton Id="culture-change"
+           Variant="@Variant.Filled" 
+           Color="@Color.Primary"
+           OnClick="@LaunchDelayedCultureChange">
+     Launch delayed culture change
+ </MudButton>
+ 
+<MudText>
+    RenderCount: @_renderCount
+</MudText>
+
+<MudText>
+    Value: @Value
+</MudText>
+ 
+@code {
+    public static string __description__ = "Test user input retention on component refresh before debounce with changed culture.";
+
+    private int _renderCount;
+
+    public double Value { get; private set; } = 1.0;
+
+    public CultureInfo Culture { get; private set; } = new("en-US");
+
+    public string Format => "N2";
+
+    public int DebounceInterval => 500;
+
+    public int RerenderDelay => 2000;
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        _renderCount++;
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task LaunchDelayedCultureChange()
+    {
+        await Task.Delay(RerenderDelay);
+        Culture = new CultureInfo("de-DE");
+        StateHasChanged();
+    }
+ }

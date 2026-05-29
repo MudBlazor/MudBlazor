@@ -1,0 +1,51 @@
+﻿@page "/components/element"
+
+<DocsPage>
+    <DocsPageHeader Title="MudElement" Component="@nameof(MudElement)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic example">
+                <Description>
+                    <CodeInline>MudElement</CodeInline> has an <CodeInline>HtmlTag</CodeInline> parameter that
+                    tells it which html element to render. It also accepts all possible html attributes and passes them on
+                    to the underlying element. Furthermore, you can set the parameters <CodeInline>Class</CodeInline> and
+                    <CodeInline>Style</CodeInline> for styling.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MudElementSimpleExample)">
+                <MudElementSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Interactive example">
+                <Description>
+                    In this example the rendered html element changes dynamically. This is the main use-case of
+                    <CodeInline>MudElement</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MudElementChangingExample)" ShowCode="false">
+                <MudElementChangingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Obtaining an ElementReference">
+                <Description>
+                    If you need access to the underlying element, you can two-way bind an <CodeInline>ElementReference</CodeInline>
+                    to <CodeInline>MudElement</CodeInline> which in turn passes it to the element it renders.
+                    <br />
+                    Just make sure that you use use <CodeInline>@("@")bind-Ref</CodeInline> instead of just <CodeInline>Ref</CodeInline>
+                    so the underlying reference can be passed out into your variable.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MudElementRefExample)" ShowCode="false">
+                <MudElementRefExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+
+

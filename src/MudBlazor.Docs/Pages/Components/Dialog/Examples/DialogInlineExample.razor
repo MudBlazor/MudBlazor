@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex">
+    <MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+        Edit rating
+    </MudButton>
+    <MudRating SelectedValue="_rating" Disabled="true" Class="mt-1 ml-3" />
+</div>
+
+<MudDialog @bind-Visible="_visible" Options="_dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <p>How awesome are inline dialogs?</p>
+        <MudRating @bind-SelectedValue="_rating" Class="mt-3" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _visible;
+    private int _rating;
+    private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
+
+    private void OpenDialog() => _visible = true;
+
+    private void Submit() => _visible = false;
+}

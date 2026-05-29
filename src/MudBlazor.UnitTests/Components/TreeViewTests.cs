@@ -1,0 +1,1418 @@
+﻿using AwesomeAssertions;
+using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
+using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.TreeView;
+using NUnit.Framework;
+
+namespace MudBlazor.UnitTests.Components
+{
+    [TestFixture]
+    public class TreeViewTests : BunitTest
+    {
+        [Test]
+        public async Task TreeView_ClickWhileDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<DisabledTreeViewTest>(parameters => parameters.Add(x => x.Disabled, true));
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+        }
+
+        [Test]
+        public async Task TreeView_ClickWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.Render<DisabledTreeViewTest>(self => self.Add(x => x.Disabled, false));
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            GetSelectedValue().Should().NotBeNullOrWhiteSpace();
+            GetSelectedValue().Should().Be("content");
+
+            // To reset
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
+            GetSelectedValue().Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.Disabled, true)
+                    .Add(x => x.ReadOnly, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnly_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnlyAndDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, true));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_ClickMultiSelectionCheckboxWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(self => self.Add(x => x.Disabled, false)
+                    .Add(x => x.ReadOnly, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(4);
+
+            // To reset
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(4);
+        }
+
+        [Test]
+        [TestCase("item1")]
+        [TestCase("item1.1")]
+        [TestCase("item1.2")]
+        public void TreeViewWithSingleSelection_Should_RespectInitialSelectedValue(string value)
+        {
+            var comp = Context.Render<SimpleTreeViewTest>(self => self.Add(x => x.SelectedValue, value));
+            comp.Find("div.mud-treeview-item-selected").QuerySelector(".mud-treeview-item-label").TrimmedText().Should().Be(value);
+        }
+
+        [Test]
+        public async Task TreeViewWith_SingleSelection_TwoWayBinding()
+        {
+            var comp = Context.Render<TreeViewSelectionBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+
+            // select another value on tree1 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // select another value on tree2 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // in single selection clicking the same item twice won't de-select it!
+            // select same value on tree1 and check selection has NOT changed
+            await comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+        }
+
+        [Test]
+        public async Task TreeViewWith_ToggleSelection_TwoWayBinding()
+        {
+            var comp = Context.Render<TreeViewSelectionBindingTest>(self => self
+                .Add(x => x.SelectedValue, "item1.2")
+                .Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+
+            // select another value on tree1 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // select another value on tree2 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+
+            // in toggle selection clicking the same item twice will de-select it!
+            // select same value on tree1 and check selection has been removed
+            await comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().BeNullOrWhiteSpace();
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+        }
+
+        [Test]
+        public async Task TreeViewWith_MultiSelection_TwoWayBinding()
+        {
+            var comp = Context.Render<TreeViewSelectionBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            // note: the tristate checkbox is null because not all its children are selected ...
+            // ... this doesn't mean that the item's Selected value isn't true. Checking:
+            foreach (var item in comp.FindComponents<MudTreeViewItem<string>>().Where(x => x.Instance.Value == "item1"))
+            {
+                item.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Selected)).Should().Be(true);
+            }
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+
+            // select another value on tree1 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+
+            // remove a value on tree2 and check selection has changed on both trees
+            await comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("");
+        }
+
+        [Test]
+        public async Task TreeViewWith_MultiSelection_ShouldNotAutoSelectParent()
+        {
+            var comp = Context.Render<TreeViewAutoSelectParentTest>(self => self
+                .Add(x => x.SelectedValues, ["item1.2"])
+                .Add(x => x.AutoSelectParent, false));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1.2");
+
+            // select another value on tree1 and check parent is not selected
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1.1, item1.2");
+
+            // manually selecting a parent should still work
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+
+            // removing selection of a child will keep the parent selected
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+        }
+
+        [Test]
+        public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
+        {
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        [Test]
+        public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_SingleSelection()
+        {
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValue, "item1.2")
+                .Add(x => x.Item1Selected, true));
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        public void TreeViewItemSelected_ShouldBeInitializedCorrectly_MultiSelection()
+        {
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersWhenVisibleIsTrue()
+        {
+            var comp = Context.Render<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, true);
+            });
+
+            comp.FindAll("li").Should().HaveCount(1);
+        }
+
+        [Test]
+        public void TreeViewItemVisible_RendersNotWhenVisibleIsFalse()
+        {
+            var comp = Context.Render<ItemVisibleTreeViewTest>(element =>
+            {
+                element.Add(x => x.IsElementVisible, false);
+            });
+
+            comp.FindAll("li").Should().HaveCount(0);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindTopElement()
+        {
+            // Arrange and act
+            var searchPhrase = "Trash";
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && !e.Visible);
+
+            // Assert that the element "Social" is invisible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && !e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindExpandableAndChildrenElements()
+        {
+            // Arrange and act
+            var searchPhrase = "Categories";
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && !e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is invisible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && !e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindChildElement()
+        {
+            // Arrange and act
+            var searchPhrase = "Social";
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && !e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_ItemsAreNull()
+        {
+            // Arrange and act
+            var searchPhrase = "Social";
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+                element.Add(x => x.AreItemsPopulated, false);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the items are null
+            comp.Instance.Items.Should().BeNull();
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FilterFuncIsNull()
+        {
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
+        public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
+        {
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.Item11Selected, true));
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+        }
+
+        /// <summary>
+        /// Note: in this test the trees are synchronized solely via their item's Selected parameter
+        /// </summary>
+        [Test]
+        public async Task TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
+        {
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+
+            // select another value on tree1 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+
+            // select another value on tree2 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
+            comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".tree1 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        public async Task TreeViewItem_Selected_TwoWayBindingTest_MultiSelection()
+        {
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
+                .Add(x => x.SelectedValues, ["item1", "item1.2"])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            // check initial selection
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
+            // note: the tristate checkbox is null because not all its children are selected ...
+            // ... this doesn't mean that the item's Selected value isn't true. Checking:
+            foreach (var item in comp.FindComponents<MudTreeViewItem<string>>().Where(x => x.Instance.Value == "item1"))
+            {
+                item.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Selected)).Should().Be(true);
+            }
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+
+            // select another value on tree1 and check selection has changed on both trees
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
+
+            // remove a value on tree2 and check selection has changed on both trees
+            await comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClickAsync();
+            comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find(".tree2 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
+            comp.Find("p.selected-values").TrimmedText().Should().Be("");
+            comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        public async Task TreeView_WhenDisabled_DoesNotHaveRipple()
+        {
+            var comp = Context.Render<TreeViewRippleTest>(self => self.Add(x => x.Disabled, true));
+
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, false));
+            comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
+        }
+
+        [Test]
+        public async Task TreeView_WhenRippleDisabled_DoesNotHaveRipple()
+        {
+            var comp = Context.Render<TreeViewRippleTest>(self => self.Add(x => x.Ripple, false));
+
+            comp.FindAll("div.mud-ripple").Count.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, true));
+            comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
+        }
+
+        [Test]
+        public async Task Collapsed_ClickOnArrowButton_CheckClose()
+        {
+            var comp = Context.Render<TreeViewTest1>();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DoubleClickOnArrowButton_ShouldNotSelectItem()
+        {
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
+            comp.Instance.SubItemSelected.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            // double-click on expand button should not influence selection
+            await comp.Find("button.mud-treeview-item-expand-button").DoubleClickAsync();
+            comp.Instance.SubItemSelected.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            await comp.Find("input.mud-checkbox-input").ChangeAsync(true);
+            comp.Instance.SubItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            // double-click on expand button should not influence selection
+            await comp.Find("button.mud-treeview-item-expand-button").DoubleClickAsync();
+            comp.Instance.SubItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Collapsed_ClickOnTreeItem_CheckClose()
+        {
+            var comp = Context.Render<TreeViewTest2>();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Unselected_Select_CheckSelected_Deselect_CheckDeselected()
+        {
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
+            comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
+            await comp.Find("input.mud-checkbox-input").ChangeAsync(true);
+            comp.Instance.SubItemSelected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            await comp.FindAll("input.mud-checkbox-input")[2].ChangeAsync(false);
+            comp.Instance.SubItemSelected.Should().BeFalse();
+            comp.Instance.Item1Selected.Should().BeFalse(); // <-- selecting child updates parent in multi-selection mode
+        }
+
+        [Test]
+        public async Task Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
+        {
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            comp.FindAll(".mud-checkbox-true").Count.Should().Be(0);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+            comp.FindAll(".mud-checkbox-true").Count.Should().Be(4); // item1 + entire sub-tree checked
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeTrue();
+            comp.FindAll(".mud-checkbox-true").Count.Should().Be(10);  // + item2 + entire sub-tree checked
+        }
+
+        [Test]
+        public async Task TreeView_WillUnselectItems_WhenNotMultiSelect()
+        {
+            var comp = Context.Render<TreeViewTest7>();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            comp.Instance.Item2Selected.Should().BeTrue();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Normal_Activate_CheckActivated_Deactivate_Check()
+        {
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
+            comp.Instance.Item1Selected.Should().BeFalse();
+            comp.Instance.Item2Selected.Should().BeFalse();
+            comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void RenderWithTemplate_CheckResult()
+        {
+            var comp = Context.Render<TreeViewTemplateTest>();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+        }
+
+        [Test]
+        public async Task TreeViewServer()
+        {
+            var comp = Context.Render<TreeViewServerTest>();
+            string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
+                .Be("All Mail|Categories|Social|Updates|Trash");
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(5);
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(5); // <-- nothing loaded as it's not expandable
+            await comp.FindAll("div.mud-treeview-item-content")[0].ClickAsync();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(6); // <- loaded one more from server
+            await comp.FindAll("div.mud-treeview-item-content")[3].ClickAsync();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(7); // <- loaded another one from server
+            // now loading a child of a server loaded item
+            await comp.FindAll("div.mud-treeview-item-content")[1].ClickAsync();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8); // <- loaded another one from server
+            string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
+                .Be("All Mail|Loaded 1|Loaded 3|Categories|Social|Loaded 2|Updates|Trash");
+        }
+
+#nullable enable
+        [Test]
+        public async Task TreeViewServerData_BindsItems()
+        {
+            var comp = Context.Render<TreeViewServerTest>();
+            var target = comp.FindComponents<MudTreeViewItem<string?>>()
+                .First(x => x.Instance.Value == "All Mail");
+            await comp.InvokeAsync(target.Instance.ReloadAsync);
+
+            var root = comp.Instance.TreeItems.First(x => x.Value == "All Mail");
+            root.Children.Should().NotBeNull();
+            root.Children!.Should().HaveCount(1);
+            root.Children.First().Value.Should().StartWith("Loaded");
+        }
+#nullable disable
+
+        [Test]
+        public async Task TreeViewItem_ShouldBeAbleTo_ReloadInCollapsedState()
+        {
+            var comp = Context.Render<TreeViewServerTest2>();
+            var treeviewItem = comp.FindComponents<MudTreeViewItem<string>>().FirstOrDefault();
+            treeviewItem!.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(2);
+            // expand first tree
+            await comp.Find("div.mud-treeview-item-arrow button").ClickAsync();
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+            // collapse first tree again
+            await comp.Find("div.mud-treeview-item-arrow button").ClickAsync();
+            treeviewItem.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
+            // reload first tree in collapsed state
+            var reloadTask = Task.CompletedTask;
+            await comp.InvokeAsync(() => reloadTask = treeviewItem.Instance.ReloadAsync());
+            await reloadTask;
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
+        }
+
+        [Test]
+        public void TreeViewTreeItemData()
+        {
+            // test default values
+            new TreeItemData<int>().Expanded.Should().Be(false);
+            new TreeItemData<int>().Selected.Should().Be(false);
+            new TreeItemData<int>().Expandable.Should().Be(true);
+            new TreeItemData<int>().Visible.Should().Be(true);
+            new TreeItemData<int>().Text.Should().Be(null);
+            new TreeItemData<int>().Icon.Should().Be(null);
+            new TreeItemData<int>().HasChildren.Should().Be(false);
+            new TreeItemData<int>().Children.Should().BeNull();
+
+            var data = new TreeItemData<string>()
+            {
+                Value = "val",
+                Icon = "i",
+                Text = "t",
+                Expandable = false,
+                Expanded = true,
+                Visible = true,
+                Selected = true,
+                Children = [new TreeItemData<string>()]
+            };
+            data.Value.Should().Be("val");
+            data.Icon.Should().Be("i");
+            data.Text.Should().Be("t");
+            data.Expandable.Should().Be(false);
+            data.Expanded.Should().Be(true);
+            data.Visible.Should().Be(true);
+            data.Selected.Should().Be(true);
+            data.HasChildren.Should().Be(true);
+            data.Children.Count.Should().Be(1);
+            new TreeItemData<int> { Value = 17 }.Should().Be(new TreeItemData<int> { Value = 17 });
+            new TreeItemData<int> { Value = 17 }.Should().NotBe(new TreeItemData<int> { Value = 77 });
+            new TreeItemData<int> { Value = 17 }.GetHashCode().Should().Be(17.GetHashCode());
+            Equals(new TreeItemData<int> { Value = 17 }, new TreeItemData<int> { Value = 17 }).Should().Be(true);
+            Equals(new TreeItemData<int> { Value = 17 }, new TreeItemData<int> { Value = 18 }).Should().Be(false);
+            Equals(new TreeItemData<int> { Value = 17 }, null).Should().Be(false);
+            var x = new TreeItemData<int> { Value = 17 };
+            Equals(x, x).Should().Be(true);
+            x.Equals(x).Should().Be(true);
+            x.Equals(null).Should().Be(false);
+            new TreeItemData<string>().GetHashCode().Should().Be(0);
+            new TreeItemData<string>().Equals(new TreeItemData<string>()).Should().Be(true);
+            new TreeItemData<int>().Value.Should().Be(default);
+        }
+
+        [Test]
+        public async Task TreeViewItem_DoubleClick_CheckExpanded()
+        {
+            var comp = Context.Render<TreeViewTest3>();
+            var itemExpanded = false;
+
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
+            await item.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OnDoubleClick, new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
+
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
+            itemExpanded.Should().BeTrue();
+
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
+            itemExpanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task TreeViewItem_DoubleClick_CheckSelected()
+        {
+            var comp = Context.Render<TreeViewTest3>();
+            string selectedItem = null;
+
+            var tree = comp.FindComponent<MudTreeView<string>>();
+
+            await tree.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValueChanged, new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
+
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
+            selectedItem.Should().Be("content");
+        }
+
+        [Test]
+        public async Task TreeViewItem_ProgrammaticallySelect()
+        {
+            var comp = Context.Render<TreeViewTest4>();
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+
+            await comp.InvokeAsync(() => comp.Instance.ClickFirst());
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be("content"));
+
+            await comp.InvokeAsync(() => comp.Instance.ClickSecond());
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be("src"));
+
+            await comp.InvokeAsync(() => comp.Instance.ClickSecond());
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be(null));
+        }
+
+        [Test]
+        public async Task TreeViewItem_BodyContent()
+        {
+            var comp = Context.Render<TreeViewTest5>();
+            var treeView = comp.FindComponent<MudTreeView<string>>();
+            var treeViewItem = comp.FindComponents<MudTreeViewItem<string>>()[2];
+
+            comp.FindAll("ul.mud-treeview").Count.Should().Be(5);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-content").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-arrow").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-icon").Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-bodycontent").Count.Should().Be(4);
+            comp.FindAll("button.mud-treeview-item-arrow-expand").Count.Should().Be(4);
+            comp.FindAll("p.mud-typography")[0].InnerHtml.MarkupMatches("This is item one");
+            comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item two");
+            comp.FindAll("p.mud-typography")[2].InnerHtml.MarkupMatches("This is item three");
+            comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item six");
+            comp.FindAll("div").Count.Should().Be(32);
+            comp.FindAll("button").Count.Should().Be(12);
+
+            // Test updating the treeview root.
+            comp.Instance.SimulateUpdateRoot = true;
+            var items = await comp.Instance.LoadServerData(null);
+            await treeView.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, items));
+            comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
+
+            // Test reloading the treeview item.
+            await comp.FindAll("button.mud-treeview-item-arrow-expand")[2].ClickAsync();
+            comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item four");
+            comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item five");
+
+            comp.Instance.SimulateUpdate3 = true;
+            await treeViewItem.InvokeAsync(treeViewItem.Instance.ReloadAsync);
+            comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item 4");
+            comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
+        }
+
+        [Test]
+        public async Task TreeView_SetSelectedValue_SetsSelectedValue()
+        {
+            var comp = Context.Render<TreeViewTest6>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+
+            comp.Instance.SelectedValue.Should().Be("logo.png");
+        }
+
+        [Test]
+        public async Task TreeView_SetSelectedValue_IsSetNullWhenNotFound()
+        {
+            var comp = Context.Render<TreeViewTest6>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+
+            comp.Instance.SelectedValue.Should().Be("logo.png");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+
+            comp.Instance.SelectedValue.Should().Be(default);
+        }
+
+        [Test]
+        public async Task TreeView_SetSelectedValue_IsSetNullWhenInitialValueIsInvalid()
+        {
+            var comp = Context.Render<TreeViewTest6>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+
+            comp.Instance.SelectedValue.Should().Be(default);
+        }
+
+        [Test]
+        public async Task TreeView_SelectedValue_ShouldUseComparer()
+        {
+            // test tree with items ("Ax", "Bx", "Cx", "Dx")
+            var comp = Context.Render<TreeViewCompareTest>();
+            string GetSelectedValue() => comp.Find("p.selected-value").TrimmedText();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
+            GetSelectedValue().Should().Be("Ax");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "Bx"));
+            GetSelectedValue().Should().Be("Bx");
+
+            // setting A will not select anything because it isn't a valid value with the default comparer
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            // set the comparer to a value that will only check the first character of the string
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Comparer,
+                new DelegateEqualityComparer<string>(
+                    (x, y) =>
+                    {
+                        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
+                            return true;
+                        }
+
+                        if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
+                            return false;
+                        }
+
+                        return x[0] == y[0];
+                    },
+                    obj =>
+                    {
+                        if (string.IsNullOrEmpty(obj))
+                        {
+                            return 0;
+                        }
+
+                        return obj[0].GetHashCode();
+                    }
+                )
+            ));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            GetSelectedValue().Should().StartWith("A");
+        }
+
+        /// <summary>
+        /// This test checks that when multiple values are selected and the compare parameter is updated,
+        /// selected values are updated correctly.
+        /// </summary>
+        [Test]
+        public async Task TreeView_SelectedValues_ShouldUseComparer()
+        {
+            // tree containing two children with values AA and AC
+            var comp = Context.Render<TreeViewComparerMultiSelectTest>(self => self.Add(x => x.SelectedValues, ["AA"]));
+
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Comparer,
+                new DelegateEqualityComparer<string>(
+                    (x, y) =>
+                    {
+                        if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
+                            return true;
+                        }
+
+                        if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
+                            return false;
+                        }
+
+                        return x[0] == y[0];
+                    },
+                    obj =>
+                    {
+                        if (string.IsNullOrEmpty(obj))
+                        {
+                            return 0;
+                        }
+
+                        return obj[0].GetHashCode();
+                    }
+                )
+            ));
+
+            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item2Selected.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Tests binding Selected and Expanded parameters, especially selection with items that have only Text and no Value
+        ///
+        /// NOTE: we can only check the component parameters directly here because they are two-way bound!
+        /// </summary>
+        [Test]
+        public async Task TreeViewItem_TwoWayBinding()
+        {
+            var comp = Context.Render<TreeViewItemBindingTest>();
+            // check initial selection
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(false);
+
+            // select logo.png via tree item
+            await comp.Find(".item-logo .mud-treeview-item-content").ClickAsync();
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
+
+            // expand config via tree item
+            await comp.Find(".item-config .mud-treeview-item-arrow button").ClickAsync();
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
+
+            // collapse config via switch
+            await comp.Find(".switch-config input").ChangeAsync(false);
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
+
+            // select launch.json via checkbox
+            await comp.Find(".checkbox-launch input").ChangeAsync(true);
+            // selection visualization
+            comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
+            comp.Find(".item-tasks .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
+            // expanded
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            // selected
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
+            // switches
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
+            // checkboxes
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(false);
+        }
+
+        [Test]
+        public async Task TreeViewAutoExpansion()
+        {
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            await select("tasks.json");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(true);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // reset all to collapsed and check
+            await comp.Find("button.collapse-all").ClickAsync();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            // here images itself must not be expanded, only its parent
+            await select("images");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public async Task TreeViewAutoExpansion_ShouldNot_ExpandNonExpandableItems()
+        {
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            await select("tasks.json");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // reset all to collapsed and check
+            await comp.Find("button.collapse-all").ClickAsync();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            // select and check that along the path to the value all parents were expanded, nothing else
+            // here images itself must not be expanded, only its parent
+            await select("logo.png");
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(true);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public async Task TreeViewExpandAllCollapseAll()
+        {
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, false));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            await comp.Find("button.expand-all").ClickAsync();
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(true);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(true);
+            isExpanded("logo.png").Should().Be(false);
+            await comp.Find("button.collapse-all").ClickAsync();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public async Task TreeViewExpandAll_ShouldNot_ExpandNonExpandableItems()
+        {
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.ConfigCanExpand, false));
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+            await comp.Find("button.expand-all").ClickAsync();
+            isExpanded("C:").Should().Be(true);
+            isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(true);
+            isExpanded("logo.png").Should().Be(false);
+            await comp.Find("button.collapse-all").ClickAsync();
+            isExpanded("C:").Should().Be(false);
+            isExpanded("config").Should().Be(false);
+            isExpanded("launch.json").Should().Be(false);
+            isExpanded("tasks.json").Should().Be(false);
+            isExpanded("images").Should().Be(false);
+            isExpanded("logo.png").Should().Be(false);
+        }
+
+        [Test]
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                var comp = Context.Render<TreeViewTest8>();
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            });
+
+#nullable enable
+            MudTreeView<string>? nullInstanceTree = null;
+            MudTreeViewItem<string>? nullInstanceItem = null;
+#nullable disable
+
+            exception.Message.Should().Be($"'{nameof(MudTreeView<string>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<string>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
+        }
+
+        [Test]
+        public async Task TreeView_ClickItemWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.Render<ItemSelectableTreeViewTest>();
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            await parentItemContent.ClickAsync();
+
+            GetSelectedValue().Should().Be("content");
+
+            GetItemExpandedValue().Should().Be(false);
+            await parentItemButton.ClickAsync();
+            GetItemExpandedValue().Should().Be(true);
+        }
+
+        [Test]
+        public async Task TreeView_ClickItemWhileReadOnly_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemReadOnly, true));
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            await parentItemContent.ClickAsync();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            GetItemExpandedValue().Should().Be(false);
+            await parentItemButton.ClickAsync();
+            GetItemExpandedValue().Should().Be(true);
+        }
+
+        [Test]
+        public async Task TreeView_ClickItemWhileDisabled_DoesNotChangeSelectionAndExpanded()
+        {
+            var comp = Context.Render<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemDisabled, true));
+
+            var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
+            var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
+
+            var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
+            var GetItemExpandedValue = () => comp
+                .FindComponent<MudTreeViewItem<string>>()
+                .Instance
+                .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+
+            await parentItemContent.ClickAsync();
+            GetSelectedValue().Should().BeNullOrWhiteSpace();
+
+            GetItemExpandedValue().Should().Be(false);
+            await parentItemButton.ClickAsync();
+            GetItemExpandedValue().Should().Be(false);
+        }
+
+        [Test]
+        public async Task TreeView_ClickHeterogeneousTreeElement_ShouldNotThrow()
+        {
+            var comp = Context.Render<TreeViewHeterogeneous>();
+            var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
+            var act = () => l2.ClickAsync();
+            await act.Should().NotThrowAsync();
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
+        public async Task TreeView_NewItem_ShouldBeSelected()
+        {
+            var comp = Context.Render<TreeViewNewItemSelectTest>();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("2");
+            await comp.Find("#add_item").ClickAsync();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("4");
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12849")]
+        public async Task TreeView_ServerData_Reset()
+        {
+            var comp = Context.Render<TreeViewServerDataResetTest>();
+            var arrows = () => comp.FindAll("button.mud-treeview-item-expand-button");
+            var itemContents = () => comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent);
+
+            arrows().Count.Should().Be(4);
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (1)"));
+            await comp.Find("#btn_reset").ClickAsync();
+            comp.WaitForAssertion(() =>
+            {
+                arrows().Count.Should().Be(4);
+                itemContents().Should().NotContain("More Spam (1)");
+            });
+
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
+        }
+    }
+}

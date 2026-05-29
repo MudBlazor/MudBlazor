@@ -1,0 +1,55 @@
+﻿@page "/utilities/flex-wrap"
+
+<DocsPage>
+    <DocsPageHeader Title="Flex Wrap" SubTitle="Controlling how flex items wrap." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_FlexWrap/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Wrap">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexWrapWrapExample)" HighLight="flex-wrap">
+                        <FlexWrapWrapExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Wrap reversed">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexWrapReverseExample)" HighLight="flex-wrap-reverse">
+                        <FlexWrapReverseExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="No wrap">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexWrapNoWrapExample)" HighLight="flex-nowrap">
+                        <FlexWrapNoWrapExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-wrap"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

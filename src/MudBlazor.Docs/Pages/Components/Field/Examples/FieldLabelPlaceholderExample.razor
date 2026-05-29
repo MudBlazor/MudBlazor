@@ -1,0 +1,68 @@
+﻿@using MudBlazor.Resources
+@using MudBlazor.Utilities
+@inject InternalMudLocalizer Localizer
+@namespace MudBlazor.Docs.Examples
+
+<style>
+    .mud-input-control.mud-field .mud-input>input.mud-input-root-outlined {
+        padding: 0px 14px;
+    }
+</style>
+
+<MudGrid>
+    <MudItem xs="12" md="6" lg="4">
+        <MudStack>
+            <MudField Label="What am I?" ChildContent="@content"
+                      Variant="Variant.Outlined">
+            </MudField>
+            <MudText Typo="Typo.button">ChildContent</MudText>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudSwitch T="bool" Label="Label" LabelPlacement="Placement.Start" Color="Color.Primary" ValueChanged="@((b) => content = b ? null : rf1)" />
+                Placeholder
+            </MudStack>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="6" lg="4">
+        <MudField Label="Pick a color" Variant="Variant.Outlined">
+            <input type="color" @bind-value="color" /><span class="ml-3">@color</span>
+        </MudField>
+    </MudItem>
+    <MudItem xs="12" md="6" lg="4">
+        <MudStack>
+            <MudField Label="ShrinkLabel Override" Variant="Variant.Outlined" AdornmentAriaLabel="info icon"
+                      AdornmentIcon="@Icons.Material.Filled.Info" AdornmentColor="Color.Info"
+                      ShrinkLabel="@_shrinkLabel" Adornment="Adornment.End">
+                <MudStack Row Class="mud-input"
+                          Spacing="2" AlignItems="AlignItems.Center" tabindex="-1">
+                    <input class="@InputClassname" />
+                    <MudIconButton Color="@Color.Default"
+                                   Icon="@Icons.Material.Filled.Clear"
+                                   Size="@Size.Small"
+                                   aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                                   tabindex="-1"
+                                   @onmousedown:stopPropagation />
+                </MudStack>
+            </MudField>
+            <MudText Typo="Typo.button">ShrinkLabel</MudText>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudSwitch @bind-Value="@_shrinkLabel" Label="Label" LabelPlacement="Placement.Start" Color="Color.Primary" />
+                Placeholder
+            </MudStack>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    RenderFragment content = null;
+    RenderFragment rf1 = @<MudText Typo="@Typo.h6">I Am Field</MudText>;
+    string color = "#6cf014";
+    private bool _shrinkLabel = false;
+
+    protected string InputClassname =>
+        new CssBuilder("mud-input-slot")
+            .AddClass("mud-input-root")
+            .AddClass($"mud-input-root-{Variant.Outlined.ToStringFast(true)}")
+            .AddClass($"mud-input-root-adorned-{Adornment.End.ToStringFast(true)}")
+            .AddClass($"mud-input-root-margin-{Margin.Normal.ToStringFast(true)}")
+            .Build();
+}

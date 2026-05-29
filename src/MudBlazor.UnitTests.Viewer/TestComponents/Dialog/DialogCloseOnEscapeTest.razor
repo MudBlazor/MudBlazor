@@ -1,0 +1,45 @@
+﻿@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudButton OnClick="@OpenDialog" Variant="Variant.Filled" Color="Color.Primary">Open Dialog (Test Esc Key)</MudButton>
+
+@code {
+    public static string __description__ = "Open Dialog -> Click overlay -> Press Esc";
+
+    private async Task OpenDialog()
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            BackdropClick = true,
+        };
+
+        // Define a RenderFragment for the dialog content directly
+        RenderFragment dialogContent = builder =>
+        {
+            builder.OpenComponent<MudText>(0);
+            builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Click the overlay (I shouldn't close), then press Esc. Or click inside me, then press Esc.")));
+            builder.CloseComponent();
+            // Add a button to ensure focus can shift to an interactive element within the dialog
+            builder.OpenComponent<MudButton>(3);
+            builder.AddAttribute(4, "Variant", Variant.Filled);
+            builder.AddAttribute(5, "Class", "ma-4");
+            builder.AddAttribute(6, "OnClick", EventCallback.Factory.Create<MouseEventArgs>(this, () => Snackbar.Add("Button clicked", Severity.Info)));
+            builder.AddAttribute(7, "ChildContent", (RenderFragment)(b => b.AddContent(8, "Test Button")));
+            builder.CloseComponent();
+        };
+
+        var parameters = new DialogParameters
+        {
+            [nameof(MudDialog.DialogContent)] = dialogContent, // Pass the RenderFragment
+            [nameof(MudDialog.OnBackdropClick)] = new EventCallback<MouseEventArgs>(null, (MouseEventArgs args) =>
+            {
+                Snackbar.Add("Overlay clicked! Dialog should still be open. Now try pressing Escape.", Severity.Info);
+                // This handler intentionally does not close the dialog, to test refocus.
+            })
+        };
+
+        // Use the built-in MudDialog and pass content and handlers through parameters
+        var dialog = await DialogService.ShowAsync<MudDialog>("Test Escape Key", parameters, options);
+    }
+}

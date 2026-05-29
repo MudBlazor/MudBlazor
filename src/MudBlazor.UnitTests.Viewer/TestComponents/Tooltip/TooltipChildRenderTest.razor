@@ -1,0 +1,20 @@
+﻿@using MudBlazor.UnitTests.TestComponents.Tooltip.RerenderTests
+
+<MudPopoverProvider />
+
+<MudTooltip Text="Tooltip with Object" Arrow="true" Placement="Placement.Top">
+    <MyAreaWithComplexObject MyValue="@ComplexValue" />
+</MudTooltip>
+
+<br/>
+<br/>
+<br/>
+
+<MudTooltip Text="Tooltip with integer" Arrow="true" Placement="Placement.Top">
+    <MyAreaWithSimpleValue MyValue="@SimpleValue" />
+</MudTooltip>
+
+@code {
+    public MyObject ComplexValue = new();
+    public int SimpleValue = 1;
+}

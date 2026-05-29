@@ -1,0 +1,40 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using AwesomeAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.Logger;
+using NUnit.Framework;
+
+namespace MudBlazor.UnitTests.Utilities
+{
+    [TestFixture]
+    public class LoggerTests : BunitTest
+    {
+        /// <summary>
+        /// Verfies the standard log messages are logged correctly
+        /// </summary>
+        [Test]
+        public void LoggerIsCreated()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider)); //set up the logging provider
+            var comp = Context.Render<LoggerTest>();
+
+            var entries = logger.GetEntries();
+            entries.Count.Should().Be(4);
+            entries[0].Level.Should().Be(LogLevel.Information);
+            entries[0].Message.Should().Be("Log Information");
+            entries[1].Level.Should().Be(LogLevel.Warning);
+            entries[1].Message.Should().Be("Log Warning");
+            entries[2].Level.Should().Be(LogLevel.Error);
+            entries[2].Message.Should().Be("Log Error");
+            entries[3].Level.Should().Be(LogLevel.Critical);
+            entries[3].Message.Should().Be("Log Critical");
+        }
+    }
+}

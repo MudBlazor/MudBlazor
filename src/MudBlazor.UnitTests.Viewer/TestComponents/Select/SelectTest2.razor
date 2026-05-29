@@ -1,0 +1,14 @@
+﻿<MudPopoverProvider />
+
+<MudSelect @bind-Value="_value" PopoverClass="select-popover-class">
+    <MudSelectItem Value="@("1")"/>
+    <MudSelectItem Value="@("2")"/>
+    <MudSelectItem Value="@("3")"/>
+    <MudSelectItem Value="@("4")" Disabled="true"/>
+</MudSelect>
+
+@code {
+    public static string __description__ = "Value 2 should be selected initially and highlighted.";
+
+    private string? _value = "2";
+}

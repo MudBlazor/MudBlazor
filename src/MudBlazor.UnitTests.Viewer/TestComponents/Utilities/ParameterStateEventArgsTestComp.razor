@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.UnitTests
+
+<h3>ParameterStateEventArgsTestComponent</h3>
+<MudButton Class="increment-int-param" OnClick="@(() => _i++)">Increment IntParam</MudButton>
+<br/>
+<ParameterStateTestComp IntParam="@_i"/>
+
+@code
+{
+    public static string __description__ = "Tests the ParameterState framework's parameter change notification event args";
+
+    private int _i;
+}

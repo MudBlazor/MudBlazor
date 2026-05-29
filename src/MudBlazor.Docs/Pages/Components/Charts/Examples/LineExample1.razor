@@ -1,0 +1,65 @@
+﻿@using MudBlazor.Charts;
+
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Line" ChartSeries="@_series" ChartLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="@($"{_height}px")"
+              @bind-SelectedIndex="_index" MatchBoundsToSize="_matchBoundsToSize"/>
+</MudPaper>
+
+<MudGrid>
+    <MudItem md="6" xs="12">
+        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox @bind-Value="_matchBoundsToSize" Label="MatchBoundsToSize"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_height" Min="150" Max="500">@($"Chart Height: {_height}px")</MudSlider>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox T="bool" ValueChanged="(v)=> _options.SeriesDisplayOverrides[_series[0]].LineDisplayType = v ? LineDisplayType.Area : LineDisplayType.Line" Label="Fossil as Area"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox T="bool" ValueChanged="(v)=> _options.SeriesDisplayOverrides[_series[1]].LineDisplayType = v ? LineDisplayType.Area : LineDisplayType.Line" Label="Renewable as Area"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_options.XAxisLabelRotation" Min="0" Max="90" Step="15">XAxis Label Rotation</MudSlider>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox T="bool" ValueChanged="(v)=> _options.ShowDataMarkers = v" Label="Show Data Markers"></MudCheckBox>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private LineChartOptions _options = new LineChartOptions()
+    {
+        XAxisTitle = "Months",
+        YAxisTitle = "Sales",
+    };
+
+    private int _height = 350;
+    private bool _matchBoundsToSize = false;
+
+    private List<ChartSeries<double>> _series = new List<ChartSeries<double>>()
+    {
+        new ChartSeries<double>() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries<double>() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+    };
+    private string[] _xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>()
+        {
+            { _series[0], new SeriesDisplayOverride() },
+            { _series[1], new SeriesDisplayOverride() }
+        };
+    }
+}

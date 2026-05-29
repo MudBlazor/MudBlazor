@@ -1,0 +1,16 @@
+﻿<MudTreeView @ref="_treeView" T="string" @bind-SelectedValue="SelectedValue" SelectionMode="SelectionMode.ToggleSelection">
+    <MudTreeViewItem @ref="_item1" Value='"content"' />
+    <MudTreeViewItem @ref="_item2" Value='"src"' />
+</MudTreeView>
+
+@code {
+    private MudTreeView<string> _treeView = null!;
+    private MudTreeViewItem<string> _item1 = null!;
+    private MudTreeViewItem<string> _item2 = null!;
+
+    public string? SelectedValue { get; set; }
+
+    public Task ClickFirst() => _treeView.OnItemClickAsync(_item1);
+
+    public Task ClickSecond() => _treeView.OnItemClickAsync(_item2);
+}

@@ -1,0 +1,41 @@
+﻿<MudTable T="int" Items="_items" OnRowClick="@(args => OnRowClicked(args))" CustomHeader="true" CustomFooter="true">
+    <HeaderContent>
+        <MudTHeadRow OnRowClick="OnHeaderClicked">
+            <MudTh>#</MudTh>
+        </MudTHeadRow>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow OnRowClick="OnFooterClicked">
+            <MudTd>#</MudTd>
+        </MudTFootRow>
+    </FooterContent>
+</MudTable>
+
+<p>
+    @(string.Join(",", _clickedItems))
+</p>
+
+@code {
+    public static string __description__ = "The row click event should fire, regardless of the selection events.";
+
+    private readonly int[] _items = [0, 1, 2];
+    private readonly List<int> _clickedItems = [];
+
+    private void OnHeaderClicked()
+    {
+        _clickedItems.Add(-1);
+    }
+
+    private void OnFooterClicked()
+    {
+        _clickedItems.Add(100);
+    }
+
+    private void OnRowClicked(TableRowClickEventArgs<int> args )
+    {
+        _clickedItems.Add(args.Item);
+    }
+}

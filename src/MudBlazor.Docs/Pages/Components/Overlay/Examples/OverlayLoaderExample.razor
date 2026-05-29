@@ -1,0 +1,59 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCard Class="my-2" Style="position:relative;">
+    @if (!dataLoaded)
+    {
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+        <MudCardContent>
+            <MudSkeleton Width="30%" Height="42px;" />
+            <MudSkeleton Width="80%" />
+            <MudSkeleton Width="100%" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+            <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+        </MudCardActions>
+        <MudOverlay Visible="visible" DarkBackground="true" Absolute="true">
+            <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+        </MudOverlay>
+    }
+    else
+    {
+        <MudCardMedia Image="images/door.jpg" Height="200" />
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Old Paint</MudText>
+            <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
+            <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Learn more</MudButton>
+        </MudCardActions>
+    }
+</MudCard>
+
+<MudToolBar Gutters="false">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOverlay" EndIcon="@Icons.Material.Filled.Refresh">Refresh data</MudButton>
+    <MudSpacer/>
+    <MudButton Variant="Variant.Filled" OnClick="ResetExample">Reset example</MudButton>
+</MudToolBar>
+
+@code { 
+    private bool visible;
+    private bool dataLoaded;
+
+    public async void OpenOverlay()
+    {
+        visible = true;
+        dataLoaded = false;
+        await Task.Delay(3000);
+        dataLoaded = true;
+        visible = false;
+        StateHasChanged();
+    }
+
+    public void ResetExample()
+    {
+        dataLoaded = false;
+    }
+} 

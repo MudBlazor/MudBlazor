@@ -1,0 +1,70 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Net.Http.Json
+@using System.Text.Json.Serialization;
+@using MudBlazor.Examples.Data.Models
+@inject HttpClient httpClient
+
+<MudTable Items="@Elements" MultiSelection="true" T="Element" SelectedItemsChanged="OnSelectedItemsChanged" Comparer="Comparer">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+    </PagerContent>
+    <FooterContent>
+        <MudTd colspan="5">Select All</MudTd>
+    </FooterContent>
+</MudTable>
+
+<MudText HtmlTag="span">Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+
+@code {
+    private HashSet<Element> selectedItems1 = new HashSet<Element>();
+
+    private List<Element> Elements = new List<Element>();
+
+    private ElementComparer Comparer = new();
+
+    private void OnSelectedItemsChanged(HashSet<Element> elements)
+    {
+        if (elements.Any())
+            elements.First().Name = "Changed";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    class ElementComparer : IEqualityComparer<Element>
+    {
+        public bool Equals(Element a, Element b) => a?.Number == b?.Number;
+        public int GetHashCode(Element x) => HashCode.Combine(x?.Number);
+    }
+
+    public record Element
+    {
+        public string Group { get; set; }
+        public int Position { get; set; }
+        public string Name { get; set; }
+        public int Number { get; set; }
+
+        [JsonPropertyName("small")]
+        public string Sign { get; set; }
+        public double Molar { get; set; }
+        public IList<int> Electrons { get; set; }
+
+        public override string ToString() => $"{Sign} - {Name}";
+    }
+}

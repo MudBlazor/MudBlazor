@@ -1,0 +1,116 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using FluentValidation
+@using Severity = MudBlazor.Severity
+@inject ISnackbar Snackbar
+
+<MudCard Style="width: 600px;">
+    <MudForm Model="@_model" @ref="@_form" Validation="@(_validationRules.ValidateValue)" ValidationDelay="0">
+        <MudCardContent>
+            <MudStack>
+                <MudTextField @bind-Value="_model.Name"
+                              For="@(() => _model.Name)"
+                              Immediate="true"
+                              Label="Name" />
+
+                <MudGrid Justify="@Justify.FlexEnd"
+                         Spacing="1">
+                    <MudItem>
+                        <MudFileUpload @ref="@_fileUpload"
+                                       T="IBrowserFile"
+                                       For="@(() => _model.File)"
+                                       @bind-Files="_model.File"
+                                       OnFilesChanged="UploadFiles"
+                                       SuppressOnChangeWhenInvalid="_suppressOnChangeWhenInvalid">
+                            <CustomContent>
+                                <MudButton Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           OnClick="@context.OpenFilePickerAsync"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                                    Choose file
+                                </MudButton>
+                            </CustomContent>
+                            <SelectedTemplate />
+                        </MudFileUpload>
+                    </MudItem>
+                    <MudItem>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Clear"
+                                   OnClick="@ClearAsync">
+                            Clear selection
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudStack>
+        </MudCardContent>
+        <MudCardActions>
+            <MudSwitch Color="Color.Primary" @bind-Value="_suppressOnChangeWhenInvalid"><CodeInline Class="ml-n1">SuppressOnChangeWhenInvalid</CodeInline></MudSwitch>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
+        </MudCardActions>
+    </MudForm>
+</MudCard>
+
+@code
+{
+    private readonly FileModelFluentValidator _validationRules = new();
+    private readonly FileModel _model = new();
+    private MudForm _form;
+    private bool _suppressOnChangeWhenInvalid;
+    private MudFileUpload<IBrowserFile> _fileUpload;
+
+    private void UploadFiles(InputFileChangeEventArgs e)
+    {
+        //If SuppressOnChangeWhenInvalid is false, perform your validations here
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add($"Selected file type: .{_model.File.Name.Split(".").Last()}", Severity.Info);
+
+        //TODO upload the files to the server
+    }
+
+    private async Task Submit()
+    {
+        await _form.ValidateAsync();
+
+        if (_form.IsValid)
+        {
+            Snackbar.Add("Submitted!");
+        }
+    }
+
+    private Task ClearAsync()
+        => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
+
+    public class FileModel
+    {
+        public string Name { get; set; }
+        public IBrowserFile File { get; set; }
+    }
+
+    /// <summary>
+    /// A standard AbstractValidator which contains multiple rules and can be shared with the back end API
+    /// </summary>
+    /// <typeparam name="OrderModel"></typeparam>
+    public class FileModelFluentValidator : AbstractValidator<FileModel>
+    {
+        public FileModelFluentValidator()
+        {
+            RuleFor(x => x.Name)
+                .NotEmpty()
+                .Length(1, 100);
+            RuleFor(x => x.File)
+            .NotEmpty();
+            When(x => x.File != null, () =>
+            {
+                RuleFor(x => x.File.Size).LessThanOrEqualTo(10485760).WithMessage("The maximum file size is 10 MB");
+            });
+        }
+
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<FileModel>.CreateWithOptions((FileModel)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+}

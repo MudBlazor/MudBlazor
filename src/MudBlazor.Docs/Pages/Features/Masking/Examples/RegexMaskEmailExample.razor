@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@emailMask" Label="Email Address"  HelperText="@emailMask.Mask"
+                      @bind-Value="email"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@emailCustomMask" Label="Email Address with Custom Mask"  HelperText="@emailCustomMask.Mask"
+                      @bind-Value="email2"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        Email 1: <b>@email</b>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        Email 2: <b>@email2</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string email;
+    public string email2;
+    public IMask emailMask = RegexMask.Email();
+    public IMask emailCustomMask = RegexMask.Email("<user>@<domain.com>");
+}

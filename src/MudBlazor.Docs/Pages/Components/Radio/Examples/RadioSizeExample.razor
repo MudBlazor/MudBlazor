@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudRadioGroup @bind-Value="Radio_Size">
+    <MudRadio Value="1" Color="Color.Primary" Size="Size.Small">Small</MudRadio>
+    <MudRadio Value="2" Color="Color.Secondary" Size="Size.Medium">Medium</MudRadio>
+    <MudRadio Value="3" Color="Color.Tertiary" Size="Size.Large">Large</MudRadio>
+</MudRadioGroup>
+
+@code { 
+    public int Radio_Size { get; set; } = 2;
+}

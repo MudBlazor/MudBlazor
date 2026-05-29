@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="OnButtonClicked" >Delete</MudButton>
+
+<MudChip T="string">@state</MudChip>
+
+@code
+{
+    [Inject] private IDialogService DialogService { get; set; }
+
+    string state = "Message box hasn't been opened yet";
+
+    private async void OnButtonClicked()
+    {
+        bool? result = await DialogService.ShowMessageBoxAsync(
+            "Warning", 
+            "Deleting can not be undone!", 
+            yesText:"Delete!", cancelText:"Cancel");
+        state = result == null ? "Canceled" : "Deleted!";
+        StateHasChanged();
+    }
+}

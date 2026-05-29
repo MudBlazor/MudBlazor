@@ -1,0 +1,74 @@
+﻿@page "/utilities/align-content"
+
+<DocsPage>
+    <DocsPageHeader Title="Align Content" SubTitle="Controlling how rows are positioned in flex and grid containers." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_AlignContent/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Start">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignContentStartExample)" HighLight="align-content-start">
+                        <AlignContentStartExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Center">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignContentCenterExample)" HighLight="align-content-center">
+                        <AlignContentCenterExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="End">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignContentEndExample)" HighLight="align-content-end">
+                        <AlignContentEndExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Space between">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignContentSpaceBetweenExample)" HighLight="align-content-space-between">
+                        <AlignContentSpaceBetweenExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Space around">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignContentSpaceAroundExample)" HighLight="align-content-space-around">
+                        <AlignContentSpaceAroundExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="align-content-md-end"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+
+    </DocsPageContent>
+</DocsPage>
+

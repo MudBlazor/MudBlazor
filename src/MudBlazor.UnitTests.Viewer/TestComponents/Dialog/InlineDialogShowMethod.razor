@@ -1,0 +1,43 @@
+﻿@inject IDialogService DialogService
+
+<MudButton OnClick="OpenDialogAsync" Class="open-dialog-button">
+    Options Dialog
+</MudButton>
+
+<MudDialog @ref="_dialog">
+    <DialogContent>
+        <p>Here be dragons</p>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Class="close-dialog-button" OnClick="CloseAsync">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudDialog _dialog = null!;
+
+    private async Task OpenDialogAsync()
+    {
+        var dialogInstance = await _dialog.ShowAsync("Options Dialog");
+
+        try
+        {
+            var result = await dialogInstance.Result;
+
+            if (result is not null)
+            {
+                await DialogService.ShowMessageBoxAsync("result", (string?)result.Data ?? string.Empty);
+            }
+            else
+            {
+                await DialogService.ShowMessageBoxAsync("error", "result was null");
+            }
+        }
+        catch (Exception exception)
+        {
+            await DialogService.ShowMessageBoxAsync("error", exception.ToString());
+        }
+    }
+
+    private Task CloseAsync() => _dialog.CloseAsync(DialogResult.Ok("dialog was successfully closed"));
+}

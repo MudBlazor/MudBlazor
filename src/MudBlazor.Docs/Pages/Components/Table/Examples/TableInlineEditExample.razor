@@ -1,0 +1,188 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)"
+          @bind-SelectedItem="selectedItem1" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
+          OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
+        {
+            <col style="width:50px;" />
+        }
+        <col style="width:50px;" />
+        <col style="width:80px;" />
+        <col style="width:50%;" />
+        <col />
+        <col />
+        @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
+        {
+            <col style="width:50px;" />
+        }
+    </ColGroup>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Sign)">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Element, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Position)">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Molar)">Mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">
+            <MudTextField @bind-Value="context.Sign" Required />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="context.Name" Required />
+        </MudTd>
+        <MudTd DataLabel="Position">
+            <MudNumericField @bind-Value="context.Position" Required Min="1" />
+        </MudTd>
+        <MudTd DataLabel="Molar mass">
+            <MudTextField @bind-Value="context.Molar" Required />
+        </MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+    </EditButtonContent>
+</MudTable>
+
+<MudSwitch @bind-Value="hover" Color="Color.Primary">Hover</MudSwitch>
+<MudSwitch @bind-Value="dense" Color="Color.Secondary">Dense</MudSwitch>
+<MudSwitch @bind-Value="ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+<MudSwitch @bind-Value="canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
+<MudSwitch @bind-Value="blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
+<MudGrid>
+    <MudItem xs="12" md="4">
+        <MudSelect Label="Edit Trigger" T="TableEditTrigger" @bind-Value="editTrigger">
+            <MudSelectItem Value="TableEditTrigger.RowClick">Row Click</MudSelectItem>
+            <MudSelectItem Value="TableEditTrigger.EditButton">Edit Button</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    @if (editTrigger == TableEditTrigger.EditButton)
+    {
+        <MudItem xs="12" md="4">
+            <MudSelect Label="Edit Button Position" T="TableEditButtonPosition" @bind-Value="editButtonPosition">
+                <MudSelectItem Value="TableEditButtonPosition.Start">Start</MudSelectItem>
+                <MudSelectItem Value="TableEditButtonPosition.End">End</MudSelectItem>
+                <MudSelectItem Value="TableEditButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+    }
+    <MudItem xs="12" md="4">
+        <MudSelect Label="Apply Button Position" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
+            <MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
+            <MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
+            <MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<MudText HtmlTag="span">Selected1: @selectedItem1?.Name</MudText>
+
+<MudExpansionPanels Style="flex: 1;">
+    <MudExpansionPanel Text="Show inline-edit event log">
+        @foreach (var message in editEvents)
+        {
+            <MudText>@message</MudText>
+        }
+        @if (editEvents.Count > 0)
+        {
+            <div class="d-flex">
+                <MudSpacer />
+                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="ClearEventLog">Clear event log</MudButton>
+            </div>
+        }
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+    private List<string> editEvents = new();
+    private bool dense = false;
+    private bool hover = true;
+    private bool ronly = false;
+    private bool canCancelEdit = false;
+    private bool blockSwitch = false;
+    private string searchString = "";
+    private Element selectedItem1 = null;
+    private Element elementBeforeEdit;
+    private HashSet<Element> selectedItems1 = new HashSet<Element>();
+    private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+    private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
+    private TableEditTrigger editTrigger = TableEditTrigger.RowClick;
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    private void ClearEventLog()
+    {
+        editEvents.Clear();
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        editEvents.Add(message);
+        StateHasChanged();
+    }
+
+    private void BackupItem(object element)
+    {
+        elementBeforeEdit = new()
+            {
+                Sign = ((Element)element).Sign,
+                Name = ((Element)element).Name,
+                Molar = ((Element)element).Molar,
+                Position = ((Element)element).Position
+            };
+        AddEditionEvent($"RowEditPreview event: made a backup of Element {((Element)element).Name}");
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+        AddEditionEvent($"RowEditCommit event: Changes to Element {((Element)element).Name} committed");
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((Element)element).Sign = elementBeforeEdit.Sign;
+        ((Element)element).Name = elementBeforeEdit.Name;
+        ((Element)element).Molar = elementBeforeEdit.Molar;
+        ((Element)element).Position = elementBeforeEdit.Position;
+        AddEditionEvent($"RowEditCancel event: Editing of Element {((Element)element).Name} canceled");
+    }
+
+    private bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+            return true;
+        return false;
+    }
+}

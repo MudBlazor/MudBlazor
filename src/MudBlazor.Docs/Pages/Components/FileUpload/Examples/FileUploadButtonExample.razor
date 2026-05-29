@@ -1,0 +1,85 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row Justify="Justify.SpaceAround" AlignItems="AlignItems.Center" Class="mud-width-full">
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="@context.OpenFilePickerAsync"
+                       StartIcon="@Icons.Material.Filled.CloudUpload">
+                Choose file
+            </MudButton>
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+        <CustomContent>
+            <MudFab Color="Color.Secondary"
+                    StartIcon="@Icons.Material.Filled.Image"
+                    OnClick="@context.OpenFilePickerAsync"
+                    Label="Choose photo" />
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+        <CustomContent>
+            <MudFab Color="Color.Success"
+                    OnClick="@context.OpenFilePickerAsync"
+                    StartIcon="@Icons.Material.Filled.AttachFile" />
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+        <CustomContent>
+            <MudIconButton Color="Color.Info"
+                           OnClick="@context.OpenFilePickerAsync"
+                           Icon="@Icons.Material.Filled.PhotoCamera">
+            </MudIconButton>
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Disabled>
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       OnClick="@context.OpenFilePickerAsync"
+                       Color="Color.Primary">
+                Disabled button
+            </MudButton>
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+</MudStack>
+
+<MudFlexBreak />
+
+@if (_files != null)
+{
+    <MudText Typo="@Typo.h6">@_files.Count() File@(_files.Count() == 1 ? "" : "s"):</MudText>
+    @if (_files.Count > 0)
+    {
+        <MudFlexBreak />
+        <MudList T="string">
+            @foreach (var file in _files)
+            {
+                <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                    @file.Name <code>@file.Size bytes</code>
+                </MudListItem>
+            }
+        </MudList>
+    }
+}
+
+@code
+{
+    private readonly IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        _files.Add(file);
+        //TODO upload the files to the server
+    }
+}

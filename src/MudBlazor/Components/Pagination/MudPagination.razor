@@ -1,0 +1,56 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Resources
+@inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
+
+<MudElement HtmlTag="ul" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
+    @if (ShowFirstButton)
+    {
+        <li class="@ItemClassname">
+            <MudIconButton Icon="@FirstIcon" Size="@Size" Variant="@Variant" Disabled="@(_selectedState.Value == 1 || Disabled)" OnClick="@(() => OnClickControlButtonAsync(Page.First))" aria-label="@Localizer[LanguageResource.MudPagination_FirstPage]"></MudIconButton>
+        </li>
+    }
+    @if (ShowPreviousButton)
+    {
+        <li class="@ItemClassname">
+            <MudIconButton Icon="@BeforeIcon" Size="@Size" Variant="@Variant" Disabled="@(_selectedState.Value == 1 || Disabled)" OnClick="@(() => OnClickControlButtonAsync(Page.Previous))" aria-label="@Localizer[LanguageResource.MudPagination_PreviousPage]"></MudIconButton>
+        </li>
+    }
+    @if (ShowPageButtons)
+    {
+        foreach (var state in GeneratePagination())
+        {
+            var currentPage = state;
+            if (currentPage == -1)
+            {
+                <li class="@ItemClassname">
+                    <MudText disabled="@Disabled">...</MudText>
+                </li>
+            }
+            else if (currentPage == _selectedState.Value)
+            {
+                <li class="@SelectedItemClassname">
+                    <MudButton Variant="@(Variant == Variant.Outlined ? Variant.Outlined : Variant.Filled)" Size="@Size" Ripple="false" Disabled="@Disabled" Color="@Color" aria-current="page" aria-label="@Localizer[LanguageResource.MudPagination_CurrentPage, $"{currentPage}"]">@currentPage</MudButton>
+                </li>
+            }
+            else
+            {
+                <li class="@ItemClassname">
+                    <MudButton OnClick="@(() => SetSelectedAsync(currentPage))" Variant="@Variant" Size="@Size" Ripple="false" Disabled="@Disabled" aria-label="@Localizer[LanguageResource.MudPagination_PageIndex, $"{currentPage}"]">@currentPage</MudButton>
+                </li>
+            }
+        }
+    }
+    @if (ShowNextButton)
+    {
+        <li class="@ItemClassname">
+            <MudIconButton Icon="@NextIcon" Variant="@Variant" Size="@Size" Disabled="@(_selectedState.Value == _countState.Value || Disabled)" OnClick="@(() => OnClickControlButtonAsync(Page.Next))" aria-label="@Localizer[LanguageResource.MudPagination_NextPage]"></MudIconButton>
+        </li>
+    }
+    @if (ShowLastButton)
+    {
+        <li class="@ItemClassname">
+            <MudIconButton Icon="@LastIcon" Variant="@Variant" Size="@Size" Disabled="@(_selectedState.Value == _countState.Value || Disabled)" OnClick="@(() => OnClickControlButtonAsync(Page.Last))" aria-label="@Localizer[LanguageResource.MudPagination_LastPage]"></MudIconButton>
+        </li>
+    }
+</MudElement>

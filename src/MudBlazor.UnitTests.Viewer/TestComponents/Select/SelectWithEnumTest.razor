@@ -1,0 +1,22 @@
+﻿<MudPopoverProvider />
+
+Value: @_selected
+<br />
+<MudSelect @bind-Value="@_selected">
+    @foreach (MyEnum item in Enum.GetValues(typeof(MyEnum)))
+    {
+        <MudSelectItem Value="@item">@item</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Initial Text should be the enum's default value.";
+
+    private MyEnum _selected;
+
+    public enum MyEnum
+    {
+        First,
+        Second,
+    }
+}

@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@using Microsoft.AspNetCore.Components.Routing
+
+<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
+    @{
+        if (!OnClick.HasDelegate)
+        {
+            <NavLink @onclick="this.AsNonRenderingEventHandler(HandleNavigation)"
+                    class="@LinkClassname"
+                    @attributes="@Attributes"
+                    tabindex="@TabIndex"
+                    Match="@Match"
+                    ActiveClass="@ActiveClass">
+                @if (!string.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
+                }
+                <div class="mud-nav-link-text">
+                    @ChildContent
+                </div>
+            </NavLink>
+        }
+        else
+        {
+            <div @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+                 class="@LinkClassname"
+                 tabindex="@TabIndex">
+                @if (!string.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+                }
+                <div class="mud-nav-link-text">
+                    @ChildContent
+                </div>
+            </div>
+        }
+    }
+</div>

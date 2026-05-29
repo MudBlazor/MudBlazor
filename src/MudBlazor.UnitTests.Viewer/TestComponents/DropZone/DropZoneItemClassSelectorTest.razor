@@ -1,0 +1,59 @@
+﻿<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1" ItemsClassSelector="GetItemClass">
+    <ChildContent>
+        @for (int i = 1; i < 4; i++) 
+         {
+             var dropzone = i.ToString();
+             <MudPaper Class="ma-4 flex-grow-1 ">
+                 <MudList T="string" Class="d-flex flex-column mud-height-full">
+                     <MudListSubheader>Drop Zone @dropzone</MudListSubheader>
+                    <MudDropZone T="DropItem" Identifier="@dropzone" Class="@($"flex-grow-1 dropzone-{dropzone}")" AllowReorder="true" />
+                 </MudList>
+             </MudPaper>
+         }
+    </ChildContent>
+    <ItemRenderer>
+        <MudListItem T="string" Text="@context.Name" />
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private readonly List<DropItem> _items =
+    [
+        new() { Name = "Item 1", Selector = "1" },
+        new() { Name = "Item 2", Selector = "1" },
+        new() { Name = "Item 3", Selector = "1" },
+        new() { Name = "Item 4", Selector = "1" },
+        new() { Name = "Item 5", Selector = "2" },
+        new() { Name = "Item 6", Selector = "2" }
+    ];
+
+    public List<int> IndexHistory { get; set; } = new();
+
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        if (dropItem.Item != null)
+        {
+            dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+        }
+
+        IndexHistory.Add(dropItem.IndexInZone);
+    }
+
+    private static string GetItemClass(DropItem item, string dropzoneId)
+    {
+        return dropzoneId switch
+        {
+            "1" => "mud-theme-primary",
+            "2" => "mud-theme-secondary",
+            "3" => "mud-theme-tertiary ",
+            _ => string.Empty
+        };
+    }
+
+    public class DropItem
+    {
+        public required string Name { get; init; }
+
+        public required string Selector { get; set; }
+    }
+}

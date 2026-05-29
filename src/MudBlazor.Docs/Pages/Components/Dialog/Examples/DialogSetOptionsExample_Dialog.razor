@@ -1,0 +1,88 @@
+﻿@using System.Web
+@namespace MudBlazor.Docs.Examples
+
+@inject NavigationManager NavigationManager
+
+<MudDialog>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudButton OnClick="ChangeTitleAsync">Change Title</MudButton>
+            <MudButton OnClick="ToggleCloseButtonAsync">Toggle Close Button</MudButton>
+            <MudButton OnClick="ToggleFullWidthAsync">Toggle Full Width</MudButton>
+            <MudButton OnClick="ToggleHeaderAsync">Toggle Header</MudButton>
+            <MudCheckBox TriState="true" T="bool?" Value="MudDialog.Options.CloseOnNavigation" ValueChanged="@(async v => await CloseOnNavigationChangedAsync(v))">Close On Navigation</MudCheckBox>
+            <MudButton OnClick="ChangeUrl">Change Url</MudButton>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Close">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [SupplyParameterFromQuery(Name = "example")]
+    public int? QueryParameterExample { get; set; }
+
+    protected override void OnParametersSet() {
+        QueryParameterExample ??= 0;
+    }
+
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    private Task ChangeTitleAsync() => MudDialog.SetTitleAsync($"Current time is: {DateTime.Now}");
+
+    private Task ToggleCloseButtonAsync()
+    {
+        var options = MudDialog.Options with
+        {
+            CloseButton = !(MudDialog.Options.CloseButton ?? false)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
+    }
+
+    private Task ToggleFullWidthAsync()
+    {
+        var options = MudDialog.Options with
+        {
+            FullWidth = !(MudDialog.Options.FullWidth ?? true)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
+    }
+
+    private Task ToggleHeaderAsync()
+    {
+        var options = MudDialog.Options with
+        {
+            NoHeader = !(MudDialog.Options.NoHeader ?? false)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
+    }
+
+    private void ChangeUrl() {
+        var uri = new Uri(NavigationManager.Uri);
+
+        var query = HttpUtility.ParseQueryString(uri.Query);
+
+        query["example"] = (QueryParameterExample + 1).ToString();
+
+        var newUri = $"{uri.GetLeftPart(UriPartial.Path)}?{query}";
+
+        NavigationManager.NavigateTo(newUri);
+    }
+
+    private Task CloseOnNavigationChangedAsync(bool? closeOnNavigation)
+    {
+        var options = MudDialog.Options with
+        {
+            CloseOnNavigation = closeOnNavigation
+        };
+
+        return MudDialog.SetOptionsAsync(options);
+    }
+}

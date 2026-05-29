@@ -1,0 +1,63 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
+
+
+<MudPaper Elevation="0" Class="mud-width-full mud-height-full d-flex justify-center align-end pb-8" MinHeight="600px" Style="@($"background-image:linear-gradient({_degrees}deg, {_gradientPrimary.ToString(MudColorOutputFormats.RGBA)} 0%, {_gradientSecondary.ToString(MudColorOutputFormats.RGBA)} 100%);")">
+    <MudPaper Class="d-flex">
+        <MudColorPicker Rounded="true" Class="rounded-tr-0" PickerVariant="PickerVariant.Static" ShowModeSwitch="false" Value="_pickerColor" ValueChanged="UpdateSelectedColor" />
+        <div class="pa-2">
+            <MudText Typo="Typo.h6" Class="mx-1">Gradient Colors</MudText>
+
+            <MudList T="string" SelectedValueChanged="ChangeSelectedColor">
+                <MudListItem Text="1">
+                    <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientPrimary};")"></div>
+                </MudListItem>
+                <MudListItem Text="2">
+                    <div class="mud-width-full rounded py-4" style="@($"background-color:{_gradientSecondary};")"></div>
+                </MudListItem>
+            </MudList>
+            <MudSlider Min="0" Max="360" Step="1" @bind-Value="_degrees" Class="px-2">Degrees</MudSlider>
+        </div>
+    </MudPaper>
+</MudPaper>
+
+
+@code {
+    private MudColor _gradientPrimary = "#594AE2";
+    private MudColor _gradientSecondary = "#FF4081";
+    private MudColor _pickerColor = "#594AE2";
+
+    private int _degrees = 90;
+
+    bool _isFirstColor = true;
+
+    public void ChangeSelectedColor(string item)
+    {
+        if (item == "1")
+        {
+            _isFirstColor = true;
+            _pickerColor = _gradientPrimary;
+            UpdateSelectedColor(_gradientPrimary);
+        }
+        else if (item == "2")
+        {
+            _isFirstColor = false;
+            _pickerColor = _gradientSecondary;
+            UpdateSelectedColor(_gradientSecondary);
+        }
+    }
+
+    public void UpdateSelectedColor(MudColor value)
+    {
+        _pickerColor = value;
+
+        if (_isFirstColor)
+        {
+            _gradientPrimary = value;
+        }
+        else
+        {
+            _gradientSecondary = value;
+        }
+    }
+}

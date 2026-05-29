@@ -1,0 +1,17 @@
+﻿
+<div @ref="@SectionReference" id="@GetSectionId()" class="@Classname">
+	@if (!String.IsNullOrWhiteSpace(Title) && HideTitle == false)
+	{
+		<MudText Typo="@GetTitleTypo()">
+			<b>@Title</b>
+		</MudText>
+	}
+	@if (SubTitle != null)
+	{
+		<MudText Typo="Typo.h6">@SubTitle</MudText>
+	}
+	@if (Description != null)
+	{
+		<MudText Class="mb-5">@Description</MudText>
+	}
+</div>

@@ -1,0 +1,50 @@
+﻿@page "/features/breakpoints"
+
+<DocsPage>
+    <DocsPageHeader Title="Breakpoints" SubTitle="Breakpoints help you control your layout based on windows size." />
+    
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Breakpoints">
+                <Description>
+                    MudBlazor use our own implementation of the original specification from Material design.
+                </Description>
+            </SectionHeader>
+            <BreakpointTable />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Components">
+                <Description>
+                    There is several components that utilizes the breakpoint system and can normally be configured with a parameter.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="MudGrid">
+                        <Description>
+                            Utilizes the screen resolution and a 12 point grid system for its layout. With the 5 breakpoints you can specify the layout order on different window sizes.
+                            Read more about <MudLink Href="/components/grid">MudBlazor's Grid component here</MudLink>, you will also find different examples and use cases.
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="MudHidden">
+                        <Description>
+                            Instead of layout order, you can determine what should be rendered or not, depending on the window size and applied breakpoint.
+                            Read more about <MudLink Href="/components/hidden">MudBlazor's Hidden component here.</MudLink>
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Utilities">
+                <Description>
+                    MudBlazor comes loaded with CSS utilities and are well documented under the feature section. Most of this CSS classes is also available with our breakpoints.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

@@ -1,0 +1,33 @@
+﻿<MudPopoverProvider />
+
+<MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new Item("B"), 
+        new Item("A"), 
+        new Item("C"),
+        new Item("C")
+    };
+
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState, CancellationToken token)
+    {
+        await Task.CompletedTask;
+        var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
+        return new GridData<Item>
+        {
+            Items = _items.Where(x => filterFunctions.All(f => f(x))),
+            TotalItems = _items.Count()
+        };
+    }
+
+    public class Item(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

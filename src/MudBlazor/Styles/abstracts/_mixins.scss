@@ -1,0 +1,53 @@
+﻿@mixin inputplaceholder {
+  // CSS Pseudo-Element
+  &::placeholder {
+    @content
+  }
+  /* - Chrome ≤56,
+    - Safari 5-10.0
+    - iOS Safari 4.2-10.2
+    - Opera 15-43
+    - Opera Mobile 12-12.1
+    - Android Browser 2.1-4.4.4
+    - Samsung Internet ≤6.2
+    - QQ Browser */
+  &::-webkit-input-placeholder {
+    @content
+  }
+  // Firefox 4-18
+  &:-moz-placeholder {
+    @content
+  }
+  // Firefox 19-50
+  &::-moz-placeholder {
+    @content
+  }
+  // IE 10–11 - IE Mobile 10-11
+  &:-ms-input-placeholder {
+    @content
+  }
+  // Edge
+  &::-ms-input-placeholder {
+    @content
+  }
+}
+
+@mixin slider-track {
+  &::-webkit-slider-runnable-track {
+    @content
+  }
+  // Firefox
+  &::-moz-range-track {
+    @content
+  }
+}
+
+@mixin slider-thumb {
+  &::-webkit-slider-thumb {
+    @content
+  }
+  // Firefox
+  &::-moz-range-thumb {
+    @content
+  }
+}

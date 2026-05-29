@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+@if (ShowToolbar)
+{
+    <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
+        @ChildContent
+    </MudToolBar>
+}

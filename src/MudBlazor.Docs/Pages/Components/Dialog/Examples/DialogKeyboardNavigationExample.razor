@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
+    Select coffee
+</MudButton>
+<MudChip T="string">@_returnValue</MudChip>
+
+@code {
+
+    string _returnValue = "Dialog return value (not yet set)";
+
+    private async Task OpenDialogAsync()
+    {    
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialogReference = await DialogService.ShowAsync<DialogKeyboardNavigationExample_Dialog>("Dialog Keyboard Accessibility Demo", options);
+        _returnValue = "Waiting for dialog to conclude ...";
+        StateHasChanged();
+        var dialogResult = await dialogReference.Result;
+        if (dialogResult.Canceled) {
+            _returnValue = "Dialog was canceled";
+            StateHasChanged();
+        }
+        else {
+            _returnValue = $"Dialog returned '{dialogResult.Data}'";
+            StateHasChanged();
+        }
+    }
+}

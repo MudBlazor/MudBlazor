@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSimpleTable Style="overflow-x: auto;">
+    <thead>
+        <tr>
+            @foreach (var h in headings)
+            {
+                <th>@h</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in rows)
+        {
+            <tr>
+                @foreach (var x in row.Split())
+                {
+                    <td>@x</td>
+                }
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    string[] headings = { "ID", "Name", "Email", "Gender", "IP Address" };
+    string[] rows = {
+        @"1 Ruby ruby_wood@example.org Female 192.0.2.77",
+        @"2 Elias elias.doyle+us@example.net Male 198.51.100.88",
+        @"3 Aria aria.lopez-training@example.com Female 203.0.113.99",
+        @"4 Miles miles_smith2025@example.net Male 192.0.2.110",
+        @"5 Eva eva.murphy-ops@example.org Female 198.51.100.121",
+        @"6 Leo leo.williams+dev@example.com Male 203.0.113.132",
+    };
+}

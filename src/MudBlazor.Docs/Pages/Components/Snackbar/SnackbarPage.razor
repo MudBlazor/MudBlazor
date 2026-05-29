@@ -1,0 +1,216 @@
+﻿@page "/components/snackbar"
+
+@inject MudBlazor.ISnackbar Snackbar
+
+<DocsPage>
+    <DocsPageHeader Title="Snackbar" Component="@nameof(SnackbarService)" />    
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> is dependant on <CodeInline Class="docs-code-tertiary">@nameof(ISnackbar)</CodeInline> service and <CodeInline>@nameof(MudSnackbarProvider)</CodeInline>.</MudText>
+            <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
+            <MudAlert Severity="Severity.Info" Class="mt-3">To statically embed an important message in a page see <MudLink Href="/components/alert">Alert</MudLink></MudAlert>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    This is the simplest way of using the <CodeInline>Snackbar</CodeInline>. It provides the user with a brief floating message.<br />
+                    It'll hide after some time unless the mouse is over it or it's the last thing touched on a touchscreen.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarUsageExample)">
+                <SnackbarUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="HTML in messages">
+                <Description>
+                    <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> messages can be rendered as HTML using <CodeInline>@nameof(MarkupString)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarHtmlInMessageExample)" ShowCode="false">
+                <SnackbarHtmlInMessageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="RenderFragment messages">
+                <Description>
+                    In addition to setting the <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> message with a string, you can also use <CodeInline>@nameof(RenderFragment)</CodeInline> to
+                    create Snackbars with more complex content.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarFromRenderFragmentExample)" ShowCode="false">
+                <SnackbarFromRenderFragmentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom component messages">
+                <Description>
+                    You can also create messages containing a custom component. This example renders a message based on MudBlazor's
+                    <CodeInline>@nameof(MudChip<T>)</CodeInline>, but you can use any component to define the content. Pass parameters to the component
+                    using the <CodeInline>componentParameters</CodeInline> argument.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarFromCustomComponentExample)" ShowCode="false">
+                <SnackbarFromCustomComponentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Alerts and Severity">
+                <Description>
+                    By default, no <CodeInline>@nameof(SnackbarOptions.Severity)</CodeInline> property has to be passed and the snackbar uses the normal level.<br />
+                    To change the snackbar into an alert snackbar, simply pass down the <CodeInline>@nameof(Severity)</CodeInline> enum after the message.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarSeverityExample)" ShowCode="false">
+                <SnackbarSeverityExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Configuration">
+                <Description>The Snackbar's default behavior can be changed in two ways, either globally when the service is registered or by passing down the <CodeInline>@nameof(SnackbarConfiguration)</CodeInline> class with the changes you want to make.</Description>
+            </SectionHeader>
+            <SectionHeader>
+                <SubTitle>1. Global Service Settings</SubTitle>
+                <Description>In <CodeInline>Program.cs</CodeInline>. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+            </SectionHeader>
+            <MarkdownSnackbarConfigurationService />
+            <SectionHeader>
+                <SubTitle>2. Per Snackbar</SubTitle>
+                <Description>
+                    This can be done in many ways, below is one of them and we will continue to use it further down on this page.<br />
+                    Below, we pass along a modified configuration that differs from our globally-set <CodeInline>@nameof(SnackbarOptions.ShowCloseIcon)</CodeInline>. In this case, it's also the Snackbar's default value.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarConfigurationExample)">
+                <SnackbarConfigurationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <MudDivider Class="my-16" Style="opacity:0;" />
+
+        <DocsPageSection>
+            <SectionHeader Title="Snackbar Position">
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarPositionExample)" ShowCode="false" Block="true">
+                <SnackbarPositionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Snackbar Variants">
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarVariantsExample)" ShowCode="false">
+                <SnackbarVariantsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Close after navigation">
+            </SectionHeader>
+            <SectionHeader>
+                <Description>
+                    The snackbar's default behavior is to remain visible until the user closes the snackbar. When <CodeInline>@nameof(SnackbarOptions.CloseAfterNavigation)</CodeInline> is set to <CodeInline>true</CodeInline> a snackbar will close after a user navigates away from the current page. Click both snackbars in the example and then navigate to another component to see this example in action.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarNavigationExample)" ShowCode="false">
+                <SnackbarNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Action Handling">
+            </SectionHeader>
+            <SectionHeader>
+                <Description>
+                    A <CodeInline>@nameof(Snackbar)</CodeInline> becomes clickable when a handler is defined in the <CodeInline>@nameof(SnackbarOptions.OnClick)</CodeInline> property of the <CodeInline>@nameof(SnackbarOptions)</CodeInline> object.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarOnClickExample)" ShowCode="false">
+                <SnackbarOnClickExample />
+            </SectionContent>
+            <SectionHeader>
+                <Description>
+                    Alternatively, the <CodeInline>@nameof(SnackbarOptions.OnClick)</CodeInline> handler can be attached to an action button by setting a label in the <CodeInline>@nameof(SnackbarOptions.Action)</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarActionButtonExample)" ShowCode="false">
+                <SnackbarActionButtonExample />
+            </SectionContent>
+            <SectionHeader>
+                <Description>
+                    A <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> can also invoke the attached <CodeInline>@nameof(SnackbarOptions.CloseButtonClickFunc)</CodeInline> task when a user clicks on the close button.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarOnCloseExample)" ShowCode="false">
+                <SnackbarOnCloseExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Require Interaction">
+                <Description>Snackbars that define an action button stay visible until the user interacts with them. Use the <CodeInline>@nameof(CommonSnackbarOptions.RequireInteraction)</CodeInline> property to enforce this behavior for all snackbars or to opt out when actions should still dismiss automatically.</Description>
+            </SectionHeader>
+            <SectionContent Class="pa-0" Code="@nameof(SnackbarRequireInteractionExample)" ShowCode="false">
+                <SnackbarRequireInteractionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="No Icon">
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarNoIconExample)" ShowCode="false">
+                <SnackbarNoIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Icon">
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarCustomIconExample)" ShowCode="false">
+                <SnackbarCustomIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Programmatically remove" />
+            <SectionHeader>
+                <Description>
+                    Using the injected <CodeInline Class="docs-code-tertiary">@nameof(ISnackbar)</CodeInline>, you can use the <CodeInline>@nameof(ISnackbar.Remove)</CodeInline> method to remove a <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> programmatically.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarRemoveExample)" ShowCode="false">
+                <SnackbarRemoveExample />
+            </SectionContent>
+            <SectionHeader>
+                <Description>
+                    Alternatively, you can use the <CodeInline>@nameof(ISnackbar.RemoveByKey)</CodeInline> method to remove the Snackbars by key programmatically.
+                    It will remove all the Snackbars with the specified key, including those that are not displayed due to <CodeInline>@nameof(SnackbarConfiguration.MaxDisplayedSnackbars)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarRemoveByKeyExample)" ShowCode="false">
+                <SnackbarRemoveByKeyExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Preventing duplication">
+                <Description>
+                    <CodeInline>@nameof(SnackbarService)</CodeInline> can prevent more than one snackbar with identical message content from appearing. It does
+                    this by default when you call <CodeInline>@nameof(ISnackbar.Add)</CodeInline> with a <CodeInline>string</CodeInline>. If you want to prevent duplication of
+                    a <CodeInline>@nameof(MudBlazor.Snackbar)</CodeInline> created with a <CodeInline>@nameof(RenderFragment)</CodeInline> or a custom component, pass a key to <CodeInline>@nameof(ISnackbar.Add)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SnackbarPreventDuplicatesExample)" ShowCode="false">
+                <SnackbarPreventDuplicatesExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

@@ -1,0 +1,28 @@
+﻿<MudDynamicTabs CloseIconClass="my-close-icon-class" CloseTab="OnCloseClicked"
+                AddIconClass="my-add-icon-class" AddTab="OnAddClicked">
+    <MudTabPanel Text="Tab A">
+        Content A
+    </MudTabPanel>
+    <MudTabPanel Text="Tab B">
+        Content B
+    </MudTabPanel>
+    <MudTabPanel Text="Tab C">
+        Content C
+    </MudTabPanel>
+</MudDynamicTabs>
+
+@code {
+    public int AddClickCounter { get; private set; }
+
+    public HashSet<MudTabPanel> CloseClicked { get; } = [];
+
+    private void OnAddClicked()
+    {
+        AddClickCounter++;
+    }
+
+    private void OnCloseClicked(MudTabPanel panel)
+    {
+        CloseClicked.Add(panel);
+    }
+}

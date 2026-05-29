@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSimpleTable Hover="true" Dense="true" FixedHeader="@fixedheader" Style="@(fixedheader?"height:300px;":"")">
+    <thead>
+        <tr>
+            @foreach (var h in headings)
+            {
+                <th>@h</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in rows)
+        {
+            <tr>
+                @foreach (var x in row.Split())
+                {
+                    <td>@x</td>
+                }
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+<MudSwitch @bind-Value="fixedheader" Color="Color.Primary">Fixed Header</MudSwitch>
+
+@code {
+    bool fixedheader = true;
+    string[] headings = { "ID", "Name", "Email", "Gender", "IP Address" };
+    string[] rows = {
+        @"1 Aiden a.reed+work@example.com Male 192.0.2.10",
+        @"2 Mason mason_gray-1@example.net Male 192.0.2.21",
+        @"3 Leo leo.hart1990@example.org Male 198.51.100.32",
+        @"4 Zara zara.armstrong.sales+eu@example.com Female 198.51.100.43",
+        @"5 Rowan rowan.phillips_team@example.net Male 198.51.100.54",
+        @"6 Iris iris_morgan@example.org Female 203.0.113.65",
+        @"7 Ethan ethan.brooks+dev@example.com Male 203.0.113.76",
+        @"8 Noah n.carter-hr@example.net Male 203.0.113.87",
+        @"9 Lily lily_green123@example.org Female 192.0.2.98",
+        @"10 Nina nina.olsen+news@example.com Female 192.0.2.109",
+        @"11 Owen owen.davis_uk@example.net Male 198.51.100.111",
+        @"12 Emma emma.klein-ops@example.org Female 203.0.113.122",
+    };
+}

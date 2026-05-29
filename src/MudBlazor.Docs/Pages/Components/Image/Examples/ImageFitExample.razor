@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex justify-center">
+    <MudImage ObjectFit="@ImageFit" Height="200" Width="400" Src="images/castle.jpg" Alt="Örebro Slott"  Elevation="25" Class="rounded-lg"/>
+</div>
+
+<MudChipSet T="string" CheckMark Class="mt-12">
+    <MudChip Text="None" OnClick="@(() => SetImageFit(ObjectFit.None))" SelectedColor="Color.Primary" />
+    <MudChip Text="Cover" OnClick="@(() => SetImageFit(ObjectFit.Cover))" SelectedColor="Color.Primary" Default="true"/>
+    <MudChip Text="Contain" OnClick="@(() => SetImageFit(ObjectFit.Contain))" SelectedColor="Color.Primary" />
+    <MudChip Text="Fill" OnClick="@(() => SetImageFit(ObjectFit.Fill))" SelectedColor="Color.Primary" />
+    <MudChip Text="ScaleDown" OnClick="@(() => SetImageFit(ObjectFit.ScaleDown))" SelectedColor="Color.Primary" />
+</MudChipSet>
+
+@code {
+    ObjectFit ImageFit = ObjectFit.Cover;
+
+    void SetImageFit(ObjectFit value)
+    {
+        ImageFit = value;
+    }
+}

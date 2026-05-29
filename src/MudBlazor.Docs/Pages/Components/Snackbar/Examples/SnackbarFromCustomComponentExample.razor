@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar SnackbarService
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@OnClick">Show a snackbar with a custom component</MudButton>
+
+@code {
+    private void OnClick()
+    {
+        SnackbarService.Add<MudChip<T>>(new Dictionary<string, object>() {
+            { "Text", "This is a snackbar with a chip!" },
+            { "Color", Color.Primary }
+        });
+    }
+}

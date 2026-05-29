@@ -1,0 +1,78 @@
+﻿
+.mud-icondrawer {
+  .mud-typography-subtitle1 {
+    font-weight: 500;
+  }
+
+  .mud-typography-subtitle2 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .mud-paper {
+    background-color: var(--mud-palette-background-gray);
+  }
+
+  .mud-input-adornment {
+    display: none;
+  }
+}
+
+.mud-iconcode {
+  font-size: 12px;
+  overflow: hidden;
+  user-select: all;
+  letter-spacing: normal;
+  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.docs-icon-panel {
+  height: 128px;
+  width: 100%;
+  max-width: 112px;
+  padding: 0px 6px;
+  margin: 16px 12px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+  border-radius: var(--mud-default-borderradius);
+  transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1);
+  user-select: none;
+
+  &:focus {
+    outline: 2px solid var(--mud-palette-primary);
+  }
+
+  &:focus-visible, &:active {
+    background-color: var(--mud-palette-action-default-hover);
+    outline: none;
+  }
+
+  & .mud-svg-icon {
+    font-size: 40px;
+    margin-top: 12px;
+  }
+
+  & .mud-typography {
+    margin-bottom: 4px;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      cursor: pointer;
+      background-color: var(--mud-palette-action-default-hover);
+    }
+  }
+
+  &:active {
+    cursor: pointer;
+    background-color: var(--mud-palette-action-default-hover);
+  }
+}

@@ -1,0 +1,107 @@
+﻿<MudTable T="DocumentedLink" @ref="Table" ServerData="@GetData"
+Breakpoint="@Breakpoint.Sm"
+Elevation="0" Class="docs-content-api-table" Hover="true" Dense="true"
+AllowUnsorted="false">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedLink" SortLabel="Text" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedLink" SortLabel="LinkType">Type</MudTableSortLabel></MudTh>
+        <MudTh>Description</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd id="@context.GetName()" DataLabel="Name" Class="docs-content-api-cell">
+            @if (context.Href != null)
+            {
+                <MudLink Href="@context.GetLink()" Typo="Typo.caption">
+                    @if(!string.IsNullOrEmpty(context.Text))
+                    {
+                        <CodeInline>@context.Text</CodeInline>                        
+                    }
+                    else
+                    {
+                        <CodeInline>@context.Href</CodeInline>
+                    }                    
+                </MudLink>
+            }
+            else if (context.Type != null)
+            {
+                <ApiTypeLink Type="@context.Type" TypeName="@context.Type.Name" TypeFriendlyName="@context.Type.NameFriendly" />
+            }
+        </MudTd>
+        <MudTd DataLabel="Type" Class="docs-content-api-cell">
+            @if (!string.IsNullOrEmpty(context.Href))
+            {
+                @if (context.Href.Contains("mudblazor.com/components"))
+                {
+                    <MudText Typo="Typo.body2">Examples</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2">External Link</MudText>
+                }
+            }
+            else if (context.Type != null)
+            {
+                @if (context.Type.IsComponent)
+                {
+                    <MudText Typo="Typo.body2">Component</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2">Type</MudText>
+                }
+            }
+            else if (context.Property != null)
+            {
+                <MudText Typo="Typo.body2">Property</MudText>
+            }
+            else if (context.Method != null)
+            {
+                <MudText Typo="Typo.body2">Method</MudText>
+            }
+            else if (context.Event != null)
+            {
+                <MudText Typo="Typo.body2">Event</MudText>
+            }
+            else if (context.Field != null)
+            {
+                <MudText Typo="Typo.body2">Field</MudText>
+            }
+        </MudTd>
+        <MudTd DataLabel="Description" Class="docs-content-api-cell docs-content-api-description">
+            @if (!string.IsNullOrEmpty(context.Href))
+            {
+                @if(context.Href.Contains("mudblazor.com/components"))
+                {
+                    <MudText Typo="Typo.body2">@Type.NameFriendly Examples</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2">External Link</MudText>
+                }
+            }
+            else if (context.Type != null)
+            {
+                <ApiText Text="@(context.Type.Summary + " " + context.Type.Remarks)" />
+            }
+            else if (context.Property != null)
+            {
+                <ApiText Text="@(context.Property.Summary + " " + context.Property.Remarks)" />
+            }
+            else if (context.Method != null)
+            {
+                <ApiText Text="@(context.Method.Summary + " " + context.Method.Remarks)" />
+            }
+            else if (context.Event != null)
+            {
+                <ApiText Text="@(context.Event.Summary + " " + context.Event.Remarks)" />
+            }
+            else if (context.Field != null)
+            {
+                <ApiText Text="@(context.Field.Summary + " " + context.Field.Remarks)" />
+            }            
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No see-also links match the current filters.</MudAlert>
+    </NoRecordsContent>
+</MudTable>

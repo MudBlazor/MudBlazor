@@ -1,0 +1,22 @@
+﻿<MudPopoverProvider />
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new("B"), 
+        new("A"), 
+        new("C"),
+        new("C")
+    };
+
+    public class Item(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

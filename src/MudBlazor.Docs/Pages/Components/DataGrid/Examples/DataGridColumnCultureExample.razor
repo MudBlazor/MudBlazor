@@ -1,0 +1,23 @@
+@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Amount" Title="Amount (es-ES culture)" Culture="@(new CultureInfo("es-ES"))" />
+        <PropertyColumn Property="x => x.Total" Title="Total (invariant culture)" Culture="@CultureInfo.InvariantCulture" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", 56, 2.3, 3.2), 
+        new Model("Alicia", 54, 4.5, 4.9), 
+        new Model("Ira", 27, 2.1, 2.5),
+        new Model("John", 32, 5.9, 6.1)
+    };
+
+    public record Model(string Name, int? Age, double? Amount, double? Total);
+}

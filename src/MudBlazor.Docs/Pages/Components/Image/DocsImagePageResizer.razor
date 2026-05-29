@@ -1,0 +1,40 @@
+﻿<div @onpointerup="OnPointerUp" @onpointermove="OnPointerMove" class="relative mud-width-full" style="height:300px;">
+    <div style="max-width: 100%; width: @($"{Width}px"); height: 100%; user-select: none;" class="pointer-events-none z-10 d-flex align-center">
+        @ChildContent
+    </div>
+    <div class="absolute pointer-events-none d-flex align-center" style="top:0; bottom: 0; left: 14px; width: 100%;">
+        <MudPaper Elevation="25" Height="100px" Width="8px" @onpointerdown="OnPointerDown" Class="absolute ma-4 cursor-col-resize z-20 pointer-events-auto" Style="@($"left:0; transform: translate3d({Width}px, 0px, 0px) scale(1, 1);")" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public bool PointerDown { get; set; }
+    public double Width { get; set; } = 400;
+
+    private void OnPointerDown() => PointerDown = true;
+    private void OnPointerUp() => PointerDown = false;
+
+    private void OnPointerMove(PointerEventArgs e)
+    {
+        if (PointerDown)
+        {
+            var newValue = e.OffsetX;
+            if (newValue < 150)
+            {
+                Width = 150;
+            }
+            else if (newValue > 680)
+            {
+                Width = 680;
+            }
+            else
+            {
+                Width = e.OffsetX;
+            }
+        }
+    }
+
+}

@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="gray" Variant="Variant.Text" Color="Color.Default">Default</MudChip>
+    <MudChip Text="purple" Variant="Variant.Text" Color="Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Variant="Variant.Text" Color="Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Info</MudChip>
+    <MudChip Text="green" Variant="Variant.Text" Color="Color.Success">Success</MudChip>
+    <MudChip Text="orange" Variant="Variant.Text" Color="Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Variant="Variant.Text" Color="Color.Error">Error</MudChip>
+    <MudChip Text="black" Variant="Variant.Text" Color="Color.Dark">Dark</MudChip>
+</MudChipSet>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="gray" Variant="Variant.Outlined" Color="Color.Default">Default</MudChip>
+    <MudChip Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Variant="Variant.Outlined" Color="Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Variant="Variant.Outlined" Color="Color.Info">Info</MudChip>
+    <MudChip Text="green" Variant="Variant.Outlined" Color="Color.Success">Success</MudChip>
+    <MudChip Text="orange" Variant="Variant.Outlined" Color="Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Variant="Variant.Outlined" Color="Color.Error">Error</MudChip>
+    <MudChip Text="black" Variant="Variant.Outlined" Color="Color.Dark">Dark</MudChip>
+</MudChipSet>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="gray" Variant="Variant.Filled" Color="Color.Default">Default</MudChip>
+    <MudChip Text="purple" Variant="Variant.Filled" Color="Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Variant="Variant.Filled" Color="Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Variant="Variant.Filled" Color="Color.Info">Info</MudChip>
+    <MudChip Text="green" Variant="Variant.Filled" Color="Color.Success">Success</MudChip>
+    <MudChip Text="orange" Variant="Variant.Filled" Color="Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Variant="Variant.Filled" Color="Color.Error">Error</MudChip>
+    <MudChip Text="black" Variant="Variant.Filled" Color="Color.Dark">Dark</MudChip>
+</MudChipSet>
+<MudCheckBox @bind-Value="_checkMark">Check marks</MudCheckBox>
+
+
+@code
+{
+    private bool _checkMark = true;
+}
+

@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudText Typo="Typo.h6" Class="mb-4">Default Gutters (Gutters="true")</MudText>
+<MudExpansionPanels Class="mb-6">
+    <MudExpansionPanel Text="Panel with Gutters" Gutters="true">
+        <MudText>Both header and content have 24px horizontal padding (gutters).</MudText>
+        <MudText>This is the default behavior when Gutters is not specified.</MudText>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+<MudText Typo="Typo.h6" Class="mb-4">No Gutters (Gutters="false")</MudText>
+<MudExpansionPanels Class="mb-6">
+    <MudExpansionPanel Text="Panel without Gutters" Gutters="false">
+        <MudText>Both header and content have no horizontal padding.</MudText>
+        <MudText>Notice how the text aligns to the left edge.</MudText>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+<MudText Typo="Typo.h6" Class="mb-4">Dense Panels</MudText>
+<MudExpansionPanels Class="mb-6">
+    <MudExpansionPanel Text="Dense with Gutters" Dense Gutters>
+        Dense removes vertical padding from content while keeping horizontal gutters.
+    </MudExpansionPanel>
+    <MudExpansionPanel Text="Dense without Gutters" Dense Gutters="false">
+        Dense with no gutters - minimal padding on all sides.
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+<MudText Typo="Typo.h6" Class="mb-4">Parent Controls Gutters</MudText>
+<MudExpansionPanels Dense Gutters="false">
+    <MudExpansionPanel Text="Gutters inherited from parent">
+        When the parent MudExpansionPanels has Gutters="false", all child panels inherit this setting.
+    </MudExpansionPanel>
+</MudExpansionPanels>

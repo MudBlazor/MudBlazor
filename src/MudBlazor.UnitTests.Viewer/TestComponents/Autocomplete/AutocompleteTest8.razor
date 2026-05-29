@@ -1,0 +1,10 @@
+@if (MustBeShown)
+{
+    <AutocompleteContainer @bind-HasBeenDisposed="@HasBeenDisposed"></AutocompleteContainer>
+}
+
+@code {
+    public bool MustBeShown { get; set; } = true;
+
+    public bool HasBeenDisposed { get; private set; }
+}

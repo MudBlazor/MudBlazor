@@ -1,0 +1,66 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<style type="text/css">
+    .mud-table-head .header-centered th {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+   .mud-table-foot .bold-text .mud-table-cell {
+       font-weight: 500;
+   }
+</style>
+
+<MudTable Items="@Elements.Take(10)" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="true" Breakpoint="Breakpoint.Sm" Striped="true" Bordered="true"
+          CustomHeader="true" CustomFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered">
+    <HeaderContent>
+        <MudTHeadRow IgnoreCheckbox="true" Class="header-centered">
+            <MudTh colspan="6">Periodic Elements Info</MudTh>
+        </MudTHeadRow>
+        <MudTHeadRow Class="header-centered">
+            <MudTh colspan="2">Basic</MudTh>
+            <MudTh colspan="3">Extended</MudTh>
+        </MudTHeadRow>
+        <MudTHeadRow Checkable="true">
+            <MudTh>Nr</MudTh> 
+            <MudTh>Sign</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Position</MudTh>
+            <MudTh>Molar mass</MudTh>
+        </MudTHeadRow>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position" HideSmall="_hidePosition">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow Class="bold-text">
+            <MudTd>Nr</MudTd>
+            <MudTd>Sign</MudTd>
+            <MudTd>Name</MudTd>
+            <MudTd>Position</MudTd>
+            <MudTd>Molar mass</MudTd>
+        </MudTFootRow>
+        <MudTFootRow Checkable="true">
+            <MudTd colspan="5">Selected: @selectedItems.Count</MudTd>
+        </MudTFootRow>
+    </FooterContent>
+</MudTable>
+<MudSwitch @bind-Value="_hidePosition" Color="Color.Primary">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+
+@code {
+    private bool _hidePosition;
+    private IEnumerable<Element> Elements = new List<Element>();
+    private HashSet<Element> selectedItems = new HashSet<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

@@ -1,0 +1,96 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row Justify="Justify.SpaceAround" AlignItems="AlignItems.Start" Class="mud-width-full">
+    <MudFileUpload @bind-Files=@_file>
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       OnClick="@context.OpenFilePickerAsync"
+                       Color="Color.Primary">
+                Default template
+            </MudButton>
+        </CustomContent>
+    </MudFileUpload>
+
+    <MudFileUpload T="IBrowserFile">
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       OnClick="@context.OpenFilePickerAsync"
+                       Color="Color.Primary">
+                Single file
+            </MudButton>
+        </CustomContent>
+        <SelectedTemplate>
+            @if (context != null)
+            {
+                <MudText>@context.Name</MudText>
+            }
+            else
+            {
+                <MudText>No file selected</MudText>
+            }
+        </SelectedTemplate>
+    </MudFileUpload>
+
+    <MudFileUpload @bind-Files=@_files>
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       OnClick="@context.OpenFilePickerAsync"
+                       Color="Color.Secondary">
+                Multiple files
+            </MudButton>
+        </CustomContent>
+        <SelectedTemplate>
+            @if (context != null)
+            {
+                @foreach (var file in context)
+                {
+                    <MudText>@file.Name</MudText>
+                }
+            }
+            else
+            {
+                <MudText>No files selected</MudText>
+            }
+        </SelectedTemplate>
+    </MudFileUpload>
+
+    <MudFileUpload @bind-Files=@_file>
+        <CustomContent>
+            <MudFab Color="Color.Warning"
+                    StartIcon="@Icons.Material.Filled.Image"
+                    OnClick="@context.OpenFilePickerAsync"
+                    Label="No template" />
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+</MudStack>
+
+@code
+{
+    private IBrowserFile _file = new DummyBrowserFile("test.jpg", DateTimeOffset.Now, 1024, "image/jpeg", new byte[1024]);
+    private IReadOnlyList<IBrowserFile> _files =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+    ];
+
+    public class DummyBrowserFile : IBrowserFile
+    {
+        public string Name { get; }
+        public DateTimeOffset LastModified { get; }
+        public long Size { get; }
+        public string ContentType { get; }
+        public byte[] Content { get; }
+
+        public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)
+        {
+            Name = name;
+            LastModified = lastModified;
+            Size = size;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
+}

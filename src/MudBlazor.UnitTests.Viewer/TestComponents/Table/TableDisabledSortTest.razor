@@ -1,0 +1,17 @@
+﻿<MudTable Items="@_examples" T="string">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<string, object>(x=>x)">#</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private IEnumerable<string> _examples = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        _examples = new List<string> { "B", "A", "C" };
+    }
+}

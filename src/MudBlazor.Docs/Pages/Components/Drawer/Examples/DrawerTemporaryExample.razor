@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Start))">Start</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.End))">End</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Top))">Top</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Bottom</MudButton>
+<MudSwitch @bind-Value="_overlayAutoClose" Label="Overlay Autoclose" Color="Color.Secondary" />
+<MudDrawer @bind-Open="@_open" Anchor="@_anchor" Elevation="1" Variant="@DrawerVariant.Temporary" OverlayAutoClose="@_overlayAutoClose">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">My App</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        <MudNavLink OnClick="_ => _open = false">Close Drawer</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code{ 
+    private bool _open;
+    private Anchor _anchor;
+    private bool _overlayAutoClose = true;
+
+    private void OpenDrawer(Anchor anchor)
+    {
+        _open = true;
+        _anchor = anchor;
+    }
+}

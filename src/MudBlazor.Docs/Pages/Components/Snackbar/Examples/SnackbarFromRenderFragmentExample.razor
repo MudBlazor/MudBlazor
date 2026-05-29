@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar SnackbarService
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@OnClick">Show a RenderFragment snackbar</MudButton>
+
+@code {
+    private void OnClick()
+    {
+        SnackbarService.Add
+        (
+            @<div>
+                <h3>Hi from a RenderFragment</h3>
+                <ul>
+                    <li>Here's a regular item</li>
+                    <li>Here's a <strong>bold item</strong></li>
+                    <li>Here's an <em>italicized item</em></li>
+                </ul>
+            </div>
+        );
+    }
+}

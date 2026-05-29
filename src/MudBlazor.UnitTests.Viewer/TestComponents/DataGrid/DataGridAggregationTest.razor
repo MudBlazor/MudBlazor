@@ -1,0 +1,62 @@
+﻿<MudDataGrid Items="@_items" Groupable="true" Filterable="true" GroupExpanded="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" AggregateDefinition="@(new AggregateDefinition<Model>())">
+            <AggregateTemplate>
+                @{
+                    var names = context.Select(x => x.Name).ToArray();
+                    var index = 1;
+                }
+                @foreach (var name in names)
+                {
+                    <MudAvatar Color="@((Color)index++)" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2 mr-1">
+                        @name.First()
+                    </MudAvatar>
+                    @name.Substring(1)
+                }
+            </AggregateTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
+        <PropertyColumn Property="x => x.Status" Grouping="true" />
+        <PropertyColumn Property="x => x.Salary" AggregateDefinition="_salaryAggregation" />
+        <PropertyColumn Property="x => x.HireDate" Title="Hired">
+            <CellTemplate>
+                @context.Item.HireDate.ToString("d")
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.IsManager" Title="Manager" />
+    </Columns>
+</MudDataGrid>
+
+@code { 
+    public record Model (string Name, int Age, Severity Status, decimal Salary, DateTime HireDate, bool IsManager);
+
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Sam", 56, Severity.Normal, 50_000.00M, new DateTime(2005, 3, 5), false), 
+        new("Alicia", 54, Severity.Info, 75_000.00M, new DateTime(2010, 1, 17), false), 
+        new("Ira", 27, Severity.Success, 102_000.00M, new DateTime(2017, 6, 15), true),
+        new("John", 32, Severity.Warning, 132_000.00M, new DateTime(2021, 12, 23), true),
+        new("Fred", 65, Severity.Warning, 87_000.00M, new DateTime(2003, 7, 3), false), 
+        new("Tabitha", 33, Severity.Info, 157_000.00M, new DateTime(2015, 2, 12), true), 
+        new("Hunter", 22, Severity.Success, 43_000.00M, new DateTime(2017, 9, 20), false),
+        new("Esme", 55, Severity.Warning, 149_000.00M, new DateTime(2017, 8, 1), true)
+    };
+
+
+    private readonly AggregateDefinition<Model> _ageAggregation = new()
+    {
+        Type = AggregateType.Avg,
+        DisplayFormat = "Average age is {value}"
+    };
+
+    private readonly AggregateDefinition<Model> _salaryAggregation = new()
+    {
+        Type = AggregateType.Custom,
+        CustomAggregate = x =>
+        {
+            var highestSalary = x.Max(z => z.Salary);
+            var countOver100Grand = x.Count(z => z.Salary > 100_000);
+            return $"Highest: {highestSalary:C0} | {countOver100Grand} Over {100000:C0}";
+        }
+    };
+}

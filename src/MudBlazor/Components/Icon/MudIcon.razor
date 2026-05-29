@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+@if (IsAngleBracket)
+{
+    <svg class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true" role="img" @attributes="UserAttributes">
+        @if (Title is not null)
+        {
+            <title>@Title</title>
+        }
+
+        @((MarkupString)Icon)
+    </svg>
+}
+else
+{
+    @if (IconSyntax.TryParseFontIconSyntax(Icon, out var syntax))
+    {
+        <span class="@($"{Classname} {syntax.FontIconClass}")" style="@Style" title="@Title" aria-hidden="true" role="img" @attributes="UserAttributes">
+            @syntax.IconName
+        </span>
+    }
+    else
+    {
+        <span class="@($"{Classname} {Icon}")" style="@Style" title="@Title" aria-hidden="true" role="img" @attributes="UserAttributes">
+            @ChildContent
+        </span>
+    }
+}

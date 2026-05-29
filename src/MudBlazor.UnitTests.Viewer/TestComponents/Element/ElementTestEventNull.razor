@@ -1,0 +1,13 @@
+﻿<MudElement @onmouseover="@((AttachEvent ? HandleMouseEnter : null)!)"/>
+
+@code{
+    [Parameter]
+    public bool AttachEvent { get; set; }
+
+    public bool WasHovered { get; set; }
+
+    private void HandleMouseEnter()
+    {
+        WasHovered = true;
+    }
+}

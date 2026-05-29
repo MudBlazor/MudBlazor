@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDialog Style="height: 400px">
+    <DialogContent>
+        @if (_loading)
+        {
+            <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+        }
+        else
+        {
+            <MudText Style="white-space: pre-wrap;">@_licenseText</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Ok">Accept</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    private string _licenseText;
+    private bool _loading;
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _loading = true;
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/master/LICENSE");
+        _licenseText = await response.Content.ReadAsStringAsync();
+        _loading = false;
+    }
+
+    private void Ok() => MudDialog.Close(DialogResult.Ok(true));
+}

@@ -1,0 +1,10 @@
+﻿<MudDateRangePicker @ref="PickerReference" PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
+
+@code {
+    public static string __description__ = "DateTime range without a timestamp";
+
+    [Parameter]
+    public DateRange? DateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).Date, DateTime.Now.Date);
+
+    public MudDateRangePicker? PickerReference;
+}

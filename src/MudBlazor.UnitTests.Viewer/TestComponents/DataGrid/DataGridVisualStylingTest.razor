@@ -1,0 +1,64 @@
+﻿<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@CellStyleFunc" HeaderStyleFunc="@HeaderStyleFunc" HeaderClassFunc="@HeaderClassFunc" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new("A"), 
+        new("B"), 
+        new("C")
+    };
+
+    // style the cells according to the element's physical classification and the molar mass.
+    private static Func<Item, string> CellStyleFunc => x =>
+    {
+        return x.Name switch
+        {
+            "B" => "background-color:#E5BDE5",
+            "C" => "font-weight:bold",
+            _ => ""
+        };
+    };
+    
+    // style the header according to the presence of elements.
+    private static Func<IEnumerable<Item>, string> HeaderStyleFunc => x =>
+    {
+        var style = "";
+        
+        foreach (var item in x)
+        {
+            switch (item.Name)
+            {
+                case "A":
+                    style += "background-color:#E5BDE5;";
+                    break;
+                case "B":
+                    style += "font-weight:bold;";
+                    break;
+            }
+        }
+
+        return style;
+    };
+    
+    // add classes to the header according to the presence of elements.
+    private static Func<IEnumerable<Item>, string> HeaderClassFunc => x =>
+    {
+        var classes = string.Empty;
+        
+        foreach (var item in x)
+        {
+            classes += $"class-{item.Name} ";
+        }
+
+        return classes.ToLower().Trim();
+    };
+
+    public class Item(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChipSet T="Color" @bind-SelectedValue="SelectedColor" CheckMark SelectionMode="@SelectionMode">
+    <MudChip Text="purple" Color="Color.Primary" Value="@Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Color="Color.Secondary" Value="@Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Color="Color.Info" Value="@Color.Info">Info</MudChip>
+    <MudChip Text="green" Color="Color.Success" Value="@Color.Success">Success</MudChip>
+    <MudChip Text="orange" Color="Color.Warning" Value="@Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Color="Color.Error" Value="@Color.Error">Error</MudChip>
+    <MudChip Text="black" Color="Color.Dark" Value="@Color.Dark">Dark</MudChip>
+</MudChipSet>
+
+<div class="d-flex flex-column align-center">
+    @if (SelectedColor != default) {
+        <MudText>You selected the <MudText Color="@SelectedColor" Inline>@SelectedColor.ToStringFast(true)</MudText> chip.</MudText>
+    }
+    else {
+        <MudText>Nothing selected.</MudText>
+    }
+    <MudRadioGroup @bind-Value="SelectionMode">
+        <MudRadio Value="@SelectionMode.SingleSelection" Color="Color.Primary">SingleSelection</MudRadio>
+        <MudRadio Value="@SelectionMode.ToggleSelection" Color="Color.Primary">ToggleSelection</MudRadio>
+    </MudRadioGroup>
+</div>
+
+@code
+{
+    public SelectionMode SelectionMode = SelectionMode.SingleSelection;
+    public Color SelectedColor;
+}
+

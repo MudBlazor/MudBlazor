@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudTabs Elevation="0" Outlined="true" @bind-ActivePanelIndex="activeIndex">
+    <MudTabPanel Text="Item One" ID='"pn_one"'></MudTabPanel>
+    <MudTabPanel Text="Item Two" ID='"pn_two"'></MudTabPanel>
+    <MudTabPanel Text="Item Three" ID='"pn_three"'></MudTabPanel>
+</MudTabs>
+<MudText>@($"Active Index: {activeIndex}")</MudText>
+
+@code
+{ 
+    int activeIndex = 2;
+}

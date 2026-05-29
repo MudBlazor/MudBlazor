@@ -1,0 +1,20 @@
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true" RowsPerPage="2">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="_pageSizeOptions"/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "Multiselection should work with paging.";
+
+    private readonly int[] _pageSizeOptions = [2];
+    private readonly int[] _items = [0, 1, 2, 3];
+    private HashSet<int> _selectedItems = [0, 1, 2, 3];
+}

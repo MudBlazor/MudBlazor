@@ -1,0 +1,13 @@
+﻿<MudPopoverProvider />
+
+<MudForm ValidationDelay="0">
+    <MudTimePicker Required="true" @bind-Time="Time">
+    </MudTimePicker>
+</MudForm>
+
+@code {
+    public static string __description__ = "Form should validate time picker's value.";
+
+    [Parameter]
+    public TimeSpan? Time { get; set; }
+}

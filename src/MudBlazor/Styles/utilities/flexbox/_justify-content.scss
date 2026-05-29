@@ -1,0 +1,29 @@
+﻿@import '../../abstracts/variables';
+
+@mixin justify-content ($breakpoint) {
+  .justify-#{$breakpoint}start {
+    justify-content: flex-start !important;
+  }
+
+  .justify-#{$breakpoint}end {
+    justify-content: flex-end !important;
+  }
+
+  .justify-#{$breakpoint}center {
+    justify-content: center !important;
+  }
+
+  .justify-#{$breakpoint}space-between {
+    justify-content: space-between !important;
+  }
+
+  .justify-#{$breakpoint}space-around {
+    justify-content: space-around !important;
+  }
+
+  .justify-#{$breakpoint}space-evenly {
+    justify-content: space-evenly !important;
+  }
+}
+
+@include justify-content("");

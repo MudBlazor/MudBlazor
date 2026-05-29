@@ -1,0 +1,17 @@
+﻿<MudTable Items="@_items" CurrentPage="@_currentPage">
+    <HeaderContent>
+        <MudTh>Item</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Item">@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+
+@code {
+    private int _currentPage = 2;
+    private int[] _items = Enumerable.Range(0, 100).ToArray();
+}

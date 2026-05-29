@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudAlert Severity="Severity.Normal" Variant="Variant.Filled" Elevation="@elevation" Class="mt-16">
+    Elevated Alert, or is it?
+</MudAlert>
+<MudSlider @bind-Value="elevation" Min="0" Max="24" Class="my-4">Elevation</MudSlider>
+
+@code {
+    public int elevation = 1;
+}

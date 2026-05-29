@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="4">
+            <MudText Typo="Typo.h6">Fixed Sizing</MudText>
+            <MudTextField T="string"
+                          Label="Fixed (3 lines)"
+                          Variant="Variant.Outlined"
+                          Lines="3"
+                          Sizing="InputSizing.Fixed"
+                          Text="@_fixedText" />
+            
+            <MudTextField T="string"
+                          Label="Fixed (5 lines)"
+                          Variant="Variant.Filled"
+                          Lines="5"
+                          Sizing="InputSizing.Fixed"
+                          Text="@_fixedText2" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="4">
+            <MudText Typo="Typo.h6">Auto Sizing</MudText>
+            <MudTextField T="string"
+                          Label="Auto (3 to 6 lines)"
+                          Variant="Variant.Outlined"
+                          Lines="3"
+                          MaxLines="6"
+                          Sizing="InputSizing.Auto"
+                          Placeholder="Type to see it grow..." />
+
+            <MudTextField T="string"
+                          Label="Auto (Starts at 1, Max 10)"
+                          Variant="Variant.Text"
+                          MaxLines="10"
+                          Sizing="InputSizing.Auto"
+                          Placeholder="This one starts small but can grow large." />
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _fixedText = "I am a multiline text area\nWith exactly three lines\nNo more, no less.";
+    private string _fixedText2 = "Standard multiline behavior\nFixed height\nSet by the 'Lines' parameter.";
+}

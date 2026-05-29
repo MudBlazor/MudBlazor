@@ -1,0 +1,18 @@
+<div style="max-width: 400px;">
+    <MudForm @bind-IsValid="@_valid" ValidationDelay="0">
+        <MudDatePicker Editable="true"
+                       Required="true"
+                       Label="Birth Date"
+                       Mask="@(new DateMask("dd.MM.yyyy"))"
+                       DateFormat="dd.MM.yyyy"
+                       Variant="Variant.Outlined" />
+        <MudTextField T="string" Required="true" Label="Last Name" />
+    </MudForm>
+    <MudSwitch @bind-Value="@_valid" Label="IsValid" Color="Color.Info" />
+</div>
+
+@code {
+    public static string __description__ = "Form should keep bind-IsValid false until a required masked date picker has a value.";
+
+    private bool _valid;
+}

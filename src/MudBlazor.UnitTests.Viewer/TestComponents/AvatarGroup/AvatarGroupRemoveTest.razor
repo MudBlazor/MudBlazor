@@ -1,0 +1,19 @@
+<MudButton id="empty-button" OnClick="Empty" Variant="Variant.Filled" Class="mb-4">Empty</MudButton>
+<MudAvatarGroup>
+    @for(var _ = 0; _ < _count; _++)
+    {
+        <MudAvatar/>
+    }
+</MudAvatarGroup>
+
+@code {
+    public static string __description__ = "Removing avatars should update the UI *and* the avatar group instance.";
+
+    private int _count = 2;
+
+    private void Empty()
+    {
+        _count = 0;
+        StateHasChanged();
+    }
+}

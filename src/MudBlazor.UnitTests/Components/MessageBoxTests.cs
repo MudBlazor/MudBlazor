@@ -1,0 +1,432 @@
+﻿using AwesomeAssertions;
+using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using NUnit.Framework;
+
+namespace MudBlazor.UnitTests.Components
+{
+    [TestFixture]
+    public class MessageBoxTests : BunitTest
+    {
+        [Test, CancelAfter(3000)]
+        [TestCase(0, null)]
+        [TestCase(1, false)]
+        [TestCase(2, true)]
+        public async Task MessageBox_Should_ReturnTrue(int clickButtonIndex, bool? expectedResult)
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            // open message box.
+            Task<bool?> yesNoCancel = null;
+            await comp.InvokeAsync(() =>
+            {
+                yesNoCancel = service?.ShowMessageBoxAsync(
+                    "Boom!",
+                    "I'm a pickle. What do you make of that?",
+                    "Great",
+                    "Whatever",
+                    "Go away!");
+            });
+
+            comp.Find("div.mud-message-box").Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            // close message box by clicking on Great.
+            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
+            comp.Markup.Trim().Should().BeEmpty();
+            yesNoCancel.Result.Should().Be(expectedResult);
+        }
+
+        [Test, CancelAfter(3000)]
+        [TestCase(0, null)]
+        [TestCase(1, false)]
+        [TestCase(2, true)]
+        public async Task MessageBox_Should_ReturnTrueWithMarkupVariant(int clickButtonIndex, bool? expectedResult)
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            // open message box.
+            Task<bool?> yesNoCancel = null;
+            await comp.InvokeAsync(() =>
+            {
+                yesNoCancel = service?.ShowMessageBoxAsync(
+                    "Boom!",
+                    (MarkupString)"I'm a pickle. What do you make of that?",
+                    "Great",
+                    "Whatever",
+                    "Go away!");
+            });
+
+            comp.Find("div.mud-message-box").Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            // close message box by clicking on Great.
+            await comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].ClickAsync();
+            comp.Markup.Trim().Should().BeEmpty();
+            yesNoCancel.Result.Should().Be(expectedResult);
+        }
+
+        [Test]
+        public async Task MessageBox_CloseOnEscapeKey_NoOptions_NoMudDefaults()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = (DialogService)Context.Services.GetService<IDialogService>()!;
+            service.Should().NotBe(null);
+
+            // Open the message box.
+            // We need the DialogReference to access the DialogInstance, which allows us to handle key events
+            // directly through the HandleKeyDown method since KeyInterceptor does not work with bUnit.
+            IDialogReference dialogReference = null;
+            Task<DialogResult> dialogResult = null;
+            await comp.InvokeAsync(async () =>
+            {
+                // In DialogService, lines 252 through 291 handle the process of:
+                // 1. Assigning the text.
+                // 2. Converting it into MessageBoxOptions.
+                // 3. Converting it again into DialogParameters.
+
+                // The methods ShowMessageBox and MessageBox.ShowAsync handle the DialogReference
+                // and return only the result. However, we need access to the instance from the reference,
+                // so we are calling the method directly.
+                var messageBoxOptions = new MessageBoxOptions
+                {
+                    MarkupMessage = (MarkupString)"I'm a pickle. What do you make of that?",
+                    Title = "Boom!",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                };
+                var parameters = new DialogParameters()
+                {
+                    [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
+                    [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
+                    [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
+                    [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
+                    [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
+                    [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                };
+                dialogReference = await service.ShowAsync<MudMessageBox>(messageBoxOptions.Title, parameters);
+                dialogResult = dialogReference.Result;
+            });
+            dialogReference.Should().NotBeNull();
+            // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
+            var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
+            // just the same as the above test method 
+            comp.Find("div.mud-message-box").Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Escape" }));
+
+            comp.FindAll("button").Count.Should().Be(3);
+
+            // close it manually
+            await comp.FindAll("button")[0].ClickAsync();
+            comp.FindAll("button").Should().BeEmpty();
+
+            dialogResult?.Result.Data?.Should().BeNull();
+        }
+
+        [Test]
+        public async Task MessageBox_CloseOnEscapeKey_WithOptions_NoMudDefaults()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = (DialogService)Context.Services.GetService<IDialogService>();
+            service.Should().NotBe(null);
+
+            // Open the message box.
+            // We need the DialogReference to access the DialogInstance, which allows us to handle key events
+            // directly through the HandleKeyDown method since KeyInterceptor does not work with bUnit.
+            IDialogReference dialogReference = null;
+            Task<DialogResult> dialogResult = null;
+            var dialogOptions = new DialogOptions { CloseOnEscapeKey = true };
+            await comp.InvokeAsync(async () =>
+            {
+                // In DialogService, lines 252 through 291 handle the process of:
+                // 1. Assigning the text.
+                // 2. Converting it into MessageBoxOptions.
+                // 3. Converting it again into DialogParameters.
+                // The ShowMessageBox method handles the DialogReference and returns the result.
+                var messageBoxOptions = new MessageBoxOptions
+                {
+                    MarkupMessage = (MarkupString)"I'm a pickle. What do you make of that?",
+                    Title = "Boom!",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                };
+                var parameters = new DialogParameters()
+                {
+                    [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
+                    [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
+                    [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
+                    [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
+                    [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
+                    [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                };
+                dialogReference = await service.ShowAsync<MudMessageBox>(messageBoxOptions.Title, parameters, dialogOptions);
+                dialogResult = dialogReference.Result;
+            });
+            dialogReference.Should().NotBeNull();
+            // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
+            var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
+            // just the same as the above test method 
+            comp.Find("div.mud-message-box").Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs { Key = "Escape" }));
+
+            comp.FindAll("button").Should().BeEmpty();
+
+            dialogResult?.Result.Data?.Should().BeNull();
+        }
+
+        [Test]
+        public async Task MessageBox_CloseOnEscapeKey_NoOptions_WithMudDefaults()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudDialogProvider>(builder =>
+            {
+                builder.Add(p => p.CloseOnEscapeKey, true);
+            });
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            // open message box.
+            // we need the DialogReference to access the DialogInstance to access the HandleKeyDown
+            // keyinterceptor does not seem to work in unit tests so I can't just "key down" on the correct element
+            IDialogReference dialogReference = null;
+            Task<DialogResult> dialogResult = null;
+            await comp.InvokeAsync(async () =>
+            {
+                // DialogService line 252 through 291 show assigning the text, turning it into messageboxoptions, then again to dialogparameters
+                // showmessagebox itself handles the dialogreference and returns the result only
+                var messageBoxOptions = new MessageBoxOptions
+                {
+                    MarkupMessage = (MarkupString)"I'm a pickle. What do you make of that?",
+                    Title = "Boom!",
+                    YesText = "Great",
+                    NoText = "Whatever",
+                    CancelText = "Go away!",
+                };
+                var parameters = new DialogParameters()
+                {
+                    [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
+                    [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
+                    [nameof(MessageBoxOptions.MarkupMessage)] = messageBoxOptions.MarkupMessage,
+                    [nameof(MessageBoxOptions.CancelText)] = messageBoxOptions.CancelText,
+                    [nameof(MessageBoxOptions.NoText)] = messageBoxOptions.NoText,
+                    [nameof(MessageBoxOptions.YesText)] = messageBoxOptions.YesText,
+                };
+                dialogReference = await service?.ShowAsync<MudMessageBox>(messageBoxOptions.Title, parameters);
+                dialogResult = dialogReference.Result;
+            });
+            dialogReference.Should().NotBeNull();
+            // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
+            var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
+            // just the same as the above test method 
+            comp.Find("div.mud-message-box").Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(dialogInstance.ElementId, new KeyboardEventArgs() { Key = "Escape" }));
+
+            comp.FindAll("button").Should().BeEmpty();
+
+            dialogResult?.Result.Data?.Should().BeNull();
+        }
+
+        [Test]
+        public async Task MessageBox_Should_UseGlobalBackgroundClass_WhenOptionsAreNotProvided()
+        {
+            var provider = Context.Render<MudDialogProvider>(builder => builder.Add(x => x.BackgroundClass, "global-background"));
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            Task<bool?> messageBoxTask = null!;
+
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync("Boom!", "I'm a pickle. What do you make of that?");
+            });
+
+            provider.Find("div.mud-overlay-dialog").ClassList.Should().Contain("global-background");
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MessageBox_Should_PreferExplicitBackgroundClass_OverGlobalBackgroundClass()
+        {
+            var provider = Context.Render<MudDialogProvider>(builder => builder.Add(x => x.BackgroundClass, "global-background"));
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBeNull();
+            var dialogOptions = new DialogOptions { BackgroundClass = "explicit-background" };
+            Task<bool?> messageBoxTask = null!;
+
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync("Boom!", "I'm a pickle. What do you make of that?", options: dialogOptions);
+            });
+
+            var overlayClasses = provider.Find("div.mud-overlay-dialog").ClassList;
+            overlayClasses.Should().Contain("explicit-background");
+            overlayClasses.Should().NotContain("global-background");
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MessageBox_Should_RenderReverseButtonOrder_WhenGlobalOptionIsSet()
+        {
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            var provider = Context.Render<MudDialogProvider>(builder =>
+            {
+                builder.Add(x => x.ReverseMessageBoxButtonOrder, true);
+            });
+
+            Task<bool?> messageBoxTask = null!;
+            await provider.InvokeAsync(() =>
+            {
+                messageBoxTask = service!.ShowMessageBoxAsync(new MessageBoxOptions
+                {
+                    Title = "Boom!",
+                    Message = "I'm a pickle. What do you make of that?",
+                    YesText = "Yes",
+                    NoText = "No",
+                    CancelText = "Cancel"
+                });
+            });
+
+            var dialogMessageBox = provider.FindComponent<MudMessageBox>();
+            dialogMessageBox.Instance.IsButtonOrderReversed.Should().BeTrue();
+
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].TrimmedText().Should().Be("Yes");
+            buttons[0].ClassList.Should().Contain("mud-message-box__yes-button");
+            buttons[1].TrimmedText().Should().Be("No");
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Cancel");
+            buttons[2].ClassList.Should().Contain("mud-message-box__cancel-button");
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task InlineMessageBox_ShouldNot_RenderReverseButtonOrder()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+
+            var inlineMessageBox = Context.Render<MudMessageBox>(parameters => parameters
+                .Add(p => p.YesText, "Yes")
+                .Add(p => p.NoText, "No")
+                .Add(p => p.CancelText, "Cancel")
+            );
+
+            Task<bool?> messageBoxTask = null!;
+            await inlineMessageBox.InvokeAsync(() =>
+            {
+                messageBoxTask = inlineMessageBox.Instance.ShowAsync();
+            });
+
+            var dialogMessageBox = provider.FindComponent<MudMessageBox>();
+            dialogMessageBox.Instance.IsButtonOrderReversed.Should().BeFalse();
+
+            var buttons = provider.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+            buttons[0].TrimmedText().Should().Be("Cancel");
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("No");
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Yes");
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await provider.Find(".mud-message-box__yes-button").ClickAsync();
+            (await messageBoxTask).Should().BeTrue();
+        }
+    }
+}

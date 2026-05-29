@@ -1,0 +1,72 @@
+@namespace MudBlazor.UnitTests.TestComponents.TextField
+@using MudBlazor
+
+<MudDialog DefaultFocus="DefaultFocus.FirstChild" OnBackdropClick="Submit">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Title</MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField T="string"
+                      @bind-Value="_text"
+                      Typo="Typo.body2"
+                      Placeholder="@Placeholder"
+                      Lines="@Lines"
+                      Sizing="InputSizing.Fixed"
+                      Underline="false"
+                      Immediate />
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Class="cancel-button"
+                   StartIcon="@Icons.Material.Rounded.Close"
+                   AriaLabel="Cancel"
+                   OnClick="Cancel">
+            Cancel
+        </MudButton>
+
+        <MudButton Class="submit-button"
+                   StartIcon="@Icons.Material.Rounded.Check"
+                   AriaLabel="Submit"
+                   OnClick="Submit"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Submit
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _initialized;
+    private string _text = string.Empty;
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string Title { get; set; } = "Edit note (Fixed)";
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Type here";
+
+    [Parameter]
+    public string? InitialText { get; set; }
+
+    [Parameter]
+    public int Lines { get; set; } = 8;
+
+    protected override void OnParametersSet()
+    {
+        if (_initialized)
+        {
+            return;
+        }
+
+        _initialized = true;
+        _text = InitialText ?? string.Empty;
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_text));
+}

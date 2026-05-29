@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Disabled="@_processing" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+    @if (_processing)
+    {
+        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+        <MudText Class="ms-2">Processing</MudText>
+    }
+    else
+    {
+        <MudText>Click me</MudText>
+    }
+</MudButton>
+
+@code {
+    private bool _processing = false;
+
+    async Task ProcessSomething()
+    {
+        _processing = true;
+        await Task.Delay(2000);
+        _processing = false;
+    }
+}

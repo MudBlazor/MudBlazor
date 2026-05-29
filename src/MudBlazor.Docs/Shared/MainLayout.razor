@@ -1,0 +1,9 @@
+﻿@inherits LayoutComponentBase
+
+<MudRTLProvider RightToLeft="@LayoutService.IsRTL">
+    <MudThemeProvider @ref="@_mudThemeProvider" Theme="@LayoutService.CurrentTheme" ObserveSystemDarkModeChange="@LayoutService.ObserveSystemDarkModeChange" IsDarkMode="@LayoutService.IsDarkMode" IsDarkModeChanged="@((dark) => LayoutService.UpdateDarkModeState(dark))" />
+    <MudPopoverProvider />
+    <MudSnackbarProvider/>
+    <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
+    @Body
+</MudRTLProvider>

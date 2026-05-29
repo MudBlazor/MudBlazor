@@ -1,0 +1,33 @@
+﻿<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm>
+
+                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@_catName" Label="Cat Name"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
+
+                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@_ownerName" Label="Owner Name"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
+
+
+                <MudTextField T="int" Variant="Variant.Outlined" @bind-Value="@_catWeight" Label="Weight"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
+
+                <MudCheckBox @bind-Value="@_evilCheckBox" Label="Evil"></MudCheckBox>
+
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary"  Class="ml-auto">Buy Cat</MudButton>
+        </MudCardActions>
+    </MudCard>
+</div>
+@code {
+
+    public static string __description__ = "Based on error report. Clicking the checkbox should not influence the other form fields.";
+
+    private string? _catName;
+    private string? _ownerName;
+    private int _catWeight;
+    private bool _evilCheckBox  = true;
+}

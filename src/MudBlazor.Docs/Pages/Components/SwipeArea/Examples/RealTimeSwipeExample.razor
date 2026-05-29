@@ -1,0 +1,62 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwipeArea @ref="@_swipeArea" Class="mud-background border-dashed border-2 mud-border-primary" Style="width: 100%; height: 300px" OnSwipeMove="HandleSwipeMove" OnSwipeEnd="@Reset" OnSwipeLeave="@OnSwipeLeave">
+    <MudText Class="pa-2" Style="user-select: none;" Typo="@Typo.body1">@($"{_swipeDirection[1].ToString()} {_swipeDirection[0].ToString()}")</MudText>
+</MudSwipeArea>
+
+<MudStack Class="mud-height-full mud-width-full" Row Wrap="Wrap.Wrap" Justify="Justify.Center">
+    <MudChip T="string" Style="user-select: none;" Color="Color.Primary">Left: @_leftSwipe</MudChip>
+    <MudChip T="string" Style="user-select: none;" Color="Color.Primary">Right: @_rightSwipe</MudChip>
+    <MudChip T="string" Style="user-select: none;" Color="Color.Primary">Top: @_topSwipe</MudChip>
+    <MudChip T="string" Style="user-select: none;" Color="Color.Primary">Bottom: @_bottomSwipe</MudChip>
+</MudStack>
+<MudText Align="Align.Center">*Value resets if swipe goes out of area.</MudText>
+
+@code {
+    private double _leftSwipe;
+    private double _rightSwipe;
+    private double _topSwipe;
+    private double _bottomSwipe;
+    private MudSwipeArea _swipeArea = null!;
+    private List<SwipeDirection> _swipeDirection = [SwipeDirection.None, SwipeDirection.None];
+
+    private void HandleSwipeMove(MultiDimensionSwipeEventArgs e)
+    {
+        _swipeDirection = [e.SwipeDirections[0], e.SwipeDirections[1]];
+        for (int i = 0; i < e.SwipeDirections.Count; i++)
+        {
+            if (e.SwipeDirections[i] == SwipeDirection.LeftToRight)
+            {
+                _rightSwipe += Math.Abs(e.SwipeDeltas[i] ?? 0);
+            }
+            else if (e.SwipeDirections[i] == SwipeDirection.RightToLeft)
+            {
+                _leftSwipe += Math.Abs(e.SwipeDeltas[i] ?? 0);
+            }
+            else if (e.SwipeDirections[i] == SwipeDirection.BottomToTop)
+            {
+                _topSwipe += Math.Abs(e.SwipeDeltas[i] ?? 0);
+            }
+            else if (e.SwipeDirections[i] == SwipeDirection.TopToBottom)
+            {
+                _bottomSwipe += Math.Abs(e.SwipeDeltas[i] ?? 0);
+            }
+        }
+    }
+
+    private void OnSwipeLeave()
+    {
+        _swipeArea.Cancel();
+        Reset();
+    }
+
+    private void Reset()
+    {
+        _swipeDirection = [SwipeDirection.None, SwipeDirection.None];
+        _leftSwipe = 0;
+        _rightSwipe = 0;
+        _topSwipe = 0;
+        _bottomSwipe = 0;
+        StateHasChanged();
+    }
+}

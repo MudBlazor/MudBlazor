@@ -1,0 +1,32 @@
+﻿<MudList T="string" @bind-SelectedValue="_selectedValue" SelectionMode="@SelectionMode">
+    <MudListSubheader>
+        Your drink:
+        <MudChip Color="Color.Secondary">
+            @(_selectedValue ?? "You are dry")
+        </MudChip>
+    </MudListSubheader>
+    <MudListItem Text="Sparkling Water" />
+    <MudListItem Text="Teas">
+        <NestedList>
+            <MudListItem Text="Earl Grey" />
+            <MudListItem Text="Matcha" />
+            <MudListItem Text="Pu'er" />
+        </NestedList>
+    </MudListItem>
+    <MudListItem Text="Coffees">
+        <NestedList>
+            <MudListItem Text="Irish Coffee" />
+            <MudListItem Text="Double Espresso" />
+            <MudListItem Text="Cafe Latte" />
+        </NestedList>
+    </MudListItem>
+</MudList>
+
+@code {
+    public static string __description__ = "Clicking the drinks selects them. The child lists are updated accordingly.";
+    
+    private string? _selectedValue;
+
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
+}

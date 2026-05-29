@@ -1,0 +1,85 @@
+﻿.wf-layout {
+  overflow: hidden;
+  display: flex;
+  height: 200px;
+  width: 350px;
+  position: relative;
+  background-color: var(--mud-palette-background);
+  border: 1px solid rgba(89, 74, 226, 0.15);
+  transform: rotate3d(.5,-.866,0,15deg) rotate(1deg);
+  box-shadow: 2em 4em 6em -2em rgba(0,0,0,.2), 1em 2em 3.5em -2.5em rgba(0,0,0,.1);
+  transition: transform .4s ease, box-shadow .4s ease;
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      cursor: pointer;
+      transform: rotate3d(0,0,0,0deg) rotate(0deg);
+    }
+  }
+
+  &:active {
+    cursor: pointer;
+    transform: rotate3d(0,0,0,0deg) rotate(0deg);
+  }
+}
+
+.wf-appbar {
+  height: 28px;
+  width: 100%;
+  display: flex;
+  padding: 8px;
+  flex-shrink: 0;
+  position: absolute;
+  color: var(--mud-palette-primary-text);
+  background-color: var(--mud-palette-primary);
+
+  &.wf-drawer-open-left {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+  }
+
+  &.wf-drawer-open-right {
+    margin-right: 70px;
+    width: calc(100% - 70px);
+  }
+}
+
+.wf-drawer {
+  height: 100%;
+  width: 70px;
+  display: flex;
+  flex-shrink: 0;
+  flex: 0 0 auto;
+  flex-direction: column;
+  color: var(--mud-palette-drawer-text);
+  background-color: var(--mud-palette-drawer-background);
+}
+
+.wf-content {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 38px 8px 0px;
+}
+
+.docs-section-wireframe {
+  position: relative;
+  height: calc(80vh - 124px);
+  overflow: hidden;
+
+  .wireframe-code-container {
+    overflow: auto;
+    position: relative;
+    height: 100%;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+  }
+
+  .copy-code-button {
+    display: none;
+  }
+}

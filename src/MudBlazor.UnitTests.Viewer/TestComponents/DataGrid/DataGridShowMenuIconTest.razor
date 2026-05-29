@@ -1,0 +1,28 @@
+﻿<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+<div>
+    @string.Join(",", _selectedItems.Select(x => x.Name))
+</div>
+
+@code {
+    private readonly List<Item> _items = [];
+    private readonly HashSet<Item> _selectedItems = [];
+
+    protected override void OnInitialized()
+    {
+        var letters = "ABC";
+        foreach (var c in letters)
+        {
+            _items.Add(new Item(c.ToString()));
+        }
+    }
+
+    public class Item(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

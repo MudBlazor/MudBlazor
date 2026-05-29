@@ -1,0 +1,80 @@
+﻿@page "/utilities/flex"
+
+<DocsPage>
+    <DocsPageHeader Title="Flex" SubTitle="Utilities for controlling how flex items both grow and shrink." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_Flex/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Initial">
+                        <Description>
+                            Allows a flex item to shrink but not grow,  taking into account of its initial size.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexInitalExample)" HighLight="flex-initial">
+                        <DocsWidthSlider>
+                            <FlexInitalExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Flex 1">
+                        <Description>
+                            Allows a flex item to grow and shrink as needed and ignores its initial size.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexFlex1Example)" HighLight="flex-1">
+                        <DocsWidthSlider>
+                            <FlexFlex1Example/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Auto">
+                        <Description>
+                            Allows a flex item to grow and shrink as needed and taking its initial size into account.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexAutoExample)" HighLight="flex-auto">
+                        <DocsWidthSlider>
+                            <FlexAutoExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="None">
+                        <Description>
+                            Prevents a flex item from growing or shrinking
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(FlexNoneExample)" HighLight="flex-none">
+                        <DocsWidthSlider>
+                            <FlexNoneExample/>
+                        </DocsWidthSlider>
+                    </SectionContent>
+                </DocsPageSection>
+                
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="flex-md-1"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

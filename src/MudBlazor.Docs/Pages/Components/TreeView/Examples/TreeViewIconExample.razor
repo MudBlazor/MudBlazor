@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTreeView T="string">
+    <MudTreeViewItem Value='"All Mail"' Icon="@Icons.Material.Filled.Email" />
+    <MudTreeViewItem Value='"Drafts"' Icon="@Icons.Material.Filled.Drafts" />
+    <MudTreeViewItem Value='"Orders"' Icon="@Icons.Material.Filled.Label" IconColor="Color.Secondary" />
+    <MudTreeViewItem Value='"Categories"' Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen" IconColor="Color.Info"
+                     ExpandButtonIcon="@Icons.Material.Filled.ArrowRight" ExpandButtonIconColor="Color.Primary">
+        <MudTreeViewItem Value='"Social"' Icon="@Icons.Material.Filled.Group" />
+        <MudTreeViewItem Value='"Updates"' Icon="@Icons.Material.Filled.Info" IconColor="Color.Tertiary" />
+        <MudTreeViewItem Value='"Forums"' Icon="@Icons.Material.Filled.QuestionAnswer" />
+        <MudTreeViewItem Value='"Spam"' Icon="@Icons.Material.Filled.LocalOffer" />
+    </MudTreeViewItem>
+    <MudTreeViewItem Value='"Trash"' Icon="@Icons.Material.Filled.Delete" />
+</MudTreeView>
+
+ 

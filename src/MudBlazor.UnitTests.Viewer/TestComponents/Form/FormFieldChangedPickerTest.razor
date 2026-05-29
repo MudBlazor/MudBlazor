@@ -1,0 +1,11 @@
+﻿@using MudBlazor.Utilities
+
+<MudForm FieldChanged="v => FormFieldChangedEventArgs = v">
+    <MudDatePicker Editable />
+    <MudTimePicker Editable />
+    <MudColorPicker Editable />
+</MudForm>
+
+@code {
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+}

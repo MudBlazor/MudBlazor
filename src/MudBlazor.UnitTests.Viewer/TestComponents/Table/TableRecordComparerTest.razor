@@ -1,0 +1,51 @@
+﻿<MudText>Elements { @string.Join(", ", _selectedItems) }</MudText>
+
+<MudTable Items="_items" T="Element" @bind-SelectedItems="_selectedItems" MultiSelection Comparer="_comparer">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Value)">#</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Value</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" id="@context.Id" @bind-Value="@context.Value"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "editing a record should not break multiselection";
+
+    private readonly ElementComparer _comparer = new();
+    private HashSet<Element> _selectedItems = [];
+    private readonly IEnumerable<Element> _items = new List<Element>
+    { 
+        new() { Value = "A", Id = "Id1" }, 
+        new() { Value = "B", Id = "Id2" }, 
+        new() { Value = "C", Id = "Id3" }, 
+    };
+
+    protected override void OnInitialized()
+    {
+        _selectedItems = new HashSet<Element>(comparer: _comparer);
+
+        base.OnInitialized();
+    }
+
+    public record Element
+    {
+        public required string Id { get; set; }
+
+        public required string Value { get; set; }
+
+        public override string ToString() => Value;
+    }
+
+    private class ElementComparer : IEqualityComparer<Element?>
+    {
+        public bool Equals(Element? a, Element? b) => a?.Id == b?.Id;
+
+        public int GetHashCode(Element? x) => HashCode.Combine(x?.Id);
+    }
+}

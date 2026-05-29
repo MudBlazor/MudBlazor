@@ -1,0 +1,27 @@
+﻿<MudTable ServerData="ServerReload">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Even without a MudTablePagination the table should call ServerReload to get the items on start.";
+
+    private int _totalItems;
+    private IEnumerable<int> _pagedData = [];
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    {
+        var data = new List<int> { 1, 2, 3 };
+        _totalItems = data.Count;
+        _pagedData = data.ToArray();
+
+        return Task.FromResult(new TableData<int> { TotalItems = _totalItems, Items = _pagedData });
+    }
+}

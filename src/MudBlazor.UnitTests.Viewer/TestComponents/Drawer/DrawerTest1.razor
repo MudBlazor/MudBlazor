@@ -1,0 +1,22 @@
+﻿<MudDrawer @ref="@Drawer" @bind-Open="@_open" Variant="@Variant" Overlay="@Overlay" OverlayAutoClose="@OverlayAutoClose" ClipMode="@ClipMode"></MudDrawer>
+<button id="toggle-drawer-button" @onclick="@HandleButtonClick">toggle open</button>
+
+@code {
+    private bool _open;
+
+    public MudDrawer Drawer { get; private set; } = null!;
+
+    [Parameter]
+    public DrawerVariant Variant { get; set; }
+
+    [Parameter]
+    public bool Overlay { get; set; } = true;
+
+    [Parameter]
+    public DrawerClipMode ClipMode { get; set; }
+
+    [Parameter]
+    public bool OverlayAutoClose { get; set; } = true;
+
+    private void HandleButtonClick() => _open = !_open;
+}

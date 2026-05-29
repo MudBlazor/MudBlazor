@@ -1,0 +1,213 @@
+﻿@page "/components/treeview"
+
+<DocsPage>
+    <DocsPageHeader Title="Tree View" Component="@nameof(MudTreeView<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    <p>
+                        The TreeView component is designed to display hierarchical data structures. By default, each <CodeInline>MudTreeViewItem</CodeInline> displays its <CodeInline>Text</CodeInline> property.
+                    </p>
+                    <br/>
+                    <p>
+                        You can also associate a data value with each item using the <CodeInline>Value</CodeInline> property. If a <CodeInline>Value</CodeInline> is not provided, the item's <CodeInline>Text</CodeInline> will be used as its value. This sample demonstrates a read-only implementation where items are defined with either text, a value, or both, illustrating the basic display capabilities of the component.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewBasicExample)">
+                <TreeViewBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    <p>
+                        The TreeView's appearance and behavior can be controlled with several parameters:
+                    </p>
+                    <ul>
+                        <li><CodeInline>Hover</CodeInline>: Applies a visual effect to an item on mouse-over.</li>
+                        <li><CodeInline>Ripple</CodeInline>: Enables a ripple effect on item click, unless <CodeInline>ExpandOnDoubleClick</CodeInline> is active.</li>
+                        <li><CodeInline>Dense</CodeInline>: Reduces the vertical padding of items for a more compact display.</li>
+                        <li><CodeInline>Disabled</CodeInline>: Prevents all user interaction with the TreeView.</li>
+                        <li><CodeInline>ExpandOnClick</CodeInline>: Allows expanding and collapsing of parent nodes with a single click.</li>
+                        <li><CodeInline>ExpandOnDoubleClick</CodeInline>: Restricts expand and collapse functionality to a double-click action. Note that this property overrides <CodeInline>ExpandOnClick</CodeInline>.</li>
+                        <li><CodeInline>OnDoubleClick</CodeInline>: This callback can be assigned to implement custom behavior for double-click events.</li>
+                    </ul>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewUsageExample)" ShowCode="false">
+                <TreeViewUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>
+                    <p>
+                        Enhance the visual presentation of TreeView items by assigning icons. The <CodeInline>Icon</CodeInline> and <CodeInline>IconColor</CodeInline> properties can be set for each <CodeInline>MudTreeViewItem</CodeInline>.
+                    </p>
+                    <br/>
+                    <p>
+                        This example defines a custom <CodeInline>ExpandButtonIcon</CodeInline> for parent nodes and provide an alternative icon for the expanded state via the <CodeInline>IconExpanded</CodeInline> property.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewIconExample)" ShowCode="false">
+                <TreeViewIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Single Selection">
+                <Description>
+                    <p>
+                        To enable item selection, set the <CodeInline>SelectionMode</CodeInline> parameter:
+                    </p>
+                    <ul>
+                        <li><CodeInline>SelectionMode.SingleSelection</CodeInline>: Allows only one item to be selected at a time across the entire tree.</li>
+                        <li><CodeInline>SelectionMode.ToggleSelection</CodeInline>: Behaves like single selection, but allows a selected item to be deselected by clicking it again.</li>
+                    </ul>
+                    <p>
+                        Use <CodeInline>@@bind-SelectedValue</CodeInline> to programmatically get or set the currently selected item. The active item's color is controlled by the <CodeInline>Color</CodeInline> property.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewSingleSelectionExample)" ShowCode="false">
+                <TreeViewSingleSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multi Selection">
+                <Description>
+                    Set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.MultiSelection</CodeInline> to allow users to select multiple items. Each selectable item will render a checkbox.
+                    Use <CodeInline>@@bind-SelectedValues</CodeInline> to manage the collection of selected items. The color of the checkboxes can be customized with the <CodeInline>CheckBoxColor</CodeInline> property.
+                    This example demonstrates how to bind the selection to a set of chips.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewMultiSelectionExample)" ShowCode="false">
+                <TreeViewMultiSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Binding Items Directly">
+                <Description>
+                    <p>
+                        You can directly bind the <CodeInline>Selected</CodeInline> and <CodeInline>Expanded</CodeInline> parameters on individual <CodeInline>MudTreeViewItem</CodeInline> components.
+                    </p>
+                    <br/>
+                    <p>
+                        While managing selection is typically done on the parent <CodeInline>MudTreeView</CodeInline> via <CodeInline>@@bind-SelectedValue</CodeInline> or <CodeInline>@@bind-SelectedValues</CodeInline>, direct item binding is particularly useful when creating custom interactions within an item template.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewBindItemsExample)" ShowCode="false">
+                <TreeViewBindItemsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Auto-Expand">
+                <Description>
+                    <p>
+                        When <CodeInline>AutoExpand</CodeInline> is set to <c>true</c>, any collapsed parent node that contains a selected item will automatically expand to reveal it.
+                        This is useful for ensuring the context of a programmatically selected item is visible to the user.
+                    </p>
+                    <br/>
+                    <p>
+                        To expand or collapse all nodes at once, you can call the public <CodeInline>ExpandAll()</CodeInline> and <CodeInline>CollapseAll()</CodeInline> methods on the TreeView instance.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewAutoExpandExample)" ShowCode="false">
+                <TreeViewAutoExpandExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Template">
+                <Description>
+                    Use the <CodeInline>ItemTemplate</CodeInline> to dynamically generate TreeView items from a hierarchical data source.
+                    This approach simplifies rendering complex or data-driven trees by defining a template for each item's structure and its children.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewItemTemplateExample)" ShowCode="false">
+                <TreeViewItemTemplateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Server-Side Data">
+                <Description>
+                    <p>
+                        For large datasets, you can load data on-demand using <CodeInline>ServerData</CodeInline>.
+                        This function is invoked when a user expands a node, allowing efficient lazy-loading of child items.
+                    </p>
+                    <br/>
+                    <p>
+                        The loading indicator's icon and color can be customized with <CodeInline>LoadingIcon</CodeInline> and <CodeInline>LoadingIconColor</CodeInline>.
+                        If you know a specific item has no children and should not trigger a server call, you can prevent the loading behavior by setting its <CodeInline>CanExpand</CodeInline> property to <c>false</c>.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewServerExample)" ShowCode="false">
+                <TreeViewServerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Filtering">
+                <Description>
+                    <p>
+                        The TreeView nodes can be filtered using the <CodeInline>Filter</CodeInline> function, which accepts a custom filter delegate.
+                        This function is applied to every item, setting its <CodeInline>Visible</CodeInline> property based on whether it matches the filter criteria.
+                    </p>
+                    <br/>
+                    <p>
+                        This example demonstrates how to implement a text-based filter that dynamically shows or hides nodes based on user input.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewFilteringExample)" ShowCode="false">
+                <TreeViewFilteringExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Look and Behavior">
+                <Description>
+                    <p>
+                        For full control over rendering and behavior, use the <CodeInline>Content</CodeInline> render fragment.
+                        This replaces the default <CodeInline>MudTreeViewItem</CodeInline> markup with your own custom implementation.
+                    </p>
+                    <br/>
+                    <p>
+                        This example demonstrates creating a non-standard multi-selection behavior where selecting a parent node does not affect its children.
+                        It also shows how to make only specific items selectable.
+                        To enable scrolling, as seen in this sample, constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set <CodeInline>overflow-y</CodeInline> to <c>auto</c> or <c>scroll</c>.
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewCustomExample)" ShowCode="false">
+                <TreeViewCustomExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Body Content">
+                <Description>
+                     Use the <CodeInline>BodyContent</CodeInline> render fragment when you want to customize the main content area of a tree item but retain the built-in icons, indentation, and expansion buttons.
+                     This provides a balance between customization and leveraging the default item structure.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="@nameof(TreeViewBodyContentExample)" ShowCode="false">
+                <TreeViewBodyContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

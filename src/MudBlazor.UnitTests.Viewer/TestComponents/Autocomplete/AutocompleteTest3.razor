@@ -1,0 +1,90 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
+                 ToStringFunc="@ToStringFunc" @bind-Value="@_stateDetails" Variant="Variant.Outlined" 
+                 Margin="Margin.Dense" ResetValueOnEmptyText="true" />
+
+@code {
+    public static string __description__ = "Autocomplete should show 'Assam'.";
+    private State? _stateDetails;
+    private IEnumerable<State> _stateList = [];
+
+    protected override void OnInitialized()
+    {
+        LoadStates();
+        _stateDetails = new State
+        {
+            StateId = 6,
+            StateName = "Assam"
+        };
+        base.OnInitialized();
+    }
+
+    private void LoadStates()
+    {
+        var s1 = new State
+        {
+            StateId = 1,
+            StateName = "Delhi"
+        };
+
+        var s2 = new State
+        {
+            StateId = 2,
+            StateName = "Gujarat"
+        };
+
+        var s3 = new State
+        {
+            StateId = 3,
+            StateName = "Maharashtra"
+        };
+
+        var s4 = new State
+        {
+            StateId = 4,
+            StateName = "Kerala"
+        };
+
+        var s5 = new State
+        {
+            StateId = 5,
+            StateName = "Tamil Nadu"
+        };
+
+        var s6 = new State
+        {
+            StateId = 6,
+            StateName = "Assam"
+        };
+
+        var s7 = new State
+        {
+            StateId = 7,
+            StateName = "Chhattisgarh"
+        };
+
+        _stateList = new List<State> { s1, s2, s3, s4, s5, s6, s7 };
+    }
+
+    public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        IEnumerable<State> list = string.IsNullOrEmpty(value)
+            ? _stateList
+            : _stateList.Where(e => e.StateName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        
+        return list;
+    }
+
+    private static string? ToStringFunc(State? arg) => arg?.StateName;
+
+    public class State
+    {
+        public required int StateId { get; init; }
+
+        public required string StateName { get; init; }
+    }
+}

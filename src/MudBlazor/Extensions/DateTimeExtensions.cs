@@ -1,0 +1,117 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+
+namespace MudBlazor.Extensions;
+
+/// <summary>
+/// Represents methods added to DateTime types.
+/// </summary>
+public static class DateTimeExtensions
+{
+    /// <summary>
+    /// Formats this date using the ISO 8601 standard.
+    /// </summary>
+    /// <returns>The date formatted as YYYY-MM-DD.</returns>
+    public static string ToIsoDateString(this DateTime self)
+    {
+        return $"{self.Year:D4}-{self.Month:D2}-{self.Day:D2}";
+    }
+
+    /// <summary>
+    /// Formats this date using the ISO 8601 standard.
+    /// </summary>
+    /// <param name="self">The date to format.</param>
+    /// <returns>The date formatted as YYYY-MM-DD.</returns>
+    [return: NotNullIfNotNull(nameof(self))]
+    public static string? ToIsoDateString(this DateTime? self)
+    {
+        if (self is null)
+        {
+            return null;
+        }
+
+        return ToIsoDateString(self.Value);
+    }
+
+    /// <summary>
+    /// Gets the first day of the month for this date.
+    /// </summary>
+    /// <param name="self">The date to use for calculation.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime StartOfMonth(this DateTime self, CultureInfo culture)
+    {
+        var month = culture.Calendar.GetMonth(self);
+        var year = culture.Calendar.GetYear(self);
+
+        return culture.Calendar.ToDateTime(year, month, 1, 0, 0, 0, 0);
+    }
+
+    /// <summary>
+    /// Gets the last day of the month for this date.
+    /// </summary>
+    /// <param name="self">The date to use for calculation.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime EndOfMonth(this DateTime self, CultureInfo culture)
+    {
+        var month = culture.Calendar.GetMonth(self);
+        var year = culture.Calendar.GetYear(self);
+        var days = culture.Calendar.GetDaysInMonth(year, month);
+
+        return culture.Calendar.ToDateTime(year, month, days, 0, 0, 0, 0);
+    }
+
+    /// <summary>
+    /// Gets the day at the start of the week for this date.
+    /// </summary>
+    /// <param name="self">The date to use for calculation.</param>
+    /// <param name="firstDayOfWeek">The day representing the first day of the week.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek, CultureInfo culture)
+    {
+        var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
+        if (self.Year == culture.Calendar.MinSupportedDateTime.Year && self.Month == culture.Calendar.MinSupportedDateTime.Month && (self.Day - diff) < 1)
+        {
+            return self.Date;
+        }
+
+        return self.AddDays(-1 * diff).Date;
+    }
+
+    /// <summary>
+    /// Gets the last occurrence of a specific day of the week in the month for this date
+    /// </summary>
+    /// <param name="self">The date to use as month for calculation.</param>
+    /// <param name="dayOfWeek">The day of the week to find.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime LastWeekDayOfMonth(this DateTime self, DayOfWeek dayOfWeek, CultureInfo culture)
+    {
+        var lastDay = self.EndOfMonth(culture);
+        while (lastDay.DayOfWeek != dayOfWeek)
+        {
+            lastDay = lastDay.AddDays(-1);
+        }
+
+        return lastDay;
+    }
+
+    /// <summary>
+    /// Gets the first occurrence of a specific day of the week in the month for this date
+    /// </summary>
+    /// <param name="self">The date to use as month for calculation.</param>
+    /// <param name="dayOfWeek">The day of the week to find.</param>
+    /// <param name="culture">The culture to use for formatting the date.</param>
+    public static DateTime FirstWeekDayOfMonth(this DateTime self, DayOfWeek dayOfWeek, CultureInfo culture)
+    {
+        var firstDay = self.StartOfMonth(culture);
+        while (firstDay.DayOfWeek != dayOfWeek)
+        {
+            firstDay = firstDay.AddDays(1);
+        }
+
+        return firstDay;
+    }
+}

@@ -1,0 +1,56 @@
+@import '../abstracts/variables';
+
+$base-spacing: 4px; // Base unit for spacing in the grid. It's important to keep this in sync with the spacing values in the variables file.
+$max-spacing-steps: 20; // Maximum spacing steps.
+$columns: 12; // Number of columns in the grid system.
+
+.mud-grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+.mud-grid-item {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+// Generate spacing classes.
+@for $i from 1 through $max-spacing-steps {
+  .mud-grid-spacing-xs-#{$i} {
+    width: calc(100% + #{$base-spacing * $i}); // Adjust width based on spacing increment.
+    margin-left: -#{$base-spacing * $i}; // Negative margin for item spacing.
+    margin-top: -#{$base-spacing * $i}; // Negative margin for item spacing.
+  }
+
+  .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
+    padding-left: #{$base-spacing * $i}; // Add spacing.
+    padding-top: #{$base-spacing * $i}; // Add spacing.
+  }
+}
+
+// Responsive grid sizes using predefined breakpoints.
+@each $name, $value in $breakpoints {
+  @media (min-width: $value) {
+    @for $i from 1 through $columns {
+      .mud-grid-item-#{$name}-#{$i} {
+        flex-grow: 0;
+        max-width: calc(100% / #{$columns} * #{$i}); // Dynamic max-width based on column count.
+        flex-basis: calc(100% / #{$columns} * #{$i}); // Flex basis matched to max-width.
+      }
+    }
+
+    .mud-grid-item-#{$name}-auto {
+      flex-grow: 0;
+      max-width: none;
+      flex-basis: auto;
+    }
+
+    .mud-grid-item-#{$name}-true {
+      flex-grow: 1;
+      max-width: 100%;
+      flex-basis: 0;
+    }
+  }
+}

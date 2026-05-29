@@ -1,0 +1,87 @@
+@import '../abstracts/variables';
+
+.mud-container {
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mud-container--gutters {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+@media (min-width:$breakpoint-sm) {
+  .mud-container--gutters {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (min-width:$breakpoint-sm) {
+  .mud-container-fixed {
+    max-width: $breakpoint-sm;
+  }
+}
+
+@media (min-width:$breakpoint-md) {
+  .mud-container-fixed {
+    max-width: $breakpoint-md;
+  }
+}
+
+@media (min-width:$breakpoint-lg) {
+  .mud-container-fixed {
+    max-width: $breakpoint-lg;
+  }
+}
+
+@media (min-width:$breakpoint-xl) {
+  .mud-container-fixed {
+    max-width: $breakpoint-xl;
+  }
+}
+
+@media (min-width:$breakpoint-xxl) {
+  .mud-container-fixed {
+    max-width: $breakpoint-xxl;
+  }
+}
+
+@media (min-width:$breakpoint-xs) {
+  .mud-container-maxwidth-xs {
+    max-width: 444px;
+  }
+}
+
+@media (min-width:$breakpoint-sm) {
+  .mud-container-maxwidth-sm {
+    max-width: $breakpoint-sm;
+  }
+}
+
+@media (min-width:$breakpoint-md) {
+  .mud-container-maxwidth-md {
+    max-width: $breakpoint-md;
+  }
+}
+
+@media (min-width:$breakpoint-lg) {
+  .mud-container-maxwidth-lg {
+    max-width: $breakpoint-lg;
+  }
+}
+
+@media (min-width:$breakpoint-xl) {
+  .mud-container-maxwidth-xl {
+    max-width: $breakpoint-xl;
+  }
+}
+
+@media (min-width:$breakpoint-xxl) {
+  .mud-container-maxwidth-xxl {
+    max-width: $breakpoint-xxl;
+  }
+}

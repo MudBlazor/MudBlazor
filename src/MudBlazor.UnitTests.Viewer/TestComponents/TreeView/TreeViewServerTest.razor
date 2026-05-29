@@ -1,0 +1,45 @@
+﻿<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="_treeItems" Width="350px">
+    <ItemTemplate>
+        <MudTreeViewItem 
+            Text="@context.Text"
+            Value="@context.Value"
+            @bind-Items="context.Children"
+            Icon="@context.Icon"
+            CanExpand="@context.Expandable"
+            Expanded="@context.Expanded"
+            />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+
+    private readonly List<TreeItemData<string?>> _treeItems = [];
+    public IReadOnlyList<TreeItemData<string?>> TreeItems => _treeItems;
+    private int _idCounter = 1;
+    protected override void OnInitialized()
+    {
+        _treeItems.Add(new TreeItemData<string?> { Value = "All Mail", Icon = Icons.Material.Filled.Email });
+        _treeItems.Add(new TreeItemData<string?>
+        {
+            Value = "Categories",
+            Icon = Icons.Material.Filled.Label,
+            Expanded = true,
+            Children = new List<TreeItemData<string?>>
+            {
+                new() { Value = "Social", Icon = Icons.Material.Filled.Group, },
+                new() { Value = "Updates", Icon = Icons.Material.Filled.Info,  }
+            }
+        });
+        _treeItems.Add(new TreeItemData<string?> { Value = "Trash", Icon = Icons.Material.Filled.Delete, Expandable = false });
+        base.OnInitialized();
+    }
+
+    public Task<IReadOnlyCollection<TreeItemData<string?>>?> LoadServerData(string? parentValue)
+    {
+        return Task.FromResult<IReadOnlyCollection<TreeItemData<string?>>?>(new List<TreeItemData<string?>>
+        {
+            new() { Value = $"Loaded {_idCounter++}", Icon = Icons.Material.Filled.Web, Expandable  = true }
+        });
+    }
+
+}

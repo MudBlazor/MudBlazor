@@ -1,0 +1,10 @@
+﻿<MudForm ValidationDelay="0">
+    <MudTextField T="string" Required="true" RequiredError="Enter a star" Validation="@Validation"></MudTextField>
+</MudForm>
+
+@code {
+    public static string __description__ = "Supplied validation func should be called.";
+
+    [Parameter]
+    public object? Validation { get; set; }
+}

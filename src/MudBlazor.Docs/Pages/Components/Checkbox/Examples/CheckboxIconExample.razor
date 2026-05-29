@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Value="CheckBox1" Color="Color.Secondary" CheckedIcon="@Icons.Material.Filled.Favorite" UncheckedIcon="@Icons.Material.Filled.FavoriteBorder"></MudCheckBox>
+<MudCheckBox @bind-Value="CheckBox2" Color="Color.Tertiary" CheckedIcon="@Icons.Material.Filled.Bookmark" UncheckedIcon="@Icons.Material.Filled.BookmarkBorder"></MudCheckBox>
+<MudCheckBox @bind-Value="CheckBox3" Color="Color.Warning" CheckedIcon="@Icons.Material.Filled.Star" UncheckedIcon="@Icons.Material.Filled.StarOutline"></MudCheckBox>
+
+
+
+@code {
+    public bool CheckBox1 { get; set; } = true;
+    public bool CheckBox2 { get; set; } = false;
+    public bool CheckBox3 { get; set; } = false;
+}

@@ -1,0 +1,100 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudLayout>
+    <MudAppBar Color="Color.Primary" Fixed="false" Contextual>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+        <MudSpacer />
+        <MudIconButton Icon="@(Deleted > 0 ? @Icons.Material.Filled.FlipToBack : @Icons.Material.Filled.FlipToFront)" Color="Color.Inherit" OnClick="ResetItems" />
+    </MudAppBar>
+    <MudMainContent Class="pt-4">
+        <div class="d-flex flex-wrap gap-4">
+            @for (int i = 0; i < _images.Length; i++)
+            {
+                var index = i;
+
+                if (_images[index].IsDeleted) continue;
+
+                <MudPaper Width="200px" Height="150px" Elevation="0" Class="d-flex align-center justify-center" Style="background-color:inherit">
+                    <MudImage Src="@($"images/{_images[index].Title}.jpg")" Width="@_images[index].Width" Height="@_images[index].Height"
+                              Elevation="25" ObjectFit="ObjectFit.Cover" Class="rounded-lg"
+                              @onclick="@(() => SelectImage(index))"/>
+                </MudPaper>
+            }
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+<MudContextualActionBar Color="Color.Tertiary" Fixed="false" Visible="ShowContext">
+    <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.Start" OnClick="UnselectItems" />
+    <MudText Class="pl-8" Typo="Typo.h6">@($"{_selected.Count} Selected") </MudText>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Inherit" />
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" />
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="DeleteSelectedItems" />
+</MudContextualActionBar>
+
+@code {
+    private bool ShowContext => _selected.Count > 0;
+
+    private readonly HashSet<Image> _selected = [];
+    private int Deleted => _images.Count(x => x.IsDeleted);
+    private readonly Image[] _images = [ new Image("sweden"), new Image("iceland"), new Image("castle"), new Image("tractor"), new Image("door"), new Image("pilars") ];
+
+    private void SelectImage(int index)
+    {
+        var image = _images[index];
+        bool isSelected = _selected.Contains(image);
+
+        _images[index] = image with { Width = isSelected ? 200 : 100, Height = isSelected ? 150 : 75 };
+
+        if (isSelected)
+            _selected.Remove(image);
+        else
+            _selected.Add(_images[index]);
+    }
+
+    private void UnselectItems()
+    {
+        for (int index = 0; index < _images.Length; index++)
+        {
+            var image = _images[index];
+
+            if (_selected.Contains(image))
+            {
+                _images[index] = image with { Width = 200, Height = 150 };
+            }
+        }
+
+        _selected.Clear();
+    }
+
+    private void DeleteSelectedItems()
+    {
+        for (int index = 0; index < _images.Length; index++)
+        {
+            var image = _images[index];
+
+            if(_selected.Contains(image))
+            {
+                _images[index] = image with { Width = 200, Height = 150, IsDeleted = true };
+            }
+        }
+
+        _selected.Clear();
+    }
+
+    private void ResetItems()
+    {
+        for (int index = 0; index < _images.Length; index++)
+        {
+            var image = _images[index];
+
+            if (image.IsDeleted)
+            {
+                _images[index] = image with { IsDeleted = false };
+            }
+        }
+    }
+
+    private record Image(string Title, int Width = 200, int Height = 150, bool IsDeleted = false);
+}

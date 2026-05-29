@@ -1,0 +1,48 @@
+﻿@using MudBlazor.Services
+@namespace MudBlazor.Docs.Examples
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+
+<MudCard Class="pa-5">
+    <MudText>
+        Resize the window and see width and height change:<br />
+        Browser window is @(_width)x@(_height)px
+    </MudText>
+</MudCard>
+
+@code
+{
+    [Inject]
+    private IBrowserViewportService BrowserViewportService { get; set; }
+
+    private int _width = 0;
+    private int _height = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async ValueTask DisposeAsync() => await BrowserViewportService.UnsubscribeAsync(this);
+
+    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
+
+    ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
+    {
+        ReportRate = 50,
+        NotifyOnBreakpointOnly = false
+    };
+
+    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+    {
+        _width = browserViewportEventArgs.BrowserWindowSize.Width;
+        _height = browserViewportEventArgs.BrowserWindowSize.Height;
+
+        return InvokeAsync(StateHasChanged);
+    }
+}

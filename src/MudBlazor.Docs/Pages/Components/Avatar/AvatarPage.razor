@@ -1,0 +1,79 @@
+﻿@page "/components/avatar"
+
+<DocsPage>
+    <DocsPageHeader Title="Avatar" Component="@nameof(MudAvatar)" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>Basic avatars, normally used to display text or numbers.<CodeInline>MudAvatar</CodeInline> can be colored with the <CodeInline>Color</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarBasicExample)">
+                <AvatarBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Outlined">
+                <Description>By default, the avatar is filled but can be changed with the <CodeInline>Variant</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarOutlinedExample)">
+                <AvatarOutlinedExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>To create an icon avatar, just add an <CodeInline>MudIcon</CodeInline> inside it.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarIconExample)">
+                <AvatarIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Images">
+                <Description>Avatars can display images using a <CodeInline>MudImage</CodeInline> within the <CodeInline>MudAvatar</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarImageExample)">
+                <AvatarImageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+                <Description>You can change the size with the pre-defined <CodeInline>Size</CodeInline> prop or change the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> in CSS.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarSizeExample)" ShowCode="false">
+                <AvatarSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Shapes">
+                <Description>With the <CodeInline>Rounded</CodeInline> and <CodeInline>Square</CodeInline> props, you can change the border radius.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarShapesExample)" ShowCode="false">
+                <AvatarShapesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Groups">
+                <Description>You can group or stack avatars with <CodeInline>MudAvatarGroup</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarGroupExample)" ShowCode="false">
+                <AvatarGroupExample />
+            </SectionContent>
+        </DocsPageSection>
+
+
+        <DocsPageSection>
+            <SectionHeader Title="Badges">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(AvatarBadgeExample)">
+                <AvatarBadgeExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

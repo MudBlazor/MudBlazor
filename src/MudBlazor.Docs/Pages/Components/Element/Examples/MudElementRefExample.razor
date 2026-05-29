@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudElement HtmlTag="button" @onclick="Focus" Style="padding: 4px 12px 4px 12px; background-color: #0067b8; color: #fff;">
+    Click to focus
+</MudElement>
+
+@*this element is going to be focused through JS via its reference*@
+
+<MudElement @bind-Ref="myRef" HtmlTag="input" Style="border: solid 1px #869E9E; padding: 0px 8px; height:28px;"/>
+
+@code{
+    ElementReference myRef = new ElementReference();
+
+    async Task Focus()
+    {
+        //this js snippet does `document.querySelector(myRef).focus();`
+       await myRef.FocusAsync();
+    }
+}

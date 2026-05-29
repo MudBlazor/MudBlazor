@@ -1,0 +1,87 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Resources
+@inherits MudBaseBindableItemsControl<MudCarouselItem, TData>
+@typeparam TData
+@inject InternalMudLocalizer Localizer
+
+<section @attributes="UserAttributes" aria-roledescription="carousel" class="@Classname" style="@Style">
+    <CascadingValue Value="this">
+
+        <MudSwipeArea OnSwipeEnd="OnSwipeEnd" Class="mud-carousel-swipe">
+            @*Selected Content*@
+            @if (ItemsSource is null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                foreach (var item in ItemsSource)
+                {
+                    <MudCarouselItem>
+                        @if (ItemTemplate is not null)
+                        {
+                            @ItemTemplate(item)
+                        }
+                    </MudCarouselItem>
+                }
+            }
+        </MudSwipeArea>
+
+        @*Controls*@
+        <div class="d-flex flex-grow-1 align-self-auto">
+            @*Left Arrow*@
+            @if (ShowArrows)
+            {
+                @if (PreviousButtonTemplate is null)
+                {
+                    <MudIconButton tabindex="1" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@PreviousIcon" OnClick="Previous" Color="@(ArrowsColor ?? Color.Inherit)" />
+                }
+                else
+                {
+                    <div @onclick="Previous" tabindex="1" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" class="@NavigationButtonsClassName" style="z-index:3">
+                        @PreviousButtonTemplate
+                    </div>
+                }
+            }
+
+            @*Bullets*@
+            <div class="@($"flex-grow-1 align-self-{ConvertPosition(BulletsPosition).ToStringFast(true)}")" style="z-index:3">
+                @if (ShowBullets)
+                {
+                    <div class="d-flex justify-center">
+                        @for (int i = 0; i < Items.Count; i++)
+                        {
+                            int current = i;
+                            if (BulletTemplate is null)
+                            {
+                                <MudIconButton tabindex="@(current+3)" aria-label="@Localizer[LanguageResource.MudCarousel_Index, $"{current + 1}"]" Class="@BulletsButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? CheckedIcon : UncheckedIcon)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                            }
+                            else
+                            {
+                                <div @onclick="() => MoveTo(current)" class="@BulletsButtonsClassName" style="z-index:3">
+                                    @BulletTemplate(current == SelectedIndex)
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+
+            @*Right Arrow*@
+            @if (ShowArrows)
+            {
+                @if (NextButtonTemplate is null)
+                {
+                    <MudIconButton tabindex="2" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@NextIcon" OnClick="Next" Color="@(ArrowsColor ?? Color.Inherit)" />
+                }
+                else
+                {
+                    <div @onclick="Next" tabindex="2" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" class="@NavigationButtonsClassName" style="z-index:3">
+                        @NextButtonTemplate
+                    </div>
+                }
+            }
+        </div>
+
+    </CascadingValue>
+</section>

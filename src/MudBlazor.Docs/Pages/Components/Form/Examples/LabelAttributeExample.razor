@@ -1,0 +1,29 @@
+﻿@using System.ComponentModel.DataAnnotations
+@namespace MudBlazor.Docs.Examples
+
+<MudCard>
+    <MudCardContent>
+        <MudForm Spacing="2">
+            <MudDatePicker For="@(() => model.Date)" />
+            <MudDatePicker For="@(() => model.Date)" Label="Parameter Label" />
+            <MudSwitch For="@(() => model.Boolean)" Color="Color.Primary" />
+            <MudSwitch For="@(() => model.Boolean)" Label="Parameter Label" Color="Color.Primary" />
+            <MudTextField For="@(() => model.String)" />
+            <MudTextField For="@(() => model.String)" Label="Parameter Label" />
+        </MudForm>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    DisplayNameLabelClass model = new();
+
+    public class DisplayNameLabelClass
+    {
+        [Label("Date LabelAttribute")]
+        public DateTime? Date { get; set; }
+        [Label("Boolean LabelAttribute")]
+        public bool Boolean { get; set; }
+        [Label("String LabelAttribute")]
+        public string String { get; set; }
+    }
+}

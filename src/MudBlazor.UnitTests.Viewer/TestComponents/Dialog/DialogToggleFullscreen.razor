@@ -1,0 +1,26 @@
+﻿<MudDialog>
+    <DialogContent>
+        <div class="d-flex flex-column py-1">
+            <MudButton OnClick="ToggleFullscreenAsync">Toggle FullScreen</MudButton>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Close">OK</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+    private Task ToggleFullscreenAsync()
+    {
+        var options = MudDialog.Options with
+        {
+            FullScreen = !(MudDialog.Options.FullScreen ?? false)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
+    }
+}

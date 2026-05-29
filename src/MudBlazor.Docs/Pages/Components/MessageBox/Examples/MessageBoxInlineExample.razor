@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="OnButtonClickedAsync">Delete</MudButton>
+<MudChip T="string">@_state</MudChip>
+
+<MudMessageBox @ref="_mudMessageBox" Title="Warning" CancelText="Cancel">
+    <MessageContent>
+        Deleting can <b><i>not</i></b> be undone!
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code
+{
+    private MudMessageBox _mudMessageBox;
+    private string _state = "Message box hasn't been opened yet";
+
+    private async Task OnButtonClickedAsync()
+    {
+        bool? result = await _mudMessageBox.ShowAsync();
+        _state = result is null ? "Canceled" : "Deleted!";
+        StateHasChanged();
+    }
+}

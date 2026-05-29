@@ -1,0 +1,192 @@
+.mud-chart {
+  display: flex;
+  min-height: fit-content;
+  min-width: fit-content;
+
+  svg {
+    order: 2
+  }
+
+  &.mud-chart-legend-bottom {
+    flex-direction: column;
+
+    .mud-chart-legend {
+      margin-top: 10px;
+      justify-content: center;
+      width: 100%;
+      order: 3;
+    }
+  }
+
+  &.mud-chart-legend-top {
+    flex-direction: column;
+
+    & .mud-chart-legend {
+      justify-content: center;
+      width: 100%;
+      order: 1;
+    }
+  }
+
+  &.mud-chart-legend-right {
+    flex-direction: row;
+
+    & .mud-chart-legend {
+      flex-direction: column;
+      order: 3;
+      min-width: fit-content;
+      margin-left: 10px;
+    }
+  }
+
+  &.mud-chart-legend-left {
+    flex-direction: row;
+
+    & .mud-chart-legend {
+      flex-direction: column;
+      order: 1;
+      min-width: fit-content;
+      margin-right: 10px;
+    }
+  }
+
+  & .mud-chart-donut, .mud-chart-pie, .mud-chart-radar, .mud-chart-line, .mud-chart-bar {
+    display: flex;
+    margin: auto;
+    overflow: unset; // Workaround for clipped axis notations
+  }
+
+  & .mud-chart-legend {
+    display: flex;
+    padding: 10px 0;
+    margin: auto;
+    flex-wrap: wrap;
+
+    & .mud-chart-legend-item {
+      display: block;
+      margin: 2px 5px;
+
+      & .mud-chart-legend-marker {
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+        position: relative;
+        display: inline-flex;
+      }
+
+      & .mud-chart-legend-text {
+        display: inline-flex;
+      }
+
+      & .mud-chart-legend-checkbox {
+        display: flex;
+        align-items: center;
+      }
+
+      & .mud-input-control {
+        width: 35px !important;
+      }
+    }
+  }
+}
+
+.mud-chart-fill-bounds {
+  height: 100%;
+  width: 100%;
+  min-height: unset;
+  min-width: unset;
+}
+
+.mud-charts-yaxis {
+  fill: var(--mud-palette-text-primary);
+}
+
+.mud-charts-xaxis {
+  fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-axis-label {
+  fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-donut {
+  & .mud-donut-hole {
+    fill: transparent;
+    user-select: none;
+    pointer-events: unset;
+  }
+
+  & .mud-donut-ring {
+    fill: transparent;
+    stroke: white;
+    pointer-events: unset;
+  }
+
+  & .mud-donut-segment {
+    fill: transparent;
+    pointer-events: stroke;
+    -webkit-transition: stroke .2s ease;
+    -moz-transition: stroke .2s ease;
+    -o-transition: stroke .2s ease;
+    transition: stroke .2s ease;
+  }
+
+  & .mud-donut-text {
+    dominant-baseline: central;
+    text-anchor: middle;
+    fill: var(--mud-palette-text-primary);
+  }
+}
+
+.mud-chart-legend-marker {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+}
+
+.mud-chart-marker-color-0 {
+  background-color: #008FFB;
+}
+
+.mud-chart-marker-color-1 {
+  background-color: #00E396;
+}
+
+.mud-chart-marker-color-2 {
+  background-color: #FEB019;
+}
+
+.mud-chart-marker-color-3 {
+  background-color: #FF4560;
+}
+
+.mud-chart-marker-color-4 {
+  background-color: #594ae2;
+}
+
+.mud-chart-cell text {
+  fill: black;
+}
+
+.mud-chart-heatmap-legend line {
+  stroke: var(--mud-palette-text-primary);
+}
+
+.mud-chart-heatmap-legend text {
+  fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-sankey {
+  width: 100%;
+  height: 100%;
+}
+
+.mud-chart-sankey text {
+  font-family: var(--mud-typography-caption-family), sans-serif;
+  font-weight: var(--mud-typography-caption-weight);
+  line-height: var(--mud-typography-caption-lineheight);
+  letter-spacing: var(--mud-typography-caption-letterspacing);
+  text-transform: var(--mud-typography-caption-text-transform);
+}

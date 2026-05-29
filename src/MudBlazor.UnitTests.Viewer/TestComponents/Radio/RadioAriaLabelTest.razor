@@ -1,0 +1,16 @@
+
+<MudRadioGroup @bind-Value="SelectedValue" T="string">
+    <MudRadio Class="r1" Value="@("1")" Label="Radio One" />
+    <MudRadio Class="r2" Value="@("2")" Color="Color.Primary" AriaLabel="Option Two" Label="Radio Two" />
+    <MudRadio Class="r3" Value="@("3")" Color="Color.Secondary">
+        <span>Misc Content</span>
+    </MudRadio>
+    <MudRadio Class="r4" Value="@("4")" Color="Color.Secondary" AriaLabel="Option Four">
+        <span>Misc Content</span>
+    </MudRadio>
+    <MudRadio Class="r5" Value="@("5")" Disabled="true" AriaLabel="Option Five" />
+</MudRadioGroup>
+
+@code {
+    public string SelectedValue { get; set; } = "1";
+}

@@ -1,0 +1,30 @@
+﻿<MudChipSet @bind-SelectedValues="_selected" SelectionMode="@GetSelectionMod()" CheckMark="_checkMark">
+    <MudChip Value="@("Milk")" />
+    <MudChip Value="@("Eggs")" />
+    <MudChip Value="@("Soap")" />
+    <MudChip Value="@("Corn flakes")"/>
+    <MudChip Value="@("Salad")" />
+    <MudChip Value="@("Apples")" />
+    <MudChip Value="@("Red wine")" />
+</MudChipSet>
+
+@if (_selected is { Count: > 0 }) {
+    <MudText>You selected @string.Join(", ", _selected).</MudText>
+}
+else {
+    <MudText>Nothing selected.</MudText>
+}
+<MudCheckBox @bind-Value="_checkMark">CheckMark</MudCheckBox>
+
+@code
+{
+    [Parameter]
+    public bool MultiSelection { get; set; }
+
+    private bool _checkMark;
+    private IReadOnlyCollection<string> _selected = ["Milk", "Cornflakes"];
+
+    private SelectionMode GetSelectionMod() => MultiSelection
+        ? SelectionMode.MultiSelection
+        : SelectionMode.SingleSelection;
+}

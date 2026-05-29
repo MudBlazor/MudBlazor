@@ -1,0 +1,7 @@
+﻿<MudSwipeArea OnSwipeEnd="@(e => _swipeDirection = e.SwipeDirection)" Style="width: 100%; height: 300px">
+    <MudText Typo="@Typo.body1">@_swipeDirection</MudText>
+</MudSwipeArea>
+
+@code {
+    private SwipeDirection _swipeDirection;
+}

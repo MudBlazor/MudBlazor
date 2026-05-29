@@ -1,0 +1,44 @@
+﻿@using System.Diagnostics
+<MudDataGrid @ref="_grid" T="Model" Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" Hidden="@_hideAge" />
+    </Columns>
+</MudDataGrid>
+
+<MudSwitch @bind-Value="@_hideAge">Hide Age Column (Hidden Parameter)</MudSwitch>
+<MudButton OnClick="@ToggleColumn">@(_isColumnRemoved ? "Add" : "Remove")</MudButton>
+
+@code {
+    private MudDataGrid<Model> _grid = null!;
+    private bool _hideAge;
+    private bool _isColumnRemoved;
+    private Column<Model>? _column;
+    private readonly IEnumerable<Model> _items = new List<Model>()
+    {
+        new("John", 45), 
+        new("Johanna", 23), 
+        new("Steve", 32)
+    };
+
+    public void ToggleColumn()
+    {
+        if (_isColumnRemoved)
+        {
+            Debug.Assert(_column is not null);
+            // Add the column back
+            _grid.RenderedColumns.Add(_column);
+            _isColumnRemoved = false;
+        }
+        else
+        {
+            // Remove the column
+            _column = _grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Age");
+            Debug.Assert(_column is not null);
+            _grid.RenderedColumns.Remove(_column);
+            _isColumnRemoved = true;
+        }
+    }
+
+    public record Model(string Name, int Age);
+}

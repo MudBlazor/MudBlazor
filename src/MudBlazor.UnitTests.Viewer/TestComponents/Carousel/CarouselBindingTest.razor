@@ -1,0 +1,34 @@
+﻿<MudCarousel @ref="_carousel" ItemsSource="@_source" ArrowsPosition="Position.End" Style="height:200px;" ShowArrows="@_arrows" ShowBullets="@_delimiters" AutoCycle="@_autocycle">
+    <ItemTemplate>
+        <div class="d-flex flex-column flex-column justify-center" style="height:100%">
+            <MudIcon Class="mx-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            <MudText Align="@Align.Center" Class="mx-auto">@context</MudText>
+        </div>
+    </ItemTemplate>
+</MudCarousel>
+
+@code {
+    private MudCarousel<string> _carousel = null!;
+    private readonly bool _arrows = true;
+    private readonly bool _delimiters = true;
+    private readonly bool _autocycle = false;
+    private readonly List<string> _source = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
+
+    public async Task AddAsync()
+    {
+        // A photo is added
+        _source.Add($"Item {_source.Count + 1}");
+        await Task.Delay(1);
+        _carousel.MoveTo(_source.Count - 1);
+    }
+
+    public async Task DeleteAsync(int index)
+    {
+        if (_source.Any())
+        {
+            _source.RemoveAt(index);
+            await Task.Delay(1);
+            _carousel.MoveTo(Math.Max(Math.Min(index, _source.Count - 1), 0));
+        }
+    }
+}

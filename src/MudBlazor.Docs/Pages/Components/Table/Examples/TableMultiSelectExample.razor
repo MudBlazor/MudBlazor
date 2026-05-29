@@ -1,0 +1,52 @@
+@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudText HtmlTag="span">Item: @_selectedItemText</MudText>
+<MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+
+<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" SelectionChangeable="_selectionChangeable" Hover="true"
+          @bind-SelectedItems="selectedItems" OnRowClick="@OnRowClick" SelectOnRowClick="@_selectOnRowClick">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+    </PagerContent>
+    <FooterContent>
+        <MudTd colspan="5">Select All</MudTd>
+    </FooterContent>
+</MudTable>
+<MudSwitch @bind-Value="_selectOnRowClick" Color="Color.Primary">Select on row click</MudSwitch>
+<MudSwitch @bind-Value="_selectionChangeable" Color="Color.Primary">Selection is changeable</MudSwitch>
+
+@code {
+    private HashSet<Element> selectedItems = new HashSet<Element>();
+    private IEnumerable<Element> Elements = new List<Element>();
+    private bool _selectOnRowClick = true;
+    private bool _selectionChangeable = true;
+    private MudTable<Element> _table;
+    private string _selectedItemText = "No row clicked";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    void OnRowClick(TableRowClickEventArgs<Element> args)
+    {
+        _selectedItemText = $"{args.Item.Name} ({args.Item.Sign})";
+    }
+}

@@ -1,0 +1,33 @@
+﻿<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditDialogOptions="_options" EditTrigger="@DataGridEditTrigger.OnRowClick">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <TemplateColumn>
+            <CellTemplate>
+                snakex64
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "This form used in unit test. If you are in a Viewer you cannot close Dialog due to two DialogProviders.";
+    private readonly DialogOptions _options = new() { CloseButton = true };
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new() { Name = "John", Age = 45 },
+        new() { Name = "Johanna", Age = 23 },
+        new() { Name = "Steve", Age = 32 }
+    };
+
+    public class Model
+    {
+        public required string Name { get; set; }
+
+        public required int Age { get; set; }
+
+        public string GetOnly => "snakex64";
+    }
+}

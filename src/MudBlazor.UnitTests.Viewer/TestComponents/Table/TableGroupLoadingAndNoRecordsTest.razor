@@ -1,0 +1,64 @@
+<MudTable FixedHeader="true" Filter="new Func<RacingCar, bool>(FilterFunc)" Items="@_cars" GroupBy="@_groupDefinition" Loading="_loading">
+    <ToolBarContent>
+        <MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Model:</MudTh>
+    </HeaderContent>
+    <LoadingContent>Loading...</LoadingContent>
+    <NoRecordsContent>No records</NoRecordsContent>
+    <GroupHeaderTemplate>
+        <MudTh Style="font-weight: 500;" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="Car">@context.ToString()</MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate>
+        <MudTh Style="font-weight: 500;text-align: right;">Count: @context.Items.Count()</MudTh>
+    </GroupFooterTemplate>
+</MudTable>
+
+<MudSwitch id="switch" @bind-Value="_loading">Show Loading</MudSwitch>
+
+@code {
+    public static string __description__ = "Loading text and no records in grouped table test.";
+
+    private IEnumerable<RacingCar> _cars = [];
+    private bool _loading; 
+    private string _searchString = string.Empty;
+
+    private readonly TableGroupDefinition<RacingCar> _groupDefinition = new()
+	{
+		GroupName = "Brand",
+		Selector = e => e.Brand
+	};
+
+    protected override Task OnInitializedAsync()
+    {
+        _cars = new List<RacingCar>() {
+            new("919 Hybrid", "Porsche", "LMP1"),
+            new("911 RSR", "Porsche", "GTE")  
+        };
+        return base.OnInitializedAsync();
+    }
+
+    private bool FilterFunc(RacingCar car)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (car.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    public class RacingCar(string name, string brand, string category)
+    {
+        public string Name { get; set; } = name;
+
+        public string Brand { get; set; } = brand;
+
+        public string Category { get; set; } = category;
+
+        public override string ToString() => $"({Category}) {Brand} {Name}";
+    }
+}

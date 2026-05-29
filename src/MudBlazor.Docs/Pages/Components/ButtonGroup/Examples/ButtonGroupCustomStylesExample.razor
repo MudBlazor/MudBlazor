@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="_overrideStyles">
+    <MudButton Color="Color.Primary" Variant="Variant.Outlined">One</MudButton>
+    <MudButton Color="Color.Warning" Variant="Variant.Outlined">Two</MudButton>
+    <MudButton Color="Color.Secondary" Variant="Variant.Outlined">Three</MudButton>
+</MudButtonGroup>
+
+<MudSwitch @bind-Value="_overrideStyles" Label="Override styles" Color="Color.Primary" />
+
+@code {
+    private bool _overrideStyles;
+}

@@ -1,0 +1,18 @@
+﻿<MudVirtualize Items="_list" Enabled="true">
+    <div class="d-flex mud-width-full">
+        @foreach (var s in _list)
+        {
+            <MudText>@s</MudText>
+        }
+    </div>
+</MudVirtualize>
+
+@code {
+    private readonly List<string> _list = [];
+
+    protected override void OnInitialized()
+    {
+        _list.Add("a");
+        base.OnInitialized();
+    }
+}

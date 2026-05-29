@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDatePicker Label="Basic example" @bind-Date="_date"/>
+<MudDatePicker Label="Editable with Placeholder" Editable="true" @bind-Date="_date" Placeholder="Select Date" />
+<MudDatePicker Label="Only Calendar" @bind-Date="_date" ShowToolbar="false" />
+<MudDatePicker Label="Date Format" @bind-Date="_date" DateFormat="dd.MM.yyyy" />
+<MudDatePicker Label="Show week number" ShowWeekNumbers="true" @bind-Date="_date" />
+<MudDatePicker Label="Display two months" DisplayMonths="2" TitleDateFormat="dddd, dd MMMM" @bind-Date="_date" />
+
+@code {
+    private DateTime? _date = DateTime.Today;
+}

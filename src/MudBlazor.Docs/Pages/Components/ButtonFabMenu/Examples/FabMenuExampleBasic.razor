@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row="true" Style="width: 300px;" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+    <MudStack Spacing="0">
+        <MudSwitch @bind-Value="_open" Label="@(_open ? "Opened" : "Closed")" Color="Color.Primary"/>
+        <MudSwitch @bind-Value="_fixed" Label="@(_fixed ? "Fixed" : "Relative")" Color="Color.Primary"/>
+    </MudStack>
+    <MudFabMenu StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" @bind-Open="@_open" Fixed="@_fixed">
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Slack"/>
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Discord"/>
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Gmail"/>
+    </MudFabMenu>
+</MudStack>
+
+@code
+{
+    private bool _open;
+    private bool _fixed;
+}

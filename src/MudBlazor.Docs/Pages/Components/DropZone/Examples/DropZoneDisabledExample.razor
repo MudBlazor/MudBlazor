@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="FileItem" ItemDisabled="@(item => item.IsLocked)" Items="_items"
+                  ItemsSelector="@((item, dropzone) => item.TransferSlot == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap">
+    <ChildContent>
+        <MudPaper Class="ma-4" Height="400px" Width="300px">
+            <MudList T="string" Class="mud-height-full">
+                <MudDropZone T="FileItem" Identifier="Company" Class="mud-height-full">
+                    <MudListSubheader>Company Files</MudListSubheader>
+                </MudDropZone>
+            </MudList>
+        </MudPaper>
+        <MudPaper Class="ma-4" Height="400px" Width="300px">
+            <MudList T="string" Class="mud-height-full">
+                <MudDropZone T="FileItem" Identifier="External" Class="mud-height-full">
+                    <MudListSubheader>External USB</MudListSubheader>
+                </MudDropZone>
+            </MudList>
+        </MudPaper>
+    </ChildContent>
+    <ItemRenderer>
+        <MudListItem T="string" Disabled="@(context.IsLocked ? true : false)" Icon="@Icons.Custom.FileFormats.FileDocument">
+            @context.Name
+        </MudListItem>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+
+    private void ItemUpdated(MudItemDropInfo<FileItem> dropItem)
+    {
+        dropItem.Item.TransferSlot = dropItem.DropzoneIdentifier;
+    }
+
+    private List<FileItem> _items = new()
+            {
+            new FileItem() { Name = "File1.txt", IsLocked = false, TransferSlot = "Company" },
+            new FileItem() { Name = "File2.txt", IsLocked = false, TransferSlot = "External" },
+            new FileItem() { Name = "File3.txt", IsLocked = true, TransferSlot = "Company" },
+            new FileItem() { Name = "File4.txt", IsLocked = true, TransferSlot = "Company" },
+            new FileItem() { Name = "File5.txt", IsLocked = false, TransferSlot = "External" },
+            new FileItem() { Name = "File6.txt", IsLocked = true, TransferSlot = "Company" },
+        };
+
+    public class FileItem
+    {
+        public string Name { get; init; }
+        public bool IsLocked { get; set; }
+        public string TransferSlot { get; set; }
+    }
+}

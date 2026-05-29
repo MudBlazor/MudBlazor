@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="string" MultiSelection="true" SelectAll="true" SelectAllText="Select all felines" HelperText="@_value" @bind-Value="_value" @bind-SelectedValues="_options" MultiSelectionTextFunc="@(new Func<IReadOnlyList<string>, string>(GetMultiSelectionText))" Label="Felines" AdornmentIcon="@Icons.Material.Filled.Search">
+    @foreach (var feline in _felines)
+    {
+        <MudSelectItem T="string" Value="@feline">@feline</MudSelectItem>
+    }
+</MudSelect>
+
+@code { 
+    private string _value  = "Nothing selected";
+    private IReadOnlyCollection<string> _options = ["Lion"];
+
+    private readonly string[] _felines =
+    [
+        "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"
+    ];
+
+    private static string GetMultiSelectionText(IReadOnlyList<string> selectedValues)
+    {
+        return $"{selectedValues.Count} feline{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
+    }
+}

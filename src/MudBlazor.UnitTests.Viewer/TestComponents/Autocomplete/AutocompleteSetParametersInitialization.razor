@@ -1,0 +1,50 @@
+﻿@* Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
+  and this issue https://github.com/MudBlazor/MudBlazor/issues/1235*@
+
+<MudPopoverProvider />
+
+<MudAutocomplete T="ExternalList" SearchFunc="@Search2" @bind-Value="SelectedValue" ToStringFunc="@ToStringFunc" />
+
+@code {
+    public ExternalList? SelectedValue;
+
+    private List<ExternalList> _externalList = [];
+
+    private static string? ToStringFunc(ExternalList? el) => el?.Name;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(15); // faking http call
+        _externalList =
+        [
+            new ExternalList("1", "One"),
+            new ExternalList("2", "Two"),
+            new ExternalList("3", "Three")
+        ];
+    }
+
+    protected override void OnParametersSet()
+    {
+        var matching = _externalList.SingleOrDefault(t => t.Id == "1");
+        if (matching != null)
+        {
+            SelectedValue = matching;
+        }
+    }
+
+    private async Task<IEnumerable<ExternalList>> Search2(string value, CancellationToken token)
+    {
+        await Task.Delay(0, token);
+        if (string.IsNullOrEmpty(value))
+            return _externalList;
+
+        return _externalList.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public class ExternalList(string id, string name)
+    {
+        public string Id { get; } = id;
+
+        public string Name { get; } = name;
+    }
+}

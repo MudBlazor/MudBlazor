@@ -1,0 +1,73 @@
+﻿@page "/utilities/align-items"
+
+<DocsPage>
+    <DocsPageHeader Title="Align Items" SubTitle="Controlling how flex and grid items are positioned along a container's cross axis." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_AlignItems/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                        
+                <DocsPageSection>
+                    <SectionHeader Title="Start">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignItemStartExample)" HighLight="align-start">
+                        <AlignItemStartExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Center">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignItemCenterExample)" HighLight="align-center">
+                        <AlignItemCenterExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="End">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignItemEndExample)" HighLight="align-end">
+                        <AlignItemEndExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Baseline">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignItemBaselineExample)" HighLight="align-baseline">
+                        <AlignItemBaselineExample/>
+                    </SectionContent>
+                </DocsPageSection>
+                
+                <DocsPageSection>
+                    <SectionHeader Title="Stretch">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent DarkenBackground="true" Code="@nameof(AlignItemStretchExample)" HighLight="align-stretch">
+                        <AlignItemStretchExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="align-md-end"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

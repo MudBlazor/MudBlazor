@@ -1,0 +1,98 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
+
+namespace MudBlazor
+{
+    /// <summary>
+    /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
+    /// </summary>
+    /// <typeparam name="T">The type of data represented by this column.</typeparam>
+    public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
+    {
+        protected internal override object? CellContent(T item)
+            => null;
+
+        /// <summary>
+        /// The name of this column.
+        /// </summary>
+        public override string PropertyName { get; } = Guid.NewGuid().ToString();
+
+        protected internal override object? PropertyFunc(T item)
+            => null;
+
+        protected internal override void SetProperty(object? item, object? value)
+        {
+        }
+
+        /// <summary>
+        /// Allows filters to be used on this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Filterable"/> property.
+        /// </remarks>
+        [Parameter]
+        public override bool? Filterable { get; set; } = false;
+
+        /// <summary>
+        /// Sorts values in this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When set, this overrides the <see cref="MudDataGrid{T}.SortMode"/> property.
+        /// </remarks>
+        [Parameter]
+        public override bool? Sortable { get; set; } = false;
+
+        /// <summary>
+        /// Allows this column to be reordered via drag-and-drop operations.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+        /// </remarks>
+        [Parameter]
+        public override bool? DragAndDropEnabled { get; set; } = false;
+
+        /// <summary>
+        /// Allows this column's width to be changed.
+        /// </summary>
+        [Parameter]
+        public override bool? Resizable { get; set; } = false;
+
+        /// <summary>
+        /// Shows options for this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When set, this overrides the <see cref="MudDataGrid{T}.ShowColumnOptions"/> property.
+        /// </remarks>
+        [Parameter]
+        public override bool? ShowColumnOptions { get; set; } = false;
+
+        /// <summary>
+        /// Sets the initial expansion state of this column if used as a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, toggling will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+        /// <summary>
+        /// Occurs when hierarchy visibility is toggled if used as a Hierarchy Column.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
+
+        /// <summary>
+        /// Sets the function which determines whether buttons are disabled if used in a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, setting this will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool> ButtonDisabledFunc { get; set; } = _ => false;
+    }
+}

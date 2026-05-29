@@ -1,0 +1,52 @@
+﻿@page "/components/link"
+
+<DocsPage>
+    <DocsPageHeader Title="Link" Component="@nameof(MudLink)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Simple Links">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LinkSimpleExample)">
+                <LinkSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline Links">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LinkInlineExample)">
+                <LinkInlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Underlines">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LinkUnderlineExample)">
+                <LinkUnderlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>Links can have icons at the start or end using the <CodeInline>StartIcon</CodeInline> and <CodeInline>EndIcon</CodeInline> properties.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LinkIconExample)">
+                <LinkIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="OnClick">
+                <Description><CodeInline>OnClick</CodeInline> property provides a way to invoke an action instead of (or in conjunction with) <CodeInline>Href</CodeInline> navigation.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(LinkOnClickExample)">
+                <LinkOnClickExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

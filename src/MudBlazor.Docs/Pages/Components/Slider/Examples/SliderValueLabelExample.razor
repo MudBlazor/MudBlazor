@@ -1,0 +1,48 @@
+﻿@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<MudSlider T="decimal" Value="@_value" ValueLabel="true" Step="0.5m" Culture="@_selectedCulture" ValueLabelFormat="@_selectedFormat" />
+
+<MudSelect T="CultureInfo" @bind-Value="_selectedCulture">
+    @foreach (var availableCulture in _availableCultures)
+    {
+        <MudSelectItem T="CultureInfo" Value="@availableCulture">@availableCulture.EnglishName</MudSelectItem>
+    }
+</MudSelect>
+
+<MudSelect T="string" @bind-Value="_selectedFormat">
+    <MudSelectItem Value="@("C")" />
+    <MudSelectItem Value="@("00.00")" />
+    <MudSelectItem Value="@("P1")" />
+</MudSelect>
+
+@code {
+    private decimal _value = 50.0m;
+    private string _selectedFormat = "C";
+    private CultureInfo _selectedCulture = EnglishMoneyCulture;
+    private List<CultureInfo> _availableCultures = new()
+    {
+        EnglishMoneyCulture,
+        GermanMoneyCulture,
+    };
+
+    private static CultureInfo EnglishMoneyCulture
+    {
+        get
+        {
+            var culture = (CultureInfo)CultureInfo.GetCultureInfo("en").Clone();
+            culture.NumberFormat.CurrencySymbol = "$";
+            return culture;
+        }
+    }
+
+    private static CultureInfo GermanMoneyCulture
+    {
+        get
+        {
+            var culture = (CultureInfo)CultureInfo.GetCultureInfo("de").Clone();
+            culture.NumberFormat.CurrencySymbol = "€";
+            return culture;
+        }
+    }
+}

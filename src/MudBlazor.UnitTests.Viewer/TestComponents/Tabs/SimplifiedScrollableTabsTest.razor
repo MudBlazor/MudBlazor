@@ -1,0 +1,40 @@
+﻿<MudTabs Elevation="1" AlwaysShowScrollButtons="false" Position="Position.Top">
+    @foreach (var tab in _tabs)
+    {
+        <MudTabPanel @key="tab" Text="@tab">
+        <MudText>@tab</MudText>
+        </MudTabPanel>
+    }
+</MudTabs>
+
+@code
+{ 
+    public static string __description__ = "scrolling should work";
+
+    private readonly List<string> _tabs = [];
+
+    [Parameter]
+    public int StartAmount { get; set; } = 0;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        for (int i = 0; i < StartAmount; i++)
+        {
+            _tabs.Add($"new item {i + 1}");
+        }
+    }
+
+    public Task AddPanel()
+    {
+        _tabs.Add($"new item {_tabs.Count+1}");
+        return InvokeAsync(StateHasChanged);
+    }
+
+    public Task RemoveLastPanel()
+    {
+        _tabs.RemoveAt(_tabs.Count-1);
+        return InvokeAsync(StateHasChanged);
+    }
+}

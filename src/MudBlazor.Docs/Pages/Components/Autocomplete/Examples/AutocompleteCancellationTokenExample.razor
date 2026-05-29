@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Threading
+@using System.Net.Http.Json
+
+<MudGrid>
+	<MudItem xs="12">
+		<MudAutocomplete T="string" Label="US States" @bind-Value="_state" SearchFunc="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true" />
+	</MudItem>
+</MudGrid>
+
+@code {
+	[Inject] private HttpClient HttpClient { get; set; }
+	private string _state;
+
+	private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+	{
+		// Forward the CancellationToken to methods which supported, such as HttpClient and DbContext
+		return await HttpClient.GetFromJsonAsync<IEnumerable<string>>($"webapi/AmericanStates/searchWithDelay/{value ?? string.Empty}", token);
+	}
+}

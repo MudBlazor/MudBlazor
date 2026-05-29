@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudProgressLinear Color="Color.Primary" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
+<MudProgressLinear Color="Color.Secondary" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
+<MudProgressLinear Color="Color.Tertiary" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
+<MudProgressLinear Color="Color.Info" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
+<MudProgressLinear Color="Color.Warning" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
+<MudProgressLinear Color="Color.Error" Buffer="true" Value="@Value" BufferValue="@BufferValue" Class="my-7" />
+@code {
+    private bool _disposed;
+
+    public int Value { get; set; }
+
+    public int BufferValue { get; set; }
+
+    public async Task SimulateProgressAsync()
+    {
+        Value = 5;
+        BufferValue = 10;
+
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
+            BufferValue += 5;
+            StateHasChanged();
+            await Task.Delay(500);
+
+        } while (Value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
+}

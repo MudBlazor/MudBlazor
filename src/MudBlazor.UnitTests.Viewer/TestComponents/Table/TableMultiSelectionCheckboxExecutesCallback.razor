@@ -1,0 +1,27 @@
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable T="int" Items="items" @bind-SelectedItems="_selectedItems" MultiSelection="true"
+          OnRowClick="GotClicked">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code
+{
+    public static string __description__ = "the selected items (check-box click or row click) should be represented in SelectedItems.";
+
+    private int[] items = [1];
+    private HashSet<int> _selectedItems = [];
+
+    private void GotClicked<T>(TableRowClickEventArgs<T> args)
+    {
+        _selectedItems.Add(2);
+        _selectedItems.Add(3);
+        _selectedItems.Add(4);
+        _selectedItems.Add(5);
+        _selectedItems.Add(6);
+    }
+}

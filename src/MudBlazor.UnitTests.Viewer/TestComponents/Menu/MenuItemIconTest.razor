@@ -1,0 +1,12 @@
+<MudPopoverProvider />
+
+<MudMenu Label="Click to see icons" Dense="Dense">
+    <MudMenuItem Icon="@Icons.Material.Filled.Chair" Label="Chair" />
+    <MudMenuItem Icon="@Icons.Material.Filled.DoorFront" IconColor="Color.Secondary" Label="Door" />
+    <MudMenuItem Icon="@Icons.Material.Filled.Window" IconColor="Color.Tertiary" Label="Window" />
+</MudMenu>
+
+@code {
+    [Parameter]
+    public bool Dense { get; set; }
+}

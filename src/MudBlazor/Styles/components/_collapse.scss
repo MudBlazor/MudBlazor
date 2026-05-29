@@ -1,0 +1,32 @@
+.mud-collapse-container {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 0fr);
+  transition: grid-template-rows 300ms ease-in-out;
+}
+
+.mud-collapse-entering {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.mud-collapse-entered {
+  overflow: initial;
+  grid-template-rows: minmax(0, 1fr);
+
+  & .mud-collapse-wrapper {
+      overflow-y: auto;
+  }
+}
+
+.mud-collapse-hidden {
+  visibility: hidden;
+}
+
+.mud-collapse-wrapper {
+  overflow: hidden;
+  display: flex;
+}
+
+.mud-collapse-wrapper-inner {
+  width: 100%;
+}

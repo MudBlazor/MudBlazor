@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton @onclick="@(() => ChangePosition("Top-Start", Defaults.Classes.Position.TopStart))" Color="Color.Primary" >Top-Start</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Top-Left", Defaults.Classes.Position.TopLeft))" Color="Color.Primary" >Top-Left</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Top-Center", Defaults.Classes.Position.TopCenter))" Color="Color.Primary" >Top-Center</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Top-Right", Defaults.Classes.Position.TopRight))" Color="Color.Primary" >Top-Right</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Top-End", Defaults.Classes.Position.TopEnd))" Color="Color.Primary" >Top-End</MudButton>
+<MudDivider />
+<MudButton @onclick="@(() => ChangePosition("Bottom-Start", Defaults.Classes.Position.BottomStart))" Color="Color.Default" >Bottom-Start</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Bottom-Left", Defaults.Classes.Position.BottomLeft))" Color="Color.Default" >Bottom-Left</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Bottom-Center", Defaults.Classes.Position.BottomCenter))" Color="Color.Default" >Bottom-Center</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Bottom-Right", Defaults.Classes.Position.BottomRight))" Color="Color.Default" >Bottom-Right</MudButton>
+<MudButton @onclick="@(() => ChangePosition("Bottom-End", Defaults.Classes.Position.BottomEnd))" Color="Color.Default" >Bottom-End</MudButton>
+
+@code {
+    void ChangePosition(string message, string position)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = position;
+        Snackbar.Add(message, Severity.Normal);
+    }
+}

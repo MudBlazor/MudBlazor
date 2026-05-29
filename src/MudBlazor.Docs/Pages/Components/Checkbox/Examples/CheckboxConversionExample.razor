@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Value="_boolean">bool: @_boolean</MudCheckBox>
+<MudCheckBox @bind-Value="_nullableBoolean" Color="Color.Primary">bool?: @_nullableBoolean</MudCheckBox>
+<MudCheckBox @bind-Value="_integer" Color="Color.Secondary">int: @_integer</MudCheckBox>
+<MudCheckBox @bind-Value="_string" Color="Color.Tertiary">string: "@(_string)"</MudCheckBox>
+<MudCheckBox @bind-Value="_customString" Converter="@CustomStringToBoolConverter.Instance">custom string: "@(_customString)"</MudCheckBox>
+<MudCheckBox @bind-Value="_object" Converter="@ObjectToBoolConverter.Instance">boxed bool: "@(_object.ToString())"</MudCheckBox>
+
+@code{ 
+    private bool _boolean = true;
+    private bool? _nullableBoolean = true;
+    private int _integer = 1;
+    private string _string = "on";
+    private string _customString = CustomStringToBoolConverter.NullString;
+    private object _object = false;
+
+    private class ObjectToBoolConverter : IReversibleConverter<object, bool?>
+    {
+        public bool? Convert(object input)
+        {
+            return input switch
+            {
+                null => null,
+                bool value => value,
+                _ => throw new InvalidCastException("Unable to convert object to bool?.")
+            };
+        }
+
+        public object ConvertBack(bool? output)
+        {
+            return output == true;
+        }
+
+        public static ObjectToBoolConverter Instance { get; } = new();
+    }
+
+    private class CustomStringToBoolConverter : IReversibleConverter<string, bool?>
+    {
+        public const string TrueString = "Yes, please";
+        public const string FalseString = "No, thanks";
+        public const string NullString = "I don't know";
+
+        public bool? Convert(string input)
+        {
+            return input switch
+            {
+                TrueString => true,
+                FalseString => false,
+                _ => null
+            };
+        }
+
+        public string ConvertBack(bool? output)
+        {
+            return output switch
+            {
+                true => TrueString,
+                false => FalseString,
+                null => NullString
+            };
+        }
+
+        public static CustomStringToBoolConverter Instance { get; } = new();
+    }
+}

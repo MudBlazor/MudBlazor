@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwitch @bind-Value="Basic_Switch1" />
+<MudSwitch @bind-Value="Basic_Switch2" Color="Color.Primary" />
+<MudSwitch @bind-Value="Basic_Switch3" Color="Color.Secondary" />
+<MudSwitch T="bool" Disabled="true" />
+
+@code{
+    public bool Basic_Switch1 { get; set; } = false;
+    public bool Basic_Switch2 { get; set; } = true;
+    public bool Basic_Switch3 { get; set; } = true;
+}

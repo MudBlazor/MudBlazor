@@ -1,0 +1,51 @@
+.mud-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 0 1 auto;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 16px 12px;
+}
+
+.mud-breadcrumb-separator {
+  display: inline-flex;
+  padding: 0 12px;
+}
+
+.mud-breadcrumb-separator > span {
+  color: var(--mud-palette-text-primary);
+  opacity: 0.38
+}
+
+.mud-breadcrumb-item > a {
+  display: flex;
+  align-items: center;
+}
+
+.mud-breadcrumb-item > a > svg.mud-icon-root {
+  margin-right: 4px;
+  margin-inline-end: 4px;
+  margin-inline-start: unset;
+}
+
+.mud-breadcrumb-item.mud-disabled > a {
+  pointer-events: none;
+  color: var(--mud-palette-action-disabled);
+}
+
+.mud-breadcrumbs-expander {
+  cursor: pointer;
+  display: flex;
+  background-color: #EEEEEE;
+}
+
+@media(hover: hover) and (pointer: fine) {
+  .mud-breadcrumbs-expander:hover {
+    background-color: #E0E0E0;
+  }
+}
+
+.mud-breadcrumbs-expander > svg {
+  width: 26px;
+}

@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+<div role="progressbar"
+     aria-busy="@((Indeterminate || _valueState.Value < _maxState.Value).ToString().ToLowerInvariant())"
+     aria-valuenow="@_valueState.Value.ToInvariantString()"
+     aria-valuemin="@_minState.Value.ToInvariantString()"
+     aria-valuemax="@_maxState.Value.ToInvariantString()"
+     aria-live="@((Indeterminate ? null : "polite"))"
+     class="@Classname" 
+     style="@Style" 
+     @attributes="UserAttributes">
+    <div class="@BarsClassname">
+        @if (Indeterminate)
+        {
+            <div class="mud-progress-linear-bar"></div>
+            <div class="mud-progress-linear-bar"></div>
+        }
+        else if (Buffer)
+        {
+            <div class="mud-progress-linear-bar"></div>
+            <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
+            <div class="mud-progress-linear-bar last" style="@GetStyledBar2Transform()"></div>
+        }
+        else
+        {
+            <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
+        }
+    </div>
+
+    @if (ChildContent is not null)
+    {
+        <div class="mud-progress-linear-content">
+            @ChildContent
+        </div>
+    }
+</div>

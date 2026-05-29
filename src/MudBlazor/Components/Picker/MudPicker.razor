@@ -1,0 +1,130 @@
+﻿@namespace MudBlazor
+@inherits MudFormComponent<T, string>
+@typeparam T
+
+@code
+{
+    protected virtual RenderFragment? InputContent =>
+        // note: Mask needs to remain before Text!
+        @<MudTextField T="string"
+                       @ref="_inputReference"
+                       @attributes="UserAttributes"
+                       Style="@Style"
+                       Label="@Label"
+                       Mask="@_mask"
+                       @bind-Value:get="@ReadText"
+                       @bind-Value:set="@WriteTextAsync"
+                       Immediate="@(ImmediateText && Editable)"
+                       Placeholder="@Placeholder"
+                       HelperText="@HelperText"
+                       HelperTextOnFocus="@HelperTextOnFocus"
+                       Variant="@Variant"
+                       ReadOnly="@(!Editable || GetReadOnlyState())"
+                       Disabled="@GetDisabledState()"
+                       Underline="@Underline"
+                       OnAdornmentClick="ToggleStateAsync"
+                       Adornment="@Adornment"
+                       AdornmentIcon="@AdornmentIcon"
+                       AdornmentColor="@AdornmentColor"
+                       AdornmentAriaLabel="@AdornmentAriaLabel"
+                       IconSize="@IconSize"
+                       Margin="@Margin"
+                       Required="@Required"
+                       RequiredError="@RequiredError"
+                       Error="@HasErrors"
+                       ErrorId="@ErrorIdState.Value"
+                       ErrorText="@ErrorTextState.Value"
+                       Clearable="@(Clearable && !GetReadOnlyState())"
+                       ClearIcon="@ClearIcon"
+                       OnClearButtonClick="@(async () => await ClearAsync())"
+                       ShrinkLabel="@ShrinkLabel"
+                       KeyDownPreventDefault="Open"
+                       InputId="@InputId"
+                       @onclick="OnClickAsync" />;
+
+    /// <summary>
+    /// Gets the content to be rendered inside the picker.
+    /// Override this property to provide custom content for the picker.
+    /// </summary>
+    protected virtual RenderFragment? PickerContent => null;
+
+    protected virtual RenderFragment? Render =>
+        @<CascadingValue Value="@this" IsFixed="true">
+            <div class="@PickerClassname" id="@ElementId">
+                @if (PickerVariant != PickerVariant.Static)
+                {
+                    <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+                        @if (InputContent != null)
+                        {
+                            @InputContent
+                        }
+                    </CascadingValue>
+                }
+                @if (PickerVariant == PickerVariant.Inline)
+                {
+                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" RelativeWidth="@(RelativeWidth)" Paper="false">
+                        <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
+                            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                                <div class="@PickerContainerClassname">
+                                    @if (PickerContent != null)
+                                    {
+                                        @PickerContent
+                                    }
+                                </div>
+                                @if (PickerActions != null)
+                                {
+                                    <div class="@ActionsClassname">
+                                        @PickerActions(this)
+                                    </div>
+                                }
+                            </MudPaper>
+                        </div>
+                    </MudPopover>
+                }
+                else if (PickerVariant == PickerVariant.Static)
+                {
+                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                        <div class="@PickerContainerClassname">
+                            @if (PickerContent != null)
+                            {
+                                @PickerContent
+                            }
+                        </div>
+                        @if (PickerActions != null)
+                        {
+                            <div class="@ActionsClassname">
+                                @PickerActions(this)
+                            </div>
+                        }
+                    </MudPaper>
+                }
+                else if (Open && PickerVariant == PickerVariant.Dialog)
+                {
+                    <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
+                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                            <div class="@PickerContainerClassname">
+                                @if (PickerContent != null)
+                                {
+                                    @PickerContent
+                                }
+                            </div>
+                            @if (PickerActions != null)
+                            {
+                                <div class="@ActionsClassname">
+                                    @PickerActions(this)
+                                </div>
+                            }
+                        </MudPaper>
+                    </MudOverlay>
+                }
+            </div>
+            @if (PickerVariant == PickerVariant.Inline)
+            {
+                <MudOverlay Visible="@Open"
+                            AutoClose
+                            Modal="@GetModal()"
+                            OnClosed="CloseOverlayAsync"
+                            LockScroll="false"/>
+            }
+        </CascadingValue>;
+}

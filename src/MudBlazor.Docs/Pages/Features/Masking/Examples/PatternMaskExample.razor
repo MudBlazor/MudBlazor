@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid Class="justify-space-between" Style="max-width: 400px;">
+    <MudItem xs="12">
+        <MudTextField Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Credit Card Number" 
+                      @bind-Value="creditCard"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+	<MudItem xs="4">
+        <MudTextField Mask="@(new DateMask("MM/YY", 'Y', 'M'))" Label="Expires" 
+                      @bind-Value="expiration"  Variant="@Variant.Text" />
+    </MudItem>
+    <MudItem xs="4"/>
+	<MudItem xs="4">
+        <MudTextField Mask="@(new PatternMask("000"))" Label="CVC" 
+                      @bind-Value="cvc"  Variant="@Variant.Text" />
+    </MudItem>
+    <MudItem xs="12">
+		Credit Card Number: <b>@creditCard</b><br/>
+		Expiration Date: <b>@expiration</b><br/>
+        CVC: <b>@cvc</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string creditCard;
+    private string expiration;
+    private string cvc;
+}

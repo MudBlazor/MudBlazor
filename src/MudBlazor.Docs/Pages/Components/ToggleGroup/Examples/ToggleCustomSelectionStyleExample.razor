@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudToggleGroup T="string" SelectedClass="@_style" @bind-Value="_value">
+        <MudToggleItem Value="@("Antimatter")" />
+        <MudToggleItem Value="@("Dark Matter")" />
+        <MudToggleItem Value="@("Dark Energy")" />
+    </MudToggleGroup>
+
+    <MudSelect T="string" @bind-Value="_style" Variant="Variant.Outlined">
+        <MudSelectItem Value="@("mud-theme-primary")" />
+        <MudSelectItem Value="@("mud-theme-secondary")" />
+        <MudSelectItem Value="@("custom-gradient")" />
+        <MudSelectItem Value="@("custom-striped")" />
+    </MudSelect>
+</MudStack>
+
+<style>
+    .custom-gradient {
+        background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+        color: white !important;
+    }
+
+    .custom-striped {
+        background: repeating-linear-gradient( 45deg, #606dbc, #606dbc 10px, #465298 10px, #465298 20px );
+        color: white !important;
+    }
+</style>
+
+@code {
+    private string _style = "custom-striped";
+    private string _value = "Antimatter";
+}

@@ -1,0 +1,11 @@
+﻿
+
+<MudDataGrid Items="@_items" MultiSelection>
+    <Columns>
+        <SelectColumn T="int" ShowInFooter="true" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private List<int> _items = [1, 2];
+}

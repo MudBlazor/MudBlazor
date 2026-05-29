@@ -1,0 +1,37 @@
+﻿@page "/utilities/enable-flex"
+
+<DocsPage>
+    <DocsPageHeader Title="Enable Flex" SubTitle="Quickly manage the layout and sizing of your items."/>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true"/>
+            <DocsClassTable>
+                <tr>
+                    <td>d-flex </td><td> display: flex;</td>
+                </tr>
+                <tr>
+                    <td>d-inline-flex </td><td> display: inline-flex;</td>
+                </tr>
+            </DocsClassTable>
+
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Enabling Flexbox">
+                <Description>With the display classes, you can turn any element into a flex container. Doing so will transform the child elements into flex items.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(FlexEnableExample)" Block="true" HighLight="d-flex,d-inline-flex">
+                <FlexEnableExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="d-md-flex"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

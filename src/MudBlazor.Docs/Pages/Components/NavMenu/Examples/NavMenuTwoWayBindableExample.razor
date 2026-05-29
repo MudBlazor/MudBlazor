@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="250px" Class="py-3 mb-4" Elevation="0">
+    <MudNavMenu>
+        <MudNavGroup Title="Settings" @bind-Expanded=_expanded>
+            <MudNavLink Href="/users">Users</MudNavLink>
+            <MudNavLink Href="/security">Security</MudNavLink>
+        </MudNavGroup>
+    </MudNavMenu>
+</MudPaper>
+
+<MudText>
+    The MudNavGroup is
+    @if (_expanded)
+    {
+        <b class="mud-theme-tertiary rounded pa-2 ml-2">expanded</b>
+    }
+    else
+    {
+        <b class="mud-theme-error rounded pa-2 ml-2">collapsed</b>
+    }
+</MudText>
+
+@code{
+    bool _expanded = true;
+}

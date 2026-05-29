@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        <MudDropZone T="DropItem" Identifier="Drop Zone 1" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
+            <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
+         </MudDropZone>
+        <MudDropZone T="DropItem" Identifier="Drop Zone 2" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
+            <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
+        </MudDropZone>
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="25" Class="pa-4 my-4">@context.Name</MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    }
+    
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Drag me!", Identifier = "Drop Zone 1" },
+        new DropItem(){ Name = "Or me!", Identifier = "Drop Zone 2" },
+        new DropItem(){ Name = "Just Mud", Identifier = "Drop Zone 1" },
+    };
+    
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Identifier { get; set; }
+    }
+}

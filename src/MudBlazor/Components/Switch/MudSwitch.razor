@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor
+@inherits MudBooleanInput<T>
+@typeparam T
+
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <label class="@LabelClassname" style="@Style" @onkeydown="HandleKeyDownAsync" id="@ElementId">
+            <span class="@SpanClassname">
+                <span class="@SwitchClassname">
+                    <span class="mud-switch-button">
+                        <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" aria-readonly="@(GetReadOnlyState().ToString().ToLower())" role="switch" aria-checked="@AriaCheckedState" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
+                        <span class="@ThumbClassname">
+                            @if (!string.IsNullOrEmpty(ThumbIcon))
+                            {
+                                <MudIcon Color="@ThumbIconColor" Icon="@ThumbIcon" Style="padding: 2px; height:inherit; width: inherit;" />
+                            }
+                        </span>
+                    </span>
+                </span>
+                <span class="@TrackClassname"></span>
+            </span>
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <MudText HtmlTag="span" Class="@LabelClassname" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
+                    @Label
+                </MudText>
+            }
+            @if (ChildContent != null)
+            {
+                <MudText HtmlTag="span" Class="@LabelClassname" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
+                    @ChildContent
+                </MudText>
+            }
+            @if (AriaLabel is not null)
+            {
+                <span id="@_ariaId" class="mud-sr-only">
+                    @AriaLabel
+                </span>
+            }
+        </label>
+    </InputContent>
+</MudInputControl>

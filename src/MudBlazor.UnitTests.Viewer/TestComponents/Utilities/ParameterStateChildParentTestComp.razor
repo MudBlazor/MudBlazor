@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.UnitTests
+
+<style>
+    .parent-div {
+        background-color: #3498db;
+        padding: 20px;
+        color: white;
+    }
+</style>
+
+<div class="parent-div">
+    Parent Component
+    <MudButton id="parentBtn" OnClick="OnClickParentAsync">Click Child</MudButton>
+    <ParameterStateChildComp1 @bind-Counter="Counter" />
+</div>
+
+@code {
+    public int Counter { get; internal set; } = 1;
+
+    private Task OnClickParentAsync()
+    {
+        Counter++;
+        return Task.CompletedTask;
+    }
+}

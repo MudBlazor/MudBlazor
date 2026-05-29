@@ -1,0 +1,43 @@
+﻿@page "/mud/project/roadmap"
+@using MudBlazor.Docs.Utilities
+
+<PageTitle>Roadmap - MudBlazor</PageTitle>
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Roadmap" />
+    <DocsPageContent>
+        @if (string.IsNullOrEmpty(_roadMap))
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudStack Spacing="2" Class="mud-typography mud-typography-body1">
+                @((MarkupString)GetBody(_roadMap))
+            </MudStack>
+        }
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+    private string _roadMap;
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/MudBlazor/MudBlazor/dev/ROADMAP.md");
+        _roadMap = await response.Content.ReadAsStringAsync();
+    }
+
+    private string GetBody(string value)
+    {
+        var html = MarkdownToHtml.Parse(value, new Uri(NavigationManager.Uri, UriKind.RelativeOrAbsolute));
+
+        return html;
+    }
+}

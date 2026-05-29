@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudSlider @bind-Value="value1" Min="20" Max="80" Color="Color.Info">Value: @value1.ToString()</MudSlider>
+<MudSlider @bind-Value="value2" Min="-1" Max="1" Step="0.05" Color="Color.Error">Value: @value2.ToString("F2")</MudSlider>
+
+
+@code {
+    public double value1 = 50;
+    public double value2 = -0.75;
+}

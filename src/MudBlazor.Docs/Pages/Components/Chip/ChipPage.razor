@@ -1,0 +1,115 @@
+﻿@page "/components/chips"
+
+<DocsPage>
+    <DocsPageHeader Title="Chips" Component="@nameof(MudChip<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Filled Chips">
+                <Description>The Chips, when disabled, differ from other components. Instead of using the disabled color, the opacity is lowered.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipBasicExample)" Block="true">
+                <ChipBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Text Chips">
+                <Description>Text Chips also differ from other components where it has transparent background instead of fully transparent.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipTextExample)"  Block="true">
+                <ChipTextExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Outlined Chips">
+                <Description>This looks and feels like outlined normally do with a border and slightly transparent background on hover.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipOutlinedExample)"  Block="true">
+                <ChipOutlinedExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Closable">
+                <Description>You can change the close icon with the <CodeInline>CloseIcon</CodeInline> prop.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipClosableExample)">
+                <ChipClosableExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Clickable">
+                <Description>
+                    The <CodeInline>OnClick</CodeInline> handler provides the EventCallback for clicking on the body of the chip.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipClickableExample)">
+                <ChipClickableExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipIconExample)">
+                <ChipIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Avatars">
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipAvatarExample)">
+                <ChipAvatarExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Label">
+                <Description>Label Chips use the default theme border-radius.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipLabelExample)">
+                <ChipLabelExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Sizes">
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipSizeExample)">
+                <ChipSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Link Chip">
+                <Description>
+                    Set the <CodeInline>Href</CodeInline> parameter to render the chip as an anchor element.
+                    <CodeInline>rel="noopener"</CodeInline> will be added automatically if <CodeInline>Target == "_blank"</CodeInline>.
+                    Link chips cannot use a close button or the <CodeInline>OnClick</CodeInline> event.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChipLinkExample)" ShowCode="false">
+                <ChipLinkExample/>
+            </SectionContent>
+
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Rel Content">
+                        <Description>
+                            The relationship between a linked resource and the current document can be defined using the <CodeInline>Rel</CodeInline> property.
+                            This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline> and so you have to specify it manually if desired.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ChipLinkRelExample)" ShowCode="false">
+                        <ChipLinkRelExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

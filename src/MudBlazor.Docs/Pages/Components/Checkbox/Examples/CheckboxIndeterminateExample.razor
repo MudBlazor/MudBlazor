@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Value="value" Color="@Color.Primary">
+    Value: @(value == null ? "null" : value.ToString())
+</MudCheckBox>
+<MudButton OnClick="@(()=>value=null)">Reset</MudButton>
+<MudCheckBox @bind-Value="anotherValue" Color="@Color.Secondary" TriState="true">Checkbox with TriState. Value: @(anotherValue == null ? "null" : anotherValue.ToString())</MudCheckBox>
+
+@code {
+    public bool? value { get; set; } = null;
+    public bool? anotherValue { get; set;} = null;
+}

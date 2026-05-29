@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Components.LandingPage
+
+<MudPaper Class="rounded-lg d-flex pa-6" Elevation="@Elevation">
+    <div class="d-flex justify-center align-center">
+        <MudIcon Icon="@Icon" Style="width:48px;height:48px;"/>
+    </div>
+    <div class="d-flex flex-column ml-6">
+        <div class="d-flex">
+            <MudText Typo="Typo.h6" Color="Color.Default">Mud</MudText>
+            <MudText Typo="Typo.h6" Color="@Color">@Name</MudText>
+        </div>
+        <MudText Typo="Typo.body1">@Description</MudText>
+    </div>
+</MudPaper>
+@code {
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Name { get; set; }
+    [Parameter] public Color Color { get; set; }
+    [Parameter] public int Elevation { get; set; }
+    [Parameter] public string Description { get; set; }
+}

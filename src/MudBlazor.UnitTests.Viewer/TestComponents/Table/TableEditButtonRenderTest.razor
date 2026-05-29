@@ -1,0 +1,37 @@
+﻿<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition" IsEditRowSwitchingBlocked="BlockRowSwitching" OnRowClick="OnRowClicked">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>
+            <div>
+                @context
+            </div>
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" @bind-Value="@context"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Inline Edit Table: Edit button content";
+
+    private readonly string[] _items = ["A", "B", "C"];
+
+    [Parameter]
+    public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
+    [Parameter]
+    public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+
+    [Parameter]
+    public bool BlockRowSwitching { get; set; }
+
+    [Parameter]
+    public Action? RowClicked { get; set; }
+
+    private void OnRowClicked() => RowClicked?.Invoke();
+}

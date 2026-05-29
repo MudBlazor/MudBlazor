@@ -1,0 +1,27 @@
+﻿<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Hired">
+            <EditTemplate>
+                <MudCheckBox T="bool" @bind-Value="context.Item.Hired" Label="Hired" Required />
+            </EditTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("John", 45, false), 
+        new("Johanna", 23, true), 
+        new("Steve", 32, false)
+    };
+
+    public class Model(string name, int age, bool hired)
+    {
+        public string Name { get; set; } = name;
+        public int Age { get; set; } = age;
+        public bool Hired { get; set; } = hired;
+    }
+}

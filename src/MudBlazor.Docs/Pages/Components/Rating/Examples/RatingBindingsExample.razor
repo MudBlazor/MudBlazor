@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<div class="d-flex flex-column align-center">
+    <MudRating @bind-SelectedValue="selectedVal" HoveredValueChanged="HandleHoveredValueChanged" />
+    <MudText Typo="Typo.subtitle2" Class="deep-purple-text mt-2">@LabelText</MudText>
+</div>
+
+
+@code {
+    private int selectedVal = 0;
+    private int? activeVal;
+
+    private void HandleHoveredValueChanged(int? val) => activeVal = val;
+
+    private string LabelText => (activeVal ?? selectedVal) switch
+    {
+        1 => "Very bad",
+        2 => "Bad",
+        3 => "Sufficient",
+        4 => "Good",
+        5 => "Awesome!",
+        _ => "Rate our product!"
+    };
+}

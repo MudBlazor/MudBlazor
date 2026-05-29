@@ -1,0 +1,23 @@
+﻿<MudTextField T="string"
+              Label="Phone"
+              Variant="Variant.Outlined"
+              InputType="InputType.Text"
+              InputMode="InputMode.tel"
+              Mask="@(new PatternMask("(000) 000-0000"))"
+              autocomplete="phone"
+              @bind-Value="_phone">
+</MudTextField>
+
+<MudTextField T="string"
+              Label="Email"
+              Variant="Variant.Outlined"
+              InputType="InputType.Text"
+              InputMode="InputMode.email">
+</MudTextField>
+
+@_phone
+
+
+@code {
+    private string? _phone;
+}

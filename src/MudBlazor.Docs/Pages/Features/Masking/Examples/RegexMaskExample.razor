@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem  xs="12" sm="6">
+        <MudTextField Mask="@mask1" Label="Only digits (unlimited length)"  HelperText="@mask1.Mask"
+                      @bind-Value="numbers"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem  xs="12" sm="6">
+        <MudTextField Mask="@mask2" Label="Russian postal code" HelperText="@mask2.Mask"
+                      @bind-Value="russianZip"  Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem  xs="12" sm="6">
+        Number: <b>@numbers</b>
+    </MudItem>
+    <MudItem  xs="12" sm="6">
+        Russian ZIP: <b>@russianZip</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string numbers, russianZip;
+
+    public IMask mask1 = new RegexMask(@"^\d+$");
+
+    public IMask mask2 = new RegexMask(@"^[1-6]\d{0,5}$");
+
+}

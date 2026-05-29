@@ -1,0 +1,28 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="8">
+        <MudStack Row="@_row" Reverse="@_reverse" Breakpoint="@_breakpoint">
+            <MudPaper Class="pa-3">Item 1</MudPaper>
+            <MudPaper Class="pa-3">Item 2</MudPaper>
+            <MudPaper Class="pa-3">Item 3</MudPaper>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudStack>
+            <MudSwitch Label="Row" @bind-Value="_row" />
+            <MudSwitch Label="Reverse" @bind-Value="_reverse" />
+            <MudSelect T="Breakpoint" @bind-Value="_breakpoint" Label="Breakpoint">
+                @foreach (var value in Enum.GetValues(typeof(Breakpoint)).Cast<Breakpoint>()){
+                    <MudSelectItem T="Breakpoint" Value="value">@value</MudSelectItem>
+                }
+            </MudSelect>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private Breakpoint _breakpoint = Breakpoint.None;
+    private bool _row = false;
+    private bool _reverse = false;
+}

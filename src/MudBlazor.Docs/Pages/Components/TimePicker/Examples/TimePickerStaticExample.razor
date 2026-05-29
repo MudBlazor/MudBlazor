@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudTimePicker PickerVariant="PickerVariant.Static" @bind-Time="_time" AmPm="true" />
+<MudHidden Breakpoint="@Breakpoint.Xs">
+    <MudTimePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" @bind-Time="_time" />
+</MudHidden>
+
+@code{
+    private TimeSpan? _time = new TimeSpan(13, 37, 00);
+}

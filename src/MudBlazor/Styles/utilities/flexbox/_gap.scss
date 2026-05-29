@@ -1,0 +1,26 @@
+@import '../../abstracts/variables';
+
+$count: 0;
+$value: 0;
+
+@mixin gap($breakpoint) {
+
+  @while $count < 21 {
+    .gap-#{$breakpoint}#{$count} {
+      gap: #{$value}px;
+    }
+
+    .gap-x-#{$breakpoint}#{$count} {
+      column-gap: #{$value}px;
+    }
+
+    .gap-y-#{$breakpoint}#{$count} {
+      row-gap: #{$value}px;
+    }
+
+    $count: $count + 1;
+    $value: $value + 4;
+  }
+}
+
+@include gap("");

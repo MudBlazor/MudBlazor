@@ -1,0 +1,32 @@
+﻿@page "/utilities/order"
+
+<DocsPage>
+    <DocsPageHeader Title="Order" SubTitle="Utilities for controlling the order of flex and grid items." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Class Reference" HideTitle="true" />
+            <DocsAutoGen_Flexbox_Order/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage" />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Order" />
+                    <SectionContent Code="@nameof(OrderBasicExample)" HighLight="order-1,order-2,order-3">
+                        <OrderBasicExample/>
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Applying conditionally"/>
+            <SectionSubGroups>
+                <DynamicBreakpointSectionContent Utility="order-md-2"/>
+            </SectionSubGroups>
+        </DocsPageSection>
+        
+    </DocsPageContent>
+</DocsPage>

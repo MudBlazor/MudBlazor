@@ -1,0 +1,32 @@
+﻿<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>
+            <div>
+                @context
+            </div>
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" @bind-Value="@context"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+    <EditButtonContent Context="button">
+        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="button.ButtonAction" Disabled="button.ButtonDisabled" />
+    </EditButtonContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "Inline Edit Table: Custom edit button content";
+
+    private readonly string[] _items = ["A", "B", "C"];
+
+    [Parameter]
+    public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
+    [Parameter]
+    public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+}

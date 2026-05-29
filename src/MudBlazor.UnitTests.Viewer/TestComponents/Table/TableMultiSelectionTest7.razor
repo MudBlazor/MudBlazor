@@ -1,0 +1,34 @@
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true" Filter="new Func<int,bool>(FilterFunc)">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudTextField id="searchInput" @bind-Value="_searchString"></MudTextField>
+
+@code {
+    public static string __description__ = "the selected items (check-box click or row click) should be represented in SelectedItems.";
+    
+    private string _searchString = string.Empty;
+    private readonly int[] _items = [0, 1, 2];
+    private HashSet<int> _selectedItems = [];
+
+    private bool FilterFunc(int element)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+        {
+            return true;
+        }
+
+        if (element == int.Parse(_searchString))
+        {
+            return true;
+        }
+
+        return false;
+    }
+}

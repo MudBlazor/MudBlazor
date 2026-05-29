@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudMenu PositionAtCursor="true">
+    <ActivatorContent>
+        <div @onclick="@context.ToggleAsync" style="cursor: pointer">
+            <MudCard>
+                <MudCardMedia Image="images/door.jpg" Height="200" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Old Paint</MudText>
+                    <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
+                    <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+                </MudCardContent>
+            </MudCard>
+        </div>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Undo" />
+        <MudMenuItem Label="Redo" Disabled />
+        <MudDivider />
+        <MudMenuItem Label="Cut" />
+        <MudMenuItem Label="Copy" />
+        <MudMenuItem Label="Paste" />
+    </ChildContent>
+</MudMenu>
+
+
+
+
+

@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSwitch Color="Color.Primary" @bind-Value="_state">Flip the switch</MudSwitch>
+    </MudItem>
+    
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Switch state" Variant="Variant.Outlined" Converter="@_converter" @bind-Value="_state" Immediate="true"/>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    private bool _state = true;
+
+    private readonly IConverter<bool, string> _converter = Conversions
+        .From((bool value) => value ? "ON" : "OFF",
+            text => string.Equals(text, "on", StringComparison.InvariantCultureIgnoreCase));
+
+}

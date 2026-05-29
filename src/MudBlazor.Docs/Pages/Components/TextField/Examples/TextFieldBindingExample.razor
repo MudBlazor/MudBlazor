@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="element.Name" Label="Name" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Mass" Label="Mass" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Electrons" Label="Electrons" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+<MudTextField @bind-Value="element.Changed" Format="yyyy/MM/dd" Label="Last Update" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+
+<div class="d-flex align-end justify-space-between mud-width-full">
+    <div class="d-flex flex-column">
+        <MudText><b>Name:</b> @element.Name</MudText>
+        <MudText><b>Mass:</b> @element.Mass u</MudText>
+        <MudText><b>Electrons:</b> @element.Electrons</MudText>
+        <MudText><b>Last Update:</b> @element.Changed.ToShortDateString()</MudText>
+    </div>
+    <MudButton Variant="Variant.Filled" DropShadow="false" OnClick="Reset">Reset Model</MudButton>
+</div>
+
+@code {
+    Atom element = new Atom { Name = "Hydrogen", Mass = 1.00794, Electrons = 1, Changed=DateTime.Today };
+
+    // A typical POCO
+    public class Atom
+    {
+        public string Name { get; set; }
+        public double Mass { get; set; }
+        public int Electrons { get; set; }
+        public DateTime Changed { get; set; }
+    }
+
+    private void Reset()
+    {
+        element = new Atom { Name = "Hydrogen", Mass = 1.00794, Electrons = 1, Changed = DateTime.Today };
+        StateHasChanged();
+    }
+}

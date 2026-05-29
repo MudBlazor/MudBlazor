@@ -1,0 +1,149 @@
+@import '../abstracts/variables';
+
+.mud-treeview {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+  overflow: auto;
+
+  @each $color in $mud-palette-colors {
+    &.mud-treeview-selected-#{$color} {
+      .mud-treeview-item-content.mud-treeview-item-selected {
+        color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
+    }
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-treeview-checked-#{$color} {
+      .mud-treeview-item-checkbox {
+        .mud-button-root.mud-icon-button {
+          color: var(--mud-palette-#{$color});
+        }
+      }
+    }
+  }
+}
+
+.mud-treeview-group {
+  margin: 0px;
+  padding: 0px;
+  margin-left: 17px;
+  margin-inline-start: 17px;
+  margin-inline-end: unset;
+  list-style: none;
+}
+
+.mud-treeview-item {
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  cursor: default;
+  list-style: none;
+  min-height: 2rem;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+
+  .mud-treeview-item-arrow, .mud-treeview-item-checkbox {
+    .mud-icon-button {
+      padding: 4px;
+    }
+  }
+
+  &.mud-treeview-item-disabled {
+    color: var(--mud-palette-action-disabled) !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+}
+
+.mud-treeview-item-content {
+  width: 100%;
+  display: flex;
+  padding: 4px 8px;
+  align-items: center;
+  transition: background-color 150ms cubic-bezier(.4,0,.2,1) 0ms;
+}
+
+@media(hover: hover) and (pointer: fine) {
+  .mud-treeview-hover .mud-treeview-item-content:hover {
+    background-color: var(--mud-palette-action-default-hover);
+  }
+}
+
+.mud-treeview-item-arrow {
+  width: 2rem;
+  display: flex;
+  flex-shrink: 0;
+  margin: 0 4px;
+  min-height: 32px;
+  justify-content: center;
+
+  .mud-treeview-item-arrow-expand {
+    transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+    &.mud-transform {
+      transform: rotate(90deg);
+    }
+  }
+
+  .mud-treeview-item-arrow-load {
+    animation: rotation 1s infinite linear;
+  }
+}
+
+.mud-treeview-item-icon {
+  width: 32px;
+  display: flex;
+  flex-shrink: 0;
+  margin-right: 4px;
+  margin-inline-end: 4px;
+  margin-inline-start: unset;
+  justify-content: center;
+}
+
+.mud-treeview-item-label {
+  flex-grow: 1;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.mud-treeview-dense {
+  .mud-treeview-item {
+    min-height: unset;
+  }
+
+  .mud-treeview-item-content {
+    padding: 1px 4px;
+  }
+
+  .mud-treeview-item-arrow {
+    min-height: unset;
+  }
+
+  .mud-icon-button {
+    padding: 0;
+  }
+}
+
+.mud-treeview-select-none {
+  user-select: none;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.mud-application-layout-rtl {
+  .mud-treeview-item-arrow {
+    transform: scaleX(-1);
+  }
+}

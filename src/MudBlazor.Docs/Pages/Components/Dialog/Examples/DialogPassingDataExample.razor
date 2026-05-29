@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Examples.Data.Models
+
+@inject IDialogService DialogService
+
+<div class="d-flex flex-wrap">
+    @foreach (var item in Servers)
+    {
+        <MudPaper Class="d-flex align-center pa-2 mx-2 my-2">
+            <MudText>@item.Name</MudText>
+            <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteServerAsync(item))">Delete</MudButton>
+        </MudPaper>
+    }
+</div>
+
+@code {
+
+    private async Task DeleteServerAsync(Server server)
+    {
+        var parameters = new DialogParameters<DialogPassingDataExample_Dialog> { { x => x.Server, server } };
+
+        var dialog = await DialogService.ShowAsync<DialogPassingDataExample_Dialog>("Delete Server", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            //In a real world scenario we would reload the data from the source here since we "removed" it in the dialog already.
+            Guid.TryParse(result.Data.ToString(), out Guid deletedServer);
+            Servers.RemoveAll(item => item.Id == deletedServer);
+        }
+    }
+
+    //Pretend we are loading this data from a database or API
+    public List<Server> Servers { get; } = new List<Server>
+    {
+        new Server{ Id = Guid.NewGuid(), Name = "Server1", Location = "Denmark", IpAddress = "193.254.123.1" },
+        new Server{ Id = Guid.NewGuid(), Name = "Server2", Location = "Sweden", IpAddress = "127.0.0.1" },
+        new Server{ Id = Guid.NewGuid(), Name = "Server3", Location = "Russia", IpAddress = "173.164.2.1" },
+        new Server{ Id = Guid.NewGuid(), Name = "Server4", Location = "Germany", IpAddress = "193.168.1.1" },
+    };
+}

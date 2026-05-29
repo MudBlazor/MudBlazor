@@ -1,0 +1,230 @@
+﻿@page "/components/tabs"
+
+<DocsPage>
+    <DocsPageHeader Title="Tabs" Component="@nameof(MudTabs)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Simple Tabs" />
+            <SectionContent Code="@nameof(TabsSimpleExample)" ShowCode="true" Block="true">
+                <TabsSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Icon Tabs">
+                <Description>
+                    Icons can be added alongside text in the tabs to enhance visuals.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsIconAndTextExample)" ShowCode="false">
+                <TabsIconAndTextExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tabs Position">
+                <Description>
+                    The position of the tab bar can be changed with the <CodeInline>Position</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsPositionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TabsPositionExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Centered">
+                        <Description>
+                            The <CodeInline>Centered</CodeInline> property aligns the tabs in the middle of the container.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsCenteredExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsCenteredExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tab Sorting">
+                <Description>
+                    TabPanels appear in the order they are processed by the RenderTreeBuilder, which can be affected by component nesting in complex scenarios.
+                    Use the <CodeInline>SortDirection</CodeInline> property to sort lexicographically by <CodeInline>Text</CodeInline>.<br />
+                    <br />
+                    Note that sorting is applied during initial rendering, when TabPanels are being added to the parent Tabs. Sorting is not re-evaluated
+                    if properties are changed at runtime.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsSortByTextExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TabsSortByTextExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Sort Keys">
+                        <Description>
+                            The TabPanel's <CodeInline>SortKey</CodeInline> property is used in preference to the <CodeInline>Text</CodeInline> property, if set.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsSortBySortKeyExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsSortBySortKeyExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Sorting">
+                        <Description>
+                            Specify a custom <CodeInline>SortComparer</CodeInline> which implements <CodeInline>IComparer&lt;MudTabPanel&gt;</CodeInline> to
+                            override the default sorting behaviour. In this scenario, sort direction must be handled by the custom SortComparer.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsSortByComparerExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsSortByComparerExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tab Width">
+                <Description>
+                    The <CodeInline>MinimumTabWidth</CodeInline> property defines a minimum width for each tab.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsMinimumTabWidthExample)" ShowCode="false">
+                <TabsMinimumTabWidthExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tooltips">
+                <Description>
+                    Tooltips can be added which will activate when the user hovers over the tab.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsToolTipExample)" ShowCode="false">
+                <TabsToolTipExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Badges">
+                <Description>
+                    Badges can be applied to icons or text within tabs for additional context.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsWithBagdesExample)" ShowCode="false">
+                <TabsWithBagdesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Drag and Drop Tabs">
+                <Description>
+                    Tab reordering can be enabled by setting <CodeInline>EnableDragAndDrop</CodeInline> to <CodeInline>true</CodeInline>.
+                    When enabled, users can rearrange tabs by dragging them to new positions. This is useful for dynamic interfaces where the number or order of tabs may change.
+                    The example below demonstrates drag-and-drop with a variable number of tabs that can be reordered interactively.
+                    An event is available that fires after a drag-and-drop operation is completed: <CodeInline>OnItemDropped</CodeInline>, which contains the original details of the operation.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsDragAndDropExample)" ShowCode="false" HighLight="EnableDragAndDrop">
+                <TabsDragAndDropExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Scrolling Tabs">
+                <Description>
+                    If the total size of all tabs exceeds the size of the container, scroll buttons are automatically added.
+                    The <CodeInline>AlwaysShowScrollButtons</CodeInline> property keeps the scroll buttons visible at all times.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsScrollExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TabsScrollExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Scroll Icons">
+                        <Description>
+                            The scroll icons can be customized using the <CodeInline>PrevIcon</CodeInline> and <CodeInline>NextIcon</CodeInline> properties.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsCustomScrollIconsExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsCustomScrollIconsExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Render Fragments">
+                <Description>
+                    Custom tab header content can be provided for special scenarios.
+                    Specify only <CodeInline>TabContent</CodeInline> to customize the tab content, or specify <CodeInline>TabWrapperContent</CodeInline> to provide a wrapper around the entire tab header.
+                    The header of the active tab can be customized using <CodeInline>ActiveTabClass</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsContentExample)" ShowCode="false" HighLight="TabContent,TabWrapperContent">
+                <TabsContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Visibility">
+                <Description>
+                    The <CodeInline>Visible</CodeInline> property defines whether the tab is visible or hidden.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsVisibleExample)" ShowCode="false" FullWidth="true">
+                <TabsVisibleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Set Active Panel">
+                <Description>
+                    Programmatic selection of an active tab is supported through bindings.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsSetActiveExample)" ShowCode="false" Block="true">
+                <TabsSetActiveExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Binding Active Panel">
+                        <Description>
+                            Two-way synchronization of the selected panel is possible using bindings.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsBindingExample)" ShowCode="false" Block="true">
+                        <TabsBindingExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dynamic Tabs">
+                <Description>
+                    A browser-like tab experience can be enabled, allowing users to dynamically add and close tabs.
+                    The close icon can be hidden by disabling <CodeInline>ShowCloseIcon</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DynamicTabsSimpleExample)" ShowCode="false" Block="true">
+                <DynamicTabsSimpleExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Advanced Dynamic Tabs">
+                        <Description>
+                            Flexibility in styling can be enhanced using <CodeInline>Header</CodeInline> and <CodeInline>TabPanelHeader</CodeInline>.
+                            Header positioning is adjustable through <CodeInline>HeaderPosition</CodeInline> or <CodeInline>TabPanelHeaderPosition</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(CustomDynamicTabsExample)" ShowCode="false" Block="true">
+                        <CustomDynamicTabsExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

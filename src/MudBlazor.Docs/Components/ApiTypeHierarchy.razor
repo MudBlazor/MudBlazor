@@ -1,0 +1,13 @@
+﻿<MudTreeView Class="api-type-hierarchy" T="DocumentedType" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
+    <ItemTemplate>
+        <MudTreeViewItem T="DocumentedType" Expanded="@context.Expanded" Text="@context.Text" Items="@context.Children" ReadOnly>
+            <Content>
+                <MudIcon Icon="@GetIcon(context)" Size="Size.Small" />
+
+                <MudLink Href="@context.Value.ApiUrl" Disabled="GetReadOnly(context)">
+                    @context.Text
+                </MudLink>
+            </Content>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>

@@ -1,0 +1,12 @@
+﻿<MudSelectItem Value="@Color">
+    <div class="d-flex align-center">
+        <MudIcon Icon="@icon" Color="@Color" Size="Size.Small" Class="rounded mr-4" />
+        @Color.ToString()
+    </div>
+</MudSelectItem>
+
+@code {
+    [Parameter] public Color Color { get; set; }
+    private string icon = "<rect width=\"24\" height=\"24\" />";
+}
+

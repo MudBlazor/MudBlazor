@@ -1,0 +1,59 @@
+﻿@*
+    Copyright (c) Alessandro Ghidini. All rights reserved.
+    Changes and improvements Copyright (c) The MudBlazor Team.
+*@
+
+@{
+#pragma warning disable IL2111
+}
+
+@namespace MudBlazor
+@using MudBlazor.Resources
+@inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
+
+@_css
+<div role="alert"
+     aria-live="polite"
+     class="@SnackbarClass"
+     style="@AnimationStyle"
+     @onclick="this.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onpointerenter="InteractionStartHandler"
+     @onpointerleave="InteractionEndHandler"
+     @ontouchstart="InteractionStartHandler"
+     @ontouchend="InteractionEndHandler"
+     @ontouchcancel="InteractionEndHandler"
+     @attributes="UserAttributes">
+
+    @if (!HideIcon)
+    {
+        <div class="mud-snackbar-icon">
+            <MudIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+        </div>
+    }
+
+    <div class="mud-snackbar-content-message">
+        @if (Message?.ComponentType != null)
+        {
+            <DynamicComponent Type="Message.ComponentType" Parameters="Message.ComponentParameters" />
+        }
+    </div>
+
+    @if (ShowCloseIcon || ShowActionButton)
+    {
+        <div class="mud-snackbar-content-action">
+            @if (ShowActionButton)
+            {
+                <MudButton Class="mud-snackbar-action-button" Variant="@ActionVariant" Color="@ActionColor" OnClick="ActionClicked" DropShadow="false">
+                    @Action
+                </MudButton>
+            }
+
+            @if (ShowCloseIcon)
+            {
+                <MudIconButton Class="mud-snackbar-close-button ms-2" Icon="@CloseIcon" Size="Size.Small" OnClick="CloseIconClicked"
+                               aria-label="@Localizer[LanguageResource.MudSnackbar_Close]" />
+            }
+        </div>
+    }
+</div>

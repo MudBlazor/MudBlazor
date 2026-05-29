@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4 my-2" Style="position:relative;">
+            <MudOverlay Visible="lightVisible" LightBackground="true" Absolute="true" />
+            <MudText>
+                Det var en gång en spindel, som hette laban. Laban tyckte om kebab pizza, men det gjorde inte hans kompis åke.
+                Åke och Laban skulle en dag ut och fiska. På vägen dit skrek Laban till, faaan du åke!!! det luktar kebab!!!
+            </MudText>
+            <MudButton Variant="Variant.Filled" Class="mt-2">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Value="lightVisible" Label="Light Overlay" Color="Color.Primary"/>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4 my-2" Style="position:relative;">
+            <MudOverlay Visible="darkVisible" DarkBackground="true" Absolute="true" />
+            <MudText>
+                Det var en gång en spindel, som hette laban. Laban tyckte om kebab pizza, men det gjorde inte hans kompis åke.
+                Åke och Laban skulle en dag ut och fiska. På vägen dit skrek Laban till, faaan du åke!!! det luktar kebab!!!
+            </MudText>
+            <MudButton Variant="Variant.Filled" Class="mt-2">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Value="darkVisible" Label="Dark Overlay" Color="Color.Secondary" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private bool lightVisible;
+    private bool darkVisible;
+} 

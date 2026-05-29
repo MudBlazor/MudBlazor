@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!--Used for the periodic table examples-->
+  <ItemGroup>
+    <EmbeddedResource Include="Elements.json" />
+  </ItemGroup>
+
+</Project>

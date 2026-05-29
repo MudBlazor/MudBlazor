@@ -1,0 +1,36 @@
+﻿<MudButton OnClick="AddTab">Add Tab</MudButton>
+<MudButton OnClick="RemoveLast">Remove Last</MudButton>
+
+<MudTabs Elevation="1" @ref="Tabs">
+    @foreach (var tab in _tabs)
+    {
+        <MudTabPanel @key="tab" Text="@tab">
+            <MudText>@tab</MudText>
+        </MudTabPanel>
+    }    
+</MudTabs>
+
+@code
+{
+    public static string __description__ = "Adding and removing tabs should work";
+
+    private List<string> _tabs = new List<string>();
+    private int i = 0;
+
+    public MudTabs Tabs { get; set; } = null!;
+
+    private async Task AddTab()
+    {
+        _tabs.Add($"Tab {i++}");
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RemoveLast()
+    {
+        if(_tabs.Any())
+        {
+            _tabs.RemoveAt(_tabs.Count - 1);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}

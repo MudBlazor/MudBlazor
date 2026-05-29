@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined="true" Class="border-dashed pa-4">
+    <MudStack Wrap="@_wrap" Spacing="4" Row="@_row" Style="@_size" AlignItems="AlignItems.Start">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 1</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 2</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 3</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 4</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="" >Button 5</MudButton>
+    </MudStack>
+</MudPaper>
+
+<MudSlider @bind-Value="_width" Min="100" Max="800">Width: @_width.ToString()px</MudSlider>
+<MudSlider @bind-Value="_height" Min="100" Max="800">Height: @_height.ToString()px</MudSlider>
+
+<MudStack Row AlignItems="AlignItems.Center">
+    <MudSwitch @bind-Value="_row" Color="Color.Primary">Row</MudSwitch>
+    <MudChipSet T="Wrap" CheckMark @bind-SelectedValue="_wrap">
+        <MudChip T="Wrap" Text="No Wrap" Value="@(Wrap.NoWrap)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true"/>
+        <MudChip T="Wrap" Text="Wrap" Value="@(Wrap.Wrap)" SelectedColor="Color.Primary" Variant="Variant.Text" />
+        <MudChip T="Wrap" Text="Wrap Reverse" Value="@(Wrap.WrapReverse)" SelectedColor="Color.Primary" Variant="Variant.Text" />
+    </MudChipSet>
+</MudStack>
+
+@code {
+    private Wrap _wrap = Wrap.NoWrap;
+
+    private int _width { get; set; } = 200;
+    private int _height { get; set; } = 200;
+    private bool _row { get; set; } = true;
+
+    private string _size => $"width: {_width}px; height: {_height}px;";
+}

@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <MudPaper Width="100%">
+            <MudList T="string" ReadOnly="@ReadOnly" Dense="@Dense" Gutters="@Gutters" Disabled="@Disabled" Padding="@Padding">
+                <MudListSubheader>Important Isotopes</MudListSubheader>
+                <MudListItem Text="Hydrogen (H-1) - stable" Icon="@StableIcon" IconColor="@StableColor" Expanded>
+                    <NestedList>
+                        <MudListItem Text="Deuterium (H-2) - stable" Icon="@StableIcon" IconColor="@StableColor" />
+                        <MudListItem Text="Tritium (H-3) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
+                    </NestedList>
+                </MudListItem>
+                <MudListItem Text="Uranium (U-92) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">
+                    <NestedList>
+                        <MudListItem Text="Uranium (U-234) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
+                        <MudListItem Text="Uranium (U-235) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
+                        <MudListItem Text="Uranium (U-238) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
+                    </NestedList>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="12" Class="d-flex">
+        <MudCheckBox @bind-Value="Dense" Label="Dense"/>
+        <MudCheckBox @bind-Value="ReadOnly" Label="ReadOnly"/>
+        <MudCheckBox @bind-Value="Gutters" Label="Gutters"/>
+        <MudCheckBox @bind-Value="Padding" Label="Padding"/>
+        <MudCheckBox @bind-Value="Icon" Label="Icon"/>
+        <MudCheckBox @bind-Value="IconColor" Label="IconColor"/>
+        <MudCheckBox @bind-Value="Disabled" Label="Disabled"/>
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+    public bool Dense { get; set; }
+    public bool ReadOnly { get; set; }
+    public bool Gutters { get; set; } = true;
+    public bool Padding { get; set; } = true;
+    public bool Disabled { get; set; }
+    public bool Icon { get; set; } = true;
+    public bool IconColor { get; set; } = true;
+
+    public string StableIcon => Icon ? Icons.Material.Filled.RadioButtonChecked : null;
+    public string RadioactiveIcon => Icon ? "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><title>radioactive-circle-outline</title><path d=\"M12 4C16.4 4 20 7.6 20 12S16.4 20 12 20 4 16.4 4 12 7.6 4 12 4M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M15 17.2L13.2 14.2C12.8 14.4 12.4 14.5 12 14.5S11.1 14.4 10.8 14.2C10.3 15.1 9.6 16.2 9 17.2C9.9 17.7 10.9 18 12 18S14.1 17.7 15 17.2M15 6.8L13.2 9.8C13.9 10.2 14.5 11 14.5 12H18C18 9.8 16.8 7.8 15 6.8M12 13C12.6 13 13 12.6 13 12S12.6 11 12 11 11 11.4 11 12 11.4 13 12 13M6 12H9.5C9.5 11.1 10 10.3 10.8 9.8C10.3 8.9 9.6 7.8 9 6.8C7.2 7.8 6 9.8 6 12Z\" /></svg>" : null;
+
+    public Color StableColor => IconColor ? Color.Primary : default;
+    public Color RadioactiveColor => IconColor ? Color.Tertiary : default;
+}
+

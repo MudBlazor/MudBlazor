@@ -1,0 +1,13 @@
+﻿<MudPopoverProvider />
+
+<MudDatePicker Label="Date Picker" @bind-Date="ExpiresOn" />
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">Set Date</MudButton>
+
+@code {
+    public DateTime? ExpiresOn { get; set; } = DateTime.Now.Date;
+
+    void ButtonOnClick()
+    {
+        ExpiresOn = DateTime.Now.Date.AddMonths(10);
+    }
+}

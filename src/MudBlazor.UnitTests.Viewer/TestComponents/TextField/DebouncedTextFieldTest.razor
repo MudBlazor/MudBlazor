@@ -1,0 +1,7 @@
+﻿<MudText Typo="Typo.h6">Result: @_searchString</MudText>
+<MudTextField @bind-Value="_searchString" T="string" DebounceInterval="500"></MudTextField>
+
+@code
+{
+    private string _searchString  = string.Empty;
+}

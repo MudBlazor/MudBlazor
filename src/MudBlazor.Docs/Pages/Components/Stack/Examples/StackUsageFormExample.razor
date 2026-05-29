@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudPaper Class="pa-4">
+        <MudStack Row="true">
+            <MudAvatar Size="Size.Large">
+                <MudImage Src="images/mony.jpg" />
+            </MudAvatar>
+            <MudStack Justify="Justify.Center" Spacing="0">
+                <MudText Typo="Typo.body1">Mony Larsson</MudText>
+                <MudText Typo="Typo.body2">onebiteonekill@mony.dog</MudText>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+
+    <MudPaper Class="pa-4">
+        <MudStack Spacing="4">
+            <MudTextField T="string" Label="Card number" Mask="@(new PatternMask("0000 0000 0000 0000"))" />
+            <MudStack Row="true">
+                <MudTextField T="string" Label="Expires" Mask="@(new DateMask("MM/YY", 'Y', 'M'))" />
+                <MudTextField T="string" Label="CVC" Mask="@(new PatternMask("000"))" />
+            </MudStack>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false">Pay Now</MudButton>
+        </MudStack>
+    </MudPaper>
+</MudStack>

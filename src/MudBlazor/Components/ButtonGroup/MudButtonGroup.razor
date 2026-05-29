@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<MudElement HtmlTag="div" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
+    <CascadingValue IsFixed="true" Value="this">
+        @ChildContent
+    </CascadingValue>
+</MudElement>
+
+@{
+    UserAttributes.TryAdd("role", "group");
+}

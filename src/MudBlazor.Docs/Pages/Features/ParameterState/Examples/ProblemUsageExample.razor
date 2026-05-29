@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@code {
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ExpandedChanged { get; set; }
+
+    private Task ToggleAsync()
+    {
+        Expanded = !Expanded; // ❌ Modifies parameter directly
+        return ExpandedChanged.InvokeAsync(Expanded);
+    }
+}

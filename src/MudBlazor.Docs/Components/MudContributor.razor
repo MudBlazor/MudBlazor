@@ -1,0 +1,32 @@
+﻿<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Size="Size.Large" Class="mud-elevation-4">
+                <MudImage Src="@AvatarLink" />
+            </MudAvatar>
+        </CardHeaderAvatar>
+
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">@Firstname @Lastname</MudText>
+        </CardHeaderContent>
+
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@GitHubLink" Color="Color.Inherit" Target="_blank" />
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    @if (ChildContent != null)
+    {
+        <MudCardContent Class="pt-0">
+            @ChildContent
+        </MudCardContent>
+    }
+</MudCard>
+
+@code {
+    [Parameter] public string AvatarLink { get; set; }
+    [Parameter] public string GitHubLink { get; set; }
+    [Parameter] public string Firstname { get; set; }
+    [Parameter] public string Lastname { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

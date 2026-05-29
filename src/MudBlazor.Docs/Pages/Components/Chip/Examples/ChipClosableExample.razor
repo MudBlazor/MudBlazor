@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChip T="string" Color="Color.Default" OnClose="Closed">Closable</MudChip>
+<MudChip T="string" Color="Color.Error" OnClose="Closed">Closable</MudChip>
+<MudChip T="string" Color="Color.Primary" OnClose="Closed" CloseIcon="@Icons.Material.Filled.AlarmAdd">Closable</MudChip>
+<MudChip T="string" Color="Color.Success" OnClose="Closed" CloseIcon="@Icons.Material.Filled.AlarmOn">Closable</MudChip>
+
+@code {
+    void Closed(MudChip<string> chip) {
+        // react to chip closed
+    }
+}

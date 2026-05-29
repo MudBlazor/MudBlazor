@@ -1,0 +1,18 @@
+<MudPopoverProvider/>
+<MudDialogProvider />
+
+<MudText>
+    Some content...
+</MudText>
+
+@code {
+    [Inject] IDialogService DialogService { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        var dialog = await DialogService.ShowAsync<SimpleDialog>();
+        await Task.Delay(TimeSpan.Zero);
+        dialog.Close();
+    }
+}

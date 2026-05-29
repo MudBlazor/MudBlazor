@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div id="unique_id_scroll_section" class="ma-0" style="height:300px;overflow: auto;">
+    <MudPaper Elevation="0" Height="3500px" Class="d-flex flex-column justify-space-between py-6">
+        <MudText Typo="Typo.h3" Align="Align.Center">Scroll inside this container</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Some initial long text</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Middle text</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Bottom text</MudText>
+        <MudScrollToTop TopOffset="100"
+                        OnScroll="OnScroll"
+                        Selector="#unique_id_scroll_section"
+                        VisibleCssClass="visible absolute"
+                        HiddenCssClass="invisible">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.ArrowUpward" Color="Color">Go to top</MudButton>
+        </MudScrollToTop>
+    </MudPaper>
+</div>
+
+@code{
+    Color Color = Color.Success;
+    private void OnScroll(ScrollEventArgs e)
+    {
+        Color = (e.FirstChildBoundingClientRect.Top*-1) switch
+        {
+            var x when x<  500 => Color.Primary,
+            var x when x < 1500 => Color.Secondary,
+            var x when x < 2500 => Color.Tertiary,
+            _=>Color.Error
+        };
+    }
+}

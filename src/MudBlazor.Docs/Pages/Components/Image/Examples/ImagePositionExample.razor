@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex justify-center">
+    <MudImage ObjectFit="ObjectFit.None" ObjectPosition="@ImagePosition" Height="200" Width="400" Src="images/iceland.jpg" Alt="Öxarárfoss, Iceland"  Elevation="25" Class="rounded-lg"/>
+</div>
+
+<MudChipSet T="string" CheckMark Class="mt-12">
+    <MudChip Text="Center" OnClick="@(() => SetImagePosition(ObjectPosition.Center))" SelectedColor="Color.Primary" Default="true" />
+    <MudChip Text="Top" OnClick="@(() => SetImagePosition(ObjectPosition.Top))" SelectedColor="Color.Primary" />
+    <MudChip Text="Bottom" OnClick="@(() => SetImagePosition(ObjectPosition.Bottom))" SelectedColor="Color.Primary" />
+    <MudChip Text="Left" OnClick="@(() => SetImagePosition(ObjectPosition.Left))" SelectedColor="Color.Primary" />
+    <MudChip Text="Left Top" OnClick="@(() => SetImagePosition(ObjectPosition.LeftTop))" SelectedColor="Color.Primary" />
+    <MudChip Text="Left Bottom" OnClick="@(() => SetImagePosition(ObjectPosition.LeftBottom))" SelectedColor="Color.Primary" />
+    <MudChip Text="Right" OnClick="@(() => SetImagePosition(ObjectPosition.Right))" SelectedColor="Color.Primary" />
+    <MudChip Text="Right Top" OnClick="@(() => SetImagePosition(ObjectPosition.RightTop))" SelectedColor="Color.Primary" />
+    <MudChip Text="Right Bottom" OnClick="@(() => SetImagePosition(ObjectPosition.RightBottom))" SelectedColor="Color.Primary" />
+</MudChipSet>
+
+@code {
+    ObjectPosition ImagePosition = ObjectPosition.Center;
+
+    void SetImagePosition(ObjectPosition value)
+    {
+        ImagePosition = value;
+    }
+}

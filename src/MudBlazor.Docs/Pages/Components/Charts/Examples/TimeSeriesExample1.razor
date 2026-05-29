@@ -1,0 +1,111 @@
+﻿@using MudBlazor.Charts;
+
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.Timeseries"
+              ChartSeries="@_series"
+              @bind-SelectedIndex="_index"
+              MatchBoundsToSize="@_matchBoundsToSize"
+              CanHideSeries="true"
+              Width="@_width"
+              Height="@_height"
+              ChartOptions="_options" />
+</MudPaper>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox @bind-Value="_options.TimeLabelSpacingRounding" Color="Color.Primary" Label="TimeLabelSpacing Rounding"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox @bind-Value="_options.TimeLabelSpacingRoundingPadSeries" Color="Color.Primary" Label="TimeLabelSpacing Rounding - Pad Series"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox @bind-Value="_matchBoundsToSize" Color="Color.Primary" Label="MatchBoundsToSize"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox T="bool" @bind-Value="_options.ShowDataMarkers" Color="Color.Primary" Label="Show Data Markers"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_options.XAxisLabelRotation" Min="0" Max="90" Step="15">XAxis Label Rotation</MudSlider>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private TimeSeriesChartOptions _options = new TimeSeriesChartOptions
+        {
+            YAxisLines = false,
+            YAxisTicks = 500,
+            MaxNumYAxisTicks = 10,
+            YAxisRequireZeroPoint = true,
+            XAxisLines = false,
+            LineStrokeWidth = 1,
+            ShowDataMarkers = false,
+            TooltipTimeLabelFormat = "yyyy MMM dd HH:mm:ss",
+            TimeLabelSpacing = TimeSpan.FromMinutes(5),
+            XAxisTitle = "Time",
+            YAxisTitle = "Values",
+        };
+
+    private ChartSeries<double> _chart1 = new();
+    private ChartSeries<double> _chart2 = new();
+    private ChartSeries<double> _chart3 = new();
+
+    private List<ChartSeries<double>> _series = new();
+
+    private readonly Random _random = new Random();
+
+    private bool _matchBoundsToSize = false;
+
+    private string _width = "100%";
+    private string _height = "350px";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var now = DateTime.Now;
+        _chart1 = new ChartSeries<double>
+            {
+                Name = "Series 1",
+                Data = Enumerable.Range(-360, 360).Select(x => new TimeValue<double>(now.AddSeconds(x * 10), _random.Next(6000, 15000))).ToArray(),
+                Visible = true,
+            };
+
+        _chart2 = new ChartSeries<double>
+            {
+                Name = "Series 2",
+                Data = Enumerable.Range(-360, 360).Select(x => new TimeValue<double>(now.AddSeconds(x * 10), _random.Next(0, 7000))).ToArray(),
+                Visible = true,
+            };
+
+        _chart3 = new ChartSeries<double>
+            {
+                Name = "Series 3",
+                Data = Enumerable.Range(-90, 60).Select(x => new TimeValue<double>(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToArray(),
+                Visible = true,
+            };
+
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>()
+        {
+            [_chart2] = new SeriesDisplayOverride
+            {
+                LineDisplayType = LineDisplayType.Area,
+            }
+        };
+
+        _series.Add(_chart1);
+        _series.Add(_chart2);
+        _series.Add(_chart3);
+
+        StateHasChanged();
+    }
+}

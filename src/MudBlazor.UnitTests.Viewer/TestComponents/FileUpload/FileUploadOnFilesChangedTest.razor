@@ -1,0 +1,21 @@
+﻿<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
+    <CustomContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+            Upload using OnFilesChanged
+        </MudButton>
+    </CustomContent>
+</MudFileUpload>
+
+@code {
+    public static string __description__ = "Tests assigning selected file state from the OnFilesChanged callback.";
+
+    public IBrowserFile? File { get; private set; }
+
+    private void UploadFiles(InputFileChangeEventArgs args)
+    {
+        File = args.File;
+    }
+}

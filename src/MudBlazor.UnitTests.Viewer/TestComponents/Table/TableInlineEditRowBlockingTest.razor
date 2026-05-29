@@ -1,0 +1,20 @@
+﻿<MudTable T="string" Items="_items" @bind-SelectedItem="_selectedItem" IsEditRowSwitchingBlocked="true">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" @bind-Value="@context"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Inline Edit Table w/ Blocked Row Switching";
+
+    private string? _selectedItem = null;
+    private readonly string[] _items = ["A", "B", "C"];
+}

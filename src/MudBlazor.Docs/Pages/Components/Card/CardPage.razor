@@ -1,0 +1,52 @@
+﻿@page "/components/card"
+
+<DocsPage>
+    <DocsPageHeader Title="Card" Component="@nameof(MudCard)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Simple Card">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(CardSimpleExample)">
+                <CardSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Outlined">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(CardOutlinedExample)">
+                <CardOutlinedExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Header">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(CardHeaderExample)" ShowCode="false">
+                <CardHeaderExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Media">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(CardMediaExample)">
+                <CardMediaExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Combined">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(CardCombinedExample)" ShowCode="false">
+                <CardCombinedExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

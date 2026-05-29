@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+<MudButton OnClick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
+    Scrollable Dialog
+</MudButton>
+
+@code {
+    private bool _licenseAccepted = false;
+
+    private async Task OpenDialogAsync()
+    {
+        var dialog = await DialogService.ShowAsync<DialogScrollableExample_Dialog>("MudBlazor License");
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            _licenseAccepted = (bool)(result.Data ?? false);
+        }
+    }
+}

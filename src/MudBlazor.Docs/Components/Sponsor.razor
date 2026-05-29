@@ -1,0 +1,20 @@
+﻿<a href="@Website" target="@Target" rel="nofollow">
+    <MudPaper Elevation="@(LandingPage? 0 : 25)" Class="@GetClassnames()" Height="100%">
+        <MudImage Src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")" Alt="@Name" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" />
+    </MudPaper>
+</a>
+
+@code {
+    [Parameter] public string Website { get; set; }
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string Image { get; set; }
+    [Parameter] public bool LandingPage { get; set; }
+    [Parameter] public string Target { get; set; } = "_blank";
+    
+    private string GetClassnames()
+    {
+        return LandingPage 
+            ? "lp-sponsor d-flex justify-center align-center pa-4 relative mud-transparent" 
+            : "d-flex justify-center align-center rounded-lg relative white";
+    }
+}

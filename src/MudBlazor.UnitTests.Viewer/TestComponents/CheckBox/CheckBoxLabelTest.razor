@@ -1,0 +1,10 @@
+﻿<MudCheckBox @bind-Value="_labelCheckBox1" Label="Default"></MudCheckBox>
+<MudCheckBox @bind-Value="_labelCheckBox2" Label="Primary" Color="Color.Primary"></MudCheckBox>
+<MudCheckBox @bind-Value="_labelCheckBox3" Label="Secondary" LabelPlacement="Placement.Start" Color="Color.Secondary"></MudCheckBox>
+<MudCheckBox @bind-Value="_labelCheckBox1" Disabled="true" Label="Disabled" LabelPlacement="Placement.Start"></MudCheckBox>
+
+@code {
+    private bool _labelCheckBox1  = true;
+    private bool _labelCheckBox2 = false;
+    private bool _labelCheckBox3 = false;
+}

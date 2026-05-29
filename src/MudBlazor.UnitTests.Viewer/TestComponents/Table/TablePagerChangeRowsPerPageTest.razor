@@ -1,0 +1,10 @@
+﻿<MudTable Items="_states" RowsPerPage="@_rows">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate> 
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudButton Disabled="false" OnClick="@(() => ToggleRows())" Variant="Variant.Outlined">Toggle Rows</MudButton>

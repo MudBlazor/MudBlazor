@@ -1,0 +1,77 @@
+name: Bug Report
+description: Tell us about a problem you found
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report **a problem** in MudBlazor. For questions, use [Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
+  - type: checkboxes
+    id: preconditions
+    attributes:
+      label: Before reporting
+      options:
+        - label: I searched existing issues
+          required: true
+        - label: I tried in private/incognito browser
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What went wrong?
+      description: Describe the issue with code snippets, screenshots, or links.
+    validations:
+      required: true
+  - type: input
+    id: repro-link
+    attributes:
+      label: Reproduction link
+      description: Share a live example on [try.mudblazor.com](https://try.mudblazor.com).
+      placeholder: https://try.mudblazor.com/snippet/...
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Reproduction steps
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: bug-version
+    attributes:
+      label: Version (bug)
+      description: Which version has the issue?
+      placeholder: v8.x.x
+    validations:
+      required: true
+  - type: input
+    id: working-version
+    attributes:
+      label: Version (working)
+      description: Last working version?
+      placeholder: v7.x.x
+  - type: dropdown
+    id: environments
+    attributes:
+      label: Environment
+      multiple: true
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Safari
+        - iOS/Android
+        - Other
+  - type: dropdown
+    id: rendering-mode
+    attributes:
+      label: Blazor rendering mode
+      multiple: true
+      options:
+        - WASM
+        - Server
+        - Hybrid

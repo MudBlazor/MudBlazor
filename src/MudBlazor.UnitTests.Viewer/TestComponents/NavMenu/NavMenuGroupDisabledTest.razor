@@ -1,0 +1,16 @@
+﻿<MudNavMenu>
+    <MudText Typo="Typo.subtitle2" Color="Color.Inherit" Class="ml-4 my-3">Templates</MudText>
+    <MudNavLink Href="/" Icon="@Icons.Material.Outlined.SelectAll">Select Template</MudNavLink>
+    <MudNavLink Href="/Admin/Upload" Icon="@Icons.Material.Outlined.Upload">Upload Template</MudNavLink>
+    <MudNavGroup Icon="@Icons.Material.Outlined.AdminPanelSettings" Title="Admin" HeaderClass="pl-4" Disabled="@_isGroupDisabled">
+            <MudNavLink Href="/users" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">User Management</MudNavLink>
+             <MudNavLink Href="/Admin/Upload" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Upload Template</MudNavLink>
+             <MudNavLink Href="/MailTemplate" Icon="@Icons.Material.Filled.Security" Disabled="true">Mail Template</MudNavLink>
+        </MudNavGroup>
+</MudNavMenu>
+
+<MudCheckBox @bind-Value="@_isGroupDisabled">Disable Group</MudCheckBox>
+
+@code {
+    private bool _isGroupDisabled;
+}

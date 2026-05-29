@@ -1,0 +1,28 @@
+﻿<MudButton id="change-max-button" OnClick="ChangeMax" Variant="Variant.Filled" Class="mb-4">ChangeMax</MudButton><MudText>Max: @Max</MudText>
+<MudAvatarGroup Max="@Max" MaxColor="Color.Primary">
+    <MudAvatar Color="Color.Primary">AA</MudAvatar>
+    <MudAvatar Color="Color.Secondary">BB</MudAvatar>
+    <MudAvatar Color="Color.Tertiary">CC</MudAvatar>
+    <MudAvatar Color="Color.Info">DD</MudAvatar>
+    <MudAvatar Color="Color.Secondary">FF</MudAvatar>
+    <MudAvatar Color="Color.Warning">GG</MudAvatar>
+    <MudAvatar Color="Color.Error">HH</MudAvatar>
+</MudAvatarGroup>
+
+@code {
+    public static string __description__ = "Clicking the button should change the max numbers of avatars.";
+
+    public int Max { get; set; } = 3;
+
+    private void ChangeMax()
+    {
+        if (Max == 7)
+        {
+            Max = 0;
+        }
+        else
+        {
+            Max++;
+        }
+    }
+}

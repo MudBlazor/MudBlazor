@@ -1,0 +1,162 @@
+@import '../abstracts/variables';
+
+.mud-fab {
+  padding: 0;
+  font-family: var(--mud-typography-button-family);
+  font-size: var(--mud-typography-button-size);
+  font-weight: var(--mud-typography-button-weight);
+  line-height: var(--mud-typography-button-lineheight);
+  letter-spacing: var(--mud-typography-button-letterspacing);
+  text-transform: var(--mud-typography-button-text-transform);
+  min-width: 0;
+  box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
+  box-sizing: border-box;
+  min-height: 36px;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 50%;
+  color: var(--mud-palette-text-primary);
+  --mud-ripple-color: var(--mud-palette-text-primary);
+  background-color: var(--mud-palette-action-default-hover);
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0,0,0,.12);
+      text-decoration: none;
+      background-color: var(--mud-palette-action-disabled-background);
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0,0,0,.12);
+    text-decoration: none;
+    background-color: var(--mud-palette-action-disabled-background);
+  }
+
+  &:active {
+    box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2),0px 12px 17px 2px rgba(0,0,0,0.14),0px 5px 22px 4px rgba(0,0,0,0.12);
+    text-decoration: none;
+    background-color: var(--mud-palette-action-disabled-background);
+  }
+
+  &:disabled {
+    color: var(--mud-palette-action-disabled);
+    box-shadow: none;
+    background-color: var(--mud-palette-action-disabled-background);
+    cursor: default;
+    pointer-events: none;
+
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-action-disabled-background);
+      }
+    }
+  }
+}
+
+.mud-fab-disable-elevation {
+  box-shadow: none;
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: none;
+    }
+  }
+
+  &:active {
+    box-shadow: none;
+  }
+
+  &.mud-focus-visible {
+    box-shadow: none;
+  }
+
+  &:disabled {
+    box-shadow: none;
+  }
+}
+
+.mud-fab-label {
+  width: 100%;
+  display: inherit;
+  align-items: inherit;
+  justify-content: inherit;
+}
+
+
+@each $color in $mud-palette-colors {
+  .mud-fab-#{$color} {
+    color: var(--mud-palette-#{$color}-text);
+    --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
+    --mud-ripple-opacity: var(--mud-ripple-opacity-secondary) !important;
+    background-color: var(--mud-palette-#{$color});
+
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-#{$color}-darken);
+      }
+    }
+
+    &:focus-visible, &:active {
+      background-color: var(--mud-palette-#{$color}-darken);
+    }
+  }
+}
+
+.mud-fab-extended {
+
+  &.mud-fab-size-large {
+    width: auto;
+    height: 48px;
+    padding: 0 16px;
+    min-width: 48px;
+    min-height: auto;
+    border-radius: 24px;
+
+    .mud-fab-label {
+      gap: 8px;
+    }
+  }
+
+  &.mud-fab-size-small {
+    width: auto;
+    height: 34px;
+    padding: 0 12px;
+    min-width: 34px;
+    border-radius: 17px;
+
+    .mud-fab-label {
+      gap: 4px;
+    }
+  }
+
+  &.mud-fab-size-medium {
+    width: auto;
+    height: 40px;
+    padding: 0 16px;
+    min-width: 40px;
+    border-radius: 20px;
+
+    .mud-fab-label {
+      gap: 8px;
+    }
+  }
+}
+
+.mud-fab-color-inherit {
+  color: inherit;
+}
+
+.mud-fab-size-small {
+  width: 40px;
+  height: 40px;
+}
+
+.mud-fab-size-medium {
+  width: 48px;
+  height: 48px;
+}
+
+.mud-fab-size-large {
+  width: 56px;
+  height: 56px;
+}

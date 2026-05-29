@@ -1,0 +1,24 @@
+﻿<MudPopoverProvider />
+
+<div class="popoverparent">
+	<p>Some Text</p>
+	<MudPopover Open="true">
+		<div class="dynamic-content">
+			@for (int i = 0; i < _rowAmount; i++)
+			{
+				var temp = i;
+				<MudText>Popover content @temp</MudText>
+			}
+		</div>
+	</MudPopover>
+</div>
+
+@code {
+	private int _rowAmount;
+
+	public Task AddRow()
+	{
+		_rowAmount++;
+		return InvokeAsync(StateHasChanged);
+	}
+}

@@ -1,0 +1,73 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDropContainer T="DropItem" Items="_items" CanDropClass="mud-border-info" NoDropClass="mud-border-error" CanDrop="@( (item,identifier ) => _items.Count(x => x.Identifier == identifier ) == 0)" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="border-2 border-solid mud-border-lines-default">
+    <ChildContent>
+        @for(int r = 0; r < 8; r++)
+        {
+            var row = r.ToString();
+            <div class="d-flex">
+                @for (int c = 0; c < 8; c++)
+                {
+                    var col = c.ToString();
+                    <MudDropZone T="DropItem" Identifier="@($"{row}{col}")" DraggingClass="mud-theme-success" Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height:64px;width:64px;"/>
+                }
+            </div>
+        }
+    </ChildContent>
+    <ItemRenderer>
+        <div class="d-flex justify-center align-center flex-grow-1">
+            <MudIcon Icon="@context.Icon" Color="@context.Color" Size="Size.Large" />
+        </div>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    }
+
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = Color.Primary, Identifier = "00" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = Color.Primary, Identifier = "01" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = Color.Primary, Identifier = "02" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessQueen, Color = Color.Primary, Identifier = "03" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKing, Color = Color.Primary, Identifier = "04" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = Color.Primary, Identifier = "05" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = Color.Primary, Identifier = "06" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = Color.Primary, Identifier = "07" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "10" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "11" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "12" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "13" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "14" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "15" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "16" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Primary, Identifier = "17" },
+        
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "60" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "61" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "62" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "63" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "64" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "65" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "66" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessPawn, Color = Color.Secondary, Identifier = "67" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = Color.Secondary, Identifier = "70" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = Color.Secondary, Identifier = "71" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = Color.Secondary, Identifier = "72" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessQueen, Color = Color.Secondary, Identifier = "73" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKing, Color = Color.Secondary, Identifier = "74" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessBishop, Color = Color.Secondary, Identifier = "75" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessKnight, Color = Color.Secondary, Identifier = "76" },
+        new DropItem(){ Icon = @Icons.Custom.Uncategorized.ChessRook, Color = Color.Secondary, Identifier = "77" },
+    };
+
+    public class DropItem
+    {
+        public string Icon { get; init; }
+        public Color Color { get; init; }
+        public string Identifier { get; set; }
+    }
+}

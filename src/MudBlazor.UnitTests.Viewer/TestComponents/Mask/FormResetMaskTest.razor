@@ -1,0 +1,27 @@
+﻿<MudForm @ref="_form" ValidationDelay="0">
+    <MudTextField Label="Phone" T="string" Required Immediate @bind-Value="@_phone" Mask="_phoneMask" />
+</MudForm>
+<br>
+<br>
+<span>Phone: @_phone</span>
+<br>
+<br>
+<MudButton Class="reset" OnClick="@ResetFormAsync">Reset</MudButton>
+
+@code
+{ 
+    public static string __description__ = "Calling Form.Reset() should clear the masked text field.";
+
+    private string? _phone;
+    private MudForm _form = null!;
+    private readonly PatternMask _phoneMask = new("(###) ###-####")
+    {
+        MaskChars = [new MaskChar('#', @"[0-9]")]
+    };
+
+    private async Task ResetFormAsync()
+    {
+        await _form.ResetAsync();
+        StateHasChanged();
+    }
+}

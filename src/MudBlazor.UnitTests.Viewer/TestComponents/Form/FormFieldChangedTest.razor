@@ -1,0 +1,18 @@
+﻿@using MudBlazor.Utilities
+
+<MudForm FieldChanged="v => FormFieldChangedEventArgs = v">
+    <MudTextField T="string" />
+    <MudNumericField T="int" />
+    <div class="d-flex">
+        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+            <MudRadio Value="@("1")">Personal</MudRadio>
+            <MudRadio Value="@("2")">Professional</MudRadio>
+        </MudRadioGroup>
+    </div>
+
+    <MudFileUpload T="IBrowserFile"></MudFileUpload>
+</MudForm>
+
+@code {
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+}

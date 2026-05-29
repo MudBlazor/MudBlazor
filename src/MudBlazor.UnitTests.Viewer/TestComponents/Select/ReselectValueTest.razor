@@ -1,0 +1,19 @@
+﻿<MudPopoverProvider />
+
+<div>
+    <MudSelect T="string" Variant="Variant.Text" @bind-Value="_fruit" Dense SelectedValuesChanged="@(() => FruitChanged(null))">
+        <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>
+        <MudSelectItem Value="@("Orange")">Orange</MudSelectItem>
+    </MudSelect>
+</div>
+
+@code{
+    private string _fruit = "Apple";
+
+    public int ChangeCount { get; private set; }
+
+    private void FruitChanged(IReadOnlyCollection<string>? fruits)
+    {
+        ChangeCount++;
+    }
+}

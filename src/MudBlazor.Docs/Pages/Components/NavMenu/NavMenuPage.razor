@@ -1,0 +1,111 @@
+﻿@page "/components/navmenu"
+
+<DocsPage>
+    <DocsPageHeader Title="Navigation Menu" Component="@nameof(MudNavMenu)" />
+    <DocsPageContent>
+        
+        <DocsPageSection>
+
+            <SectionHeader Title="Basic Usage">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Two Way Bind">
+                <Description>MudNavGroup allows two-way binding in the <CodeInline>@nameof(MudNavGroup.Expanded)</CodeInline> property, so you can control what happens when expanded and collapsed.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuTwoWayBindableExample)" DarkenBackground="true" ShowCode="false" Block="true">
+                <NavMenuTwoWayBindableExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Sub Groups">
+                <Description>NavMenu can have up to <CodeInline>4</CodeInline> sub groups within <CodeInline>MudNavMenu</CodeInline> itself.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuSubGroupExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuSubGroupExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Icons">
+                <Description>You can use both the icons that come with MudBlazor or font icons. <MudLink Href="/components/icons">Read more about icons here.</MudLink></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(NavMenuIconExample)" ShowCode="false">
+                <link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
+                <NavMenuIconExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Bordered">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuBorderedExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuBorderedExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Color">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuColorExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuColorExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Margin">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuMarginExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuMarginExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Rounded">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuRoundedExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuRoundedExample/>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Dense">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuDenseExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuDenseExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customizing the Group Title">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuGroupTitleExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuGroupTitleExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="OnClick">
+                <Description>
+                    The <CodeInline>OnClick</CodeInline> handler provides a way to invoke an action instead of (or in conjunction with) <CodeInline>Href</CodeInline> navigation.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuOnClickExample)" DarkenBackground="true" ShowCode="true">
+                <NavMenuOnClickExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

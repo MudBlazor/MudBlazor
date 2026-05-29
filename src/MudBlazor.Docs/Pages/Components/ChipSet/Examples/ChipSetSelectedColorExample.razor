@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="Brunsås" Variant="Variant.Text" Color="Color.Default" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Spotted Dick" Variant="Variant.Text" Color="Color.Primary" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Sushi" Variant="Variant.Text" Color="Color.Dark" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Schnitzel" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Hamburger" Variant="Variant.Text" Color="Color.Success" SelectedColor="Color.Error"></MudChip>
+</MudChipSet>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="Brunsås" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Spotted Dick" Variant="Variant.Outlined" Color="Color.Primary" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Sushi" Variant="Variant.Outlined" Color="Color.Dark" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Schnitzel" Variant="Variant.Outlined" Color="Color.Info" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Hamburger" Variant="Variant.Outlined" Color="Color.Success" SelectedColor="Color.Error"></MudChip>
+</MudChipSet>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="Brunsås" Variant="Variant.Filled" Color="Color.Default" SelectedColor="Color.Primary"></MudChip>
+    <MudChip Text="Spotted Dick" Variant="Variant.Filled" Color="Color.Primary" SelectedColor="Color.Secondary"></MudChip>
+    <MudChip Text="Sushi" Variant="Variant.Filled" Color="Color.Dark" SelectedColor="Color.Warning"></MudChip>
+    <MudChip Text="Schnitzel" Variant="Variant.Filled" Color="Color.Info" SelectedColor="Color.Error"></MudChip>
+    <MudChip Text="Hamburger" Variant="Variant.Filled" Color="Color.Success" SelectedColor="Color.Error"></MudChip>
+</MudChipSet>
+<MudCheckBox @bind-Value="_checkMark">Check marks</MudCheckBox>
+
+@code
+{
+    private bool _checkMark = true;
+}
+

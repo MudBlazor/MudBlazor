@@ -1,0 +1,94 @@
+@import 'variables';
+
+@each $color in $mud-palette-colors {
+  .mud-#{$color} {
+    background-color: var(--mud-palette-#{$color}) !important;
+  }
+
+  .mud-#{$color}-text {
+    color: var(--mud-palette-#{$color}) !important;
+    --mud-ripple-color: var(--mud-palette-#{$color}) !important;
+  }
+
+  .mud-#{$color}-hover {
+    background-color: var(--mud-palette-#{$color}-hover) !important;
+  }
+
+  .hover\:mud-#{$color}-hover {
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--mud-palette-#{$color}-hover) !important;
+      }
+    }
+
+    &:focus-visible, &:active {
+      background-color: var(--mud-palette-#{$color}-hover) !important;
+    }
+  }
+
+  .mud-border-#{$color} {
+    border-color: var(--mud-palette-#{$color}) !important;
+  }
+
+  .mud-theme-#{$color} {
+    color: var(--mud-palette-#{$color}-text) !important;
+    background-color: var(--mud-palette-#{$color}) !important;
+  }
+}
+
+.mud-inherit-text {
+  color: inherit !important;
+}
+
+.mud-border-lines-default {
+  border-color: var(--mud-palette-lines-default);
+}
+
+.mud-background {
+  background-color: var(--mud-palette-background) !important;
+}
+
+.mud-background-gray {
+  background-color: var(--mud-palette-background-gray) !important;
+}
+
+.mud-theme-transparent {
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
+.mud-transparent {
+  background-color: transparent !important;
+}
+
+.mud-transparent-text {
+  color: transparent !important;
+}
+
+.mud-text-primary {
+  color: var(--mud-palette-text-primary);
+}
+
+.mud-text-secondary {
+  color: var(--mud-palette-text-secondary);
+}
+
+.mud-text-disabled {
+  color: var(--mud-palette-text-disabled);
+}
+
+.white {
+  background-color: #FFFFFF !important;
+}
+
+.white-text {
+  color: #FFFFFF !important;
+}
+
+.black {
+  background-color: #000000 !important;
+}
+
+.black-text {
+  color: #000000 !important;
+}

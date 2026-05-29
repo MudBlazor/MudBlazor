@@ -1,0 +1,20 @@
+﻿@using MudBlazor
+
+<div class="viewer-root">
+    <MudTooltip Inline="true" Text="Delete">
+        <MudButton Id="btn-inline-full" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">
+            Delete
+        </MudButton>
+    </MudTooltip>
+
+    <MudTooltip Inline="false" Text="Delete">
+        <MudButton Id="btn-block-full" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">
+            Delete
+        </MudButton>
+    </MudTooltip>
+</div>
+
+@code {
+    public static string __description__ =
+        "Verifies MudTooltip with Inline=true stretches a FullWidth child without changing default inline layout.";
+}

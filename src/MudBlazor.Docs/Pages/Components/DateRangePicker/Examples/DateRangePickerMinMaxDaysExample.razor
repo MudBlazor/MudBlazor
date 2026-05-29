@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudDateRangePicker @bind-DateRange="@_dateRange" MinDays="_minDays" MaxDays="@_maxDays" Margin="Margin.Dense" HelperText="@HelperText"
+    Variant="Variant.Outlined" Label="Range" />
+</MudStack>
+
+@code {
+    private DateRange _dateRange { get; set; }
+    private int _minDays = 3;
+    private int _maxDays = 7;
+
+    private string HelperText => $"Range: {_minDays} to {_maxDays} days";
+}

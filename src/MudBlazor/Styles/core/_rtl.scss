@@ -1,0 +1,13 @@
+﻿.mud-rtl {
+  direction: rtl !important;
+}
+
+.mud-ltr {
+  direction: ltr !important;
+}
+
+.mud-application-layout-rtl {
+  .mud-flip-x-rtl {
+    transform: scaleX(-1);
+  }
+}

@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<form @attributes="UserAttributes" class="@Classname" style="@Style" @onkeydown="this.AsNonRenderingEventHandler<KeyboardEventArgs>(OnKeyDownAsync)">
+    @if (SuppressImplicitSubmission)
+    {
+        <!-- Prevent implicit submission of the form -->
+        <!-- Note: adding another submit button to the form will automatically enable it again even with SuppressImplicitSubmission set to false -->
+        <button type="submit" disabled style="display: none" aria-hidden="true"></button>
+    }
+    <CascadingValue Value="this" IsFixed="true">
+        <CascadingValue Value="GetDisabledState()" Name="ParentDisabled">
+            <CascadingValue Value="GetReadOnlyState()" Name="ParentReadOnly">
+                @ChildContent
+            </CascadingValue>
+        </CascadingValue>
+    </CascadingValue>
+</form>

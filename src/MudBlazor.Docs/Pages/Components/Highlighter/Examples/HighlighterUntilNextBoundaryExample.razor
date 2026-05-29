@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField Style="max-width:250px" @bind-Value="highlightedText" Immediate="true" Label="Highlighted Text" />
+<MudPaper Class="pa-4 mt-4" Elevation="0">
+    @foreach (var paragraph in paragraphs)
+    {
+        <MudText @key="paragraph" Class="ma-2">
+            <MudHighlighter Text="@paragraph"
+                         HighlightedText="@highlightedText"
+                         UntilNextBoundary="@untilNextBoundary"
+                         CaseSensitive="@caseSensitive"
+                         Markup="@markup"
+                         Class="@(untilNextBoundary ? "pa-1 mud-elevation-2 mud-theme-primary":"")" />
+        </MudText>
+    }
+
+</MudPaper>
+<MudSwitch @bind-Value="untilNextBoundary" Label="UntilNextBoundary" Color="Color.Primary" />
+<MudSwitch @bind-Value="caseSensitive" Label="CaseSensitive" Color="Color.Primary" />
+<MudSwitch @bind-Value="markup" Label="Markup" Color="Color.Primary" />
+
+@code{
+   string highlightedText = "mud";
+   bool untilNextBoundary;
+   bool caseSensitive;
+   bool markup;
+   IEnumerable<string> paragraphs = new List<string>
+    {
+        $"<i>MudBlazor</i> is an ambitious <span style='color:{Colors.Purple.Default}'>Material Design</span> component framework for Blazor with an <span style='color:{Colors.Green.Default}'>emphasis</span> on <em>ease of use and clear structure</em>.",
+        $"MudLists are easily <span style='color:{Colors.Orange.Default}'>customizable</span> and <span style='color:{Colors.Red.Default}'>scrollable</span> lists. Make them suit your needs with <i>avatars</i>, <i>icons</i>, or something like <i>checkboxes</i>.",
+        $"Use <b>mud</b>-* classes to <span style='color:{Colors.Blue.Default}'>customize your MudBlazor components</span>."
+    };
+}

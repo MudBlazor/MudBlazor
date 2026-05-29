@@ -1,0 +1,54 @@
+
+.mud-typography {
+  margin: 0;
+}
+
+$typography-types: ("h1", "h2", "h3", "h4", "h5", "h6", "subtitle1", "subtitle2", "body1", "body2", "button", "caption", "overline");
+
+@each $type in $typography-types {
+  .mud-typography-#{$type} {
+    font-size: var(--mud-typography-#{$type}-size);
+    font-family: var(--mud-typography-#{$type}-family);
+    font-weight: var(--mud-typography-#{$type}-weight);
+    line-height: var(--mud-typography-#{$type}-lineheight);
+    letter-spacing: var(--mud-typography-#{$type}-letterspacing);
+    text-transform: var(--mud-typography-#{$type}-text-transform);
+  }
+}
+
+.mud-typography-srOnly {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+}
+
+.mud-typography-align-left {
+  text-align: left;
+}
+
+.mud-typography-align-center {
+  text-align: center;
+}
+
+.mud-typography-align-right {
+  text-align: right;
+}
+
+.mud-typography-align-justify {
+  text-align: justify;
+}
+
+.mud-typography-nowrap {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mud-typography-gutterbottom {
+  margin-bottom: 0.35em;
+}
+
+.mud-typography-paragraph {
+  margin-bottom: 16px;
+}

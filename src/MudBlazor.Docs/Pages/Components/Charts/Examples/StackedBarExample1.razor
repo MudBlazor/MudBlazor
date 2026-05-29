@@ -1,0 +1,55 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.StackedBar" ChartSeries="@_series" LegendPosition="@_legendPosition" ChartLabels="@_xAxisLabels" Width="100%" Height="350px" ChartOptions="_axisChartOptions"
+              @bind-SelectedIndex="_index" MatchBoundsToSize="_matchBoundsToSize"/>
+</MudPaper>
+
+<MudGrid>
+    <MudItem md="6" xs="12">
+        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox @bind-Value="_matchBoundsToSize" Color="Color.Primary" Label="MatchBoundsToSize"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_axisChartOptions.XAxisLabelRotation" Min="0" Max="90" Step="15">XAxis Label Rotation</MudSlider>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_axisChartOptions.BarWidthRatio" Min="0.1" Max="1" Step="0.1">Bar Width Ratio</MudSlider>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudStack>
+            <MudText Typo="Typo.body1">Legend Position</MudText>
+            <MudRadioGroup T="Position" @bind-Value="_legendPosition">
+                <MudRadio Value="@(Position.Bottom)" Color="Color.Primary">Bottom</MudRadio>
+                <MudRadio Value="@(Position.Top)" Color="Color.Primary">Top</MudRadio>
+                <MudRadio Value="@(Position.Left)" Color="Color.Primary">Left</MudRadio>
+                <MudRadio Value="@(Position.Right)" Color="Color.Primary">Right</MudRadio>
+                <MudRadio Value="@(Position.Start)" Color="Color.Primary">Start</MudRadio>
+                <MudRadio Value="@(Position.End)" Color="Color.Primary">End</MudRadio>
+            </MudRadioGroup>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private bool _matchBoundsToSize = false;
+    private StackedBarChartOptions _axisChartOptions = new() 
+    { 
+        BarWidthRatio = 0.5,
+        XAxisTitle = "Months",
+        YAxisTitle = "Sales",
+    };
+
+    private Position _legendPosition = Position.Bottom;
+
+    private List<ChartSeries<double>> _series = new List<ChartSeries<double>>()
+    {
+        new ChartSeries<double>() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries<double>() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries<double>() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+    };
+    private string[] _xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+}

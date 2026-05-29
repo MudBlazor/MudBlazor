@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Outlined="true" Class="border-dashed">
+    <MudStack Justify="@_justify" Row="true">
+        <MudPaper Class="pa-3 mud-theme-primary">Item 1</MudPaper>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 2</MudPaper>
+        <MudPaper Class="pa-3 mud-theme-primary">Item 3</MudPaper>
+    </MudStack>
+</MudPaper>
+
+<MudChipSet T="string" CheckMark Class="d-flex justify-center mt-12">
+    <MudChip Text="Start" OnClick="@(() => _justify = Justify.FlexStart)" SelectedColor="Color.Primary" />
+    <MudChip Text="Center" OnClick="@(() => _justify = Justify.Center)" SelectedColor="Color.Primary" Default="true" />
+    <MudChip Text="End" OnClick="@(() => _justify = Justify.FlexEnd)" SelectedColor="Color.Primary" />
+    <MudChip Text="Space Around" OnClick="@(() => _justify = Justify.SpaceAround)" SelectedColor="Color.Primary" />
+    <MudChip Text="Space Between" OnClick="@(() => _justify = Justify.SpaceBetween)" SelectedColor="Color.Primary" />
+    <MudChip Text="Space Evenly" OnClick="@(() => _justify = Justify.SpaceEvenly)" SelectedColor="Color.Primary" />
+</MudChipSet>
+
+
+@code {
+    Justify _justify = Justify.Center;
+}

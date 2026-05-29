@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudRTLProvider RightToLeft="true">
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+            <MudText Align="Align.Left">Text</MudText>
+            <MudTextField Label="الاسم الأول" Variant="Variant.Outlined" @bind-Value="_name" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudText Align="Align.Left">Telephone</MudText>
+            <MudTextField InputType="InputType.Telephone" Label="رقم الهاتف" Variant="Variant.Outlined" @bind-Value="_telephone" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Smartphone"></MudTextField>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudText Align="Align.Left">Email</MudText>
+            <MudTextField InputType="InputType.Email" Label="البريد الإلكتروني" Variant="Variant.Outlined" @bind-Value="_email" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email"></MudTextField>
+        </MudItem>
+    </MudGrid>
+</MudRTLProvider>
+
+@code {
+    private string _name { get; set; } = "John Smith";
+    private string _email { get; set; } = "mail@example.com";
+    private long? _telephone { get; set; } = 1618033988;
+}

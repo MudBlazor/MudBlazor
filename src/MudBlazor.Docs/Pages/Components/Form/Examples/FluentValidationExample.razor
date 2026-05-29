@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using FluentValidation
+
+<MudPaper Class="pa-4">
+    <MudForm>
+        <MudTextField @bind-Value="creditCardNr" Validation="@ccValidator.Validation" Immediate="true" Label="Credit card nr" />
+    </MudForm>
+</MudPaper>
+
+@code { 
+    // This is a valid Visa test card number
+    string creditCardNr = "4012 8888 8888 1881";
+
+    // The validation rules (overkill, I know, but very fluent):
+    FluentValueValidator<string> ccValidator = new FluentValueValidator<string>(x => x
+        .NotEmpty()
+        .Length(1,100)
+        .CreditCard());
+
+    /// <summary>
+    /// A glue class to make it easy to define validation rules for single values using FluentValidation
+    /// You can reuse this class for all your fields, like for the credit card rules above.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class FluentValueValidator<T> : AbstractValidator<T>
+    {
+        public FluentValueValidator(Action<IRuleBuilderInitial<T, T>> rule)
+        {
+            rule(RuleFor(x => x));
+        }
+
+        private IEnumerable<string> ValidateValue(T arg)
+        {
+            var result = Validate(arg);
+            if (result.IsValid)
+                return new string[0];
+            return result.Errors.Select(e => e.ErrorMessage);
+        }
+
+        public Func<T, IEnumerable<string>> Validation => ValidateValue;
+    }
+}

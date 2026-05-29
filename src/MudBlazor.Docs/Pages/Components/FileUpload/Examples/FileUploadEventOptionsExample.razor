@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row Justify="Justify.SpaceAround" AlignItems="AlignItems.Start" Class="mud-width-full">
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="@context.OpenFilePickerAsync"
+                       StartIcon="@Icons.Material.Filled.CloudUpload">
+                Upload using FileValueChanged
+            </MudButton>
+        </CustomContent>
+    </MudFileUpload>
+    <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
+        <CustomContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="@context.OpenFilePickerAsync"
+                       StartIcon="@Icons.Material.Filled.CloudUpload">
+                Upload using OnFilesChanged
+            </MudButton>
+        </CustomContent>
+    </MudFileUpload>
+</MudStack>
+
+@code
+{
+    private readonly IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        _files.Add(file);
+        //TODO upload the files to the server
+    }
+
+    private void UploadFiles(InputFileChangeEventArgs args)
+    {
+        _files.Add(args.File);
+        //TODO upload the files to the server
+    }
+}

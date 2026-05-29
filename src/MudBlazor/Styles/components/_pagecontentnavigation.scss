@@ -1,0 +1,34 @@
+﻿@import '../abstracts/variables';
+
+.page-content-navigation {
+
+  .page-content-navigation-navlink {
+    &.active {
+      .mud-nav-link {
+        color: var(--mud-palette-primary);
+        border-color: var(--mud-palette-primary);
+        background-color: transparent;
+      }
+    }
+
+    .mud-nav-link {
+      padding: 4px 16px 4px 16px;
+      color: var(--mud-palette-text-secondary);
+      border-left: 2px solid var(--mud-palette-action-disabled-background);
+
+      &.active {
+        color: var(--mud-palette-primary);
+        border-color: var(--mud-palette-primary);
+        background-color: transparent;
+      }
+
+      .mud-nav-link-text {
+        margin-left: 0px;
+        margin-inline-start: 0px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}

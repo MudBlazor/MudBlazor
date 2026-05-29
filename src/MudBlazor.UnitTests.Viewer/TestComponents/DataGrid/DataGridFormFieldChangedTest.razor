@@ -1,0 +1,25 @@
+﻿@using MudBlazor.Utilities
+
+<MudDialogProvider />
+
+<MudDataGrid T="Item" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.OnRowClick" FormFieldChanged="((args) => FormFieldChangedEventArgs = args)">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new Item("A"),
+        new Item("B"),
+        new Item("C")
+    };
+
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+
+    public class Item(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

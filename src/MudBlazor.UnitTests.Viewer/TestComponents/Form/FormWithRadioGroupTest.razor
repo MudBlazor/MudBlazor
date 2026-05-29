@@ -1,0 +1,13 @@
+﻿<MudForm ValidationDelay="0">
+    <MudRadioGroup T="string" Required="true" @bind-Value="Selected">
+        <MudRadio Value="@("A")">Option A</MudRadio>
+        <MudRadio Value="@("B")">Option B</MudRadio>
+    </MudRadioGroup>
+</MudForm>
+
+@code {
+    public static string __description__ = "Clearing the value of a required radiogroup should set form's isvalid to false.";
+
+    [Parameter]
+    public string? Selected { get; set; }
+}

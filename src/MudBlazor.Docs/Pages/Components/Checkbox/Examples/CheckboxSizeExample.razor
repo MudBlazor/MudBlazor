@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Value="Size_CheckBox1" Size="Size.Small" Color="Color.Primary"></MudCheckBox>
+<MudCheckBox @bind-Value="Size_CheckBox2" Size="Size.Medium" Color="Color.Secondary"></MudCheckBox>
+<MudCheckBox @bind-Value="Size_CheckBox3" Size="Size.Large" Color="Color.Tertiary"></MudCheckBox>
+@code {
+    public bool Size_CheckBox1 { get; set; } = true;
+    public bool Size_CheckBox2 { get; set; } = false;
+    public bool Size_CheckBox3 { get; set; } = false;
+}

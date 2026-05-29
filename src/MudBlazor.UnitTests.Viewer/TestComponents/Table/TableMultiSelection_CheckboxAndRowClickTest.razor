@@ -1,0 +1,13 @@
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "A checkbox- or row-click should toggle the checkbox state.";
+
+    private readonly int[] _items = [0, 1, 2];
+    private HashSet<int> _selectedItems = [];
+}

@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs Elevation="1" Rounded="true" @ref="_tabs">
+    <MudTabPanel Text="One" @ref="_panel01" ID="@("pn_one")" />
+    <MudTabPanel Text="Two" @ref="_panel02" ID="@("pn_two")" />
+    <MudTabPanel Text="Three" @ref="_panel03" ID="@("pn_three")" />
+</MudTabs>
+
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-8"><b>Set Active by Index</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => ActivateAsync(0)">Index 0</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => ActivateAsync(1)" Class="mx-2">Index 1</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => ActivateAsync(2)">Index 2</MudButton>
+</div>
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-4"><b>Set Active by Instance</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => ActivateAsync(_panel01)">Item One</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => ActivateAsync(_panel02)" Class="mx-2">Item Two</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => ActivateAsync(_panel03)">Item Three</MudButton>
+</div>
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-4"><b>Set Active by TabPanel ID</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick='() => ActivateAsync("pn_one")'>Item One</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick='() => ActivateAsync("pn_two")' Class="mx-2">Item Two</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick='() => ActivateAsync("pn_three")'>Item Three</MudButton>
+</div>
+
+@code {
+    private MudTabs _tabs = null!;
+    private MudTabPanel _panel01 = null!;
+    private MudTabPanel _panel02 = null!;
+    private MudTabPanel _panel03 = null!;
+
+    private Task ActivateAsync(int index)
+    {
+        return _tabs.ActivatePanelAsync(index);
+    }
+
+    private Task ActivateAsync(MudTabPanel panel)
+    {
+        return _tabs.ActivatePanelAsync(panel);
+    }
+
+    private Task ActivateAsync(object id)
+    {
+        return _tabs.ActivatePanelAsync(id);
+    }
+}

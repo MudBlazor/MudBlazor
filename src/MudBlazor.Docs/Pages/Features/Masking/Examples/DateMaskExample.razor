@@ -1,0 +1,36 @@
+﻿@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem  xs="12" sm="6">
+        <MudTextField Mask="@mask1" Label="ISO Date"  HelperText="@mask1.Mask"
+                      @bind-Value="isoDate"  Variant="@Variant.Text" Clearable />
+        ISO: <b>@isoDate</b>
+    </MudItem>
+    <MudItem  xs="12" sm="6">
+        <MudTextField Mask="@mask2" Label="US" HelperText="@mask2.Mask"
+                      @bind-Value="usDate"  Variant="@Variant.Text" Clearable />
+        US: <b>@usDate</b>
+    </MudItem>
+    <MudItem  xs="12" sm="6">
+        <MudTextField Mask="@mask3" Label="AT"  HelperText="@mask3.Mask"
+                      @bind-Value="atDate"  Variant="@Variant.Text" Clearable />
+        AT: <b>@atDate</b>
+    </MudItem>
+    <MudItem  xs="12" sm="6">
+        <MudTextField Mask="@mask4" Label="Month" HelperText="@mask4.Mask"
+                      @bind-Value="monthAndYear"  Variant="@Variant.Text" Clearable />
+        MM/YY: <b>@monthAndYear</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    string isoDate, usDate, atDate;
+    string monthAndYear;
+
+    IMask mask1 = new DateMask("yyyy-MM-dd");
+    IMask mask2 = new DateMask("MM/dd/yyyy");
+    IMask mask3 = new DateMask("TT.MM.JJJJ", 'J', 'M', 'T');
+    IMask mask4 = new DateMask("MM/YY", 'Y', 'M');
+}

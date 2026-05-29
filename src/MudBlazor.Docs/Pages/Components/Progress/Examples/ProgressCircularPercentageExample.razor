@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System;
+@using System.Threading;
+
+@implements IDisposable
+
+<MudProgressCircular Color="Color.Default" Value="@_value">
+    <ChildContent>
+        @_value
+    </ChildContent>
+</MudProgressCircular>
+<MudProgressCircular Color="Color.Primary" Value="@_value" Size="Size.Large">
+    <ChildContent>
+        @_value %
+    </ChildContent>
+</MudProgressCircular>
+<MudProgressCircular Style="height: 80px; width: 80px" Color="Color.Primary" Value="@_value">
+    <ChildContent>
+        <MudStack Spacing="0" AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudText Typo="Typo.subtitle2">Value</MudText>
+            <MudText Typo="Typo.subtitle2">@_value</MudText>
+        </MudStack>
+    </ChildContent>
+</MudProgressCircular>
+<MudProgressCircular Style="height: 60px; width: 60px" Color="Color.Success" Value="@_doubleValue">
+    <ChildContent>@_doubleValue.ToString("N2")</ChildContent>
+</MudProgressCircular>
+<MudProgressCircular Size="Size.Large" Indeterminate="true" Color="Color.Primary">
+    <ChildContent>Mud</ChildContent>
+</MudProgressCircular>
+
+@code {
+    private bool _disposed;
+    private int _value;
+    private double _doubleValue;
+
+    public async Task SimulateProgressAsync()
+    {
+        _value = 0;
+        _doubleValue = 0;
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _value += 4;
+            _doubleValue += 4.2d;
+            StateHasChanged();
+            await Task.Delay(500);
+
+        } while (_value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
+}

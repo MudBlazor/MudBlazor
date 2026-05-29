@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudText Typo="Typo.h6" Class="mud-width-full">@(_pizza is null ? "Nothing selected." : $"Pizza: {_pizza.Name}")</MudText>
+
+<MudSelect T="Pizza" @bind-Value="@_pizza" ToStringFunc="@_toStringFunc" Label="Select your pizza" Variant="Variant.Outlined" Clearable>
+    <MudSelectItem Value="@(new Pizza("Cardinale"))" />
+    <MudSelectItem Value="@(new Pizza("Diavolo"))" />
+    <MudSelectItem Value="@(new Pizza("Margarita"))" />
+    <MudSelectItem Value="@(new Pizza("Spinaci"))" />
+</MudSelect>
+
+@code {
+    private Pizza _pizza = new("Diavolo");
+    private readonly Func<Pizza, string> _toStringFunc = p => p?.Name;
+
+    public class Pizza(string name)
+    {
+        public string Name { get; } = name;
+
+        // Note: this is important so the select can compare pizzas
+        public override bool Equals(object obj) => obj is Pizza other && string.Equals(Name, other.Name, StringComparison.Ordinal);
+
+        // Note: this is important so the select can compare pizzas
+        public override int GetHashCode() => Name.GetHashCode();
+    }
+}

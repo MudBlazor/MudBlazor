@@ -1,0 +1,42 @@
+﻿@page "/components/chat"
+@page "/components/MudChat"
+
+<DocsPage>
+    <DocsPageHeader Title="Chat" SubTitle="Chat components have been moved to MudX" />
+    <DocsPageContent>
+        <MudAlert Severity="Severity.Info" Class="my-4">
+            <strong>Component Moved:</strong> The MudChat component family has been removed from MudBlazor and is now available in 
+            <MudLink Href="https://github.com/MudXtra/MudX" Target="_blank">MudX</MudLink>.
+        </MudAlert>
+
+        <MudText Typo="Typo.h6" Class="mb-2">Migration Guide</MudText>
+        <MudText Class="mb-4">
+            To continue using the chat components, please install the MudX package from the MudXtra project:
+        </MudText>
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            <strong>1. Install the MudX NuGet package:</strong>
+        </MudText>
+        <MudPaper Class="pa-4 mb-4" Outlined="true">
+            <code>dotnet add package MudX.MudBlazor.Extension</code>
+        </MudPaper>
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            <strong>2. Update your using statements:</strong>
+        </MudText>
+        <MudPaper Class="pa-4 mb-4" Outlined="true">
+            <code>@@using MudX</code>
+        </MudPaper>
+
+        <MudText Typo="Typo.body2" Class="mb-2">
+            <strong>3. Visit the MudX documentation:</strong>
+        </MudText>
+        <MudText Class="mb-4">
+            For detailed documentation and examples, visit: <MudLink Href="https://mudx.org" Target="_blank">https://MudX.org</MudLink> or for the GitHub visit <MudLink Href="https://github.com/MudXtra/MudX" Target="_blank">https://github.com/MudXtra/MudX</MudLink>
+        </MudText>
+
+        <MudAlert Severity="Severity.Warning" Class="mt-4">
+            This page is kept for reference. The MudChat components were removed in v9.
+        </MudAlert>
+    </DocsPageContent>
+</DocsPage>

@@ -1,0 +1,66 @@
+@using System.Threading
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid T="int" VirtualizeServerData="ServerDataFunc" Virtualize="true" Filterable FixedHeader Height="400px" ItemSize="52.68f">
+    <Columns>
+        <PropertyColumn Property="x => x" Title="Number" />
+    </Columns>
+    <RowLoadingContent>
+        <tr class="mud-table-row">
+            <td class="mud-table-cell" colspan="1000">
+                Loading...
+            </td>
+        </tr>
+    </RowLoadingContent>
+</MudDataGrid>
+
+@code {
+    private readonly List<int> _items = Enumerable.Range(0, 51).ToList();
+    
+    private async Task<GridData<int>> ServerDataFunc(GridStateVirtualize<int> gridState, CancellationToken token)
+    {
+        try
+        {
+            var result = _items.ToList();
+
+            await Task.Delay(1000, token);
+
+            if (gridState.SortDefinitions.Count > 0) 
+            {
+                var firstSort = gridState.SortDefinitions.First();
+                result = firstSort.Descending 
+                    ? result.OrderByDescending(firstSort.SortFunc).ToList() 
+                    : result.OrderBy(firstSort.SortFunc).ToList();
+            }
+
+            if (gridState.FilterDefinitions.Any())
+            {
+                var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
+                result = result
+                    .Where(x => filterFunctions.All(f => f(x)))
+                    .ToList();
+            }
+
+            var totalNumberOfFilteredItems = result.Count;
+            
+            result = result
+                .Skip(gridState.StartIndex)
+                .Take(gridState.Count)
+                .ToList();
+
+            return new GridData<int>
+            {
+                Items = result,
+                TotalItems = totalNumberOfFilteredItems
+            };
+        }
+        catch (TaskCanceledException)
+        {
+            return new GridData<int>
+            {
+                Items = [],
+                TotalItems = 0
+            };
+        }
+    }
+}

@@ -1,0 +1,125 @@
+﻿@using PrimitiveCalculator
+@using System.Globalization
+@namespace MudBlazor.Docs.Components.LandingPage
+
+<MudPaper Square="true" Elevation="0" Height="30%" Class="d-flex justify-end align-center px-10 mud-transparent">
+    <div>
+        <MudText Typo="Typo.h4" Align="Align.End" Class="mud-text-secondary">
+            @Last
+        </MudText>
+        <MudText Typo="Typo.h1">
+            @CalcExpression
+        </MudText>
+    </div>
+</MudPaper>
+<MudPaper Square="true" Elevation="0" Height="70%" Class="lp-calc-buttons pb-16">
+    <MudGrid Spacing="0" Class="mud-height-full">
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton OnClick="@(() => CalcExpression += "(")" Class="rounded-circle">(</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton OnClick="@(() => CalcExpression += ")")" Class="rounded-circle">)</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton OnClick="@(() => CalcExpression += "%")" Class="rounded-circle">
+                <MudIcon Icon="@("<path d=\"M18.5 3.5l-15 15l2 2l15-15M7 4a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m10 10a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z\">")"/>
+            </MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Variant="Variant.Filled" DropShadow="false"  OnClick="@(() => CalcExpression += "/")" Class="rounded-circle">
+                <MudIcon Icon="@("<path d=\"M19 13H5v-2h14v2m-7-8a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 10a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2z\">")"/>
+            </MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=7)">7</MudButton>  
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=8)">8</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=9)">9</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Variant="Variant.Filled" DropShadow="false"  Class="rounded-circle" OnClick="@(()=>CalcExpression+="*")">
+              <MudIcon Icon="@Icons.Material.Filled.Close"/>
+          </MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=4)">4</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=5)">5</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=6)">6</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Variant="Variant.Filled" DropShadow="false"  Class="rounded-circle" OnClick="@(()=>CalcExpression+="-")">
+               <MudIcon Icon="@Icons.Material.Filled.Remove"/>
+           </MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=1)">1</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=2)">2</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=3)">3</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Variant="Variant.Filled" DropShadow="false" Class="rounded-circle" OnClick="@(()=>CalcExpression+="+")">
+                <MudIcon Icon="@Icons.Material.Filled.Add"/>
+            </MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton OnClick="Reset" Class="rounded-circle">C</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=0)">0</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=".")">.</MudButton>
+        </MudItem>
+        <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
+            <MudButton Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" OnClick="Evaluate" Class="rounded-circle">
+                <MudIcon Icon="@("<path d=\"M19,10H5V8H19V10M19,16H5V14H19V16Z\"/>")"/>
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+
+@code
+{
+    
+    protected string Last;
+    protected string Current;
+    protected string CalcExpression = "";
+
+    public void Reset()
+    {
+        Last = "";
+        Current = "";
+        CalcExpression = "";
+    }
+
+    public void Evaluate()
+    {
+        Last = Current;
+        if (string.IsNullOrWhiteSpace(CalcExpression))
+        {
+            Current = "";
+            return;
+        }
+        var exp = new Expression(CalcExpression);
+        var result=exp.Eval();
+        if (double.IsNaN(result))
+        {
+            Current = "ERROR";
+            return;
+        }
+        Current = Math.Round( result, 8).ToString(CultureInfo.InvariantCulture);
+        CalcExpression=Current; // <-- this allows to continue calculating with the result
+    }
+}

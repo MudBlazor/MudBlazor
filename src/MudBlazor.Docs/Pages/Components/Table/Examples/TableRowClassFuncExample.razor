@@ -1,0 +1,89 @@
+﻿@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+
+    .selected > td {
+        color: white !important;
+    }
+
+    .selected > td .mud-input {
+        color: white !important;
+    }
+</style>
+
+<MudTable T="Element" @bind-SelectedItem="_selectedElement" Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" RowClassFunc="@SelectedRowClassFunc"
+          OnRowClick="@RowClickEvent" RowDisabledFunc="@(context => _rowTwoIsDisabled && context.Number == 2)">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+</MudTable>
+<MudExpansionPanels Style="flex: 1;">
+    <MudExpansionPanel Text="Show inline-clicked event log">
+        @foreach (var message in _clickedEvents)
+        {
+            <MudText>@message</MudText>
+        }
+        @if (_clickedEvents.Count > 0)
+        {
+            <div class="d-flex">
+                <MudSpacer/>
+                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _clickedEvents.Clear())">Clear events</MudButton>
+            </div>
+        }
+    </MudExpansionPanel>
+</MudExpansionPanels>
+<MudSwitch Label="Disable row 2" @bind-Value="_rowTwoIsDisabled" Color="Color.Primary"/>
+
+@code {
+
+    private static readonly IEnumerable<Element> Elements = new List<Element>
+    {
+        new() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 0, Molar = 1.00794 },
+        new() { Number = 2, Sign = "He", Name = "Helium", Position = 17, Molar = 4.002602 },
+        new() { Number = 3, Sign = "Li", Name = "Lithium", Position = 0, Molar = 6.941 }
+    };
+
+    private Element _selectedElement;
+    private int _selectedRowNumber = -1;
+    private readonly List<string> _clickedEvents = [];
+    private bool _rowTwoIsDisabled;
+
+    private void RowClickEvent(TableRowClickEventArgs<Element> tableRowClickEventArgs)
+    {
+        _clickedEvents.Add($"Row has been clicked {tableRowClickEventArgs.MouseEventArgs.Detail} times");
+    }
+
+    private string SelectedRowClassFunc(Element element, int rowNumber)
+    {
+        if (_selectedRowNumber == rowNumber)
+        {
+            _selectedRowNumber = -1;
+            _clickedEvents.Add("Selected Row: None");
+            return string.Empty;
+        }
+
+        if (_selectedElement is not null && _selectedElement.Equals(element))
+        {
+            _selectedRowNumber = rowNumber;
+            _clickedEvents.Add($"Selected Row: {rowNumber}");
+            return "selected";
+        }
+
+        return string.Empty;
+    }
+}

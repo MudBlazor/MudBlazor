@@ -1,0 +1,50 @@
+.docs-contribution-markdown {
+  ul {
+    list-style: disc;
+    padding-inline-start: 24px;
+    margin: 0 0 12px;
+  }
+
+  ol {
+    list-style: decimal;
+    padding-inline-start: 24px;
+    margin: 0 0 12px;
+  }
+
+  li {
+    margin: 4px 0;
+  }
+
+  pre {
+    margin: 12px 0 20px;
+    padding: 16px;
+    overflow: auto;
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: var(--mud-default-borderradius);
+    background-color: var(--mud-palette-background-grey);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  pre code {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    font-size: inherit;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  }
+
+  :not(pre) > code {
+    display: inline-block;
+    padding: 0 5px;
+    direction: ltr;
+    font-size: 0.85em;
+    font-weight: 900;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    line-height: 1.4;
+    border-radius: 2px;
+    color: var(--mud-palette-primary);
+    background-color: var(--mud-palette-primary-hover);
+  }
+}

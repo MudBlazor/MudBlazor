@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Value="Basic_CheckBox1"></MudCheckBox>
+<MudCheckBox @bind-Value="Basic_CheckBox2" Color="Color.Primary"></MudCheckBox>
+<MudCheckBox @bind-Value="Basic_CheckBox3" Color="Color.Secondary"></MudCheckBox>
+<MudCheckBox @bind-Value="Basic_CheckBox4" Disabled="true"></MudCheckBox>
+
+@code {
+    public bool Basic_CheckBox1 { get; set; } = true;
+    public bool Basic_CheckBox2 { get; set; } = false;
+    public bool Basic_CheckBox3 { get; set; } = false;
+    public bool Basic_CheckBox4 { get; set; } = true;
+}

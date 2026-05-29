@@ -1,0 +1,72 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudDebouncedInput<T>
+
+<CascadingValue Name="SubscribeToParentForm" Value="@SubscribeToParentForm" IsFixed="true">
+    <MudInputControl id="@_elementId"
+                     Label="@Label"
+                     Variant="@Variant"
+                     HelperId="@GetHelperId()"
+                     HelperText="@HelperText"
+                     HelperTextOnFocus="@HelperTextOnFocus"
+                     FullWidth="@FullWidth"
+                     Class="@Classname"
+                     Error="@HasErrors"
+                     ErrorId="@ErrorIdState.Value"
+                     ErrorText="@GetErrorText()"
+                     Disabled="@GetDisabledState()"
+                     Margin="@Margin"
+                     Required="@Required"
+                     CounterText="@GetCounterText()"
+                     ForId="@InputElementId">
+        <InputContent>
+            <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+                <MudInput T="string"
+                          @ref="@_elementReference"
+                          @attributes="@InputAttributes"
+                          InputType="@InputType.Text"
+                          Style="@Style"
+                          Variant="@Variant"
+                          Typo="@Typo"
+                          Label="@Label"
+                          Value="@ReadText"
+                          ValueChanged="@OnInputValueChanged"
+                          Placeholder="@Placeholder"
+                          Disabled="@GetDisabledState()"
+                          Underline="@Underline"
+                          ReadOnly="@GetReadOnlyState()"
+                          Adornment="@Adornment"
+                          AdornmentText="@AdornmentText"
+                          AdornmentIcon="@AdornmentIcon"
+                          AdornmentColor="@AdornmentColor"
+                          AdornmentAriaLabel="@AdornmentAriaLabel"
+                          IconSize="@IconSize"
+                          Error="@HasErrors"
+                          ErrorId="@ErrorIdState.Value"
+                          HelperId="@GetHelperId()"
+                          HelperText="@HelperText"
+                          Immediate="@Immediate"
+                          Margin="@Margin"
+                          MaxLength="@MaxLength"
+                          HideSpinButtons="@HideSpinButtons"
+                          min="@(_minHasValue ? FormatParam(_min) : null)"
+                          max="@(_maxHasValue ? FormatParam(_max) : null)"
+                          step="@(_stepHasValue ? FormatParam(_step) : "any")"
+                          InputMode="@InputMode"
+                          Pattern="@(Pattern == null ? null : Pattern!.TrimEnd('*')+"*")"
+                          OnAdornmentClick="@OnAdornmentClick"
+                          OnBlur="@OnBlurredAsync"
+                          OnKeyDown="@HandleKeyDownAsync"
+                          OnKeyUp="@HandleKeyUpAsync"
+                          OnIncrement="@Increment"
+                          OnDecrement="@Decrement"
+                          OnMouseWheel="@OnMouseWheelAsync"
+                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          ClearIcon="@ClearIcon"
+                          ShrinkLabel="@ShrinkLabel"
+                          InputId="@InputElementId"
+                          Required="@Required" />
+            </CascadingValue>
+        </InputContent>
+    </MudInputControl>
+</CascadingValue>

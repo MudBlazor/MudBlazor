@@ -1,0 +1,49 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@using System.Threading
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value1" 
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value2" 
+                         SearchFunc="@Search" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+            <ItemTemplate Context="e">                          
+                <MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" Class="mb-n1 mr-3"/>@($"{e.Name} ({e.Sign})")
+                </MudText>
+            </ItemTemplate>
+            <ItemSelectedTemplate Context="e">                
+                <MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="mb-n1 mr-3"/>@($"{e.Name} ({e.Sign})")
+                </MudText>
+            </ItemSelectedTemplate>
+        </MudAutocomplete>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value3"
+                   SearchFunc="@Search" ItemDisabledFunc="@((Element e) => (e.Name.Contains("H")))" ToStringFunc="@(e=> e==null?null : $"{e.Name} ({e.Sign})")">
+            <ItemDisabledTemplate>
+                <MudText>Not available: @context.ToString()</MudText>
+            </ItemDisabledTemplate>
+        </MudAutocomplete>
+    </MudItem>
+    <MudItem xs="12" md="12">
+        <MudText Class="mb-n3" Typo="Typo.body2">
+            Selected values: <MudChip T="string">@(value1?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value2?.ToString() ?? "Not selected")</MudChip><MudChip T="string">@(value3?.ToString() ?? "Not selected")</MudChip>
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private Element value1, value2, value3;
+
+    private async Task<IEnumerable<Element>> Search(string value, CancellationToken token)
+    {
+        return  await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodictable/{value}", token);
+    }
+}

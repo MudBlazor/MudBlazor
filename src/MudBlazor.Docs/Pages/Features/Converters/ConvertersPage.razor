@@ -1,0 +1,99 @@
+﻿@page "/features/converters"
+
+<DocsPage>
+    <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model." />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader>
+                 <Description>
+                    When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T, then a <CodeInline>Converter</CodeInline>
+                    converts that value to <CodeInline>string</CodeInline> for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
+                    MudBlazor's <CodeInline>DefaultConverter<Tag>T</Tag></CodeInline> is pretty capable as you can see below, but sometimes
+                    you'll want to use your own conversion functions. This page is all about that.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Converter API">
+                <Description>
+                    MudBlazor provides a small, composable converter API you can use to implement custom conversion logic.
+                    The primary contracts are:
+                    <br />
+                    <ul>
+                        <li><CodeInline>IConverter&lt;TIn, TOut&gt;</CodeInline> — synchronous converter that maps a value from <CodeInline>TIn</CodeInline> to <CodeInline>TOut</CodeInline>. Implement this for simple one-way conversions.</li>
+                        <li><CodeInline>IReversibleConverter&lt;TIn, TOut&gt;</CodeInline> — extends <CodeInline>IConverter</CodeInline> with <CodeInline>ConvertBack</CodeInline> so the converter can perform both forward and backward conversions.</li>
+                    </ul>
+                    <br/>
+                    For composing converters you can use the fluent helpers in <CodeInline>Conversions</CodeInline> to build chains:
+                    <ul>
+                        <li><CodeInline>Conversions.From(IConverter)</CodeInline> or <CodeInline>Conversions.From(Func&lt;TIn,TOut&gt;)</CodeInline> — start a converter chain.</li>
+                        <li><CodeInline>ConverterChain.Then(...)</CodeInline> — append additional steps to the chain. A reversible chain is created when both forward and backward delegates (or an <CodeInline>IReversibleConverter</CodeInline>) are provided.</li>
+                    </ul>
+                    <br />
+                    The built-in <CodeInline>DefaultConverter&lt;T&gt;</CodeInline> implements <CodeInline>IReversibleConverter&lt;T?, string?&gt;</CodeInline> and <CodeInline>ICultureAwareConverter</CodeInline>.
+                    It ships with conversions for primitives, numbers, dates, GUIDs, <CodeInline>BigInteger</CodeInline>, and nullable variants. When used inside components the component will auto-inject culture/format providers if the converter implements <CodeInline>ICultureAwareConverter</CodeInline>.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DefaultConverter<T>">
+                <Description>
+                    The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
+                    Edit the textfields below to see how the default converter handles different values depending on the type.
+                </Description>
+            </SectionHeader>
+            <DefaultConverterTable/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DateConverter">
+                <Description>
+                    <MudText>
+                        By default, the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings (from <CodeInline>CultureInfo.CurrentUICulture</CodeInline>). 
+                        If you want to change that, you can set the <CodeInline>Culture</CodeInline> parameter of individual input components or set the <CodeInline>Culture</CodeInline> property on custom converter instances.
+                    </MudText>
+                    <MudText Class="mt-4">
+                        If you want to configure the date format of a DateTime value, you can set the <CodeInline>Format</CodeInline> parameter of <CodeInline Tag="true">MudTextField</CodeInline>.
+                    </MudText>
+                    <MudText>
+                        Let's format the same date in different ways:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(TurkeyTestExample)" ShowCode="false">
+                <TurkeyTestExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Custom Binding Converters">
+                <Description>
+                    If you need specialized binding conversion, you can implement a converter directly or use the fluent helpers in <CodeInline>Conversions</CodeInline> to create inline converters.
+                    For example, you can create a converter from two delegates.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(SpecialConverterExample)" ShowCode="false">
+                <SpecialConverterExample/>
+            </SectionContent>
+            <SectionContent DarkenBackground="false" Code="@nameof(PointConverterExample)" ShowCode="false">
+                <PointConverterExample />
+            </SectionContent>
+        </DocsPageSection>
+
+@*         <DocsPageSection>
+            <SectionHeader Title="Another example of Converter">
+                <Description>
+                    You can register per-instance converters or create inline reversible converters with <CodeInline>Conversions.From</CodeInline>.
+                    The example demonstrates creating a converter using <CodeInline>Conversions.From</CodeInline> and wiring it directly to a <CodeInline>MudTextField</CodeInline> via the <CodeInline>Converter</CodeInline> parameter:
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(PointConverterExample)" ShowCode="false">
+                <PointConverterExample />
+            </SectionContent>
+        </DocsPageSection> *@
+    </DocsPageContent>
+</DocsPage>
+

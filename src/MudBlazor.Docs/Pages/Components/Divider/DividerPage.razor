@@ -1,0 +1,44 @@
+﻿@page "/components/divider"
+
+<DocsPage>
+    <DocsPageHeader Title="Divider" Component="@nameof(MudDivider)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="List Dividers">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerListExample)">
+                <DividerListExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inset Dividers">
+                <Description>Adds a margin to the left side of the divider.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerInsertExample)">
+                <DividerInsertExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Middle Dividers">
+                <Description>Middle dividers have margin on both left and right side.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerMiddleExample)" ShowCode="false">
+                <DividerMiddleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Vertical Dividers">
+                <Description>Vertical dividers can be used inside parents with a set height. If the parent doesn't have a set height but is displayed with flex, use the <CodeInline>Flexitem</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DividerVerticalExample)">
+                <DividerVerticalExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

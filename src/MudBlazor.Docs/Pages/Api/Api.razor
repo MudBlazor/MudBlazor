@@ -1,0 +1,117 @@
+﻿@page "/api/{TypeName}"
+@using MudBlazor.Docs.Components
+@namespace MudBlazor.Docs.Pages.Api
+
+<style>
+    .mud-table-toolbar {
+        height: auto;
+    }
+
+    [id] {
+        scroll-margin-top: 65px;
+    }
+</style>
+
+<DocsPage>
+    @if (DocumentedType != null)
+    {
+        <ApiBreadcrumbs Type="@DocumentedType" />
+
+        <DocsPageHeader Title="@Title" IsApi="true" Component="@TypeName" />
+
+        <DocsPageContent>
+
+            @if (DocumentedType.Properties.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Properties" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiMemberTable Mode="@ApiMemberTableMode.Properties" Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Methods.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Methods" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiMemberTable Mode="@ApiMemberTableMode.Methods" Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Fields.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Fields" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiMemberTable Mode="@ApiMemberTableMode.Fields" Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Events.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Events" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiMemberTable Mode="@ApiMemberTableMode.Events" Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Children.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Derived Classes" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiTypeTable BaseType="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.Links.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="See Also" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiSeeAlsoLinks Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (DocumentedType.GlobalSettings.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Global Settings" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiMemberTable Mode="ApiMemberTableMode.Globals" Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+            @if (ShowInheritance)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Inheritance" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiTypeHierarchy Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
+        </DocsPageContent>
+    }
+    else
+    {
+        <DocsPageHeader Title="404 Not Found" />
+        <DocsPageContent>
+            <MudBlazorLogo Class="docs-api-404-logo" />
+
+            <MudAlert Class="docs-api-404-alert" Icon="@Icons.Material.Outlined.CloudOff">
+                Sorry, the type <CodeInline>@TypeName</CodeInline> was not found.
+            </MudAlert>
+        </DocsPageContent>
+    }
+</DocsPage>

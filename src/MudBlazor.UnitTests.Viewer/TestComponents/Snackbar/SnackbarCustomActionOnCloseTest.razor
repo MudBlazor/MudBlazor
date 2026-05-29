@@ -1,0 +1,73 @@
+﻿@inject ISnackbar Snackbar
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Show">
+    Show snackbars
+</MudButton>
+
+@code {
+    public static string __description__ = "Try closing a snackbar with an 'X' button.";
+
+    protected override void OnParametersSet()
+    {
+        Show();
+    }
+
+    private void Show()
+    {
+        Snackbar.Add("Close me using the close button.", Severity.Normal, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseButtonClickFunc = SayGoodbye;
+        });
+
+        Snackbar.Add("On close I explode!", Severity.Error, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseButtonClickFunc = Explode;
+        });
+
+        Snackbar.Add("On close I explode but handled.", Severity.Success, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseButtonClickFunc = ExplodeButHandle;
+        });
+
+        Snackbar.Add("On close do something expensive.", Severity.Info, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseButtonClickFunc = OnCloseDoSomethingExpensiveAsync;
+        });
+    }
+
+    private Task SayGoodbye(Snackbar snackbar)
+    {
+        Snackbar.Add("Sorry to see you go!");
+        return Task.CompletedTask;
+    }
+
+    private Task Explode(Snackbar snackbar)
+    {
+        throw new Exception("Not properly handled exception correctly propagates to Explode() method.");
+    }
+
+    private Task ExplodeButHandle(Snackbar snackbar)
+    {
+        try
+        {
+            throw new Exception("I'm a nicely handled exception.");
+        }
+        catch (Exception e)
+        {
+            // handle, log, whatever
+            Console.WriteLine(e.Message);
+        }
+        return Task.CompletedTask;
+    }
+
+    private async Task OnCloseDoSomethingExpensiveAsync(Snackbar snackbar)
+    {
+        Snackbar.Add("Sure, I'll tell the database you closed me. No big deal...");
+        await Task.Delay(5000);
+        Snackbar.Add("All sorted. The database is thrilled.");
+    }
+}

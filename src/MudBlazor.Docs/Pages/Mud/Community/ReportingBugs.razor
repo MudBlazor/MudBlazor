@@ -1,0 +1,35 @@
+﻿@page "/mud/community/reporting-bugs"
+
+<DocsPage DisplayFooter="true">
+    <DocsPageHeader Title="Reporting Bugs" SubTitle="" />
+    <DocsPageContent>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Is it really a bug?">
+                <Description>
+                    Consider if it's really a bug. Sometimes, the concept or use case has been misunderstood.<br/>
+                    If you're looking to get help with something, we'd love to help you - but the best way to do that is through <MudLink Href="/mud/community/getting-help">asking for help</MudLink> rather than reporting a bug.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Search the issues">
+                <Description>
+                    Search through the <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues" Target="_blank">issues</MudLink> and <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions" Target="_blank">discussions</MudLink> first. If you find anything that seems like the same thing, comment on that one instead of creating a duplicate.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Minimal reproduction">
+                <Description>
+                    To ensure that we can help you,  we need to reproduce the bug reliably - in a minimal way and separately from the rest of your project. It makes it easier for us to narrow down what could be causing the problem, allow people to test potential solutions, and finally create a pull request to fix the issue. 
+                    Start with TryMudBlazor. If you can be reproduced the issue there, you can save the code snippet and attach it to the issue. If not, provide a link to a GitHub repository with minimal reproduction (No complete applications).
+                </Description>
+            </SectionHeader>
+            <MudButton DropShadow="false" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="_blank">TryMudBlazor</MudButton>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

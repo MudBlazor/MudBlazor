@@ -1,0 +1,26 @@
+﻿<MudTable T="string" Items="_items" @bind-SelectedItem="_selectedItem" ApplyButtonPosition="@ApplyButtonPosition">
+	<HeaderContent>
+		<MudTh>#</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd>@context</MudTd>
+	</RowTemplate>
+	<RowEditingTemplate>
+		<MudTd>
+			<MudTextField T="string" @bind-Value="@context"></MudTextField>
+		</MudTd>
+	</RowEditingTemplate>
+	<FooterContent>
+		<MudTd>#Footer</MudTd>
+	</FooterContent>
+</MudTable>
+
+@code {
+	public static string __description__ = "Inline Edit Table: Basic";
+
+	private string? _selectedItem;
+    private readonly string[] _items = ["A", "B", "C"];
+
+    [Parameter]
+    public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+}

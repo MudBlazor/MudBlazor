@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor
+@inherits MudBooleanInput<T>
+@typeparam T
+
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <label class="@LabelClassname" id="@_elementId" @onkeydown="HandleKeyDownAsync" @onclick:stopPropagation="@StopClickPropagation">
+            <span class="@IconClassname">
+                @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
+                <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
+                <MudIcon Disabled="@Disabled" Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
+            </span>
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <MudText HtmlTag="span" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
+            }
+            @if (ChildContent is not null)
+            {
+                <MudText HtmlTag="span" aria-hidden="@(AriaLabel is not null)" Color="HasErrors ? Color.Error : Color.Inherit">
+                    @ChildContent
+                </MudText>
+            }
+            @if (AriaLabel is not null)
+            {
+                <span id="@_ariaId" class="mud-sr-only">
+                    @AriaLabel
+                </span>
+            }
+        </label>
+    </InputContent>
+</MudInputControl>

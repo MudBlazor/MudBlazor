@@ -1,0 +1,38 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid Items="@employees" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.YearsEmployed" Title="Years Employed" />
+        <PropertyColumn Property="x => x.Salary" Format="C" />
+        <PropertyColumn Property="x => x.Salary * x.YearsEmployed" Title="Total Earned" Format="C" />
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudRating Size="@Size.Small" SelectedValue="@context.Item.Rating" />
+                    <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">Hire</MudButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Employee(string Name, string Position, int YearsEmployed, int Salary, int Rating);
+    public IEnumerable<Employee> employees;
+
+    protected override void OnInitialized()
+    {
+        employees = new List<Employee>
+        {
+            new Employee("Sam", "CPA", 23, 87_000, 4),
+            new Employee("Alicia", "Product Manager", 11, 143_000, 5),
+            new Employee("Ira", "Developer", 4, 92_000, 3),
+            new Employee("John", "IT Director", 17, 229_000, 4),
+        };
+    }
+}

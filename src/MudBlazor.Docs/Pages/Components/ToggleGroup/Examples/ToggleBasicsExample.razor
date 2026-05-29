@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+        <MudStack Spacing="8" AlignItems="@AlignItems.Center">
+            <MudToggleGroup T="string" @bind-Value="_value1" Vertical="@_vertical" Outlined="@_outlined" Delimiters="@_delimiters" Size="@_size" Color="@_color" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled" Style="width: 20rem">
+                <MudToggleItem Value="@("One")" />
+                <MudToggleItem Value="@("Two")" />
+                <MudToggleItem Value="@("Three")" />
+            </MudToggleGroup>
+
+            <MudToggleGroup T="string" Vertical="@_vertical" Outlined="@_outlined" Delimiters="@_delimiters" Size="@_size" Color="@_color" CheckMark="@_checkMark" FixedContent="@_fixedContent" Disabled="@_disabled">
+                <MudToggleItem Value="@("left")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignLeft" />
+                </MudToggleItem>
+                <MudToggleItem Value="@("center")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignCenter" />
+                </MudToggleItem>
+                <MudToggleItem Value="@("right")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignRight" />
+                </MudToggleItem>
+                <MudToggleItem Value="@("justify")">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatAlignJustify" />
+                </MudToggleItem>
+            </MudToggleGroup>
+        </MudStack>
+    </MudStack>
+
+    <MudDivider />
+
+    <MudStack>
+        <MudSelect @bind-Value="_size" Label="Size">
+            @foreach (var size in Enum.GetValues(typeof(Size)).Cast<Size>())
+            {
+                <MudSelectItem Value="@size">@size</MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudSelect @bind-Value="_color" Label="Color">
+            @foreach (var color in Enum.GetValues(typeof(Color)).Cast<Color>())
+            {
+                <MudSelectItem Value="@color">@color</MudSelectItem>
+            }
+        </MudSelect>
+    </MudStack>
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center">
+        <MudCheckBox @bind-Value="_checkMark" Label="CheckMark" />
+        <MudCheckBox @bind-Value="_fixedContent" Label="FixedContent" />
+        <MudCheckBox @bind-Value="_outlined" Label="Outlined" />
+        <MudCheckBox @bind-Value="_delimiters" Label="Delimiters" />
+        <MudCheckBox @bind-Value="_disabled" Label="Disabled" />
+        <MudCheckBox @bind-Value="_vertical" Label="Vertical" />
+    </MudStack>
+</MudStack>
+
+@code {
+    string _value1;
+    Size _size = Size.Medium;
+    Color _color = Color.Primary;
+    bool _checkMark = false;
+    bool _outlined = true;
+    bool _delimiters = true;
+    bool _fixedContent = false;
+    bool _disabled = false;
+    bool _vertical = false;
+}

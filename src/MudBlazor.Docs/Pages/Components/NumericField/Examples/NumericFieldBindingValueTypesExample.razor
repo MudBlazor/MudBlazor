@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudNumericField @bind-Value="intValue" Label="Enter an int" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="doubleValue" Label="Enter a double" Format="F1" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="nullableInt" Label="Enter an int" Variant="Variant.Outlined" />
+<MudNumericField @bind-Value="nullableDouble" Label="Enter a double" Format="F1" Variant="Variant.Outlined" />
+
+@code { 
+    int intValue;
+    double doubleValue;
+    int? nullableInt;
+    double? nullableDouble;
+}

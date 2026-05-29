@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="250px" Class="py-3" Elevation="0">
+    <MudNavMenu>
+        <MudText Typo="Typo.h6" Class="px-4">My Application</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Secondary Text</MudText>
+        <MudDivider Class="my-2"/>
+        <MudNavLink Href="/dashboard">Dashboard</MudNavLink>
+        <MudNavLink Href="/servers">Servers</MudNavLink>
+        <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
+        <MudNavGroup Title="Settings" Expanded="true">
+            <MudNavLink Href="/users">Users</MudNavLink>
+            <MudNavLink Href="/security">Security</MudNavLink>
+        </MudNavGroup>
+        <MudNavLink Href="/about">About</MudNavLink>
+    </MudNavMenu>
+</MudPaper>

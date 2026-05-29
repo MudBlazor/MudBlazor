@@ -1,0 +1,67 @@
+﻿@*html head (for server prerendering)*@
+<PageTitle>@(GetTitle())</PageTitle>
+<HeadContent>
+    <meta Name="keywords" Content="@GetKeywords()" />
+    <meta Property="og:title" Content="@GetTitle()" />
+    <meta Name="twitter:title" Content="@GetTitle()" />
+    @if (!string.IsNullOrEmpty(SubTitle))
+    {
+        <meta Name="description" Content="@SubTitle" />
+        <meta Property="og:description" Content="@SubTitle" />
+        <meta Name="twitter:description" Content="@SubTitle" />
+    }
+    <link rel="canonical" href="@GetCanonicalUri()" />
+</HeadContent>
+
+@if (SpecialHeaderContent != null)
+{
+    <div class="docs-page-header my-16">
+        @SpecialHeaderContent
+        <DocsRenderBenchmark />
+    </div>
+}
+else
+{
+    <div class="docs-page-header">
+        <MudText Typo="@Typo.h4">@Title</MudText>
+        <ApiText Typo="@Typo.subtitle1" Text="@GetSubTitle()" />
+        <MudText Typo="@Typo.body1">@Description</MudText>
+        <DocsRenderBenchmark />
+    </div>
+}
+
+@if (!IsApi && DocumentedType != null)
+{
+    <DocsPageSection api-link-section>
+        <SectionHeader Title="API" />
+        <div class="docs-page-apilinks">
+            <ul class="my-2">
+                <li>
+                    <MudLink Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
+                        <CodeInline>@($"<{Component}>")</CodeInline>
+                    </MudLink>
+                </li>
+                @if (Example != null && Example.ChildTypes != null)
+                {
+                    @foreach (var childType in Example.ChildTypes)
+                    {
+                        <li>
+                            <MudLink Href="@($"api/{childType.Name.ToLowerInvariant()}")" Class="ms-1">
+                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
+                            </MudLink>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </DocsPageSection>
+}
+@if (IsApi && Example != null)
+{
+    <DocsPageSection api-link-section>
+        <SectionHeader Title="Pages" />
+        <MudAlert Severity="Severity.Info" Class="mt-6">
+            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link.ToLowerInvariant()}")">@Example.Name</MudLink> page.
+        </MudAlert>
+    </DocsPageSection>
+}

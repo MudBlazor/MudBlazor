@@ -1,0 +1,23 @@
+﻿<MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search"></MudTextField>
+<MudTable T="string" Items="_items" @bind-SelectedItem="_selectedItem" Filter="new Func<string, bool>(FilterFunc)">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate> 
+</MudTable>
+
+@code {
+    public static string __description__ = "The table should not be set to IsEditing when a row is clicked and IsEditable is not set.";
+
+    private string? _selectedItem;
+    private string? _searchString;
+    private readonly string[] _items = ["a", "b", "c"];
+
+    private bool FilterFunc(string text)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (text.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

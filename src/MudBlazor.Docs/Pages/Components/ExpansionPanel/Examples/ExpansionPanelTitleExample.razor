@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="mx-auto"  style="max-width: 400px;">
+    <MudExpansionPanels>
+        <MudExpansionPanel>
+            <TitleContent>
+                <div class="d-flex">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" class="mr-3"></MudIcon>
+                    <MudText>Panel header as <strong>RenderFragment</strong></MudText>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                Panel Content
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="The icon of this panel is hidden" HideIcon="true">
+            Panel Content
+        </MudExpansionPanel>
+        <MudExpansionPanel HideIcon="true">
+            <TitleContent>
+                <div class="d-flex">
+                    <MudText Class="mt-1">Inbox</MudText>
+                    <MudBadge Content="3" Color="Color.Primary" Overlap="true" Class="d-flex ml-auto">
+                        <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
+                    </MudBadge>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                Panel Content
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="@open" HideIcon="true">
+            <TitleContent>
+                <div class="d-flex">
+                    <MudText>Overriding standard icon with own icon</MudText>
+                    <MudIcon Icon="@(open ? Icons.Material.Filled.Close : Icons.Material.Filled.Add)" class="ml-auto"></MudIcon>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                Panel Content
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</div>
+
+@code
+{
+    bool open;
+}

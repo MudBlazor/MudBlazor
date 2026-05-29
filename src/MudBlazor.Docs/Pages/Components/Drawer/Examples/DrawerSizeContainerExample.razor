@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Height="200px" Class="mud-theme-primary" Style="overflow:hidden; position:relative;">
+    <MudDrawerContainer Class="mud-height-full">
+        <MudDrawer @bind-Open="@_openStart" Width="150px" Fixed="false" Anchor="Anchor.Start" Elevation="0" Variant="@DrawerVariant.Persistent">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Store">Store</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalLibrary">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Forum">Community</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <MudDrawer @bind-Open="@_openEnd" Width="300px" Fixed="false" Anchor="Anchor.End" Elevation="0" Variant="@DrawerVariant.Persistent">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Settings</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AccountBox">Profile</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ShoppingCart">Orders</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.History">Order History</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <div class="d-flex justify-center align-center mud-height-full">
+            <MudButton Color="Color.Inherit" OnClick="@ToggleStartDrawer" StartIcon="@(Rtl ? Icons.Material.Filled.East : Icons.Material.Filled.West)" Class="mx-2">Toggle start</MudButton>
+            <MudButton Color="Color.Inherit" OnClick="@ToggleEndDrawer" EndIcon="@(Rtl ? Icons.Material.Filled.West : Icons.Material.Filled.East)" Class="mx-2">Toggle end</MudButton>
+        </div>
+    </MudDrawerContainer>
+</MudPaper>
+
+@code
+{
+    private bool _openStart = false;
+    private bool _openEnd = false;
+
+    [CascadingParameter]
+    public bool Rtl { get; set; }
+
+    private void ToggleStartDrawer()
+    {
+        _openStart = !_openStart;
+    }
+
+    private void ToggleEndDrawer()
+    {
+        _openEnd = !_openEnd;
+    } 
+}

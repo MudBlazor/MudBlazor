@@ -1,0 +1,65 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataGrid Items="@Elements.Take(4)" Hover="@_hover" Dense="@_dense" Striped="@_striped" Bordered="@_bordered"
+    RowStyleFunc="@_rowStyleFunc">
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Value="_hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Value="_dense" Color="Color.Secondary">Dense</MudSwitch>
+    <MudSwitch @bind-Value="_striped" Color="Color.Tertiary">Striped</MudSwitch>
+    <MudSwitch @bind-Value="_bordered" Color="Color.Warning">Bordered</MudSwitch>
+</div>
+
+@code {
+    private IEnumerable<Element> Elements = new List<Element>();
+    private bool _hover;
+    private bool _dense;
+    private bool _striped;
+    private bool _bordered;
+    // style the rows where the Element.Position == 0 to have italic text.
+    private Func<Element, int, string> _rowStyleFunc => (x, i) =>
+    {
+        if (x.Position == 0)
+            return "font-style:italic";
+
+        return "";
+    };
+    // style the cells according to the element's physical classification and the molar mass.
+    private Func<Element, string> _cellStyleFunc => x =>
+    {
+        string style = "";
+
+        if (x.Number == 1)
+            style += "background-color:#8CED8C";
+
+        else if (x.Number == 2)
+            style += "background-color:#E5BDE5";
+
+        else if (x.Number == 3)
+            style += "background-color:#EACE5D";
+
+        else if (x.Number == 4)
+            style += "background-color:#F1F165";
+
+        if (x.Molar > 5)
+            style += ";font-weight:bold";
+
+        return style;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}

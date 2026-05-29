@@ -1,0 +1,34 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudInput @bind-Value="TestValue" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="OnTest" Variant="Variant.Filled" Color="Color.Primary" Class="mr-auto">Test</MudButton>
+        <MudButton OnClick="() => MudDialog.Close()">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string? TestValue { get; set; }
+
+    [Parameter]
+    public Color ColorTest { get; set; }
+
+    public int ParametersSetCounter { get; private set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ParametersSetCounter++;
+    }
+
+    private void OnTest()
+    {
+        MudDialog.StateHasChanged();
+        StateHasChanged();
+    }
+}

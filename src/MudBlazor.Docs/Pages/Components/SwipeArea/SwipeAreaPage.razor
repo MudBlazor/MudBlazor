@@ -1,0 +1,62 @@
+﻿@page "/components/swipearea"
+
+<DocsPage>
+    <DocsPageHeader Title="Swipe Area" Component="@nameof(MudSwipeArea)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Swipe directions">
+                <Description>Swipe your finger in different directions to see how the component works (<CodeInline>LeftToRight</CodeInline>, <CodeInline>RightToLeft</CodeInline>, <CodeInline>TopToBottom</CodeInline>, <CodeInline>BottomToTop</CodeInline>).</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsExample)" ShowCode="false">
+                <SwipeDirectionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Real Time Swipe">
+                <Description>You can control the process in real time with the <CodeInline>OnSwipeMove</CodeInline> event. This event uses the <CodeInline>MultiDimensionSwipeEventArgs</CodeInline> parameter instead of SwipeEventArgs for increased precision.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(RealTimeSwipeExample)" ShowCode="false">
+                <RealTimeSwipeExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Prevent default browser behavior">
+                <Description>Browser will not scroll when <CodeInline>PreventDefault</CodeInline> is set to <CodeInline>true</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsPreventDefaultExample)" ShowCode="false">
+                <SwipeDirectionsPreventDefaultExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Drawer Example">
+                <Description>Swipe <CodeInline>LeftToRight</CodeInline>/<CodeInline>RightToLeft</CodeInline> to open and close the drawer.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDrawerExample)" ShowCode="false">
+                <SwipeDrawerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DatePicker Example">
+                <Description>Swipe <CodeInline>LeftToRight</CodeInline>/<CodeInline>RightToLeft</CodeInline> to change months.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDatePickerExample)" ShowCode="false">
+                <SwipeDatePickerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Swipe Box's Drag Example">
+                <Description>Try to drag this Swipe Box!</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeBoxExample)" ShowCode="false">
+                <SwipeBoxExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

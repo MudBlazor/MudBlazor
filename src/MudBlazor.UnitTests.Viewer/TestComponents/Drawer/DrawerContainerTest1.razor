@@ -1,0 +1,17 @@
+﻿<MudDrawerContainer>
+    @if (_isShown)
+    {
+        <MudDrawer Open="true" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Anchor="Anchor.Right"></MudDrawer>
+    }
+</MudDrawerContainer>
+
+<button id="hide-drawer-button" @onclick="@HandleButtonClick">hide</button>
+
+@code {
+    private bool _isShown = true;
+
+    private void HandleButtonClick()
+    {
+        _isShown = false;
+    }
+}

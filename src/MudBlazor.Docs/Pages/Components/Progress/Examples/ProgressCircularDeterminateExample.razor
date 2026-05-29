@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System;
+@using System.Threading;
+
+@implements IDisposable
+
+<MudProgressCircular Color="Color.Default" Value="@Value" />
+<MudProgressCircular Color="Color.Primary" Value="@Value" />
+<MudProgressCircular Color="Color.Secondary" Value="@Value" />
+<MudProgressCircular Color="Color.Success" Value="@Value" />
+<MudProgressCircular Color="Color.Info" Value="@Value" />
+
+@code {
+    private bool _disposed;
+
+    public int Value { get; set; }
+
+    public async Task SimulateProgressAsync()
+    {
+        Value = 0;
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
+            StateHasChanged();
+            await Task.Delay(500);
+
+        } while (Value < 100);
+
+        await SimulateProgressAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
+
+    public void Dispose() => _disposed = true;
+}

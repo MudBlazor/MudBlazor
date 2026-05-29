@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection" CheckMark>
+    <MudChip Value="@("Milk")" />
+    <MudChip Value="@("Eggs")" />
+    <MudChip Value="@("Soap")" />
+    <MudChip Value="@("Cornflakes")" />
+    <MudChip Value="@("Salad")" />
+    <MudChip Value="@("Apples")" />
+    <MudChip Value="@("Red wine")" />
+</MudChipSet>
+
+<div class="d-flex justify-center">
+    @if (_selected is { Count: > 0 })
+    {
+        <MudText>You selected @string.Join(", ", _selected).</MudText>
+    }
+    else
+    {
+        <MudText>Nothing selected.</MudText>
+    }
+</div>
+
+@code
+{
+    private IReadOnlyCollection<string> _selected = ["Milk", "Cornflakes"];
+}
+

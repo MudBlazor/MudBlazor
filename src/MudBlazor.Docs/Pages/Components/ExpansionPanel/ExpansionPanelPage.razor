@@ -1,0 +1,71 @@
+﻿@page "/components/expansionpanels"
+
+<DocsPage>
+    <DocsPageHeader Title="Expansion Panels" Component="@nameof(MudExpansionPanels)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Simple Usage">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelSimpleExample)" ShowCode="false" Block="true" FullWidth="true">
+                <ExpansionPanelSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiple Expanded Panels">
+                <Description>Multiple expansion panels can be opened at the same time by setting <CodeInline>MultiExpansion</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelMultiExample)" Block="true" FullWidth="true">
+                <ExpansionPanelMultiExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Async loading of data">
+                <Description>The panels inner collapsible won't expand until <CodeInline>@nameof(MudExpansionPanel.ExpandedChanged)</CodeInline> has completed, enabling smooth opening of expansion panels even if the data is not loaded when the header is clicked.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelAsyncExample)" ShowCode="false" Block="true" FullWidth="true">
+                <ExpansionPanelAsyncExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Disabled">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelDisabledExample)" Block="true" FullWidth="true">
+                <ExpansionPanelDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Padding">
+                <Description>The padding of the panels can be controlled with <CodeInline>Gutters</CodeInline> and <CodeInline>Dense</CodeInline>. These can be set individually per panel or applied on all panels by setting them on the parent.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelPaddingExample)" Block="true" FullWidth="true">
+                <ExpansionPanelPaddingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Borders">
+                <Description>The <CodeInline>Outlined</CodeInline> property controls the borders around the panel.<br />For a flatter UI design, you might be prefer to set it to <CodeInline>false</CodeInline> along with <CodeInline>Elevation</CodeInline> set to 0.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelOutlinedExample)" Block="true" FullWidth="true">
+                <ExpansionPanelOutlinedExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customizing the Header and Icon">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ExpansionPanelTitleExample)" ShowCode="false" Block="true" FullWidth="true">
+                <ExpansionPanelTitleExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

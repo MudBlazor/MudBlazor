@@ -1,0 +1,28 @@
+﻿<a href="@GetLink()">
+    <MudPaper Outlined="true" Class="pa-2 rounded-lg d-flex flex-column">
+        <MudPaper Elevation="0" Class="rounded-lg docs-gray-bg explore-card" role="img" aria-label="Component visualization">
+            <div class="d-flex justify-center align-center relative pa-8 mud-height-full mud-width-full">
+                @ChildContent
+            </div>
+        </MudPaper>
+        <MudText Typo="Typo.subtitle2" Class="mt-3">@Title</MudText>
+    </MudPaper>
+</a>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Link { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private string GetLink()
+    {
+        if (String.IsNullOrEmpty(Link))
+        {
+            return $"/components/{Title.Replace(" ", "").ToLowerInvariant()}";
+        }
+        else
+        {
+            return Link;
+        }
+    }
+}

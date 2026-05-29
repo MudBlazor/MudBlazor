@@ -1,0 +1,42 @@
+﻿@layout IframeLayout
+@namespace MudBlazor.Docs.Examples
+@page "/iframe/docs/examples/drawer/clipped"
+
+<MudLayout>
+    <MudAppBar Elevation="1" Dense="@_dense">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_open" ClipMode="_clipMode" Elevation="1" Variant="@DrawerVariant.Responsive">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+            <MudSelect Label="Select clip mode" @bind-Value="_clipMode">
+                <MudSelectItem Value="@DrawerClipMode.Never">Not clipped (DrawerClipMode.Never)</MudSelectItem>
+                <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
+                <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
+            </MudSelect>
+            <MudSwitch @bind-Value="_dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+    private bool _open = false;
+    private bool _dense = false;
+    private DrawerClipMode _clipMode = DrawerClipMode.Never;
+
+    private void ToggleDrawer()
+    {
+        _open = !_open;
+    }
+}

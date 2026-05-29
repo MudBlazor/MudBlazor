@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor
+@inherits MudDrawerContainer
+
+<div @attributes="UserAttributes" class="@Classname" style="@Stylename">
+    <CascadingValue IsFixed="true" Value="@this">
+        @ChildContent
+    </CascadingValue>
+</div>

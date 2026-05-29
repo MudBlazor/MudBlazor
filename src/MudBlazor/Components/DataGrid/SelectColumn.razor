@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor
+@inherits TemplateColumn<T>
+@typeparam T
+@using MudBlazor.Resources
+
+@code {
+    public RenderFragment<HeaderContext<T>>? GetSelectHeaderTemplate() => context =>
+    {
+        if (ShowInHeader && context.IsMultiSelection)
+        {
+            return @<MudCheckBox T="bool?"
+                                 Size="@Size"
+                                 Value="@context.IsAllSelected"
+                                 ValueChanged="@context.Actions.SetSelectAllAsync"
+                                 UserAttributes="@GetSelectAllAttributes()" />;
+        }
+
+        return null!;
+    };
+
+    public RenderFragment<CellContext<T>> GetSelectCellTemplate() => context =>
+        @<MudCheckBox T="bool"
+                      Size="@Size"
+                      Value="@context.Selected"
+                      ValueChanged="@context.Actions.SetSelectedItemAsync"
+                      Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)"
+                      AriaLabel="@GetRowCheckboxAriaLabel(context.Item)" />;
+
+    private RenderFragment<FooterContext<T>>? GetSelectFooterTemplate() => context =>
+    {
+        if (ShowInFooter && context.IsMultiSelection)
+        {
+            return @<MudCheckBox T="bool?"
+                                 Size="@Size"
+                                 Value="@context.IsAllSelected"
+                                 ValueChanged="@context.Actions.SetSelectAllAsync"
+                                 UserAttributes="@GetSelectAllAttributes()" />;
+        }
+
+        return null!;
+    };
+}

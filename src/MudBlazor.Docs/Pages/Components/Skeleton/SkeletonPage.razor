@@ -1,0 +1,42 @@
+﻿@page "/components/skeleton"
+
+<DocsPage>
+    <DocsPageHeader Title="Skeleton" Component="@nameof(MudSkeleton)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Variants">
+                <Description>The component can take the shape of 3 different variants.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SkeletonVariantsExample)" Block="true">
+                <SkeletonVariantsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Animations">
+                <Description>The default animation is pulse, but you can disable it or change to wave.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SkeletonAnimationsExample)" Block="true" FullWidth="true">
+                <SkeletonAnimationsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Pulsate Example">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SkeletonPulsateExample)" ShowCode="false" Block="true">
+                <SkeletonPulsateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Wave Example">
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SkeletonWaveExample)" ShowCode="false" Block="true">
+                <SkeletonWaveExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

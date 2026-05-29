@@ -1,0 +1,14 @@
+﻿<MudTable T="int" Items="_items" RowStyleFunc="@((item, index) => item > 1 ? "color: blue" : "color: red")" RowClassFunc="@((item, index) => index % 2 == 0 ? "even" : "odd")">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "The row style and row class should be placed on the row correctly.";
+
+    private readonly int[] _items = [0, 1, 2, 3];
+}

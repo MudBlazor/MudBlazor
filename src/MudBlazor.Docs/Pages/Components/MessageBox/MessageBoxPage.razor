@@ -1,0 +1,71 @@
+﻿@page "/components/messagebox"
+
+<DocsPage>
+    <DocsPageHeader Title="Message Box" Component="@nameof(MudMessageBox)" />
+    <DocsPageContent>
+        
+        <MudAlert Severity="Severity.Info">
+            <MudText>The MessageBox component uses <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline> for its functionality.</MudText>
+            <MudText>Global settings on MudDialogProvider affect all MessageBoxes in your app.</MudText>
+            <MudText>See the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for details on global dialog setup.</MudText>
+        </MudAlert>
+
+        <DocsPageSection>
+            <SectionHeader Title="Message Box">
+                <Description>
+                    The easiest way to show a message box is with <CodeInline>IDialogService.ShowMessageBox</CodeInline>. This method displays a message box and waits for the user's response. You can control which buttons (Yes, No, Cancel) appear and their text. The result is a nullable <CodeInline>bool</CodeInline>: Yes = <CodeInline>true</CodeInline>, No = <CodeInline>false</CodeInline>, Cancel = <CodeInline>null</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxSimpleExample)">
+                <MessageBoxSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Custom Message Box">
+                <Description>
+                    You can inline <CodeInline>MudMessageBox</CodeInline> in Razor to fully customize its appearance using render fragments. For example, you can change the color and icon of the Yes button, or customize the title and message using <CodeInline>TitleContent</CodeInline> and <CodeInline>MessageContent</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxInlineExample)">
+                <MessageBoxInlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiline Message">
+                <Description>
+                    Use <CodeInline>MarkupString</CodeInline> for the message content to support multiline text or basic HTML styling. This is useful for highlighting parts of the message or displaying longer content without creating a custom dialog.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxMarkupContentExample)">
+                <MessageBoxMarkupContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Message Box With DialogOptions">
+                <Description>
+                    Pass custom <CodeInline>DialogOptions</CodeInline> to override default or global settings, such as allowing the message box to close on Escape. This lets you tailor the behavior or appearance for specific message boxes.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxOptionsExample)">
+                <MessageBoxOptionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Button Order">
+                <Description>
+                    By default, MessageBox buttons are rendered in the order: Cancel, No, Yes.
+                    If you want to reverse this order globally across your entire application (Yes, No, Cancel),
+                    you can configure the <CodeInline>ReverseMessageBoxButtonOrder</CodeInline> property on your global <CodeInline>&lt;MudDialogProvider /&gt;</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxConfigurationExample)">
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+

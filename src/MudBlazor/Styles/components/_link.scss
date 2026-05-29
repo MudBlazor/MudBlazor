@@ -1,0 +1,49 @@
+
+.mud-link {
+  &.mud-link-underline-none {
+    text-decoration: none;
+  }
+
+  &.mud-link-underline-hover {
+    text-decoration: none;
+
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &:focus-visible, &:active {
+      text-decoration: underline;
+    }
+  }
+
+  &.mud-link-underline-always {
+    text-decoration: underline;
+  }
+
+  &.mud-link-disabled {
+    cursor: default;
+    color: var(--mud-palette-action-disabled) !important;
+
+    &:not(.mud-link-underline-always) {
+      text-decoration: none;
+    }
+  }
+
+  .mud-link-icon-start,
+  .mud-link-icon-end {
+    &.mud-icon-root {
+      font-size: inherit;
+      vertical-align: middle;
+    }
+  }
+
+  .mud-link-icon-start {
+    margin-inline-end: 4px;
+  }
+
+  .mud-link-icon-end {
+    margin-inline-start: 4px;
+  }
+}

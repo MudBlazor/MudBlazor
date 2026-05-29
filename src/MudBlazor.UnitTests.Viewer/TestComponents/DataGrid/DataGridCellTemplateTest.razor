@@ -1,0 +1,30 @@
+﻿<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Hired">
+            <CellTemplate>
+                @if (context.Item.Hired)
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Check" />
+                }
+            </CellTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("John", 45, false), 
+        new("Johanna", 23, true), 
+        new("Steve", 32, false)
+    };
+
+    public class Model(string name, int age, bool hired)
+    {
+        public string Name { get; set; } = name;
+        public int Age { get; set; } = age;
+        public bool Hired { get; set; } = hired;
+    }
+}

@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+@if (LinkToIndex)
+{
+    <a @attributes="UserAttributes" class="@Classname" style="@Style" href="/">
+        @ChildContent
+    </a>
+}
+else
+{
+    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+        @ChildContent
+    </div>
+}

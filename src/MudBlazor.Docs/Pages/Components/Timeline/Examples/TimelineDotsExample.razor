@@ -1,0 +1,85 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="8" Class="my-auto">
+        <MudTimeline Reverse="true">
+            <MudTimelineItem>
+                <MudText Align="Align.End">Static dot</MudText>
+            </MudTimelineItem>
+            <MudTimelineItem Color="@DotColor" Size="@DotSize" Variant="@DotVariant" Elevation="@DotElevation" HideDot="@HideDot">
+                <ItemDot>
+                    @if(DotConfig == 1)
+                    {
+                        <MudIcon Size="@DotSize" Icon="@Icons.Custom.Brands.MudBlazor"/>
+                    }
+                    else if(DotConfig == 2)
+                    {
+                        <MudAvatar Size="@DotSize">
+                            <MudImage Src="images/mony.jpg" />
+                        </MudAvatar>
+                    }
+                </ItemDot>
+            </MudTimelineItem>
+            <MudTimelineItem>
+                <MudText Align="Align.End">Static dot</MudText>
+            </MudTimelineItem>
+        </MudTimeline>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudPaper Class="pa-4" Elevation="0">
+            <MudText Typo="Typo.h6">Dot Options</MudText>
+            <MudSelect Label="Color" Dense="true" Margin="Margin.Dense" @bind-Value="DotColor" Class="mt-4">
+                <MudSelectItem T="Color" Value="Color.Default">Default</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Primary">Primary</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Secondary">Secondary</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Tertiary">Tertiary</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Info">Info</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Success">Success</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Warning">Warning</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Error">Error</MudSelectItem>
+                <MudSelectItem T="Color" Value="Color.Dark">Dark</MudSelectItem>
+            </MudSelect>
+            <MudSelect Label="Size" Dense="true" Margin="Margin.Dense" @bind-Value="DotSize" Class="mt-4">
+                <MudSelectItem T="Size" Value="Size.Small">Small</MudSelectItem>
+                <MudSelectItem T="Size" Value="Size.Medium">Medium</MudSelectItem>
+                <MudSelectItem T="Size" Value="Size.Large">Large</MudSelectItem>
+            </MudSelect>
+            <MudSelect Label="Variant" Dense="true" Margin="Margin.Dense" @bind-Value="DotVariant" Class="mt-4">
+                <MudSelectItem T="Variant" Value="Variant.Outlined">Outlined</MudSelectItem>
+                <MudSelectItem T="Variant" Value="Variant.Filled">Filled</MudSelectItem>
+            </MudSelect>
+            <MudSlider @bind-Value="DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
+            <MudRadioGroup T="int" ValueChanged="DotConfigChanged">
+                <MudRadio Value="0" Color="Color.Primary">Default</MudRadio>
+                <MudRadio Value="1" Color="Color.Secondary">Icon</MudRadio>
+                <MudRadio Value="2" Color="Color.Tertiary">Avatar</MudRadio>
+                <MudRadio Value="3" Color="Color.Default">Hide</MudRadio>
+            </MudRadioGroup>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+
+@code{
+    public Size DotSize { get; set; } = Size.Medium;
+    public Color DotColor { get; set; } = Color.Primary;
+    public Variant DotVariant { get; set; } = Variant.Outlined;
+    public int DotElevation { get; set; } = 1;
+    public bool HideDot { get; set; }
+    public int DotConfig;
+
+    void DotConfigChanged(int value)
+    {
+        switch(value)
+        {
+            case 3:
+                DotConfig = value;
+                HideDot = true;
+                break;
+            default:
+                DotConfig = value;
+                HideDot = false;
+                break;
+        }
+    }
+}

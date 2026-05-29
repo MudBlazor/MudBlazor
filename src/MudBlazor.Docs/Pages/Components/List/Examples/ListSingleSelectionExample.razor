@@ -1,0 +1,55 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px">
+<MudList T="string" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode" ReadOnly="@ReadOnly" Color="@Color.Info">
+        <MudListSubheader>
+            Your drink:
+        <MudChip Color="@Color.Info">
+            @(SelectedValue ?? "You are dry")
+        </MudChip>
+        </MudListSubheader>
+        <MudListItem Text="Milk" />
+        <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
+        <MudListItem Text="Teas">
+            <NestedList>
+                <MudListItem Text="English Tea" Value='"Earl Grey"' />
+                <MudListItem Text="Chinese Tea" Value='"Gunpowder Tea"' />
+                <MudListItem Text="Bubble Tea" />
+            </NestedList>
+        </MudListItem>
+        <MudListItem Text="Coffees">
+            <NestedList>
+                <MudListItem Text="Irish Coffee" />
+                <MudListItem Text="Double Espresso" />
+                <MudListItem Text="Cafe Latte" />
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>
+
+<MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
+    <MudRadioGroup @bind-Value="SelectionMode">
+        <MudRadio Value="SelectionMode.SingleSelection" Color="Color.Primary">SingleSelection</MudRadio>
+        <MudRadio Value="SelectionMode.ToggleSelection" Color="Color.Primary">ToggleSelection</MudRadio>
+    </MudRadioGroup>
+    <MudChipSet T="string" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode" Color="Color.Info" Variant="Variant.Text">
+        <MudChip Text="Milk" />
+        <MudChip Text="Carbonated H²O" />
+        <MudChip Text="Earl Grey" />
+        <MudChip Text="Gunpowder Tea" />
+        <MudChip Text="Bubble Tea" />
+        <MudChip Text="Irish Coffee" />
+        <MudChip Text="Double Espresso" />
+        <MudChip Text="Cafe Latte" />
+    </MudChipSet>
+    <MudSwitch @bind-Value="ReadOnly" Color="Color.Primary">ReadOnly</MudSwitch>    
+</MudStack>
+
+
+
+@code
+{
+    public string SelectedValue = "Milk";
+    public SelectionMode SelectionMode = SelectionMode.SingleSelection;
+    public bool ReadOnly;
+}

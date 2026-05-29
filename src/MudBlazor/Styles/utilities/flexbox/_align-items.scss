@@ -1,0 +1,25 @@
+﻿@import '../../abstracts/variables';
+
+@mixin align-items ($breakpoint) {
+  .align-#{$breakpoint}start {
+    align-items: flex-start !important;
+  }
+
+  .align-#{$breakpoint}end {
+    align-items: flex-end !important;
+  }
+
+  .align-#{$breakpoint}center {
+    align-items: center !important;
+  }
+
+  .align-#{$breakpoint}baseline {
+    align-items: baseline !important;
+  }
+
+  .align-#{$breakpoint}stretch {
+    align-items: stretch !important;
+  }
+}
+
+@include align-items("");

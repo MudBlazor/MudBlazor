@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @ontransitionend="this.AsNonRenderingEventHandler(AnimationEndAsync)"
+     @attributes="UserAttributes" class="@Classname" style="@Stylename">
+    <div class="mud-collapse-wrapper">
+        <div class="mud-collapse-wrapper-inner">
+            @ChildContent
+        </div>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+﻿@page "/components/image"
+
+<DocsPage>
+    <DocsPageHeader Title="Image" Component="@nameof(MudImage)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    <CodeInline>MudImage</CodeInline> is used to embed an image in an HTML page. Images are not technically inserted into a page, but are linked to a file.<br/>
+                    The component represents the <CodeInline>&#60;img&#62;</CodeInline> tag and creates a holding space for the referenced image.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageUsageExample)">
+                <ImageUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fallback Image">
+                <Description>
+                    If the <CodeInline>Src</CodeInline> image fails to load, the <CodeInline>FallbackSrc</CodeInline> will be loaded.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageFallbackExample)" Block="true">
+                <ImageFallbackExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Size">
+                <Description>Size can be set directly on the image with the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> properties. This can be useful even for responsive images because setting them reserves space before the images load, which helps when pictures take a long time to appear.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageSizeExample)">
+                <ImageSizeExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Responsive Images">
+                <Description>
+                    To get responsive images set the <CodeInline>Fluid</CodeInline> property to true. This applies <CodeInline SecondaryColor="true">max-width: 100%; and height: auto;</CodeInline> so the image scales with the parent's width.<br/>
+                    Resize the example below to see how the image scales with the parent's width.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageResponsiveExample)" Block="true" FullWidth="true">
+                <DocsImagePageResizer>
+                    <ImageResponsiveExample/>
+                </DocsImagePageResizer>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Image Fit">
+                <Description>
+                    Use <CodeInline>ObjectFit</CodeInline> to control how an image should be resized.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageFitExample)" Block="true" ShowCode="false">
+                <ImageFitExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Image Position">
+                <Description>
+                    With the <CodeInline>ObjectPosition</CodeInline> property you can specify how an image should be positioned within its container.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImagePositionExample)" Block="true" ShowCode="false">
+                <ImagePositionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Playground">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImagePlaygroundExample)" ShowCode="false">
+                <ImagePlaygroundExample />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

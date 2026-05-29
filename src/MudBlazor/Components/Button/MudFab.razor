@@ -1,0 +1,27 @@
+﻿@namespace MudBlazor
+@inherits MudBaseButton
+
+<MudElement @bind-Ref="@_elementReference"
+            HtmlTag="@HtmlTag"
+            Class="@Classname"
+            Style="@Style"
+            @attributes="UserAttributes"
+            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+            type="@ButtonType.ToStringFast(true)"
+            href="@Href"
+            target="@Target"
+            rel="@GetRel()"
+            disabled="@GetDisabledState()"
+            ClickPropagation="@GetClickPropagation()">
+    <span class="mud-fab-label">
+        @if (!string.IsNullOrWhiteSpace(StartIcon))
+        {
+            <MudIcon Disabled="@Disabled" Icon="@StartIcon" Color="@IconColor" Size="@IconSize" />
+        }
+        @Label
+        @if (!string.IsNullOrWhiteSpace(EndIcon))
+        {
+            <MudIcon Disabled="@Disabled" Icon="@EndIcon" Color="@IconColor" Size="@IconSize" />
+        }
+    </span>
+</MudElement>

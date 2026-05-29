@@ -1,0 +1,9 @@
+﻿<MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="@("1")" LabelPlacement="Placement.Left" />
+    <MudRadio Value="@("2")" LabelPlacement="Placement.Top" />
+    <MudRadio Value="@("3")" />
+</MudRadioGroup>
+
+@code {
+    public static string __description__ = "Clicking the radios should change the selected radio.";
+}

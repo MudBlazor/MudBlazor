@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Sections
+@inherits MudAppBar
+
+@if (Visible)
+{
+    <SectionContent SectionId="@ContextualActionBar">
+        @ContextualContent
+    </SectionContent>
+}
