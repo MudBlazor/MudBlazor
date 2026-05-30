@@ -51,7 +51,8 @@ public class SplitPanelTests : BunitTest
     {
         Context.Render<SplitPanelTest>();
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel.build");
-        invocation.Arguments.Count.Should().Be(6);
+        invocation.Arguments.Count.Should().Be(7);
+        invocation.Arguments[5].Should().BeNull();
 
         await Context.DisposeComponentsAsync();
         invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_destroy");

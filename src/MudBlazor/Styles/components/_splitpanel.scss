@@ -1,5 +1,6 @@
 .mud-split-panel {
   display: flex;
+  pointer-events: none;
 
   &.absolute {
     position: absolute;
@@ -14,9 +15,11 @@
     flex: 1 1 auto;
     overflow: hidden;
     background-color: var(--mud-palette-surface);
+    pointer-events: auto;
 
     &.transparent {
       background: transparent;
+      pointer-events: none;
     }
   }
 
@@ -24,6 +27,7 @@
     cursor: ew-resize;
     position: relative;
     outline: none;
+    pointer-events: auto;
 
     &.horizontal {
       cursor: n-resize;
