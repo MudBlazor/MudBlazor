@@ -5,7 +5,7 @@
 @inject InternalMudLocalizer Localizer
 
 <tr id="@RowId" class="@Classname" @onclick="@OnRowClickedAsync" @onpointerenter="@RowMouseEnterEventCallback" @onpointerleave="@RowMouseLeaveEventCallback" style="@Style"
-    @attributes="@UserAttributes" aria-disabled="@Disabled">
+    @attributes="@UserAttributes" @oncontextmenu="OnContextMenu" @oncontextmenu:preventDefault="OnContextMenuPreventDefault" aria-disabled="@Disabled">
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@

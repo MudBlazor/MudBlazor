@@ -3218,5 +3218,73 @@ namespace MudBlazor.UnitTests.Components
             row.ClassList.Should().NotContain("mud-table-row-clickable");
             row.ClassList.Should().Contain("mud-table-row-disabled");
         }
+
+        [Test]
+        public async Task MudTd_OnContextMenu_FiresCallbackAndPassesPreventDefault()
+        {
+            var fired = 0;
+            var comp = Context.Render<MudTd>(parameters => parameters
+                .Add(p => p.OnContextMenu, () => { fired++; })
+                .Add(p => p.OnContextMenuPreventDefault, true)
+                .Add(p => p.ChildContent, b => b.AddContent(0, "cell")));
+
+            var td = comp.Find("td");
+            await td.ContextMenuAsync(new MouseEventArgs());
+
+            fired.Should().Be(1);
+            comp.Instance.OnContextMenuPreventDefault.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MudTh_OnContextMenu_FiresCallbackAndPassesPreventDefault()
+        {
+            var fired = 0;
+            var comp = Context.Render<MudTh>(parameters => parameters
+                .Add(p => p.OnContextMenu, () => { fired++; })
+                .Add(p => p.OnContextMenuPreventDefault, true)
+                .Add(p => p.ChildContent, b => b.AddContent(0, "header")));
+
+            var th = comp.Find("th");
+            await th.ContextMenuAsync(new MouseEventArgs());
+
+            fired.Should().Be(1);
+            comp.Instance.OnContextMenuPreventDefault.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MudTr_OnContextMenu_FiresCallbackAndPassesPreventDefault()
+        {
+            var fired = 0;
+            var comp = Context.Render<MudTr>(parameters => parameters
+                .Add(p => p.OnContextMenu, () => { fired++; })
+                .Add(p => p.OnContextMenuPreventDefault, true));
+
+            var tr = comp.Find("tr");
+            await tr.ContextMenuAsync(new MouseEventArgs());
+
+            fired.Should().Be(1);
+            comp.Instance.OnContextMenuPreventDefault.Should().BeTrue();
+        }
+
+        [Test]
+        public void MudTd_OnContextMenuPreventDefault_DefaultsToFalse()
+        {
+            var comp = Context.Render<MudTd>();
+            comp.Instance.OnContextMenuPreventDefault.Should().BeFalse();
+        }
+
+        [Test]
+        public void MudTh_OnContextMenuPreventDefault_DefaultsToFalse()
+        {
+            var comp = Context.Render<MudTh>();
+            comp.Instance.OnContextMenuPreventDefault.Should().BeFalse();
+        }
+
+        [Test]
+        public void MudTr_OnContextMenuPreventDefault_DefaultsToFalse()
+        {
+            var comp = Context.Render<MudTr>();
+            comp.Instance.OnContextMenuPreventDefault.Should().BeFalse();
+        }
     }
 }
