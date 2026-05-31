@@ -131,9 +131,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [NonParallelizable]
         public async Task Select_KeyDown_WhileClosed()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -145,29 +145,29 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //cycle through matching results
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Texas"));
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //multi-string search
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "c", Type = "keydown" }));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "l", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Colorado"));
 
             //paused search
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Iowa"));
 
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Ohio"));
         }
@@ -227,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
             inputs.Count.Should().Be(3);
             inputs[1].GetAttribute("value").Should().Be("Value2");
             await inputs[1].MouseDownAsync();
-            await Task.Delay(500);
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-list-item").Count.Should().BeGreaterThan(0));
             var listItems = comp.FindAll(".mud-list-item");
             foreach (var listItem in listItems)
             {
@@ -413,9 +413,8 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.ReadValue.Should().Be(17);
             select.Instance.ReadText.Should().Be("17");
-            await Task.Delay(100);
             // BUT: we have a select with Strict="true" so the Text will not be shown because it is not in the list of selectable values
-            comp.FindComponent<MudInput<string>>().Instance.ReadValue.Should().Be(null);
+            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudInput<string>>().Instance.ReadValue.Should().Be(null));
             comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
