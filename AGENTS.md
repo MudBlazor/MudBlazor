@@ -1,5 +1,25 @@
 # AGENTS.md - AI Coding Agent Guide for MudBlazor
 
+## Start Here
+
+1. Identify the change type: component, docs, docs example, analyzer, TS/style, asset pipeline, or metadata-only.
+2. Inspect nearby code and tests before editing.
+3. Keep the diff scoped to the affected project or feature.
+4. Use the smallest valid verification loop for the change type.
+5. Run final whitespace formatting only for relevant changed source files.
+6. In the final response, report changed areas, exact verification commands, and any skipped checks.
+
+## Change Type Matrix
+
+| Change type | Common locations | Verification | Notes |
+| --- | --- | --- | --- |
+| Component C#/Razor behavior | `src/MudBlazor`, `src/MudBlazor.UnitTests*` | Filtered `dotnet test` on `MudBlazor.UnitTests.csproj` | Use `/p:SkipBunCompile=true` unless assets are affected. |
+| Component public API | Component, tests, docs | Unit tests plus relevant docs validation | XML docs and `[Category(...)]` are required. |
+| Docs page/example | `src/MudBlazor.Docs*` | Relevant docs build or generated docs tests | Do not edit generated docs tests. |
+| TS/style/assets | `TScripts`, styles, `wwwroot`, asset inputs | Normal scoped build | Do not use `/p:SkipBunCompile=true`. |
+| Analyzer/code fix | `src/MudBlazor.Analyzers*` | Filtered analyzer tests | Keep diagnostics, fixes, and tests aligned. |
+| Metadata/prose only | Root markdown, `.github` text | No `dotnet` verification | Do not run build/test/format for prose-only changes. |
+
 ## Scope and Workflow
 
 ### Keep changes focused
@@ -18,6 +38,14 @@
 - If no code, project, test, docs app, or asset-pipeline inputs changed, do not call `dotnet`. Changes limited to files such as `README.md`, changelog text, issue templates, or other repo metadata do not require restore, build, test, or format.
 - Prefer a single scoped `dotnet build` or `dotnet test` command as the first verification step. Split build and test only when you will reuse the build outputs for multiple test runs.
 - Do not build `src/MudBlazor/MudBlazor.csproj` immediately before testing `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`; the test project already builds `MudBlazor`, `MudBlazor.UnitTests.Shared`, and `MudBlazor.UnitTests.Viewer`.
+
+## Before Editing
+
+- Search for existing patterns before adding helpers, abstractions, or new APIs.
+- For component behavior changes, identify the likely unit test file before editing.
+- For public API changes, identify the docs page and examples that may need updates.
+- For TS, style, or asset changes, check whether `entrypoint.js` or generated assets are affected.
+- If the task is ambiguous and a wrong assumption could cause a broad change, ask a focused clarifying question.
 
 ## Repository Layout
 
@@ -43,6 +71,17 @@
 - Docs: `src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj`, `src/MudBlazor.Docs/MudBlazor.Docs.csproj`, `src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj`, and `src/MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj`
 - Docs tests: `src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj`
 - Analyzers and code fixes: `src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj`, `src/MudBlazor.Analyzers.CodeFixes/MudBlazor.Analyzers.CodeFixes.csproj`, and `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`
+
+### Choose the smallest valid verification loop
+- For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
+- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test --project ... -- --filter ...` run against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
+- For component `.cs` or `.razor` changes that only need compile validation: build `src/MudBlazor/MudBlazor.csproj` with `/p:SkipBunCompile=true`.
+- For `TScripts` or `Styles`: run a normal scoped project build.
+- For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
+- For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
+- For analyzer or code-fix changes: prefer a single filtered `dotnet test --project ... -- --filter ...` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
+- Prefer the narrowest relevant test filter over running an entire test project.
+- Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
 
 ### Restore
 Do not run restore automatically at the start of every session. Reuse existing assets in the working tree.
@@ -111,17 +150,6 @@ If `src/.editorconfig` changed, format the whole `src` tree:
 ```bash
 dotnet format --no-restore
 ```
-
-### Choose the smallest valid verification loop
-- For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
-- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test --project ... -- --filter ...` run against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
-- For component `.cs` or `.razor` changes that only need compile validation: build `src/MudBlazor/MudBlazor.csproj` with `/p:SkipBunCompile=true`.
-- For `TScripts` or `Styles`: run a normal scoped project build.
-- For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
-- For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
-- For analyzer or code-fix changes: prefer a single filtered `dotnet test --project ... -- --filter ...` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
-- Prefer the narrowest relevant test filter over running an entire test project.
-- Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
 
 ## Component Authoring Rules
 
@@ -286,6 +314,35 @@ private Task ToggleAsync()
 - Comments should usually explain why a decision exists, not restate what the code already shows or describe straightforward mechanics.
 - Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
 
+## When Verification Fails
+
+- If `--no-restore` fails because assets are missing or stale, run the scoped restore for the project being verified.
+- If a filtered test fails, inspect the failure and rerun the narrowest relevant filter after changes.
+- Do not broaden to solution-wide build or test unless explicitly requested.
+- Do not use `dotnet clean` unless incremental outputs are clearly stale or corrupted.
+- Do not suppress warnings introduced by the change.
+- If verification cannot be completed, report the exact command, failure reason, and next recommended step.
+
+## Common Agent Mistakes To Avoid
+
+- Do not run solution-wide commands for routine validation.
+- Do not build `MudBlazor.csproj` immediately before testing `MudBlazor.UnitTests.csproj`.
+- Do not use `/p:SkipBunCompile=true` for TS, style, `package.json`, `bun.lock`, or asset-pipeline changes.
+- Do not edit generated docs tests.
+- Do not cache bUnit `Find()` or `FindAll()` results across interactions.
+- Do not add public component parameters without XML docs and `[Category(...)]`.
+- Do not add viewer test components when direct bUnit markup is enough.
+
+## Final Response Requirements
+
+When finishing a task, include:
+
+- What changed.
+- Exact verification commands run.
+- Whether formatting was run.
+- Any skipped verification and the reason.
+- Follow-up work intentionally left out of scope.
+
 ## Change Checklist
 
 Before finishing, verify all of the following:
@@ -294,3 +351,15 @@ Before finishing, verify all of the following:
 - Tests were updated and run when behavior changed.
 - Docs were updated when component behavior or public API changed.
 - No new dependencies were added without approval.
+
+## Maintaining This File
+
+When review feedback identifies a repeated agent mistake, update this file with one of:
+
+- a routing rule,
+- a concrete example,
+- a verification command,
+- a common mistake entry,
+- or a final-response expectation.
+
+Prefer concise, enforceable guidance over broad advice. If a rule becomes stable and frequently violated, consider promoting it to an analyzer, script, or CI check.
