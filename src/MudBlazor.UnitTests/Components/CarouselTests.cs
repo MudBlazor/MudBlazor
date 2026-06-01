@@ -10,14 +10,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class CarouselTests : BunitTest
     {
-        private FakeTimeProvider _timeProvider;
-
-        [SetUp]
-        public void CarouselSetUp()
-        {
-            _timeProvider = Context.AddFakeTimeProvider();
-        }
-
         /// <summary>
         /// Default Carousel, with three pages.
         /// Testing if selection is sync with move commands.
@@ -180,6 +172,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Carousel_AutoCycle()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
             // adding some pages
@@ -194,13 +187,13 @@ namespace MudBlazor.UnitTests.Components
             for (var interval = 150; interval <= 300; interval += 150)
             {
                 await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval)));
-                await comp.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
+                await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
                 comp.Instance.SelectedIndex.Should().Be(1);
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-                await comp.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
+                await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
                 comp.Instance.SelectedIndex.Should().Be(2);
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-                await comp.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
+                await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
                 comp.Instance.SelectedIndex.Should().Be(0);
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
             }
