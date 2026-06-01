@@ -1,6 +1,7 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.Carousel;
 using NUnit.Framework;
 
@@ -9,6 +10,14 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class CarouselTests : BunitTest
     {
+        private FakeTimeProvider _timeProvider;
+
+        [SetUp]
+        public void CarouselSetUp()
+        {
+            _timeProvider = Context.AddFakeTimeProvider();
+        }
+
         /// <summary>
         /// Default Carousel, with three pages.
         /// Testing if selection is sync with move commands.
@@ -185,14 +194,14 @@ namespace MudBlazor.UnitTests.Components
             for (var interval = 150; interval <= 300; interval += 150)
             {
                 await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval)));
-                await Task.Delay(interval);
-                await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
+                await comp.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
+                comp.Instance.SelectedIndex.Should().Be(1);
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-                await Task.Delay(interval);
-                await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(3000));
+                await comp.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
+                comp.Instance.SelectedIndex.Should().Be(2);
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-                await Task.Delay(interval);
-                await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(3000));
+                await comp.InvokeAsync(() => _timeProvider.Advance(TimeSpan.FromMilliseconds(interval)));
+                comp.Instance.SelectedIndex.Should().Be(0);
                 comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
             }
         }
