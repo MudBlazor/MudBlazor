@@ -27,11 +27,6 @@ namespace MudBlazor
                 .AddClass("mud-direction-desc", _direction == SortDirection.Descending)
                 .Build();
 
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle(Style)
-                .Build();
-
         /// <summary>
         /// The current state of the <see cref="MudTable{T}"/> containing this sort label.
         /// </summary>
