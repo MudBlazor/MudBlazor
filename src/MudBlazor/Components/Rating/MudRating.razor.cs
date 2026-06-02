@@ -220,11 +220,14 @@ namespace MudBlazor
         }
 
         internal Task HandleItemHoveredAsync(int? itemValue)
-    {
-        if (ReadOnly || Disabled)
-            return Task.CompletedTask;
-        return SetHoveredValueAsync(itemValue);
-    }
+        {
+            if (ReadOnly || Disabled)
+            {
+                return Task.CompletedTask;
+            }
+
+            return SetHoveredValueAsync(itemValue);
+        }
 
         private async Task IncreaseValueAsync(int val)
         {
