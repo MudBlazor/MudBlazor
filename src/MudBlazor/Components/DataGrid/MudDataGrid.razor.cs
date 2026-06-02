@@ -1139,7 +1139,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
