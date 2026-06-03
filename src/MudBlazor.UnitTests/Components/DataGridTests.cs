@@ -3118,11 +3118,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task DataGridColumnPopupFilteringEscapeOnPopupWrapperClosesFilter()
         {
             var comp = Context.Render<DataGridColumnPopupFilteringTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
 
             await comp.Find(".filter-button").ClickAsync();
 
-            comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            });
 
             var popupWrapper = comp.Find(".column-filter-popup").QuerySelector("div");
             popupWrapper.Should().NotBeNull();
@@ -3132,6 +3134,12 @@ namespace MudBlazor.UnitTests.Components
                 Key = "Escape",
                 Type = "keydown"
             });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().BeEmpty();
+            });
+
         }
 
         [Test]
