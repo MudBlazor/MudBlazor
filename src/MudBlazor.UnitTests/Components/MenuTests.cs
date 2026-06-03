@@ -170,7 +170,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Enter opens the menu (after a delay).
             comp.Find("div.mud-menu").PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay + 100));
+            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay + 100)));
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Clicking the button should close the menu.
