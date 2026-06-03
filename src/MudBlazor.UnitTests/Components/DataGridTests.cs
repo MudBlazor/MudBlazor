@@ -2980,6 +2980,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_OpenFilters_FromHeaderFilterButton_SetsAutoFocusOnMatchingFilter()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            var ageColumn = dataGrid.Instance.GetColumnByPropertyName("Age");
+
+            await comp.InvokeAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFiltersTest.Model>
+                {
+                    Id = Guid.NewGuid(),
+                    Column = nameColumn,
+                    Operator = FilterOperator.String.Contains,
+                    Value = "Sam"
+                });
+                dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFiltersTest.Model>
+                {
+                    Id = Guid.NewGuid(),
+                    Column = ageColumn,
+                    Operator = FilterOperator.Number.GreaterThan,
+                    Value = 30
+                });
+            });
+
+            var ageHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()
+                .First(x => x.Instance.Column?.PropertyName == "Age");
+
+            await comp.InvokeAsync(() => ageHeaderCell.Instance.OpenFilters(new MouseEventArgs
+            {
+                PageX = 100,
+                PageY = 200
+            }));
+
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(2);
+
+            var filterFieldSelects = comp.FindComponents<MudSelect<Column<DataGridFiltersTest.Model>>>()
+                .Where(x => x.Instance.Class == "filter-field")
+                .ToArray();
+
+            filterFieldSelects.Should().HaveCount(2);
+            filterFieldSelects.Count(x => x.Instance.AutoFocus).Should().Be(1);
+            filterFieldSelects[0].Instance.AutoFocus.Should().BeFalse();
+            filterFieldSelects[1].Instance.AutoFocus.Should().BeTrue();
+        }
+
+        [Test]
         public async Task DataGridCloseFilters()
         {
             var comp = Context.Render<DataGridFiltersTest>();

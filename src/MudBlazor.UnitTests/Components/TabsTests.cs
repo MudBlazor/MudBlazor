@@ -181,6 +181,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-tabs-tabbar").ClassList.Should().Contain(new[] { "testA", "testB" });
         }
 
+        [TestCase(128, 99, "99+")]
+        [TestCase(128, 999, "128")]
+        public void TabPanelBadgeMaxControlsIntegerBadgeData(int badgeData, int badgeMax, string expectedBadgeText)
+        {
+            var comp = Context.Render<MudTabs>(parameters => parameters
+                .AddChildContent<MudTabPanel>(panel => panel
+                    .Add(x => x.Text, "Bugs")
+                    .Add(x => x.BadgeData, badgeData)
+                    .Add(x => x.BadgeMax, badgeMax)
+                )
+            );
+
+            comp.Find(".mud-badge").TrimmedText().Should().Be(expectedBadgeText);
+        }
+
         [Test]
         public async Task ScrollToItem_NoScrollingNeeded()
         {

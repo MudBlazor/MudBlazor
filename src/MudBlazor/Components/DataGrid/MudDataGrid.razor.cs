@@ -49,6 +49,7 @@ namespace MudBlazor
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private (double Top, double Left) _filtersMenuPosition = (0, 0);
         private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -1139,7 +1140,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
@@ -1975,6 +1977,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2496,6 +2499,12 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            OpenFilters(FilterDefinitions.FirstOrDefault()?.Id);
+        }
+
+        internal void OpenFilters(Guid? filterDefinitionIdToFocus)
+        {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
