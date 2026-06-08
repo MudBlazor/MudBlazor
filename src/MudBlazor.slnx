@@ -10,6 +10,7 @@
     <Project Path="MudBlazor.Docs.WasmHost/MudBlazor.Docs.WasmHost.csproj" />
     <Project Path="MudBlazor.Docs/MudBlazor.Docs.csproj" />
     <Project Path="MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
+    <Project Path="MudBlazor.Examples.DataGridState/MudBlazor.Examples.DataGridState.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

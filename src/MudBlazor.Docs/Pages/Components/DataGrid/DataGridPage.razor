@@ -505,6 +505,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Save And Restore State">
+                <Description>
+                    Use <CodeInline>GetState</CodeInline> and <CodeInline>SetStateAsync</CodeInline> to capture and restore filters, sorting, paging, grouping, and selected rows.
+                    Selection is persisted through item keys supplied by your application.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridStateSaveRestoreExample)" Block="true" FullWidth="true">
+                <DataGridStateSaveRestoreExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Other Options">
                 <Description>
                     There are many options available for the <CodeInline>&lt;MudDataGrid></CodeInline> that are not covered in the examples above.
