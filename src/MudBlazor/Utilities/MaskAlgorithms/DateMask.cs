@@ -49,6 +49,18 @@ public partial class DateMask : PatternMask
     }
 
     /// <inheritdoc />
+    public override void Insert(string? input)
+    {
+        // _year and _month may still hold values from a previous text, for instance after SetText
+        // replaced the text entirely. Reset them so day validation only uses what is re-extracted
+        // from the current text during alignment, otherwise a valid day like 31 could be clamped
+        // or padded based on the previous month (#10772).
+        _year = 0;
+        _month = 0;
+        base.Insert(input);
+    }
+
+    /// <inheritdoc />
     protected override void ModifyPartiallyAlignedMask(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
     {
         if (alignedText.IsEmpty())
