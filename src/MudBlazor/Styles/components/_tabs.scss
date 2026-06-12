@@ -122,6 +122,14 @@
   position: relative;
   transition: .3s cubic-bezier(.25,.8,.5,1);
 
+  > .mud-tab-panel {
+    display: none;
+
+    &.mud-tab-panel-active:not(.mud-tab-panel-hidden) {
+      display: contents;
+    }
+  }
+
   &.mud-tabs-vertical {
     display: flex;
     flex-grow: 1;
