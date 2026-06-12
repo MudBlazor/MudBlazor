@@ -141,8 +141,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
-            // no child divs in div.mud-tabs-panels
+            // only the active panel wrapper should be rendered, matching the KeepPanelsAlive layout behavior
             comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(1);
+            comp.Find("div.mud-tabs-panels > div").GetAttribute("style").Should().Be("display:contents;");
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             await comp.FindAll("button")[0].ClickAsync();
@@ -153,6 +154,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
+            comp.Find("div.mud-tabs-panels > div").GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
             // click the button twice
             await comp.FindAll("button")[0].ClickAsync();
@@ -161,10 +163,12 @@ namespace MudBlazor.UnitTests.Components
             // switch to the third tab:
             await comp.FindAll("div.mud-tab")[2].ClickAsync();
             // second panel should be displayed
+            comp.Find("div.mud-tabs-panels > div").GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // switch back to the first tab:
             await comp.FindAll("div.mud-tab")[0].ClickAsync();
+            comp.Find("div.mud-tabs-panels > div").GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             await comp.FindAll("button")[0].ClickAsync();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");

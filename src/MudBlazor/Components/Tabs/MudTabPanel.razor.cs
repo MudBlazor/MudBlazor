@@ -18,7 +18,7 @@ public partial class MudTabPanel : MudComponentBase
 
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("display", Parent?.ActivePanel == this ? "contents" : "none", Parent?.KeepPanelsAlive == true)
+            .AddStyle("display", Parent?.ActivePanel == this ? "contents" : "none")
             .AddStyle(Style)
             .Build();
 
