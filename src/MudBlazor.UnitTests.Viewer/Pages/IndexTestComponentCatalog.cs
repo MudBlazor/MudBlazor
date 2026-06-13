@@ -19,12 +19,12 @@ internal static class IndexTestComponentCatalog
         }
     }
 
-    public static TestEntry CreateEntry(Type type)
+    public static TestViewerEntry CreateEntry(Type type)
     {
         var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
         var description = GetDescriptionOrNull(type);
         var filePath = GetFilePath(type);
-        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath);
+        return new TestViewerEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath);
     }
 
     public static string GetFilePath(Type type)
@@ -54,4 +54,4 @@ internal static class IndexTestComponentCatalog
     }
 }
 
-internal sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath);
+internal sealed record TestViewerEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath);

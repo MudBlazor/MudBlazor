@@ -16,10 +16,10 @@ public partial class Index : IDisposable
     private Type? _selectedType;
     private bool _drawerOpen = true;
     private string _searchText = string.Empty;
-    private TestEntry[] _entries = [];
-    private TestEntry[] _filteredEntries = [];
+    private TestViewerEntry[] _entries = [];
+    private TestViewerEntry[] _filteredEntries = [];
     private Type[] _availableComponentTypes = [];
-    private Dictionary<Type, TestEntry> _entryByType = [];
+    private Dictionary<Type, TestViewerEntry> _entryByType = [];
     private int _remainingResultsCount;
     private bool _showAllResults;
     private CancellationTokenSource? _searchCts;
@@ -210,7 +210,7 @@ public partial class Index : IDisposable
         StartSearch();
     }
 
-    private string GetEntryClass(TestEntry entry)
+    private string GetEntryClass(TestViewerEntry entry)
     {
         if (_selectedType == entry.Type)
         {
