@@ -1,0 +1,96 @@
+.test-viewer-drawer {
+    overflow: hidden;
+}
+
+.test-viewer-drawer-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 4px;
+}
+
+.test-viewer-sidebar-header {
+    padding: 0 16px 0 16px;
+    display: flex;
+    align-items: center;
+}
+
+.test-viewer-results {
+    flex: 1;
+    overflow: auto;
+    scrollbar-width: none;
+}
+
+.test-viewer-results::-webkit-scrollbar {
+    display: none;
+}
+
+.test-viewer-result-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px;
+    text-align: start;
+}
+
+.test-viewer-entry-name {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.test-viewer-entry-category {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: end;
+}
+
+.test-viewer-show-all {
+    padding: 10px 12px 6px 12px;
+}
+
+.test-viewer-entry {
+    justify-content: flex-start;
+    border-radius: var(--mud-default-borderradius);
+    text-transform: none;
+}
+
+.test-viewer-entry:hover {
+    background: var(--mud-palette-action-default-hover);
+}
+
+.test-viewer-entry.test-viewer-entry-selected {
+    background: var(--mud-palette-primary-hover);
+    color: var(--mud-palette-primary);
+}
+
+.test-viewer-main {
+    padding: 0 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100vh;
+}
+
+.test-viewer-header {
+    padding: 16px 4px 0 4px;
+}
+
+.test-viewer-surface {
+    flex: 1;
+    overflow: auto;
+}
+
+.test-viewer-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.test-viewer-path {
+    font-family: monospace;
+    opacity: 0.6;
+}
