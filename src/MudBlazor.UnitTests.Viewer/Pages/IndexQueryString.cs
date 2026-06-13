@@ -1,4 +1,4 @@
-namespace MudBlazor.UnitTests.Pages;
+﻿namespace MudBlazor.UnitTests.Pages;
 
 internal static class IndexQueryString
 {

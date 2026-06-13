@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -7,10 +7,10 @@ namespace MudBlazor.UnitTests.Pages;
 public partial class Index : IDisposable
 {
     [Inject]
-    public NavigationManager NavManager { get; set; } = null!;
+    private NavigationManager NavManager { get; set; } = null!;
 
     [Inject]
-    public ISearchService SearchService { get; set; } = null!;
+    private ISearchService SearchService { get; set; } = null!;
 
     private bool _rightToLeft;
     private Type? _selectedType;
