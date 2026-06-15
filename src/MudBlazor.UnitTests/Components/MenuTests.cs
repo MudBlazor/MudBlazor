@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
             // Leave the list shouldn't change anything.
-            comp.Find("[data-testid='menu-wrapper']").PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
+            comp.Find("[data-testid='menu-wrapper']").PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
             await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay + 100)));
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
 
