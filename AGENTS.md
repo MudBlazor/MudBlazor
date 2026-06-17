@@ -272,11 +272,11 @@ private Task ToggleAsync()
 - Run the narrowest relevant test filter first.
 - Test logic rather than full HTML snapshots.
 - Prefer a fail-first workflow: add or update the test to fail for the target behavior before implementing the fix.
-- Keep tests isolated so they can run in parallel.
+- Keep tests isolated so they can run in parallel. The suite runs fixtures in parallel (`[assembly: Parallelizable(ParallelScope.Fixtures)]`) with a fresh fixture instance per test (`InstancePerTestCase`). Do not switch the assembly to `ParallelScope.All`: bUnit's renderer requires the test code and render code to share a thread (memory-coherence locking, see bUnit#124), so parallelizing tests *within* a fixture is unsafe. Get throughput from independent fixtures, not from intra-fixture parallelism.
 - Async tests and async helpers must return `Task`, not `async void`.
 - Do not add mutable static state in tests or viewer test components.
 - If a test modifies shared or static state, restore it in `[TearDown]` and keep `[NonParallelizable]` until the shared-state dependency is removed.
-- Use `[NonParallelizable]` only when isolation is not feasible, and document the shared resource it protects.
+- Use `[NonParallelizable]` only when isolation is not feasible, and document the shared resource it protects. Before removing an existing `[NonParallelizable]`, prove the fixture is parallel-safe by running the suite repeatedly under heavy parallel load — bUnit renderer timing under fake time is a common hidden dependency that only surfaces under concurrency.
 - Prefer fixed test data. Use random data only when randomness is the behavior under test or when the random source is seeded per test.
 - Prefer passing explicit culture into APIs or components. If a test must mutate culture, restore it and keep the test nonparallel until the mutation is removed.
 - Tests must not add fixed sleeps, sync-over-async waits, polling waits, local wall-clock hang guards, or fire-and-forget async behavior. Disallowed patterns include `Task.Delay` as a sleep, `Thread.Sleep`, blocking `Task`/`ValueTask` `.Wait()` or `.Result`, `GetAwaiter().GetResult()`, `WaitAsync(TimeSpan)`, `Task.WhenAny(..., Task.Delay(...))`, and `CatchAndLog` to drive assertions. Domain properties named `Result` are allowed. Use fake time, direct awaits, `TaskCompletionSource` gates, bUnit renderer waits, and framework-level cancellation instead.
