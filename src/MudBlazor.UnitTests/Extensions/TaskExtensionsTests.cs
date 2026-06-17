@@ -64,6 +64,18 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
+        public void UnhandledExceptionHandler_ShouldFallBackToDefaultWhenUnset()
+        {
+            // No handler is set in this flow, so the getter resolves to the default console handler.
+            var handler = MudGlobal.UnhandledExceptionHandler;
+            handler.Should().NotBeNull();
+
+            // The default handler writes the exception to the console and must not throw.
+            var invokeDefault = () => handler.Invoke(new InvalidOperationException("default handler smoke test"));
+            invokeDefault.Should().NotThrow();
+        }
+
+        [Test]
         [CancelAfter(5000)]
         public async Task CatchAndLog_ShouldUseHandlerFromCurrentAsyncFlow()
         {
