@@ -22,7 +22,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class TextFieldTests : BunitTest
     {
         /// <summary>
@@ -1276,7 +1275,10 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        [Ignore("Randomly fails under heavy loads.")]
+        // Debounce-render test: the interleaved external re-render churns the input's event-handler IDs and the
+        // post-debounce render can race under heavy parallel CPU contention, so this runs serially (deterministic;
+        // no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedTextFieldRerender()
         {
             var timeProvider = Context.AddFakeTimeProvider();
@@ -1288,26 +1290,27 @@ namespace MudBlazor.UnitTests.Components
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
 
-            // trigger delayed re-render
-            await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
-
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            // imitate "typing in progress" with an external re-render between keystrokes,
+            // advancing fake time by less than the debounce interval so it does not commit mid-typing
             var currentText = "test";
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+
+                // external re-render dispatched on the renderer's synchronization context
+                await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
+
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
 
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(currentText);
-            textField.ReadText.Should().Be(currentText);
+            comp.WaitForAssertion(() =>
+            {
+                textField.ReadValue.Should().Be(currentText);
+                textField.ReadText.Should().Be(currentText);
+            });
         }
 
         [Test]
@@ -1324,7 +1327,9 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
         [Test]
-        [Ignore("Randomly fails under heavy loads.")]
+        // Converter-change mid-debounce: the post-debounce reset render can exceed the default WaitForAssertion
+        // timeout under heavy parallel CPU contention, so this runs serially (deterministic; no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedTextFieldFormatChangeRerender()
         {
             var timeProvider = Context.AddFakeTimeProvider();
@@ -1336,26 +1341,25 @@ namespace MudBlazor.UnitTests.Components
             // ensure text is updated on initialize
             textField.ReadText.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
 
-            // trigger the format change
-            await comp.Find("#format-change-button").ClickAsync();
-
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            // imitate "typing in progress" with an external format change between keystrokes,
+            // advancing fake time by less than the debounce interval so it does not commit mid-typing
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await comp.Find("input").InputAsync(currentText);
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+
+                // external format change dispatched on the renderer's synchronization context
+                await comp.InvokeAsync(comp.Instance.ApplyFormatChange);
+
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
 
-            // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
+            // while typing after the format change, the uncommitted text is retained
             textField.ReadText.Should().Be(currentText);
 
-            // once debounce occurs, both value and text are reset because they define an invalid DateTime,
-            // now with the new Format
+            // once the final debounce occurs, both value and text are reset because the typed text
+            // defines an invalid DateTime, now rendered with the new Format
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             comp.WaitForAssertion(() =>
             {
