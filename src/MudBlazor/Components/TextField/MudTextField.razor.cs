@@ -289,6 +289,29 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
+        private async Task OnInnerValueChangedAsync(string? text)
+        {
+            var valueBefore = ReadValue;
+            await SetTextAndUpdateValueAsync(text);
+
+            // When the entered text parses to the SAME Value, SetValueAndUpdateTextAsync returns early and
+            // the value->text round-trip that MudTextField relies on for formatting never runs, so a
+            // Converter or Format is not re-applied and the raw text is left on screen (#13096). Only in
+            // that value-unchanged case, resync the displayed text to the value's formatted representation.
+            // Gated to committed changes (not live oninput typing, not while debouncing) so we never
+            // reformat mid-keystroke and jump the caret, matching MudNumericField.
+            if (!Immediate && DebounceInterval <= 0 && !ConversionError && !HasMask
+                && EqualityComparer<T?>.Default.Equals(valueBefore, ReadValue))
+            {
+                var formatted = ConvertSet(ReadValue);
+                if (!string.Equals(ReadText, formatted, StringComparison.Ordinal))
+                {
+                    await SetTextCoreAsync(formatted);
+                    await InputReference.SetText(formatted, updateValue: false);
+                }
+            }
+        }
+
         private Task OnMaskedValueChangedAsync(string s) => SetTextAndUpdateValueAsync(s);
 
         private string GetCounterText() => Counter switch

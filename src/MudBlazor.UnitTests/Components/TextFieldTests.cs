@@ -376,6 +376,43 @@ namespace MudBlazor.UnitTests.Components
             textfield.ReadText.Should().Be("B");
         }
 
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Converter case).
+        /// Entering text that parses to the same Value a second time must still re-apply the converter's
+        /// formatting, not leave the raw text. Previously the unchanged value short-circuited the
+        /// value->text round-trip, so only the first occurrence of a value formatted.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithConverter_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueConverterTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+
+            // Re-enter the same raw value: it parses to the same Value, but the display must still reformat.
+            await comp.Find("input").ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Format case).
+        /// Re-entering a raw value that parses to the same number must still re-apply the Format.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithFormat_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueFormatTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+
+            await comp.Find("input").ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+        }
+
         [Test]
         public void TextField_Should_FireValueChangedOnTextParameterChange()
         {
