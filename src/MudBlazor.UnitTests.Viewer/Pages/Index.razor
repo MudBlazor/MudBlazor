@@ -55,18 +55,23 @@
 
         <MudMainContent Class="test-viewer-main">
             <div class="test-viewer-header">
-                @if (_selectedType is null)
-                {
-                    <MudText Typo="Typo.h6">No test selected</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
-                }
-                else
+                @if (_selectedType is not null)
                 {
                     <div class="test-viewer-title-row">
                         <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
                         <MudText Typo="Typo.body2" Class="mud-text-secondary test-viewer-path">@GetFilePathForDisplay(_selectedType)</MudText>
                     </div>
                     <MudText Typo="Typo.body2" Class="mud-text-secondary">@GetDescriptionForDisplay(_selectedType)</MudText>
+                }
+                else if (_notFoundComponent is not null)
+                {
+                    <MudText Typo="Typo.h6">Component not found</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Nothing is registered for that path or name.</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">No test selected</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
                 }
             </div>
 
@@ -75,8 +80,45 @@
                 {
                     @* Prevent double popovers! *@
                     <CascadingValue Name="UsePopoverProvider" Value="false" IsFixed="true">
-                        @TestComponent()
+                        @* Keyed by the selected type so switching components starts a fresh, non-errored boundary. *@
+                        <ErrorBoundary @key="_selectedType">
+                            <ChildContent>
+                                @TestComponent()
+                            </ChildContent>
+                            <ErrorContent Context="exception">
+                                <div class="test-viewer-error" data-viewer-state="error">
+                                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                                        @GetTitleForDisplay(_selectedType) threw @exception.GetType().Name
+                                    </MudAlert>
+                                    <pre class="test-viewer-error-detail">@exception.ToString()</pre>
+                                </div>
+                            </ErrorContent>
+                        </ErrorBoundary>
                     </CascadingValue>
+                }
+                else if (_notFoundComponent is not null)
+                {
+                    <div class="test-viewer-notfound" data-viewer-state="not-found">
+                        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                            No test component matches <code>@_notFoundComponent</code>.
+                        </MudAlert>
+                        @{
+                            var suggestions = GetSuggestions(_notFoundComponent);
+                        }
+                        @if (suggestions.Count > 0)
+                        {
+                            <MudText Typo="Typo.body2" Class="mud-text-secondary">Did you mean:</MudText>
+                            <div class="test-viewer-notfound-suggestions">
+                                @foreach (var suggestion in suggestions)
+                                {
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" Class="test-viewer-entry"
+                                               OnClick="() => Select(suggestion.Type)">
+                                        @suggestion.FilePath
+                                    </MudButton>
+                                }
+                            </div>
+                        }
+                    </div>
                 }
             </div>
         </MudMainContent>
@@ -179,12 +221,39 @@
         font-family: monospace;
         opacity: 0.6;
     }
+
+    .test-viewer-error,
+    .test-viewer-notfound {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 900px;
+    }
+
+    .test-viewer-error-detail {
+        margin: 0;
+        padding: 12px;
+        border-radius: var(--mud-default-borderradius);
+        background: var(--mud-palette-background-grey);
+        color: var(--mud-palette-text-primary);
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.8rem;
+    }
+
+    .test-viewer-notfound-suggestions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 </style>
 
 @code {
 
     private bool _rightToLeft;
     private Type? _selectedType;
+    private string? _notFoundComponent;
     private bool _drawerOpen = true;
     private string _searchText = string.Empty;
     private TestEntry[] _entries = [];
@@ -261,39 +330,54 @@
 
     private void ParseQueryString()
     {
-        var uri = new Uri(NavManager.Uri);
-        var query = uri.Query;
+        var query = new Uri(NavManager.Uri).Query;
+        var requested = GetQueryValue(query, "component");
 
-        if (string.IsNullOrEmpty(query))
+        if (string.IsNullOrEmpty(requested))
+        {
+            // No component requested: keep any existing selection, clear a stale not-found.
+            _notFoundComponent = null;
             return;
+        }
+
+        var componentType = _availableComponentTypes.FirstOrDefault(t =>
+            t.Name.Equals(requested, StringComparison.OrdinalIgnoreCase));
+
+        if (componentType is not null)
+        {
+            _selectedType = componentType;
+            _notFoundComponent = null;
+        }
+        else
+        {
+            // Requested explicitly but nothing matches: show a distinct error, not the empty state.
+            _selectedType = null;
+            _notFoundComponent = requested;
+        }
+    }
+
+    private static string? GetQueryValue(string query, string key)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
+            return null;
+        }
 
         if (query.StartsWith('?'))
-            query = query.Substring(1);
-
-        var queryParams = query.Split('&');
-
-        foreach (var param in queryParams)
         {
-            var parts = param.Split('=');
-            if (parts.Length == 2)
+            query = query.Substring(1);
+        }
+
+        foreach (var param in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = param.Split('=', 2);
+            if (parts.Length == 2 && string.Equals(parts[0], key, StringComparison.OrdinalIgnoreCase))
             {
-                var key = parts[0];
-                var value = Uri.UnescapeDataString(parts[1]);
-
-                if (string.Equals(key, "component", StringComparison.OrdinalIgnoreCase))
-                {
-                    var componentType = _availableComponentTypes.FirstOrDefault(t =>
-                        t.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
-
-                    if (componentType != null)
-                    {
-                        _selectedType = componentType;
-                        StateHasChanged();
-                        break;
-                    }
-                }
+                return Uri.UnescapeDataString(parts[1]);
             }
         }
+
+        return null;
     }
 
     private void Select(Type componentType)
@@ -304,6 +388,7 @@
         }
 
         _selectedType = componentType;
+        _notFoundComponent = null;
         UpdateQueryString(componentType);
     }
 
@@ -409,6 +494,19 @@
         }
 
         return GetDisplayName(type.Name);
+    }
+
+    private IReadOnlyList<TestEntry> GetSuggestions(string requested)
+    {
+        if (_entries.Length == 0 || string.IsNullOrWhiteSpace(requested))
+        {
+            return [];
+        }
+
+        return SearchService
+            .Search(_entries, e => new[] { e.Name, e.Category }, requested)
+            .Take(5)
+            .ToList();
     }
 
     private void StartSearch()
