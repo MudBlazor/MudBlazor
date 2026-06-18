@@ -698,18 +698,6 @@ namespace MudBlazor
                 return;
             }
 
-            if (_activeItemId is null)
-            {
-                if (MultiSelection)
-                {
-                    _activeItemId = Items.FirstOrDefault(x => !x.Disabled)?.ItemId;
-                }
-                else
-                {
-                    _activeItemId = GetItemByValue(ReadValue)?.ItemId;
-                }
-            }
-
             await _openState.SetValueAsync(true);
             _needsHighlightAfterRender = true;
             UpdateIcon();
@@ -917,13 +905,8 @@ namespace MudBlazor
 
         private Task HighlightItemForValueAsync(T? value)
         {
-            return HighlightItemAsync(GetItemByValue(value));
-        }
-
-        private MudSelectItem<T>? GetItemByValue(T? value)
-        {
-            var comparer = Comparer ?? EqualityComparer<T?>.Default;
-            return Items.FirstOrDefault(item => comparer.Equals(item.Value, value));
+            _context.TryGetItemByValue(value, out var item);
+            return HighlightItemAsync(item);
         }
 
         private Task HighlightItemAsync(MudSelectItem<T>? item)
