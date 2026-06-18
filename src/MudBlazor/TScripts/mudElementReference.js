@@ -288,5 +288,43 @@ class MudElementReference {
             delete element._mudBlurHandler;
         }
     }
+
+    // The tooltip wrapper uses display:contents (issue #1167) so it generates no box; the
+    // non-bubbling pointerenter/leave events never fire on it. Bridge hover via the bubbling
+    // pointerover/pointerout events instead and ignore moves that stay within the wrapper
+    // subtree (relatedTarget contained) so crossing a child boundary doesn't flicker the tooltip.
+    /**
+     * Attaches a hover bridge that calls back into .NET (OnHoverChangedAsync).
+     */
+    addTooltipHover(element, dotNetReference) {
+        if (!element) return;
+        element._mudTooltipOver = function (e) {
+            if (!element.contains(e.relatedTarget)) {
+                dotNetReference.invokeMethodAsync('OnHoverChangedAsync', true).catch(() => { });
+            }
+        };
+        element._mudTooltipOut = function (e) {
+            if (!element.contains(e.relatedTarget)) {
+                dotNetReference.invokeMethodAsync('OnHoverChangedAsync', false).catch(() => { });
+            }
+        };
+        element.addEventListener('pointerover', element._mudTooltipOver);
+        element.addEventListener('pointerout', element._mudTooltipOut);
+    }
+
+    /**
+     * Detaches the hover bridge previously installed by addTooltipHover.
+     */
+    removeTooltipHover(element) {
+        if (!element) return;
+        if (element._mudTooltipOver) {
+            element.removeEventListener('pointerover', element._mudTooltipOver);
+            delete element._mudTooltipOver;
+        }
+        if (element._mudTooltipOut) {
+            element.removeEventListener('pointerout', element._mudTooltipOut);
+            delete element._mudTooltipOut;
+        }
+    }
 };
 window.mudElementRef = new MudElementReference();

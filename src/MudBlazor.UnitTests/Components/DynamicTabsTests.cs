@@ -96,8 +96,17 @@ namespace MudBlazor.UnitTests.Components
             var closeButtons = comp.FindAll(".my-close-icon-class");
             closeButtons.Should().HaveCount(3);
 
-            foreach (var item in closeButtons)
+            // Tooltips are shown via a JS hover bridge (display:contents wrapper, issue #1167) which
+            // bUnit can't dispatch, so drive the matching tooltip instance directly. Render order of the
+            // tooltip components aligns with the DOM order of the close buttons they wrap.
+            var closeTooltips = comp.FindComponents<MudTooltip>()
+                .Where(x => x.Instance.Text == "close here")
+                .ToList();
+            closeTooltips.Should().HaveCount(3);
+
+            for (var index = 0; index < closeButtons.Count; index++)
             {
+                var item = closeButtons[index];
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -108,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
-                await item.ParentElement.PointerEnterAsync();
+                await comp.InvokeAsync(() => closeTooltips[index].Instance.OnHoverChangedAsync(true));
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -117,15 +126,20 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("close here");
 
-                await item.ParentElement.PointerLeaveAsync();
-
+                await comp.InvokeAsync(() => closeTooltips[index].Instance.OnHoverChangedAsync(false));
             }
 
             var addButtons = comp.FindAll(".my-add-icon-class");
 
             addButtons.Should().HaveCount(1);
-            foreach (var item in addButtons)
+            var addTooltips = comp.FindComponents<MudTooltip>()
+                .Where(x => x.Instance.Text == "add here")
+                .ToList();
+            addTooltips.Should().HaveCount(1);
+
+            for (var index = 0; index < addButtons.Count; index++)
             {
+                var item = addButtons[index];
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -136,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
-                await item.ParentElement.PointerEnterAsync();
+                await comp.InvokeAsync(() => addTooltips[index].Instance.OnHoverChangedAsync(true));
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -145,7 +159,7 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("add here");
 
-                await item.ParentElement.PointerLeaveAsync();
+                await comp.InvokeAsync(() => addTooltips[index].Instance.OnHoverChangedAsync(false));
             }
         }
 

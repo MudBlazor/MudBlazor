@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onpointerenter="@HandlePointerEnterAsync" @onpointerleave="@HandlePointerLeaveAsync" @onpointerup="@HandlePointerUpAsync" @onfocusin="@HandleFocusInAsync" @onfocusout="@HandleFocusOutAsync">
+<div @ref="_rootRef" @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onpointerup="@HandlePointerUpAsync" @onfocusin="@HandleFocusInAsync" @onfocusout="@HandleFocusOutAsync">
     <MudTooltipChildContainer ChildContent="@ChildContent" UpdateCount="@_parentUpdateCount" />
     @if (ShowToolTip())
     {
