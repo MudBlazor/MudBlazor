@@ -8,6 +8,9 @@
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
+        @* chrome=none hides the viewer UI (drawer + header) while keeping theme/RTL/popover/dialog/snackbar intact. *@
+        @if (!_chromeless)
+        {
         <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Never" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
             <div class="test-viewer-drawer-inner">
                 <div class="test-viewer-sidebar-header">
@@ -17,7 +20,7 @@
                         <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
                     </MudTooltip>
                     <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
-                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
+                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="ToggleRtl" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
                     </MudTooltip>
                 </div>
 
@@ -52,8 +55,11 @@
                 </div>
             </div>
         </MudDrawer>
+        }
 
         <MudMainContent Class="test-viewer-main">
+            @if (!_chromeless)
+            {
             <div class="test-viewer-header">
                 @if (_selectedType is not null)
                 {
@@ -74,8 +80,9 @@
                     <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
                 }
             </div>
+            }
 
-            <div class="test-viewer-surface">
+            <div class="test-viewer-surface" data-viewer-theme="@(_isDarkMode ? "dark" : "light")" data-viewer-dir="@(_rightToLeft ? "rtl" : "ltr")" data-viewer-chrome="@(_chromeless ? "none" : "full")">
                 @if (_selectedType is not null)
                 {
                     @* Prevent double popovers! *@
@@ -264,6 +271,7 @@
     private bool _showAllResults;
     private CancellationTokenSource? _searchCts;
     private bool _isDarkMode;
+    private bool _chromeless;
     private readonly MudTheme _customTheme = new()
     {
         LayoutProperties = new LayoutProperties
@@ -273,7 +281,17 @@
         }
     };
 
-    private void ToggleTheme() => _isDarkMode = !_isDarkMode;
+    private void ToggleTheme()
+    {
+        _isDarkMode = !_isDarkMode;
+        UpdateUrl(replace: true);
+    }
+
+    private void ToggleRtl()
+    {
+        _rightToLeft = !_rightToLeft;
+        UpdateUrl(replace: true);
+    }
 
     private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
@@ -331,6 +349,12 @@
     private void ParseQueryString()
     {
         var query = new Uri(NavManager.Uri).Query;
+
+        // Viewer/harness state lives in the query string; component identity is separate.
+        _isDarkMode = string.Equals(GetQueryValue(query, "theme"), "dark", StringComparison.OrdinalIgnoreCase);
+        _rightToLeft = string.Equals(GetQueryValue(query, "dir"), "rtl", StringComparison.OrdinalIgnoreCase);
+        _chromeless = string.Equals(GetQueryValue(query, "chrome"), "none", StringComparison.OrdinalIgnoreCase);
+
         var requested = GetQueryValue(query, "component");
 
         if (string.IsNullOrEmpty(requested))
@@ -389,21 +413,45 @@
 
         _selectedType = componentType;
         _notFoundComponent = null;
-        UpdateQueryString(componentType);
+        // Selecting a component pushes history; current visual params (theme/dir/chrome) are preserved.
+        UpdateUrl(replace: false);
     }
 
-    private void UpdateQueryString(Type componentType)
+    // Component identity (?component=) plus viewer/harness state (theme/dir/chrome) in one URL.
+    private string BuildViewerUrl()
     {
-        if (componentType == null) return;
+        var baseUrl = new Uri(NavManager.Uri).GetLeftPart(UriPartial.Path);
 
-        var uri = new Uri(NavManager.Uri);
-        var baseUrl = uri.GetLeftPart(UriPartial.Path);
+        var parameters = new List<string>();
 
-        // Create the new query string
-        var newUrl = $"{baseUrl}?component={componentType.Name}";
+        var component = _selectedType?.Name ?? _notFoundComponent;
+        if (!string.IsNullOrEmpty(component))
+        {
+            parameters.Add($"component={Uri.EscapeDataString(component)}");
+        }
 
-        // Update URL without navigation (false parameter)
-        NavManager.NavigateTo(newUrl, false);
+        if (_isDarkMode)
+        {
+            parameters.Add("theme=dark");
+        }
+
+        if (_rightToLeft)
+        {
+            parameters.Add("dir=rtl");
+        }
+
+        if (_chromeless)
+        {
+            parameters.Add("chrome=none");
+        }
+
+        return parameters.Count == 0 ? baseUrl : $"{baseUrl}?{string.Join('&', parameters)}";
+    }
+
+    private void UpdateUrl(bool replace)
+    {
+        // Toggles use replace:true so dark/RTL clicks do not spam browser history.
+        NavManager.NavigateTo(BuildViewerUrl(), forceLoad: false, replace: replace);
     }
 
     private RenderFragment TestComponent() => builder =>
