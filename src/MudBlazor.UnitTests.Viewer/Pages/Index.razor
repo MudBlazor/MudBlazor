@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/viewer/{*Path}"
 @using System.Reflection
 @inject NavigationManager NavManager
 @inject ISearchService SearchService
@@ -35,11 +36,7 @@
                         <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true"
                                    Class="@GetEntryClass(entry)" OnClick="() => Select(entry.Type)">
                             <div class="test-viewer-result-row">
-                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.DisplayName</MudText>
-                                @if (!string.IsNullOrWhiteSpace(entry.Category))
-                                {
-                                    <MudText Typo="Typo.caption" Class="mud-text-secondary test-viewer-entry-category">@entry.Category</MudText>
-                                }
+                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.RouteKey</MudText>
                             </div>
                         </MudButton>
                     </MudVirtualize>
@@ -120,7 +117,7 @@
                                 {
                                     <MudButton Variant="Variant.Text" Color="Color.Primary" Class="test-viewer-entry"
                                                OnClick="() => Select(suggestion.Type)">
-                                        @suggestion.FilePath
+                                        @suggestion.RouteKey
                                     </MudButton>
                                 }
                             </div>
@@ -161,10 +158,8 @@
 
     .test-viewer-result-row {
         width: 100%;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        display: flex;
         align-items: start;
-        gap: 12px;
         text-align: start;
     }
 
@@ -172,14 +167,6 @@
         min-width: 0;
         white-space: normal;
         overflow-wrap: anywhere;
-    }
-
-    .test-viewer-entry-category {
-        max-width: 140px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-align: end;
     }
 
     .test-viewer-show-all {
@@ -258,6 +245,10 @@
 
 @code {
 
+    // Backs the "/viewer/{*Path}" catch-all route. Parsed from the URI in ParseUrl rather than read directly.
+    [Parameter]
+    public string? Path { get; set; }
+
     private bool _rightToLeft;
     private Type? _selectedType;
     private string? _notFoundComponent;
@@ -267,6 +258,7 @@
     private TestEntry[] _filteredEntries = [];
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
+    private Dictionary<string, Type> _typeByRouteKey = new(StringComparer.OrdinalIgnoreCase);
     private int _remainingResultsCount;
     private bool _showAllResults;
     private CancellationTokenSource? _searchCts;
@@ -276,8 +268,8 @@
     {
         LayoutProperties = new LayoutProperties
         {
-            DrawerWidthLeft = "340px",
-            DrawerWidthRight = "340px"
+            DrawerWidthLeft = "300px",
+            DrawerWidthRight = "300px"
         }
     };
 
@@ -327,15 +319,23 @@
             .ToArray();
 
         _entryByType = _entries.ToDictionary(x => x.Type, x => x);
+
+        _typeByRouteKey = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        foreach (var type in _availableComponentTypes)
+        {
+            // Route keys are unique by construction (one file per path); TryAdd guards against any future clash.
+            _typeByRouteKey.TryAdd(RouteKey(type), type);
+        }
+
         StartSearch();
 
-        ParseQueryString();
+        ParseUrl();
         NavManager.LocationChanged += HandleLocationChanged;
     }
 
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        ParseQueryString();
+        ParseUrl();
         StateHasChanged();
     }
 
@@ -346,38 +346,47 @@
         _searchCts?.Dispose();
     }
 
-    private void ParseQueryString()
+    private void ParseUrl()
     {
-        var query = new Uri(NavManager.Uri).Query;
+        var uri = new Uri(NavManager.Uri);
 
-        // Viewer/harness state lives in the query string; component identity is separate.
-        _isDarkMode = string.Equals(GetQueryValue(query, "theme"), "dark", StringComparison.OrdinalIgnoreCase);
-        _rightToLeft = string.Equals(GetQueryValue(query, "dir"), "rtl", StringComparison.OrdinalIgnoreCase);
-        _chromeless = string.Equals(GetQueryValue(query, "chrome"), "none", StringComparison.OrdinalIgnoreCase);
+        // Viewer/harness state lives in the query string; component identity is the path "/viewer/<route-key>".
+        _isDarkMode = string.Equals(GetQueryValue(uri.Query, "theme"), "dark", StringComparison.OrdinalIgnoreCase);
+        _rightToLeft = string.Equals(GetQueryValue(uri.Query, "dir"), "rtl", StringComparison.OrdinalIgnoreCase);
+        _chromeless = string.Equals(GetQueryValue(uri.Query, "chrome"), "none", StringComparison.OrdinalIgnoreCase);
 
-        var requested = GetQueryValue(query, "component");
+        var routeKey = ExtractRouteKey(uri.AbsolutePath);
 
-        if (string.IsNullOrEmpty(requested))
+        if (string.IsNullOrEmpty(routeKey))
         {
-            // No component requested: keep any existing selection, clear a stale not-found.
+            // Landing page ("/"): keep any existing selection, clear a stale not-found.
             _notFoundComponent = null;
             return;
         }
 
-        var componentType = _availableComponentTypes.FirstOrDefault(t =>
-            t.Name.Equals(requested, StringComparison.OrdinalIgnoreCase));
-
-        if (componentType is not null)
+        if (_typeByRouteKey.TryGetValue(routeKey, out var resolved))
         {
-            _selectedType = componentType;
+            _selectedType = resolved;
             _notFoundComponent = null;
         }
         else
         {
-            // Requested explicitly but nothing matches: show a distinct error, not the empty state.
+            // Addressed explicitly but nothing matches: show a distinct error, not the empty state.
             _selectedType = null;
-            _notFoundComponent = requested;
+            _notFoundComponent = routeKey;
         }
+    }
+
+    private static string? ExtractRouteKey(string absolutePath)
+    {
+        const string prefix = "/viewer/";
+        if (!absolutePath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var key = absolutePath.Substring(prefix.Length).Trim('/');
+        return string.IsNullOrEmpty(key) ? null : Uri.UnescapeDataString(key);
     }
 
     private static string? GetQueryValue(string query, string key)
@@ -417,18 +426,13 @@
         UpdateUrl(replace: false);
     }
 
-    // Component identity (?component=) plus viewer/harness state (theme/dir/chrome) in one URL.
+    // Canonical identity in the path ("/viewer/<route-key>"); viewer/harness state stays in the query.
     private string BuildViewerUrl()
     {
-        var baseUrl = new Uri(NavManager.Uri).GetLeftPart(UriPartial.Path);
+        var key = _selectedType is not null ? RouteKey(_selectedType) : _notFoundComponent;
+        var path = string.IsNullOrEmpty(key) ? "/" : $"/viewer/{EscapeRouteKey(key)}";
 
         var parameters = new List<string>();
-
-        var component = _selectedType?.Name ?? _notFoundComponent;
-        if (!string.IsNullOrEmpty(component))
-        {
-            parameters.Add($"component={Uri.EscapeDataString(component)}");
-        }
 
         if (_isDarkMode)
         {
@@ -445,8 +449,22 @@
             parameters.Add("chrome=none");
         }
 
-        return parameters.Count == 0 ? baseUrl : $"{baseUrl}?{string.Join('&', parameters)}";
+        return parameters.Count == 0 ? path : $"{path}?{string.Join('&', parameters)}";
     }
+
+    // Route key relative to TestComponents, e.g. "Menu/MenuTest1" (unique per file).
+    private static string RouteKey(Type type)
+    {
+        var ns = type.Namespace ?? string.Empty;
+        const string marker = "TestComponents.";
+        var index = ns.IndexOf(marker, StringComparison.Ordinal);
+        var folder = index >= 0 ? ns[(index + marker.Length)..].Replace('.', '/') : string.Empty;
+        return string.IsNullOrEmpty(folder) ? type.Name : $"{folder}/{type.Name}";
+    }
+
+    // Escape each segment (so a generic-arity backtick survives the round trip) while keeping the slashes.
+    private static string EscapeRouteKey(string key)
+        => string.Join('/', key.Split('/').Select(Uri.EscapeDataString));
 
     private void UpdateUrl(bool replace)
     {
@@ -485,7 +503,7 @@
         var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
         var description = GetDescriptionOrNull(type);
         var filePath = GetFilePath(type);
-        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath);
+        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath, RouteKey(type));
     }
 
     private static string GetFilePath(Type type)
@@ -552,7 +570,7 @@
         }
 
         return SearchService
-            .Search(_entries, e => new[] { e.Name, e.Category }, requested)
+            .Search(_entries, e => new[] { e.Name, e.RouteKey }, requested)
             .Take(5)
             .ToList();
     }
@@ -593,7 +611,7 @@
             token.ThrowIfCancellationRequested();
 
             const int defaultLimit = 20;
-            var results = SearchService.Search(_entries, e => new[] { e.Name, e.Category }, query);
+            var results = SearchService.Search(_entries, e => new[] { e.Name, e.RouteKey }, query);
             _filteredEntries = _showAllResults ? [.. results] : [.. results.Take(defaultLimit)];
             _remainingResultsCount = _showAllResults ? 0 : Math.Max(0, results.Count - _filteredEntries.Length);
 
@@ -621,5 +639,5 @@
         return "test-viewer-entry";
     }
 
-    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath);
+    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath, string RouteKey);
 }
