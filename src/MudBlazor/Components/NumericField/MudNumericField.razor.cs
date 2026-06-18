@@ -516,9 +516,14 @@ namespace MudBlazor
         {
             await SetTextAndUpdateValueAsync(text);
 
-            // Keep formatted text in sync when using formatted input mode.
-            // This also covers onchange updates that can occur around blur timing.
-            if (UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
+            // Keep formatted text in sync with the value when using managed formatting, but only for a
+            // committed change (onchange), never for live typing (oninput). When Immediate is true this
+            // callback runs on every keystroke; reformatting then would rewrite the text mid-typing and
+            // jump the caret to the end, making multi-digit or decimal entry impossible (e.g. typing
+            // "1234" with Format="F3" collapses to "1.000", and "1." loses its trailing characters).
+            // The parsed value stays correct while typing; the text is reformatted on blur instead
+            // (see OnBlurredAsync). This matches the non-Immediate behavior and pre-v9.1 formatting.
+            if (!Immediate && UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
             {
                 var formattedText = ConvertSet(ReadValue);
                 if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))

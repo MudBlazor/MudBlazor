@@ -601,8 +601,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Immediate_Should_Reformat_Repeated_Input_With_F3()
+        public async Task NumericField_Immediate_Should_Not_Reformat_While_Typing_But_Format_On_Blur_With_F3()
         {
+            // Regression test for #13266 / #13002 / #13250: with Immediate=true and a Format, the field
+            // must NOT reformat the text on every keystroke (which jumped the caret and made multi-digit
+            // entry impossible). The parsed value stays correct while typing; the format is applied on blur.
             var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
                 .Add(x => x.Immediate, true)
                 .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
@@ -610,15 +613,83 @@ namespace MudBlazor.UnitTests.Components
 
             var input = comp.Find("input");
 
+            // While the user is typing (oninput), the raw text is preserved, not reformatted to "3.145".
             await input.InputAsync("3.14514515415414515");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+            comp.Instance.ReadText.Should().Be("3.14514515415414515");
+            input.GetAttribute("value").Should().Be("3.14514515415414515");
+
+            // On blur the value is reformatted with the supplied format.
+            await input.BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
             input.GetAttribute("value").Should().Be("3.145");
+        }
 
-            await input.InputAsync("3.145145154154145159");
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.145145154154145159d));
-            input.GetAttribute("value").Should().Be("3.145");
+        // Simulate a user typing one character at a time, appending each keystroke to whatever is
+        // currently displayed in the input (cursor-at-end), exactly like a browser does.
+        private static async Task TypeCharByCharAsync(IRenderedComponent<MudNumericField<double?>> comp, string toType)
+        {
+            IElement Input() => comp.Find("input");
+            foreach (var ch in toType)
+            {
+                var current = Input().GetAttribute("value") ?? string.Empty;
+                await Input().InputAsync(current + ch);
+            }
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithFormat_TypingMultiDigit_IsNotReformattedMidway()
+        {
+            // #13266: typing "1234" one character at a time with Immediate=true and Format="F3" must
+            // build up the value 1234, not collapse to 1 because the field reformatted to "1.000"
+            // after the first keystroke (which moved the caret to the end and ate every later digit).
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "F3"));
+
+            await TypeCharByCharAsync(comp, "1234");
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            comp.Instance.ReadValue.Should().Be(1234d);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
+            comp.Instance.ReadValue.Should().Be(1234d);
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithCulture_CanTypeZeroAfterDecimalPoint()
+        {
+            // #13250: with Immediate=true and an explicit Culture (as the DataGrid numeric filter uses),
+            // typing "1.008" one character at a time must produce 1.008. Previously the "." and the
+            // leading "0" were stripped by the mid-typing reformat, turning the input into 1008.
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            await TypeCharByCharAsync(comp, "1.008");
+
+            comp.Instance.ReadText.Should().Be("1.008", "the raw text is preserved while typing");
+            comp.Instance.ReadValue.Should().Be(1.008d);
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithPattern_IsNotReformattedWhileTyping()
+        {
+            // Covers the Pattern trigger of UsesManagedFormatting (the Format and Culture triggers are
+            // covered by the two tests above). Typing "1.5" one character at a time with Immediate must
+            // not strip the "." mid-entry.
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Pattern, @"[0-9.\-]"));
+
+            await TypeCharByCharAsync(comp, "1.5");
+
+            comp.Instance.ReadText.Should().Be("1.5", "the raw text is preserved while typing");
+            comp.Instance.ReadValue.Should().Be(1.5d);
         }
 
         [Test]
