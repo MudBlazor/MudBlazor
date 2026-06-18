@@ -114,6 +114,7 @@ jobs:
           flags: ${{ matrix.project-name }}
 
       - name: Publish test results
+        if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
