@@ -109,7 +109,7 @@ public sealed class ApiTextTests : BunitTest
 
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Occurs when </span>", "There should be a text span");
 
-        comp.Markup.Should().Contain("<a href=\"/api/MudComponentBase#Class\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Class</a>", "Then a link to /api/MudComponentBase#Class");
+        comp.Markup.Should().Contain("<a href=\"/api/MudComponentBase#Class\" blazor:onclick=\"4\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Class</a>", "Then a link to /api/MudComponentBase#Class");
 
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> has changed.</span>", "Ending with another text span");
     }
@@ -139,7 +139,7 @@ public sealed class ApiTextTests : BunitTest
 
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">When set, calls </span>", "There should be a text span");
 
-        comp.Markup.Should().Contain("<a href=\"/api/AggregateDefinition`1#SimpleAvg\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">SimpleAvg</a>", "Then a link to /api/AggregateDefinition`1#SimpleAvg");
+        comp.Markup.Should().Contain("<a href=\"/api/AggregateDefinition`1#SimpleAvg\" blazor:onclick=\"4\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">SimpleAvg</a>", "Then a link to /api/AggregateDefinition`1#SimpleAvg");
 
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> to receive viewport changes.</span>", "Ending with another text span");
     }
