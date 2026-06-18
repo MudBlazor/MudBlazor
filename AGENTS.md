@@ -310,6 +310,20 @@ private Task ToggleAsync()
 - Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
 - Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
 
+### Reproducing visual issues with the Viewer
+
+Use `src/MudBlazor.UnitTests.Viewer` to reproduce and verify visual, layout, focus, overlay, popover, drag/drop, responsive, RTL, dark-mode, or browser-interaction behavior that bUnit alone cannot confidently verify. Prefer a focused viewer component over the docs app unless the issue depends on docs-only composition.
+
+Reproduction loop:
+1. Add a focused component under `TestComponents/<Component>/`, or under `TestComponents/Scratch/` for a throwaway repro (that folder is gitignored, so scratch components are never committed).
+2. Build the viewer with `dotnet build src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj /p:SkipBunCompile=true`. Components are discovered by reflection at startup, so a newly added file is not visible until the app is rebuilt and reloaded; `dotnet watch` does not reliably pick up added files or routes.
+3. Run it with `dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj` and open `/viewer/<path>`, where `<path>` is the folder relative to `TestComponents` plus the type name (e.g. `/viewer/Menu/MenuEdgeCasesTest`).
+4. Set visual state through the query string: `theme=light|dark`, `dir=ltr|rtl`, `chrome=full|none`. `chrome=none` hides the viewer UI (drawer and header) while keeping theme, RTL, and the popover/dialog/snackbar providers intact, which is useful for clean screenshots.
+5. Capture the route, query parameters, viewport, and steps as before/after evidence.
+6. Delete the component (and rebuild) when done; a scratch component is removed with a single file delete.
+
+Use `@attribute [ViewerHidden]` for helper or sub-components that are not meaningful to open on their own; they stay routable but are kept out of the sidebar listing.
+
 ## Code Style and Analyzer Rules
 
 - Fix new warnings instead of suppressing them.
