@@ -244,17 +244,77 @@ window.mudpopoverHelper = {
         return true;
     },
 
+    getTooltipAnchorNodes: function (tooltipRoot) {
+        if (!tooltipRoot?.classList?.contains('mud-tooltip-root')) {
+            return [];
+        }
+
+        return Array.from(tooltipRoot.childNodes).filter(node => {
+            if (node.nodeType === Node.COMMENT_NODE) {
+                return false;
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                return node.textContent?.trim().length > 0;
+            }
+
+            return !node.classList?.contains('mud-popover-cascading-value');
+        });
+    },
+
+    getPopoverAnchorNode: function (popoverNode) {
+        const parentNode = popoverNode?.parentNode;
+        if (!parentNode?.classList?.contains('mud-tooltip-root')) {
+            return parentNode;
+        }
+
+        return this.getTooltipAnchorNodes(parentNode).find(node => node.nodeType === Node.ELEMENT_NODE) || parentNode;
+    },
+
+    getPopoverAnchorRect: function (popoverNode) {
+        const parentNode = popoverNode?.parentNode;
+        if (!parentNode?.classList?.contains('mud-tooltip-root')) {
+            return parentNode?.getBoundingClientRect();
+        }
+
+        const anchorNodes = this.getTooltipAnchorNodes(parentNode);
+        if (anchorNodes.length === 0) {
+            return parentNode.getBoundingClientRect();
+        }
+
+        const range = document.createRange();
+        range.setStartBefore(anchorNodes[0]);
+        range.setEndAfter(anchorNodes[anchorNodes.length - 1]);
+        const rect = range.getBoundingClientRect();
+        range.detach();
+
+        return rect;
+    },
+
+    getPopoverResizeObserverNodes: function (popoverNode) {
+        const parentNode = popoverNode?.parentNode;
+        if (!parentNode?.classList?.contains('mud-tooltip-root')) {
+            return parentNode ? [parentNode] : [];
+        }
+
+        const anchorElements = this.getTooltipAnchorNodes(parentNode)
+            .filter(node => node.nodeType === Node.ELEMENT_NODE);
+
+        return anchorElements.length > 0 ? anchorElements : [parentNode];
+    },
+
     // primary positioning method
     placePopover: function (popoverNode, classSelector) {
         // parentNode is the calling element, mudmenu/tooltip/etc not the parent popover if it's a child popover
         // this happens at page load unless it's popover inside a popover, then it happens when you activate the parent
 
         if (popoverNode?.parentNode) {
+            const anchorNode = window.mudpopoverHelper.getPopoverAnchorNode(popoverNode);
             const id = popoverNode.id.substr(8);
             const popoverContentNode = document.getElementById('popovercontent-' + id);
 
             // if the popover doesn't exist we stop
-            if (!popoverContentNode) return;
+            if (!anchorNode || !popoverContentNode) return;
 
             const classList = popoverContentNode.classList;
 
@@ -265,8 +325,8 @@ window.mudpopoverHelper = {
             if (classSelector && !classList.contains(classSelector)) return;
 
             // Batch DOM reads
-            let boundingRect = popoverNode.parentNode.getBoundingClientRect();
-            if (!window.mudpopoverHelper.isInViewport(popoverNode, boundingRect)) {
+            let boundingRect = window.mudpopoverHelper.getPopoverAnchorRect(popoverNode);
+            if (!boundingRect || !window.mudpopoverHelper.isInViewport(anchorNode, boundingRect)) {
                 // if the parentNode isn't visible at all we stop
                 return;
             }
@@ -836,19 +896,19 @@ class MudPopover {
         const popoverContentNode = document.getElementById('popovercontent-' + id);
 
         if (popoverNode?.parentNode && popoverContentNode) {
+            const resizeObserverNodes = window.mudpopoverHelper.getPopoverResizeObserverNodes(popoverNode);
+
             // add a resize observer to catch resize events
             const resizeObserver = new ResizeObserver(entries => {
-                for (const entry of entries) {
-                    const target = entry.target;
-                    for (const childNode of target.childNodes) {
-                        if (childNode.id?.startsWith('popover-')) {
-                            this.onResize();
-                        }
-                    }
+                if (entries.length > 0) {
+                    this.onResize();
                 }
             });
 
-            resizeObserver.observe(popoverNode.parentNode);
+            for (const resizeObserverNode of resizeObserverNodes) {
+                resizeObserver.observe(resizeObserverNode);
+            }
+
             // Add scroll event listeners to the content node and its parents up to the Body
             const scrollableElements = this.popoverScrollListener(popoverNode);
 
