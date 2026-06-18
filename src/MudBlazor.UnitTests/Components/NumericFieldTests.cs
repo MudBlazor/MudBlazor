@@ -601,7 +601,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Immediate_Should_Reformat_Repeated_Input_With_F3()
+        public async Task NumericField_Immediate_WithFormat_ShouldKeepRawTextUntilBlur()
         {
             var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
                 .Add(x => x.Immediate, true)
@@ -610,15 +610,60 @@ namespace MudBlazor.UnitTests.Components
 
             var input = comp.Find("input");
 
-            await input.InputAsync("3.14514515415414515");
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
-            input.GetAttribute("value").Should().Be("3.145");
+            await input.InputAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+            input.GetAttribute("value").Should().Be("1");
 
-            await input.InputAsync("3.145145154154145159");
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.145145154154145159d));
-            input.GetAttribute("value").Should().Be("3.145");
+            await input.InputAsync("12");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("12"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(12d));
+            input.GetAttribute("value").Should().Be("12");
+
+            await input.InputAsync("1234");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1234d));
+            input.GetAttribute("value").Should().Be("1234");
+
+            await input.BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1234d));
+            input.GetAttribute("value").Should().Be("1234.000");
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithExplicitCulture_ShouldPreserveDecimalTextWhileTyping()
+        {
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            var input = comp.Find("input");
+
+            await input.InputAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+            input.GetAttribute("value").Should().Be("1");
+
+            await input.InputAsync("1.");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1."));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+            input.GetAttribute("value").Should().Be("1.");
+
+            await input.InputAsync("1.0");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1.0"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+            input.GetAttribute("value").Should().Be("1.0");
+
+            await input.InputAsync("1.00");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1.00"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+            input.GetAttribute("value").Should().Be("1.00");
+
+            await input.InputAsync("1.008");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1.008"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1.008d));
+            input.GetAttribute("value").Should().Be("1.008");
         }
 
         [Test]
