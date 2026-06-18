@@ -242,10 +242,16 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This path keeps focus on the display element instead of the hidden input, so the display element needs the same accessibility-facing attributes.
-        /// Caller-provided <c>UserAttributes</c> take precedence.
+        /// Caller-provided <c>UserAttributes</c> take precedence. Returns <c>null</c> for every other render so the always-emitted
+        /// (but hidden) presenter <c>div</c> does not get spurious attributes or allocate on the common input path.
         /// </remarks>
-        private Dictionary<string, object?> GetDisplayUserAttributes()
+        private Dictionary<string, object?>? GetDisplayUserAttributes()
         {
+            if (InputType != InputType.Hidden || ChildContent is null)
+            {
+                return null;
+            }
+
             var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var attribute in UserAttributes)
@@ -264,6 +270,14 @@ namespace MudBlazor
 
             attributes.TryAdd("aria-invalid", HasErrors.ToString().ToLowerInvariant());
             attributes.TryAdd("aria-required", Required.ToString().ToLowerInvariant());
+
+            // The presenter is a div, so the native disabled attribute on the hidden input no longer
+            // conveys the disabled state to assistive tech; mirror it as aria-disabled.
+            if (GetDisabledState())
+            {
+                attributes.TryAdd("aria-disabled", "true");
+            }
+
             return attributes;
         }
 
