@@ -7,8 +7,12 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <!-- Build-time analyzer-authoring (RS####) rules; does NOT affect the shipped analyzer's runtime
+         compiler floor. The 3.x line targets the Roslyn 4.x API surface this analyzer builds against,
+         so it stays on 3.11.0 (latest 3.x); 4.14.0/5.x correspond to newer Roslyn targets. -->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+    <!-- Shipped-analyzer Roslyn floor; see MudBlazorRoslynShippedVersion in src/Directory.Build.props. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MudBlazorRoslynShippedVersion)" />
   </ItemGroup>
 
   <ItemGroup>
