@@ -567,7 +567,12 @@ namespace MudBlazor
 
             // Notify the form that the field has changed and trigger re-validation
             // Only do this after the field has been touched.
-            if (wasTouched)
+            // Skip when the change is this input's own ValueChanged echo (the parent's @bind round-trip):
+            // that user edit already validated once in SetValueAndUpdateTextAsync, so re-validating here
+            // would run the validation func twice for every keystroke on Immediate + @bind-Value inputs
+            // (#13174). Genuine external programmatic value changes are not child-originated and still
+            // re-validate, preserving the #12012 fix.
+            if (wasTouched && !arg.IsChildOriginatedChange)
             {
                 FieldChanged(arg.Value);
                 await BeginValidateAsync();
