@@ -97,6 +97,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task OpenMenu_ListReachableFromPopoverForOverflowClamping()
+        {
+            // Regression guard for https://github.com/MudBlazor/MudBlazor/issues/13141.
+            // The automatic viewport-overflow scrollbar (and an explicit MaxHeight) only work if
+            // mudPopover.js can reach the menu's .mud-list by descending single-child wrappers from
+            // the popover content node, and if that wrapper carries the class the SCSS max-height
+            // inheritance chain targets. The v9 keyboard/focus wrapper silently broke both, with no
+            // test catching it.
+            var comp = Context.Render<MenuTest1>();
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            var popover = comp.FindAll("div.mud-popover").Single(p => p.QuerySelector(".mud-menu-list") is not null);
+
+            // Mirror the descent in mudPopover.js: walk down through single-child wrappers to the list.
+            var node = popover.FirstElementChild;
+            while (node is not null && !node.ClassList.Contains("mud-list") && node.ChildElementCount == 1)
+            {
+                node = node.FirstElementChild;
+            }
+
+            node.Should().NotBeNull("mudPopover.js locates the scrollable menu list by descending single-child wrappers from the popover");
+            node!.ClassList.Should().Contain("mud-list");
+
+            // The list's wrapper must keep the class the SCSS max-height inheritance chain targets.
+            var wrapper = comp.Find("[data-testid='menu-wrapper']");
+            wrapper.ClassList.Should().Contain("mud-menu-list-wrapper");
+            wrapper.QuerySelector(".mud-menu-list").Should().NotBeNull();
+        }
+
+        [Test]
         public async Task Menu_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
         {
             var comp = Context.Render<MenuTest1>();
