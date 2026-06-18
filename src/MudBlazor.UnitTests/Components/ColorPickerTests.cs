@@ -347,13 +347,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(ColorPickerMode.RGB)]
+        [TestCase(ColorPickerMode.HSL)]
+        [TestCase(ColorPickerMode.HEX)]
+        public void UnboundColorPicker_ShouldDisplayDefaultColorInAllModes(ColorPickerMode mode)
+        {
+            var comp = Context.Render<MudColorPicker>(p =>
+            {
+                p.Add(x => x.PickerVariant, PickerVariant.Static);
+                p.Add(x => x.ColorPickerMode, mode);
+            });
+
+            var expectedInputCount = mode == ColorPickerMode.HEX ? 1 : 4;
+            var inputs = comp.FindAll($"{_colorInputCssSelector} input");
+
+            inputs.Should().HaveCount(expectedInputCount);
+            inputs.Should().AllBeAssignableTo<IHtmlInputElement>();
+
+            AssertDisplayedChannelValuesCore(inputs.Cast<IHtmlInputElement>().ToArray(), _defaultColor, mode);
+        }
+
+        [Test]
         [TestCase("#00000088", ColorPickerMode.RGB)]
         [TestCase("#00000088", ColorPickerMode.HSL)]
+        [TestCase("#00000088", ColorPickerMode.HEX)]
         [TestCase("#00000188", ColorPickerMode.RGB)]
         [TestCase("#00000188", ColorPickerMode.HSL)]
+        [TestCase("#00000188", ColorPickerMode.HEX)]
         [TestCase("#ff0000ff", ColorPickerMode.HSL)]
+        [TestCase("#ff0000ff", ColorPickerMode.HEX)]
         [TestCase("#0f0f", ColorPickerMode.RGB)]
         [TestCase("#0f0f", ColorPickerMode.HSL)]
+        [TestCase("#0f0f", ColorPickerMode.HEX)]
         public async Task InitiallyBoundValue_ShouldInitializeAllVisibleControls(string colorHex, ColorPickerMode mode)
         {
             var expectedColor = new MudColor(colorHex);
