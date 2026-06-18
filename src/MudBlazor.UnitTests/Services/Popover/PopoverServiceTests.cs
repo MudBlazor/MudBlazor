@@ -608,48 +608,6 @@ public class PopoverServiceTests
     }
 
     [Test]
-    [Ignore(reason:
-        $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
-        $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
-        $"since the {nameof(PopoverJsInterop.DisposeAsync)} does it.")]
-    public async Task DisposeAsync_ShouldClearActivePopoversAndFireOnBatchTimerElapsedAsync()
-    {
-        // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalEvent = new ManualResetEventSlim(false);
-        var service = CreateMockService(jsRuntimeMock, popoverTimerMock.Object);
-        var observer = new PopoverObserverMock();
-        service.Subscribe(observer);
-
-        popoverTimerMock
-            .Setup(h => h.OnBatchTimerElapsedAfterAsync(
-                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
-                It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
-
-        await service.CreatePopoverAsync(new PopoverMock());
-        await service.CreatePopoverAsync(new PopoverMock());
-
-        // Act
-        await service.DisposeAsync();
-        // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        var eventSignaled = signalEvent.Wait(signalEventWaitTime);
-
-        // Assert
-        eventSignaled.Should().BeTrue();
-        service.ActivePopovers.Should().BeEmpty();
-        popoverTimerMock.Verify(
-            h => h.OnBatchTimerElapsedAfterAsync(
-                It.Is<IReadOnlyCollection<MudPopoverHolder>>(items => items.Count == 2),
-                It.IsAny<CancellationToken>()),
-            Times.AtLeastOnce,
-            "The periodic handler method was not called.");
-    }
-
-    [Test]
     [CancelAfter(5000)]
     public async Task DisposeAsync_ShouldCancelDetachRange()
     {

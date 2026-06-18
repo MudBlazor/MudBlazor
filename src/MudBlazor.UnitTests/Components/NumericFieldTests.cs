@@ -17,7 +17,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
@@ -939,37 +938,36 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
-        [Ignore("Randomly fails or causes test-host hangs under heavy loads.")]
+        // Debounce-render test: the interleaved external re-render churns the input's event-handler IDs and the
+        // post-debounce render can race under heavy parallel CPU contention, so this runs serially (deterministic;
+        // no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedNumericFieldRerender()
         {
             var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
-            IElement DelayedRerenderButton() => comp.Find("button#re-render");
             IElement Input() => comp.Find("input");
             var converter = new DefaultConverter<int>();
-            await Input().InputAsync("1");
+            var currentText = "1";
+            await Input().InputAsync(currentText);
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            // trigger delayed re-render
-            await DelayedRerenderButton().ClickAsync();
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
-            var currentText = "1";
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            // imitate "typing in progress" with an external re-render interleaved before the debounce commits
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
                 await Input().InputAsync(currentText);
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+                // external re-render while the user is mid-typing (before debounce commits)
+                await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
+                // advance by less than the debounce interval so it does NOT commit mid-typing
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
-            numericField.ReadText.Should().Be(currentText);
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(converter.ConvertBack(currentText)));
+            comp.WaitForAssertion(() => numericField.ReadText.Should().Be(currentText));
         }
 
         [Test]
@@ -987,38 +985,36 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
         /// </summary>
         [Test]
-        [Ignore("Randomly fails or causes test-host hangs under heavy loads.")]
+        // Converter-change mid-debounce: the post-debounce reinterpretation render can exceed the default WaitForAssertion
+        // timeout under heavy parallel CPU contention, so this runs serially (deterministic; no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedNumericFieldCultureChangeRerender()
         {
             var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<NumericFieldCultureChangeTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
-            var delayedCultureChange = comp.Find("button#culture-change");
+            IElement Input() => comp.Find("input");
             // ensure text is updated on initialize
             numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            // trigger the culture change
-            await delayedCultureChange.ClickAsync();
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            // change the culture while typing is in progress (runs on the renderer dispatcher synchronously, avoiding the deadlock)
+            await comp.InvokeAsync(comp.Instance.ApplyCultureChange);
+            // imitate "typing in progress" by advancing only half the debounce interval each iteration so it never commits mid-typing
             var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+                await Input().InputAsync(new ChangeEventArgs { Value = currentText });
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
-            // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
+            // after the culture change, the uncommitted text is retained (with the old culture)
             numericField.ReadText.Should().Be(currentText);
-            // once debounce occurs, both value and text are translated into the new culture
+            // once the final debounce occurs, both value and text are translated into the new culture
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
-            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval * 2));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            comp.WaitForAssertion(() => numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture)));
         }
 
         /// <summary>
