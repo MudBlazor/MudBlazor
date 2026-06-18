@@ -22,7 +22,7 @@
                 }
                 @if (GetCloseButton())
                 {
-                    <MudIconButton aria-label="@Localizer[LanguageResource.MudDialog_Close]" @onmousedown:preventDefault="true" Icon="@CloseIcon" @onclick="((IMudDialogInstance)this).Cancel" Class="mud-button-close" />
+                    <MudIconButton aria-label="@Localizer[LanguageResource.MudDialog_Close]" Icon="@CloseIcon" @onclick="((IMudDialogInstance)this).Cancel" Class="mud-button-close" />
                 }
             </div>
          }
