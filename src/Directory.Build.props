@@ -12,6 +12,21 @@
     <EnumGenerator_EnumMetadataSource>DescriptionAttribute</EnumGenerator_EnumMetadataSource>
   </PropertyGroup>
 
+  <!--
+    Roslyn version for the SHIPPED analyzer + code-fix assemblies (MudBlazor.Analyzers and
+    MudBlazor.Analyzers.CodeFixes). Both DLLs are packed side-by-side into analyzers/dotnet/cs of the
+    MudBlazor NuGet package and are loaded by the CONSUMER's build compiler / IDE Roslyn host. The
+    compiler refuses to load an analyzer that references a NEWER Roslyn than the host is running (error
+    CS9057), so this version is effectively the minimum .NET SDK / Visual Studio a MudBlazor consumer
+    must have. It is deliberately kept low (4.7.0 = VS 2022 17.7) to keep working for net8.0 consumers
+    and older toolchains. Do NOT raise it without intentionally dropping support for those SDKs; a
+    previous bump to 4.13.0 broke consumers on .NET SDK 8.0.4xx (see issue #11114, reverted in PR #11116).
+    Sharing one property keeps the analyzer and its code-fix from ever drifting onto different bands.
+  -->
+  <PropertyGroup>
+    <MudBlazorRoslynShippedVersion>4.7.0</MudBlazorRoslynShippedVersion>
+  </PropertyGroup>
+
   <PropertyGroup>
     <BunVersion>1.3.14</BunVersion>
     <BunToolRestore>dotnet tool restore --tool-manifest ../../.config/dotnet-tools.json</BunToolRestore>

@@ -272,11 +272,12 @@ private Task ToggleAsync()
 - Run the narrowest relevant test filter first.
 - Test logic rather than full HTML snapshots.
 - Prefer a fail-first workflow: add or update the test to fail for the target behavior before implementing the fix.
-- Keep tests isolated so they can run in parallel.
+- Keep tests isolated so they can run in parallel. The suite runs fixtures in parallel (`[assembly: Parallelizable(ParallelScope.Fixtures)]`) with a fresh fixture instance per test (`InstancePerTestCase`). Do not switch the assembly to `ParallelScope.All`: bUnit's renderer requires the test code and render code to share a thread (memory-coherence locking, see bUnit#124), so parallelizing tests *within* a fixture is unsafe. Get throughput from independent fixtures, not from intra-fixture parallelism.
 - Async tests and async helpers must return `Task`, not `async void`.
 - Do not add mutable static state in tests or viewer test components.
 - If a test modifies shared or static state, restore it in `[TearDown]` and keep `[NonParallelizable]` until the shared-state dependency is removed.
-- Use `[NonParallelizable]` only when isolation is not feasible, and document the shared resource it protects.
+- Use `[NonParallelizable]` only when isolation is not feasible, and document the shared resource it protects. Before removing an existing `[NonParallelizable]`, prove the fixture is parallel-safe by running the suite repeatedly under heavy parallel load — bUnit renderer timing under fake time is a common hidden dependency that only surfaces under concurrency.
+- A few async bUnit render tests (debounced-input re-render, inline-dialog lifecycle) are `[NonParallelizable]` **by design** and must stay that way. NUnit runs an `async Task` test by blocking its worker thread (sync-over-async), so under parallel CPU contention their renderer dispatch deadlocks or races/exceeds the `WaitForAssertion` window. This was investigated and accepted (see #13188 / #13297) — do not re-attempt to parallelize them.
 - Prefer fixed test data. Use random data only when randomness is the behavior under test or when the random source is seeded per test.
 - Prefer passing explicit culture into APIs or components. If a test must mutate culture, restore it and keep the test nonparallel until the mutation is removed.
 - Tests must not add fixed sleeps, sync-over-async waits, polling waits, local wall-clock hang guards, or fire-and-forget async behavior. Disallowed patterns include `Task.Delay` as a sleep, `Thread.Sleep`, blocking `Task`/`ValueTask` `.Wait()` or `.Result`, `GetAwaiter().GetResult()`, `WaitAsync(TimeSpan)`, `Task.WhenAny(..., Task.Delay(...))`, and `CatchAndLog` to drive assertions. Domain properties named `Result` are allowed. Use fake time, direct awaits, `TaskCompletionSource` gates, bUnit renderer waits, and framework-level cancellation instead.
@@ -297,7 +298,8 @@ private Task ToggleAsync()
 
 ### Test locations and naming
 - Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.
-- Viewer test component file names should start with the component prefix, use correct component casing, and end with `Test`, optionally followed by an indexer such as `MenuTest1`.
+- Viewer components are discovered by location: any component under `TestComponents/` (a `TestComponents.*` namespace) is loaded and addressable at `/viewer/<path>`, where `<path>` is its folder path relative to `TestComponents` plus the type name (e.g. `Menu/MenuTest1`). The historical "name must contain `Test`" requirement no longer applies, though `Test`-suffixed scenario names remain the convention.
+- Add `@attribute [ViewerHidden]` to a helper or sub-component (e.g. dialog content shown via the dialog service) to keep it routable but out of the sidebar listing.
 - Keep viewer test component file names at 40 characters or fewer. Prefer concise scenario names over long descriptive file names.
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
@@ -307,6 +309,20 @@ private Task ToggleAsync()
 - When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
 - Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
 - Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
+
+### Reproducing visual issues with the Viewer
+
+Use `src/MudBlazor.UnitTests.Viewer` to reproduce and verify visual, layout, focus, overlay, popover, drag/drop, responsive, RTL, dark-mode, or browser-interaction behavior that bUnit alone cannot confidently verify. Prefer a focused viewer component over the docs app unless the issue depends on docs-only composition.
+
+Reproduction loop:
+1. Add a focused component under `TestComponents/<Component>/`, or under `TestComponents/Scratch/` for a throwaway repro (that folder is gitignored, so scratch components are never committed).
+2. Build the viewer with `dotnet build src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj /p:SkipBunCompile=true`. Components are discovered by reflection at startup, so a newly added file is not visible until the app is rebuilt and reloaded; `dotnet watch` does not reliably pick up added files or routes.
+3. Run it with `dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj` and open `/viewer/<path>`, where `<path>` is the folder relative to `TestComponents` plus the type name (e.g. `/viewer/Menu/MenuEdgeCasesTest`).
+4. Set visual state through the query string: `theme=light|dark`, `dir=ltr|rtl`, `chrome=full|none`. `chrome=none` hides the viewer UI (drawer and header) while keeping theme, RTL, and the popover/dialog/snackbar providers intact, which is useful for clean screenshots.
+5. Capture the route, query parameters, viewport, and steps as before/after evidence.
+6. Delete the component (and rebuild) when done; a scratch component is removed with a single file delete.
+
+Use `@attribute [ViewerHidden]` for helper or sub-components that are not meaningful to open on their own; they stay routable but are kept out of the sidebar listing.
 
 ## Code Style and Analyzer Rules
 

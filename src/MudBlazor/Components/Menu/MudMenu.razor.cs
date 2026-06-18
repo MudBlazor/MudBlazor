@@ -254,6 +254,8 @@ namespace MudBlazor
         /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenAsync"/>,
         /// <see cref="MenuContext.CloseAsync"/>, <see cref="MenuContext.ToggleAsync"/>, and
         /// <see cref="MenuContext.CloseAllAsync"/>.</para>
+        /// <para>For hover activation, set <see cref="ActivationEvent"/> to <see cref="MouseEvent.MouseOver"/>
+        /// and allow the menu to handle pointer enter and leave events.</para>
         /// <para>Example usage:</para>
         /// <code>
         /// &lt;MudMenu&gt;
@@ -271,10 +273,13 @@ namespace MudBlazor
         public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
         /// <summary>
-        /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.
+        /// The mouse event which opens the menu.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MouseEvent.LeftClick"/>.
+        /// <para>Defaults to <see cref="MouseEvent.LeftClick"/>.</para>
+        /// <para>Default activators are wired automatically. When using <see cref="ActivatorContent"/>,
+        /// click and context menu activators should call the provided <see cref="MenuContext"/>.
+        /// Hover activation is handled by the menu's built-in pointer handlers.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]

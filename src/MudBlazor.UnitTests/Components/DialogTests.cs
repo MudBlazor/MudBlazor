@@ -13,6 +13,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    // Shares DialogRender's static OnInitializedCount and exercises async inline-dialog timing that
+    // deadlocks/flakes under NUnit parallel execution. Kept serial by design (accepted limitation); see #13188 / #13297.
     [NonParallelizable]
     public class DialogTests : BunitTest
     {

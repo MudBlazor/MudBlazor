@@ -151,7 +151,7 @@ else if (Column != null && !Column.HiddenState.Value)
             <MudPopover UserAttributes="@PositionAttributes" Open="@_filtersMenuVisible" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight" Class="pa-4 column-filter-popup mud-popover-position-override">
                 @if (Column.FilterTemplate != null)
                 {
-                    @Column.FilterTemplate(Column.FilterContext) 
+                    @Column.FilterTemplate(Column.FilterContext)
                 }
                 else
                 {

@@ -326,6 +326,38 @@ public class DateMaskTests
     }
 
     [Test]
+    public void DateMask_SetText_Day31AfterShorterMonth_Issue10772()
+    {
+        var mask = new DateMask("dd.MM.yyyy");
+        mask.SetText("01.04.2025");
+        mask.Text.Should().Be("01.04.2025");
+        // replacing the text must not clamp the day to the previous text's month (April = 30 days)
+        mask.SetText("31.03.2025");
+        mask.Text.Should().Be("31.03.2025");
+    }
+
+    [Test]
+    public void DateMask_SetText_Day31AfterFebruary_Issue10772()
+    {
+        var mask = new DateMask("dd-MM-yyyy");
+        mask.SetText("01-02-2025");
+        mask.Text.Should().Be("01-02-2025");
+        // the leading 3 must not be padded to 03 based on the previous text's month (February)
+        mask.SetText("31-01-2025");
+        mask.Text.Should().Be("31-01-2025");
+    }
+
+    [Test]
+    public void DateMask_Insert_AfterSelectAll_DoesNotUseStaleMonth()
+    {
+        var mask = new DateMask("dd.MM.yyyy");
+        mask.SetText("01.02.2025");
+        mask.Selection = (0, 10);
+        mask.Insert("3");
+        mask.ToString().Should().Be("3|");
+    }
+
+    [Test]
     public void DateMask_GetCleanText()
     {
         // Arrange
