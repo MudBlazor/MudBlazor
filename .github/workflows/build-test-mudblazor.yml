@@ -19,7 +19,7 @@ jobs:
   format-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Cache NuGet packages
         uses: actions/cache@v5
@@ -73,7 +73,7 @@ jobs:
             generate-coverage: false
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
@@ -131,7 +131,7 @@ jobs:
         project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
