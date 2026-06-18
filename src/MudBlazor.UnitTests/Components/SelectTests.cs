@@ -1509,6 +1509,36 @@ namespace MudBlazor.UnitTests.Components
             icons[5].Attributes["d"].Value.Should().Be(@unchecked); // test3
         }
 
+        [Test(Description = "A custom Comparer must drive value->item resolution for highlight/active-descendant, not just selection state.")]
+        public async Task SingleSelectWithCustomComparer_HighlightsKeyEqualItem()
+        {
+            var comp = Context.Render<SingleSelectComparerHighlightTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var input = comp.Find("input");
+                var latte = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Cafe Latte"));
+
+                // The bound value is a different Coffee instance with the same Key ("lat") as "Cafe Latte".
+                // Without honoring the comparer the dictionary lookup misses, so no item is highlighted
+                // and aria-activedescendant is omitted.
+                input.GetAttribute("aria-activedescendant").Should().Be(latte.Id);
+                latte.ToMarkup().Should().Contain("mud-selected-item");
+            });
+        }
+
+        [Test(Description = "A custom Comparer must drive value->item resolution for the selected-value template (shadow lookup).")]
+        public async Task SingleSelectWithCustomComparer_RendersKeyEqualItemTemplate()
+        {
+            var comp = Context.Render<SingleSelectComparerPresenterTest>();
+
+            // The bound value is a different Coffee instance with the same Key ("lat") as "Cafe Latte".
+            // Resolving it to the matching item's ChildContent requires honoring the comparer.
+            comp.Find("div.mud-select-input").TextContent.Should().Contain("Latte template");
+        }
+
         [Test]
         public async Task Select_Item_Collection_Should_Match_Number_Of_Select_Options()
         {

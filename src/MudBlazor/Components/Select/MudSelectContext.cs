@@ -174,17 +174,59 @@ internal sealed class MudSelectContext<T>
     /// <summary>
     /// Attempts to get an item by its value from visible items.
     /// </summary>
+    /// <remarks>
+    /// When a custom <see cref="Comparer"/> is set the lookup honors it via a linear scan;
+    /// otherwise the fast dictionary lookup (default equality) is used. This keeps value-to-item
+    /// resolution consistent with the comparer-aware selection state.
+    /// </remarks>
     public bool TryGetItemByValue(T? value, [NotNullWhen(true)] out MudSelectItem<T>? item)
     {
-        return _valueLookup.TryGetValue(value, out item);
+        var comparer = Comparer;
+        if (comparer is null)
+        {
+            return _valueLookup.TryGetValue(value, out item);
+        }
+
+        foreach (var candidate in _items)
+        {
+            if (comparer.Equals(candidate.Value, value))
+            {
+                item = candidate;
+                return true;
+            }
+        }
+
+        item = null;
+        return false;
     }
 
     /// <summary>
     /// Attempts to get an item by its value from all items (including shadow items).
     /// </summary>
+    /// <remarks>
+    /// When a custom <see cref="Comparer"/> is set the lookup honors it via a linear scan;
+    /// otherwise the fast dictionary lookup (default equality) is used. This keeps value-to-item
+    /// resolution consistent with the comparer-aware selection state.
+    /// </remarks>
     public bool TryGetShadowItemByValue(T? value, [NotNullWhen(true)] out MudSelectItem<T>? item)
     {
-        return _shadowLookup.TryGetValue(value, out item);
+        var comparer = Comparer;
+        if (comparer is null)
+        {
+            return _shadowLookup.TryGetValue(value, out item);
+        }
+
+        foreach (var candidate in _shadowLookup.Values)
+        {
+            if (comparer.Equals(candidate.Value, value))
+            {
+                item = candidate;
+                return true;
+            }
+        }
+
+        item = null;
+        return false;
     }
 
     /// <summary>
