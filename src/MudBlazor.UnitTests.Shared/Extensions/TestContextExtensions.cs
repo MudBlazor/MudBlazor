@@ -2,6 +2,8 @@
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Shared.Extensions
@@ -20,6 +22,18 @@ namespace MudBlazor.UnitTests.Shared.Extensions
             });
             ctx.Services.AddScoped(sp => new HttpClient());
             ctx.Services.AddOptions();
+        }
+
+        /// <summary>
+        /// Replaces the default time provider with a fake provider for the current bUnit context.
+        /// </summary>
+        public static FakeTimeProvider AddFakeTimeProvider(this BunitContext ctx)
+        {
+            var timeProvider = new FakeTimeProvider();
+            ctx.Services.RemoveAll<TimeProvider>();
+            ctx.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            return timeProvider;
         }
     }
 }

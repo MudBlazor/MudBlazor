@@ -8,8 +8,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
-	<!--https://github.com/MudBlazor/MudBlazor/issues/11114-->
-	<!--https://github.com/dotnet/roslyn/issues/77255-->
+    <!--
+      Pinned to the Roslyn version bundled in the GA .NET SDK 10.0.100 that global.json targets (Roslyn
+      5.0.x). This is an ordinary package reference in a Razor helper library (NOT a shipped analyzer),
+      so it is not a CS9057 / compiler-floor concern; the pin keeps the Roslyn API aligned with the base
+      SDK so MSBuildWorkspace + the Razor source generator yield deterministic analyzer results across
+      SDK feature bands (otherwise the analyzer tests find a different set of diagnostics). Do not bump to
+      5.3.0 (a later 10.0.2xx-band Roslyn) without re-validating the analyzer tests.
+      See https://github.com/MudBlazor/MudBlazor/issues/11114 and https://github.com/dotnet/roslyn/issues/77255
+    -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
   </ItemGroup>
   

@@ -47,6 +47,16 @@
             "enabled": false
         },
         {
+            "description": "Shipped analyzer targets Roslyn 4.x; keep the build-time authoring-rules package on the matching 3.x line.",
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.Analyzers"
+            ],
+            "allowedVersions": "<4.0.0"
+        },
+        {
             "matchFileNames": [
                 "src/MudBlazor/MudBlazor.csproj"
             ],

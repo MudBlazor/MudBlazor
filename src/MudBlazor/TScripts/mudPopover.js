@@ -322,17 +322,21 @@ window.mudpopoverHelper = {
             // flipping logic
             if (isFlipOnOpen || isFlipAlways) {
 
-                // Reset max-height if it was previously set and anchor is in bounds
-                // Adjust .mud-list children if they would run off screen even after flipping
-                const firstChild = popoverContentNode.firstElementChild;
-                // Check if firstChild exists, has a classList, and is a mud-list
-                const isList = firstChild?.classList?.contains("mud-list");
+                // Reset max-height if it was previously set and anchor is in bounds.
+                // Adjust .mud-list children if they would run off screen even after flipping.
+                // The list can be nested inside single-child wrappers (e.g. the menu's
+                // keyboard/focus container), so descend to it rather than assuming it's the first child.
+                let listChild = popoverContentNode.firstElementChild;
+                while (listChild && !listChild.classList?.contains("mud-list") && listChild.childElementCount === 1) {
+                    listChild = listChild.firstElementChild;
+                }
+                const isList = listChild?.classList?.contains("mud-list") === true;
                 // we do it here to ensure it flips properly if more space becomes available on the other side.
                 if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
                     popoverContentNode.style.maxHeight = null;
                     if (isList) {
-                        popoverContentNode.mudScrollTop = firstChild.scrollTop;
-                        firstChild.style.maxHeight = null;
+                        popoverContentNode.mudScrollTop = listChild.scrollTop;
+                        listChild.style.maxHeight = null;
                     }
                     popoverContentNode.mudHeight = null;
                 }
@@ -511,14 +515,6 @@ window.mudpopoverHelper = {
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 
-                const effectiveClassListArray = selector && selector !== 'none'
-                    ? classListArray.map((className) => window.mudpopoverHelper.flipClassReplacements[selector]?.[className] || className)
-                    : classListArray;
-                const alignsHorizontallyToAnchor = effectiveClassListArray.some((className) =>
-                    className.startsWith('mud-popover-top-') || className.startsWith('mud-popover-bottom-'));
-                const alignsVerticallyToAnchor = effectiveClassListArray.some((className) =>
-                    className === 'mud-popover-center-left' || className === 'mud-popover-center-right');
-
                 if (isFlipOnOpen) { // store flip direction on open so it's not recalculated
                     if (!popoverContentNode.mudPopoverFliped) {
                         popoverContentNode.mudPopoverFliped = selector || 'none';
@@ -526,8 +522,7 @@ window.mudpopoverHelper = {
                 }
 
                 // ensure the left is inside bounds
-                if (!alignsHorizontallyToAnchor &&
-                    left + offsetX < window.mudpopoverHelper.overflowPadding && // it's starting left of the screen
+                if (left + offsetX < window.mudpopoverHelper.overflowPadding && // it's starting left of the screen
                     Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
                     left = window.mudpopoverHelper.overflowPadding;
                     // set offsetX to 0 to avoid double offset
@@ -535,8 +530,7 @@ window.mudpopoverHelper = {
                 }
 
                 // ensure the top is inside bounds
-                if (!alignsVerticallyToAnchor &&
-                    top + offsetY < window.mudpopoverHelper.overflowPadding && // it's starting above the screen
+                if (top + offsetY < window.mudpopoverHelper.overflowPadding && // it's starting above the screen
                     boundingRect.top >= 0 && // the popoverNode is still on screen
                     Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
                     top = window.mudpopoverHelper.overflowPadding;
@@ -553,7 +547,7 @@ window.mudpopoverHelper = {
                 // height adjustment logic for mud lists
                 if (isList) {
                     const popoverStyle = popoverContentNode.style;
-                    const listStyle = firstChild.style;
+                    const listStyle = listChild.style;
 
                     // If there is no max height set we need to check the height
                     // we reset previously flipped at the start of flipping logic
@@ -596,10 +590,10 @@ window.mudpopoverHelper = {
                             const minVisibleHeight = overflowPadding * 3;
                             const newMaxHeight = Math.max(availableHeight, minVisibleHeight);
                             popoverContentNode.style.maxHeight = `${newMaxHeight}px`;
-                            firstChild.style.maxHeight = `${newMaxHeight}px`;
+                            listChild.style.maxHeight = `${newMaxHeight}px`;
                             popoverContentNode.mudHeight = "setmaxheight";
                             if (popoverContentNode.mudScrollTop) {
-                                firstChild.scrollTop = popoverContentNode.mudScrollTop;
+                                listChild.scrollTop = popoverContentNode.mudScrollTop;
                                 popoverContentNode.mudScrollTop = null;
                             }
                         }

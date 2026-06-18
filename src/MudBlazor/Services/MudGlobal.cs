@@ -46,13 +46,22 @@ public static class MudGlobal
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
+    private static readonly AsyncLocal<Action<Exception>?> _unhandledExceptionHandler = new();
+
     /// <summary>
     /// The handler for unhandled MudBlazor component exceptions.
     /// </summary>
     /// <remarks>
     /// Exceptions which use this handler are typically rare, such as errors which occur during a "fire-and-forget" <see cref="Task"/> which cannot be awaited.<br />
     /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
+    /// The handler is resolved per async flow, so a value set in one flow does not affect others; unset flows use the default console handler.<br />
     /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
     /// </remarks>
-    public static Action<Exception> UnhandledExceptionHandler { get; set; } = (exception) => Console.Write(exception);
+    public static Action<Exception> UnhandledExceptionHandler
+    {
+        get => _unhandledExceptionHandler.Value ?? DefaultUnhandledExceptionHandler;
+        set => _unhandledExceptionHandler.Value = value;
+    }
+
+    private static void DefaultUnhandledExceptionHandler(Exception exception) => Console.Write(exception);
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using System.Globalization;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -165,6 +166,53 @@ namespace MudBlazor.UnitTests.Charts
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
+        }
+
+        [Test]
+        public void BarChartXAxisLabelRotation90UsesRotatedLabelSpacing()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Sales", Data = new double[] { 40, 20 } },
+            };
+            string[] xAxisLabels = { "January", "February" };
+
+            var unrotated = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new BarChartOptions { XAxisLabelRotation = 0 }));
+
+            var rotated = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new BarChartOptions { XAxisLabelRotation = 90 }));
+
+            var unrotatedXAxisLabel = unrotated.Find("g.mud-charts-xaxis text");
+            var rotatedXAxisLabel = rotated.Find("g.mud-charts-xaxis text");
+
+            rotatedXAxisLabel.GetAttribute("text-anchor").Should().Be("end");
+            rotatedXAxisLabel.GetAttribute("transform").Should().StartWith("rotate(-90 ");
+            rotatedXAxisLabel.GetAttribute("y").Should().Be("320");
+
+            var unrotatedLabelY = double.Parse(unrotatedXAxisLabel.GetAttribute("y")!, CultureInfo.InvariantCulture);
+            var rotatedLabelY = double.Parse(rotatedXAxisLabel.GetAttribute("y")!, CultureInfo.InvariantCulture);
+            rotatedLabelY.Should().BeLessThan(unrotatedLabelY, because: "rotated labels need a larger bottom offset from the chart edge");
+
+            static double GetYCoordinate(string pathData)
+            {
+                var coordinates = pathData.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                return double.Parse(coordinates[2], CultureInfo.InvariantCulture);
+            }
+
+            var unrotatedPlotBottom = GetYCoordinate(unrotated.Find("g.mud-charts-gridlines-yaxis path").GetAttribute("d")!);
+            var rotatedPlotBottom = GetYCoordinate(rotated.Find("g.mud-charts-gridlines-yaxis path").GetAttribute("d")!);
+            rotatedPlotBottom.Should().BeLessThan(unrotatedPlotBottom, because: "rotated labels need more bottom plot spacing");
         }
 
         [Test]
