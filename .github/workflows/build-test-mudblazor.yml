@@ -78,18 +78,25 @@ jobs:
 
       - name: Test ${{ matrix.project-path }}
         run: |
+          coverage_args=()
+          if [ "${{ matrix.project-path }}" != "src/MudBlazor.UnitTests.Analyzers" ]; then
+            coverage_args=(
+              --coverlet
+              --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute"
+              --coverlet-exclude-by-attribute "CompilerGeneratedAttribute"
+              --coverlet-exclude-by-file "**/*.g.cs"
+              --coverlet-include "[MudBlazor]*"
+              --coverlet-skip-auto-props
+            )
+          fi
+
           dotnet test \
           --project ${{ matrix.project-path }} \
           -c Release \
           --no-build \
           --hangdump \
           --hangdump-timeout 60s \
-          --coverlet \
-          --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute" \
-          --coverlet-exclude-by-attribute "CompilerGeneratedAttribute" \
-          --coverlet-exclude-by-file "**/*.g.cs" \
-          --coverlet-include "[MudBlazor]*" \
-          --coverlet-skip-auto-props \
+          "${coverage_args[@]}" \
           --report-spekt-junit \
           --report-spekt-junit-filename junit.xml \
           --results-directory ${{ matrix.project-path }}/TestResults
@@ -100,34 +107,20 @@ jobs:
           path="${{ matrix.project-path }}"
           echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
 
-      - name: Upload coverage report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-report-${{ steps.project.outputs.name }}
-          path: |
-            ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
-            ${{ matrix.project-path }}/TestResults/junit.xml
-
-  upload-codecov:
-    needs: build-test
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Download coverage report
-        uses: actions/download-artifact@v8
-
       - name: Publish coverage
+        if: ${{ !cancelled() && matrix.project-path != 'src/MudBlazor.UnitTests.Analyzers' }}
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+          flags: ${{ steps.project.outputs.name }}
 
       - name: Publish test results
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ matrix.project-path }}/TestResults/junit.xml
+          flags: ${{ steps.project.outputs.name }}
           report_type: test_results
 
   build-only:
