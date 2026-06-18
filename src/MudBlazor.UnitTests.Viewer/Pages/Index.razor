@@ -313,19 +313,22 @@
 
         _availableComponentTypes = GetTestComponentTypes().ToArray();
 
-        _entries = _availableComponentTypes
-            .Select(CreateEntry)
-            .OrderBy(x => x.Name)
-            .ToArray();
-
-        _entryByType = _entries.ToDictionary(x => x.Type, x => x);
-
+        // Everything discovered is routable...
         _typeByRouteKey = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         foreach (var type in _availableComponentTypes)
         {
             // Route keys are unique by construction (one file per path); TryAdd guards against any future clash.
             _typeByRouteKey.TryAdd(RouteKey(type), type);
         }
+
+        // ...but [ViewerHidden] helpers are kept out of the sidebar listing.
+        _entries = _availableComponentTypes
+            .Where(type => !type.IsDefined(typeof(ViewerHiddenAttribute), inherit: false))
+            .Select(CreateEntry)
+            .OrderBy(x => x.Name)
+            .ToArray();
+
+        _entryByType = _entries.ToDictionary(x => x.Type, x => x);
 
         StartSearch();
 
@@ -485,8 +488,11 @@
 
     private static IEnumerable<Type> GetTestComponentTypes()
     {
+        // Discover by location: anything under a TestComponents namespace. A few legacy components
+        // override @namespace away from their folder, so also keep the historical "name contains Test".
         var types = typeof(Program).Assembly.GetTypes()
-            .Where(type => type.Name.Contains("Test"))
+            .Where(type => type.Namespace?.Contains("TestComponents", StringComparison.Ordinal) == true
+                           || type.Name.Contains("Test"))
             .Where(type => !type.Name.StartsWith("<"))
             .Where(type => type.GetInterfaces().Contains(typeof(IComponent)))
             .OrderBy(type => type.Name);

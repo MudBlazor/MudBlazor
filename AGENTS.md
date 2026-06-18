@@ -298,7 +298,8 @@ private Task ToggleAsync()
 
 ### Test locations and naming
 - Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.
-- Viewer test component file names should start with the component prefix, use correct component casing, and end with `Test`, optionally followed by an indexer such as `MenuTest1`.
+- Viewer components are discovered by location: any component under `TestComponents/` (a `TestComponents.*` namespace) is loaded and addressable at `/viewer/<path>`, where `<path>` is its folder path relative to `TestComponents` plus the type name (e.g. `Menu/MenuTest1`). The historical "name must contain `Test`" requirement no longer applies, though `Test`-suffixed scenario names remain the convention.
+- Add `@attribute [ViewerHidden]` to a helper or sub-component (e.g. dialog content shown via the dialog service) to keep it routable but out of the sidebar listing.
 - Keep viewer test component file names at 40 characters or fewer. Prefer concise scenario names over long descriptive file names.
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.

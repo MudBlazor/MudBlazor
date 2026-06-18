@@ -14,7 +14,8 @@ namespace MudBlazor.UnitTests.Other
             var assembly = Assembly.Load("MudBlazor.UnitTests.Viewer");
 
             return assembly.GetTypes()
-                .Where(type => type.Name.Contains("Test"))
+                .Where(type => type.Namespace?.Contains("TestComponents", StringComparison.Ordinal) == true
+                               || type.Name.Contains("Test"))
                 .Where(type => !type.Name.StartsWith("<"))
                 .Where(type => type.GetInterfaces().Contains(typeof(IComponent)))
                 .ToList();
@@ -47,6 +48,21 @@ namespace MudBlazor.UnitTests.Other
                 .ToList();
 
             duplicates.Should().BeEmpty();
+        }
+
+        [Test]
+        public void ViewerHiddenComponentsAreRoutableButDetectable()
+        {
+            // [ViewerHidden] is applied as a Razor @attribute; the viewer keeps such components routable
+            // but filters them out of the sidebar listing. Confirm the attribute round-trips through
+            // reflection (how that filter detects them) and that those components are still discovered.
+            var components = GetViewerComponentTypes();
+
+            var hidden = components
+                .Where(type => type.IsDefined(typeof(ViewerHiddenAttribute), inherit: false))
+                .ToList();
+
+            hidden.Should().NotBeEmpty();
         }
     }
 }
