@@ -1539,6 +1539,23 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-select-input").TextContent.Should().Contain("Latte template");
         }
 
+        [Test(Description = "A custom Comparer that matches no item resolves to no highlight rather than mis-highlighting.")]
+        public async Task SingleSelectWithCustomComparer_NoMatch_HighlightsNothing()
+        {
+            var comp = Context.Render<SingleSelectComparerNoMatchTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                // Menu is open, but no item's key matches the bound value, so nothing is highlighted
+                // and no active descendant is published.
+                comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0);
+                comp.FindAll("div.mud-selected-item").Should().BeEmpty();
+                comp.Find("input").GetAttribute("aria-activedescendant").Should().BeNull();
+            });
+        }
+
         [Test]
         public async Task Select_Item_Collection_Should_Match_Number_Of_Select_Options()
         {
