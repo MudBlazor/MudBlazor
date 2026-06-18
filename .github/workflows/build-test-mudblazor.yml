@@ -61,12 +61,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project-path:
-          [
-            "src/MudBlazor.UnitTests",
-            "src/MudBlazor.UnitTests.Docs",
-            "src/MudBlazor.UnitTests.Analyzers",
-          ]
+        include:
+          - project-path: src/MudBlazor.UnitTests
+            project-name: MudBlazor.UnitTests
+            generate-coverage: true
+          - project-path: src/MudBlazor.UnitTests.Docs
+            project-name: MudBlazor.UnitTests.Docs
+            generate-coverage: true
+          - project-path: src/MudBlazor.UnitTests.Analyzers
+            project-name: MudBlazor.UnitTests.Analyzers
+            generate-coverage: false
 
     steps:
       - uses: actions/checkout@v6
@@ -79,7 +83,7 @@ jobs:
       - name: Test ${{ matrix.project-path }}
         run: |
           coverage_args=()
-          if [ "${{ matrix.project-path }}" != "src/MudBlazor.UnitTests.Analyzers" ]; then
+          if [ "${{ matrix.generate-coverage }}" = "true" ]; then
             coverage_args=(
               --coverlet
               --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute"
@@ -101,26 +105,20 @@ jobs:
           --report-spekt-junit-filename junit.xml \
           --results-directory ${{ matrix.project-path }}/TestResults
 
-      - name: Extract project name
-        id: project
-        run: |
-          path="${{ matrix.project-path }}"
-          echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
-
       - name: Publish coverage
-        if: ${{ !cancelled() && matrix.project-path != 'src/MudBlazor.UnitTests.Analyzers' }}
+        if: ${{ !cancelled() && matrix.generate-coverage }}
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
-          flags: ${{ steps.project.outputs.name }}
+          flags: ${{ matrix.project-name }}
 
       - name: Publish test results
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ${{ matrix.project-path }}/TestResults/junit.xml
-          flags: ${{ steps.project.outputs.name }}
+          flags: ${{ matrix.project-name }}
           report_type: test_results
 
   build-only:
