@@ -4,6 +4,9 @@
 
 namespace MudBlazor;
 
+/// <summary>
+/// Indicates how columns are reordered when dragging column headers in a <see cref="MudDataGrid{T}"/>.
+/// </summary>
 public enum DataGridDragAndDropColumnReorderMode
 {
     /// <summary>
