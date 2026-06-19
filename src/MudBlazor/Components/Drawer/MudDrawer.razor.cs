@@ -43,7 +43,14 @@ namespace MudBlazor
                 .WithChangeHandler(OnRightToLeftParameterChanged);
         }
 
-        internal DrawerVariant EffectiveVariant => Variant == DrawerVariant.Mini && IsBelowCurrentBreakpoint() ? DrawerVariant.Temporary : Variant;
+        // A mini drawer behaves like a temporary drawer below its breakpoint, but only for a finite breakpoint.
+        // Breakpoint.None and Breakpoint.Always are sentinels (not real widths): treating them as "below" would
+        // make every viewport temporary and break, for example, a mini drawer using Breakpoint.None to opt out of
+        // automatic responsiveness, so they keep the mini behavior on all screen sizes.
+        internal DrawerVariant EffectiveVariant =>
+            Variant == DrawerVariant.Mini && Breakpoint is not (Breakpoint.None or Breakpoint.Always) && IsBelowCurrentBreakpoint()
+                ? DrawerVariant.Temporary
+                : Variant;
 
         private bool OverlayVisible => _openState.Value && Overlay && (EffectiveVariant == DrawerVariant.Temporary || (EffectiveVariant == DrawerVariant.Responsive && IsBelowCurrentBreakpoint()));
 
@@ -444,13 +451,19 @@ namespace MudBlazor
             }
         }
 
-        async Task INavigationEventReceiver.OnNavigation()
+        Task INavigationEventReceiver.OnNavigation()
         {
+            // Close on navigation only when the drawer is currently shown as an overlay: a temporary drawer (which
+            // includes a mini drawer below its breakpoint, via EffectiveVariant) or a responsive drawer below its
+            // breakpoint. This mirrors OverlayVisible and uses the normalized, already-resolved breakpoint so
+            // navigation never closes a docked desktop drawer such as a mini rail.
             if (EffectiveVariant == DrawerVariant.Temporary ||
-                (IsResponsiveOrMini() && await BrowserViewportService.GetCurrentBreakpointAsync() < Breakpoint))
+                (EffectiveVariant == DrawerVariant.Responsive && IsBelowCurrentBreakpoint()))
             {
-                await _openState.SetValueAsync(false);
+                return _openState.SetValueAsync(false);
             }
+
+            return Task.CompletedTask;
         }
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
