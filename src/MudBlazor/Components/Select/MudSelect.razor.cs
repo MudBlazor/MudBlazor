@@ -52,7 +52,8 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
-                .WithChangeHandler(() => UpdateTextPropertyAsync(false));
+                // Re-syncing the text on a MultiSelection parameter change must not touch the input (#13064).
+                .WithChangeHandler(() => SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false)));
             registerScope.RegisterParameter<IEqualityComparer<T?>?>(nameof(Comparer))
                 .WithParameter(() => Comparer)
                 .WithChangeHandler(OnComparerChangedAsync);
@@ -801,24 +802,30 @@ namespace MudBlazor
             // Notify all subscribed items of the selection change
             await _context.NotifySelectionChangedAsync();
 
-            if (!MultiSelection)
+            // A SelectedValues parameter change is programmatic (an initial or async-loaded selection),
+            // so syncing the text from it must not mark the input touched (#13064). User selection touches
+            // via SelectOption, which does not go through this handler.
+            await SuppressInteractionEffectsWhileAsync(async () =>
             {
-                await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
-            }
-            else
-            {
-                //Warning. Here the Converter was not set yet
-                if (MultiSelectionTextFunc != null)
+                if (!MultiSelection)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                    await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
                 }
                 else
                 {
-                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    //Warning. Here the Converter was not set yet
+                    if (MultiSelectionTextFunc != null)
+                    {
+                        await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                            selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                            multiSelectionTextFunc: MultiSelectionTextFunc);
+                    }
+                    else
+                    {
+                        await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    }
                 }
-            }
+            });
 
             // Only fire FieldChanged after the first render to avoid triggering during initialization
             if (HasRendered)
@@ -1514,7 +1521,9 @@ namespace MudBlazor
             if (_multiSelectionText != text)
             {
                 _multiSelectionText = text;
-                if (!string.IsNullOrWhiteSpace(_multiSelectionText))
+                // Only a user selection touches the input; a programmatic / parameter-driven text sync
+                // (e.g. an initial or async-loaded SelectedValues) runs under SuppressInteractionEffectsWhileAsync (#13064).
+                if (!string.IsNullOrWhiteSpace(_multiSelectionText) && !_suppressInteractionEffects)
                 {
                     Touched = true;
                 }

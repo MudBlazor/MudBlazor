@@ -183,16 +183,22 @@ namespace MudBlazor
         /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new text value to use.</param>
-        public async Task SetTextAsync(string? text)
+        public Task SetTextAsync(string? text)
         {
-            if (!HasMask)
+            // SetTextAsync is a programmatic API, not user input, so it must not mark the field touched
+            // or fire FieldChanged (#12997). The flag spans the inner-input value echo (ValueChanged ->
+            // OnInnerValueChangedAsync) and the masked path, which are awaited synchronously here.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                await InputReference.SetText(text);
-                return;
-            }
+                if (!HasMask)
+                {
+                    await InputReference.SetText(text);
+                    return;
+                }
 
-            await _maskReference.Clear();
-            await _maskReference.OnPasteAsync(text);
+                await _maskReference.Clear();
+                await _maskReference.OnPasteAsync(text);
+            });
         }
 
         /// <summary>

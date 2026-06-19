@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using AngleSharp.Dom;
 using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -159,6 +160,77 @@ namespace MudBlazor.UnitTests.Components
 
             await input.InputAsync(new ChangeEventArgs { Value = "ABC" });
             await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(3));
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13246 and
+        /// https://github.com/MudBlazor/MudBlazor/issues/13064.
+        /// Inputs that receive a non-default value via @bind-Value / @bind-Text must NOT mark the form
+        /// touched and must NOT fire FieldChanged on the initial render (no user interaction occurred).
+        /// Regressed in 9.3.0 by PR #12892: the programmatic value->text sync sets Touched=true.
+        /// </summary>
+        [Test]
+        public async Task FormWithNonDefaultInitialValuesIsNotTouchedAndDoesNotFireFieldChanged()
+        {
+            var comp = Context.Render<FormInitialValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+            var form = comp.Instance.Form;
+
+            using var _ = new AssertionScope();
+            comp.FindComponent<MudNumericField<int>>().Instance.Touched.Should().BeFalse("numeric");
+            comp.FindComponent<MudTextField<string>>().Instance.Touched.Should().BeFalse("textfield");
+            comp.FindComponent<MudSelect<FormInitialValuesNotTouchedTest.Fruit?>>().Instance.Touched.Should().BeFalse("select");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+            form.IsTouched.Should().BeFalse("form.IsTouched");
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13064.
+        /// When values arrive after the first render (e.g. an async data load), the form must remain
+        /// untouched and FieldChanged must not fire.
+        /// </summary>
+        [Test]
+        public async Task FormFieldsRemainUntouchedWhenValuesLoadedAfterRender()
+        {
+            var comp = Context.Render<FormInitialValuesNotTouchedTest>();
+            var form = comp.Instance.Form;
+
+            // Baseline: empty form is not touched.
+            form.IsTouched.Should().BeFalse();
+
+            // Simulate an async data load arriving after the first render.
+            await comp.InvokeAsync(() => comp.Instance.LoadValuesAsync());
+
+            using var _ = new AssertionScope();
+            // Per-field Touched is the source of truth for MudForm.IsTouched and is reliable in bUnit;
+            // the form-level _touched aggregation is recomputed on a later cycle.
+            comp.FindComponent<MudNumericField<int>>().Instance.Touched.Should().BeFalse("numeric");
+            comp.FindComponent<MudTextField<string>>().Instance.Touched.Should().BeFalse("textfield");
+            comp.FindComponent<MudSelect<FormInitialValuesNotTouchedTest.Fruit?>>().Instance.Touched.Should().BeFalse("select");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+            form.IsTouched.Should().BeFalse("form.IsTouched");
+        }
+
+        /// <summary>
+        /// The Touched suppression for programmatic/parameter sync must not leak into genuine user
+        /// interaction: a real user edit after a non-default value was loaded must still touch the form
+        /// and fire FieldChanged.
+        /// </summary>
+        [Test]
+        public async Task FormBecomesTouchedAfterUserInteractionWithPreloadedValues()
+        {
+            var comp = Context.Render<FormInitialValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+            var form = comp.Instance.Form;
+            var textField = comp.FindComponent<MudTextField<string>>();
+            textField.Instance.Touched.Should().BeFalse();
+
+            // A real user edit (DOM change) must still touch the field and raise FieldChanged: the
+            // suppression must not leak past the programmatic sync into genuine user interaction.
+            await textField.Find("input").ChangeAsync(new ChangeEventArgs { Value = "user typed" });
+
+            textField.Instance.Touched.Should().BeTrue();
+            comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull();
         }
 
         /// <summary>
@@ -1679,7 +1751,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormFieldChangedTest>();
 
-            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComp.Instance;
             var numeric = comp.FindComponent<MudNumericField<int>>().Instance;
             var radioGroup = comp.FindComponent<MudRadioGroup<string>>().Instance;
 
@@ -1687,7 +1760,8 @@ namespace MudBlazor.UnitTests.Components
 
             //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
 
-            await comp.InvokeAsync(() => textField.SetTextAsync("new value"));
+            // A genuine user edit (DOM change) must raise FieldChanged. (Programmatic SetTextAsync does not — see #12997.)
+            await textFieldComp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "new value" });
             comp.Instance.FormFieldChangedEventArgs!.NewValue.Should().Be("new value");
             textField.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
@@ -1713,6 +1787,27 @@ namespace MudBlazor.UnitTests.Components
 
             (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
             mudFile.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/12997.
+        /// Programmatically setting the text via <see cref="MudTextField{T}.SetTextAsync"/> must update the
+        /// text but must NOT mark the field touched nor fire FieldChanged — Touched reflects user
+        /// interaction only.
+        /// </summary>
+        [Test]
+        public async Task SetTextAsyncDoesNotTouchOrFireFieldChanged()
+        {
+            var comp = Context.Render<FormFieldChangedTest>();
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComp.Instance;
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("programmatic"));
+
+            using var _ = new AssertionScope();
+            textFieldComp.Find("input").GetAttribute("value").Should().Be("programmatic", "the text is still set");
+            textField.Touched.Should().BeFalse("no user interaction occurred");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged must not fire for a programmatic set");
         }
 
         /// <summary>
