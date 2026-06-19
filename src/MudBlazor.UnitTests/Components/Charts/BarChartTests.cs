@@ -345,5 +345,103 @@ namespace MudBlazor.UnitTests.Charts
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true");
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(chartSeries[2].Data.Values.Count, "Series 3 bars should be visible");
         }
+
+        [Test]
+        public void BarChartOverlay_RendersOverlayBars()
+        {
+            // Outer StackedBar chart with a nested Bar overlay that shares the outer axis chart.
+            var stacked = new List<ChartSeries<double>>
+            {
+                new() { Name = "S0", Data = new double[] { 40, 30, 20, 50 } },
+                new() { Name = "S1", Data = new double[] { 10, 20, 30, 15 } },
+            };
+            var overlayData = new List<ChartSeries<double>>
+            {
+                new() { Name = "Overlay", Data = new double[] { 25, 35, 45, 30 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, stacked)
+                .Add(x => x.ChartLabels, new[] { "A", "B", "C", "D" })
+                .Add(x => x.ChartOptions, new StackedBarChartOptions())
+                .AddChildContent<Bar<double>>(cp => cp
+                    .Add(b => b.ChartSeries, overlayData)
+                    .Add(b => b.ChartOptions, new BarChartOptions())));
+
+            var overlay = comp.FindComponent<Bar<double>>();
+            overlay.Instance.IsOverlayChart.Should().BeTrue(because: "the nested Bar's cascaded reference is the outer axis chart");
+
+            // The overlay child renders after the outer ChartReference is set; settle the renders so the
+            // overlay's shared-data branch emits bars into the outer chart's overlay content.
+            overlay.Render();
+            comp.Render();
+
+            var overlayBars = comp.FindAll("g.mud-charts-bar-series path.mud-chart-bar");
+            overlayBars.Count.Should().Be(overlayData[0].Data.Values.Count, because: "the overlay renders one bar per data point");
+        }
+
+        [Test]
+        public async Task BarChartOverlay_HoverTogglesTooltip()
+        {
+            var stacked = new List<ChartSeries<double>>
+            {
+                new() { Name = "S0", Data = new double[] { 40, 30, 20, 50 } },
+                new() { Name = "S1", Data = new double[] { 10, 20, 30, 15 } },
+            };
+            var overlayData = new List<ChartSeries<double>>
+            {
+                new() { Name = "Overlay", Data = new double[] { 25, 35, 45, 30 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, stacked)
+                .Add(x => x.ChartLabels, new[] { "A", "B", "C", "D" })
+                .Add(x => x.ChartOptions, new StackedBarChartOptions())
+                .AddChildContent<Bar<double>>(cp => cp
+                    .Add(b => b.ChartSeries, overlayData)
+                    .Add(b => b.ChartOptions, new BarChartOptions())));
+
+            var overlay = comp.FindComponent<Bar<double>>();
+            overlay.Instance.IsOverlayChart.Should().BeTrue();
+
+            // Settle the renders so the overlay emits its bars before hovering.
+            overlay.Render();
+            comp.Render();
+
+            var bar = comp.Find("g.mud-charts-bar-series path.mud-chart-bar");
+
+            comp.FindComponents<ChartTooltip>().Should().BeEmpty(because: "nothing is hovered yet");
+
+            await bar.MouseOverAsync();
+            comp.FindComponents<ChartTooltip>().Should().NotBeEmpty(because: "hovering an overlay bar renders its tooltip");
+
+            await bar.MouseOutAsync();
+            comp.FindComponents<ChartTooltip>().Should().BeEmpty(because: "moving out clears the hovered bar and its tooltip");
+        }
+
+        [Test]
+        public void BarChart_TightMaxYAxisTicks_BoundsHorizontalLineCount()
+        {
+            // With YAxisTicks = 1 and a huge value range, the unbounded line count would be ~100000;
+            // the gridYUnits doubling safeguard must keep the rendered gridlines within MaxNumYAxisTicks.
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S0", Data = new double[] { 1, 100000 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.Bar)
+                .Add(x => x.ChartSeries, series)
+                .Add(x => x.ChartLabels, new[] { "A", "B" })
+                .Add(x => x.ChartOptions, new BarChartOptions { YAxisTicks = 1, MaxNumYAxisTicks = 5 }));
+
+            var hLines = comp.FindAll("g.mud-charts-gridlines-yaxis path");
+            hLines.Count.Should().BeGreaterThan(0, because: "horizontal grid lines are still rendered");
+            hLines.Count.Should().BeLessThanOrEqualTo(5, because: "the doubling safeguard keeps the count within MaxNumYAxisTicks");
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(2, because: "both data points render as bars");
+        }
     }
 }
