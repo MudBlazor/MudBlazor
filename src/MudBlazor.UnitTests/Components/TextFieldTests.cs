@@ -376,6 +376,71 @@ namespace MudBlazor.UnitTests.Components
             textfield.ReadText.Should().Be("B");
         }
 
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Converter case).
+        /// Entering text that parses to the same Value a second time must still re-apply the converter's
+        /// formatting, not leave the raw text. Previously the unchanged value short-circuited the
+        /// value->text round-trip, so only the first occurrence of a value formatted.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithConverter_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueConverterTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+
+            // Re-enter the same raw value: it parses to the same Value, but the display must still reformat.
+            await comp.Find("input").ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Format case).
+        /// Re-entering a raw value that parses to the same number must still re-apply the Format.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithFormat_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueFormatTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+
+            await comp.Find("input").ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+        }
+
+        [Test]
+        public async Task TextField_Immediate_Format_TwoWayBound_RawWhileTyping_FormatsOnBlur()
+        {
+            // #13002 on Blazor Server: a two-way @bind-Value MudTextField with Format reformatted the text
+            // mid-typing because the value echo round-trip re-derived the formatted text on each keystroke.
+            // Simulate real typing (keydown + input) and assert the raw text is preserved while typing and
+            // the format is applied on blur (the pre-v9 "format on LostFocus" behavior).
+            decimal? bound = null;
+            var comp = Context.Render<MudTextField<decimal?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "N2")
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            foreach (var ch in "1234")
+            {
+                var current = comp.Find("input").GetAttribute("value") ?? string.Empty;
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = ch.ToString() });
+                await comp.Find("input").InputAsync(current + ch);
+            }
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            bound.Should().Be(1234m);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1,234.00"));
+        }
+
         [Test]
         public void TextField_Should_FireValueChangedOnTextParameterChange()
         {

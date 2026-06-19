@@ -4921,6 +4921,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridNumericColumnFilter_CanTypeDecimalCharByChar()
+        {
+            // Regression test for #13250: typing a decimal value such as "1.008" one character at a time
+            // into a numeric column filter (which renders a MudNumericField with Immediate=true and the
+            // column Culture bound) must produce 1.008. Previously the field reformatted on every
+            // keystroke, so the "." and the leading "0" were stripped and the filter became 1008.
+            var comp = Context.Render<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            // Amount column (index 2) uses InvariantCulture, so "." is the decimal separator.
+            IElement AmountFilter() => dataGrid.FindAll("th.filter-header-cell input")[2];
+            foreach (var ch in "1.008")
+            {
+                var current = AmountFilter().GetAttribute("value") ?? string.Empty;
+                await AmountFilter().InputAsync(current + ch);
+            }
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(1.008);
+        }
+
+        [Test]
         public async Task DataGridCultureColumnFilterHeader()
         {
             var comp = Context.Render<DataGridCultureEditableTest>();
