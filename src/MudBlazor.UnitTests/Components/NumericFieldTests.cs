@@ -660,6 +660,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task NumericField_Immediate_Format_TwoWayBound_RawWhileTyping_FormatsOnBlur()
+        {
+            // #13266 completion on Blazor Server: with a two-way @bind-Value the value echoes back through
+            // the parent and previously reformatted the text mid-typing (the wrapper never tracked focus,
+            // so the SetParametersAsync "preserve user text" guard never engaged). Simulate real typing
+            // (keydown sets focus, then input) and assert the raw text is preserved while typing and only
+            // formatted on blur. Keydown is the key difference from the one-way test above.
+            double? bound = null;
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "F3")
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            foreach (var ch in "1234")
+            {
+                var current = comp.Find("input").GetAttribute("value") ?? string.Empty;
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = ch.ToString() });
+                await comp.Find("input").InputAsync(current + ch);
+            }
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            bound.Should().Be(1234d);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
+        }
+
+        [Test]
         public async Task NumericField_Immediate_WithCulture_CanTypeZeroAfterDecimalPoint()
         {
             // #13250: with Immediate=true and an explicit Culture (as the DataGrid numeric filter uses),

@@ -379,6 +379,11 @@ namespace MudBlazor
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
+            // Track focus like MudBaseInput.InvokeKeyDownAsync (which MudTextField uses) so the
+            // "preserve user text while editing" guard in SetParametersAsync engages while typing.
+            // Without this, the wrapper's _isFocused stays false and the value->text resync reformats
+            // mid-typing on Blazor Server (#13266/#13002 family).
+            _isFocused = true;
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }
@@ -387,6 +392,8 @@ namespace MudBlazor
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return Task.CompletedTask;
+
+            _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
         }

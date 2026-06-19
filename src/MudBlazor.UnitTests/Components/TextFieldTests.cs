@@ -377,6 +377,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TextField_Immediate_Format_TwoWayBound_RawWhileTyping_FormatsOnBlur()
+        {
+            // #13002 on Blazor Server: a two-way @bind-Value MudTextField with Format reformatted the text
+            // mid-typing because the value echo round-trip re-derived the formatted text on each keystroke.
+            // Simulate real typing (keydown + input) and assert the raw text is preserved while typing and
+            // the format is applied on blur (the pre-v9 "format on LostFocus" behavior).
+            decimal? bound = null;
+            var comp = Context.Render<MudTextField<decimal?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "N2")
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            foreach (var ch in "1234")
+            {
+                var current = comp.Find("input").GetAttribute("value") ?? string.Empty;
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = ch.ToString() });
+                await comp.Find("input").InputAsync(current + ch);
+            }
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            bound.Should().Be(1234m);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1,234.00"));
+        }
+
+        [Test]
         public void TextField_Should_FireValueChangedOnTextParameterChange()
         {
             string? changed_value = null;
