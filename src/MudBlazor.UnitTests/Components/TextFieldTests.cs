@@ -475,6 +475,64 @@ namespace MudBlazor.UnitTests.Components
             changed_text.Should().Be("B");
         }
 
+        // ---- #12796: in-flight edit window (Immediate inputs must not lose characters to stale echoes) ----
+
+        [Test]
+        public async Task TextField_Immediate_StaleParentEcho_Should_NotClobberInFlightText()
+        {
+            // #12796: the user is typing on an Immediate input. A stale parent value (an earlier
+            // keystroke's @bind echo arriving late on a high-latency circuit) must NOT overwrite the
+            // text the user has since typed. Before the in-flight window, the stale value reformatted
+            // the field and ate characters.
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Immediate, true)
+                .Add(p => p.Value, "a"));
+            var input = comp.Find("input");
+            comp.Instance.ReadText.Should().Be("a");
+
+            // user focuses (keydown opens focus tracking) and types ahead to "abc"
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "b" });
+            await input.InputAsync(new ChangeEventArgs { Value = "abc" });
+            comp.Instance.ReadText.Should().Be("abc");
+
+            // a STALE echo lands: the parent re-renders with the earlier value "a" while "abc" is in flight
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "a"));
+
+            // the in-flight window suppresses the stale echo, so the typed text survives
+            comp.Instance.ReadText.Should().Be("abc");
+        }
+
+        [Test]
+        public async Task TextField_Immediate_ExternalChange_Should_SyncAfterEditingEnds()
+        {
+            // #12796 contract: once the edit settles (here, on blur) the window closes and genuine
+            // external/programmatic updates sync to the text again, even though it was just edited.
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Immediate, true)
+                .Add(p => p.Value, "a"));
+            var input = comp.Find("input");
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "b" });
+            await input.InputAsync(new ChangeEventArgs { Value = "abc" });
+            await input.BlurAsync(); // editing ends → window closes
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "external"));
+            comp.Instance.ReadText.Should().Be("external");
+        }
+
+        [Test]
+        public async Task TextField_NonImmediate_ExternalChange_Should_SyncText_Unchanged()
+        {
+            // #12796 contract: Immediate=false behavior is unchanged — the window never engages, so an
+            // external value change always refreshes the displayed text.
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Immediate, false)
+                .Add(p => p.Value, "a"));
+            comp.Instance.ReadText.Should().Be("a");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "b"));
+            comp.Instance.ReadText.Should().Be("b");
+        }
+
         /// <summary>
         /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.

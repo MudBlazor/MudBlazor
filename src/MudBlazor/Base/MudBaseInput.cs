@@ -22,6 +22,14 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
+        // In-flight edit window (#12796): while a user keystroke's @bind echo is still round-tripping
+        // through the parent, stale value echoes from earlier keystrokes must not clobber the
+        // in-progress text. The window opens on user input (Immediate + focused) and closes the instant
+        // the echo of the most recent user value arrives, so genuine external changes resume syncing
+        // even while the input stays focused. Non-Immediate inputs never open it.
+        private bool _editInFlight;
+        private T? _latestUserValue;
+
         /// <summary>
         /// The resolved input element ID.
         /// </summary>
@@ -469,6 +477,9 @@ namespace MudBlazor
         protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
             _isFocused = false;
+            // Editing has ended: close the in-flight edit window so the next Value change derives text
+            // normally and the committed/formatted value can be shown (#12796).
+            _editInFlight = false;
 
             if (ReadOnly)
             {
@@ -530,6 +541,15 @@ namespace MudBlazor
             _isDirty = true;
             _validated = false;
 
+            // Open the in-flight edit window (#12796): record the value this keystroke produced so a
+            // stale echo arriving mid-typing can be told apart from the settling echo and from a genuine
+            // external change. Only Immediate, focused user input needs the window.
+            if (Immediate && _isFocused)
+            {
+                _latestUserValue = value;
+                _editInFlight = true;
+            }
+
             // Use ParameterState to set Value instead of direct assignment
             // This ensures proper parameter lifecycle management
             await _valueState.SetValueAsync(value);
@@ -562,12 +582,18 @@ namespace MudBlazor
             {
                 var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
-                // Do not reformat the displayed text from Value on this input's own Immediate ValueChanged
-                // echo (the @bind round-trip mid-typing). On Blazor Server the echo can land between
-                // keystrokes and would reformat while the user is typing, corrupting input (#13002; also
-                // completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
-                // External value changes, non-Immediate commits, and explicit forced updates still refresh.
-                if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
+                if (forceTextUpdate)
+                {
+                    _editInFlight = false;
+                }
+                // Governed by the in-flight edit window (#12796): while a user edit is awaiting its echo,
+                // suppress the value->text derive so a stale echo from an earlier keystroke can't reformat
+                // (and corrupt) the in-progress text on a high-latency Blazor Server circuit. The window
+                // closes the moment the latest user value echoes back, so genuine external value changes
+                // resume refreshing the text even while the input stays focused. This supersedes the prior
+                // `Immediate && IsChildOriginatedChange` guard, which let stale echoes through because their
+                // value differs from the current working value (so IsChildOriginatedChange was false).
+                if (forceTextUpdate || ShouldDeriveTextFromValue(arg.Value))
                 {
                     await UpdateTextPropertyAsync(false);
                 }
@@ -585,6 +611,35 @@ namespace MudBlazor
                 FieldChanged(arg.Value);
                 await BeginValidateAsync();
             }
+        }
+
+        /// <summary>
+        /// Decides whether an incoming <see cref="Value"/> change should refresh the derived display
+        /// text, implementing the in-flight edit window (#12796).
+        /// </summary>
+        /// <remarks>
+        /// While a user edit is awaiting its <see cref="ValueChanged"/> echo, derivation is suppressed so
+        /// a stale echo from an earlier keystroke cannot overwrite the in-flight text. As soon as the echo
+        /// of the most recent user value arrives, the window closes so subsequent genuine external changes
+        /// resume syncing normally — even while the input is still focused. The settling echo itself does
+        /// not reformat, so the user's in-progress text is preserved until they commit (blur).
+        /// </remarks>
+        private bool ShouldDeriveTextFromValue(T? incomingValue)
+        {
+            if (!_editInFlight)
+            {
+                return true;
+            }
+
+            if (EqualityComparer<T?>.Default.Equals(incomingValue, _latestUserValue))
+            {
+                // The latest user keystroke's echo has caught up: the window has settled.
+                _editInFlight = false;
+                return false; // the display already shows the user's in-flight text
+            }
+
+            // A stale echo from an earlier keystroke (or an external change mid-edit). Don't clobber.
+            return false;
         }
 
         /// <summary>
@@ -674,6 +729,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
+            _editInFlight = false;
             UpdateTextPropertyAsync(false).CatchAndLog();
             StateHasChanged();
         }
@@ -694,14 +750,24 @@ namespace MudBlazor
             {
                 var valueChanged = !EqualityComparer<T?>.Default.Equals(currentValue, ReadValue);
 
-                // Preserve in-progress user text across parent rerenders until Value actually changes.
-                if (_isFocused && !valueChanged && !_forceTextUpdate)
+                // An explicit forced refresh always wins and closes any in-flight edit window.
+                if (_forceTextUpdate)
+                {
+                    _forceTextUpdate = false;
+                    _editInFlight = false;
+                    await UpdateTextPropertyAsync(false);
+                    return;
+                }
+
+                // Preserve in-progress user text across parent rerenders. While a user edit is in flight,
+                // suppress the value->text derive here too so a stale echo on a high-latency circuit can't
+                // clobber typed text via this path (the value-changed echo bypasses the focused/unchanged
+                // guard below) (#12796). Also keep preserving focused text when the value is unchanged.
+                if (_editInFlight || (_isFocused && !valueChanged))
                 {
                     return;
                 }
 
-                // Always update text when Value changes (TextUpdateSuppression removed)
-                _forceTextUpdate = false;
                 await UpdateTextPropertyAsync(false);
             }
         }
