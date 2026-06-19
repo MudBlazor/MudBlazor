@@ -36,7 +36,7 @@
                               Variant="@Variant"
                               Typo="@Typo"
                               Value="@ReadText"
-                              ValueChanged="(s) => SetTextAndUpdateValueAsync(s)"
+                              ValueChanged="@OnInnerValueChangedAsync"
                               Placeholder="@Placeholder"
                               Disabled=@GetDisabledState()
                               Underline="@Underline"

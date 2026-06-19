@@ -16,12 +16,6 @@ public partial class MudTabPanel : MudComponentBase
 {
     private bool _disposed;
 
-    protected string Stylename =>
-        new StyleBuilder()
-            .AddStyle("display", Parent?.ActivePanel == this ? "contents" : "none", Parent?.KeepPanelsAlive == true)
-            .AddStyle(Style)
-            .Build();
-
     internal string Classname =>
         new CssBuilder("mud-tab-panel")
             .AddClass("mud-tab-panel-hidden", !Visible)
@@ -30,6 +24,7 @@ public partial class MudTabPanel : MudComponentBase
 
     internal string PanelClassname =>
         new CssBuilder("mud-tab-panel")
+            .AddClass("mud-tab-panel-active", Parent?.ActivePanel == this)
             .AddClass("mud-tab-panel-hidden", !Visible)
             .AddClass(PanelClass)
             .Build();
@@ -111,6 +106,16 @@ public partial class MudTabPanel : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public object? BadgeData { get; set; }
+
+    /// <summary>
+    /// The maximum number allowed in the badge.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>99</c>. Applies when <see cref="BadgeData"/> is an <c>int</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public int BadgeMax { get; set; } = 99;
 
     /// <summary>
     /// Optional icon to be shown in the badge instead of text.

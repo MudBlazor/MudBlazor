@@ -139,6 +139,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13174.
+        /// With Immediate=true and a two-way @bind-Value, the validation func must run exactly once per
+        /// keystroke. The parent's ValueChanged echo (the @bind round-trip) must NOT trigger a second
+        /// validation (regression introduced in 9.3.0 by PR #12892, which added BeginValidateAsync to
+        /// MudBaseInput.OnValueParameterChangedAsync).
+        /// </summary>
+        [Test]
+        public async Task FormValidationFuncRunsOncePerKeystrokeWithImmediateBoundInput()
+        {
+            var comp = Context.Render<FormValidationFuncOncePerKeystrokeTest>();
+            var input = comp.Find("input");
+
+            await input.InputAsync(new ChangeEventArgs { Value = "A" });
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(1));
+
+            await input.InputAsync(new ChangeEventArgs { Value = "AB" });
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(2));
+
+            await input.InputAsync(new ChangeEventArgs { Value = "ABC" });
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(3));
+        }
+
+        /// <summary>
         /// Changing the nested form fields value should set IsTouched
         /// </summary>
         [Test]

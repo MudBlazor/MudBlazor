@@ -2854,6 +2854,24 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
         }
 
+        [Test]
+        public void TableSortLabelFullWidthAddsFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.FullWidth, true)
+            );
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthFalseDoesNotAddFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
+        }
+
         private Mock<IScrollManager> _mockScrollManager = null!;
 
         public class TestItem { public int Id { get; set; } public string Name { get; set; } }
@@ -3217,6 +3235,60 @@ namespace MudBlazor.UnitTests.Components
 
             row.ClassList.Should().NotContain("mud-table-row-clickable");
             row.ClassList.Should().Contain("mud-table-row-disabled");
+        }
+
+        [Test]
+        public void Pager_RendersAboveTable_WhenPagerPositionIsTop()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Top)
+            );
+
+            var html = comp.Markup;
+            var toolbarIndex = html.IndexOf("test-toolbar");
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            toolbarIndex.Should().NotBe(-1);
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            toolbarIndex.Should().BeLessThan(pagerIndex);
+            pagerIndex.Should().BeLessThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().Contain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void Pager_RendersBelowTable_WhenPagerPositionIsBottom()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Bottom)
+            );
+
+            var html = comp.Markup;
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            pagerIndex.Should().BeGreaterThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().NotContain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void TablePagerPosition_TopAndBottom_RendersTwoPagers()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.TopAndBottom)
+            );
+
+            var pagers = comp.FindAll(".mud-table-pagination");
+
+            pagers.Count.Should().Be(2);
+
+            pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
+            pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
         }
     }
 }
