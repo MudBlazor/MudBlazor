@@ -7,6 +7,7 @@ using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
@@ -1201,6 +1202,91 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button:contains('1')").ClickAsync();
             var icon = comp.Find(".mud-menu-submenu-icon");
             icon.InnerHtml.Should().Contain("M14 7l-5 5 5 5V7z"); // ArrowLeft path
+        }
+
+        [Test]
+        public async Task OpenMenu_WhenFocusInteropThrows_DoesNotCrash()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/12184
+            // On MAUI BlazorWebView the wrapper-focus interop in OnAfterRenderAsync can run after
+            // the element has been detached (rapid open/close, navigation), throwing
+            // "Unable to focus an invalid element". Opening the menu must swallow that rather
+            // than surface it as an unhandled JSException. This reproduces the reported stack
+            // frame (MudMenu.OnAfterRenderAsync -> focus) as closely as bUnit allows.
+            Context.JSInterop
+                .SetupVoid("Blazor._internal.domWrapper.focus", _ => true)
+                .SetException(new JSException("Unable to focus an invalid element."));
+
+            var comp = Context.Render<MenuTest1>();
+
+            var open = async () => await comp.Find("button.mud-button-root").ClickAsync();
+
+            await open.Should().NotThrowAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+        }
+
+        [Test]
+        public async Task FocusItemAsync_WhenFocusInteropThrows_DoesNotPropagate()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/12184
+            // Every keyboard navigation path funnels through FocusItemAsync (including the
+            // fire-and-forget calls in TrackKeyboardInteraction). If the target element is
+            // detached when focus runs, the JSException must be swallowed, not propagated.
+            var comp = Context.Render<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            // Simulate the element being detached: the focus interop now throws.
+            Context.JSInterop
+                .SetupVoid("Blazor._internal.domWrapper.focus", _ => true)
+                .SetException(new JSException("Unable to focus an invalid element."));
+
+            var focus = async () => await comp.InvokeAsync(() => menu.FocusItemAsync(0));
+
+            await focus.Should().NotThrowAsync();
+        }
+
+        [Test]
+        public async Task FocusItemAsync_AfterDispose_DoesNotInvokeFocusInterop()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/12184
+            // When the menu is torn down mid-flight (navigation), queued focus work must
+            // short-circuit on the _disposed guard and not run JS interop against the
+            // disposed component / detached DOM.
+            var comp = Context.Render<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            var focusCountBeforeDispose = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Count;
+
+            menu.Dispose();
+            await comp.InvokeAsync(() => menu.FocusItemAsync(0));
+
+            Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Count
+                .Should().Be(focusCountBeforeDispose);
+        }
+
+        [Test]
+        public async Task Dispose_CalledTwiceAfterHover_IsIdempotent()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/12184 (review follow-up)
+            // Dispose must be idempotent. A hovered menu holds a live CancellationTokenSource,
+            // so a second Dispose() (e.g. user code disposing a @ref before the renderer tears
+            // the component down) would otherwise call Cancel() on the already-disposed CTS and
+            // throw ObjectDisposedException.
+            var comp = Context.Render<MenuTestMouseOver>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Hover to open, which creates the hover CancellationTokenSource.
+            await comp.Find("div.mud-menu").PointerEnterAsync();
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
+
+            menu.Dispose();
+            var secondDispose = () => menu.Dispose();
+
+            secondDispose.Should().NotThrow();
         }
     }
 }

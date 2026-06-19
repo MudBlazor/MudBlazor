@@ -560,9 +560,17 @@ namespace MudBlazor
             // Check ParameterView to see if Text is also present
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
             {
-                // Always update text when Value changes (TextUpdateSuppression removed)
+                var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                // Do not reformat the displayed text from Value on this input's own Immediate ValueChanged
+                // echo (the @bind round-trip mid-typing). On Blazor Server the echo can land between
+                // keystrokes and would reformat while the user is typing, corrupting input (#13002; also
+                // completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
+                // External value changes, non-Immediate commits, and explicit forced updates still refresh.
+                if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
+                {
+                    await UpdateTextPropertyAsync(false);
+                }
             }
 
             // Notify the form that the field has changed and trigger re-validation

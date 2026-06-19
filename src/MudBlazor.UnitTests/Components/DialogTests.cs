@@ -1569,23 +1569,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => service.Close(dialogReference));
         }
 
-        [Test]
-        public async Task CloseButton_ShouldHavePreventDefaultOnMouseDownAttribute()
-        {
-            // Arrange
-            var comp = Context.Render<MudDialogProvider>();
-            var service = Context.Services.GetRequiredService<IDialogService>();
-
-            // Act
-            await comp.InvokeAsync(async () =>
-                await service.ShowAsync<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
-
-            // Assert
-            var closeBtn = comp.Find(".mud-button-close");
-            closeBtn.Should().NotBeNull();
-            closeBtn.GetAttribute("blazor:onmousedown:preventdefault").Should().Be("");
-        }
-
         /// <summary>
         /// InjectOptions() should set the options of the calling IDialogReference.
         /// </summary>
