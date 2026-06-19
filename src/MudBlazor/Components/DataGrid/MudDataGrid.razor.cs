@@ -276,16 +276,14 @@ namespace MudBlazor
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                switch (ColumnReorderMode)
+                if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                 {
-                    case DataGridDragAndDropColumnReorderMode.Insert:
-                        var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal) ? 1 : 0;
-                        Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex, position);
-                        break;
-                    case DataGridDragAndDropColumnReorderMode.Swap:
-                    default:
-                        Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
-                        break;
+                    var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal) ? 1 : 0;
+                    Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex, position);
+                }
+                else
+                {
+                    Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
                 }
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
