@@ -546,7 +546,11 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
             }
 
-            FieldChanged(value);
+            // Only user interaction notifies the form; the validation below runs either way.
+            if (!_suppressInteractionEffects)
+            {
+                FieldChanged(value);
+            }
             await BeginValidateAsync();
         }
 
@@ -560,14 +564,27 @@ namespace MudBlazor
             // Check ParameterView to see if Text is also present
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
             {
-                // Always update text when Value changes (TextUpdateSuppression removed)
+                var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                // Do not reformat the displayed text from Value on this input's own Immediate ValueChanged
+                // echo (the @bind round-trip mid-typing). On Blazor Server the echo can land between
+                // keystrokes and would reformat while the user is typing, corrupting input (#13002; also
+                // completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
+                // External value changes, non-Immediate commits, and explicit forced updates still refresh.
+                if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
+                {
+                    await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
+                }
             }
 
             // Notify the form that the field has changed and trigger re-validation
             // Only do this after the field has been touched.
-            if (wasTouched)
+            // Skip when the change is this input's own ValueChanged echo (the parent's @bind round-trip):
+            // that user edit already validated once in SetValueAndUpdateTextAsync, so re-validating here
+            // would run the validation func twice for every keystroke on Immediate + @bind-Value inputs
+            // (#13174). Genuine external programmatic value changes are not child-originated and still
+            // re-validate, preserving the #12012 fix.
+            if (wasTouched && !arg.IsChildOriginatedChange)
             {
                 FieldChanged(arg.Value);
                 await BeginValidateAsync();
@@ -611,14 +628,14 @@ namespace MudBlazor
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         protected override async Task ValidateValue()
@@ -638,7 +655,7 @@ namespace MudBlazor
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
 
             if (Label == null && For != null)
@@ -689,7 +706,7 @@ namespace MudBlazor
 
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
         }
 
@@ -783,7 +800,7 @@ namespace MudBlazor
 
             _validated = false;
 
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
             {
                 Touched = true;
             }
@@ -795,22 +812,23 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
-            _validated = false;
-
-            if (!string.IsNullOrEmpty(arg.Value))
+            // A Text parameter change is always parameter-driven (a user edit updates Text via the internal
+            // state without re-triggering this handler), so it must not touch the input. The whole handler
+            // runs suppressed, so the gated Touched write in UpdateValuePropertyAsync's chain is skipped.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                Touched = true;
-            }
+                _validated = false;
 
-            // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
-            // But only if Value is not also being set in the same parameter update
-            // Check ParameterView to see if Value is also present
-            if (!arg.ParameterView.Contains<T?>(nameof(Value)))
-            {
-                await UpdateValuePropertyAsync(updateText: false);
-            }
+                // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
+                // But only if Value is not also being set in the same parameter update
+                // Check ParameterView to see if Value is also present
+                if (!arg.ParameterView.Contains<T?>(nameof(Value)))
+                {
+                    await UpdateValuePropertyAsync(updateText: false);
+                }
+            });
         }
 
         private async Task UpdateInputIdStateAsync()

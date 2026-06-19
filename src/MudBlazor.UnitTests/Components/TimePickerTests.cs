@@ -328,6 +328,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression test for the PR #13328 review: the Time parameter setter is suppressed so a
+        /// parameter-driven value does not touch the picker, but a genuine user submit (Enter) must still
+        /// mark the picker Touched and fire MudForm.FieldChanged.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_UserSubmit_TouchesAndFiresFieldChanged()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<FormTimePickerSubmitTest>();
+            var timePicker = comp.FindComponent<MudTimePicker>().Instance;
+
+            timePicker.Touched.Should().BeFalse();
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull();
+
+            // Open the picker and change the time with the keyboard.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(timePicker.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown" }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(timePicker.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" }));
+            await comp.WaitForAssertionAsync(() => timePicker.TimeIntermediate.Should().NotBeNull());
+
+            // Submit the user-picked time.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(timePicker.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown" }));
+
+            await comp.WaitForAssertionAsync(() => timePicker.Touched.Should().BeTrue());
+            comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull();
+        }
+
+        /// <summary>
         /// A time picker with a label should auto-generate an id and use that id on the input element and the label's for attribute.
         /// </summary>
         [Test]

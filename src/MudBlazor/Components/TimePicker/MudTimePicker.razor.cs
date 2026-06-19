@@ -140,7 +140,9 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            set => SetTimeAsync(value, true).CatchAndLog();
+            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
+            // awaits inside SetTimeAsync into a concurrent user clock pick on Blazor Server (PR #13328 review).
+            set => SetTimeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
         }
 
         /// <summary>
@@ -154,11 +156,15 @@ namespace MudBlazor
         /// </summary>
         /// <param name="time">The new value to set.</param>
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
-        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
+        /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
+        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
             if (_value != time)
             {
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
@@ -169,7 +175,10 @@ namespace MudBlazor
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 
@@ -204,9 +213,9 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            Time = TimeIntermediate;
-
-            return Task.CompletedTask;
+            // Commit via SetTimeAsync directly, NOT the Time setter: the setter is suppressed, but a submit
+            // is a user commit that must touch and fire FieldChanged (as MudDatePicker/MudDateRangePicker do).
+            return SetTimeAsync(TimeIntermediate, updateValue: true);
         }
 
         /// <inheritdoc />

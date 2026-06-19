@@ -69,7 +69,7 @@
                                                     <MudStack>
                                                         @foreach (var f in FilterDefinitions)
                                                         {
-                                                            @Filter(f, null)
+                                                            @Filter(f, null, f.Id == _filterDefinitionIdToFocus)
                                                         }
                                                     </MudStack>
                                                     <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
@@ -427,7 +427,7 @@
              </td>
          </text>;
 
-    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T>? column) =>
+    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T>? column, bool autoFocus = false) =>
         @<text>
             @{
                 var filter = new Filter<T>(this, filterDefinition, column);
@@ -440,8 +440,15 @@
                         <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
-                        <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense"
-                                   Class="filter-field">
+                        <MudSelect T="Column<T>" 
+                                   Value="@filterDefinition.Column" 
+                                   ValueChanged="@filter.FieldChanged" 
+                                   FullWidth="true" 
+                                   Label="@Localizer[LanguageResource.MudDataGrid_Column]" 
+                                   Dense="true" 
+                                   Margin="@Margin.Dense"
+                                   Class="filter-field"
+                                   AutoFocus="@autoFocus">
                             @foreach (var renderColumn in RenderedColumns.Where(x => x.Filterable != false))
                             {
                                 <MudSelectItem T="Column<T>" Value="@renderColumn">@renderColumn.Title</MudSelectItem>

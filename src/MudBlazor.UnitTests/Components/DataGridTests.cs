@@ -1369,6 +1369,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterChangedColumnFilterRowApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            var filterInput = dataGrid.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await dataGrid.Find(".column-filter-menu button").ClickAsync();
+            var operators = popoverProvider.FindComponents<MudMenuItem>();
+            await operators[1].Find(".mud-menu-item").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+
+            await dataGrid.Find(".filter-button.clear").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(3);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridFilterChangedColumnFilterMenuApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>(parameters => parameters
+                .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            var filterInput = comp.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            await comp.Find(".apply-filter-button").ClickAsync();
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".clear-filter-button").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridCommittedItemChangedOccursAfterSourceItemUpdateInFormEdit()
         {
             var comp = Context.Render<DataGridCommittedItemChangedTest>();
@@ -1439,10 +1481,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridServerSideSortable()
         {
-            // Disable simulated load on server side:
-            TestComponents.DataGrid.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
-
-            var comp = Context.Render<DataGridServerSideSortableTest>();
+            var comp = Context.Render<DataGridServerSideSortableTest>(parameters =>
+                parameters.Add(x => x.ServerDelay, TimeSpan.Zero));
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerSideSortableTest.Item>>();
 
             var cells = dataGrid.FindAll("td");
@@ -2937,6 +2977,54 @@ namespace MudBlazor.UnitTests.Components
 
             // check the number of filters displayed in the filters panel is still 1 (no duplicate filter)
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DataGrid_OpenFilters_FromHeaderFilterButton_SetsAutoFocusOnMatchingFilter()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            var ageColumn = dataGrid.Instance.GetColumnByPropertyName("Age");
+
+            await comp.InvokeAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFiltersTest.Model>
+                {
+                    Id = Guid.NewGuid(),
+                    Column = nameColumn,
+                    Operator = FilterOperator.String.Contains,
+                    Value = "Sam"
+                });
+                dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFiltersTest.Model>
+                {
+                    Id = Guid.NewGuid(),
+                    Column = ageColumn,
+                    Operator = FilterOperator.Number.GreaterThan,
+                    Value = 30
+                });
+            });
+
+            var ageHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()
+                .First(x => x.Instance.Column?.PropertyName == "Age");
+
+            await comp.InvokeAsync(() => ageHeaderCell.Instance.OpenFilters(new MouseEventArgs
+            {
+                PageX = 100,
+                PageY = 200
+            }));
+
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(2);
+
+            var filterFieldSelects = comp.FindComponents<MudSelect<Column<DataGridFiltersTest.Model>>>()
+                .Where(x => x.Instance.Class == "filter-field")
+                .ToArray();
+
+            filterFieldSelects.Should().HaveCount(2);
+            filterFieldSelects.Count(x => x.Instance.AutoFocus).Should().Be(1);
+            filterFieldSelects[0].Instance.AutoFocus.Should().BeFalse();
+            filterFieldSelects[1].Instance.AutoFocus.Should().BeTrue();
         }
 
         [Test]
@@ -4999,6 +5087,28 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+        }
+
+        [Test]
+        public async Task DataGridNumericColumnFilter_CanTypeDecimalCharByChar()
+        {
+            // Regression test for #13250: typing a decimal value such as "1.008" one character at a time
+            // into a numeric column filter (which renders a MudNumericField with Immediate=true and the
+            // column Culture bound) must produce 1.008. Previously the field reformatted on every
+            // keystroke, so the "." and the leading "0" were stripped and the filter became 1008.
+            var comp = Context.Render<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            // Amount column (index 2) uses InvariantCulture, so "." is the decimal separator.
+            IElement AmountFilter() => dataGrid.FindAll("th.filter-header-cell input")[2];
+            foreach (var ch in "1.008")
+            {
+                var current = AmountFilter().GetAttribute("value") ?? string.Empty;
+                await AmountFilter().InputAsync(current + ch);
+            }
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(1.008);
         }
 
         [Test]

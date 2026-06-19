@@ -5,8 +5,6 @@ using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
@@ -683,8 +681,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PersianCalendarDefault()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
             var comp = Context.Render<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
@@ -761,8 +758,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DisableCalendarMonthButtonsWhenFixDayOutOfRange()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
             var comp = await OpenPicker(parameters => parameters
@@ -1711,8 +1707,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DatePicker_CustomTimerProvider()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
             var comp = Context.Render<DatePickerCustomDateTest>();
 
@@ -2147,9 +2142,8 @@ namespace MudBlazor.UnitTests.Components
             // Bug: SubmitAsync calls FromDateTime which uses TimeProvider.GetLocalNow().Offset,
             // so clicking a day on a host whose local offset differs from the bound value's offset
             // silently shifts the bound value's Offset. Should be: preserve the original DateTimeOffset.Offset.
-            var fakeTimeProvider = new FakeTimeProvider();
+            var fakeTimeProvider = Context.AddFakeTimeProvider();
             fakeTimeProvider.SetLocalTimeZone(TimeZoneInfo.Utc);
-            Context.Services.AddSingleton<TimeProvider>(fakeTimeProvider);
 
             var originalOffset = TimeSpan.FromMinutes(330); // +05:30 — distinct from the host (UTC) offset
             var initial = new DateTimeOffset(2024, 6, 15, 10, 0, 0, originalOffset);

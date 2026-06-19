@@ -32,7 +32,10 @@ namespace MudBlazor
         public T? Date
         {
             get => _value;
-            set => SetDateAsync(value, true).CatchAndLog();
+            // Assigning Date from the parameter is programmatic, not user interaction. Pass the suppression
+            // as an explicit argument (NOT an instance flag) so it cannot leak across the awaits inside
+            // SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true).CatchAndLog();
         }
 
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
@@ -41,7 +44,7 @@ namespace MudBlazor
         protected Task SetDateAsync(T? date, bool updateValue)
             => SetDateAsync(date, updateValue, false);
 
-        protected async Task SetDateAsync(T? date, bool updateValue, bool forceUpdate)
+        protected async Task SetDateAsync(T? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false)
         {
             // DateTime.Kind preservation only matters when the underlying type is DateTime.
             if (_underlyingType == typeof(DateTime) && _value is not null && date is not null)
@@ -73,7 +76,10 @@ namespace MudBlazor
             // without this the UI doesn't display a validation error correctly
             if (!EqualityComparer<T?>.Default.Equals(_value, date) || (date is null && Text != null))
             {
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
 
                 HighlightedDate = ToDateTime(date);
 
@@ -108,7 +114,10 @@ namespace MudBlazor
 
                 await DateChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
             else if (forceUpdate)
             {

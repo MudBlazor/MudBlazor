@@ -166,6 +166,35 @@
   }
 }
 
+@mixin datagrid-loading-display-smalldevices($breakpoint) {
+  .mud-data-grid.mud-#{$breakpoint}table.mud-table-sticky-header {
+    .mud-table-root .mud-table-head .mud-table-loading {
+      // The mobile layout hides header rows, so the loader should stick to the top.
+      top: 0;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  @include datagrid-loading-display-smalldevices("xs-");
+}
+
+@media (max-width: $breakpoint-md) {
+  @include datagrid-loading-display-smalldevices("sm-");
+}
+
+@media (max-width: $breakpoint-lg) {
+  @include datagrid-loading-display-smalldevices("md-");
+}
+
+@media (max-width: $breakpoint-xl) {
+  @include datagrid-loading-display-smalldevices("lg-");
+}
+
+@media (max-width: $breakpoint-xxl) {
+  @include datagrid-loading-display-smalldevices("xl-");
+}
+
 .mud-data-grid-columns-panel {
   @media(hover: hover) and (pointer: fine) {
     &:hover {
