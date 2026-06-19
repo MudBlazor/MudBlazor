@@ -129,6 +129,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DynamicDropItem_UserProvidedId_TouchInteropFollowsIt()
+        {
+            var comp = Context.Render<DropZoneDynamicItemTouchTest>();
+
+            var item = comp.Find(".mud-drop-item");
+            item.GetAttribute("id").Should().Be("custom-item");
+
+            // Start a touch drag, then move it. mudDragAndDrop.moveItemByDifference does document.getElementById on the
+            // id, so it must target the overridden rendered id, not the internal generated one (regression for #13070).
+            await item.TouchStartAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 0, ClientY = 0 }] });
+            await item.TouchMoveAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 5, ClientY = 5 }] });
+
+            Context.JSInterop.VerifyInvoke("mudDragAndDrop.moveItemByDifference").Arguments[0].Should().Be("custom-item");
+        }
+
+        [Test]
         public void DropZone_DropZoneOverrideContainerRendered()
         {
             var comp = Context.Render<DropZoneCustomItemSelectorTest>();
