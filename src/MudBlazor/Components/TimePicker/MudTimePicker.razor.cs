@@ -213,9 +213,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            Time = TimeIntermediate;
-
-            return Task.CompletedTask;
+            // Commit via SetTimeAsync directly, NOT through the Time parameter setter: the setter runs
+            // under SuppressInteractionEffectsWhileAsync (so a parameter-driven value does not touch the
+            // picker), but a submit is a genuine user commit and must mark Touched and fire FieldChanged.
+            // This matches MudDatePicker/MudDateRangePicker, whose submit paths call SetDateAsync/
+            // SetDateRangeAsync directly.
+            return SetTimeAsync(TimeIntermediate, updateValue: true);
         }
 
         /// <inheritdoc />
