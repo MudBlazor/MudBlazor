@@ -678,7 +678,7 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
-            SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false)).CatchAndLog();
+            UpdateTextPropertyAsync(false).CatchAndLog();
             StateHasChanged();
         }
 
@@ -815,15 +815,11 @@ namespace MudBlazor
         private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
             // A Text parameter change is always parameter-driven (a user edit updates Text via the internal
-            // state without re-triggering this handler).
+            // state without re-triggering this handler), so it must not touch the input. The whole handler
+            // runs suppressed, so the gated Touched write in UpdateValuePropertyAsync's chain is skipped.
             return SuppressInteractionEffectsWhileAsync(async () =>
             {
                 _validated = false;
-
-                if (!string.IsNullOrEmpty(arg.Value) && !_suppressInteractionEffects)
-                {
-                    Touched = true;
-                }
 
                 // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
                 // But only if Value is not also being set in the same parameter update

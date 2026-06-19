@@ -27,7 +27,10 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            set => SuppressInteractionEffectsWhileAsync(() => SetDateAsync(value, true)).CatchAndLog();
+            // Assigning Date from the parameter is programmatic, not user interaction. Pass the suppression
+            // as an explicit argument (NOT an instance flag) so it cannot leak across the awaits inside
+            // SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true).CatchAndLog();
         }
 
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
@@ -36,7 +39,7 @@ namespace MudBlazor
         protected Task SetDateAsync(DateTime? date, bool updateValue)
             => SetDateAsync(date, updateValue, false);
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate)
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
@@ -62,7 +65,7 @@ namespace MudBlazor
             // without this the UI doesn't display a validation error correctly
             if (_value != date || (date is null && Text != null))
             {
-                if (!_suppressInteractionEffects)
+                if (!suppressInteraction)
                 {
                     Touched = true;
                 }
@@ -91,7 +94,7 @@ namespace MudBlazor
 
                 await DateChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                if (!_suppressInteractionEffects)
+                if (!suppressInteraction)
                 {
                     FieldChanged(_value);
                 }
