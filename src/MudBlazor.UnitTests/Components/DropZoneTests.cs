@@ -114,6 +114,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DropZone_UserProvidedId_OverridesZoneId_AndInitTargetsIt()
+        {
+            var comp = Context.Render<DropZoneOverriddenIdTest>();
+
+            // The consumer id wins on the rendered zone div (attribute splat comes after the explicit id).
+            comp.Find(".first-drop-zone").GetAttribute("id").Should().Be("custom-zone");
+
+            // Regression for #13070: mudDragAndDrop.initDropZone runs document.getElementById on this value with no
+            // null guard, so it must target the rendered id, not the internal generated one, or it throws when a
+            // consumer sets a custom id and the drop zone never wires up its drag listeners.
+            var initCalls = Context.JSInterop.VerifyInvoke("mudDragAndDrop.initDropZone", 2);
+            initCalls.Select(i => i.Arguments[0]).Should().Contain("custom-zone");
+        }
+
+        [Test]
         public void DropZone_DropZoneOverrideContainerRendered()
         {
             var comp = Context.Render<DropZoneCustomItemSelectorTest>();
