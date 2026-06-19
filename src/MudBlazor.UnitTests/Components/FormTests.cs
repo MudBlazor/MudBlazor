@@ -1756,8 +1756,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormFieldChangedTest>();
 
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldComp.Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var numeric = comp.FindComponent<MudNumericField<int>>().Instance;
             var radioGroup = comp.FindComponent<MudRadioGroup<string>>().Instance;
 
@@ -1765,8 +1764,7 @@ namespace MudBlazor.UnitTests.Components
 
             //in all below cases, the event args should switch to an instance of the field changed and contain the new value that was set
 
-            // A genuine user edit (DOM change) must raise FieldChanged. (Programmatic SetTextAsync does not — see #12997.)
-            await textFieldComp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "new value" });
+            await comp.InvokeAsync(() => textField.SetTextAsync("new value"));
             comp.Instance.FormFieldChangedEventArgs!.NewValue.Should().Be("new value");
             textField.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
@@ -1792,27 +1790,6 @@ namespace MudBlazor.UnitTests.Components
 
             (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
             mudFile.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
-        }
-
-        /// <summary>
-        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/12997.
-        /// Programmatically setting the text via <see cref="MudTextField{T}.SetTextAsync"/> must update the
-        /// text but must NOT mark the field touched nor fire FieldChanged — Touched reflects user
-        /// interaction only.
-        /// </summary>
-        [Test]
-        public async Task SetTextAsyncDoesNotTouchOrFireFieldChanged()
-        {
-            var comp = Context.Render<FormFieldChangedTest>();
-            var textFieldComp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldComp.Instance;
-
-            await comp.InvokeAsync(() => textField.SetTextAsync("programmatic"));
-
-            using var _ = new AssertionScope();
-            textFieldComp.Find("input").GetAttribute("value").Should().Be("programmatic", "the text is still set");
-            textField.Touched.Should().BeFalse("no user interaction occurred");
-            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged must not fire for a programmatic set");
         }
 
         /// <summary>

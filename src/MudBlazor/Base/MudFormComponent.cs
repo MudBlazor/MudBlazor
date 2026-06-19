@@ -247,7 +247,7 @@ namespace MudBlazor
         // must reflect genuine user interaction (typing, selecting, blur) only, never values that arrive
         // from parameters or are set programmatically. Without this, supplying a non-default initial (or
         // async-loaded) value marks the input — and its surrounding MudForm — touched on load and fires
-        // FieldChanged with no interaction (#13064, #13246, #12997). It is a plain instance bool, set and
+        // FieldChanged with no interaction (#13064, #13246). It is a plain instance bool, set and
         // cleared synchronously around each parameter-sync entry point via SuppressInteractionEffectsWhileAsync,
         // so it can never leak across an await into a user event. Validation is intentionally NOT suppressed.
         private protected bool _suppressInteractionEffects;
