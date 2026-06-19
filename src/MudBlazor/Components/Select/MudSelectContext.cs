@@ -168,7 +168,18 @@ internal sealed class MudSelectContext<T>
 
         _shadowLookup[newValue] = item;
         _select.InvalidateFitContent();
-        ((IMudStateHasChanged)_select).StateHasChanged();
+
+        // Re-render only when the changed value is the one shown by the selected-value presenter
+        // (single selection only). An unconditional StateHasChanged loops forever when an item's
+        // Value is a fresh reference each render, e.g. an inline Value="@(new ...)" (#13281).
+        if (!_select.MultiSelection)
+        {
+            var comparer = Comparer ?? EqualityComparer<T?>.Default;
+            if (comparer.Equals(oldValue, _select.ReadValue) || comparer.Equals(newValue, _select.ReadValue))
+            {
+                ((IMudStateHasChanged)_select).StateHasChanged();
+            }
+        }
     }
 
     /// <summary>
