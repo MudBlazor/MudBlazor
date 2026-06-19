@@ -797,9 +797,15 @@ namespace MudBlazor
         /// <param name="disposing">Indicates if managed resources should be disposed.</param>
         protected virtual void Dispose(bool disposing)
         {
-            // Set first so any in-flight async callback (e.g. the fire-and-forget focus
-            // calls in TrackKeyboardInteraction, or a queued OnAfterRenderAsync) short-circuits
-            // instead of running JS interop against the now-detached DOM. See issue #12184.
+            // Idempotent: a second Dispose() (e.g. user code disposing a @ref before the
+            // renderer tears the component down) must not re-run cleanup such as Cancel() on
+            // an already-disposed CancellationTokenSource.
+            if (_disposed)
+                return;
+
+            // Set before cleanup so any in-flight async callback (e.g. the fire-and-forget
+            // focus calls in TrackKeyboardInteraction, or a queued OnAfterRenderAsync)
+            // short-circuits instead of running JS interop against the detached DOM. See #12184.
             _disposed = true;
 
             if (disposing)

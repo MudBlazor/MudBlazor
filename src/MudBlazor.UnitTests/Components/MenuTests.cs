@@ -1267,5 +1267,26 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Count
                 .Should().Be(focusCountBeforeDispose);
         }
+
+        [Test]
+        public async Task Dispose_CalledTwiceAfterHover_IsIdempotent()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/12184 (review follow-up)
+            // Dispose must be idempotent. A hovered menu holds a live CancellationTokenSource,
+            // so a second Dispose() (e.g. user code disposing a @ref before the renderer tears
+            // the component down) would otherwise call Cancel() on the already-disposed CTS and
+            // throw ObjectDisposedException.
+            var comp = Context.Render<MenuTestMouseOver>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Hover to open, which creates the hover CancellationTokenSource.
+            await comp.Find("div.mud-menu").PointerEnterAsync();
+            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("mud-popover-open"));
+
+            menu.Dispose();
+            var secondDispose = () => menu.Dispose();
+
+            secondDispose.Should().NotThrow();
+        }
     }
 }
