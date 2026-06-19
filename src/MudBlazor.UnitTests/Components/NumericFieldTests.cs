@@ -367,6 +367,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Programmatically resetting Value (e.g. from an OnKeyDown handler) while the field is focused must
+        /// update the displayed text, not only the bound Value. Regression test for #8565 / #10486: on Blazor
+        /// Server the rendered input kept the typed text because the old TextUpdateSuppression skipped the
+        /// _internalText refresh while focused. The key assertion is on the rendered value attribute, since
+        /// ReadText already updated correctly even when the bug was present.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Should_UpdateDisplayedTextOnBoundValueChange_WhenFocused()
+        {
+            var comp = Context.Render<NumericFieldUpdateViaBindingTest>();
+            var input = comp.FindComponent<MudInput<string>>();
+
+            // Focus the field (sets _isFocused = true, the condition that used to suppress the text refresh).
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+
+            // Simulate the user typing a value (Immediate => commits on input).
+            await comp.Find("input").InputAsync(new ChangeEventArgs() { Value = "123" });
+
+            comp.Find("#value-display").TrimmedText().Should().Be("value: 123");
+            input.Instance.ReadText.Should().Be("123");
+            comp.Find("input").GetAttribute("value").Should().Be("123");
+
+            // Hit Enter: the handler resets the bound value to 0 while the field is still focused.
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("#value-display").TrimmedText().Should().Be("value: 0"));
+            await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be("0"));
+            // Crucial assertion: the displayed text (rendered value attribute) must reflect the reset and not
+            // keep the typed "123". This is what regressed on Server in #8565 / #10486.
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("0"));
+        }
+
+        /// <summary>
         /// KeyDown disabled, should not do anything
         /// </summary>
         [Test]
