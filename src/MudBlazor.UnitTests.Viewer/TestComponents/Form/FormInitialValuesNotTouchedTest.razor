@@ -7,6 +7,10 @@
         <MudSelectItem T="Fruit?" Value="@((Fruit?)Fruit.Banana)">Banana</MudSelectItem>
     </MudSelect>
     <MudTextField T="string" @bind-Text="_text" />
+    <MudSelect T="string" MultiSelection="true" @bind-SelectedValues="_multiSelected">
+        <MudSelectItem T="string" Value="@("a")">A</MudSelectItem>
+        <MudSelectItem T="string" Value="@("b")">B</MudSelectItem>
+    </MudSelect>
 </MudForm>
 
 @code {
@@ -22,6 +26,7 @@
     private int _number;
     private Fruit? _fruit;
     private string? _text;
+    private IReadOnlyCollection<string> _multiSelected = [];
 
     public enum Fruit { Apple, Banana }
 
@@ -48,5 +53,6 @@
         _number = 5;
         _fruit = Fruit.Banana;
         _text = "hello";
+        _multiSelected = ["a"];
     }
 }

@@ -180,6 +180,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudNumericField<int>>().Instance.Touched.Should().BeFalse("numeric");
             comp.FindComponent<MudTextField<string>>().Instance.Touched.Should().BeFalse("textfield");
             comp.FindComponent<MudSelect<FormInitialValuesNotTouchedTest.Fruit?>>().Instance.Touched.Should().BeFalse("select");
+            comp.FindComponent<MudSelect<string>>().Instance.Touched.Should().BeFalse("multiselect");
             comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
             form.IsTouched.Should().BeFalse("form.IsTouched");
         }
@@ -207,6 +208,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudNumericField<int>>().Instance.Touched.Should().BeFalse("numeric");
             comp.FindComponent<MudTextField<string>>().Instance.Touched.Should().BeFalse("textfield");
             comp.FindComponent<MudSelect<FormInitialValuesNotTouchedTest.Fruit?>>().Instance.Touched.Should().BeFalse("select");
+            comp.FindComponent<MudSelect<string>>().Instance.Touched.Should().BeFalse("multiselect");
             comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
             form.IsTouched.Should().BeFalse("form.IsTouched");
         }
