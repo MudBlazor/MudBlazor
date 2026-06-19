@@ -286,10 +286,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(false);
-            // input a date, istouched should be true
+            // input a date into the OUTER form's date picker (textCompFields[1] is that picker's inner
+            // input); only the outer form becomes touched. The nested form stays untouched - previously it
+            // appeared touched only because its date picker was erroneously marked touched on initial load
+            // by its bound value (#13246/#13064), which this fix corrects.
             await textCompFields[1].Find("input").ChangeAsync("2001-01-31");
             form.IsTouched.Should().Be(true);
-            nestedForm.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
 
             //reset should set touched to false
             await comp.InvokeAsync(() => form.ResetAsync());
@@ -1808,6 +1811,61 @@ namespace MudBlazor.UnitTests.Components
             textFieldComp.Find("input").GetAttribute("value").Should().Be("programmatic", "the text is still set");
             textField.Touched.Should().BeFalse("no user interaction occurred");
             comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged must not fire for a programmatic set");
+        }
+
+        /// <summary>
+        /// Regression test for #13246 / #13064 for pickers. A picker that receives a non-default value via
+        /// its value parameter (Date/Time/DateRange) on initial render must not become touched or fire
+        /// FieldChanged.
+        /// </summary>
+        [Test]
+        public void FormWithNonDefaultInitialPickerValuesIsNotTouched()
+        {
+            var comp = Context.Render<FormInitialPickerValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+
+            using var _ = new AssertionScope();
+            comp.FindComponent<MudDatePicker>().Instance.Touched.Should().BeFalse("date");
+            comp.FindComponent<MudTimePicker>().Instance.Touched.Should().BeFalse("time");
+            comp.FindComponent<MudDateRangePicker>().Instance.Touched.Should().BeFalse("daterange");
+            comp.FindComponent<MudColorPicker>().Instance.Touched.Should().BeFalse("color");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+        }
+
+        /// <summary>
+        /// Regression test for #13064 for pickers. Values that arrive after the first render (e.g. an async
+        /// data load), including an external MudColorPicker Value change, must leave the pickers untouched.
+        /// </summary>
+        [Test]
+        public async Task FormPickersRemainUntouchedWhenValuesLoadedAfterRender()
+        {
+            var comp = Context.Render<FormInitialPickerValuesNotTouchedTest>();
+
+            await comp.InvokeAsync(() => comp.Instance.LoadValuesAsync());
+
+            using var _ = new AssertionScope();
+            comp.FindComponent<MudDatePicker>().Instance.Touched.Should().BeFalse("date");
+            comp.FindComponent<MudTimePicker>().Instance.Touched.Should().BeFalse("time");
+            comp.FindComponent<MudDateRangePicker>().Instance.Touched.Should().BeFalse("daterange");
+            comp.FindComponent<MudColorPicker>().Instance.Touched.Should().BeFalse("color");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+        }
+
+        /// <summary>
+        /// The picker Touched suppression must not leak into user interaction: typing a date into the
+        /// picker's input must still touch it.
+        /// </summary>
+        [Test]
+        public async Task DatePickerStillTouchesOnUserTextInput()
+        {
+            var comp = Context.Render<FormInitialPickerValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            datePicker.Instance.Touched.Should().BeFalse();
+
+            await datePicker.Find("input").ChangeAsync(new ChangeEventArgs { Value = "2020-02-20" });
+
+            datePicker.Instance.Touched.Should().BeTrue();
         }
 
         /// <summary>

@@ -140,7 +140,10 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            set => SetTimeAsync(value, true).CatchAndLog();
+            // Setting Time from the parameter is not user interaction, so it must not touch the picker
+            // or fire FieldChanged (#13246, #13064). User clock/text input goes through other callers of
+            // SetTimeAsync, which run without the flag and touch normally.
+            set => SuppressInteractionEffectsWhileAsync(() => SetTimeAsync(value, true)).CatchAndLog();
         }
 
         /// <summary>
@@ -158,7 +161,10 @@ namespace MudBlazor
         {
             if (_value != time)
             {
-                Touched = true;
+                if (!_suppressInteractionEffects)
+                {
+                    Touched = true;
+                }
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
@@ -169,7 +175,10 @@ namespace MudBlazor
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!_suppressInteractionEffects)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 

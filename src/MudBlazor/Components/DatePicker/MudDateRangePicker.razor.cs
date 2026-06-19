@@ -104,7 +104,10 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            set => SetDateRangeAsync(value, true).CatchAndLog();
+            // Setting DateRange from the parameter is not user interaction, so it must not touch the
+            // picker or fire FieldChanged (#13246, #13064). User calendar/text input goes through other
+            // callers of SetDateRangeAsync, which run without the flag and touch normally.
+            set => SuppressInteractionEffectsWhileAsync(() => SetDateRangeAsync(value, true)).CatchAndLog();
         }
 
         /// <summary>
@@ -137,7 +140,10 @@ namespace MudBlazor
                     return;
                 }
 
-                Touched = true;
+                if (!_suppressInteractionEffects)
+                {
+                    Touched = true;
+                }
 
                 if (range?.Start is not null && StartMonth == null)
                     PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
@@ -165,7 +171,10 @@ namespace MudBlazor
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!_suppressInteractionEffects)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 

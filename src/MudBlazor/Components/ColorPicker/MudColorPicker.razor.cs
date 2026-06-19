@@ -94,7 +94,10 @@ namespace MudBlazor
         {
             // TODO: Revisit this when the state of input components / validation improves, for now mimic old behavior
             var forceUpdate = _valueState.IsInitialized && HasRendered;
-            return SetColorAsync(args.Value, forceUpdate);
+            // An external Value parameter change is not user interaction, so it must not touch the picker
+            // or fire FieldChanged (#13246, #13064). User selector / RGB / HSL edits call SetColorAsync
+            // directly (without the flag) and touch normally.
+            return SuppressInteractionEffectsWhileAsync(() => SetColorAsync(args.Value, forceUpdate));
         }
 
         private async Task OnAlphaChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
@@ -436,11 +439,17 @@ namespace MudBlazor
 
             if (shouldUpdateBinding || forceUpdate)
             {
-                Touched = true;
+                if (!_suppressInteractionEffects)
+                {
+                    Touched = true;
+                }
                 await SetTextAsync(GetColorTextValue(newColor), false);
                 await _valueState.SetValueAsync(newColor);
                 await BeginValidateAsync();
-                FieldChanged(newColor);
+                if (!_suppressInteractionEffects)
+                {
+                    FieldChanged(newColor);
+                }
             }
             else if (colorChanged)
             {

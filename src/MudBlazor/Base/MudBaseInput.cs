@@ -22,16 +22,6 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
-        // Suppresses user-interaction side effects (marking Touched, firing FieldChanged) while a
-        // programmatic / parameter-driven value<->text synchronization runs. These must reflect genuine
-        // user interaction (typing, selecting, blur) only, never values that arrive from parameters or
-        // are set programmatically. Without this, supplying a non-default initial (or async-loaded)
-        // Value/Text marks the input — and its surrounding MudForm — touched on load and fires
-        // FieldChanged with no interaction (#13064, #13246, #12997). It is a plain instance bool, set and
-        // cleared synchronously around each parameter-sync entry point via SuppressInteractionEffectsWhileAsync,
-        // so it can never leak across an await into a user event. Validation is intentionally NOT suppressed.
-        private protected bool _suppressInteractionEffects;
-
         /// <summary>
         /// The resolved input element ID.
         /// </summary>
@@ -448,30 +438,6 @@ namespace MudBlazor
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
             return SetTextAndUpdateValueAsync(ConvertSet(ReadValue), updateValue);
-        }
-
-        /// <summary>
-        /// Runs a programmatic or parameter-driven value/text synchronization without marking this
-        /// input as <see cref="MudFormComponent{T, U}.Touched"/>.
-        /// </summary>
-        /// <remarks>
-        /// <see cref="MudFormComponent{T, U}.Touched"/> must reflect genuine user interaction only.
-        /// Use this wrapper around any sync that is triggered by a parameter change or a programmatic
-        /// call (initial value load, external <c>Value</c>/<c>Text</c> changes, culture/format/converter
-        /// changes) so the resulting text update does not spuriously touch the input or its form.
-        /// </remarks>
-        private protected async Task SuppressInteractionEffectsWhileAsync(Func<Task> synchronize)
-        {
-            var previous = _suppressInteractionEffects;
-            _suppressInteractionEffects = true;
-            try
-            {
-                await synchronize();
-            }
-            finally
-            {
-                _suppressInteractionEffects = previous;
-            }
         }
 
         /// <summary>

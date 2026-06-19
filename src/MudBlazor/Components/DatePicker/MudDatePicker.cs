@@ -27,7 +27,10 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            set => SetDateAsync(value, true).CatchAndLog();
+            // Setting Date from the parameter is not user interaction, so it must not touch the picker
+            // or fire FieldChanged (#13246, #13064). User calendar/text input goes through other callers
+            // of SetDateAsync, which run without the flag and touch normally.
+            set => SuppressInteractionEffectsWhileAsync(() => SetDateAsync(value, true)).CatchAndLog();
         }
 
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
@@ -62,7 +65,10 @@ namespace MudBlazor
             // without this the UI doesn't display a validation error correctly
             if (_value != date || (date is null && Text != null))
             {
-                Touched = true;
+                if (!_suppressInteractionEffects)
+                {
+                    Touched = true;
+                }
 
                 HighlightedDate = date;
 
@@ -88,7 +94,10 @@ namespace MudBlazor
 
                 await DateChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!_suppressInteractionEffects)
+                {
+                    FieldChanged(_value);
+                }
             }
             else if (forceUpdate)
             {
