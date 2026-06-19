@@ -73,6 +73,24 @@ namespace MudBlazor.UnitTests.Charts
             Assert.DoesNotThrow(() => RenderSankey(edges, options));
         }
 
+        [Test]
+        [CancelAfter(5000)]
+        public void CircularEdgesDoNotHang()
+        {
+            // A cycle (A -> B -> A) has no root node, so every node falls back to a "source".
+            // CalculateNodeColumns previously enqueued targets forever and hung the render;
+            // it must now terminate and still draw both nodes.
+            var edges = new List<SankeyEdge<double>>
+            {
+                new("A", "B", 10),
+                new("B", "A", 5)
+            };
+
+            var sankey = RenderSankey(edges);
+
+            sankey.FindAll("svg > rect").Count.Should().Be(2);
+        }
+
         private static List<SankeyEdge<double>> GetEdges()
         {
             var edges = new List<SankeyEdge<double>>
