@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
 
+// Tests cover the obsolete Text/TextChanged (removed in v10, #13320) which is still supported in v9.
+#pragma warning disable CS0618
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]

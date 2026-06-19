@@ -36,10 +36,12 @@ namespace MudBlazor
         protected MudBaseInput()
         {
             using var registerScope = CreateRegisterScope();
+#pragma warning disable CS0618 // Text/TextChanged are obsolete but remain wired up for v9 back-compat; removed in v10 (#13320)
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
                 .WithEventCallback(() => TextChanged)
                 .WithChangeHandler(OnTextParameterChangedAsync);
+#pragma warning restore CS0618
             _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithEventCallback(() => ValueChanged)
@@ -304,6 +306,10 @@ namespace MudBlazor
         /// <summary>
         /// The text displayed in the input.
         /// </summary>
+        /// <remarks>
+        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth; bind <c>@bind-Value</c> instead, and observe typed text via <see cref="OnInternalInputChanged"/>. See https://github.com/MudBlazor/MudBlazor/issues/13320.
+        /// </remarks>
+        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth. Bind @bind-Value instead, and observe typed text via OnInternalInputChanged. https://github.com/MudBlazor/MudBlazor/issues/13320")]
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
@@ -342,6 +348,10 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
+        /// <remarks>
+        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. Observe typed text via <see cref="OnInternalInputChanged"/>, or bind <c>@bind-Value</c> to react to value changes. See https://github.com/MudBlazor/MudBlazor/issues/13320.
+        /// </remarks>
+        [Obsolete("TextChanged is being removed in v10 along with the settable Text. Observe typed text via OnInternalInputChanged, or bind @bind-Value to react to value changes. https://github.com/MudBlazor/MudBlazor/issues/13320")]
         [Parameter]
         public EventCallback<string?> TextChanged { get; set; }
 
@@ -558,7 +568,9 @@ namespace MudBlazor
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
             // Check ParameterView to see if Text is also present
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #13320); referenced here only for v9 back-compat
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
+#pragma warning restore CS0618
             {
                 var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
@@ -681,7 +693,9 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #13320); referenced here only for v9 back-compat
             var hasText = parameters.Contains<string>(nameof(Text));
+#pragma warning restore CS0618
             var hasValue = parameters.Contains<T>(nameof(Value));
             var currentValue = ReadValue;
             await base.SetParametersAsync(parameters);

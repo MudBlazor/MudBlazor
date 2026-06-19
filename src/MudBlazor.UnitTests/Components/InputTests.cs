@@ -5,6 +5,10 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components;
 
 #nullable enable
+
+// Tests cover the obsolete Text/TextChanged (removed in v10, #13320) which is still supported in v9.
+#pragma warning disable CS0618
+
 [TestFixture]
 public class InputTests : BunitTest
 {

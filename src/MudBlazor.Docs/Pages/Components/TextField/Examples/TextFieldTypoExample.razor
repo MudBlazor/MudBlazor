@@ -1,5 +1,9 @@
-﻿@namespace MudBlazor.Docs.Examples
+@namespace MudBlazor.Docs.Examples
 
-<MudTextField T="string" Text="Lorem ipsum dolor" Label="Typo.subtitle1" Typo="Typo.subtitle1"></MudTextField>
-<MudTextField T="string" Text="Lorem ipsum dolor" Label="Typo.caption" Typo="Typo.caption"></MudTextField>
-<MudTextField T="string" Text="Lorem ipsum dolor" Label="Typo.h5" Typo="Typo.h5"></MudTextField>
+<MudTextField T="string" Value="@_text" Label="Typo.subtitle1" Typo="Typo.subtitle1"></MudTextField>
+<MudTextField T="string" Value="@_text" Label="Typo.caption" Typo="Typo.caption"></MudTextField>
+<MudTextField T="string" Value="@_text" Label="Typo.h5" Typo="Typo.h5"></MudTextField>
+
+@code {
+    private string _text = "Lorem ipsum dolor";
+}

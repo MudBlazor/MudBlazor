@@ -16,6 +16,9 @@ using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
 
+// Tests cover the obsolete Text/TextChanged (removed in v10, #13320) which is still supported in v9.
+#pragma warning disable CS0618
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
