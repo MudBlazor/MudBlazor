@@ -5379,9 +5379,13 @@ namespace MudBlazor.UnitTests.Components
             zone.Count.Should().Be(15, because: "5 columns with 3 drop zones each in DataGridDragAndDropTest_InsertMode");
 
             var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "HiredOn").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the HiredOn drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the HiredOn drop zone should contain a draggable item");
             var firstDropItem = firstDropZone.Children[0];
 
             var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_pre__:Age").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the pre-insert drop zone for Age should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the pre-insert drop zone for Age should contain a drop target item");
             var secondDropItem = secondDropZone.Children[0];
 
             await firstDropItem.DragStartAsync(new DragEventArgs());
@@ -5420,9 +5424,13 @@ namespace MudBlazor.UnitTests.Components
             zone.Count.Should().Be(15, because: "5 columns with 3 drop zones each in DataGridDragAndDropTest_InsertMode");
 
             var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
             var firstDropItem = firstDropZone.Children[0];
 
             var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_post__:Status").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the post-insert drop zone for Status should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the post-insert drop zone for Status should contain a drop target item");
             var secondDropItem = secondDropZone.Children[0];
 
             await firstDropItem.DragStartAsync(new DragEventArgs());
@@ -5461,9 +5469,13 @@ namespace MudBlazor.UnitTests.Components
             zone.Count.Should().Be(15, because: "5 columns with 3 drop zones each in DataGridDragAndDropTest_InsertMode");
 
             var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
             var firstDropItem = firstDropZone.Children[0];
 
             var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the Age drop zone should still exist when dropping the column onto itself");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a drop target item");
             var secondDropItem = secondDropZone.Children[0];
 
             await firstDropItem.DragStartAsync(new DragEventArgs());
