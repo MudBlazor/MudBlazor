@@ -4,16 +4,8 @@
   overflow: hidden;
 }
 
-// Fallback clip for an orphaned ripple. The ripple span is created in JS and lives
-// for a short while after pointer-up; a host can drop the `.mud-ripple` class during
-// that window (e.g. a list item becomes Disabled the moment it is selected, as in a
-// MultiSelection MudSelect whose SelectedValuesChanged disables items), taking the
-// `overflow: hidden` above with it. The leftover absolutely-positioned span (sized
-// max(w,h)*2 with negative offsets) is then unclipped and overflows, forcing a
-// scrollbar (#13283). This rule re-applies the clip ONLY while such an orphaned span
-// is present and the host is no longer a `.mud-ripple` — so it never touches normal
-// elements. position:relative is required so overflow:hidden clips the absolutely-
-// positioned span.
+// If a host loses `.mud-ripple` while its ripple span is still animating (e.g. an
+// item disabled on click), keep clipping the span so it can't overflow (#13283).
 :not(.mud-ripple):has(> .mud-ripple-effect) {
   position: relative;
   overflow: hidden;
