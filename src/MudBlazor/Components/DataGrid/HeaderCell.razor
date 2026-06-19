@@ -51,7 +51,7 @@ else if (Column != null && !Column.HiddenState.Value)
 
         return
         @<text>
-        <span class="column-header" @key="@(Column.PropertyName ?? _id)">
+        <span class="column-header">
             @if (sortable)
             {
                 <span class="@SortHeaderClass" @onclick="SortChangedAsync">

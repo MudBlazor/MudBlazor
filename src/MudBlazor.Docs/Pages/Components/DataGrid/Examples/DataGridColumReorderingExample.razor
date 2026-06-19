@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" Items="@_elements" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" 
-                    DragIndicatorIcon="@_dragIndicatorIcon" Dense ColumnResizeMode="ResizeMode.Container">
+                    DragIndicatorIcon="@_dragIndicatorIcon" Dense ColumnResizeMode="ResizeMode.Container" ColumnReorderMode="@_dragAndDropColumnReorderMode">
     <Columns>
         <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr (fixed)" DragAndDropEnabled="false"/>
@@ -21,6 +21,10 @@
 
 <div class="d-flex flex-column mt-4">
     <MudSwitch @bind-Value="_reorderingEnabled" Color="Color.Primary">DragDropColumnReordering</MudSwitch>
+    <MudRadioGroup T="DataGridDragAndDropColumnReorderMode" @bind-Value="_dragAndDropColumnReorderMode">
+        <MudRadio Dense="true" Value="@DataGridDragAndDropColumnReorderMode.Swap" Color="Color.Primary">Swap</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridDragAndDropColumnReorderMode.Insert" Color="Color.Tertiary">Insert</MudRadio>
+    </MudRadioGroup>
     <MudSwitch @bind-Value="_applyDropClassesOnDragStarted" Color="Color.Primary">ApplyDropClassesOnDragStarted</MudSwitch>
 </div>
 
@@ -32,6 +36,8 @@
 
     bool _reorderingEnabled = true;
 
+    DataGridDragAndDropColumnReorderMode _dragAndDropColumnReorderMode = DataGridDragAndDropColumnReorderMode.Swap;
+    
     protected override async Task OnInitializedAsync()
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");

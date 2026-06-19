@@ -289,13 +289,6 @@ namespace MudBlazor
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
 
-                // swap source / destination
-                var dest = dragAndDropDestination.HeaderCell.Width;
-                var src = dragAndDropSource.HeaderCell.Width;
-
-                dragAndDropSource.HeaderCell.Width = dest;
-                dragAndDropDestination.HeaderCell.Width = src;
-
                 StateHasChanged();
             }
             return Task.CompletedTask;

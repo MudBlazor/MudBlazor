@@ -54,7 +54,7 @@
                                 <tr class="mud-table-row">
                                     @foreach (var column in RenderedColumns)
                                     {
-                                        <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
+                                        <HeaderCell @key="column" SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
                                     }
                                 </tr>
                                 @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
@@ -268,11 +268,11 @@
                         @if (DragDropColumnReordering && ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                         {
                             <div class="d-flex" style="width: 100%">
-                                <MudDropZone T="Column<T>" Identifier="@($"{PrePrefix}{context.PropertyName}")" AllowReorder="true" Class="px-1 py-1" />
+                                <MudDropZone T="Column<T>" Identifier="@($"{PrePrefix}{context.PropertyName}")" AllowReorder="@(context.DragAndDropEnabled ?? true)" Class="px-1 py-1" />
                                 <div style="width: 90%">
                                     @context.HeaderCell.TableHeader()
                                 </div>
-                                <MudDropZone T="Column<T>" Identifier="@($"{PostPrefix}{context.PropertyName}")" AllowReorder="true" Class="px-1 py-1" />
+                                <MudDropZone T="Column<T>" Identifier="@($"{PostPrefix}{context.PropertyName}")" AllowReorder="@(context.DragAndDropEnabled ?? true)" Class="px-1 py-1" />
                             </div>
                         }
                         else
