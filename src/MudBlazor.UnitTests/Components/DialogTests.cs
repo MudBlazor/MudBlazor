@@ -1732,6 +1732,36 @@ namespace MudBlazor.UnitTests.Components
             var changedFragment = navigationManager.ToAbsoluteUri($"{currentRoute}#{Guid.NewGuid()}").AbsolutePath;
             provider.Instance.HasRouteChanged(changedFragment).Should().BeFalse();
         }
+
+        /// <summary>
+        /// Closing an earlier dialog must not re-instantiate later dialogs that remain open.
+        /// Reproduces #13231 (closing a parent dialog reopens/re-renders a still-open child dialog).
+        /// </summary>
+        [Test]
+        public async Task ClosingEarlierDialog_ShouldNotReinstantiateLaterDialogs()
+        {
+            DialogReinstantiationInner.InitCount = 0;
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            IDialogReference first = null;
+            IDialogReference second = null;
+            await comp.InvokeAsync(async () => first = await service.ShowAsync<DialogOkCancel>("First"));
+            await comp.InvokeAsync(async () => second = await service.ShowAsync<DialogReinstantiationInner>("Second"));
+
+            // Both dialogs are open and the inner dialog has been constructed exactly once.
+            comp.FindAll("div.mud-dialog-container").Count.Should().Be(2);
+            DialogReinstantiationInner.InitCount.Should().Be(1);
+
+            // Close the FIRST (earlier) dialog while the second remains open.
+            await comp.InvokeAsync(() => first.Close());
+
+            // The second dialog must still be open and must NOT have been reconstructed.
+            comp.FindAll("div.mud-dialog-container").Count.Should().Be(1);
+            DialogReinstantiationInner.InitCount.Should().Be(1);
+
+            second.Should().NotBeNull();
+        }
     }
     internal class CustomDialogService : DialogService
     {
