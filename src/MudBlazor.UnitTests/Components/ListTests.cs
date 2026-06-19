@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
 using NUnit.Framework;
@@ -272,6 +273,208 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<ListItemTabIndexTest>();
             comp.FindAll("div")[1].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void ListAccessibility_ReadOnlyUsesListRoles()
+        {
+            var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.ReadOnly, true));
+
+            var list = comp.Find("div.mud-list");
+            list.GetAttribute("role").Should().Be("list");
+            list.HasAttribute("aria-multiselectable").Should().BeFalse();
+
+            foreach (var item in comp.FindAll("div.mud-list-item"))
+            {
+                item.GetAttribute("role").Should().Be("listitem");
+                item.HasAttribute("aria-selected").Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void ListAccessibility_InteractiveUsesListboxRolesAndRovingTabIndex()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+
+            var list = comp.Find("div.mud-list");
+            list.GetAttribute("role").Should().Be("listbox");
+            list.HasAttribute("aria-multiselectable").Should().BeFalse();
+
+            var items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("role").Should().Be("option");
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[1].GetAttribute("tabindex").Should().Be("-1");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_ArrowDownSkipsDisabledItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.IncludeDisabledItem, true));
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("-1");
+            items[1].GetAttribute("tabindex").Should().Be("-1");
+            items[2].GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_ArrowUpMovesToPreviousItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            await items[2].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Bravo"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[1].GetAttribute("tabindex").Should().Be("0");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_ArrowUpOnFirstItemStaysOnFirstItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Alpha"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[1].GetAttribute("tabindex").Should().Be("-1");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_HomeMovesFocusToFirstItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            await items[2].KeyDownAsync(new KeyboardEventArgs { Key = "Home" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Alpha"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[2].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_EndMovesFocusToLastItem()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Charlie"));
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("-1");
+            items[2].GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_EnterAndNumpadEnterToggleSelectionInToggleMode()
+        {
+            var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.SelectionMode, SelectionMode.ToggleSelection));
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().Be("Alpha"));
+
+            items = comp.FindAll("div.mud-list-item");
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter" });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-value").TrimmedText().Should().BeEmpty());
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_NonTabbableItemDoesNotHandleKeyCommands()
+        {
+            var comp = Context.Render<ListAccessibilityTest>();
+            var items = comp.FindAll("div.mud-list-item");
+
+            await items[1].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find("p.selected-value").TrimmedText().Should().BeEmpty();
+                var currentItems = comp.FindAll("div.mud-list-item");
+                currentItems[0].GetAttribute("tabindex").Should().Be("0");
+                currentItems[1].GetAttribute("tabindex").Should().Be("-1");
+                currentItems[2].GetAttribute("tabindex").Should().Be("-1");
+            });
+        }
+
+        [Test]
+        public async Task ListKeyboardNavigation_SpaceTogglesMultiSelectionWithoutTabbableCheckboxes()
+        {
+            var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.SelectionMode, SelectionMode.MultiSelection));
+            var items = comp.FindAll("div.mud-list-item");
+
+            foreach (var checkbox in comp.FindAll("input.mud-checkbox-input"))
+            {
+                checkbox.GetAttribute("tabindex").Should().Be("-1");
+                checkbox.GetAttribute("aria-hidden").Should().Be("true");
+            }
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = " " });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-values").TrimmedText().Should().Be("Alpha"));
+
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = " " });
+            await comp.WaitForAssertionAsync(() => comp.Find("p.selected-values").TrimmedText().Should().BeEmpty());
+        }
+
+        [Test]
+        public void ListItem_UserProvidedIdOverridesGeneratedElementId()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Custom attrs")
+                    .AddUnmatched("id", "custom-id")
+                    .AddUnmatched("tabindex", "-1")
+                    .AddUnmatched("data-test", "custom-marker"))
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Default item"))
+            );
+
+            var customIdItem = comp.Find("div.mud-list-item[data-test='custom-marker']");
+            var fallbackItem = comp.FindAll("div.mud-list-item")[1];
+
+            customIdItem.GetAttribute("id").Should().Be("custom-id");
+            customIdItem.GetAttribute("tabindex").Should().Be("-1");
+            fallbackItem.GetAttribute("id").Should().StartWith("list-item");
+        }
+
+        [Test]
+        public void List_UserAttributes_ShouldOverrideGeneratedAccessibilityAttributes()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .AddUnmatched("role", "group")
+                .AddUnmatched("aria-multiselectable", "false"));
+
+            var list = comp.Find("div.mud-list");
+            list.GetAttribute("role").Should().Be("group");
+            list.GetAttribute("aria-multiselectable").Should().Be("false");
         }
 
         [Test]

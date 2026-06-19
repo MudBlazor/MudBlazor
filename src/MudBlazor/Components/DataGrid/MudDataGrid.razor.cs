@@ -49,6 +49,7 @@ namespace MudBlazor
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private (double Top, double Left) _filtersMenuPosition = (0, 0);
         private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -1182,7 +1183,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
@@ -1901,6 +1903,42 @@ namespace MudBlazor
             return context;
         }
 
+        internal bool HasFilter(Column<T>? column)
+        {
+            if (column is null)
+            {
+                return false;
+            }
+
+            return FilterDefinitions.Any(x =>
+                (ReferenceEquals(x.Column, column) || (column.PropertyName is not null && x.Column?.PropertyName == column.PropertyName)) &&
+                IsFilterApplied(x));
+        }
+
+        private static bool IsFilterApplied(IFilterDefinition<T> filterDefinition)
+        {
+            return (filterDefinition is FilterDefinition<T> dataGridFilterDefinition && dataGridFilterDefinition.FilterFunction is not null) ||
+                   filterDefinition.Value is not null ||
+                   filterDefinition.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
+                       FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
+                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
+        }
+
+        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
+        {
+            if (column is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return args.Key switch
+            {
+                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
+                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
+                _ => Task.CompletedTask
+            };
+        }
+
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -1985,6 +2023,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2052,7 +2091,7 @@ namespace MudBlazor
             await NotifyFilterChangedAsync();
         }
 
-        private Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
+        internal Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
@@ -2506,6 +2545,12 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            OpenFilters(FilterDefinitions.FirstOrDefault()?.Id);
+        }
+
+        internal void OpenFilters(Guid? filterDefinitionIdToFocus)
+        {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus;
             _filtersMenuVisible = true;
             StateHasChanged();
         }

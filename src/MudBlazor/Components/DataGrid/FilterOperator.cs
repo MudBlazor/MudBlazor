@@ -124,6 +124,16 @@ namespace MudBlazor
             /// Find values which do not match the filter value.
             /// </summary>
             public const string IsNot = "is not";
+
+            /// <summary>
+            /// Find rows where the nullable enum column is <c>null</c>.
+            /// </summary>
+            public const string Empty = "is empty";
+
+            /// <summary>
+            /// Find rows where the nullable enum column is not <c>null</c>.
+            /// </summary>
+            public const string NotEmpty = "is not empty";
         }
 
         /// <summary>
@@ -286,6 +296,8 @@ namespace MudBlazor
                 return new[] {
                     Enum.Is,
                     Enum.IsNot,
+                    Enum.Empty,
+                    Enum.NotEmpty,
                 };
             }
             if (fieldType.IsBoolean)

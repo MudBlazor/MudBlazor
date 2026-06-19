@@ -69,7 +69,7 @@
                                                     <MudStack>
                                                         @foreach (var f in FilterDefinitions)
                                                         {
-                                                            @Filter(f, null)
+                                                            @Filter(f, null, f.Id == _filterDefinitionIdToFocus)
                                                         }
                                                     </MudStack>
                                                     <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
@@ -316,7 +316,7 @@
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" />
+                                Required="@column.Required" Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" Culture="@column.Culture" Format="@column.ContentFormat" />
                             }
                         }
                     }
@@ -404,7 +404,8 @@
                                               ValueChanged="@cell.NumberValueChangedAsync"
                                               Margin="@Margin.Dense" Style="margin-top:0"
                                               Required="@column.Required"
-                                              Variant="@Variant.Text" Culture="@column.Culture" />
+                                              Variant="@Variant.Text" Culture="@column.Culture"
+                                              Format="@column.ContentFormat" />
                          }
                      }
                  }
@@ -441,7 +442,7 @@
              </td>
          </text>;
 
-    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T>? column) =>
+    internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T>? column, bool autoFocus = false) =>
         @<text>
             @{
                 var filter = new Filter<T>(this, filterDefinition, column);
@@ -454,8 +455,15 @@
                         <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
-                        <MudSelect T="Column<T>" Value="@filterDefinition.Column" ValueChanged="@filter.FieldChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Column]" Dense="true" Margin="@Margin.Dense"
-                                   Class="filter-field">
+                        <MudSelect T="Column<T>" 
+                                   Value="@filterDefinition.Column" 
+                                   ValueChanged="@filter.FieldChanged" 
+                                   FullWidth="true" 
+                                   Label="@Localizer[LanguageResource.MudDataGrid_Column]" 
+                                   Dense="true" 
+                                   Margin="@Margin.Dense"
+                                   Class="filter-field"
+                                   AutoFocus="@autoFocus">
                             @foreach (var renderColumn in RenderedColumns.Where(x => x.Filterable != false))
                             {
                                 <MudSelectItem T="Column<T>" Value="@renderColumn">@renderColumn.Title</MudSelectItem>
@@ -551,12 +559,12 @@
                         @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                          Immediate="true" Class="filter-input"/>
+                                          Immediate="true" Class="filter-input" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                         else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                         {
                             <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                             Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
+                                             Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                         else if (fieldType.IsEnum)
                         {
@@ -596,7 +604,7 @@
                         else if (fieldType.IsGuid)
                         {
                             <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                          Immediate="true" Class="filter-input"/>
+                                          Immediate="true" Class="filter-input" AutoFocus="true" OnKeyDown="@(args => OnColumnFilterInputKeyDownAsync(args, column))"/>
                         }
                     </MudItem>
                 </MudGrid>

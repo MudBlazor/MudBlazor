@@ -139,6 +139,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13174.
+        /// With Immediate=true and a two-way @bind-Value, the validation func must run exactly once per
+        /// keystroke. The parent's ValueChanged echo (the @bind round-trip) must NOT trigger a second
+        /// validation (regression introduced in 9.3.0 by PR #12892, which added BeginValidateAsync to
+        /// MudBaseInput.OnValueParameterChangedAsync).
+        /// </summary>
+        [Test]
+        public async Task FormValidationFuncRunsOncePerKeystrokeWithImmediateBoundInput()
+        {
+            var comp = Context.Render<FormValidationFuncOncePerKeystrokeTest>();
+            var input = comp.Find("input");
+
+            await input.InputAsync(new ChangeEventArgs { Value = "A" });
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(1));
+
+            await input.InputAsync(new ChangeEventArgs { Value = "AB" });
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(2));
+
+            await input.InputAsync(new ChangeEventArgs { Value = "ABC" });
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValidationCount.Should().Be(3));
+        }
+
+        /// <summary>
         /// Changing the nested form fields value should set IsTouched
         /// </summary>
         [Test]
@@ -383,7 +406,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormAsyncValidationWithFieldChangedSubscriber()
         {
-            var comp = Context.Render<FormAsyncValidationWithFieldChangedSubscriberTest>();
+            var comp = Context.Render<FormFieldChangedSubTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
             var input = () => comp.Find("input");
             await input().InputAsync("test");
@@ -1086,7 +1109,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var fileName = "cat.jpg";
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
-            var comp = Context.Render<FormWithFileUploadAndDragAndDropActivatorTest>();
+            var comp = Context.Render<FormFileUploadDndTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
@@ -1608,7 +1631,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudForm_Should_RegisterOnlyTopSubscribeToParentFormFormControls()
         {
-            var comp = Context.Render<FormShouldRegisterOnlyTopSubscribeToParentFormFormControlsTest>();
+            var comp = Context.Render<FormTopLevelControlsTest>();
             var form = comp.FindComponent<MudFormTestable>().Instance;
 
             form.FormControls.Count.Should().Be(13);
@@ -1982,7 +2005,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormComponent_Should_UpdateValidationMessagesOnEditContextChanged()
         {
-            var comp = Context.Render<FormComponentUpdateValidationMessagesOnEditContextChangedTest>();
+            var comp = Context.Render<FormEditContextMessagesTest>();
             var validator = comp.FindComponent<FormComponentUpdateValidationMessagesValidator>();
             var errorMessage = "some error";
 

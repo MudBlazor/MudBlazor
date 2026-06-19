@@ -3,6 +3,6 @@
 
 **Checklist:**
 <!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [x] I've read the [contribution guidelines](CONTRIBUTING.md)
+- [x] I've read the [contribution guidelines](https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md)
 - [x] My code follows the style of this project
 - [x] I've added or updated relevant unit tests

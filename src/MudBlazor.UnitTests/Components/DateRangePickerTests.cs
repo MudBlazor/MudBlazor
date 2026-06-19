@@ -741,16 +741,36 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CurrentDate_ShouldBeMarked()
         {
-            var currentDate = DateTime.Now.Date;
-            var comp = await OpenPicker();
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+            var currentDate = timeProvider.GetLocalNow().Date;
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static));
+            var currentDay = currentDate.Day.ToString(CultureInfo.InvariantCulture);
 
             // Check that only one date is marked
             comp.FindAll("button.mud-current").Count.Should().Be(1);
+            comp.Find("button.mud-current").TrimmedText().Should().Be(currentDay);
 
-            // Check that the marked date is the current date
-            await comp.Find("button.mud-current").ClickAsync();
-            await comp.Find("button.mud-range-start-selected").ClickAsync();
+            await comp.InvokeAsync(() => comp.Instance.ClickDayAsync(currentDate));
+            await comp.InvokeAsync(() => comp.Instance.ClickDayAsync(currentDate));
+
             comp.Instance.DateRange.Should().Be(new DateRange(currentDate, currentDate));
+        }
+
+        [Test]
+        [SetCulture("en-US")]
+        public async Task DateRangePicker_CustomTimeProvider()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
+
+            var comp = await OpenPicker();
+
+            comp.FindAll("button.mud-current").Count.Should().Be(1);
+            comp.Find("button.mud-current").TrimmedText().Should().Be("4");
+            comp.Find(".mud-button-month").TrimmedText().Should().Contain("April");
+            comp.Find(".mud-button-year").TrimmedText().Should().Be("2003");
         }
 
         [Test]
@@ -1461,13 +1481,15 @@ namespace MudBlazor.UnitTests.Components
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
+
+            public Task ClickDayAsync(DateTime date) => OnDayClickedAsync(date);
         }
     }
     public static class DatePickerRenderedFragmentExtensions
     {
         public static Task SelectDateAsync(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence = true)
         {
-            return comp.ValidateSelection(day, firstOccurrence).ClickAsync();
+            return comp.InvokeAsync(async () => await comp.ValidateSelection(day, firstOccurrence).ClickAsync());
         }
 
         private static IElement ValidateSelection(this IRenderedComponent<IComponent> comp, string day, bool firstOccurrence)

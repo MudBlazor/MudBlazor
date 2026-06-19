@@ -21,6 +21,25 @@ namespace MudBlazor
 
         internal string ItemId { get; } = Identifier.Create();
 
+        /// <summary>
+        /// Builds fallback accessibility attributes for the rendered option element.
+        /// </summary>
+        /// <remarks>
+        /// Option semantics come from this item's selection state rather than the popup's temporary active item.
+        /// </remarks>
+        private Dictionary<string, object?> GetUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("aria-selected", Selected ? "true" : "false");
+
+            if (Disabled)
+            {
+                attributes.TryAdd("aria-disabled", "true");
+            }
+
+            return attributes;
+        }
+
         public MudSelectItem()
         {
             using var registerScope = CreateRegisterScope();
@@ -30,6 +49,10 @@ namespace MudBlazor
             registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
                 .WithParameter(() => IMudShadowSelect)
                 .WithChangeHandler(OnMudShadowSelectChanged);
+            registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnValueChanged)
+                .WithComparer(() => (_context ?? _shadowContext)?.Comparer ?? EqualityComparer<T?>.Default);
         }
 
         /// <summary>
@@ -210,6 +233,20 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Handles changes to the <see cref="Value"/> parameter.
+        /// </summary>
+        /// <remarks>
+        /// When the parent swaps the underlying data collection while Blazor reuses the same component instances
+        /// (e.g. a keyless <c>@foreach</c> binding new items to existing <see cref="MudSelectItem{T}"/> positions),
+        /// the value-keyed lookups in <see cref="MudSelectContext{T}"/> must be updated to avoid stale keys.
+        /// </remarks>
+        private void OnValueChanged(ParameterChangedEventArgs<T?> args)
+        {
+            _context?.OnItemValueChanged(this, args.LastValue, args.Value);
+            _shadowContext?.OnShadowItemValueChanged(this, args.LastValue, args.Value);
         }
 
         /// <summary>

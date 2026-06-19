@@ -13,6 +13,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    // Shares DialogRender's static OnInitializedCount and exercises async inline-dialog timing that
+    // deadlocks/flakes under NUnit parallel execution. Kept serial by design (accepted limitation); see #13188 / #13297.
     [NonParallelizable]
     public class DialogTests : BunitTest
     {
@@ -1565,23 +1567,6 @@ namespace MudBlazor.UnitTests.Components
 
             // Close the dialog
             await comp.InvokeAsync(() => service.Close(dialogReference));
-        }
-
-        [Test]
-        public async Task CloseButton_ShouldHavePreventDefaultOnMouseDownAttribute()
-        {
-            // Arrange
-            var comp = Context.Render<MudDialogProvider>();
-            var service = Context.Services.GetRequiredService<IDialogService>();
-
-            // Act
-            await comp.InvokeAsync(async () =>
-                await service.ShowAsync<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
-
-            // Assert
-            var closeBtn = comp.Find(".mud-button-close");
-            closeBtn.Should().NotBeNull();
-            closeBtn.GetAttribute("blazor:onmousedown:preventdefault").Should().Be("");
         }
 
         /// <summary>

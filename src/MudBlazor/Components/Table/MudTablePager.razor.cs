@@ -11,7 +11,7 @@ namespace MudBlazor
     /// <summary>
     /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
     /// </summary>
-    public partial class MudTablePager : MudComponentBase
+    public partial class MudTablePager : MudComponentBase, IDisposable
     {
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
@@ -190,7 +190,7 @@ namespace MudBlazor
             if (Context != null)
             {
                 Context.HasPager = true;
-                Context.PagerStateHasChanged = StateHasChanged;
+                Context.PagerStateHasChanged += StateHasChanged;
                 var size = Table?._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
                 SetRowsPerPage(size);
             }
@@ -208,6 +208,32 @@ namespace MudBlazor
             if (string.IsNullOrEmpty(AllItemsText))
             {
                 AllItemsText = Localizer[LanguageResource.MudDataGridPager_AllItems];
+            }
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            if (Context != null)
+            {
+                Context.PagerStateHasChanged -= StateHasChanged;
             }
         }
     }

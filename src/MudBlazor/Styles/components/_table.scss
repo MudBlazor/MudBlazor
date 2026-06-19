@@ -73,6 +73,10 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   flex-direction: inherit;
   justify-content: flex-start;
 
+  &.mud-table-sort-label-full-width {
+    width: 100%;
+  }
+
   &.mud-clickable {
     cursor: pointer;
     user-select: none;
@@ -492,6 +496,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
+.mud-table-pagination-top .mud-table-pagination-toolbar {
+  border-top: none;
+  border-bottom: 1px solid var(--mud-palette-table-lines);
+}
+
 .mud-table-pagination-spacer {
   flex: 1 1 100%;
 }
@@ -587,6 +596,10 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
     .mud-table-body {
       border-top: 1px solid var(--mud-palette-table-lines);
+    }
+
+    .mud-table-root colgroup {
+      display: none;
     }
 
     .mud-table-row {

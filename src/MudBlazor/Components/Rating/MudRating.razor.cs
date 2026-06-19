@@ -219,7 +219,15 @@ namespace MudBlazor
             }
         }
 
-        internal Task HandleItemHoveredAsync(int? itemValue) => SetHoveredValueAsync(itemValue);
+        internal Task HandleItemHoveredAsync(int? itemValue)
+        {
+            if (ReadOnly || Disabled)
+            {
+                return Task.CompletedTask;
+            }
+
+            return SetHoveredValueAsync(itemValue);
+        }
 
         private async Task IncreaseValueAsync(int val)
         {

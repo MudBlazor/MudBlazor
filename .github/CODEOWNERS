@@ -14,8 +14,6 @@
 # Components
 /src/MudBlazor/Components/Menu/ @danielchalmers
 /src/MudBlazor/Components/Tabs/ @versile2
-/src/MudBlazor/Components/Autocomplete/ @versile2
-/src/MudBlazor/Components/Select/ @versile2
 /src/MudBlazor/Components/Overlay/ @versile2
 /src/MudBlazor/Components/Popover/ @versile2
 /src/MudBlazor/Components/Tooltip/ @versile2

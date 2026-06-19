@@ -289,6 +289,22 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
+        /// <inheritdoc />
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
+        {
+            await base.OnBlurredAsync(obj);
+
+            // Apply the format/converter to the displayed text on blur. While the user edits an Immediate
+            // input the value->text echo is suppressed so their raw text is preserved (#13002), so we
+            // re-derive the formatted text here to restore the pre-v9 "format on LostFocus" behavior.
+            // No-op for plain text fields (ConvertSet(Value) == Text); skipped for masks and conversion errors.
+            if (!HasMask && !ConversionError)
+            {
+                await UpdateTextPropertyAsync(false);
+                await InputReference.SetText(ReadText, updateValue: false);
+            }
+        }
+
         private Task OnMaskedValueChangedAsync(string s) => SetTextAndUpdateValueAsync(s);
 
         private string GetCounterText() => Counter switch

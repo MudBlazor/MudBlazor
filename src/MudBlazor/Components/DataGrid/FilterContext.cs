@@ -31,6 +31,20 @@ namespace MudBlazor
         public IEnumerable<T>? Items => _dataGrid.Items;
 
         /// <summary>
+        /// Indicates whether this filter currently has an applied value in the data grid.
+        /// </summary>
+        public bool IsFiltered => _dataGrid.HasFilter(FilterDefinition?.Column);
+
+        /// <summary>
+        /// The icon which reflects whether this filter is currently applied.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="MudDataGrid{T}.FilterIconFilled"/> when <see cref="IsFiltered"/> is <c>true</c>;
+        /// otherwise returns <see cref="MudDataGrid{T}.FilterIconEmpty"/>.
+        /// </remarks>
+        public string FilterIcon => IsFiltered ? _dataGrid.FilterIconFilled : _dataGrid.FilterIconEmpty;
+
+        /// <summary>
         /// The definitions of all filters in the grid.
         /// </summary>
         public List<IFilterDefinition<T>> FilterDefinitions => _dataGrid.FilterDefinitions;

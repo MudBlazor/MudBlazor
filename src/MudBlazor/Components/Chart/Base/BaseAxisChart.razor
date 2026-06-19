@@ -54,8 +54,10 @@
             var verticalLineValue = VerticalValues[i];
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
-            var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
+            var rotationValue = ChartOptions?.XAxisLabelRotation ?? 0;
+            var rotation = (-rotationValue).ToString();
+            var textAnchor = rotationValue > 0 ? "end" : rotationValue < 0 ? "start" : "middle";
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='{textAnchor}' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
         }
     </g>
     <g class="@($"mud-charts-{ChartType?.ToString().ToLower()}-series")">
