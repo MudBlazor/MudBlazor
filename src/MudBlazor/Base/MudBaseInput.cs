@@ -546,11 +546,7 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
             }
 
-            // Only notify the form of a change that originates from user interaction. Programmatic /
-            // parameter-driven syncs (e.g. an initial @bind-Text value, or an async-loaded selection)
-            // run under SuppressInteractionEffectsWhileAsync and must not fire FieldChanged (#13246).
-            // Validation still runs below so externally-set values are validated; an untouched field
-            // simply shows no required error.
+            // Only user interaction notifies the form; the validation below runs either way.
             if (!_suppressInteractionEffects)
             {
                 FieldChanged(value);
@@ -577,9 +573,6 @@ namespace MudBlazor
                 // External value changes, non-Immediate commits, and explicit forced updates still refresh.
                 if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
                 {
-                    // External/programmatic Value change: refresh the displayed text, but do not touch
-                    // the input — only user interaction touches (#13064, #13246). wasTouched (captured
-                    // above) still governs the FieldChanged below, preserving the #12012 behavior.
                     await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
                 }
             }
@@ -635,7 +628,6 @@ namespace MudBlazor
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
-            // Reformatting the text on a culture/format parameter change must not touch the input.
             await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
@@ -643,7 +635,6 @@ namespace MudBlazor
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();
-            // Reformatting the text on a converter parameter change must not touch the input.
             await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
@@ -662,7 +653,6 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            // This is a programmatic sync, so it must not mark the input touched (#13246, #13064).
             if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
                 await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
@@ -688,7 +678,6 @@ namespace MudBlazor
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
-            // A programmatic re-render must not mark the input touched (#13246).
             SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false)).CatchAndLog();
             StateHasChanged();
         }
@@ -715,8 +704,7 @@ namespace MudBlazor
                     return;
                 }
 
-                // Always update text when Value changes (TextUpdateSuppression removed).
-                // This sync is parameter-driven, so it must not mark the input touched (#13064, #13246).
+                // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
                 await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
@@ -812,8 +800,6 @@ namespace MudBlazor
 
             _validated = false;
 
-            // Only a genuine user interaction marks the input touched. Programmatic / parameter-driven
-            // syncs run under SuppressInteractionEffectsWhileAsync and must not touch the input (#13064, #13246).
             if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
             {
                 Touched = true;
@@ -828,8 +814,8 @@ namespace MudBlazor
 
         private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
-            // A change to the Text parameter is always parameter-driven (a user edit updates Text via the
-            // internal state without re-triggering this handler), so it must not touch the input (#13246).
+            // A Text parameter change is always parameter-driven (a user edit updates Text via the internal
+            // state without re-triggering this handler).
             return SuppressInteractionEffectsWhileAsync(async () =>
             {
                 _validated = false;

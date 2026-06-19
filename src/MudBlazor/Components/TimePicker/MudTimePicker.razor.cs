@@ -140,9 +140,6 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            // Setting Time from the parameter is not user interaction, so it must not touch the picker
-            // or fire FieldChanged (#13246, #13064). User clock/text input goes through other callers of
-            // SetTimeAsync, which run without the flag and touch normally.
             set => SuppressInteractionEffectsWhileAsync(() => SetTimeAsync(value, true)).CatchAndLog();
         }
 
@@ -213,11 +210,8 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            // Commit via SetTimeAsync directly, NOT through the Time parameter setter: the setter runs
-            // under SuppressInteractionEffectsWhileAsync (so a parameter-driven value does not touch the
-            // picker), but a submit is a genuine user commit and must mark Touched and fire FieldChanged.
-            // This matches MudDatePicker/MudDateRangePicker, whose submit paths call SetDateAsync/
-            // SetDateRangeAsync directly.
+            // Commit via SetTimeAsync directly, NOT the Time setter: the setter is suppressed, but a submit
+            // is a user commit that must touch and fire FieldChanged (as MudDatePicker/MudDateRangePicker do).
             return SetTimeAsync(TimeIntermediate, updateValue: true);
         }
 

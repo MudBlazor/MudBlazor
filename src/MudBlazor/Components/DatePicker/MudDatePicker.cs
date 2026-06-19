@@ -27,9 +27,6 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            // Setting Date from the parameter is not user interaction, so it must not touch the picker
-            // or fire FieldChanged (#13246, #13064). User calendar/text input goes through other callers
-            // of SetDateAsync, which run without the flag and touch normally.
             set => SuppressInteractionEffectsWhileAsync(() => SetDateAsync(value, true)).CatchAndLog();
         }
 

@@ -242,26 +242,17 @@ namespace MudBlazor
         /// </remarks>
         public bool Touched { get; protected set; }
 
-        // Suppresses user-interaction side effects (marking Touched, firing FieldChanged) while a
-        // programmatic / parameter-driven value<->text synchronization runs. Touched and FieldChanged
-        // must reflect genuine user interaction (typing, selecting, blur) only, never values that arrive
-        // from parameters or are set programmatically. Without this, supplying a non-default initial (or
-        // async-loaded) value marks the input — and its surrounding MudForm — touched on load and fires
-        // FieldChanged with no interaction (#13064, #13246). It is a plain instance bool, set and
-        // cleared synchronously around each parameter-sync entry point via SuppressInteractionEffectsWhileAsync,
-        // so it can never leak across an await into a user event. Validation is intentionally NOT suppressed.
+        // While set, a programmatic / parameter-driven value sync is running and must not mark the input
+        // Touched or fire FieldChanged - those reflect genuine user interaction only. This stops a
+        // non-default initial or async-loaded value from touching the input (and its MudForm) on load
+        // (#13064, #13246). Toggle it only via SuppressInteractionEffectsWhileAsync, which sets and clears
+        // it synchronously so it never leaks across an await. Validation is intentionally not suppressed.
         private protected bool _suppressInteractionEffects;
 
         /// <summary>
-        /// Runs a programmatic or parameter-driven value/text synchronization without marking this
-        /// component as <see cref="Touched"/> or firing <see cref="FieldChanged"/>.
+        /// Runs a programmatic or parameter-driven value/text sync without marking this component
+        /// <see cref="Touched"/> or firing <see cref="FieldChanged"/> - those reflect user interaction only.
         /// </summary>
-        /// <remarks>
-        /// <see cref="Touched"/> and <see cref="FieldChanged"/> must reflect genuine user interaction only.
-        /// Use this wrapper around any sync triggered by a parameter change or a programmatic call (initial
-        /// value load, external value/text changes, culture/format/converter changes) so the resulting
-        /// update does not spuriously touch the component or notify its form.
-        /// </remarks>
         private protected async Task SuppressInteractionEffectsWhileAsync(Func<Task> synchronize)
         {
             var previous = _suppressInteractionEffects;

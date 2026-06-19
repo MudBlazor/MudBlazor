@@ -104,9 +104,6 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            // Setting DateRange from the parameter is not user interaction, so it must not touch the
-            // picker or fire FieldChanged (#13246, #13064). User calendar/text input goes through other
-            // callers of SetDateRangeAsync, which run without the flag and touch normally.
             set => SuppressInteractionEffectsWhileAsync(() => SetDateRangeAsync(value, true)).CatchAndLog();
         }
 

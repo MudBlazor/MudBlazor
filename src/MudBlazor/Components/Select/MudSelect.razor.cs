@@ -52,7 +52,6 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
-                // Re-syncing the text on a MultiSelection parameter change must not touch the input (#13064).
                 .WithChangeHandler(() => SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false)));
             registerScope.RegisterParameter<IEqualityComparer<T?>?>(nameof(Comparer))
                 .WithParameter(() => Comparer)
@@ -793,10 +792,8 @@ namespace MudBlazor
 
         private Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
         {
-            // A SelectedValues parameter change is always programmatic (an initial or async-loaded
-            // selection); user selection goes through SelectOption, not this handler. So the entire
-            // handler runs suppressed: syncing the text must not mark the input touched, and the
-            // value->text sinks below must not fire FieldChanged on load (#13064, #13246).
+            // A SelectedValues parameter change is always programmatic; user selection goes through
+            // SelectOption, not this handler. The whole handler therefore runs suppressed.
             return SuppressInteractionEffectsWhileAsync(async () =>
             {
                 var wasTouched = Touched;
@@ -828,10 +825,9 @@ namespace MudBlazor
                     }
                 }
 
-                // Notify the form only when this external change occurs on a select the user has already
-                // touched (mirrors MudBaseInput.OnValueParameterChangedAsync's wasTouched gate, preserving
-                // the #12012 behavior). An initial or async-loaded selection on an untouched select - and
-                // this input's own ValueChanged echo - must not fire FieldChanged. User selection notifies
+                // Mirror MudBaseInput.OnValueParameterChangedAsync's wasTouched gate: an external change
+                // only notifies the form if the select was already touched (an initial/async-loaded
+                // selection on an untouched select must not fire FieldChanged). User selection notifies
                 // via SelectOption.
                 if (HasRendered && wasTouched && !arg.IsChildOriginatedChange)
                 {
@@ -1527,8 +1523,6 @@ namespace MudBlazor
             if (_multiSelectionText != text)
             {
                 _multiSelectionText = text;
-                // Only a user selection touches the input; a programmatic / parameter-driven text sync
-                // (e.g. an initial or async-loaded SelectedValues) runs under SuppressInteractionEffectsWhileAsync (#13064).
                 if (!string.IsNullOrWhiteSpace(_multiSelectionText) && !_suppressInteractionEffects)
                 {
                     Touched = true;
