@@ -1,0 +1,58 @@
+@using MudBlazor.Utilities
+
+<MudForm @ref="Form" FieldChanged="v => FormFieldChangedEventArgs = v">
+    <MudNumericField T="int" @bind-Value="_number" />
+    <MudSelect T="Fruit?" @bind-Value="_fruit">
+        <MudSelectItem T="Fruit?" Value="@((Fruit?)Fruit.Apple)">Apple</MudSelectItem>
+        <MudSelectItem T="Fruit?" Value="@((Fruit?)Fruit.Banana)">Banana</MudSelectItem>
+    </MudSelect>
+    <MudTextField T="string" @bind-Text="_text" />
+    <MudSelect T="string" MultiSelection="true" @bind-SelectedValues="_multiSelected">
+        <MudSelectItem T="string" Value="@("a")">A</MudSelectItem>
+        <MudSelectItem T="string" Value="@("b")">B</MudSelectItem>
+    </MudSelect>
+</MudForm>
+
+@code {
+    public static string __description__ =
+        "A MudForm whose inputs receive non-default initial (or async-loaded) values must NOT become Touched and must NOT fire FieldChanged without user interaction (#13246, #13064).";
+
+    public MudForm Form = null!;
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+
+    // Non-string T (int / nullable enum) is required to reproduce: MudBaseInput.OnInitializedAsync
+    // only syncs Text from Value when typeof(T) != typeof(string). A non-empty bound Text also
+    // reproduces via OnTextParameterChangedAsync regardless of T.
+    private int _number;
+    private Fruit? _fruit;
+    private string? _text;
+    private IReadOnlyCollection<string> _multiSelected = [];
+
+    public enum Fruit { Apple, Banana }
+
+    /// <summary>When true, the inputs start with non-default values (#13246 initial-load case).</summary>
+    [Parameter] public bool Preloaded { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Preloaded)
+        {
+            ApplyValues();
+        }
+    }
+
+    /// <summary>Simulates a data load that arrives after the first render (#13064 async-load case).</summary>
+    public Task LoadValuesAsync()
+    {
+        ApplyValues();
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private void ApplyValues()
+    {
+        _number = 5;
+        _fruit = Fruit.Banana;
+        _text = "hello";
+        _multiSelected = ["a"];
+    }
+}

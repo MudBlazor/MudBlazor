@@ -52,7 +52,7 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
-                .WithChangeHandler(() => UpdateTextPropertyAsync(false));
+                .WithChangeHandler(() => SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false)));
             registerScope.RegisterParameter<IEqualityComparer<T?>?>(nameof(Comparer))
                 .WithParameter(() => Comparer)
                 .WithChangeHandler(OnComparerChangedAsync);
@@ -790,46 +790,55 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
+        private Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
         {
-            var value = arg.Value;
-
-            // Update internal HashSet with new values - make a defensive copy to avoid shared references
-            // The HashSet uses the Comparer for equality checks and ensures uniqueness
-            _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
-
-            // Notify all subscribed items of the selection change
-            await _context.NotifySelectionChangedAsync();
-
-            if (!MultiSelection)
+            // A SelectedValues parameter change is always programmatic; user selection goes through
+            // SelectOption, not this handler. The whole handler therefore runs suppressed.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
-            }
-            else
-            {
-                //Warning. Here the Converter was not set yet
-                if (MultiSelectionTextFunc != null)
+                var wasTouched = Touched;
+                var value = arg.Value;
+
+                // Update internal HashSet with new values - make a defensive copy to avoid shared references
+                // The HashSet uses the Comparer for equality checks and ensures uniqueness
+                _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
+
+                // Notify all subscribed items of the selection change
+                await _context.NotifySelectionChangedAsync();
+
+                if (!MultiSelection)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                    await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
                 }
                 else
                 {
-                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    //Warning. Here the Converter was not set yet
+                    if (MultiSelectionTextFunc != null)
+                    {
+                        await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
+                            selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                            multiSelectionTextFunc: MultiSelectionTextFunc);
+                    }
+                    else
+                    {
+                        await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    }
                 }
-            }
 
-            // Only fire FieldChanged after the first render to avoid triggering during initialization
-            if (HasRendered)
-            {
-                FieldChanged(_selectedValues);
-            }
+                // Mirror MudBaseInput.OnValueParameterChangedAsync's wasTouched gate: an external change
+                // only notifies the form if the select was already touched (an initial/async-loaded
+                // selection on an untouched select must not fire FieldChanged). User selection notifies
+                // via SelectOption.
+                if (HasRendered && wasTouched && !arg.IsChildOriginatedChange)
+                {
+                    FieldChanged(_selectedValues);
+                }
 
-            if (MultiSelection && typeof(T) == typeof(string))
-            {
-                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
-            }
+                if (MultiSelection && typeof(T) == typeof(string))
+                {
+                    await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
+                }
+            });
         }
 
         internal void UpdateFitContent()
@@ -1514,7 +1523,7 @@ namespace MudBlazor
             if (_multiSelectionText != text)
             {
                 _multiSelectionText = text;
-                if (!string.IsNullOrWhiteSpace(_multiSelectionText))
+                if (!string.IsNullOrWhiteSpace(_multiSelectionText) && !_suppressInteractionEffects)
                 {
                     Touched = true;
                 }
