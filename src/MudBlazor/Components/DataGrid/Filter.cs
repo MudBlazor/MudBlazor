@@ -83,6 +83,22 @@ namespace MudBlazor
             }
         }
 
+        internal void OperatorChanged(string? value)
+        {
+            _filterDefinition.Operator = value;
+            // IsAnyOf holds a list of enums while the other operators hold a single value, so a value
+            // left over from the previous operator can be the wrong shape. Drop it when it no longer
+            // matches the new operator to avoid binding a list to a single-select (or vice versa).
+            var isAnyOf = value == FilterOperator.Enum.IsAnyOf;
+            if (isAnyOf
+                ? _filterDefinition.Value is not (null or IReadOnlyList<Enum>)
+                : _filterDefinition.Value is IReadOnlyList<Enum>)
+            {
+                _filterDefinition.Value = null;
+            }
+            _dataGrid.GroupItems();
+        }
+
         internal void StringValueChanged(string value)
         {
             _valueString = value;

@@ -94,8 +94,17 @@ namespace MudBlazor
         private async Task ChangeOperatorAsync(string o)
         {
             Debug.Assert(Column.FilterContext.FilterDefinition is not null);
-            Column.FilterContext.FilterDefinition.Operator = o;
-            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
+            var filterDefinition = Column.FilterContext.FilterDefinition;
+            // Crossing the IsAnyOf boundary swaps the value shape (scalar Enum <-> list of Enum),
+            // so clear the stale value to avoid binding a list to a single-select or vice versa.
+            var wasAnyOf = filterDefinition.Operator == FilterOperator.Enum.IsAnyOf;
+            var isAnyOf = o == FilterOperator.Enum.IsAnyOf;
+            if (wasAnyOf != isAnyOf)
+            {
+                filterDefinition.Value = null;
+            }
+            filterDefinition.Operator = o;
+            await ApplyFilterAsync(filterDefinition);
         }
 
         internal async Task StringValueChangedAsync(string value)

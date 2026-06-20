@@ -2229,6 +2229,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridEnumIsAnyOfOperatorSwitchClearsValueAndDoesNotThrow()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            var statusColumn = dataGrid.Instance.GetColumnByPropertyName("Status");
+
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { Severity.Normal, Severity.Info }
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            var operatorSelect = comp.FindComponents<MudSelect<string>>().Single(x => x.Instance.Class == "filter-operator");
+
+            // Switching from IsAnyOf (list value) to a scalar operator must drop the stale list and not throw
+            // when the single-select re-renders (regression: list value previously cast to a scalar Enum).
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.Is));
+            filterDefinition.Operator.Should().Be(FilterOperator.Enum.Is);
+            filterDefinition.Value.Should().BeNull();
+
+            // And back: scalar -> IsAnyOf must not throw when the multi-select re-renders.
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.IsAnyOf));
+            filterDefinition.Operator.Should().Be(FilterOperator.Enum.IsAnyOf);
+        }
+
+        [Test]
         public void FilterDefinitionDateTime()
         {
             var comp = Context.Render<DataGridFiltersTest>();
