@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using AngleSharp.Dom;
 using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -162,6 +163,79 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13246 and
+        /// https://github.com/MudBlazor/MudBlazor/issues/13064.
+        /// Inputs that receive a non-default value via @bind-Value / @bind-Text must NOT mark the form
+        /// touched and must NOT fire FieldChanged on the initial render (no user interaction occurred).
+        /// Regressed in 9.3.0 by PR #12892: the programmatic value->text sync sets Touched=true.
+        /// </summary>
+        [Test]
+        public async Task FormWithNonDefaultInitialValuesIsNotTouchedAndDoesNotFireFieldChanged()
+        {
+            var comp = Context.Render<FormInitialValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+            var form = comp.Instance.Form;
+
+            using var _ = new AssertionScope();
+            comp.FindComponent<MudNumericField<int>>().Instance.Touched.Should().BeFalse("numeric");
+            comp.FindComponent<MudTextField<string>>().Instance.Touched.Should().BeFalse("textfield");
+            comp.FindComponent<MudSelect<FormInitialValuesNotTouchedTest.Fruit?>>().Instance.Touched.Should().BeFalse("select");
+            comp.FindComponent<MudSelect<string>>().Instance.Touched.Should().BeFalse("multiselect");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+            form.IsTouched.Should().BeFalse("form.IsTouched");
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13064.
+        /// When values arrive after the first render (e.g. an async data load), the form must remain
+        /// untouched and FieldChanged must not fire.
+        /// </summary>
+        [Test]
+        public async Task FormFieldsRemainUntouchedWhenValuesLoadedAfterRender()
+        {
+            var comp = Context.Render<FormInitialValuesNotTouchedTest>();
+            var form = comp.Instance.Form;
+
+            // Baseline: empty form is not touched.
+            form.IsTouched.Should().BeFalse();
+
+            // Simulate an async data load arriving after the first render.
+            await comp.InvokeAsync(() => comp.Instance.LoadValuesAsync());
+
+            using var _ = new AssertionScope();
+            // Per-field Touched is the source of truth for MudForm.IsTouched and is reliable in bUnit;
+            // the form-level _touched aggregation is recomputed on a later cycle.
+            comp.FindComponent<MudNumericField<int>>().Instance.Touched.Should().BeFalse("numeric");
+            comp.FindComponent<MudTextField<string>>().Instance.Touched.Should().BeFalse("textfield");
+            comp.FindComponent<MudSelect<FormInitialValuesNotTouchedTest.Fruit?>>().Instance.Touched.Should().BeFalse("select");
+            comp.FindComponent<MudSelect<string>>().Instance.Touched.Should().BeFalse("multiselect");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+            form.IsTouched.Should().BeFalse("form.IsTouched");
+        }
+
+        /// <summary>
+        /// The Touched suppression for programmatic/parameter sync must not leak into genuine user
+        /// interaction: a real user edit after a non-default value was loaded must still touch the form
+        /// and fire FieldChanged.
+        /// </summary>
+        [Test]
+        public async Task FormBecomesTouchedAfterUserInteractionWithPreloadedValues()
+        {
+            var comp = Context.Render<FormInitialValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+            var form = comp.Instance.Form;
+            var textField = comp.FindComponent<MudTextField<string>>();
+            textField.Instance.Touched.Should().BeFalse();
+
+            // A real user edit (DOM change) must still touch the field and raise FieldChanged: the
+            // suppression must not leak past the programmatic sync into genuine user interaction.
+            await textField.Find("input").ChangeAsync(new ChangeEventArgs { Value = "user typed" });
+
+            textField.Instance.Touched.Should().BeTrue();
+            comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull();
+        }
+
+        /// <summary>
         /// Changing the nested form fields value should set IsTouched
         /// </summary>
         [Test]
@@ -214,10 +288,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state: form should not be touched
             form.IsTouched.Should().Be(false);
             nestedForm.IsTouched.Should().Be(false);
-            // input a date, istouched should be true
+            // input a date into the OUTER form's date picker (textCompFields[1] is that picker's inner
+            // input); only the outer form becomes touched. The nested form stays untouched - previously it
+            // appeared touched only because its date picker was erroneously marked touched on initial load
+            // by its bound value (#13246/#13064), which this fix corrects.
             await textCompFields[1].Find("input").ChangeAsync("2001-01-31");
             form.IsTouched.Should().Be(true);
-            nestedForm.IsTouched.Should().Be(true);
+            nestedForm.IsTouched.Should().Be(false);
 
             //reset should set touched to false
             await comp.InvokeAsync(() => form.ResetAsync());
@@ -1713,6 +1790,61 @@ namespace MudBlazor.UnitTests.Components
 
             (comp.Instance.FormFieldChangedEventArgs.NewValue is IBrowserFile).Should().BeTrue();
             mudFile.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
+        }
+
+        /// <summary>
+        /// Regression test for #13246 / #13064 for pickers. A picker that receives a non-default value via
+        /// its value parameter (Date/Time/DateRange) on initial render must not become touched or fire
+        /// FieldChanged.
+        /// </summary>
+        [Test]
+        public void FormWithNonDefaultInitialPickerValuesIsNotTouched()
+        {
+            var comp = Context.Render<FormInitialPickerValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+
+            using var _ = new AssertionScope();
+            comp.FindComponent<MudDatePicker>().Instance.Touched.Should().BeFalse("date");
+            comp.FindComponent<MudTimePicker>().Instance.Touched.Should().BeFalse("time");
+            comp.FindComponent<MudDateRangePicker>().Instance.Touched.Should().BeFalse("daterange");
+            comp.FindComponent<MudColorPicker>().Instance.Touched.Should().BeFalse("color");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+        }
+
+        /// <summary>
+        /// Regression test for #13064 for pickers. Values that arrive after the first render (e.g. an async
+        /// data load), including an external MudColorPicker Value change, must leave the pickers untouched.
+        /// </summary>
+        [Test]
+        public async Task FormPickersRemainUntouchedWhenValuesLoadedAfterRender()
+        {
+            var comp = Context.Render<FormInitialPickerValuesNotTouchedTest>();
+
+            await comp.InvokeAsync(() => comp.Instance.LoadValuesAsync());
+
+            using var _ = new AssertionScope();
+            comp.FindComponent<MudDatePicker>().Instance.Touched.Should().BeFalse("date");
+            comp.FindComponent<MudTimePicker>().Instance.Touched.Should().BeFalse("time");
+            comp.FindComponent<MudDateRangePicker>().Instance.Touched.Should().BeFalse("daterange");
+            comp.FindComponent<MudColorPicker>().Instance.Touched.Should().BeFalse("color");
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull("FieldChanged");
+        }
+
+        /// <summary>
+        /// The picker Touched suppression must not leak into user interaction: typing a date into the
+        /// picker's input must still touch it.
+        /// </summary>
+        [Test]
+        public async Task DatePickerStillTouchesOnUserTextInput()
+        {
+            var comp = Context.Render<FormInitialPickerValuesNotTouchedTest>(parameters => parameters
+                .Add(p => p.Preloaded, true));
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            datePicker.Instance.Touched.Should().BeFalse();
+
+            await datePicker.Find("input").ChangeAsync(new ChangeEventArgs { Value = "2020-02-20" });
+
+            datePicker.Instance.Touched.Should().BeTrue();
         }
 
         /// <summary>

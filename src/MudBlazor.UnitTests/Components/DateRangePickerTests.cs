@@ -546,17 +546,14 @@ namespace MudBlazor.UnitTests.Components
             wasEventCallbackCalled.Should().BeFalse();
         }
 
+        // new DateRange() chains to new DateRange(null, null), so both produce an all-null range.
         [Test]
-        public async Task InitializeDateRange_DefaultConstructor()
+        public async Task InitializeDateRange_AllNull_StartAndEndAreNull()
         {
-            var range = new DateRange();
-
             var comp = await OpenPicker(parameters => parameters
-                .Add(x => x.DateRange, range));
+                .Add(x => x.DateRange, new DateRange()));
 
             comp.Instance.DateRange.Should().NotBeNull();
-            comp.Instance.DateRange.Start.Should().NotBe(default);
-            comp.Instance.DateRange.End.Should().NotBe(default);
             comp.Instance.DateRange.Start.Should().BeNull();
             comp.Instance.DateRange.End.Should().BeNull();
         }
@@ -613,21 +610,6 @@ namespace MudBlazor.UnitTests.Components
                 picker.Instance.DateRange.Start.Should().Be(DateTime.Today);
                 picker.Instance.DateRange.End.Should().BeNull();
             });
-        }
-
-        [Test]
-        public async Task InitializeDateRange_AllNullValues()
-        {
-            var range = new DateRange(null, null);
-
-            var comp = await OpenPicker(parameters => parameters
-                .Add(x => x.DateRange, range));
-
-            comp.Instance.DateRange.Should().NotBeNull();
-            comp.Instance.DateRange.Start.Should().NotBe(default);
-            comp.Instance.DateRange.End.Should().NotBe(default);
-            comp.Instance.DateRange.Start.Should().BeNull();
-            comp.Instance.DateRange.End.Should().BeNull();
         }
 
         [Test]
@@ -1009,24 +991,27 @@ namespace MudBlazor.UnitTests.Components
             openBtn.Count.Should().Be(1);
             var openBtnElement = openBtn[0].Find("button");
             await openBtnElement.ClickAsync();
-            await Task.Delay(500);
             IElement DayButton(string dayNumber) =>
                 comp.FindAll("button")
                     .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
+            await comp.WaitForAssertionAsync(() => DayButton("5").Should().NotBeNull());
             await DayButton("5").ClickAsync();
-            await Task.Delay(200);
             await DayButton("7").ClickAsync();
-            await Task.Delay(200);
 
             IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>
                 picker[index].FindComponents<MudIconButton>();
 
-            IconButtons(0).Count.Should().Be(2);
+            // A range is now selected, so each picker shows both the clear and open adornment buttons.
+            await comp.WaitForAssertionAsync(() => IconButtons(0).Count.Should().Be(2));
             IconButtons(1).Count.Should().Be(2);
+            picker[0].Instance.DateRange.Should().NotBeNull();
+
+            // Clicking the clear button removes the value and the clear adornment.
             await IconButtons(0)[0].Find("button").ClickAsync();
             await IconButtons(1)[0].Find("button").ClickAsync();
-            IconButtons(0).Count.Should().Be(1);
+            await comp.WaitForAssertionAsync(() => IconButtons(0).Count.Should().Be(1));
             IconButtons(1).Count.Should().Be(1);
+            picker[0].Instance.DateRange.Should().BeNull();
         }
 
         [Test]
@@ -1147,7 +1132,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [SetCulture("en-US")]
-        public async Task DatePicker_JumpToYear()
+        public async Task DateRangePicker_JumpToYear()
         {
             var selectedRange = new DateRange(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
             var comp = Context.Render<DateRangePickerPresetWithoutTimestampTest>(p => p.Add(x => x.DateRange, selectedRange));
@@ -1478,11 +1463,38 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().Be(initialRange);
         }
 
+        [Test]
+        public async Task SubmitAsync_WhenReadOnly_DoesNotCommitCompleteRange()
+        {
+            // PickerActions present means the second day click does not auto-submit, so we can build a
+            // COMPLETE pending range (both dates set) and prove the ReadOnly guard - not the null guard -
+            // is what blocks SubmitAsync.
+            RenderFragment<MudPicker<DateTime?>> pickerActions = _ => builder => { };
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.PickerActions, pickerActions));
+            var picker = comp.Instance;
+
+            await comp.InvokeAsync(() => picker.ClickDayAsync(new DateTime(2025, 6, 10)));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(new DateTime(2025, 6, 20)));
+
+            // Both dates are selected but nothing is committed yet (waiting for the OK button).
+            picker.DateRange.Should().BeNull();
+
+            // Flip to ReadOnly and submit the complete pending range: the guard must block the commit.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            await comp.InvokeAsync(picker.Submit);
+
+            picker.DateRange.Should().BeNull();
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
 
             public Task ClickDayAsync(DateTime date) => OnDayClickedAsync(date);
+
+            public Task Submit() => SubmitAsync();
         }
     }
     public static class DatePickerRenderedFragmentExtensions

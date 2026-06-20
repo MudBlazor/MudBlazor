@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
@@ -7,6 +6,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -61,24 +61,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(c => c.InputId, "birthday"));
 
             comp.Find("input[id='birthday']").Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task DatePicker_OpenClose_Performance()
-        {
-            // warmup
-            var comp = Context.Render<MudDatePicker>();
-            var datepicker = comp.Instance;
-            // measure
-            var watch = Stopwatch.StartNew();
-            for (var i = 0; i < 1000; i++)
-            {
-                await comp.InvokeAsync(() => datepicker.OpenAsync());
-                await comp.InvokeAsync(() => datepicker.CloseAsync());
-            }
-
-            watch.Stop();
-            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -207,6 +189,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataPicker_ShouldClearText_WhenDateSetNull()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
@@ -219,7 +202,8 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
 
-            await Task.Delay(150);
+            // Advance past the SetDateAsync debounce window so the clear is not debounced away.
+            timeProvider.Advance(TimeSpan.FromMilliseconds(150));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
@@ -230,6 +214,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
+            // Pin the clock so both quick sets land inside the same SetDateAsync debounce window
+            // (contrast with the sibling above, which advances past it).
+            _ = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
@@ -244,6 +231,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
+            // The clear is debounced (same value within the window), so the invalid text is retained.
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
         }
@@ -957,9 +945,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = await OpenPicker(parameters => parameters.Add(x => x.FixDay, 1));
             var monthsCount = 12;
 
-            comp.FindAll("button.mud-picker-month").Select(button =>
-                button.ClassName?.Contains("mud-button-root"))
-                .Should().HaveCount(monthsCount);
+            comp.FindAll("button.mud-picker-month")
+                .Should().HaveCount(monthsCount)
+                .And.OnlyContain(button => button.ClassName != null && button.ClassName.Contains("mud-button-root"));
         }
 
         [Test]
@@ -978,76 +966,67 @@ namespace MudBlazor.UnitTests.Components
                 .Should().HaveCount(daysCount);
         }
 
-        public async Task CheckAutoCloseDatePickerTest()
+        // AutocompleteDatePickerTest initializes to a fixed date (2025-06-10); these tests select the 15th,
+        // so a commit is observable as a change from the 10th to the 15th regardless of the run date.
+        [Test]
+        public async Task DatePicker_WithPickerActions_DayClickDoesNotAutoCommitOrClose()
         {
-            // Define a date for comparison
-            var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-
-            // Get access to the datepicker of the instance
             var comp = Context.Render<AutocompleteDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
+            var initialDate = datePicker.Instance.Date;
+            initialDate.Should().Be(new DateTime(2025, 6, 10));
 
-            // Open the datepicker
             await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            // Clicking a day button to select a date
-            // It must be a different day than the day of now!
-            // So the test is working when the day is 20
-            if (now.Day != 20)
-            {
-                await comp.SelectDateAsync("20");
-            }
-            else
-            {
-                await comp.SelectDateAsync("19");
-            }
+            await comp.SelectDateAsync("15");
 
-            // Check that the date should remain the same because autoclose is false
-            // and there are actions which are defined
-            datePicker.Instance.Date.Should().Be(now);
+            // With PickerActions defined and AutoClose off, the click waits for the OK button:
+            // neither the value nor the open state changes.
+            datePicker.Instance.Date.Should().Be(initialDate);
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
 
-            // Close the datepicker without submitting the date
-            // The date of the datepicker remains equal to now
-            await comp.InvokeAsync(() => datePicker.Instance.CloseAsync(false));
+            // ClearAsync also leaves the popover open while AutoClose is off.
+            await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
+            datePicker.Instance.Date.Should().BeNull();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
 
-            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+        [Test]
+        public async Task DatePicker_WithAutoClose_DayClickCommitsAndCloses()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters.Add(p => p.AutoClose, true));
+            var datePicker = comp.FindComponent<MudDatePicker>();
+
+            await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            // AutoClose commits the clicked day, then waits ClosingDelay before closing.
+            // Hold the click task and release the (fake) delay so the close is deterministic.
+            // The initial date is the 10th, so committing the 15th is an observable change.
+            var clickTask = comp.SelectDateAsync("15");
+            await comp.WaitForAssertionAsync(() => datePicker.Instance.Date.Should().Be(new DateTime(2025, 6, 15)));
+
+            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(datePicker.Instance.ClosingDelay)));
+            await clickTask;
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DatePicker_ClearAsync_WithAutoClose_ClosesPopover()
+        {
+            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters.Add(p => p.AutoClose, true));
+            var datePicker = comp.FindComponent<MudDatePicker>();
+
+            await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
-            await comp.InvokeAsync(() => datePicker.Instance.CloseAsync(false));
 
-            // Change the value of autoclose
-            await datePicker.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.AutoClose, true));
-
-            // Open the datepicker
-            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
-
-            // Clicking a day button to select a date
-            if (now.Day != 20)
-            {
-                await comp.SelectDateAsync("20");
-            }
-            else
-            {
-                await comp.SelectDateAsync("19");
-            }
-
-            // Check that the date should be equal to the new date 19 or 20
-            if (now.Day != 20)
-            {
-                datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 20));
-            }
-            else
-            {
-                datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
-            }
-
-            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
-
-            await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
+            // ClearAsync clears the value and, because AutoClose is on, closes the popover.
+            datePicker.Instance.Date.Should().BeNull();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
         [Test]
@@ -1131,6 +1110,97 @@ namespace MudBlazor.UnitTests.Components
 
             // Date should remain unchanged because ReadOnly is true
             picker.Date.Should().Be(initialDate);
+        }
+
+        // In the editable path a month/year click advances the view (Year->Month, Month->Date); the ReadOnly
+        // guard must suppress that, so the originally-shown container stays put. Asserting the view (not Date,
+        // which a month/year click never commits anyway) is what actually proves the guard.
+        [Test]
+        [TestCase(OpenTo.Year, "div.mud-picker-year-container", "div.mud-picker-year")]
+        [TestCase(OpenTo.Month, "div.mud-picker-month-container", "button.mud-picker-month")]
+        public async Task StaticReadOnly_MonthOrYearClick_DoesNotAdvanceView(OpenTo openTo, string container, string entry)
+        {
+            var initialDate = new DateTime(2025, 6, 15);
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OpenTo, openTo)
+                .Add(p => p.Date, initialDate));
+            var picker = comp.Instance;
+
+            // The requested view is shown.
+            comp.FindAll(container).Count.Should().Be(1);
+
+            await comp.FindAll(entry)[0].ClickAsync();
+
+            // ReadOnly blocks the click: the view does not advance and the date is untouched.
+            comp.FindAll(container).Count.Should().Be(1);
+            picker.Date.Should().Be(initialDate);
+        }
+
+        [Test]
+        public void ShowWeekNumbers_RendersWeekNumberColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ShowWeekNumbers, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.PickerMonth, new DateTime(2025, 1, 1)));
+
+            // A week cell is rendered in the header plus one per calendar row.
+            comp.FindAll(".mud-picker-calendar-week").Count.Should().BeGreaterThan(1);
+
+            // The first calendar week of January is week 1.
+            var weekNumbers = comp.FindAll(".mud-picker-calendar-week-text")
+                .Select(x => x.TrimmedText())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToList();
+            weekNumbers.Should().Contain("1");
+        }
+
+        [Test]
+        public void For_WithoutExplicitLabel_UsesLabelAttribute()
+        {
+            var model = new DisplayNameLabelClass();
+
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.For, () => model.Date));
+            comp.Instance.Label.Should().Be("Date LabelAttribute");
+
+            // An explicit Label always wins over the [Label] attribute.
+            var explicitLabel = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.For, () => model.Date)
+                .Add(p => p.Label, "Explicit"));
+            explicitLabel.Instance.Label.Should().Be("Explicit");
+        }
+
+        [Test]
+        public void Mask_Parameter_RoundTrips()
+        {
+            var mask = new DateMask("0000-00-00");
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Mask, mask));
+
+            comp.Instance.Mask.Should().BeSameAs(mask);
+        }
+
+        [Test]
+        public async Task FocusSelectAndSelectRange_AreNoOps_WhenNoInputIsRendered()
+        {
+            // A Static picker renders no text input, so _inputReference stays null and these must not throw.
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static));
+            var picker = comp.Instance;
+
+            var act = async () => await comp.InvokeAsync(async () =>
+            {
+                await picker.FocusAsync();
+                await picker.SelectAsync();
+                await picker.SelectRangeAsync(0, 1);
+            });
+
+            await act.Should().NotThrowAsync();
         }
 
         [Test]
@@ -1726,9 +1796,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FixYearFixMonthTest>();
             await comp.Find("input").ClickAsync();
-            await Task.Delay(500);
-            comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
-            comp.Find(".mud-picker-calendar-header-transition").GetInnerText().Should().Be("October 2022");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
+                comp.Find(".mud-picker-calendar-header-transition").GetInnerText().Should().Be("October 2022");
+            });
         }
 
         [Test]

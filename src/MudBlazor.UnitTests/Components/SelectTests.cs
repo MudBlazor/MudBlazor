@@ -2218,6 +2218,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_ShouldExposeComboboxSemantics_OnCustomPresenter()
+        {
+            var comp = Context.Render<SelectPrecedenceTest>();
+
+            var display = comp.Find("div.mud-select-input[tabindex='0']");
+            display.GetAttribute("role").Should().Be("combobox");
+            display.GetAttribute("aria-haspopup").Should().Be("listbox");
+            display.GetAttribute("aria-expanded").Should().Be("false");
+            display.GetAttribute("aria-label").Should().Be("Select");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var openDisplay = comp.Find("div.mud-select-input[tabindex='0']");
+                openDisplay.GetAttribute("aria-expanded").Should().Be("true");
+                openDisplay.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+            });
+        }
+
+        [Test]
         public void Select_UserAttributes_ShouldOverrideGeneratedAccessibilityAttributes()
         {
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
