@@ -1,0 +1,16 @@
+﻿<MudTable T="int" Items="@(new[] { 1, 2, 3 })" PagerPosition="@Position">
+    <ToolBarContent>
+        <div class="test-toolbar">Toolbar</div>
+    </ToolBarContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter]
+    public PagerPosition Position { get; set; } = PagerPosition.Bottom;
+}

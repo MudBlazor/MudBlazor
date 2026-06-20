@@ -27,6 +27,7 @@ namespace MudBlazor.Charts
         private double _barGap;
 
         private const double MinBarWidth = 6;
+        private const double BarWidthFactor = 0.25;
 
         protected override void OnInitialized()
         {
@@ -84,7 +85,7 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
@@ -156,7 +157,7 @@ namespace MudBlazor.Charts
                 VerticalLines.Add(line);
 
                 var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
-                var lineValue = new SvgText { X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift, Y = _boundHeight - 10, Value = xLabels };
+                var lineValue = new SvgText { X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift, Y = _boundHeight - XAxisLabelOffset, Value = xLabels };
                 VerticalValues.Add(lineValue);
             }
         }
@@ -249,7 +250,7 @@ namespace MudBlazor.Charts
             if (fixedWidth.HasValue)
             {
                 _barWidth = fixedWidth.Value;
-                _barGap = _barWidth * 0.25;
+                _barGap = _barWidth * BarWidthFactor;
                 _barGroupWidth = (seriesCount * _barWidth) + ((seriesCount - 1) * _barGap);
                 return;
             }

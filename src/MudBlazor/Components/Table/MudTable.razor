@@ -17,6 +17,12 @@
                     @ToolBarContent
                 </MudToolBar>
             }
+            @if (PagerContent != null && (PagerPosition == PagerPosition.Top || PagerPosition == PagerPosition.TopAndBottom))
+            {
+                <div class="mud-table-pagination mud-table-pagination-top">
+                    @PagerContent
+                </div>
+            }
             @if (Context.SortLabels.Any())
             {
                 <div Class="mud-table-smalldevices-sortselect">
@@ -190,7 +196,7 @@
                     }
                 </table>
             </div>
-            @if (PagerContent != null)
+            @if (PagerContent != null && (PagerPosition == PagerPosition.Bottom || PagerPosition == PagerPosition.TopAndBottom))
             {
                 <div class="mud-table-pagination">
                     @PagerContent

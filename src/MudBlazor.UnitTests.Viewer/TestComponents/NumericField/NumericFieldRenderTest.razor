@@ -12,7 +12,7 @@
 <MudSwitch @bind-Value="@UsePattern" Label="Use Pattern"/>
 
 @code {
-    public static string __description__ = "Render as Type Number or Text";
+    public static string __description__ = "Render as Type Text and only emit pattern when requested";
 
     [Parameter]
     public bool UsePattern { get; set; }

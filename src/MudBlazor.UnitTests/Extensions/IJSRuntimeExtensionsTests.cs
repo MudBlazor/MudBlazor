@@ -40,6 +40,25 @@ namespace MudBlazor.UnitTests
             runtimeMock.Verify();
         }
 
+        [Test]
+        public async Task InvokeVoidAsyncWithErrorHandling_WithToken_NoException()
+        {
+            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            runtimeMock
+                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", cancellationToken, It.IsAny<object[]>()))
+                .ReturnsAsync(Mock.Of<IJSVoidResult>())
+                .Verifiable();
+
+            var runtime = runtimeMock.Object;
+
+            await runtime.InvokeVoidAsyncWithErrorHandling("myMethod", cancellationToken, 42, "blub");
+
+            runtimeMock.Verify();
+        }
+
         [TestCaseSource(nameof(_caughtExceptions))]
         public async Task InvokeVoidAsyncWithErrorHandling_Exception<T>(T ex) where T : Exception
         {
@@ -53,6 +72,25 @@ namespace MudBlazor.UnitTests
             var runtime = runtimeMock.Object;
 
             await runtime.InvokeVoidAsyncWithErrorHandling("myMethod", 42, "blub");
+
+            runtimeMock.Verify();
+        }
+
+        [TestCaseSource(nameof(_caughtExceptions))]
+        public async Task InvokeVoidAsyncWithErrorHandling_WithToken_Exception<T>(T ex) where T : Exception
+        {
+            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            runtimeMock
+                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", cancellationToken, It.IsAny<object[]>()))
+                .Throws(ex)
+                .Verifiable();
+
+            var runtime = runtimeMock.Object;
+
+            await runtime.InvokeVoidAsyncWithErrorHandling("myMethod", cancellationToken, 42, "blub");
 
             runtimeMock.Verify();
         }
@@ -76,6 +114,23 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
+        public async Task InvokeVoidAsyncWithErrorHandling_WithToken_ShouldReturnFalse_WhenUnsupportedJavaScriptRuntime()
+        {
+            // Arrange
+            var jsRuntime1 = new UnsupportedJavaScriptRuntime();
+            var jsRuntime2 = new RemoteJSRuntime();
+            var cancellationToken = CancellationToken.None;
+
+            // Act
+            var result1 = await jsRuntime1.InvokeVoidAsyncWithErrorHandling("myMethod1", cancellationToken, 42, "blub1");
+            var result2 = await jsRuntime2.InvokeVoidAsyncWithErrorHandling("myMethod2", cancellationToken, 43, "blub2");
+
+            // Assert
+            result1.Should().BeFalse();
+            result2.Should().BeFalse();
+        }
+
+        [Test]
         public async Task InvokeAsyncWithErrorHandling_NoException()
         {
             var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
@@ -88,6 +143,27 @@ namespace MudBlazor.UnitTests
             var runtime = runtimeMock.Object;
 
             var (success, value) = await runtime.InvokeAsyncWithErrorHandling<double>("myMethod", 42, "blub");
+
+            success.Should().Be(true);
+            value.Should().Be(42.0);
+            runtimeMock.Verify();
+        }
+
+        [Test]
+        public async Task InvokeAsyncWithErrorHandling_WithToken_NoException()
+        {
+            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            runtimeMock
+                .Setup(x => x.InvokeAsync<double>("myMethod", cancellationToken, It.IsAny<object[]>()))
+                .ReturnsAsync(42.0)
+                .Verifiable();
+
+            var runtime = runtimeMock.Object;
+
+            var (success, value) = await runtime.InvokeAsyncWithErrorHandling<double>("myMethod", cancellationToken, 42, "blub");
 
             success.Should().Be(true);
             value.Should().Be(42.0);
@@ -132,6 +208,27 @@ namespace MudBlazor.UnitTests
             runtimeMock.Verify();
         }
 
+        [TestCaseSource(nameof(_caughtExceptions))]
+        public async Task InvokeAsyncWithErrorHandling_WithToken_Exception_Fallback<T>(T ex) where T : Exception
+        {
+            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+            using var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            runtimeMock
+                .Setup(x => x.InvokeAsync<double>("myMethod", cancellationToken, It.IsAny<object[]>()))
+                .Throws(ex)
+                .Verifiable();
+
+            var runtime = runtimeMock.Object;
+
+            var (success, value) = await runtime.InvokeAsyncWithErrorHandling(37.5, "myMethod", cancellationToken, 42, "blub");
+
+            success.Should().Be(false);
+            value.Should().Be(37.5);
+            runtimeMock.Verify();
+        }
+
         [Test]
         public async Task InvokeAsyncWithErrorHandling_ThrowsForUncaughtExceptions()
         {
@@ -159,6 +256,25 @@ namespace MudBlazor.UnitTests
             // Act
             var result1 = await jsRuntime1.InvokeAsyncWithErrorHandling("fallback1", "myMethod1", 42, "blub1");
             var result2 = await jsRuntime2.InvokeAsyncWithErrorHandling("fallback2", "myMethod2", 43, "blub2");
+
+            // Assert
+            result1.success.Should().BeFalse();
+            result1.value.Should().Be("fallback1");
+            result2.success.Should().BeFalse();
+            result2.value.Should().Be("fallback2");
+        }
+
+        [Test]
+        public async Task InvokeAsyncWithErrorHandling_WithToken_ShouldReturnFallbackValue_WhenUnsupportedJavaScriptRuntime()
+        {
+            // Arrange
+            var jsRuntime1 = new UnsupportedJavaScriptRuntime();
+            var jsRuntime2 = new RemoteJSRuntime();
+            var cancellationToken = CancellationToken.None;
+
+            // Act
+            var result1 = await jsRuntime1.InvokeAsyncWithErrorHandling("fallback1", "myMethod1", cancellationToken, 42, "blub1");
+            var result2 = await jsRuntime2.InvokeAsyncWithErrorHandling("fallback2", "myMethod2", cancellationToken, 43, "blub2");
 
             // Assert
             result1.success.Should().BeFalse();

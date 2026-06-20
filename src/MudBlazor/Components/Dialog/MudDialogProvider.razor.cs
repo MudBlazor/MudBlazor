@@ -119,6 +119,17 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus? DefaultFocus { get; set; }
 
+        /// <summary>
+        /// Reverses the button order in all <see cref="MudMessageBox"/> instances.
+        /// </summary>
+        /// <remarks>
+        /// This is primarily useful for Blazor Hybrid Windows applications where the native OS button order differs from standard Material Design guidelines.
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public bool ReverseMessageBoxButtonOrder { get; set; }
+
         protected override void OnInitialized()
         {
             DialogService.DialogInstanceAddedAsync += AddInstanceAsync;

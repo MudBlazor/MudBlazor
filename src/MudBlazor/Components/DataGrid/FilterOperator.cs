@@ -129,6 +129,16 @@ namespace MudBlazor
             /// Find text which is any of the filter values.
             /// </summary>
             public const string IsAnyOf = "is any of";
+
+            /// <summary>
+            /// Find rows where the nullable enum column is <c>null</c>.
+            /// </summary>
+            public const string Empty = "is empty";
+
+            /// <summary>
+            /// Find rows where the nullable enum column is not <c>null</c>.
+            /// </summary>
+            public const string NotEmpty = "is not empty";
         }
 
         /// <summary>
@@ -292,6 +302,8 @@ namespace MudBlazor
                     Enum.Is,
                     Enum.IsNot,
                     Enum.IsAnyOf,
+                    Enum.Empty,
+                    Enum.NotEmpty,
                 };
             }
             if (fieldType.IsBoolean)

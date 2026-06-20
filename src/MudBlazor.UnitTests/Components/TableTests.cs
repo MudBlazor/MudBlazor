@@ -128,6 +128,34 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
 
+        [Test]
+        public async Task TableSortLabelInitialSortDirection()
+        {
+            var comp = Context.Render<TableInitialSortDirectionTest>();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+
+            comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
+                .Add(p => p.InitialSortDirection, SortDirection.Ascending));
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
+                .Add(p => p.InitialSortDirection, SortDirection.None));
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+        }
+
         /// <summary>
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
@@ -695,7 +723,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableMultiSelection_IgnoreCheckbox_RowClick()
         {
-            var comp = Context.Render<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var comp = Context.Render<TableMultiSelectIgnoreRowTest>();
             var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
@@ -709,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableMultiSelection_MultiGrouping_DefaultCheckboxStates()
         {
-            var comp = Context.Render<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var comp = Context.Render<TableMultiGroupCheckboxTest>();
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.
@@ -2826,6 +2854,24 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
         }
 
+        [Test]
+        public void TableSortLabelFullWidthAddsFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.FullWidth, true)
+            );
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthFalseDoesNotAddFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
+        }
+
         private Mock<IScrollManager> _mockScrollManager = null!;
 
         public class TestItem { public int Id { get; set; } public string Name { get; set; } }
@@ -3189,6 +3235,60 @@ namespace MudBlazor.UnitTests.Components
 
             row.ClassList.Should().NotContain("mud-table-row-clickable");
             row.ClassList.Should().Contain("mud-table-row-disabled");
+        }
+
+        [Test]
+        public void Pager_RendersAboveTable_WhenPagerPositionIsTop()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Top)
+            );
+
+            var html = comp.Markup;
+            var toolbarIndex = html.IndexOf("test-toolbar");
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            toolbarIndex.Should().NotBe(-1);
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            toolbarIndex.Should().BeLessThan(pagerIndex);
+            pagerIndex.Should().BeLessThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().Contain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void Pager_RendersBelowTable_WhenPagerPositionIsBottom()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Bottom)
+            );
+
+            var html = comp.Markup;
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            pagerIndex.Should().BeGreaterThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().NotContain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void TablePagerPosition_TopAndBottom_RendersTwoPagers()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.TopAndBottom)
+            );
+
+            var pagers = comp.FindAll(".mud-table-pagination");
+
+            pagers.Count.Should().Be(2);
+
+            pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
+            pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
         }
     }
 }

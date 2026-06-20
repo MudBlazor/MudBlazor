@@ -134,16 +134,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Timeline_DotStyles()
+        public async Task Timeline_DotClass()
+        {
+            var comp = Context.Render<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+
+            comp.Find("div.mud-timeline-item-dot-inner").ClassList.Should().NotContain("timeline-red-dot");
+
+            await firstItem.SetParametersAndRenderAsync(p =>
+            {
+                p.Add(t => t.DotClass, "timeline-red-dot");
+            });
+
+            comp.Find("div.mud-timeline-item-dot-inner").ClassList.Should().Contain("timeline-red-dot");
+        }
+
+        [Test]
+        public async Task Timeline_DotStyle()
         {
             var comp = Context.Render<TimelineTest>();
             var firstItem = comp.FindComponent<MudTimelineItem>();
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("");
 
+#pragma warning disable CS0618 // Type or member is obsolete
             await firstItem.SetParametersAndRenderAsync(p =>
             {
                 p.Add(t => t.DotStyle, "background-color: #ff0000");
             });
+#pragma warning restore CS0618 // Type or member is obsolete
 
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("rgba(255, 0, 0, 1)");
         }

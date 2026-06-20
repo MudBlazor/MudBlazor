@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -78,6 +79,12 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+        /// <summary>
+        /// Occurs when hierarchy visibility is toggled if used as a Hierarchy Column.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 
         /// <summary>
         /// Sets the function which determines whether buttons are disabled if used in a Hierarchy Column.

@@ -21,6 +21,25 @@ namespace MudBlazor
 
         internal string ItemId { get; } = Identifier.Create();
 
+        /// <summary>
+        /// Builds fallback accessibility attributes for the rendered option element.
+        /// </summary>
+        /// <remarks>
+        /// Option semantics come from this item's selection state rather than the popup's temporary active item.
+        /// </remarks>
+        private Dictionary<string, object?> GetUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("aria-selected", Selected ? "true" : "false");
+
+            if (Disabled)
+            {
+                attributes.TryAdd("aria-disabled", "true");
+            }
+
+            return attributes;
+        }
+
         public MudSelectItem()
         {
             using var registerScope = CreateRegisterScope();
@@ -30,6 +49,10 @@ namespace MudBlazor
             registerScope.RegisterParameter<IMudShadowSelect?>(nameof(IMudShadowSelect))
                 .WithParameter(() => IMudShadowSelect)
                 .WithChangeHandler(OnMudShadowSelectChanged);
+            registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithChangeHandler(OnValueChanged)
+                .WithComparer(() => (_context ?? _shadowContext)?.Comparer ?? EqualityComparer<T?>.Default);
         }
 
         /// <summary>
@@ -196,15 +219,34 @@ namespace MudBlazor
         /// It updates the local Selected state and triggers a re-render if needed.
         /// This replaces the OnUpdateSelectionStateFromOutside method.
         /// </remarks>
-        private async Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
+        private Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
         {
             var oldSelected = Selected;
             Selected = selectedValues.Contains(Value);
 
             if (oldSelected != Selected)
             {
-                await InvokeAsync(StateHasChanged);
+                // Avoid await InvokeAsync(StateHasChanged) due to a MAUI dispatcher bug:
+                // https://github.com/MudBlazor/MudBlazor/issues/13009
+                // This issue does not occur on other platforms (e.g., WASM, WinForms Hybrid, etc).
+                StateHasChanged();
             }
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Handles changes to the <see cref="Value"/> parameter.
+        /// </summary>
+        /// <remarks>
+        /// When the parent swaps the underlying data collection while Blazor reuses the same component instances
+        /// (e.g. a keyless <c>@foreach</c> binding new items to existing <see cref="MudSelectItem{T}"/> positions),
+        /// the value-keyed lookups in <see cref="MudSelectContext{T}"/> must be updated to avoid stale keys.
+        /// </remarks>
+        private void OnValueChanged(ParameterChangedEventArgs<T?> args)
+        {
+            _context?.OnItemValueChanged(this, args.LastValue, args.Value);
+            _shadowContext?.OnShadowItemValueChanged(this, args.LastValue, args.Value);
         }
 
         /// <summary>
@@ -212,11 +254,6 @@ namespace MudBlazor
         /// </summary>
         private async Task OnClickHandleAsync()
         {
-            if (MultiSelection)
-            {
-                Selected = !Selected;
-            }
-
             if (MudSelect is not null)
             {
                 await MudSelect.SelectOption(Value);

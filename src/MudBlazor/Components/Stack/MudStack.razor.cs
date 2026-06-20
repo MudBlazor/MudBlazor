@@ -13,6 +13,11 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudStack : MudComponentBase
 {
+    private string? Role =>
+        string.Equals(HtmlTag, "div", StringComparison.OrdinalIgnoreCase)
+            ? "group"
+            : null;
+
     protected string Classname =>
         new CssBuilder("d-flex")
             .AddClass(getFlexDirection())
@@ -171,4 +176,14 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// The HTML tag rendered for this component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>div</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public string HtmlTag { get; set; } = "div";
 }

@@ -1,0 +1,36 @@
+<MudPopoverProvider />
+
+<MudDataGrid T="Item"
+             Items="@_items"
+             Filterable="true"
+             FilterMode="@FilterMode"
+             FilterChanged="@OnFilterChanged">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Id" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    [Parameter]
+    public DataGridFilterMode FilterMode { get; set; } = DataGridFilterMode.ColumnFilterRow;
+
+    private readonly IReadOnlyList<Item> _items =
+    [
+        new(Guid.NewGuid(), "first"),
+        new(Guid.NewGuid(), "second"),
+        new(Guid.NewGuid(), "third")
+    ];
+
+    public bool FilterChanged { get; private set; }
+
+    public int FilterChangedCallCount { get; private set; }
+
+    private void OnFilterChanged(IReadOnlyCollection<IFilterDefinition<Item>> _)
+    {
+        FilterChanged = true;
+        FilterChangedCallCount++;
+    }
+
+    public record Item(Guid Id, string Name);
+}
