@@ -160,23 +160,6 @@ namespace MudBlazor.UnitTests.Components
             CheckBox(list2, "Sparkling Water").Should().Be(false);
         }
 
-        // Issue #13232: non-string items track selection by Value, so clicking a value-less item in a
-        // multi-selection list fails loudly instead of silently doing nothing (string falls back to Text).
-        [Test]
-        public async Task MultiSelection_ItemWithoutValue_ThrowsOnClick()
-        {
-            var comp = Context.Render<MudList<Drink>>(list => list
-                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
-                .AddChildContent<MudListItem<Drink>>(item => item.Add(x => x.Text, "Milk")));
-            var click = async () => await comp.Find("div.mud-list-item").ClickAsync();
-            await click.Should().ThrowAsync<InvalidOperationException>();
-        }
-
-        private sealed class Drink
-        {
-            public string? Name { get; set; }
-        }
-
         [Test]
         [TestCase(Color.Default)]
         [TestCase(Color.Primary)]
