@@ -186,6 +186,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A class-typed multi-selection list selects on a single click and raises SelectedValuesChanged when Value is set (issue #13232).
+        /// </summary>
+        [Test]
+        public async Task ListMultiSelection_ClassType_WithValue_SelectsOnSingleClick()
+        {
+            var comp = Context.Render<ListMultiSelectionClassTypeTest>(self => self.Add(x => x.ProvideValue, true));
+            comp.Find("p.selected-count").TrimmedText().Should().Be("0");
+            comp.Find("p.changed-count").TrimmedText().Should().Be("0");
+            // click "Milk"
+            await comp.FindComponents<MudListItem<ListMultiSelectionClassTypeTest.Item>>()[0]
+                .Find("div.mud-list-item").ClickAsync();
+            comp.Find("p.selected-count").TrimmedText().Should().Be("1");
+            comp.Find("p.changed-count").TrimmedText().Should().Be("1");
+        }
+
+        /// <summary>
+        /// A class-typed multi-selection list with null item values is a misconfiguration that silently never selects;
+        /// it must throw an actionable error instead (issue #13232).
+        /// </summary>
+        [Test]
+        public void ListMultiSelection_ClassType_WithoutValue_Throws()
+        {
+            Action act = () => Context.Render<ListMultiSelectionClassTypeTest>(self => self.Add(x => x.ProvideValue, false));
+            act.Should().Throw<InvalidOperationException>().WithMessage("*Value*");
+        }
+
+        /// <summary>
+        /// A read-only list is display-only, so a missing Value is visible rather than a silent click failure and must not throw (issue #13232).
+        /// </summary>
+        [Test]
+        public void ListMultiSelection_ClassType_WithoutValue_ReadOnly_DoesNotThrow()
+        {
+            Action act = () => Context.Render<ListMultiSelectionClassTypeTest>(self => self
+                .Add(x => x.ProvideValue, false)
+                .Add(x => x.ReadOnly, true));
+            act.Should().NotThrow();
+        }
+
+        /// <summary>
         /// <para>Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.</para>
         /// <para>This test starts with a pre-selected item (by value)</para>
         /// </summary>

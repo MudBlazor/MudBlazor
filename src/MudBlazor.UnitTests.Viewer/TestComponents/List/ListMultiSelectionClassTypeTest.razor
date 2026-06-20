@@ -1,0 +1,46 @@
+@* Regression coverage for issue #13232: class type T in MultiSelection. *@
+<MudList T="Item" SelectedValues="SelectedValues" SelectedValuesChanged="OnSelectedValuesChanged" SelectionMode="SelectionMode.MultiSelection" ReadOnly="ReadOnly">
+    @foreach (var value in Items)
+    {
+        @if (ProvideValue)
+        {
+            <MudListItem Text="@value.Name" Value="@value" />
+        }
+        else
+        {
+            <MudListItem Text="@value.Name" />
+        }
+    }
+</MudList>
+
+<p class="selected-count">@(SelectedValues?.Count ?? 0)</p>
+<p class="changed-count">@_changedCount</p>
+
+@code {
+    private int _changedCount;
+
+    [Parameter]
+    public bool ProvideValue { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    public IReadOnlyCollection<Item> SelectedValues { get; set; } = [];
+
+    private void OnSelectedValuesChanged(IReadOnlyCollection<Item>? values)
+    {
+        SelectedValues = values ?? [];
+        _changedCount++;
+    }
+
+    public List<Item> Items =
+    [
+        new() { Name = "Milk" },
+        new() { Name = "Sparkling Water" }
+    ];
+
+    public class Item
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+}
