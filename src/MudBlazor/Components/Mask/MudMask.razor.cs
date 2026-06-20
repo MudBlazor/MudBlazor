@@ -237,10 +237,8 @@ namespace MudBlazor
             }
             finally
             {
-                // Call the user callback. Guard with _updating: when MudMask is hosted by a MudTextField the
-                // callback re-renders the parent, which echoes the just-committed value back as our Value
-                // parameter. Without the guard that resync re-applies the masked text via SetText and resets
-                // the caret to the end, dropping the next character the user types (#9829).
+                // when MudMask is hosted by a MudTextField, the callback re-renders the parent, which echoes the just-committed value back as our Value parameter.
+                // Without the guard that resync re-applies the masked text via SetText and resets the caret to the end, dropping the next character the user types (#9829).
                 await RaiseKeyCallbackAsync(OnKeyDown, e);
             }
         }
