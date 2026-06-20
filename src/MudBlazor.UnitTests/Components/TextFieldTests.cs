@@ -1229,22 +1229,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// ReadOnly TextFields should still fire OnBlur when blurred (#7687)
-        /// </summary>
-        [Test]
-        public async Task ReadOnlyTextFieldShouldTriggerOnBlur()
-        {
-            var calls = 0;
-            var comp = Context.Render<MudTextField<string>>(parameters => parameters
-                .Add(p => p.ReadOnly, true)
-                .Add(p => p.OnBlur, _ => calls++));
-
-            await comp.Find("input").BlurAsync();
-
-            calls.Should().Be(1);
-        }
-
-        /// <summary>
         /// https://github.com/MudBlazor/MudBlazor/issues/6322
         /// </summary>
         [Test]

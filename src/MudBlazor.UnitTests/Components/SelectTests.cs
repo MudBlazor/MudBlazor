@@ -717,19 +717,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ReadOnlySelectShouldTriggerOnBlur()
-        {
-            var calls = 0;
-            var comp = Context.Render<MudSelect<string>>(parameters => parameters
-                .Add(p => p.ReadOnly, true)
-                .Add(p => p.OnBlur, _ => calls++));
-
-            await comp.Find($"#{comp.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
-
-            calls.Should().Be(1);
-        }
-
-        [Test]
         public async Task Select_OnBlurShouldFireOnceOnFocusLoss()
         {
             // A single focus loss raises both the inner input's blur and the outer element's

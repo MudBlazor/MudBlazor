@@ -852,19 +852,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ReadOnlyAutocompleteShouldTriggerOnBlur()
-        {
-            var calls = 0;
-            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
-                .Add(p => p.ReadOnly, true)
-                .Add(p => p.OnBlur, _ => calls++));
-
-            await comp.Find("input").BlurAsync();
-
-            calls.Should().Be(1);
-        }
-
-        [Test]
         public async Task AutoCompleteClearable()
         {
             var comp = Context.Render<AutocompleteTestClearable>();

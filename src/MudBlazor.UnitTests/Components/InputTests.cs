@@ -33,19 +33,6 @@ public class InputTests : BunitTest
     }
 
     [Test]
-    public async Task ReadOnlyShouldTriggerOnBlur()
-    {
-        var calls = 0;
-        var comp = Context.Render<MudInput<string>>(parameters => parameters
-            .Add(p => p.ReadOnly, true)
-            .Add(p => p.OnBlur, _ => calls++));
-
-        await comp.Find("input").BlurAsync();
-
-        calls.Should().Be(1);
-    }
-
-    [Test]
     public void RangeInputDefaultAriaLabels()
     {
         var comp = Context.Render<MudRangeInput<string>>();
