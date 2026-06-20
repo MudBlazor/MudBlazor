@@ -309,18 +309,6 @@ namespace MudBlazor
                 return;
             }
 
-            // Multi-selection tracks items by Value, so a null value can never be selected (it silently no-ops).
-            // For string the Text is used as a fallback, but every other type must set Value explicitly.
-            // Only guard interactive lists: a read-only list still renders its state, so a missing Value there is
-            // visible rather than a click vanishing with no feedback.
-            if (SelectionMode == SelectionMode.MultiSelection && IsInteractive() && item.GetValue() is null)
-            {
-                throw new InvalidOperationException(
-                    $"A {nameof(MudListItem<T>)} in a multi-selection {nameof(MudList<T>)} must have a non-null {nameof(MudListItem<T>.Value)}. " +
-                    $"Set the {nameof(MudListItem<T>.Value)} parameter so the item can be tracked in {nameof(SelectedValues)}. " +
-                    $"When T is string, Text is used as a fallback when Value is null.");
-            }
-
             _items.Add(item);
             if (_selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {
@@ -373,9 +361,16 @@ namespace MudBlazor
 
         internal async Task SelectValueAsync(T? value)
         {
-            if (SelectionMode != SelectionMode.MultiSelection || value is null)
+            if (SelectionMode != SelectionMode.MultiSelection)
             {
                 return;
+            }
+            // Selection is tracked by Value, so a null value can never be selected and the click would silently
+            // no-op. Surface the misconfiguration here, on the actual selection path: only enabled, non-nested
+            // leaf items reach this point, and it is re-evaluated per click so a runtime mode change is covered too.
+            if (value is null)
+            {
+                throw NullValueException();
             }
             _selection.Add(value);
             UpdateSelectedItems(_selection);
@@ -384,14 +379,23 @@ namespace MudBlazor
 
         internal async Task DeselectValueAsync(T? value)
         {
-            if (SelectionMode != SelectionMode.MultiSelection || value is null)
+            if (SelectionMode != SelectionMode.MultiSelection)
             {
                 return;
+            }
+            if (value is null)
+            {
+                throw NullValueException();
             }
             _selection.Remove(value);
             UpdateSelectedItems(_selection);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: ToList is essential here!
         }
+
+        private static InvalidOperationException NullValueException() =>
+            new($"A {nameof(MudListItem<T>)} in a multi-selection {nameof(MudList<T>)} must have a non-null {nameof(MudListItem<T>.Value)}. " +
+                $"Set the {nameof(MudListItem<T>.Value)} parameter so the item can be tracked in {nameof(SelectedValues)}. " +
+                $"When T is string, Text is used as a fallback when Value is null.");
 
         internal void UpdateSelection()
         {

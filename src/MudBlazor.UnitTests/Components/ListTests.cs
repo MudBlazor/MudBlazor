@@ -160,6 +160,10 @@ namespace MudBlazor.UnitTests.Components
             CheckBox(list2, "Sparkling Water").Should().Be(false);
         }
 
+        private static IRenderedComponent<MudListItem<ListMultiSelectionClassTypeTest.Item>> ClassItem(
+            IRenderedComponent<ListMultiSelectionClassTypeTest> comp, string text) =>
+            comp.FindComponents<MudListItem<ListMultiSelectionClassTypeTest.Item>>().Single(x => x.Instance.Text == text);
+
         // Issue #13232: a class-typed multi-selection list selects on a single click and raises
         // SelectedValuesChanged when each item provides a Value (string falls back to Text).
         [Test]
@@ -169,30 +173,71 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-count").TrimmedText().Should().Be("0");
             comp.Find("p.changed-count").TrimmedText().Should().Be("0");
 
-            await comp.FindComponents<MudListItem<ListMultiSelectionClassTypeTest.Item>>()[0]
-                .Find("div.mud-list-item").ClickAsync();
+            await ClassItem(comp, "Milk").Find("div.mud-list-item").ClickAsync();
 
             comp.Find("p.selected-count").TrimmedText().Should().Be("1");
             comp.Find("p.changed-count").TrimmedText().Should().Be("1");
         }
 
-        // A null item value can never be selected, so an interactive multi-selection list surfaces the
-        // misconfiguration instead of silently ignoring clicks.
+        // A null value can never be tracked in SelectedValues, so clicking a selectable leaf item surfaces the
+        // misconfiguration instead of silently ignoring the click. Rendering itself does not throw.
         [Test]
-        public void MultiSelection_ClassType_NullValue_Throws()
+        public async Task MultiSelection_ClassType_NullValue_ThrowsOnClick()
         {
-            Action act = () => Context.Render<ListMultiSelectionClassTypeTest>(self => self.Add(x => x.ProvideValue, false));
-            act.Should().Throw<InvalidOperationException>().WithMessage("*Value*");
+            var comp = Context.Render<ListMultiSelectionClassTypeTest>(self => self.Add(x => x.ProvideValue, false));
+            var click = async () => await ClassItem(comp, "Milk").Find("div.mud-list-item").ClickAsync();
+            await click.Should().ThrowAsync<InvalidOperationException>().WithMessage("*Value*");
         }
 
-        // A read-only list is display-only, so a missing Value is visible rather than a silent click failure and must not throw.
+        // A group header row expands instead of selecting, so a missing Value must not block rendering or clicking it.
         [Test]
-        public void MultiSelection_ClassType_NullValue_ReadOnly_DoesNotThrow()
+        public async Task MultiSelection_ClassType_NestedParentWithoutValue_DoesNotThrow()
         {
-            Action act = () => Context.Render<ListMultiSelectionClassTypeTest>(self => self
+            var comp = Context.Render<ListMultiSelectionClassTypeTest>(self => self
+                .Add(x => x.ProvideValue, true)
+                .Add(x => x.IncludeNestedParent, true));
+            var expand = async () => await ClassItem(comp, "Group").Find("div.mud-list-item").ClickAsync();
+            await expand.Should().NotThrowAsync();
+        }
+
+        // A disabled row can never be selected, so a missing Value must not throw when it is clicked.
+        [Test]
+        public async Task MultiSelection_ClassType_DisabledItemWithoutValue_DoesNotThrowOnClick()
+        {
+            var items = new List<ListMultiSelectionClassTypeTest.Item>
+            {
+                new() { Name = "Milk" },
+                new() { Name = "Out of stock", Disabled = true }
+            };
+            var comp = Context.Render<ListMultiSelectionClassTypeTest>(self => self
+                .Add(x => x.ProvideValue, false)
+                .Add(x => x.Items, items));
+            var click = async () => await ClassItem(comp, "Out of stock").Find("div.mud-list-item").ClickAsync();
+            await click.Should().NotThrowAsync();
+        }
+
+        // A read-only list is display-only: clicks never reach selection, so a missing Value must not throw.
+        [Test]
+        public async Task MultiSelection_ClassType_ReadOnly_NullValue_DoesNotThrowOnClick()
+        {
+            var comp = Context.Render<ListMultiSelectionClassTypeTest>(self => self
                 .Add(x => x.ProvideValue, false)
                 .Add(x => x.ReadOnly, true));
-            act.Should().NotThrow();
+            var click = async () => await ClassItem(comp, "Milk").Find("div.mud-list-item").ClickAsync();
+            await click.Should().NotThrowAsync();
+        }
+
+        // SelectionMode can change after items register; because the guard lives on the selection path it still
+        // fires after a runtime switch into MultiSelection, closing the silent no-op for dynamic mode changes.
+        [Test]
+        public async Task MultiSelection_ClassType_NullValue_ThrowsAfterSwitchingToMultiSelection()
+        {
+            var comp = Context.Render<ListMultiSelectionClassTypeTest>(self => self
+                .Add(x => x.ProvideValue, false)
+                .Add(x => x.Mode, SelectionMode.SingleSelection));
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Mode, SelectionMode.MultiSelection));
+            var click = async () => await ClassItem(comp, "Milk").Find("div.mud-list-item").ClickAsync();
+            await click.Should().ThrowAsync<InvalidOperationException>().WithMessage("*Value*");
         }
 
         [Test]

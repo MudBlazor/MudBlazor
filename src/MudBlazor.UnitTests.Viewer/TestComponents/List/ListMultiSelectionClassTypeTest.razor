@@ -1,15 +1,17 @@
 @* Regression coverage for issue #13232: class type T in MultiSelection. *@
-<MudList T="Item" SelectedValues="SelectedValues" SelectedValuesChanged="OnSelectedValuesChanged" SelectionMode="SelectionMode.MultiSelection" ReadOnly="ReadOnly">
-    @foreach (var value in Items)
+<MudList T="Item" SelectedValues="SelectedValues" SelectedValuesChanged="OnSelectedValuesChanged" SelectionMode="Mode" ReadOnly="ReadOnly">
+    @foreach (var item in Items)
     {
-        @if (ProvideValue)
-        {
-            <MudListItem Text="@value.Name" Value="@value" />
-        }
-        else
-        {
-            <MudListItem Text="@value.Name" />
-        }
+        <MudListItem Text="@item.Name" Value="@(ProvideValue ? item : null)" Disabled="@item.Disabled" />
+    }
+    @if (IncludeNestedParent)
+    {
+        @* Group header: it expands rather than selects, so it must not require a Value. *@
+        <MudListItem Text="Group">
+            <NestedList>
+                <MudListItem Text="Nested child" Value="@(ProvideValue ? _nestedChild : null)" />
+            </NestedList>
+        </MudListItem>
     }
 </MudList>
 
@@ -18,12 +20,26 @@
 
 @code {
     private int _changedCount;
+    private readonly Item _nestedChild = new() { Name = "Nested child" };
 
     [Parameter]
     public bool ProvideValue { get; set; }
 
     [Parameter]
     public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public bool IncludeNestedParent { get; set; }
+
+    [Parameter]
+    public SelectionMode Mode { get; set; } = SelectionMode.MultiSelection;
+
+    [Parameter]
+    public List<Item> Items { get; set; } =
+    [
+        new() { Name = "Milk" },
+        new() { Name = "Sparkling Water" }
+    ];
 
     public IReadOnlyCollection<Item> SelectedValues { get; set; } = [];
 
@@ -33,14 +49,9 @@
         _changedCount++;
     }
 
-    public List<Item> Items =
-    [
-        new() { Name = "Milk" },
-        new() { Name = "Sparkling Water" }
-    ];
-
     public class Item
     {
         public string Name { get; set; } = string.Empty;
+        public bool Disabled { get; set; }
     }
 }
