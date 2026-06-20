@@ -1480,6 +1480,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridStartedEditingItemHonorsCustomComparerInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            var startedCount = 0;
+            // A comparer that treats every row as the same identity.
+            var allEqual = EqualityComparer<DataGridEventCallbacksTest.Item>.Create((_, _) => true, _ => 0);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.Comparer, allEqual)
+                .Add(x => x.StartedEditingItem, EventCallback.Factory.Create<DataGridEventCallbacksTest.Item>(this, _ => startedCount++)));
+
+            // The start dedup must follow the grid's Comparer, not hard-coded item equality.
+            await dataGrid.FindAll(".mud-table-body tr td input")[0].ChangeAsync("first");
+            await dataGrid.FindAll(".mud-table-body tr td input")[1].ChangeAsync("second");
+
+            // Both rows share identity under the comparer, so editing is started only once.
+            startedCount.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridFilterChangedColumnFilterRowApplyAndClear()
         {
             var comp = Context.Render<DataGridFilterChangedCallbacksTest>();

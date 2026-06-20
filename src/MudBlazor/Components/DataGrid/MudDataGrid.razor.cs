@@ -2483,7 +2483,11 @@ namespace MudBlazor
         /// <param name="item">The item whose cell is being edited.</param>
         internal async Task BeginCellEditAsync(T item)
         {
-            if (EqualityComparer<T>.Default.Equals(_editingSourceItem, item))
+            // Use the grid's Comparer (same identity used for selection) so a custom comparer can
+            // distinguish otherwise-equal rows, e.g. records. The first edit always starts since
+            // nothing is being edited yet.
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+            if (_editingSourceItem is not null && comparer.Equals(_editingSourceItem, item))
                 return;
 
             await SetEditingItemAsync(item);
