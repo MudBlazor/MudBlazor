@@ -23,13 +23,13 @@ else
                         InputId="@InputId" />
 }
 @code {
-    private MudDateRangePicker _picker = null!;
+    private MudDateRangePicker<DateTime?> _picker = null!;
 
     [Parameter]
-    public DateRange? DateRange { get; set; }
+    public DateRange<DateTime?>? DateRange { get; set; }
 
     [Parameter]
-    public Func<DateTime, bool>? IsDateDisabledFunc { get; set; }
+    public Func<DateTime?, bool>? IsDateDisabledFunc { get; set; }
 
     [Parameter]
     public DateTime? PickerMonth { get; set; }
@@ -41,7 +41,7 @@ else
     public DateTime? StartMonth { get; set; }
 
     [Parameter]
-    public Func<DateTime, string>? AdditionalDateClassesFunc { get; set; }
+    public Func<DateTime?, string>? AdditionalDateClassesFunc { get; set; }
 
     [Parameter]
     public bool AllowDisabledDatesInRange { get; set; }

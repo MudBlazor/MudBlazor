@@ -4,9 +4,9 @@
     <MudDateRangePicker @ref="_picker" @bind-DateRange="@DateRange"
     MinDays="MinDays" MaxDays="@MaxDays"
     PickerVariant="PickerVariant.Static" Margin="Margin.Dense"
-    IsDateDisabledFunc="@( (d) => AllowWeekends ? false : IsWeekend(d))" 
+    IsDateDisabledFunc="@(d => !AllowWeekends && IsWeekend(d))"
     AllowDisabledDatesInRange AllowDisabledDatesInCount="@CountDisabledDays"
-    AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" />
+    AdditionalDateClassesFunc="@(d => d?.DayOfWeek == DayOfWeek.Sunday ? "red-text text-accent-4" : "")" />
 
     <MudStack Row>
         <MudSwitch @bind-Value="AllowWeekends" @bind-Value:after="@(() => _picker.RecalculateValidDays())" Color="Color.Primary">Allow Weekends</MudSwitch>
@@ -18,10 +18,10 @@
 @code {
     public static string __description__ = "DateTime range with a restricted mix & max days selection";
     
-    private MudDateRangePicker? _picker;
+    private MudDateRangePicker<DateTime?>? _picker;
     
     [Parameter]
-    public DateRange? DateRange { get; set; }
+    public DateRange<DateTime?>? DateRange { get; set; }
 
     [Parameter]
     public int MinDays { get; set; } = 3;
@@ -35,9 +35,9 @@
     [Parameter]
     public bool CountDisabledDays { get; set; } = true;
 
-    private static bool IsWeekend(DateTime date)
+    private static bool IsWeekend(DateTime? date)
     {
-        DayOfWeek day = date.DayOfWeek;
+        var day = date?.DayOfWeek;
         return day == DayOfWeek.Saturday || day == DayOfWeek.Sunday;
     }
 }

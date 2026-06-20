@@ -9,10 +9,10 @@
 </MudDateRangePicker>
 
 @code {
-    private MudDateRangePicker _picker = null!;
+    private MudDateRangePicker<DateTime?> _picker = null!;
 
     [Parameter]
-    public DateRange? DateRange { get; set; }
+    public DateRange<DateTime?>? DateRange { get; set; }
 
     [Parameter]
     public bool AutoClose { get; set; }

@@ -17,12 +17,12 @@
 </MudForm>
 
 @code {
-    public static string __description__ = $"The {nameof(MudDateRangePicker)} should shown an error when clicking validate without any data but this should disappear when a value has been set.";
+    public static string __description__ = $"The {nameof(MudDateRangePicker<>)} should shown an error when clicking validate without any data but this should disappear when a value has been set.";
 
     private MudForm _form = null!;
-    private MudDateRangePicker _picker = null!;
+    private MudDateRangePicker<DateTime?> _picker = null!;
     private string? _submitStatus;
-    private DateRange? _dateRange; // = new(DateTime.Now, DateTime.Now.AddDays(2));
+    private DateRange<DateTime?>? _dateRange; // = new(DateTime.Now, DateTime.Now.AddDays(2));
 
     private void HandleFormValidChanged(bool isValid)
     {

@@ -5,14 +5,15 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a date range used by a <see cref="MudDatePicker"/>.
+/// Represents a date range used by a <see cref="MudDateRangePicker{T}"/>.
 /// </summary>
-public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
+/// <typeparam name="T">The date type bound by the range. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
+public sealed class DateRange<T> : Range<T>, IEquatable<DateRange<T>?>
 {
     /// <summary>
     /// Creates a new instance.
     /// </summary>
-    public DateRange() : this(null, null)
+    public DateRange() : this(default, default)
     {
     }
 
@@ -21,8 +22,9 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
     /// </summary>
     /// <param name="start">The earliest date.</param>
     /// <param name="end">The most recent date.</param>
-    public DateRange(DateTime? start, DateTime? end) : base(start, end)
+    public DateRange(T? start, T? end) : base(start, end)
     {
+        PickerTypeSupport<T>.EnsureSupported();
     }
 
     /// <summary>
@@ -30,14 +32,14 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
     /// </summary>
     /// <param name="converter">The converter used to convert to a <c>string</c>.</param>
     /// <returns>The formatted string.</returns>
-    public string ToString(IConverter<DateTime?, string?> converter)
+    public string ToString(IConverter<T?, string?> converter)
     {
         if (Start is null || End is null)
         {
             return string.Empty;
         }
 
-        return RangeUtility.Join(converter.Convert(Start.Value), converter.Convert(End.Value));
+        return RangeUtility.Join(converter.Convert(Start), converter.Convert(End));
     }
 
     /// <summary>
@@ -46,12 +48,14 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
     /// <returns>The formatted string.</returns>
     public string ToIsoDateString()
     {
-        if (Start is null || End is null)
+        var startDt = PickerTypeSupport<T>.ToDateTime(Start);
+        var endDt = PickerTypeSupport<T>.ToDateTime(End);
+        if (startDt is null || endDt is null)
         {
             return string.Empty;
         }
 
-        return RangeUtility.Join(Start.ToIsoDateString(), End.ToIsoDateString());
+        return RangeUtility.Join(startDt.ToIsoDateString(), endDt.ToIsoDateString());
     }
 
     /// <summary>
@@ -61,7 +65,7 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
     /// <param name="converter">The converter for parsing string values.</param>
     /// <param name="date">The result of the parse.</param>
     /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-    public static bool TryParse(string? value, IConverter<DateTime?, string?> converter, [NotNullWhen(true)] out DateRange? date)
+    public static bool TryParse(string? value, IConverter<T?, string?> converter, [NotNullWhen(true)] out DateRange<T>? date)
     {
         if (!RangeUtility.Split(value, out var start, out var end))
         {
@@ -80,7 +84,7 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
     /// <param name="converter">The converter for parsing string values.</param>
     /// <param name="date">The result of the parse.</param>
     /// <returns><c>true</c> if the string was successfully interpreted as a date.</returns>
-    public static bool TryParse(string? start, string? end, IConverter<DateTime?, string?> converter, [NotNullWhen(true)] out DateRange? date)
+    public static bool TryParse(string? start, string? end, IConverter<T?, string?> converter, [NotNullWhen(true)] out DateRange<T>? date)
     {
         var endDate = converter.TryConvertBack(end);
         if (!endDate.Success)
@@ -96,20 +100,23 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
             return false;
         }
 
-        date = new DateRange(startDate.Value, endDate.Value);
+        date = new DateRange<T>(startDate.Value, endDate.Value);
         return true;
     }
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is DateRange dateRange && Equals(dateRange);
+    public override bool Equals(object? obj) => obj is DateRange<T> dateRange && Equals(dateRange);
 
     /// <inheritdoc />
-    public bool Equals(DateRange? other) => other is not null && other.Start == Start && other.End == End;
+    public bool Equals(DateRange<T>? other)
+        => other is not null
+        && EqualityComparer<T?>.Default.Equals(other.Start, Start)
+        && EqualityComparer<T?>.Default.Equals(other.End, End);
 
     /// <inheritdoc />
     public override int GetHashCode() => HashCode.Combine(Start, End);
 
-    public static bool operator ==(DateRange? dateRange1, DateRange? dateRange2)
+    public static bool operator ==(DateRange<T>? dateRange1, DateRange<T>? dateRange2)
     {
         if (ReferenceEquals(dateRange1, dateRange2))
             return true;
@@ -119,5 +126,6 @@ public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
         return dateRange1.Equals(dateRange2);
     }
 
-    public static bool operator !=(DateRange? dateRange1, DateRange? dateRange2) => !(dateRange1 == dateRange2);
+    public static bool operator !=(DateRange<T>? dateRange1, DateRange<T>? dateRange2) => !(dateRange1 == dateRange2);
+
 }

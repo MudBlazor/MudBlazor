@@ -53,19 +53,19 @@
 
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">MudDatePicker</MudText>
 <MudStack Row AlignItems="@Align">
-    <MudDatePicker Variant="Variant.Text" Margin="@Margin" />
-    <MudDatePicker Variant="Variant.Filled" Margin="@Margin" />
-    <MudDatePicker Variant="Variant.Outlined" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" Variant="Variant.Text" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" Variant="Variant.Filled" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" Variant="Variant.Outlined" Margin="@Margin" />
 </MudStack>
 <MudStack Row AlignItems="@Align">
-    <MudDatePicker Label="With Label" Variant="Variant.Text" Margin="@Margin" />
-    <MudDatePicker Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
-    <MudDatePicker Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" Label="With Label" Variant="Variant.Text" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" Label="With Label" Variant="Variant.Filled" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" Label="With Label" Variant="Variant.Outlined" Margin="@Margin" />
 </MudStack>
 <MudStack Row AlignItems="@Align">
-    <MudDatePicker HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
-    <MudDatePicker HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
-    <MudDatePicker HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" HelperText="With Helper" Variant="Variant.Text" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" HelperText="With Helper" Variant="Variant.Filled" Margin="@Margin" />
+    <MudDatePicker T="DateTime?" HelperText="With Helper" Variant="Variant.Outlined" Margin="@Margin" />
 </MudStack>
 
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">MudTimePicker</MudText>
@@ -178,7 +178,7 @@
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">Using a MudStack to align items that have no label</MudText>
 <MudStack Row AlignItems="AlignItems.Center">
     <MudTextField T="string" />
-    <MudDatePicker />
+    <MudDatePicker T="DateTime?" />
     <MudNumericField T="int" />
     <MudSelect T="string"></MudSelect>
     <MudColorPicker />

@@ -16,7 +16,7 @@
 
     private DateTime? _date;
     private TimeSpan? _time;
-    private DateRange? _dateRange;
+    private DateRange<DateTime?>? _dateRange;
     private MudColor _color = "#594ae2"; // default-ish; changed by ApplyValues
 
     /// <summary>When true, the pickers start with non-default values (#13246 initial-load case).</summary>
@@ -41,7 +41,7 @@
     {
         _date = new DateTime(2020, 1, 15);
         _time = new TimeSpan(10, 30, 0);
-        _dateRange = new DateRange(new DateTime(2020, 1, 1), new DateTime(2020, 1, 5));
+        _dateRange = new DateRange<DateTime?>(new DateTime(2020, 1, 1), new DateTime(2020, 1, 5));
         _color = "#ff0000";
     }
 }

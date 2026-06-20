@@ -9,13 +9,45 @@ namespace MudBlazor
     /// <summary>
     /// Represents a base class for designing date picker components.
     /// </summary>
-    public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
+    /// <typeparam name="T">The date type bound by the picker. Supported: <see cref="DateTime"/>, <see cref="DateTime"/>?, <see cref="DateOnly"/>, <see cref="DateOnly"/>?, <see cref="DateTimeOffset"/>, <see cref="DateTimeOffset"/>?.</typeparam>
+    public abstract partial class MudBaseDatePicker<T> : MudPicker<T>
     {
+        protected static readonly Type _underlyingType = PickerTypeSupport<T>.UnderlyingType;
+
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
 
+        /// <summary>
+        /// Convert a public-API <typeparamref name="T"/> value into a <see cref="DateTime"/> for internal calendar math.
+        /// </summary>
+        protected static DateTime? ToDateTime(T? value) => PickerTypeSupport<T>.ToDateTime(value);
+
+        /// <summary>
+        /// Convert a public-API <typeparamref name="T"/> limit (<see cref="MinDate"/>/<see cref="MaxDate"/>) into a <see cref="DateTime"/>.
+        /// Treats <c>default(T)</c> as "no limit set" so unconstrained-T pickers don't apply a bogus year-1 limit when the user leaves the parameter unset.
+        /// </summary>
+        protected static DateTime? ToDateTimeLimit(T? value)
+        {
+            if (value is null) return null;
+            if (EqualityComparer<T?>.Default.Equals(value, default)) return null;
+            return ToDateTime(value);
+        }
+
+        /// <summary>
+        /// Convert an internal <see cref="DateTime"/> back to <typeparamref name="T"/>.
+        /// For <see cref="DateTimeOffset"/>, the offset returned by <see cref="GetPreferredOffset"/> is applied — overrides preserve the user's original offset.
+        /// </summary>
+        protected T? FromDateTime(DateTime? value) => PickerTypeSupport<T>.FromDateTime(value, GetPreferredOffset());
+
+        /// <summary>
+        /// Offset to apply when reconstructing a <see cref="DateTimeOffset"/> in <see cref="FromDateTime"/>.
+        /// Defaults to the picker-local offset; concrete pickers override to preserve the bound value's original offset.
+        /// </summary>
+        protected virtual TimeSpan GetPreferredOffset() => TimeProvider.GetLocalNow().Offset;
+
         protected MudBaseDatePicker()
         {
+            PickerTypeSupport<T>.EnsureSupported();
             _mudPickerCalendarContentElementId = Identifier.Create();
             Culture = CultureInfo.CurrentCulture;
 
@@ -39,14 +71,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public DateTime? MaxDate { get; set; }
+        public T? MaxDate { get; set; }
 
         /// <summary>
         /// The minimum selectable date.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public DateTime? MinDate { get; set; }
+        public T? MinDate { get; set; }
 
         /// <summary>
         /// The initial view to display.
@@ -94,14 +126,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public DateTime? PickerMonth
+        public T? PickerMonth
         {
-            get => _picker_month;
+            get => FromDateTime(_picker_month);
             set
             {
-                if (value == _picker_month)
+                var newValue = ToDateTime(value);
+                if (newValue == _picker_month)
                     return;
-                _picker_month = value;
+                _picker_month = newValue;
                 InvokeAsync(StateHasChanged);
                 PickerMonthChanged.InvokeAsync(value);
             }
@@ -121,7 +154,7 @@ namespace MudBlazor
         /// Occurs when <see cref="PickerMonth"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<DateTime?> PickerMonthChanged { get; set; }
+        public EventCallback<T?> PickerMonthChanged { get; set; }
 
         /// <summary>
         /// The delay, in milliseconds, before closing the picker after a value is selected.
@@ -160,7 +193,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public DateTime? StartMonth { get; set; }
+        public T? StartMonth { get; set; }
 
         /// <summary>
         /// Shows week numbers at the start of each week.
@@ -202,7 +235,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public Func<DateTime, bool> IsDateDisabledFunc { get; set; } = _ => false;
+        public Func<T, bool> IsDateDisabledFunc { get; set; } = _ => false;
 
         /// <summary>
         /// The function which returns CSS classes for a date.
@@ -212,7 +245,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Func<DateTime, string>? AdditionalDateClassesFunc { get; set; }
+        public Func<T, string>? AdditionalDateClassesFunc { get; set; }
 
         /// <summary>
         /// The icon for the button that navigates to the previous month or year.
@@ -271,12 +304,12 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var dateTime = ConvertGet(Text);
+                var dateTime = ToDateTime(ConvertGet(Text));
                 if (dateTime.HasValue)
                 {
                     var culture = GetCulture();
                     var calendar = culture.Calendar;
-                    PickerMonth = new DateTime(calendar.GetYear(dateTime.Value), calendar.GetMonth(dateTime.Value), 1, calendar);
+                    PickerMonth = FromDateTime(new DateTime(calendar.GetYear(dateTime.Value), calendar.GetMonth(dateTime.Value), 1, 0, 0, 0, 0, calendar, DateTimeKind.Unspecified));
                 }
             }
             if (OpenTo == OpenTo.Date && FixDay.HasValue && FixMonth.HasValue)
@@ -464,9 +497,12 @@ namespace MudBlazor
 
         protected virtual bool IsDayDisabled(DateTime date)
         {
-            return date < MinDate ||
-                   date > MaxDate ||
-                   IsDateDisabledFunc(date);
+            var minDate = ToDateTimeLimit(MinDate);
+            var maxDate = ToDateTimeLimit(MaxDate);
+            if (minDate.HasValue && date < minDate) return true;
+            if (maxDate.HasValue && date > maxDate) return true;
+            var asTValue = FromDateTime(date);
+            return asTValue is not null && IsDateDisabledFunc(asTValue);
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);
@@ -482,7 +518,7 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected virtual Task OnMonthSelectedAsync(DateTime month)
         {
-            PickerMonth = month;
+            PickerMonth = FromDateTime(month);
             var nextView = GetNextView();
             if (nextView != null)
             {
@@ -499,7 +535,7 @@ namespace MudBlazor
         protected virtual Task OnYearClickedAsync(int year)
         {
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month, 1, GetCulture().Calendar);
+            PickerMonth = FromDateTime(new DateTime(year, current.Month, 1, 0, 0, 0, 0, GetCulture().Calendar, DateTimeKind.Unspecified));
             var nextView = GetNextView();
             if (nextView != null)
             {
@@ -528,16 +564,23 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
+            var minDate = ToDateTimeLimit(MinDate);
+            var maxDate = ToDateTimeLimit(MaxDate);
             if (!FixDay.HasValue)
             {
-                return month.EndOfMonth(culture) < MinDate || month > MaxDate;
+                if (minDate.HasValue && month.EndOfMonth(culture) < minDate) return true;
+                if (maxDate.HasValue && month > maxDate) return true;
+                return false;
             }
             if (calendar.GetDaysInMonth(calendar.GetYear(month), calendar.GetMonth(month)) < FixDay!.Value)
             {
                 return true;
             }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
-            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
+            if (minDate.HasValue && day < minDate) return true;
+            if (maxDate.HasValue && day > maxDate) return true;
+            var asTValue = FromDateTime(day);
+            return asTValue is not null && IsDateDisabledFunc(asTValue);
         }
 
         /// <summary>
@@ -553,9 +596,9 @@ namespace MudBlazor
         /// <summary>
         /// Shift array and cycle around from the end
         /// </summary>
-        private static T[] Shift<T>(T[] array, int positions)
+        private static TItem[] Shift<TItem>(TItem[] array, int positions)
         {
-            var copy = new T[array.Length];
+            var copy = new TItem[array.Length];
             Array.Copy(array, 0, copy, array.Length - positions, positions);
             Array.Copy(array, positions, copy, 0, array.Length - positions);
             return copy;
@@ -584,49 +627,53 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
+            var pickerMonthDt = ToDateTime(PickerMonth);
             // It is impossible to go further into the past after reaching DateTime.MinValue
-            if (PickerMonth.HasValue && calendar.GetYear(PickerMonth.Value) == DateTime.MinValue.Year && calendar.GetMonth(PickerMonth.Value) == DateTime.MinValue.Month)
+            if (pickerMonthDt.HasValue && calendar.GetYear(pickerMonthDt.Value) == DateTime.MinValue.Year && calendar.GetMonth(pickerMonthDt.Value) == DateTime.MinValue.Month)
             {
                 return;
             }
-            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(GetCulture());
+            PickerMonth = FromDateTime(GetMonthStart(0).AddDays(-1).StartOfMonth(GetCulture()));
         }
 
         private void OnNextMonthClick()
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
+            var pickerMonthDt = ToDateTime(PickerMonth);
             // It is impossible to go further into the future after reaching DateTime.MaxValue
-            if (PickerMonth.HasValue && calendar.GetYear(PickerMonth.Value) == DateTime.MaxValue.Year
-                && calendar.GetMonth(PickerMonth.Value) == DateTime.MaxValue.Month)
+            if (pickerMonthDt.HasValue && calendar.GetYear(pickerMonthDt.Value) == DateTime.MaxValue.Year
+                && calendar.GetMonth(pickerMonthDt.Value) == DateTime.MaxValue.Month)
             {
                 return;
             }
-            PickerMonth = GetMonthEnd(0).AddDays(1);
+            PickerMonth = FromDateTime(GetMonthEnd(0).AddDays(1));
         }
 
         private void OnPreviousYearClick()
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
+            var pickerMonthDt = ToDateTime(PickerMonth);
             // It is impossible to go further into the past after reaching DateTime.MinValue
-            if (PickerMonth.HasValue && calendar.GetYear(PickerMonth.Value) == DateTime.MinValue.Year)
+            if (pickerMonthDt.HasValue && calendar.GetYear(pickerMonthDt.Value) == DateTime.MinValue.Year)
             {
                 return;
             }
-            PickerMonth = GetMonthStart(0).AddYears(-1);
+            PickerMonth = FromDateTime(GetMonthStart(0).AddYears(-1));
         }
 
         private void OnNextYearClick()
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
+            var pickerMonthDt = ToDateTime(PickerMonth);
             // It is impossible to go further into the future after reaching DateTime.MaxValue
-            if (PickerMonth.HasValue && calendar.GetYear(PickerMonth.Value) == DateTime.MaxValue.Year)
+            if (pickerMonthDt.HasValue && calendar.GetYear(pickerMonthDt.Value) == DateTime.MaxValue.Year)
             {
                 return;
             }
-            PickerMonth = GetMonthStart(0).AddYears(1);
+            PickerMonth = FromDateTime(GetMonthStart(0).AddYears(1));
         }
 
         private void OnYearClick()
@@ -641,7 +688,7 @@ namespace MudBlazor
 
         private void GoToSelectedYear()
         {
-            PickerMonth = HighlightedDate;
+            PickerMonth = FromDateTime(HighlightedDate);
             OnYearClick();
         }
 
@@ -673,8 +720,9 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MinDate.HasValue)
-                return calendar.GetYear(MinDate.Value);
+            var minDate = ToDateTimeLimit(MinDate);
+            if (minDate.HasValue)
+                return calendar.GetYear(minDate.Value);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) - 100;
         }
 
@@ -682,8 +730,9 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MaxDate.HasValue)
-                return calendar.GetYear(MaxDate.Value);
+            var maxDate = ToDateTimeLimit(MaxDate);
+            if (maxDate.HasValue)
+                return calendar.GetYear(maxDate.Value);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) + 100;
         }
 
@@ -820,9 +869,9 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override IConverter<DateTime?, string?> GetDefaultConverter()
+        protected override IConverter<T?, string?> GetDefaultConverter()
         {
-            return new DefaultConverter<DateTime?>
+            return new DefaultConverter<T?>
             {
                 Culture = GetCulture,
                 Format = GetFormat

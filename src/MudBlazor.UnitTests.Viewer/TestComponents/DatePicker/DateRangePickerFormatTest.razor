@@ -9,7 +9,7 @@ else
 
 @code {
     [Parameter, EditorRequired]
-    public required DateRange DateRange { get; set; }
+    public required DateRange<DateTime?> DateRange { get; set; }
 
     [Parameter]
     public bool FormatFirst { get; set; }

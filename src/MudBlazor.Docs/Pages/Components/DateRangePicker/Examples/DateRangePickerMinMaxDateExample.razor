@@ -6,7 +6,7 @@
 </MudStack>
 
 @code {
-    private DateRange _dateRange { get; set; }
+    private DateRange<DateTime?> _dateRange { get; set; }
     private DateTime _minDate = DateTime.Now.Date;
     private DateTime _maxDate = DateTime.Now.Date.AddMonths(1);
 

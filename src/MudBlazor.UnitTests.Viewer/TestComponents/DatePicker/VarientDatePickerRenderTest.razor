@@ -22,5 +22,5 @@
 
 @code {
     private DateTime? _date = DateTime.Today;
-    private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(1), DateTime.Today.AddDays(5));
+    private DateRange<DateTime?> _dateRange = new DateRange<DateTime?>(DateTime.Today.AddDays(1), DateTime.Today.AddDays(5));
 }

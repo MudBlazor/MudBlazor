@@ -688,6 +688,21 @@ namespace MudBlazor
         public DataGridFilterCaseSensitivity FilterCaseSensitivity { get; set; }
 
         /// <summary>
+        /// When <c>true</c>, the date and time pickers used in column filters allow direct text entry in addition to calendar / clock selection.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Applies to the built-in <see cref="MudDatePicker{T}"/> and <see cref="MudTimePicker"/> rendered for <c>DateTime</c> and <c>DateOnly</c> filter values in the column filter row and column filter menu.
+        /// </remarks>
+        [Parameter]
+        public bool FilterPickerEditable { get; set; }
+
+        // Times entered before a date is picked, keyed by FilterDefinition.Id. Filter<T> is a plain
+        // class instantiated per render of the filter panel, so its own _valueTime field doesn't
+        // survive across renders. Hosting the staging dictionary on the grid (which does survive)
+        // lets a time picked first persist until DateValueChanged combines it with the date.
+        internal Dictionary<Guid, TimeSpan?> _stagedFilterTimes = new();
+
+        /// <summary>
         /// The template used to display each filter.
         /// </summary>
         [Parameter]
@@ -1931,7 +1946,12 @@ namespace MudBlazor
 
         private async Task ClearFiltersFromSimpleModeAsync(IEnumerable<IFilterDefinition<T>> filterDefinitions)
         {
-            FilterDefinitions.RemoveAll(x => filterDefinitions.Any(y => y.Id == x.Id));
+            var ids = filterDefinitions.Select(d => d.Id).ToHashSet();
+            FilterDefinitions.RemoveAll(x => ids.Contains(x.Id));
+            foreach (var id in ids)
+            {
+                _stagedFilterTimes.Remove(id);
+            }
 
             await InvokeServerLoadFunc();
             GroupItems();
@@ -2004,6 +2024,7 @@ namespace MudBlazor
         {
             FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
+            _stagedFilterTimes.Clear();
             await InvokeServerLoadFunc();
             await NotifyFilterChangedAsync();
         }
@@ -2034,6 +2055,7 @@ namespace MudBlazor
 
             FilterDefinitions[index].Value = null;
             FilterDefinitions.RemoveAt(index);
+            if (id is { } guid) _stagedFilterTimes.Remove(guid);
             await InvokeServerLoadFunc();
             GroupItems();
             await NotifyFilterChangedAsync();
@@ -2505,7 +2527,12 @@ namespace MudBlazor
 
         private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
 
-        internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
+        internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p =>
+        {
+            var remove = p.Value == null && ValueRequired(p);
+            if (remove) _stagedFilterTimes.Remove(p.Id);
+            return remove;
+        });
         internal void SetFiltersMenuPosition(double top, double left)
         {
             _filtersMenuPosition = (top, left);

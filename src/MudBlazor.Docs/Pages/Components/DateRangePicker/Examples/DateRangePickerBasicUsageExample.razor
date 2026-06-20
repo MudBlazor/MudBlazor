@@ -13,7 +13,7 @@
 
 @code {
     private PickerVariant _variant = PickerVariant.Static;
-    private DateRange _dateRange { get; set; }
+    private DateRange<DateTime?> _dateRange { get; set; }
 
     private void OnValueChanged(PickerVariant variant)
     {

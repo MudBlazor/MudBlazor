@@ -18,7 +18,7 @@
 </MudStack>
 
 @code { 
-    private MudDateRangePicker _picker;
-    private DateRange _dateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date);
+    private MudDateRangePicker<DateTime?> _picker;
+    private DateRange<DateTime?> _dateRange = new DateRange<DateTime?>(DateTime.Now.Date, DateTime.Now.AddDays(5).Date);
     private bool _autoClose;
 }

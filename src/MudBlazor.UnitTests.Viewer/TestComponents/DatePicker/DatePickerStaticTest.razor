@@ -12,5 +12,5 @@
     [Parameter]
     public DateTime? Date { get; set; } = DateTime.Today.Subtract(TimeSpan.FromDays(60));
 
-    public MudDatePicker PickerReference { get; set; } = null!;
+    public MudDatePicker<DateTime?> PickerReference { get; set; } = null!;
 }

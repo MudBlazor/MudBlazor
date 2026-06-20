@@ -44,16 +44,16 @@
                 }
                 else if (fieldType.IsDateOnly && !(@operator ?? "").EndsWith("empty"))
                 {
-                    <MudDatePicker Date="@valueDateOnlyForPicker" DateChanged="@DateOnlyValueChangedAsync" Margin="@Margin.Dense" />
+                    <MudDatePicker T="DateOnly?" Date="@valueDateOnlyForPicker" DateChanged="@DateOnlyValueChangedAsync" Editable="@DataGrid.FilterPickerEditable" Margin="@Margin.Dense" />
                 }
                 else if (fieldType.IsDateTime && !(@operator ?? "").EndsWith("empty"))
                 {
                     <MudGrid Spacing="0">
                         <MudItem xs="7">
-                            <MudDatePicker Date="@valueDateTimeForPicker" DateChanged="@DateTimeValueChangedAsync" Margin="@Margin.Dense" />
+                            <MudDatePicker T="DateTime?" Date="@valueDateTimeForPicker" DateChanged="@DateTimeValueChangedAsync" Editable="@DataGrid.FilterPickerEditable" Margin="@Margin.Dense" />
                         </MudItem>
                         <MudItem xs="5">
-                            <MudTimePicker Time="@valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
+                            <MudTimePicker Time="@valueTime" TimeChanged="@TimeValueChangedAsync" Editable="@DataGrid.FilterPickerEditable" Margin="@Margin.Dense" />
                         </MudItem>
                     </MudGrid>
                 }

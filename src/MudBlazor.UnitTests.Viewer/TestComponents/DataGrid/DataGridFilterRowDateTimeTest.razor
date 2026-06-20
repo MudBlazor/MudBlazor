@@ -1,0 +1,20 @@
+@* Minimal grid in ColumnFilterRow mode with a DateTime? column, no preset filter. Used to drive
+   FilterHeaderCell time/date sequencing in unit tests. *@
+<MudDataGrid @ref="@DataGrid" T="Model" Items="@_items" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.HiredOn" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, DateTime? HiredOn);
+
+    public MudDataGrid<Model> DataGrid { get; set; } = null!;
+
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Sam", new DateTime(2024, 6, 1, 8, 30, 0)),
+        new("Ira", new DateTime(2024, 6, 2, 14, 15, 0)),
+    };
+}

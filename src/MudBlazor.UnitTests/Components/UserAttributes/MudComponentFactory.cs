@@ -69,9 +69,14 @@ namespace MudBlazor.UnitTests.UserAttributes
                 var genericArgs = componentType.GetGenericArguments();
                 var constraints = genericArgs.SelectMany(arg => arg.GetGenericParameterConstraints()).Distinct().ToArray();
                 var hasINumberConstraint = constraints.Any(constraint => constraint.GetInterfaces().Any(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(INumberBase<>)));
+                var isDatePicker = componentType == typeof(MudDatePicker<>) || componentType == typeof(MudDateRangePicker<>);
                 if (hasINumberConstraint)
                 {
                     componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(int)).ToArray());
+                }
+                else if (isDatePicker)
+                {
+                    componentType = componentType.MakeGenericType(typeof(DateTime?));
                 }
                 else
                 {

@@ -19,7 +19,7 @@ namespace MudBlazor
         internal double? _valueNumber;
         internal Enum? _valueEnum;
         internal bool? _valueBool;
-        internal DateTime? _valueDateOnlyForPicker;
+        internal DateOnly? _valueDateOnlyForPicker;
         internal DateTime? _valueDateTimeForPicker;
         internal TimeSpan? _valueTime;
         internal Guid? _valueGuid;
@@ -47,11 +47,18 @@ namespace MudBlazor
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
                 _valueDateTimeForPicker = _filterDefinition.Value == null ? null : dateTime;
-                _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
+                if (_filterDefinition.Value == null)
+                {
+                    _valueTime = _dataGrid._stagedFilterTimes.TryGetValue(_filterDefinition.Id, out var staged) ? staged : null;
+                }
+                else
+                {
+                    _valueTime = dateTime.TimeOfDay;
+                }
             }
             else if (fieldType.IsDateOnly)
             {
-                _valueDateOnlyForPicker = ((DateOnly?)_filterDefinition.Value)?.ToDateTime(TimeOnly.MinValue);
+                _valueDateOnlyForPicker = (DateOnly?)_filterDefinition.Value;
             }
             else if (fieldType.IsGuid)
                 _valueGuid = _filterDefinition.Value as Guid?;
@@ -118,6 +125,7 @@ namespace MudBlazor
                 }
 
                 _filterDefinition.Value = date;
+                _dataGrid._stagedFilterTimes.Remove(_filterDefinition.Id);
             }
             else
                 _filterDefinition.Value = null;
@@ -140,22 +148,22 @@ namespace MudBlazor
                 }
 
                 _filterDefinition.Value = date;
+                _dataGrid._stagedFilterTimes.Remove(_filterDefinition.Id);
+            }
+            else
+            {
+                // No date yet — stash the time on the grid so the next Filter<T> re-instantiation
+                // (and the eventual DateValueChanged) can combine them.
+                _dataGrid._stagedFilterTimes[_filterDefinition.Id] = value;
             }
 
             _dataGrid.GroupItems();
         }
 
-        internal void DateOnlyValueChanged(DateTime? value)
+        internal void DateOnlyValueChanged(DateOnly? value)
         {
             _valueDateOnlyForPicker = value;
-
-            if (value is not null)
-            {
-                _filterDefinition.Value = DateOnly.FromDateTime(value.Value);
-            }
-            else
-                _filterDefinition.Value = null;
-
+            _filterDefinition.Value = value;
             _dataGrid.GroupItems();
         }
 

@@ -10,7 +10,7 @@
 <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
 
 @code {
-    private MudDatePicker _picker;
+    private MudDatePicker<DateTime?> _picker = null!;
     private DateTime? _date = DateTime.Today;
     private bool _autoClose;
 }

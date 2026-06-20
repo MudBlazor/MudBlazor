@@ -77,8 +77,16 @@ namespace MudBlazor
         private bool? valueBool => fieldType.IsBoolean && Column.FilterContext.FilterDefinition?.Value is not null ? (bool?)Column.FilterContext.FilterDefinition.Value : default;
         private Enum? valueEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition?.Value is not null ? (Enum)Column.FilterContext.FilterDefinition.Value : default;
         private DateTime? valueDateTimeForPicker => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition?.Value : default;
-        private DateTime? valueDateOnlyForPicker => fieldType.IsDateOnly && Column.FilterContext.FilterDefinition?.Value != null ? ((DateOnly)Column.FilterContext.FilterDefinition.Value).ToDateTime(TimeOnly.MinValue) : null;
-        private TimeSpan? valueTime => fieldType.IsDateTime && Column.FilterContext.FilterDefinition?.Value is not null ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay : null;
+        private DateOnly? valueDateOnlyForPicker => fieldType.IsDateOnly && Column.FilterContext.FilterDefinition?.Value != null ? (DateOnly)Column.FilterContext.FilterDefinition.Value : null;
+
+        // Holds a time picked before any date has been set. Without this, picking time first and
+        // then date would commit the date with 00:00 because the time picker is otherwise a derived
+        // projection of FilterDefinition.Value (which is null until the date is picked).
+        private TimeSpan? _stagedTime;
+        private TimeSpan? valueTime => _stagedTime
+            ?? (fieldType.IsDateTime && Column.FilterContext.FilterDefinition?.Value is not null
+                ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay
+                : null);
         private string? @operator => Column.FilterContext.FilterDefinition?.Operator ?? operators.FirstOrDefault();
 
         private string chosenOperatorStyle(string o)
@@ -140,6 +148,7 @@ namespace MudBlazor
                 }
 
                 Column.FilterContext.FilterDefinition.Value = date;
+                _stagedTime = null;
             }
             else
             {
@@ -149,19 +158,10 @@ namespace MudBlazor
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal async Task DateOnlyValueChangedAsync(DateTime? value)
+        internal async Task DateOnlyValueChangedAsync(DateOnly? value)
         {
             Debug.Assert(Column.FilterContext.FilterDefinition is not null);
-            // For DateOnly fields, convert DateTime to DateOnly
-            if (value != null)
-            {
-                var dateOnly = DateOnly.FromDateTime(value.Value);
-                Column.FilterContext.FilterDefinition.Value = dateOnly;
-            }
-            else
-            {
-                Column.FilterContext.FilterDefinition.Value = null;
-            }
+            Column.FilterContext.FilterDefinition.Value = value;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
@@ -179,7 +179,13 @@ namespace MudBlazor
                 }
 
                 Column.FilterContext.FilterDefinition.Value = date;
+                _stagedTime = null;
                 await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
+            }
+            else
+            {
+                // No date yet — stash the time so DateTimeValueChangedAsync can combine them later.
+                _stagedTime = value;
             }
         }
 

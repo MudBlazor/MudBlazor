@@ -1,13 +1,27 @@
 ﻿@page "/components/daterangepicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Date Range Picker" Component="@nameof(MudDateRangePicker)" />
+    <DocsPageHeader Title="Date Range Picker" Component="@nameof(MudDateRangePicker<>)" />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic Usage" />
             <SectionContent Code="@nameof(DateRangePickerBasicUsageExample)" ShowCode="false">
                 <DateRangePickerBasicUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Supported Types">
+                <Description>
+                    <CodeInline>MudDateRangePicker</CodeInline> is generic over <CodeInline>T</CodeInline> and supports
+                    <CodeInline>DateTime</CodeInline>, <CodeInline>DateOnly</CodeInline>, and
+                    <CodeInline>DateTimeOffset</CodeInline> (and their nullable variants). The bound
+                    <CodeInline>DateRange&lt;T&gt;</CodeInline> matches the picker's type argument.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DateRangePickerTValueExample)" ShowCode="false">
+                <DateRangePickerTValueExample />
             </SectionContent>
         </DocsPageSection>
 

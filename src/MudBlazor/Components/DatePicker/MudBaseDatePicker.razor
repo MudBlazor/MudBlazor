@@ -1,7 +1,8 @@
 ﻿@using MudBlazor.Internal
 @using MudBlazor.Resources
 @namespace MudBlazor
-@inherits MudPicker<DateTime?>
+@typeparam T
+@inherits MudPicker<T>
 @inject InternalMudLocalizer Localizer
 
 @Render
@@ -44,7 +45,7 @@
                         }
                         else if (tempMonth == 0 && CurrentView == OpenTo.Month)
                         {
-                            var calendarYear = GetCalendarYear(PickerMonth ?? TimeProvider.GetLocalNow().Date);
+                            var calendarYear = GetCalendarYear(ToDateTime(PickerMonth) ?? TimeProvider.GetLocalNow().Date);
 
                             <div class="mud-picker-calendar-header">
                                 <div class="mud-picker-calendar-header-switch">

@@ -3251,13 +3251,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinitionWithNull)); // Test adding DateTime filter with null value
             dateTimeFilterDefinitionWithNull.Value.Should().BeNull();
 
+            // Regression: time picked before any date should survive a Filter<T> re-instantiation
+            // (which happens on every render of the filter panel) and be combined when the date arrives.
+            dateTimeFilterDefinition.Value = null;
+            var stagedTime = new TimeSpan(10, 30, 0);
+            var stagedDate = new DateTime(2024, 6, 15);
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(stagedTime));
+            // Simulate re-render: brand new Filter<T> instance for the same definition.
+            internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => internalFilter.DateValueChanged(stagedDate));
+            dateTimeFilterDefinition.Value.Should().Be(stagedDate.Add(stagedTime));
+
             // test internal filter class for dateonly data type.
-            var dateOnlyDateTimeInput = DateTime.UtcNow;
+            var dateOnlyInput = DateOnly.FromDateTime(DateTime.UtcNow);
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);
             dateOnlyFilterDefinition.Column.dataType.Should().Be(typeof(DateOnly?));
 
-            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyDateTimeInput));
-            dateOnlyFilterDefinition.Value.Should().Be(DateOnly.FromDateTime(dateOnlyDateTimeInput));
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyInput));
+            dateOnlyFilterDefinition.Value.Should().Be(dateOnlyInput);
 
             await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(null));
             dateOnlyFilterDefinition.Value.Should().BeNull();
@@ -4552,7 +4564,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.DoesNotThrow(() => comp.FindComponent<MudNumericField<double?>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<Enum>>());
             Assert.DoesNotThrow(() => comp.FindComponent<MudSelect<bool?>>());
-            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker>());
+            Assert.DoesNotThrow(() => comp.FindComponent<MudDatePicker<DateTime?>>());
         }
 
         [Test]
@@ -4601,6 +4613,163 @@ namespace MudBlazor.UnitTests.Components
 
             var inputsAfter = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             inputsAfter.Should().HaveCount(6).And.AllBe("", because: "clicking the clear button should reset all filters");
+        }
+
+        [Test]
+        public async Task DataGridFilterRow_DateTime_TimeSetBeforeDate_PreservesTime()
+        {
+            // Regression: in the column filter row the time picker was a derived projection
+            // of the filter Value. Picking time before any date dropped the time silently and
+            // the subsequent date pick committed with 00:00.
+            var comp = Context.Render<DataGridFilterRowDateTimeTest>();
+            var headerCell = comp.FindComponent<FilterHeaderCell<DataGridFilterRowDateTimeTest.Model>>();
+
+            var time = new TimeSpan(10, 30, 0);
+            var date = new DateTime(2024, 6, 15);
+
+            await comp.InvokeAsync(() => headerCell.Instance.TimeValueChangedAsync(time));
+            await comp.InvokeAsync(() => headerCell.Instance.DateTimeValueChangedAsync(date));
+
+            var filter = headerCell.Instance.Column.FilterContext.FilterDefinition;
+            filter!.Value.Should().Be(date.Add(time));
+        }
+
+        [Test]
+        public async Task DataGridFilter_StagedTime_ClearedOnRemoveFilter()
+        {
+            // Bug: MudDataGrid._stagedFilterTimes is never cleaned up. Removing a filter while it
+            // had a staged (date-less) time leaks the entry — it survives the filter being deleted.
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.RenderedColumns.First(c => c.PropertyType == typeof(DateTime?)),
+                Operator = FilterOperator.DateTime.Is,
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinition));
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => filter.TimeValueChanged(new TimeSpan(10, 30, 0)));
+
+            dataGrid.Instance._stagedFilterTimes.Should().ContainKey(dateTimeFilterDefinition.Id,
+                because: "staged time was set without a date");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveFilterAsync(dateTimeFilterDefinition.Id));
+
+            dataGrid.Instance._stagedFilterTimes.Should().NotContainKey(dateTimeFilterDefinition.Id,
+                because: "removing a filter must clean up its staged time entry");
+        }
+
+        [Test]
+        public async Task DataGridFilter_StagedTime_ClearedOnClearFilters()
+        {
+            // Bug: ClearFiltersAsync wipes FilterDefinitions but leaves _stagedFilterTimes populated.
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.RenderedColumns.First(c => c.PropertyType == typeof(DateTime?)),
+                Operator = FilterOperator.DateTime.Is,
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinition));
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => filter.TimeValueChanged(new TimeSpan(14, 0, 0)));
+
+            dataGrid.Instance._stagedFilterTimes.Should().ContainKey(dateTimeFilterDefinition.Id);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
+
+            dataGrid.Instance._stagedFilterTimes.Should().BeEmpty(
+                because: "ClearFiltersAsync must drop all staged times along with the filter definitions");
+        }
+
+        [Test]
+        public async Task DataGridFilter_StagedTime_ClearedOnCleanupIncompleteFilters()
+        {
+            // Bug: CleanupIncompleteFilters drops Value-null filter definitions but never removes
+            // their staged-time entry from _stagedFilterTimes. Closing the filter panel after
+            // staging a time without a date leaks the entry.
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.RenderedColumns.First(c => c.PropertyType == typeof(DateTime?)),
+                Operator = FilterOperator.DateTime.Is,
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinition));
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => filter.TimeValueChanged(new TimeSpan(9, 15, 0)));
+
+            dataGrid.Instance._stagedFilterTimes.Should().ContainKey(dateTimeFilterDefinition.Id);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CleanupIncompleteFilters());
+
+            dataGrid.Instance._stagedFilterTimes.Should().NotContainKey(dateTimeFilterDefinition.Id,
+                because: "CleanupIncompleteFilters must drop the staged time when it removes the value-less filter");
+        }
+
+        [Test]
+        public async Task DataGridFilter_DateClearAndReopen_DoesNotResurrectPreviousTime()
+        {
+            // Regression: time → date → clear date → close & reopen filter → pick fresh date.
+            // The fresh date should NOT carry the previously-picked time. A bug here would have
+            // _stagedFilterTimes still hold the old time, so the re-instantiated Filter<T>'s ctor
+            // re-reads it and combines on the next date pick.
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = dataGrid.Instance.RenderedColumns.First(c => c.PropertyType == typeof(DateTime?)),
+                Operator = FilterOperator.DateTime.Is,
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinition));
+
+            var firstFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            await comp.InvokeAsync(() => firstFilter.TimeValueChanged(new TimeSpan(10, 30, 0)));
+            await comp.InvokeAsync(() => firstFilter.DateValueChanged(new DateTime(2024, 6, 15)));
+            await comp.InvokeAsync(() => firstFilter.DateValueChanged(null));
+
+            // Simulate the user closing and reopening the filter panel — produces a fresh Filter<T>
+            // for the same definition. The new instance's ctor reads _stagedFilterTimes.
+            var reopenedFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
+            reopenedFilter._valueTime.Should().BeNull(
+                because: "after clearing the date, a freshly opened filter must not pre-populate the time picker with the prior pick");
+
+            await comp.InvokeAsync(() => reopenedFilter.DateValueChanged(new DateTime(2024, 7, 1)));
+            dateTimeFilterDefinition.Value.Should().Be(new DateTime(2024, 7, 1),
+                because: "the freshly picked date must commit without the previously cleared time");
+        }
+
+        [Test]
+        public async Task DataGridFilterRow_DateClearAndRepick_DoesNotResurrectPreviousTime()
+        {
+            // Regression in Column-Filter-Row mode: same flow as above but via FilterHeaderCell.
+            // After clearing the date, picking a new date must not bring back the prior time.
+            var comp = Context.Render<DataGridFilterRowDateTimeTest>();
+            var headerCell = comp.FindComponent<FilterHeaderCell<DataGridFilterRowDateTimeTest.Model>>();
+
+            var time = new TimeSpan(10, 30, 0);
+            var firstDate = new DateTime(2024, 6, 15);
+            var freshDate = new DateTime(2024, 7, 1);
+
+            await comp.InvokeAsync(() => headerCell.Instance.TimeValueChangedAsync(time));
+            await comp.InvokeAsync(() => headerCell.Instance.DateTimeValueChangedAsync(firstDate));
+            await comp.InvokeAsync(() => headerCell.Instance.DateTimeValueChangedAsync(null));
+            await comp.InvokeAsync(() => headerCell.Instance.DateTimeValueChangedAsync(freshDate));
+
+            var filter = headerCell.Instance.Column.FilterContext.FilterDefinition;
+            filter!.Value.Should().Be(freshDate,
+                because: "after clearing, the freshly picked date must commit without the previously cleared time");
         }
 
         [Test]
