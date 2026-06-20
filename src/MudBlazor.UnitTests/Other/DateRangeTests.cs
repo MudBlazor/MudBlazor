@@ -50,6 +50,13 @@ public class DateRangeTests
     }
 
     [Test]
+    public void ToIsoDateString_BothDatesSet_JoinsIsoParts()
+    {
+        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        range.ToIsoDateString().Should().Contain("2024-01-01").And.Contain("2024-06-01");
+    }
+
+    [Test]
     public void TryParse_InvalidRangeFormat_ReturnsFalse()
     {
         var ok = DateRange.TryParse("not-a-range", new DateTimeConverter(), out var result);
@@ -138,15 +145,6 @@ public class DateRangeTests
         var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var b = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         a.GetHashCode().Should().Be(b.GetHashCode());
-    }
-
-    [Test]
-    public void GetHashCode_ConsistentAcrossMultipleCalls()
-    {
-        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        var hash1 = range.GetHashCode();
-        var hash2 = range.GetHashCode();
-        hash1.Should().Be(hash2);
     }
 
     /// <summary>
