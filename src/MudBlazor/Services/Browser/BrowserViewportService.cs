@@ -249,13 +249,16 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             await _cancellationTokenSource.CancelAsync();
             _observerManager.Clear();
 
+            // Only tear down the JS listener if one was ever created. During prerendering the DI scope
+            // disposes this service before a circuit exists; skipping the call avoids a first-chance
+            // InvalidOperationException and cannot leak, since nothing was registered on the JS side.
             if (_dotNetReferenceLazy.IsValueCreated)
             {
                 _dotNetReferenceLazy.Value.Dispose();
-            }
 
-            // Do not send our CancellationTokenSource as it was cancelled.
-            await _resizeListenerInterop.DisposeAsync(CancellationToken.None);
+                // Do not send our CancellationTokenSource as it was cancelled.
+                await _resizeListenerInterop.DisposeAsync(CancellationToken.None);
+            }
 
             _cancellationTokenSource.Dispose();
         }

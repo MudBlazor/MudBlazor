@@ -228,8 +228,14 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             // In case someone has custom implementation and didn't unsubscribe
             _observerManager.Clear();
 
-            // Do not send our CancellationTokenSource as it was cancelled.
-            await _popoverJsInterop.DisposeAsync(CancellationToken.None);
+            // Only dispose the JS side if it was ever initialized. During prerendering the DI scope
+            // disposes this service before a circuit exists; skipping the call avoids a first-chance
+            // InvalidOperationException and cannot leak, since the JS module was never set up.
+            if (IsInitialized)
+            {
+                // Do not send our CancellationTokenSource as it was cancelled.
+                await _popoverJsInterop.DisposeAsync(CancellationToken.None);
+            }
 
             _cancellationTokenSource.Dispose();
         }

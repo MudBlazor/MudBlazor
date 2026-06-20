@@ -710,6 +710,40 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task DisposeAsync_WhenNeverInitialized_ShouldNotCallJsDispose()
+    {
+        // A scoped service is disposed by the DI scope at the end of a prerender request, before a
+        // circuit exists. With no JS initialization there is nothing to tear down, so DisposeAsync
+        // must not call JS - otherwise it throws a first-chance InvalidOperationException. See #12574.
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = CreateService(jsRuntimeMock.Object);
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        service.IsInitialized.Should().BeFalse();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
+
+    [Test]
+    public async Task DisposeAsync_WhenInitialized_ShouldCallJsDispose()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = CreateService(jsRuntimeMock.Object);
+        await service.UpdatePopoverAsync(new PopoverMock());
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        service.IsInitialized.Should().BeTrue();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
     public async Task DisposeAsync_ShouldNotAcceptObservers()
     {
         // Arrange
