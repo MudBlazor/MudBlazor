@@ -31,11 +31,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-list-item-secondary-text").TextContent.Should().Contain("with oat milk");
         }
 
-        /// <summary>
-        /// Clicking items selects them, and at most one item is ever highlighted because the child lists
-        /// share the parent's selection. The two modes differ only when an already-selected item is clicked
-        /// again: single-selection keeps it, toggle-selection clears it.
-        /// </summary>
         [Test]
         [TestCase(SelectionMode.SingleSelection)]
         [TestCase(SelectionMode.ToggleSelection)]
@@ -78,10 +73,6 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        /// <summary>
-        /// Changing <see cref="MudList{T}.SelectedValue"/> from outside the component re-targets the highlight,
-        /// including into nested child lists, and clearing it removes the highlight entirely.
-        /// </summary>
         [Test]
         public async Task PreSelectedValue_IsHonored_AndExternalChangesMoveSelection()
         {
@@ -135,10 +126,6 @@ namespace MudBlazor.UnitTests.Components
             CheckBoxValue(comp, "Orange Juice").Should().Be(true);
         }
 
-        /// <summary>
-        /// Two lists bound to the same collection mirror each other: a click on one updates the other and the
-        /// shared <c>SelectedValues</c>.
-        /// </summary>
         [Test]
         public async Task MultiSelection_TwoListsShareBoundCollection()
         {
@@ -191,9 +178,6 @@ namespace MudBlazor.UnitTests.Components
             selectedItem.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToStringFast(true)}-text", $"mud-{color.ToStringFast(true)}-hover" });
         }
 
-        /// <summary>
-        /// Child lists honor the parent list's <see cref="MudList{T}.Dense"/> setting unless they override it.
-        /// </summary>
         [Test]
         [TestCase(true, null, 9)]
         [TestCase(false, null, 0)]
@@ -209,10 +193,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount);
         }
 
-        /// <summary>
-        /// Toggling <see cref="MudList{T}.Dense"/> after the first render propagates to every already-registered
-        /// item, including those in nested child lists.
-        /// </summary>
         [Test]
         public async Task Dense_ToggledAfterRender_PropagatesToItemsAndNestedLists()
         {
@@ -224,10 +204,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(9);
         }
 
-        /// <summary>
-        /// Switching to multi-selection at runtime re-evaluates the container semantics: the list (which owns
-        /// nested child lists) gains <c>aria-multiselectable</c>.
-        /// </summary>
         [Test]
         public async Task SelectionMode_SwitchedToMultiSelection_MarksContainerMultiselectable()
         {
@@ -338,10 +314,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Should().ContainSingle();
         }
 
-        /// <summary>
-        /// A list item only navigates manually (bypassing the router) when it has an <c>Href</c>, <c>ForceLoad</c>
-        /// is set, and no <c>Target</c> is given. In every other case the rendered anchor handles navigation.
-        /// </summary>
         [Test]
         [TestCase(true, null, true)]      // ForceLoad + Href + no Target -> manual NavigateTo
         [TestCase(false, null, false)]    // Href only -> the anchor navigates, no manual call
@@ -369,10 +341,6 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        /// <summary>
-        /// <see cref="MudListItem{T}.OnClickPreventDefault"/> renders the item as a div (even with an Href) and
-        /// short-circuits the click to only invoke <c>OnClick</c>; selection and navigation are suppressed.
-        /// </summary>
         [Test]
         public async Task ListItem_OnClickPreventDefault_OnlyInvokesOnClick()
         {
@@ -447,10 +415,6 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
-        /// <summary>
-        /// Changing the <see cref="MudList{T}.Comparer"/> re-evaluates the single selection, so a value that did
-        /// not match any item under the default comparer can match once a looser comparer is supplied.
-        /// </summary>
         [Test]
         public async Task SingleSelection_ChangingComparer_ReevaluatesSelectedItem()
         {
@@ -471,10 +435,6 @@ namespace MudBlazor.UnitTests.Components
                 .Markup.Should().Contain("mud-selected-item");
         }
 
-        /// <summary>
-        /// Changing the <see cref="MudList{T}.Comparer"/> in multi-selection rebuilds the selection set with the
-        /// new comparer, so items re-match the selected values under the looser comparison.
-        /// </summary>
         [Test]
         public async Task MultiSelection_ChangingComparer_RematchesItemsUnderNewComparer()
         {
@@ -721,10 +681,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("p.selected-values").TrimmedText().Should().BeEmpty());
         }
 
-        /// <summary>
-        /// Clicking an item that owns a nested list toggles its expansion (and raises <c>ExpandedChanged</c>)
-        /// instead of selecting it; the expand/collapse icon swaps to match.
-        /// </summary>
         [Test]
         public async Task NestedItem_Click_TogglesExpansion_AndRaisesExpandedChanged()
         {
