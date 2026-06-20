@@ -10,6 +10,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -35,6 +36,7 @@ namespace MudBlazor
         private readonly HashSet<T> _initialExpansions = [];
         private Func<T, bool>? _initialExpandedFunc = null;
         private Func<T, bool>? _buttonDisabledFunc = null;
+        private EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> _hierarchyColumnVisibilityToggled;
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>>? _dropContainer;
         private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
@@ -45,7 +47,9 @@ namespace MudBlazor
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
-        internal (double Top, double Left) _openPosition = (0, 0);
+        private (double Top, double Left) _filtersMenuPosition = (0, 0);
+        private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -54,10 +58,16 @@ namespace MudBlazor
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
-        internal Dictionary<string, object> PositionAttributes => new()
+        internal Dictionary<string, object> FiltersPositionAttributes => new()
         {
-            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
-            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+            { "data-pc-x", _filtersMenuPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _filtersMenuPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
+
+        internal Dictionary<string, object> ColumnsPanelPositionAttributes => new()
+        {
+            { "data-pc-x", _columnsPanelPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _columnsPanelPosition.Top.ToString(CultureInfo.InvariantCulture) }
         };
 
         public MudDataGrid()
@@ -283,6 +293,17 @@ namespace MudBlazor
         #region EventCallbacks
 
         /// <summary>
+        /// Occurs when the <see cref="SortDefinitions"/> have changed.
+        /// </summary>
+        /// <remarks>
+        /// This callback is raised when the grid's sort state is updated.
+        /// When <see cref="ServerData"/> or <see cref="VirtualizeServerData"/> is used,
+        /// it is invoked before the data reload triggered by the new sort completes.
+        /// </remarks>        
+        [Parameter]
+        public EventCallback<Dictionary<string, SortDefinition<T>>> SortChanged { get; set; }
+
+        /// <summary>
         /// Occurs when the <see cref="SelectedItem"/> has changed.
         /// </summary>
         /// <remarks>
@@ -372,6 +393,15 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 
+        /// <summary>
+        /// Occurs when the active filters have changed.
+        /// </summary>
+        /// <remarks>
+        /// This callback receives the current active filters after the change is applied.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<IReadOnlyCollection<IFilterDefinition<T>>> FilterChanged { get; set; }
+
         #endregion
 
         #region Parameters
@@ -450,6 +480,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public SortMode SortMode { get; set; } = SortMode.Multiple;
+
+        /// <summary>
+        /// The icon shown when a column is sortable.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
         /// Allows filtering of data in this grid.
@@ -602,19 +642,32 @@ namespace MudBlazor
         /// The empty filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and no filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconEmpty { get; set; } = Icons.Material.Outlined.FilterAlt;
 
         /// <summary>
         /// The filled filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconFilled { get; set; } = Icons.Material.Filled.FilterAlt;
 
         /// <summary>
         /// The clear filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> to remove filters applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
+
+        /// <summary>
+        /// The icon used for column options menus in header cells.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.MoreVert"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string ColumnOptionsIcon { get; set; } = Icons.Material.Filled.MoreVert;
 
         /// <summary>
         /// The way that this grid filters data.
@@ -1087,7 +1140,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
@@ -1588,7 +1642,7 @@ namespace MudBlazor
                 var first = _openHierarchies.First();
                 foreach (var item in _openHierarchies.Skip(1))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(first);
@@ -1709,6 +1763,7 @@ namespace MudBlazor
                 {
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
+                    _hierarchyColumnVisibilityToggled = templateColumn.HierarchyVisibilityToggled;
                     // Apply expansion now if items or _serverData.Items is already set
                     if (Items is not null)
                     {
@@ -1756,6 +1811,13 @@ namespace MudBlazor
         internal void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
+
+            if (column.Tag?.ToString() == "hierarchy-column")
+            {
+                _hierarchyColumnVisibilityToggled = default;
+                _initialExpandedFunc = null;
+                _buttonDisabledFunc = null;
+            }
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
@@ -1789,6 +1851,42 @@ namespace MudBlazor
             return context;
         }
 
+        internal bool HasFilter(Column<T>? column)
+        {
+            if (column is null)
+            {
+                return false;
+            }
+
+            return FilterDefinitions.Any(x =>
+                (ReferenceEquals(x.Column, column) || (column.PropertyName is not null && x.Column?.PropertyName == column.PropertyName)) &&
+                IsFilterApplied(x));
+        }
+
+        private static bool IsFilterApplied(IFilterDefinition<T> filterDefinition)
+        {
+            return (filterDefinition is FilterDefinition<T> dataGridFilterDefinition && dataGridFilterDefinition.FilterFunction is not null) ||
+                   filterDefinition.Value is not null ||
+                   filterDefinition.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
+                       FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
+                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
+        }
+
+        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
+        {
+            if (column is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return args.Key switch
+            {
+                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
+                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
+                _ => Task.CompletedTask
+            };
+        }
+
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -1798,6 +1896,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1812,6 +1911,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1835,6 +1935,7 @@ namespace MudBlazor
 
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
 
             if (!HasServerData)
             {
@@ -1870,6 +1971,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -1898,11 +2000,12 @@ namespace MudBlazor
         /// <summary>
         /// Removes all filters from all columns.
         /// </summary>
-        public Task ClearFiltersAsync()
+        public async Task ClearFiltersAsync()
         {
             FilterDefinitions.ForEach(x => x.Value = null);
             FilterDefinitions.Clear();
-            return InvokeServerLoadFunc();
+            await InvokeServerLoadFunc();
+            await NotifyFilterChangedAsync();
         }
 
         /// <summary>
@@ -1917,6 +2020,7 @@ namespace MudBlazor
             }
             _filtersMenuVisible = true;
             await InvokeServerLoadFunc();
+            await NotifyFilterChangedAsync();
             if (!HasServerData) StateHasChanged();
         }
 
@@ -1932,14 +2036,15 @@ namespace MudBlazor
             FilterDefinitions.RemoveAt(index);
             await InvokeServerLoadFunc();
             GroupItems();
+            await NotifyFilterChangedAsync();
         }
+
+        internal Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
-            var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-
-            if (selectColumn?.DisabledFunc?.Invoke(item) is true)
+            if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
             if (value)
@@ -2007,13 +2112,8 @@ namespace MudBlazor
             if (value) // Logic for selecting all
             {
                 var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
-
-                var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-                if (selectColumn?.DisabledFunc != null)
-                {
-                    // Filter out disabled items before adding to selection
-                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.DisabledFunc(item));
-                }
+                var selectColumn = GetSelectColumn();
+                itemsToSelect = itemsToSelect.Where(item => !IsRowSelectionDisabled(item, selectColumn));
 
                 Selection.UnionWith(itemsToSelect);
             }
@@ -2024,6 +2124,32 @@ namespace MudBlazor
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private SelectColumn<T>? GetSelectColumn()
+        {
+            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+        }
+
+        internal bool? GetRowSelectionState(T item)
+        {
+            var selectColumn = GetSelectColumn();
+            if (selectColumn is null || IsRowSelectionDisabled(item, selectColumn))
+            {
+                return null;
+            }
+
+            return Selection.Contains(item);
+        }
+
+        private static bool IsRowSelectionDisabled(T item, SelectColumn<T>? selectColumn)
+        {
+            return selectColumn?.DisabledFunc?.Invoke(item) is true;
+        }
+
+        internal bool IsRowSelectionDisabled(T item)
+        {
+            return IsRowSelectionDisabled(item, GetSelectColumn());
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
@@ -2269,6 +2395,10 @@ namespace MudBlazor
         private async Task InvokeSortUpdates(Dictionary<string, SortDefinition<T>> activeSortDefinitions, HashSet<string>? removedSortDefinitions)
         {
             SortChangedEvent?.Invoke(activeSortDefinitions, removedSortDefinitions);
+            if (_isFirstRendered)
+            {
+                await SortChanged.InvokeAsync(new Dictionary<string, SortDefinition<T>>(activeSortDefinitions));
+            }
 
             if (_isFirstRendered)
             {
@@ -2363,6 +2493,12 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            OpenFilters(FilterDefinitions.FirstOrDefault()?.Id);
+        }
+
+        internal void OpenFilters(Guid? filterDefinitionIdToFocus)
+        {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2370,6 +2506,10 @@ namespace MudBlazor
         private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
 
         internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
+        internal void SetFiltersMenuPosition(double top, double left)
+        {
+            _filtersMenuPosition = (top, left);
+        }
 
         private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
             FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not
@@ -2405,8 +2545,7 @@ namespace MudBlazor
         {
             if (args != null)
             {
-                _openPosition.Top = args.PageY;
-                _openPosition.Left = args.PageX;
+                _columnsPanelPosition = (args.PageY, args.PageX);
             }
             _columnsPanelVisible = true;
             StateHasChanged();
@@ -2703,7 +2842,7 @@ namespace MudBlazor
             var expandedItems = FilteredItems.Where(x => !_buttonDisabledFunc(x) && _openHierarchies.Add(x));
             foreach (var item in expandedItems)
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, true));
             }
             await InvokeAsync(StateHasChanged);
         }
@@ -2716,7 +2855,7 @@ namespace MudBlazor
             Debug.Assert(_buttonDisabledFunc is not null);
             foreach (var openedHierarchy in _openHierarchies.Where(x => !_buttonDisabledFunc(x)).ToList())
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
+                await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 _openHierarchies.Remove(openedHierarchy);
             }
             await InvokeAsync(StateHasChanged);
@@ -2731,12 +2870,17 @@ namespace MudBlazor
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
             if (_expandSingleRowState.Value)
             {
+                var itemWasOpen = _openHierarchies.Contains(item);
                 foreach (var openedHierarchy in _openHierarchies.Where(x => x != null && !x.Equals(item)))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
+                    await InvokeHierarchyVisibilityToggledAsync(new(openedHierarchy, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(item);
+                if (!itemWasOpen)
+                {
+                    await InvokeHierarchyVisibilityToggledAsync(new(item, true));
+                }
                 await InvokeAsync(StateHasChanged);
                 return;
             }
@@ -2745,14 +2889,20 @@ namespace MudBlazor
             if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, true));
             }
             else
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
+                await InvokeHierarchyVisibilityToggledAsync(new(item, false));
             }
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private async Task InvokeHierarchyVisibilityToggledAsync(DataGridHierarchyVisibilityToggledEventArgs<T> args)
+        {
+            await HierarchyVisibilityToggled.InvokeAsync(args);
+            await _hierarchyColumnVisibilityToggled.InvokeAsync(args);
         }
 
         #region Resize feature

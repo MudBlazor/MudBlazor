@@ -262,6 +262,8 @@
                     This allows users to select a row by clicking anywhere on it.<br>
                     To provide visual feedback and explicit selection controls, add a <CodeInline>SelectColumn</CodeInline> in the <CodeInline>&lt;Columns></CodeInline> definition. 
                     This renders a checkbox for each row.<br><br>
+                    When using <CodeInline>SelectColumn</CodeInline> checkboxes, built-in accessible labels are provided by default and can be overridden with <CodeInline>AriaLabelFunc</CodeInline>.
+                    <br><br>
                     Use the <CodeInline>MultiSelection</CodeInline> property (default: <CodeInline>false</CodeInline>) to control whether users can select one or multiple rows.
                     Single selection is enabled by default.
                     <br><br>
@@ -437,9 +439,10 @@
         <DocsPageSection>
             <SectionHeader Title="CultureInfo">
                 <Description>
-                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and editing/filter columns data.
-                    Each <CodeInline>&lt;Column></CodeInline> can define his own culture,
-                    to allow to specify its format individually.
+                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and edit/filter column data.
+                    When it is not set, cell values use the current culture through .NET's default formatting behavior.
+                    Set it to <CodeInline>CultureInfo.InvariantCulture</CodeInline> when invariant numeric or date formatting is required.
+                    Each <CodeInline>&lt;Column></CodeInline> can define its own culture to specify its format individually.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnCultureExample)" ShowCode="false" Block="true" FullWidth="true">

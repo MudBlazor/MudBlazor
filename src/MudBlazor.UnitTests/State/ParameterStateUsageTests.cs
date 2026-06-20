@@ -56,7 +56,7 @@ public class ParameterStateUsageTests : BunitTest
     [Test]
     public void InheritanceIntegration()
     {
-        var comp = Context.Render<ParameterStateSharedInheritanceHandlerTestComp>();
+        var comp = Context.Render<ParameterStateInheritanceTest>();
 
         // note: the handler for abc and the one for xyz are each called once per click
         // the handlers for o and p are lambdas which are excluded from this optimization, so they

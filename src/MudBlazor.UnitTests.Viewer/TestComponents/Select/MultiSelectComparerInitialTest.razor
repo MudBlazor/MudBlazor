@@ -1,0 +1,48 @@
+<MudPopoverProvider />
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudSelect T="Coffee" Label="Coffee"
+                   MultiSelection="true"
+                   SelectedValues="_selected" SelectedValuesChanged="SelectedChanged"
+                   Comparer="Comparer"
+                   ToStringFunc="@(x => x?.Name)">
+            <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
+            <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
+            <MudSelectItem Value="@(new Coffee("esp","Espresso"))" />
+            <MudSelectItem Value="@(new Coffee("ire","Irish Coffee"))" />
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private static CoffeeComparer Comparer { get; } = new();
+
+    // Non-empty initial selection set at construction time: the regression case.
+    // Keys match "lat" and "esp" but Name differs to prove the custom comparer is honored.
+    public IReadOnlyCollection<Coffee?> _selected { get; set; } = new HashSet<Coffee?>(Comparer)
+    {
+        new Coffee("lat", "Preselected Latte"),
+        new Coffee("esp", "Preselected Espresso")
+    };
+
+    private void SelectedChanged(IReadOnlyCollection<Coffee?>? newSelected)
+    {
+        _selected = newSelected is null
+            ? new HashSet<Coffee?>(Comparer)
+            : new HashSet<Coffee?>(newSelected, Comparer);
+    }
+
+    public class Coffee(string key, string name)
+    {
+        public string Key { get; } = key;
+        public string Name { get; } = name;
+    }
+
+    private class CoffeeComparer : IEqualityComparer<Coffee?>
+    {
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
+
+        public int GetHashCode(Coffee? x) => HashCode.Combine(x?.Key);
+    }
+}

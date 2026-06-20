@@ -65,6 +65,7 @@ label.mud-input-label.mud-input-label-inputcontrol {
   .mud-input:focus-within ~ & {
     transform: translate(0, 1.5px) scale(0.75);
     transform-origin: top left;
+    max-width: calc(100% / 0.75);
 
     &.mud-input-label-filled {
       transform: translate(12px, 10px) scale(0.75);

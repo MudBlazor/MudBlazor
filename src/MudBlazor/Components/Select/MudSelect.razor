@@ -33,7 +33,7 @@
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
-                          Error="@ErrorState.Value"
+                          Error="@HasErrors"
                           ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
@@ -47,8 +47,7 @@
                           Clearable="@(Clearable && !GetReadOnlyState())"
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes"
-                          OnBlur="@OnBlurAsync"
+                          @attributes="GetInputUserAttributes()"
                           ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">
@@ -114,6 +113,7 @@
                             RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
+                                 @attributes="GetListUserAttributes()"
                                  Class="@ListClass"
                                  Dense="@Dense"
                                  @bind-SelectedValue="_activeItemId">

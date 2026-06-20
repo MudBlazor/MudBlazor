@@ -237,6 +237,50 @@ namespace MudBlazor
             return ElementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
+        /// <summary>
+        /// Builds the attributes mirrored onto the focusable display element for hidden-input rendering.
+        /// </summary>
+        /// <remarks>
+        /// This path keeps focus on the display element instead of the hidden input, so the display element needs the same accessibility-facing attributes.
+        /// Caller-provided <c>UserAttributes</c> take precedence. Returns <c>null</c> for every other render so the always-emitted
+        /// (but hidden) presenter <c>div</c> does not get spurious attributes or allocate on the common input path.
+        /// </remarks>
+        private Dictionary<string, object?>? GetDisplayUserAttributes()
+        {
+            if (InputType != InputType.Hidden || ChildContent is null)
+            {
+                return null;
+            }
+
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var attribute in UserAttributes)
+            {
+                if (attribute.Key.Equals("role", StringComparison.OrdinalIgnoreCase) || attribute.Key.StartsWith("aria-", StringComparison.OrdinalIgnoreCase))
+                {
+                    attributes[attribute.Key] = attribute.Value;
+                }
+            }
+
+            var describedBy = GetAriaDescribedByString();
+            if (describedBy is not null)
+            {
+                attributes.TryAdd("aria-describedby", describedBy);
+            }
+
+            attributes.TryAdd("aria-invalid", HasErrors.ToString().ToLowerInvariant());
+            attributes.TryAdd("aria-required", Required.ToString().ToLowerInvariant());
+
+            // The presenter is a div, so the native disabled attribute on the hidden input no longer
+            // conveys the disabled state to assistive tech; mirror it as aria-disabled.
+            if (GetDisabledState())
+            {
+                attributes.TryAdd("aria-disabled", "true");
+            }
+
+            return attributes;
+        }
+
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         /// <summary>
@@ -274,6 +318,11 @@ namespace MudBlazor
             await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        protected virtual async Task HandleSpinButtonPointerDownAsync()
+        {
+            await ElementReference.FocusAsync();
         }
 
         private readonly record struct AutoSizingVisualState(
@@ -376,8 +425,7 @@ namespace MudBlazor
             }
             if (firstRender)
             {
-                // add onblur event through javascript which will trigger CallOnBlurredAsync
-                // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
+                // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
                 await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
             }
 
@@ -434,9 +482,11 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            // If onblurred already fired then cancel
+            // If native blur already ran, do not process the fallback callback again.
             if (!_isFocused)
+            {
                 return;
+            }
 
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }

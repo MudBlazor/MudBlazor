@@ -7,7 +7,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -23,7 +22,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class TextFieldTests : BunitTest
     {
         /// <summary>
@@ -174,6 +172,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInTextField()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
             var textField = comp.Instance;
             var input = comp.Find("input");
@@ -189,10 +188,11 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
-            await Task.Delay(100);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             textField.ReadValue.Should().BeNull();
 
             //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
         }
 
@@ -223,7 +223,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextField_ShouldStayInSyncWithBoundValueAfterAsyncInitialization()
         {
-            var comp = Context.Render<DebouncedTextFieldAsyncInitializationSyncTest>();
+            var comp = Context.Render<TextFieldAsyncInitTest>();
 
             await comp.WaitForAssertionAsync(() =>
             {
@@ -246,8 +246,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DebouncedTextField_Should_ValidatePendingValueImmediatelyWhenFormIsValidated()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedTextFieldFormValidationSyncTest>();
             var form = comp.FindComponent<MudForm>().Instance;
@@ -377,6 +376,71 @@ namespace MudBlazor.UnitTests.Components
             textfield.ReadText.Should().Be("B");
         }
 
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Converter case).
+        /// Entering text that parses to the same Value a second time must still re-apply the converter's
+        /// formatting, not leave the raw text. Previously the unchanged value short-circuited the
+        /// value->text round-trip, so only the first occurrence of a value formatted.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithConverter_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueConverterTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+
+            // Re-enter the same raw value: it parses to the same Value, but the display must still reformat.
+            await comp.Find("input").ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Format case).
+        /// Re-entering a raw value that parses to the same number must still re-apply the Format.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithFormat_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueFormatTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+
+            await comp.Find("input").ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+        }
+
+        [Test]
+        public async Task TextField_Immediate_Format_TwoWayBound_RawWhileTyping_FormatsOnBlur()
+        {
+            // #13002 on Blazor Server: a two-way @bind-Value MudTextField with Format reformatted the text
+            // mid-typing because the value echo round-trip re-derived the formatted text on each keystroke.
+            // Simulate real typing (keydown + input) and assert the raw text is preserved while typing and
+            // the format is applied on blur (the pre-v9 "format on LostFocus" behavior).
+            decimal? bound = null;
+            var comp = Context.Render<MudTextField<decimal?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "N2")
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            foreach (var ch in "1234")
+            {
+                var current = comp.Find("input").GetAttribute("value") ?? string.Empty;
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = ch.ToString() });
+                await comp.Find("input").InputAsync(current + ch);
+            }
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            bound.Should().Be(1234m);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1,234.00"));
+        }
+
         [Test]
         public void TextField_Should_FireValueChangedOnTextParameterChange()
         {
@@ -425,6 +489,55 @@ namespace MudBlazor.UnitTests.Components
             textfield.ReadText.Should().Be("A");
             textfield.HasErrors.Should().Be(true);
             textfield.GetState(x => x.ErrorText).Should().Be("Not a valid number");
+        }
+
+        [Test]
+        public async Task RequiredTextField_Should_ReuseGeneratedErrorIdWhileInvalid()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.Required, true));
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+
+            var firstErrorId = comp.Find("input").GetAttribute("aria-describedby");
+            firstErrorId.Should().NotBeNullOrWhiteSpace();
+            comp.Find($"[id='{firstErrorId}']").TextContent.Should().Be("Required");
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(firstErrorId);
+
+            await comp.Find("input").ChangeAsync("valid");
+            await comp.Find("input").BlurAsync();
+
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.Find("input").ChangeAsync(string.Empty);
+            await comp.Find("input").BlurAsync();
+
+            var secondErrorId = comp.Find("input").GetAttribute("aria-describedby");
+            secondErrorId.Should().NotBeNullOrWhiteSpace();
+            secondErrorId.Should().NotBe(firstErrorId);
+        }
+
+        [Test]
+        public async Task RequiredTextField_Should_RestoreProvidedErrorIdAfterBecomingValid()
+        {
+            const string errorId = "provided-error-id";
+
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.ErrorId, errorId));
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(errorId);
+
+            await comp.Find("input").ChangeAsync("valid");
+            await comp.Find("input").BlurAsync();
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.Find("input").ChangeAsync(string.Empty);
+            await comp.Find("input").BlurAsync();
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be(errorId);
         }
 
         /// <summary>
@@ -503,7 +616,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
-            var comp = Context.Render<MultilineTextfieldBindingTest>();
+            var comp = Context.Render<MultilineTextFieldBindingTest>();
 
             // print the generated html
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
@@ -831,12 +944,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("span").TrimmedText().Should().Be("value: The Stormlight Archive");
             input.Instance.ReadValue.Should().Be("The Stormlight Archive");
             input.Instance.ReadText.Should().Be("The Stormlight Archive");
+            comp.Find("input").GetAttribute("value").Should().Be("The Stormlight Archive");
 
             // now hit Enter to cause the clearing of the focused text field
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => comp.Find("span").TrimmedText().Should().Be("value:"));
             await comp.WaitForAssertionAsync(() => input.Instance.ReadValue.Should().Be(""));
             await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be(""));
+            // Assert the rendered value attribute too: the displayed text (not just ReadText) must clear while
+            // focused. This is the user-visible part that regressed on Server in #8565 / #10486.
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be(""));
         }
 
         [Test]
@@ -1002,12 +1119,12 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user does not change invalid input value but changes focus
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
@@ -1021,7 +1138,7 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
             await comp.Find("input").BlurAsync();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user corrects input
@@ -1103,15 +1220,28 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ReadOnlyTextFieldShouldNotValidate()
         {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.Required, true));
+
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// ReadOnly TextFields should still fire OnBlur when blurred (#7687)
+        /// </summary>
+        [Test]
+        public async Task ReadOnlyTextFieldShouldTriggerOnBlur()
+        {
             var calls = 0;
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.ReadOnly, true)
-                .Add(p => p.Required, true)
-                .Add(p => p.OnBlur, args => calls++));
+                .Add(p => p.OnBlur, _ => calls++));
 
             await comp.Find("input").BlurAsync();
+
             calls.Should().Be(1);
-            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -1192,6 +1322,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task InputBlurBridgeShouldNotProcessBlurTwiceWhenNativeBlurRunsFirst()
+        {
+            var blurCount = 0;
+            var comp = Context.Render<MudInput<string>>(parameters => parameters
+                .Add(p => p.Immediate, true)
+                .Add(p => p.OnBlur, _ => blurCount++));
+
+            await comp.Find("input").InputAsync("abc");
+            await comp.Find("input").BlurAsync();
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            blurCount.Should().Be(1);
+        }
+
+        [Test]
         public async Task OnKeyDownErrorContentCaughtException()
         {
             var comp = Context.Render<TextFieldErrorContenCaughtException>();
@@ -1215,10 +1360,13 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
         [Test]
+        // Debounce-render test: the interleaved external re-render churns the input's event-handler IDs and the
+        // post-debounce render can race under heavy parallel CPU contention, so this runs serially (deterministic;
+        // no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedTextFieldRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
@@ -1227,26 +1375,27 @@ namespace MudBlazor.UnitTests.Components
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
 
-            // trigger delayed re-render
-            await comp.InvokeAsync(() => comp.Find("#re-render-button").Click());
-
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            // imitate "typing in progress" with an external re-render between keystrokes,
+            // advancing fake time by less than the debounce interval so it does not commit mid-typing
             var currentText = "test";
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+
+                // external re-render dispatched on the renderer's synchronization context
+                await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
+
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
 
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(currentText);
-            textField.ReadText.Should().Be(currentText);
+            comp.WaitForAssertion(() =>
+            {
+                textField.ReadValue.Should().Be(currentText);
+                textField.ReadText.Should().Be(currentText);
+            });
         }
 
         [Test]
@@ -1263,10 +1412,12 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
         [Test]
+        // Converter-change mid-debounce: the post-debounce reset render can exceed the default WaitForAssertion
+        // timeout under heavy parallel CPU contention, so this runs serially (deterministic; no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedTextFieldFormatChangeRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
@@ -1275,30 +1426,31 @@ namespace MudBlazor.UnitTests.Components
             // ensure text is updated on initialize
             textField.ReadText.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
 
-            // trigger the format change
-            await comp.Find("#format-change-button").ClickAsync();
-
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            // imitate "typing in progress" with an external format change between keystrokes,
+            // advancing fake time by less than the debounce interval so it does not commit mid-typing
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await comp.Find("input").InputAsync(currentText);
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+
+                // external format change dispatched on the renderer's synchronization context
+                await comp.InvokeAsync(comp.Instance.ApplyFormatChange);
+
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
 
-            // after the format change delay has elapsed, the uncommitted text is retained (with the old Format)
+            // while typing after the format change, the uncommitted text is retained
             textField.ReadText.Should().Be(currentText);
 
-            // once debounce occurs, both value and text are reset because they define an invalid DateTime,
-            // now with the new Format
+            // once the final debounce occurs, both value and text are reset because the typed text
+            // defines an invalid DateTime, now rendered with the new Format
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            textField.ReadValue.Should().Be(expectedFinalDateTime);
-            textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            comp.WaitForAssertion(() =>
+            {
+                textField.ReadValue.Should().Be(expectedFinalDateTime);
+                textField.ReadText.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
+            });
         }
 
         /// <summary>
@@ -1742,6 +1894,8 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
             comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be("error-id");
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
         [TestCase(Adornment.Start, false, false)]

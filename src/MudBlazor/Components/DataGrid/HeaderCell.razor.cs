@@ -22,6 +22,7 @@ namespace MudBlazor
         private bool _isResizing;
         private double? _resizerHeight;
         private bool _filtersMenuVisible;
+        private (double Top, double Left) _filtersMenuPosition;
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
         private readonly string _id = Identifier.Create();
@@ -216,18 +217,15 @@ namespace MudBlazor
         {
             get
             {
-                if (DataGrid == null)
-                    return false;
-
-                return DataGrid.FilterDefinitions.Any(x =>
-                    x.Column?.PropertyName == Column?.PropertyName &&
-                    ((x is FilterDefinition<T> filterDefinition && filterDefinition.FilterFunction is not null) ||
-                     x.Value is not null ||
-                     x.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
-                         FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
-                         FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty));
+                return DataGrid?.HasFilter(Column) ?? false;
             }
         }
+
+        private Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _filtersMenuPosition.Left.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+            { "data-pc-y", _filtersMenuPosition.Top.ToString(System.Globalization.CultureInfo.InvariantCulture) }
+        };
 
         #endregion
         protected override async Task OnParametersSetAsync()
@@ -496,13 +494,17 @@ namespace MudBlazor
                 return;
             }
 
+            var initialSortDirection = Column?.InitialSortDirection ?? SortDirection.Ascending;
+
             SortDirection = SortDirection switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
                 SortDirection.Descending => DataGrid.AllowUnsorted
                     ? SortDirection.None
                     : SortDirection.Ascending,
-                _ => SortDirection.Ascending
+                _ => initialSortDirection == SortDirection.None
+                    ? SortDirection.Ascending
+                    : initialSortDirection
             };
 
             if (SortDirection == SortDirection.None)
@@ -533,20 +535,24 @@ namespace MudBlazor
         {
             Debug.Assert(DataGrid is not null);
             var filterDefinition = Column?.FilterContext.FilterDefinition;
+
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
             {
-                if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
+                var filterDefinitionToFocus = DataGrid.FilterDefinitions
+                    .FirstOrDefault(x => x.Title == filterDefinition.Title);
+
+                if (filterDefinitionToFocus is null)
                 {
-                    DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                    filterDefinitionToFocus = filterDefinition.Clone();
+                    DataGrid.FilterDefinitions.Add(filterDefinitionToFocus);
                 }
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
-                DataGrid.OpenFilters();
+
+                DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
+                DataGrid.OpenFilters(filterDefinitionToFocus.Id);
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }
@@ -555,16 +561,20 @@ namespace MudBlazor
         internal void OpenFilters(MouseEventArgs args)
         {
             Debug.Assert(DataGrid is not null);
+
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
-                DataGrid.OpenFilters();
+                var filterDefinitionToFocus = DataGrid.FilterDefinitions
+                    .FirstOrDefault(x =>
+                        ReferenceEquals(x.Column, Column) ||
+                        (Column?.PropertyName is not null && x.Column?.PropertyName == Column.PropertyName));
+
+                DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
+                DataGrid.OpenFilters(filterDefinitionToFocus?.Id);
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }
@@ -586,6 +596,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -605,6 +616,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -622,6 +634,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -661,6 +674,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }

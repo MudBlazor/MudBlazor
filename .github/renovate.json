@@ -7,6 +7,9 @@
         ":ignoreModulesAndTests",
         "mergeConfidence:all-badges"
     ],
+    "ignoreDeps": [
+        "dotnet-sdk"
+    ],
     "labels": [
         "dependency",
         "build"
@@ -44,14 +47,14 @@
             "enabled": false
         },
         {
-            "description": "Keep updates in draft while release age is unknown or immature.",
-            "matchJsonata": [
-                "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
+            "description": "Shipped analyzer targets Roslyn 4.x; keep the build-time authoring-rules package on the matching 3.x line.",
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj"
             ],
-            "draftPR": true,
-            "prBodyNotes": [
-                "> [!WARNING]\n> Target version is either under 14 days old or does not publish a reliable release timestamp yet."
-            ]
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.Analyzers"
+            ],
+            "allowedVersions": "<4.0.0"
         },
         {
             "matchFileNames": [

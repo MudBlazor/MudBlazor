@@ -773,6 +773,18 @@ namespace MudBlazor.UnitTests.Charts
 
             yAxisLabels2.Should().HaveCount(3);
             yAxisLabels2.Should().ContainInOrder("0", "80", "160");
+
+            // A huge data range with YAxisTicks=1 and a tight MaxNumYAxisTicks forces the grid-units
+            // safeguard to repeatedly double the unit until the line count fits within the cap.
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>() { new() { Name = "Big", Data = new[] { 100_000.0, 250_000.0 } } })
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 1, MaxNumYAxisTicks = 4 }));
+
+            var yAxisLabels3 = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels3.Count.Should().BeInRange(2, 4);
+            // The top tick must still cover the data max of 250,000.
+            yAxisLabels3.Select(l => double.Parse(l, System.Globalization.CultureInfo.InvariantCulture)).Max()
+                .Should().BeGreaterThanOrEqualTo(250_000);
         }
 
         [Test]
@@ -1022,6 +1034,134 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true after showing");
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(chartSeries[2].Data.Values.Count, "Series 3 bar segments should be visible");
+        }
+
+        private static List<ChartSeries<double>> TwoSeries() =>
+            new()
+            {
+                new() { Name = "S1", Data = new double[] { 10, 20, 30 } },
+                new() { Name = "S2", Data = new double[] { 5, 15, 25 } },
+            };
+
+        [Test]
+        public async Task StackedBarChart_AsOverlay_InsideBarChart_ShouldShareDataAndProjectSegments()
+        {
+            // A StackedBar nested inside a Bar chart registers itself as an overlay: it renders nothing
+            // of its own, instead projecting its segments into the host Bar's overlay content and sharing
+            // the host's plot data. Hovering an overlay segment surfaces the tooltip through the host.
+            var barSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Base", Data = new double[] { 40, 60, 80 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.Bar)
+                .Add(x => x.ChartSeries, barSeries)
+                .Add(x => x.ChartLabels, new[] { "A", "B", "C" })
+                .Add(x => x.ChartOptions, new BarChartOptions { YAxisTicks = 20, ShowToolTips = true })
+                .AddChildContent<StackedBar<double>>(cp => cp
+                    .Add(s => s.ChartSeries, TwoSeries())
+                    .Add(s => s.ChartOptions, new StackedBarChartOptions { YAxisTicks = 20, ShowToolTips = true })));
+
+            var overlay = comp.FindComponent<StackedBar<double>>().Instance;
+            overlay.IsOverlayChart.Should().BeTrue();
+
+            var hostBar = comp.FindComponent<Bar<double>>().Instance;
+            hostBar.OverlayChart.Should().NotBeNull();
+
+            // The JS element-size callback that normally triggers the host rebuild is absent in bUnit,
+            // so force the host to rebuild now to build the shared plot data and project the overlay.
+            await comp.InvokeAsync(() => hostBar.RebuildChart());
+            overlay.SharedData.Should().NotBeNull();
+
+            // Host (1 series x 3 points = 3 bars) plus overlay (2 series x 3 points = 6 bars) = 9 bars
+            // in the combined markup, since the overlay's segments are projected into the host.
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(9);
+
+            // Hovering the last (overlay) segment surfaces the tooltip through the host; mousing out clears it.
+            await bars.Last().MouseOverAsync();
+            comp.FindAll("g.svg-tooltip").Count.Should().BeGreaterThan(0);
+
+            await comp.FindAll("path.mud-chart-bar").Last().MouseOutAsync();
+            comp.FindAll("g.svg-tooltip").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void StackedBarChart_FixedBarWidth_ShouldUseFixedWidthAndForceRatioToOne()
+        {
+            var options = new StackedBarChartOptions { FixedBarWidth = 12, BarWidthRatio = 0.3, YAxisTicks = 20 };
+
+            var comp = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, TwoSeries())
+                .Add(x => x.ChartLabels, new[] { "A", "B", "C" })
+                .Add(x => x.ChartOptions, options));
+
+            // FixedBarWidth forces the ratio to 1 and returns the fixed width verbatim (no overlap fix).
+            options.BarWidthRatio.Should().Be(1);
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(6);
+            bars.First().GetAttribute("stroke-width").Should().Be("12");
+        }
+
+        [Test]
+        public void StackedBarChart_FullBarWidthRatio_ShouldApplyOverlapStrokeFix()
+        {
+            var compFull = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, TwoSeries())
+                .Add(x => x.ChartLabels, new[] { "A", "B", "C" })
+                .Add(x => x.ChartOptions, new StackedBarChartOptions { BarWidthRatio = 1.0, YAxisTicks = 20 }));
+
+            var fullRatioStroke = double.Parse(
+                compFull.FindAll("path.mud-chart-bar").First().GetAttribute("stroke-width")!,
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            // Below the full-ratio threshold the overlap branch is not taken, so the stroke is the plain
+            // rounded width. The full-ratio stroke must be wider thanks to the +0.5 overlap fix.
+            var compNarrow = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, TwoSeries())
+                .Add(x => x.ChartLabels, new[] { "A", "B", "C" })
+                .Add(x => x.ChartOptions, new StackedBarChartOptions { BarWidthRatio = 0.5, YAxisTicks = 20 }));
+
+            var narrowStroke = double.Parse(
+                compNarrow.FindAll("path.mud-chart-bar").First().GetAttribute("stroke-width")!,
+                System.Globalization.CultureInfo.InvariantCulture);
+
+            fullRatioStroke.Should().BeGreaterThan(narrowStroke,
+                "the maximum ratio uses the full bar width plus the 0.5 overlap fix");
+        }
+
+        [Test]
+        public void StackedBarChart_ShowZeroValuesFalse_ShouldSkipZeroSegments()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = new double[] { 0, 20 } },
+                new() { Name = "S2", Data = new double[] { 10, 0 } },
+            };
+
+            var compHidden = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, series)
+                .Add(x => x.ChartLabels, new[] { "A", "B" })
+                .Add(x => x.ChartOptions, new StackedBarChartOptions { ShowZeroValues = false, YAxisTicks = 10 }));
+
+            // Two of the four segments are zero and are skipped.
+            compHidden.FindAll("path.mud-chart-bar").Count.Should().Be(2);
+
+            // The same data with ShowZeroValues = true (the default) renders all four, proving the
+            // difference is the skip branch, not the data.
+            var compShown = Context.Render<MudChart<double>>(p => p
+                .Add(x => x.ChartType, ChartType.StackedBar)
+                .Add(x => x.ChartSeries, series)
+                .Add(x => x.ChartLabels, new[] { "A", "B" })
+                .Add(x => x.ChartOptions, new StackedBarChartOptions { ShowZeroValues = true, YAxisTicks = 10 }));
+
+            compShown.FindAll("path.mud-chart-bar").Count.Should().Be(4);
         }
     }
 }

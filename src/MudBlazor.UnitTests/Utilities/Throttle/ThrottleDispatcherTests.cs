@@ -252,12 +252,13 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_Dispose_DoesNotCancelRunningAction()
+    [CancelAfter(5000)]
+    public async Task ThrottleAsync_Dispose_DoesNotCancelRunningAction()
     {
         // Arrange
         var dispatcher = new ThrottleDispatcher(100);
-        var actionStarted = new TaskCompletionSource<bool>();
-        var actionCanComplete = new TaskCompletionSource<bool>();
+        var actionStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var actionCanComplete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var actionCompleted = false;
 
         async Task LongRunningAction()
@@ -269,12 +270,12 @@ public class ThrottleDispatcherTests
 
         // Act
         var task = dispatcher.ThrottleAsync(LongRunningAction);
-        actionStarted.Task.Wait(); // Wait for action to start
+        await actionStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken); // Wait for action to start
 
         dispatcher.Dispose(); // Dispose while action is running
 
         actionCanComplete.SetResult(true); // Allow action to complete
-        task.Wait();
+        await task.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Assert
         actionCompleted.Should().BeTrue();
@@ -295,12 +296,13 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_DisposeDuringLock_HandlesGracefully()
+    [CancelAfter(5000)]
+    public async Task ThrottleAsync_DisposeDuringLock_HandlesGracefully()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
-        var firstStarted = new TaskCompletionSource<bool>();
-        var firstCanComplete = new TaskCompletionSource<bool>();
+        var firstStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstCanComplete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         async Task SlowAction()
         {
@@ -310,7 +312,7 @@ public class ThrottleDispatcherTests
 
         // Act - Start a slow action to hold the task
         var task1 = dispatcher.ThrottleAsync(SlowAction);
-        firstStarted.Task.Wait();
+        await firstStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Now dispose and try to call again
         // ReSharper disable once DisposeOnUsingVariable
@@ -319,7 +321,7 @@ public class ThrottleDispatcherTests
 
         // Complete the first action
         firstCanComplete.SetResult(true);
-        task1.Wait();
+        await task1.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Assert - second task should complete immediately (disposed)
         task2.IsCompleted.Should().BeTrue();

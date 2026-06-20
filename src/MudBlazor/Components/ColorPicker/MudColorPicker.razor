@@ -236,7 +236,7 @@
                                         case ColorPickerMode.HEX:
                                             <MudTextField T="string"
                                                           @key="@_inputResetKey"
-                                                          Value="@GetColorTextValue(_valueState.Value)"
+                                                          Value="@GetColorTextValue(ValueOrDefault)"
                                                           ValueChanged="SetInputStringAsync"
                                                           Class="mud-picker-color-inputfield"
                                                           Variant="Variant.Outlined"

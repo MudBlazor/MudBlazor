@@ -1,6 +1,5 @@
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Bunit;
-using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -37,19 +36,36 @@ public class InputTests : BunitTest
     public async Task ReadOnlyShouldTriggerOnBlur()
     {
         var calls = 0;
-        FocusEventArgs? args = null;
         var comp = Context.Render<MudInput<string>>(parameters => parameters
             .Add(p => p.ReadOnly, true)
-            .Add(p => p.OnBlur, x =>
-            {
-                calls++;
-                args = x;
-            }));
+            .Add(p => p.OnBlur, _ => calls++));
 
         await comp.Find("input").BlurAsync();
 
         calls.Should().Be(1);
-        args.Should().NotBeNull();
-        args!.Type.Should().Contain(".additional");
+    }
+
+    [Test]
+    public void RangeInputDefaultAriaLabels()
+    {
+        var comp = Context.Render<MudRangeInput<string>>();
+        var inputs = comp.FindAll("input");
+
+        inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Start");
+        inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be("End");
+    }
+
+    [Test]
+    public void RangeInputCustomAriaLabels()
+    {
+        const string startAriaLabel = "From";
+        const string endAriaLabel = "To";
+        var comp = Context.Render<MudRangeInput<string>>(parameters => parameters
+            .Add(x => x.StartInputAriaLabel, startAriaLabel)
+            .Add(x => x.EndInputAriaLabel, endAriaLabel));
+        var inputs = comp.FindAll("input");
+
+        inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(startAriaLabel);
+        inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(endAriaLabel);
     }
 }

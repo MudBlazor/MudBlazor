@@ -242,6 +242,34 @@ namespace MudBlazor
         /// </remarks>
         public bool Touched { get; protected set; }
 
+        // While set, a programmatic / parameter-driven value sync is running and the gated Touched /
+        // FieldChanged writes are skipped - those reflect genuine user interaction only. This stops a
+        // non-default initial or async-loaded value from touching the input (and its MudForm) on load
+        // (#13064, #13246). It is toggled ONLY by SuppressInteractionEffectsWhileAsync, and only around
+        // AWAITED parameter-change handlers, so it is always restored before the awaiting caller resumes.
+        // Fire-and-forget value setters (the date/time pickers) deliberately do NOT use this flag - they
+        // pass suppression as an explicit argument instead, so it can never be left set across their awaits
+        // and swallow a concurrent user interaction. Validation is intentionally not suppressed.
+        private protected bool _suppressInteractionEffects;
+
+        /// <summary>
+        /// Runs a programmatic or parameter-driven value/text sync without marking this component
+        /// <see cref="Touched"/> or firing <see cref="FieldChanged"/> - those reflect user interaction only.
+        /// </summary>
+        private protected async Task SuppressInteractionEffectsWhileAsync(Func<Task> synchronize)
+        {
+            var previous = _suppressInteractionEffects;
+            _suppressInteractionEffects = true;
+            try
+            {
+                await synchronize();
+            }
+            finally
+            {
+                _suppressInteractionEffects = previous;
+            }
+        }
+
         #region MudForm Validation
 
         /// <summary>
@@ -424,7 +452,7 @@ namespace MudBlazor
                     ValidationErrors = errors;
                     await ErrorState.SetValueAsync(errors.Count > 0);
                     await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
-                    await ErrorIdState.SetValueAsync(HasErrors ? Guid.NewGuid().ToString() : null);
+                    await UpdateErrorIdStateAsync(HasErrors);
                     Form?.Update(this);
                     StateHasChanged();
                 }
@@ -671,6 +699,7 @@ namespace MudBlazor
             await ErrorState.SetValueAsync(false);
             ValidationErrors.Clear();
             await ErrorTextState.SetValueAsync(null);
+            await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
             await InvokeAsync(StateHasChanged);
         }
@@ -731,6 +760,7 @@ namespace MudBlazor
                     //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
                     await ErrorState.SetValueAsync(hasError);
                     await ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null);
+                    await UpdateErrorIdStateAsync(hasError);
 
                     ValidationErrors.Clear();
                     ValidationErrors.AddRange(errorMessages);
@@ -742,6 +772,15 @@ namespace MudBlazor
             {
                 Logger.LogError(exception, "An unexpected exception occurred: {ExceptionMessage}", exception.Message);
             }
+        }
+
+        private Task UpdateErrorIdStateAsync(bool hasErrors)
+        {
+            var errorId = hasErrors
+                ? ErrorIdState.RenderValue ?? ErrorIdState.Value ?? Guid.NewGuid().ToString()
+                : ErrorIdState.RenderValue;
+
+            return ErrorIdState.SetValueAsync(errorId);
         }
 
         /// <summary>
