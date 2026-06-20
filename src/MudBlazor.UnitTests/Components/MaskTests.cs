@@ -1109,9 +1109,6 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadText.Should().Be(autofillValue);
         }
 
-        /// <summary>
-        /// A masked MudTextField must forward keyup to the user's OnKeyUp handler (#9829, #5512).
-        /// </summary>
         [Test]
         public async Task TextFieldWithMask_OnKeyUp_ShouldFire()
         {
@@ -1127,10 +1124,6 @@ namespace MudBlazor.UnitTests.Components
             receivedKey.Should().Be("1");
         }
 
-        /// <summary>
-        /// A masked MudTextField must forward keydown to the user's OnKeyDown handler (#9829, #5512), and the
-        /// callback's parent rerender must not clobber subsequent typing.
-        /// </summary>
         [Test]
         public async Task TextFieldWithMask_OnKeyDown_ShouldFireAndPreserveTyping()
         {
@@ -1151,9 +1144,6 @@ namespace MudBlazor.UnitTests.Components
             mask.ReadText.Should().Be("12");
         }
 
-        /// <summary>
-        /// MudMask must raise its inherited OnKeyUp callback when the input emits a keyup.
-        /// </summary>
         [Test]
         public async Task Mask_OnKeyUp_ShouldFire()
         {
