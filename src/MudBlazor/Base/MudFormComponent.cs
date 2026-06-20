@@ -242,6 +242,34 @@ namespace MudBlazor
         /// </remarks>
         public bool Touched { get; protected set; }
 
+        // While set, a programmatic / parameter-driven value sync is running and the gated Touched /
+        // FieldChanged writes are skipped - those reflect genuine user interaction only. This stops a
+        // non-default initial or async-loaded value from touching the input (and its MudForm) on load
+        // (#13064, #13246). It is toggled ONLY by SuppressInteractionEffectsWhileAsync, and only around
+        // AWAITED parameter-change handlers, so it is always restored before the awaiting caller resumes.
+        // Fire-and-forget value setters (the date/time pickers) deliberately do NOT use this flag - they
+        // pass suppression as an explicit argument instead, so it can never be left set across their awaits
+        // and swallow a concurrent user interaction. Validation is intentionally not suppressed.
+        private protected bool _suppressInteractionEffects;
+
+        /// <summary>
+        /// Runs a programmatic or parameter-driven value/text sync without marking this component
+        /// <see cref="Touched"/> or firing <see cref="FieldChanged"/> - those reflect user interaction only.
+        /// </summary>
+        private protected async Task SuppressInteractionEffectsWhileAsync(Func<Task> synchronize)
+        {
+            var previous = _suppressInteractionEffects;
+            _suppressInteractionEffects = true;
+            try
+            {
+                await synchronize();
+            }
+            finally
+            {
+                _suppressInteractionEffects = previous;
+            }
+        }
+
         #region MudForm Validation
 
         /// <summary>

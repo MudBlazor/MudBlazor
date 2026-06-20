@@ -192,6 +192,7 @@ namespace MudBlazor
                 await DataGrid.ReloadServerData();
 
             DataGrid.GroupItems();
+            await DataGrid.NotifyFilterChangedAsync();
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 

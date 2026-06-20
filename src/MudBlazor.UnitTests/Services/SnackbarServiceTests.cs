@@ -71,4 +71,49 @@ public class SnackbarServiceTests : BunitTest
         // Assert
         sut.ShownSnackbars.Should().ContainSingle().Which.SnackbarMessage.Text.Should().Be("Another message");
     }
+
+    [Test]
+    public void ShownSnackbars_ReturnsSnapshotWhenCollectionChanges()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        var sut = new SnackbarService(_navigationManager, timeProvider);
+        sut.Add("First message");
+
+        // Act
+        var snapshot = sut.ShownSnackbars;
+        sut.Add("Second message");
+
+        // Assert
+        snapshot.Select(x => x.SnackbarMessage.Text).Should().Equal("First message");
+    }
+
+    [Test]
+    public void Remove_SnackbarAlreadyRemoved_IsNoOp()
+    {
+        // Arrange
+        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider());
+        var snackbar = sut.Add("Test message");
+
+        // Act
+        sut.Remove(snackbar);
+        sut.Remove(snackbar); // Second removal: the snackbar is no longer in the list.
+
+        // Assert
+        sut.ShownSnackbars.Should().BeEmpty();
+    }
+
+    [Test]
+    public void RemoveByKey_NoMatchingKey_IsNoOp()
+    {
+        // Arrange
+        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider());
+        sut.Add("Test message", key: "keep");
+
+        // Act
+        sut.RemoveByKey("does-not-exist");
+
+        // Assert
+        sut.ShownSnackbars.Should().ContainSingle().Which.SnackbarMessage.Key.Should().Be("keep");
+    }
 }

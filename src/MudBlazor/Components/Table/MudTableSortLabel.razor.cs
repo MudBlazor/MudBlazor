@@ -16,6 +16,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-table-sort-label")
                 .AddClass("mud-clickable", Enabled)
+                .AddClass("mud-table-sort-label-full-width", FullWidth)
                 .AddClass(Class)
                 .Build();
 
@@ -74,6 +75,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Expands this sort label to fill the available header width.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Sorting)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// The icon for the sort button.

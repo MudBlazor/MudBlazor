@@ -131,9 +131,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [NonParallelizable]
         public async Task Select_KeyDown_WhileClosed()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -145,29 +145,29 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //cycle through matching results
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Texas"));
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
             //multi-string search
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "c", Type = "keydown" }));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "l", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Colorado"));
 
             //paused search
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Iowa"));
 
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
-            await Task.Delay(210);
+            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Ohio"));
         }
@@ -227,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
             inputs.Count.Should().Be(3);
             inputs[1].GetAttribute("value").Should().Be("Value2");
             await inputs[1].MouseDownAsync();
-            await Task.Delay(500);
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-list-item").Count.Should().BeGreaterThan(0));
             var listItems = comp.FindAll(".mud-list-item");
             foreach (var listItem in listItems)
             {
@@ -413,9 +413,8 @@ namespace MudBlazor.UnitTests.Components
 
             select.Instance.ReadValue.Should().Be(17);
             select.Instance.ReadText.Should().Be("17");
-            await Task.Delay(100);
             // BUT: we have a select with Strict="true" so the Text will not be shown because it is not in the list of selectable values
-            comp.FindComponent<MudInput<string>>().Instance.ReadValue.Should().Be(null);
+            await comp.WaitForAssertionAsync(() => comp.FindComponent<MudInput<string>>().Instance.ReadValue.Should().Be(null));
             comp.FindComponent<MudInput<string>>().Instance.InputType.Should().Be(InputType.Hidden);
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -1464,7 +1463,7 @@ namespace MudBlazor.UnitTests.Components
         [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
         public async Task MultiSelectWithCustomComparer_InitialSelectionPreservedOnFirstRender()
         {
-            var comp = Context.Render<MultiSelectWithCustomComparerInitialSelectionTest>();
+            var comp = Context.Render<MultiSelectComparerInitialTest>();
 
             // The parent's bound collection must still contain both preselected items.
             comp.Instance._selected.Should().HaveCount(2);
@@ -1508,6 +1507,53 @@ namespace MudBlazor.UnitTests.Components
             icons[1].Attributes["d"].Value.Should().Be(@checked);   // test1
             icons[3].Attributes["d"].Value.Should().Be(@unchecked); // test2
             icons[5].Attributes["d"].Value.Should().Be(@unchecked); // test3
+        }
+
+        [Test(Description = "A custom Comparer must drive value->item resolution for highlight/active-descendant, not just selection state.")]
+        public async Task SingleSelectWithCustomComparer_HighlightsKeyEqualItem()
+        {
+            var comp = Context.Render<SingleSelectComparerHighlightTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var input = comp.Find("input");
+                var latte = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Cafe Latte"));
+
+                // The bound value is a different Coffee instance with the same Key ("lat") as "Cafe Latte".
+                // Without honoring the comparer the dictionary lookup misses, so no item is highlighted
+                // and aria-activedescendant is omitted.
+                input.GetAttribute("aria-activedescendant").Should().Be(latte.Id);
+                latte.ToMarkup().Should().Contain("mud-selected-item");
+            });
+        }
+
+        [Test(Description = "A custom Comparer must drive value->item resolution for the selected-value template (shadow lookup).")]
+        public async Task SingleSelectWithCustomComparer_RendersKeyEqualItemTemplate()
+        {
+            var comp = Context.Render<SingleSelectComparerPresenterTest>();
+
+            // The bound value is a different Coffee instance with the same Key ("lat") as "Cafe Latte".
+            // Resolving it to the matching item's ChildContent requires honoring the comparer.
+            comp.Find("div.mud-select-input").TextContent.Should().Contain("Latte template");
+        }
+
+        [Test(Description = "A custom Comparer that matches no item resolves to no highlight rather than mis-highlighting.")]
+        public async Task SingleSelectWithCustomComparer_NoMatch_HighlightsNothing()
+        {
+            var comp = Context.Render<SingleSelectComparerNoMatchTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                // Menu is open, but no item's key matches the bound value, so nothing is highlighted
+                // and no active descendant is published.
+                comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0);
+                comp.FindAll("div.mud-selected-item").Should().BeEmpty();
+                comp.Find("input").GetAttribute("aria-activedescendant").Should().BeNull();
+            });
         }
 
         [Test]
@@ -2168,6 +2214,27 @@ namespace MudBlazor.UnitTests.Components
                 var listbox = comp.Find($"#{listboxId}");
                 listbox.GetAttribute("role").Should().Be("listbox");
                 listbox.GetAttribute("aria-multiselectable").Should().Be("true");
+            });
+        }
+
+        [Test]
+        public async Task Select_ShouldExposeComboboxSemantics_OnCustomPresenter()
+        {
+            var comp = Context.Render<SelectPrecedenceTest>();
+
+            var display = comp.Find("div.mud-select-input[tabindex='0']");
+            display.GetAttribute("role").Should().Be("combobox");
+            display.GetAttribute("aria-haspopup").Should().Be("listbox");
+            display.GetAttribute("aria-expanded").Should().Be("false");
+            display.GetAttribute("aria-label").Should().Be("Select");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var openDisplay = comp.Find("div.mud-select-input[tabindex='0']");
+                openDisplay.GetAttribute("aria-expanded").Should().Be("true");
+                openDisplay.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
             });
         }
 

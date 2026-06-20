@@ -219,6 +219,24 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task CreatePopoverAsync_ShouldUseInjectedTimeProviderForActivationDate()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var timeProvider = new FakeTimeProvider();
+        timeProvider.SetUtcNow(new DateTime(2024, 4, 5, 6, 7, 8, DateTimeKind.Utc));
+        var popover = new PopoverMock { Open = true };
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = CreateService(jsRuntimeMock, options, timeProvider);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+
+        // Assert
+        service.ActivePopovers.Single().ActivationDate.Should().Be(timeProvider.GetLocalNow().DateTime);
+    }
+
+    [Test]
     public async Task UpdatePopoverAsync_ShouldThrowWheNullPopover()
     {
         // Arrange
@@ -538,14 +556,16 @@ public class PopoverServiceTests
     }
 
     [Test]
+    [CancelAfter(5000)]
     public async Task CreatePopoverAsync_UpdatePopoverAsync_DestroyPopoverAsync_ShouldInvokeJS()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var popover = new PopoverMock();
         var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalEvent = new ManualResetEventSlim(false);
-        var service = CreateMockService(jsRuntimeMock.Object, popoverTimerMock.Object);
+        var batchCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timeProvider = new FakeTimeProvider();
+        var service = CreateMockService(jsRuntimeMock.Object, popoverTimerMock.Object, timeProvider);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -554,7 +574,7 @@ public class PopoverServiceTests
                 It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
+            .Callback(() => batchCompletion.TrySetResult());
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.initialize", It.IsAny<CancellationToken>(),
                 It.Is<object[]>(y => y.Length == 3)))
@@ -579,8 +599,8 @@ public class PopoverServiceTests
         popover.Open = true;
         await service.UpdatePopoverAsync(popover);
         await service.DestroyPopoverAsync(popover);
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        signalEvent.Wait(signalEventWaitTime);
+        timeProvider.Advance(service.PopoverOptions.QueueDelay);
+        await batchCompletion.Task;
 
         // Assert
         jsRuntimeMock.Verify();
@@ -588,56 +608,16 @@ public class PopoverServiceTests
     }
 
     [Test]
-    [Ignore(reason:
-        $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
-        $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
-        $"since the {nameof(PopoverJsInterop.DisposeAsync)} does it.")]
-    public async Task DisposeAsync_ShouldClearActivePopoversAndFireOnBatchTimerElapsedAsync()
-    {
-        // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalEvent = new ManualResetEventSlim(false);
-        var service = CreateMockService(jsRuntimeMock, popoverTimerMock.Object);
-        var observer = new PopoverObserverMock();
-        service.Subscribe(observer);
-
-        popoverTimerMock
-            .Setup(h => h.OnBatchTimerElapsedAfterAsync(
-                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
-                It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
-
-        await service.CreatePopoverAsync(new PopoverMock());
-        await service.CreatePopoverAsync(new PopoverMock());
-
-        // Act
-        await service.DisposeAsync();
-        // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        var eventSignaled = signalEvent.Wait(signalEventWaitTime);
-
-        // Assert
-        eventSignaled.Should().BeTrue();
-        service.ActivePopovers.Should().BeEmpty();
-        popoverTimerMock.Verify(
-            h => h.OnBatchTimerElapsedAfterAsync(
-                It.Is<IReadOnlyCollection<MudPopoverHolder>>(items => items.Count == 2),
-                It.IsAny<CancellationToken>()),
-            Times.AtLeastOnce,
-            "The periodic handler method was not called.");
-    }
-
-    [Test]
+    [CancelAfter(5000)]
     public async Task DisposeAsync_ShouldCancelDetachRange()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalBeforeEvent = new ManualResetEventSlim(false);
-        var signalAfterEvent = new ManualResetEventSlim(false);
-        var service = CreateMockService(jsRuntimeMock.Object, popoverTimerMock.Object);
+        var beforeBatchCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var afterBatchCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timeProvider = new FakeTimeProvider();
+        var service = CreateMockService(jsRuntimeMock.Object, popoverTimerMock.Object, timeProvider);
         var observer = new PopoverObserverMock();
         var popovers = new[] { new PopoverMock(), new PopoverMock(), new PopoverMock(), new PopoverMock() };
         service.Subscribe(observer);
@@ -649,16 +629,16 @@ public class PopoverServiceTests
             .Returns(async () =>
             {
                 // Call dispose immediately before the DetachRangeAsync about to fire.
+                beforeBatchCompletion.TrySetResult();
                 await service.DisposeAsync();
-            })
-            .Callback(signalBeforeEvent.Set);
+            });
 
         popoverTimerMock
             .Setup(h => h.OnBatchTimerElapsedAfterAsync(
                 It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
-            .Callback(signalAfterEvent.Set);
+            .Callback(() => afterBatchCompletion.TrySetResult());
 
         // Act
         foreach (var popover in popovers)
@@ -677,14 +657,11 @@ public class PopoverServiceTests
             await service.DestroyPopoverAsync(popover);
         }
 
-        // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        var eventBeforeSignaled = signalBeforeEvent.Wait(signalEventWaitTime);
-        var eventAfterSignaled = signalAfterEvent.Wait(signalEventWaitTime);
+        timeProvider.Advance(service.PopoverOptions.QueueDelay);
+        await beforeBatchCompletion.Task;
+        await afterBatchCompletion.Task;
 
         // Assert
-        eventBeforeSignaled.Should().BeTrue();
-        eventAfterSignaled.Should().BeTrue();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
     }
 

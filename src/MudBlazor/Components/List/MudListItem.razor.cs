@@ -300,7 +300,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            var effectiveElementId = GetEffectiveElementId();
+            var effectiveElementId = GetEffectiveElementId(ElementId);
 
             if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
@@ -403,21 +403,7 @@ namespace MudBlazor
             }
         }
 
-        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(), KeyEventKind.Down, args);
-
-        private string GetEffectiveElementId()
-        {
-            if (UserAttributes.TryGetValue("id", out var idValue) && idValue is not null)
-            {
-                var id = idValue.ToString();
-                if (!string.IsNullOrWhiteSpace(id))
-                {
-                    return id;
-                }
-            }
-
-            return ElementId;
-        }
+        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(ElementId), KeyEventKind.Down, args);
 
         private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
 

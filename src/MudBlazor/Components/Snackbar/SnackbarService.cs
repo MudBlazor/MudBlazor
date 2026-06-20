@@ -45,7 +45,7 @@ namespace MudBlazor
                 _snackBarLock.EnterReadLock();
                 try
                 {
-                    return _snackBarList.Take(Configuration.MaxDisplayedSnackbars);
+                    return _snackBarList.Take(Configuration.MaxDisplayedSnackbars).ToArray();
                 }
                 finally
                 {
