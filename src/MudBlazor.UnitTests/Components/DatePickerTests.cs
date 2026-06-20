@@ -966,14 +966,15 @@ namespace MudBlazor.UnitTests.Components
                 .Should().HaveCount(daysCount);
         }
 
-        // The "15th" always exists in the visible month and never overflows from an adjacent month,
-        // so these AutoClose tests stay deterministic regardless of today's date.
+        // AutocompleteDatePickerTest initializes to a fixed date (2025-06-10); these tests select the 15th,
+        // so a commit is observable as a change from the 10th to the 15th regardless of the run date.
         [Test]
         public async Task DatePicker_WithPickerActions_DayClickDoesNotAutoCommitOrClose()
         {
             var comp = Context.Render<AutocompleteDatePickerTest>();
             var datePicker = comp.FindComponent<MudDatePicker>();
             var initialDate = datePicker.Instance.Date;
+            initialDate.Should().Be(new DateTime(2025, 6, 10));
 
             await comp.InvokeAsync(datePicker.Instance.OpenAsync);
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
@@ -1003,8 +1004,9 @@ namespace MudBlazor.UnitTests.Components
 
             // AutoClose commits the clicked day, then waits ClosingDelay before closing.
             // Hold the click task and release the (fake) delay so the close is deterministic.
+            // The initial date is the 10th, so committing the 15th is an observable change.
             var clickTask = comp.SelectDateAsync("15");
-            await comp.WaitForAssertionAsync(() => datePicker.Instance.Date!.Value.Day.Should().Be(15));
+            await comp.WaitForAssertionAsync(() => datePicker.Instance.Date.Should().Be(new DateTime(2025, 6, 15)));
 
             await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(datePicker.Instance.ClosingDelay)));
             await clickTask;
@@ -1110,10 +1112,13 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(initialDate);
         }
 
+        // In the editable path a month/year click advances the view (Year->Month, Month->Date); the ReadOnly
+        // guard must suppress that, so the originally-shown container stays put. Asserting the view (not Date,
+        // which a month/year click never commits anyway) is what actually proves the guard.
         [Test]
-        [TestCase(OpenTo.Month)]
-        [TestCase(OpenTo.Year)]
-        public async Task StaticReadOnly_ShouldNotChangeDate_OnMonthOrYearClick(OpenTo openTo)
+        [TestCase(OpenTo.Year, "div.mud-picker-year-container", "div.mud-picker-year")]
+        [TestCase(OpenTo.Month, "div.mud-picker-month-container", "button.mud-picker-month")]
+        public async Task StaticReadOnly_MonthOrYearClick_DoesNotAdvanceView(OpenTo openTo, string container, string entry)
         {
             var initialDate = new DateTime(2025, 6, 15);
             var comp = Context.Render<MudDatePicker>(parameters => parameters
@@ -1123,16 +1128,13 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Date, initialDate));
             var picker = comp.Instance;
 
-            // Click a month/year entry other than the selected one - ReadOnly must block it.
-            if (openTo == OpenTo.Year)
-            {
-                await comp.FindAll("div.mud-picker-year")[0].ClickAsync();
-            }
-            else
-            {
-                await comp.FindAll("button.mud-picker-month")[0].ClickAsync();
-            }
+            // The requested view is shown.
+            comp.FindAll(container).Count.Should().Be(1);
 
+            await comp.FindAll(entry)[0].ClickAsync();
+
+            // ReadOnly blocks the click: the view does not advance and the date is untouched.
+            comp.FindAll(container).Count.Should().Be(1);
             picker.Date.Should().Be(initialDate);
         }
 

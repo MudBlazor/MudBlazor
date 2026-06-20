@@ -1564,23 +1564,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PointerLeave_DuringDrag_FlushesCurrentSelection()
+        public async Task PointerLeave_DuringDrag_FlushesPendingThrottledMove()
         {
+            // Fake clock we never advance: the throttle commits the first move (leading edge) but coalesces
+            // the second, leaving its color update pending until the leave flushes it. This makes the test
+            // fail if the flush is removed, rather than just re-asserting an already-committed color.
+            Context.AddFakeTimeProvider();
             var comp = Context.Render<SimpleColorPickerTest>(p => p.Add(x => x.DragEffect, true));
             var overlay = comp.Find(CssSelector);
 
-            // Position the selector with a drag move.
+            // First drag move commits immediately.
+            await overlay.PointerMoveAsync(new PointerEventArgs { OffsetX = 99.2, OffsetY = 200.98, Buttons = 1 });
+            var firstColor = new MudColor(35, 34, 50, _defaultColor);
+            comp.Instance.ColorValue.Should().Be(firstColor);
+
+            // Second move repositions the selector but is throttle-coalesced, so the committed color stays put.
             await overlay.PointerMoveAsync(new PointerEventArgs { OffsetX = 117.0, OffsetY = 140.0, Buttons = 1 });
-            var draggedColor = new MudColor(74, 70, 112, 255);
-            comp.Instance.ColorValue.Should().Be(draggedColor);
+            comp.Instance.ColorValue.Should().Be(firstColor);
 
-            // No button held: leaving the overlay is a no-op.
+            // A no-button leave is a no-op.
             await overlay.PointerLeaveAsync(new PointerEventArgs { Buttons = 0 });
-            comp.Instance.ColorValue.Should().Be(draggedColor);
+            comp.Instance.ColorValue.Should().Be(firstColor);
 
-            // Mid-drag: leaving flushes the current selection (covers the flush path) without changing it.
+            // Leaving mid-drag flushes the pending selector, so the second move's color finally lands.
             await overlay.PointerLeaveAsync(new PointerEventArgs { Buttons = 1 });
-            comp.Instance.ColorValue.Should().Be(draggedColor);
+            comp.Instance.ColorValue.Should().Be(new MudColor(74, 70, 112, 255));
         }
 
         [Test]

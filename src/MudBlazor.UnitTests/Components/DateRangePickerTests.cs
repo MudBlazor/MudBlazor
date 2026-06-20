@@ -1464,19 +1464,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SubmitAsync_WhenReadOnly_DoesNotCommitRange()
+        public async Task SubmitAsync_WhenReadOnly_DoesNotCommitCompleteRange()
         {
+            // PickerActions present means the second day click does not auto-submit, so we can build a
+            // COMPLETE pending range (both dates set) and prove the ReadOnly guard - not the null guard -
+            // is what blocks SubmitAsync.
+            RenderFragment<MudPicker<DateTime?>> pickerActions = _ => builder => { };
             var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
-                .Add(p => p.PickerVariant, PickerVariant.Static));
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.PickerActions, pickerActions));
             var picker = comp.Instance;
 
-            // Begin a selection while editable, then flip to ReadOnly before submitting.
             await comp.InvokeAsync(() => picker.ClickDayAsync(new DateTime(2025, 6, 10)));
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(new DateTime(2025, 6, 20)));
 
+            // Both dates are selected but nothing is committed yet (waiting for the OK button).
+            picker.DateRange.Should().BeNull();
+
+            // Flip to ReadOnly and submit the complete pending range: the guard must block the commit.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
             await comp.InvokeAsync(picker.Submit);
 
-            // The ReadOnly guard in SubmitAsync blocks the commit.
             picker.DateRange.Should().BeNull();
         }
 

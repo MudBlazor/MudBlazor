@@ -11,7 +11,8 @@
 @code {
     private MudDatePicker _picker = null!;
 
-    private DateTime? _date = DateTime.Today;
+    // A fixed date (not today) keeps the AutoClose commit/no-commit tests deterministic regardless of the run date.
+    private DateTime? _date = new DateTime(2025, 6, 10);
 
     [Parameter]
     public bool AutoClose { get; set; }
