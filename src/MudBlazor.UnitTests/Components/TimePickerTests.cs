@@ -443,40 +443,46 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task OnStickClick_OnMinute_SubmitsAndClosesPicker()
         {
-            var timeProvider = Context.AddFakeTimeProvider();
-            var comp = await OpenPicker(parameters => parameters.Add(x => x.OpenTo, OpenTo.Minutes));
+            // ClosingDelay = 0 removes the post-commit close timer so the minute click commits and closes
+            // deterministically, without depending on a timer settling (advancing a fake clock after the
+            // commit races the timer registration and hangs under CI load).
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Minutes)
+                .Add(x => x.ClosingDelay, 0));
             var picker = comp.FindComponent<MudTimePicker>().Instance;
 
             await comp.InvokeAsync(() => picker.SelectTimeFromStick(20, false));
 
-            // OnStickClick commits the minute, then waits ClosingDelay before closing.
-            // Hold the task and release the (fake) delay so the close is deterministic.
-            var closeTask = comp.InvokeAsync(() => picker.OnStickClick(20));
-            await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(0, 20, 0)));
+            await comp.InvokeAsync(() => picker.OnStickClick(20));
 
-            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(picker.ClosingDelay)));
-            await closeTask;
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                picker.Time.Should().Be(new TimeSpan(0, 20, 0));
+                comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
         public async Task OnStickClick_OnHour_InOnlyHoursMode_SubmitsAndCloses()
         {
-            var timeProvider = Context.AddFakeTimeProvider();
+            // OnlyHours mode has nothing left to pick, so the hour click commits and closes. ClosingDelay = 0
+            // removes the post-commit close timer so the close is deterministic, without depending on a timer
+            // settling (advancing a fake clock after the commit races the timer registration and hangs).
             var comp = await OpenPicker(parameters => parameters
                 .Add(x => x.OpenTo, OpenTo.Hours)
-                .Add(x => x.TimeEditMode, TimeEditMode.OnlyHours));
+                .Add(x => x.TimeEditMode, TimeEditMode.OnlyHours)
+                .Add(x => x.ClosingDelay, 0));
             var picker = comp.FindComponent<MudTimePicker>().Instance;
 
             await comp.InvokeAsync(() => picker.SelectTimeFromStick(9, false));
 
-            // OnlyHours mode has nothing left to pick, so the hour click commits and closes after ClosingDelay.
-            var closeTask = comp.InvokeAsync(() => picker.OnStickClick(9));
-            await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(9, 0, 0)));
+            await comp.InvokeAsync(() => picker.OnStickClick(9));
 
-            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(picker.ClosingDelay)));
-            await closeTask;
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                picker.Time.Should().Be(new TimeSpan(9, 0, 0));
+                comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            });
         }
 
         [Test]

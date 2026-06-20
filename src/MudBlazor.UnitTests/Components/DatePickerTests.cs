@@ -995,22 +995,25 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DatePicker_WithAutoClose_DayClickCommitsAndCloses()
         {
-            var timeProvider = Context.AddFakeTimeProvider();
-            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters.Add(p => p.AutoClose, true));
+            // ClosingDelay = 0 removes the post-commit close timer so the day click commits the value
+            // and closes the popover deterministically, without depending on a timer settling (the commit
+            // runs on a pooled thread, so advancing a fake clock after the commit races the timer and hangs).
+            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters
+                .Add(p => p.AutoClose, true)
+                .Add(p => p.ClosingDelay, 0));
             var datePicker = comp.FindComponent<MudDatePicker>();
 
             await comp.InvokeAsync(datePicker.Instance.OpenAsync);
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            // AutoClose commits the clicked day, then waits ClosingDelay before closing.
-            // Hold the click task and release the (fake) delay so the close is deterministic.
             // The initial date is the 10th, so committing the 15th is an observable change.
-            var clickTask = comp.SelectDateAsync("15");
-            await comp.WaitForAssertionAsync(() => datePicker.Instance.Date.Should().Be(new DateTime(2025, 6, 15)));
+            await comp.SelectDateAsync("15");
 
-            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(datePicker.Instance.ClosingDelay)));
-            await clickTask;
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                datePicker.Instance.Date.Should().Be(new DateTime(2025, 6, 15));
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
         }
 
         [Test]
