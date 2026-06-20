@@ -1159,13 +1159,6 @@ namespace MudBlazor.UnitTests.Components
             receivedKey.Should().Be("1");
         }
 
-        /// <summary>
-        /// Forwarding OnKeyDown re-renders the parent MudTextField, which echoes its Value parameter back into the
-        /// MudMask mid-insertion. Without the guard around the forwarded callback, that resync re-applies the masked
-        /// text via SetText and resets the caret to the end, dropping the next typed character (#9829).
-        /// Reproducing it requires a non-string round-tripping Value (int?) and a delimiter mask with
-        /// CleanDelimiters=true so the echoed re-masked value differs from the displayed text.
-        /// </summary>
         [Test]
         public async Task TextFieldWithMask_OnKeyDownForwarding_ShouldNotDropCharacter()
         {
