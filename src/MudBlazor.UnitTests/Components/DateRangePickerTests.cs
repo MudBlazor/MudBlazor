@@ -1487,7 +1487,7 @@ namespace MudBlazor.UnitTests.Components
 
             picker.DateRange.Should().BeNull();
         }
-        
+
         [Test]
         public void DateRangePicker_ShowAdjacentMonthDays_ShowsAdjacentDays()
         {
