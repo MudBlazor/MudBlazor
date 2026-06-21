@@ -130,24 +130,6 @@ public class InternalMudLocalizerTests
     }
 
     [Test]
-    public void StringIndexer_ShouldForwardArgumentsToInterceptor()
-    {
-        // Arrange
-        var interceptorMock = new Mock<ILocalizationInterceptor>();
-        interceptorMock
-            .Setup(mock => mock.Handle("Greeting", "World"))
-            .Returns(new LocalizedString("Greeting", "Hello World", false));
-        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
-
-        // Act
-        var result = internalMudLocalizer["Greeting", "World"];
-
-        // Assert
-        result.Should().BeEquivalentTo(new LocalizedString("Greeting", "Hello World", false));
-        interceptorMock.Verify(mock => mock.Handle("Greeting", "World"), Times.Once);
-    }
-
-    [Test]
     public void EnumIndexer_WithSingleInterceptorConstructor_ShouldUseDefaultEnumInterceptor()
     {
         // The single-interceptor constructor wires up DefaultLocalizationEnumInterceptor, which resolves

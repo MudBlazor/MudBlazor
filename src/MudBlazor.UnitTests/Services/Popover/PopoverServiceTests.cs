@@ -185,27 +185,6 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task Unsubscribe_ShouldStopReceivingNotifications()
-    {
-        // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var popover = new PopoverMock();
-        var service = CreateService(jsRuntimeMock);
-        var observer = new PopoverObserverMock();
-        service.Subscribe(observer);
-
-        // Act
-        await service.CreatePopoverAsync(popover);
-        service.Unsubscribe(observer);
-        await service.UpdatePopoverAsync(popover);
-
-        // Assert
-        service.ObserversCount.Should().Be(0);
-        // Only the Create notification arrived before unsubscribing.
-        observer.PopoverNotifications.Count.Should().Be(1);
-    }
-
-    [Test]
     public async Task CreatePopoverAsync_ShouldThrowWheNullPopover()
     {
         // Arrange

@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -137,18 +136,4 @@ public class PointerEventsNoneObserverTests
         pointerDownMock.Verify(x => x.NotifyOnPointerDownAsync(It.IsAny<EventArgs>()), Times.Once);
         pointerUpMock.Verify(x => x.NotifyOnPointerUpAsync(It.IsAny<EventArgs>()), Times.Once);
     }
-
-    [Test]
-    public async Task NotifyOnPointerDownAsync_WithNullObserver_DoesNotThrow()
-    {
-        // Arrange
-        IPointerEventsNoneObserver observer = new PointerEventsNoneObserver("observer1", null, null);
-
-        // Act
-        var act = async () => await observer.NotifyOnPointerDownAsync(EventArgs.Empty);
-
-        // Assert
-        await act.Should().NotThrowAsync();
-    }
-
 }

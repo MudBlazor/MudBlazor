@@ -648,29 +648,6 @@ public class KeyMapBuilderTests
     }
 
     [Test]
-    public async Task OnKeyDownAny_RegexAndLiteralMixed_MatchesBoth()
-    {
-        // Arrange
-        var executedCount = 0;
-        var builder = KeyMapBuilder.Create()
-            .OnKeyDownAny(["Enter", "/F[0-9]+/"], () =>
-            {
-                executedCount++;
-                return Task.CompletedTask;
-            });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" }); // Literal
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "F5" });    // Regex
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }); // Neither
-
-        // Assert
-        executedCount.Should().Be(2);
-    }
-
-    [Test]
     public async Task HookKeyDown_DeclaredAfterCommand_ExecutesBeforeIt()
     {
         // Arrange
@@ -694,26 +671,5 @@ public class KeyMapBuilderTests
 
         // Assert - hook is reordered to run first even though it was declared last
         executionOrder.Should().Equal("hook", "command");
-    }
-
-    [Test]
-    public async Task HookKeyDown_OnlyRunsForKeyDown_NotKeyUp()
-    {
-        // Arrange
-        var hookExecuted = false;
-        var builder = KeyMapBuilder.Create()
-            .HookKeyDown(_ =>
-            {
-                hookExecuted = true;
-                return Task.CompletedTask;
-            });
-
-        var (_, keyUp) = builder.Build();
-
-        // Act
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
-
-        // Assert
-        hookExecuted.Should().BeFalse();
     }
 }

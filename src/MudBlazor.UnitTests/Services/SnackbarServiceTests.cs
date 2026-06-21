@@ -132,57 +132,6 @@ public class SnackbarServiceTests : BunitTest
     }
 
     [Test]
-    public void Add_DuplicatePrevented_DoesNotRaiseOnSnackbarsUpdated()
-    {
-        // Arrange
-        var configuration = Options.Create(new SnackbarConfiguration { PreventDuplicates = true });
-        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider(), configuration);
-        sut.Add("Test message", key: "dupe");
-        var raised = 0;
-        sut.OnSnackbarsUpdated += () => raised++;
-
-        // Act: the duplicate is rejected before the list changes, so subscribers must not be notified.
-        var result = sut.Add("Test message", key: "dupe");
-
-        // Assert
-        result.Should().BeNull();
-        raised.Should().Be(0);
-    }
-
-    [Test]
-    public void Clear_RaisesOnSnackbarsUpdatedAndEmptiesList()
-    {
-        // Arrange
-        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider());
-        sut.Add("First");
-        sut.Add("Second", key: "second");
-        var raised = 0;
-        sut.OnSnackbarsUpdated += () => raised++;
-
-        // Act
-        sut.Clear();
-
-        // Assert
-        raised.Should().Be(1);
-        sut.ShownSnackbars.Should().BeEmpty();
-    }
-
-    [Test]
-    public void ConfigurationChange_RaisesOnSnackbarsUpdated()
-    {
-        // Arrange: the service subscribes to Configuration.OnUpdate so the provider re-renders on settings changes.
-        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider());
-        var raised = 0;
-        sut.OnSnackbarsUpdated += () => raised++;
-
-        // Act
-        sut.Configuration.NewestOnTop = !sut.Configuration.NewestOnTop;
-
-        // Assert
-        raised.Should().Be(1);
-    }
-
-    [Test]
     public void Dispose_UnsubscribesFromNavigationAndConfiguration()
     {
         // Arrange

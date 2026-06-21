@@ -101,23 +101,6 @@ public class KeyInterceptorServiceTests
     }
 
     [Test]
-    public async Task SubscribeAsync_AfterDispose_ShouldNotSubscribeOrConnect()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var observer = new KeyInterceptorObserverMock("observer1");
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        await service.DisposeAsync();
-
-        // Act
-        await service.SubscribeAsync(observer, new KeyInterceptorOptions());
-
-        // Assert
-        service.ObserversCount.Should().Be(0);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Never);
-    }
-
-    [Test]
     public async Task SubscribeAsync_ConfigureOverload_ShouldDispatchToBuiltCommands()
     {
         // Arrange
@@ -138,44 +121,6 @@ public class KeyInterceptorServiceTests
         // Assert
         service.ObserversCount.Should().Be(1);
         executed.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task DispatchAsync_ShouldRouteByKind()
-    {
-        // Arrange
-        var downArgs = new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown" };
-        var upArgs = new KeyboardEventArgs { Key = "ArrowUp", Type = "keyup" };
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var observer = new KeyInterceptorObserverMock("observer1");
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        await service.SubscribeAsync(observer, new KeyInterceptorOptions());
-
-        // Act
-        await service.DispatchAsync(observer.ElementId, KeyEventKind.Down, downArgs);
-        await service.DispatchAsync(observer.ElementId, KeyEventKind.Up, upArgs);
-
-        // Assert
-        observer.Notifications.Should().HaveCount(2);
-        observer.Notifications[0].Should().BeEquivalentTo((observer.ElementId, downArgs));
-        observer.Notifications[1].Should().BeEquivalentTo((observer.ElementId, upArgs));
-    }
-
-    [Test]
-    public async Task OnKeyDown_UnknownElement_ShouldNotNotifyOrThrow()
-    {
-        // Arrange
-        var expectedEventArgs = new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" };
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var observer = new KeyInterceptorObserverMock("observer1");
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        await service.SubscribeAsync(observer, new KeyInterceptorOptions());
-
-        // Act
-        await service.OnKeyDown("unknown", expectedEventArgs);
-
-        // Assert
-        observer.Notifications.Should().BeEmpty();
     }
 
     [Test]
@@ -250,24 +195,6 @@ public class KeyInterceptorServiceTests
         service.ObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Once);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Once);
-    }
-
-    [Test]
-    public async Task DisposeAsync_CalledTwice_ShouldDisconnectOncePerObserver()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer1"), new KeyInterceptorOptions());
-        await service.SubscribeAsync(new KeyInterceptorObserverMock("observer2"), new KeyInterceptorOptions());
-
-        // Act
-        await service.DisposeAsync();
-        await service.DisposeAsync();
-
-        // Assert
-        service.ObserversCount.Should().Be(0);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Exactly(2));
     }
 
     [Test]

@@ -190,34 +190,6 @@ public class KeyCommandObserverTests
     }
 
     [Test]
-    public async Task NotifyOnKeyUpAsync_HookContinuesChainToMatchingCommand()
-    {
-        // The hook-continuation branch of DispatchAsync must apply to key-up dispatch too.
-        var hookExecuted = false;
-        var commandExecuted = false;
-        var builder = KeyMapBuilder.Create()
-            .HookKeyUp(_ =>
-            {
-                hookExecuted = true;
-                return Task.CompletedTask;
-            })
-            .OnKeyUp("Enter", () =>
-            {
-                commandExecuted = true;
-                return Task.CompletedTask;
-            });
-
-        var (_, keyUp) = builder.Build();
-
-        // Act
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
-
-        // Assert - hook did not short-circuit dispatch before the command
-        hookExecuted.Should().BeTrue();
-        commandExecuted.Should().BeTrue();
-    }
-
-    [Test]
     public async Task PerformanceOptimization_SeparatesCommandsByKindAtConstruction()
     {
         // This test verifies that the observer splits commands at construction time

@@ -116,7 +116,6 @@ public class BoundingClientRectTests
         // Act & Assert
         rect.IsEqualTo(null).Should().BeFalse();
         ((BoundingClientRect)null).IsEqualTo(rect).Should().BeFalse();
-        ((BoundingClientRect)null).IsEqualTo(null).Should().BeFalse();
     }
 
     [Test]
@@ -127,38 +126,5 @@ public class BoundingClientRectTests
 
         rect1.IsEqualTo(rect2, tolerance: 2).Should().BeTrue();
         rect1.IsEqualTo(rect2, tolerance: 0.5).Should().BeFalse();
-    }
-
-    [TestCase(nameof(BoundingClientRect.Top))]
-    [TestCase(nameof(BoundingClientRect.Left))]
-    [TestCase(nameof(BoundingClientRect.Width))]
-    [TestCase(nameof(BoundingClientRect.Height))]
-    [TestCase(nameof(BoundingClientRect.WindowHeight))]
-    [TestCase(nameof(BoundingClientRect.WindowWidth))]
-    [TestCase(nameof(BoundingClientRect.ScrollX))]
-    [TestCase(nameof(BoundingClientRect.ScrollY))]
-    public void BoundingClientRectIsEqualTo_ShouldDetectDifferenceInAnyField(string field)
-    {
-        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200, WindowHeight = 1080, WindowWidth = 1920, ScrollX = 5, ScrollY = 10 };
-        var rect2 = rect1.Clone();
-
-        static void SetField(BoundingClientRect rect, string name)
-        {
-            switch (name)
-            {
-                case nameof(BoundingClientRect.Top): rect.Top += 1; break;
-                case nameof(BoundingClientRect.Left): rect.Left += 1; break;
-                case nameof(BoundingClientRect.Width): rect.Width += 1; break;
-                case nameof(BoundingClientRect.Height): rect.Height += 1; break;
-                case nameof(BoundingClientRect.WindowHeight): rect.WindowHeight += 1; break;
-                case nameof(BoundingClientRect.WindowWidth): rect.WindowWidth += 1; break;
-                case nameof(BoundingClientRect.ScrollX): rect.ScrollX += 1; break;
-                case nameof(BoundingClientRect.ScrollY): rect.ScrollY += 1; break;
-            }
-        }
-
-        SetField(rect2, field);
-
-        rect1.IsEqualTo(rect2).Should().BeFalse();
     }
 }

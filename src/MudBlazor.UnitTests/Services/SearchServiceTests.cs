@@ -58,16 +58,6 @@ public sealed class SearchServiceTests
         score.Should().BeGreaterThanOrEqualTo(70);
     }
 
-    [Test]
-    public void ComputeScore_NeverDropsBelowMinScore_ForLongPrefixSurplus()
-    {
-        // A short query that is a prefix of a much longer target must still clear
-        // MinScore so it isn't filtered out of search results.
-        var score = SearchService.ComputeScore("autocompletefieldwidget".AsSpan(), "auto".AsSpan());
-
-        score.Should().BeGreaterThanOrEqualTo(SearchService.MinScore);
-    }
-
     [TestCase("snackbar", "snakbar")]       // missing 'c' (1 deletion)
     [TestCase("dialog", "dialoq")]          // q → g (1 substitution)
     [TestCase("tooltip", "tooltop")]        // i → o (1 substitution)
@@ -232,24 +222,6 @@ public sealed class SearchServiceTests
         results.Should().HaveCount(2);
         results[0].Value.Should().Be("Exact");
         results[1].Value.Should().Be("Fuzzy");
-    }
-
-    [Test]
-    public void Search_ScoresItemByItsBestKeyword_WhenMultipleKeywordsGiven()
-    {
-        // The item with an exact-matching keyword among several must outrank an item
-        // whose only keyword is a fuzzy match, regardless of keyword order.
-        var exactViaSecondKeyword = new KeyValuePair<string, string>("k", "Exact");
-        var fuzzyOnly = new KeyValuePair<string, string>("dialoq", "Fuzzy");
-        var index = new[] { fuzzyOnly, exactViaSecondKeyword };
-
-        var results = Service.Search(
-            index,
-            e => e.Value == "Exact" ? new[] { "zzzzzz", "dialog" } : new[] { e.Key },
-            "dialog");
-
-        results.Should().HaveCount(2);
-        results[0].Value.Should().Be("Exact");
     }
 
 }

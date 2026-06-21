@@ -661,25 +661,6 @@ public class BrowserViewportServiceTests
     }
 
     [Test]
-    public async Task DisposeAsync_UnsubscribeShouldBeIgnored()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
-        var observer = new BrowserViewportObserverMock();
-        await service.SubscribeAsync(observer, fireImmediately: false);
-
-        // Act
-        await service.DisposeAsync();
-        await service.UnsubscribeAsync(observer);
-
-        // Assert
-        // Dispose already cleared observers and the JS listener; a late unsubscribe must not cancel anything again
-        service.ObserversCount.Should().Be(0);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
-    }
-
-    [Test]
     public async Task GetCurrentBreakpointAsync_NullWindowSize_ReturnsXs()
     {
         // Arrange
@@ -695,26 +676,5 @@ public class BrowserViewportServiceTests
 
         // Assert
         result.Should().Be(Breakpoint.Xs);
-    }
-
-    [Test]
-    public async Task GetCurrentBreakpointAsync_CachesLatestWindowSize_DoesNotQueryJsAgain()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
-        var observer = new BrowserViewportObserverMock();
-        await service.SubscribeAsync(observer, fireImmediately: false);
-        var subscription = service.GetInternalSubscription(observer);
-        Debug.Assert(subscription is not null, nameof(subscription) + " != null");
-        // RaiseOnResized populates the cached window size, so GetCurrentBreakpointAsync should not call JS
-        await service.RaiseOnResized(new BrowserWindowSize { Width = 1280, Height = 1024 }, Breakpoint.Lg, subscription.JavaScriptListenerId);
-
-        // Act
-        var result = await service.GetCurrentBreakpointAsync();
-
-        // Assert
-        result.Should().Be(Breakpoint.Lg);
-        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
     }
 }

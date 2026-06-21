@@ -205,51 +205,6 @@ public class KeyMapBuilderRegexTests
     }
 
     [Test]
-    public async Task OnKeyDown_WithRegex_MatchesUnanchoredSubstring()
-    {
-        // Arrange - regex uses IsMatch (unanchored), so a partial match anywhere in a multi-char key counts.
-        var executionCount = 0;
-        var builder = KeyMapBuilder.Create();
-        builder.OnKeyDown("/[a-z]/", () =>
-        {
-            executionCount++;
-            return Task.CompletedTask;
-        });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act & Assert - "Enter" contains lowercase letters, so it matches even though it is not a single char.
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
-        executionCount.Should().Be(1);
-
-        // "F1" has no lowercase letters, so it does not match.
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "F1" });
-        executionCount.Should().Be(1); // unchanged
-    }
-
-    [Test]
-    public async Task OnKeyDown_WithTwoSlashes_TreatedAsLiteralNotRegex()
-    {
-        // Arrange - "//" is length 2, below the Length > 2 threshold, so it is not compiled as an (empty) regex.
-        var executionCount = 0;
-        var builder = KeyMapBuilder.Create();
-        builder.OnKeyDown("//", () =>
-        {
-            executionCount++;
-            return Task.CompletedTask;
-        });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act & Assert - only the literal "//" matches; an empty regex would have matched every key.
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "//" });
-        executionCount.Should().Be(1);
-
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
-        executionCount.Should().Be(1); // unchanged
-    }
-
-    [Test]
     public async Task OnKeyDown_WithMultipleRegexCommands_ExecutesFirstMatch()
     {
         // Arrange

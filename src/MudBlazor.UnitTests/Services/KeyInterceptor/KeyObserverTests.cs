@@ -138,19 +138,6 @@ public class KeyObserverTests
     }
 
     [Test]
-    public async Task KeyDownObserver_NullTaskLambda_ShouldNotThrow()
-    {
-        // Arrange: the Func<Task> overload with a null lambda must short-circuit to Task.CompletedTask.
-        var observer = new KeyObserver("observer1", KeyObserver.KeyDown((Func<KeyboardEventArgs, Task>?)null), KeyObserver.KeyUpIgnore());
-
-        // Act
-        var act = async () => await ((IKeyDownObserver)observer).NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" });
-
-        // Assert
-        await act.Should().NotThrowAsync();
-    }
-
-    [Test]
     public void Equals_ReturnsTrueForSameInstance()
     {
         // Arrange

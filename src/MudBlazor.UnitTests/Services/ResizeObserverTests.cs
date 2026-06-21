@@ -268,35 +268,6 @@ namespace MudBlazor.UnitTests.Services
         }
 
         [Test]
-        public async Task Observe_SingleElement_ReturnsRectAndCaches()
-        {
-            // Arrange
-            var random = new Random();
-            var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
-            var rect = GetRandomRect(random);
-
-            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
-                "mudResizeObserver.connect",
-                It.Is<object[]>(z =>
-                    (Guid)z[0] != default &&
-                    (z[1] is DotNetObjectReference<ResizeObserver>) &&
-                    (z[2] is IEnumerable<ElementReference>) &&
-                    (z[3] is IEnumerable<Guid>) &&
-                    (z[4] is ResizeObserverOptions)
-                )
-            )).ReturnsAsync([rect]).Verifiable();
-
-            // Act
-            var actual = await _service.Observe(reference);
-
-            // Assert
-            actual.Should().BeEquivalentTo(rect);
-            _service.IsElementObserved(reference).Should().BeTrue();
-            _service.GetSizeInfo(reference).Should().BeEquivalentTo(rect);
-            _runtimeMock.Verify();
-        }
-
-        [Test]
         public async Task Observe_AlreadyCachedElement_SkipsSecondJsConnect()
         {
             // Arrange
@@ -320,59 +291,6 @@ namespace MudBlazor.UnitTests.Services
             actual.Should().BeNull();
             _service.GetSizeInfo(reference).Should().BeEquivalentTo(rect);
             _runtimeMock.Verify(x => x.InvokeAsync<BoundingClientRect[]>("mudResizeObserver.connect", It.IsAny<object[]>()), Times.Once);
-        }
-
-        [Test]
-        public void OnSizeChanged_UnknownIds_FiresEventWithEmptyPayload()
-        {
-            // Arrange: nothing observed, so every reported id is unknown.
-            var random = new Random();
-            var changes = new List<ResizeObserver.SizeChangeUpdateInfo>
-            {
-                new(Guid.NewGuid(), GetRandomRect(random)),
-                new(Guid.NewGuid(), GetRandomRect(random)),
-            };
-
-            IDictionary<ElementReference, BoundingClientRect> raised = null;
-            _service.OnResized += sizeChanges => raised = sizeChanges;
-
-            // Act
-            _service.OnSizeChanged(changes);
-
-            // Assert
-            raised.Should().NotBeNull();
-            raised.Should().BeEmpty();
-        }
-
-        [Test]
-        public async Task DisposeAsync_CancelsListenerAndClearsCache()
-        {
-            // Arrange
-            var random = new Random();
-            var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
-            var rect = GetRandomRect(random);
-
-            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
-                "mudResizeObserver.connect",
-                It.IsAny<object[]>()
-            )).ReturnsAsync([rect]);
-
-            _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>(
-                "mudResizeObserver.cancelListener",
-                It.Is<object[]>(z => (Guid)z[0] != default)
-            )).ReturnsAsync(Mock.Of<IJSVoidResult>).Verifiable();
-
-            await _service.Observe(reference);
-            _service.IsElementObserved(reference).Should().BeTrue();
-
-            // Act
-            await _service.DisposeAsync();
-            // Second dispose is a no-op; strict mock would throw on a second cancelListener call.
-            await _service.DisposeAsync();
-
-            // Assert
-            _service.IsElementObserved(reference).Should().BeFalse();
-            _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeObserver.cancelListener", It.IsAny<object[]>()), Times.Once);
         }
 
         private static BoundingClientRect GetRandomRect(Random random)

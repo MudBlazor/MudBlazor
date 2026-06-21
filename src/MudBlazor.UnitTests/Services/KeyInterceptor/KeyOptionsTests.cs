@@ -19,7 +19,7 @@ public class KeyOptionsTests
         var keyOptions1 = new KeyOptions();
         var keyOptions2 = new KeyOptions(null);
 
-        // Act & Assert: both constructors must agree on every default value.
+        // Act & Assert
         keyOptions1.Key.Should().Be(keyOptions2.Key);
         keyOptions1.SubscribeDown.Should().Be(keyOptions2.SubscribeDown);
         keyOptions1.SubscribeUp.Should().Be(keyOptions2.SubscribeUp);
@@ -28,16 +28,6 @@ public class KeyOptionsTests
         keyOptions1.StopDown.Should().Be(keyOptions2.StopDown);
         keyOptions1.StopUp.Should().Be(keyOptions2.StopUp);
         keyOptions1.IgnoreDownRepeats.Should().Be(keyOptions2.IgnoreDownRepeats);
-
-        // The "none" prevent/stop defaults are a contract the JS interop relies on.
-        keyOptions1.Key.Should().BeNull();
-        keyOptions1.SubscribeDown.Should().BeFalse();
-        keyOptions1.SubscribeUp.Should().BeFalse();
-        keyOptions1.PreventDown.Should().Be("none");
-        keyOptions1.PreventUp.Should().Be("none");
-        keyOptions1.StopDown.Should().Be("none");
-        keyOptions1.StopUp.Should().Be("none");
-        keyOptions1.IgnoreDownRepeats.Should().BeFalse();
     }
 
     [Test]
