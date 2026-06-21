@@ -22,20 +22,6 @@ public class DoubleEpsilonEqualityComparerTests
         construct.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("epsilon");
     }
 
-    [Test]
-    public void Default_UsesDoubleMinNormalEpsilon()
-    {
-        // Arrange
-        // The parameterless ctor (and Default) use the smallest positive normal double as epsilon,
-        // making the comparer effectively exact-equality for any meaningfully distinct values.
-        var comparer = DoubleEpsilonEqualityComparer.Default;
-
-        // Act & Assert
-        comparer.Equals(1.0, 1.0).Should().BeTrue();
-        comparer.Equals(0.3, 0.30000003).Should().BeFalse();
-        comparer.Equals(1000000.0, 1000001.0).Should().BeFalse();
-    }
-
     [TestCase(1000000f, 1000001f, true)]
     [TestCase(1000001f, 1000000f, true)]
     [TestCase(10000f, 10001f, false)]

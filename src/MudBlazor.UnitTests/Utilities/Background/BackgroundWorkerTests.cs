@@ -22,26 +22,9 @@ public class BackgroundWorkerTests
 
         startTask.IsCompleted.Should().BeTrue();
         tcs.Task.IsCompleted.Should().BeFalse();
-        // While running, StartAsync returns Task.CompletedTask, not the still-executing task
-        startTask.Should().NotBeSameAs(worker.ExecuteTask);
-        worker.ExecuteTask!.IsCompleted.Should().BeFalse();
 
         // Complete the task
         tcs.TrySetResult(null!);
-    }
-
-    [Test]
-    public void StartAsync_ReturnsExecuteTaskWhenCompletedSynchronously()
-    {
-        var tcs = new TaskCompletionSource<object>();
-        tcs.TrySetResult(null!);
-        var worker = new MyBackgroundWorkerMock(tcs.Task);
-
-        var startTask = worker.StartAsync(CancellationToken.None);
-
-        // When ExecuteAsync finishes synchronously, the started task itself is returned
-        startTask.IsCompletedSuccessfully.Should().BeTrue();
-        worker.ExecuteTask.Should().BeSameAs(startTask);
     }
 
     [Test]

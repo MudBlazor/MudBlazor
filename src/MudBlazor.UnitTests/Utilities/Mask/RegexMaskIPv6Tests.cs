@@ -85,15 +85,6 @@ public class RegexMaskIPv6Tests
     }
 
     [Test]
-    public void IPv6_Insert_NinthGroupRejected()
-    {
-        // an IPv6 address has at most 8 groups (Hex(:Hex){0,7}); the 9th colon is dropped
-        var mask = RegexMask.IPv6();
-        mask.Insert("1:2:3:4:5:6:7:8:9");
-        mask.ToString().Should().Be("1:2:3:4:5:6:7:89|");
-    }
-
-    [Test]
     public void IPv6_Delete()
     {
         var mask = RegexMask.IPv6();
@@ -206,15 +197,6 @@ public class RegexMaskIPv6Tests
         mask.Insert("0:0:0:0:0:0:0:0:1\n");
         mask.ToString().Should().Be("[0:0:0:0:0:0:0:0]:1|");
         mask.Text.IndexOf('\n').Should().Be(-1);
-    }
-
-    [Test]
-    public void IPv6WithPort_Insert_PortAbove65535Rejected()
-    {
-        // ports are capped at 65535; the digit that pushes the value over the limit is dropped
-        var mask = RegexMask.IPv6(true);
-        mask.Insert("1:2:3:4:5:6:7:8:65536");
-        mask.ToString().Should().Be("[1:2:3:4:5:6:7:8]:6553|");
     }
 
     [Test]

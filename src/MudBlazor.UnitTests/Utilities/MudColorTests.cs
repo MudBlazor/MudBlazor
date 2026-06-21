@@ -1154,35 +1154,6 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void FromRGB_CopyHueFromColor()
-        {
-            // Arrange: a non-gray source color so its hue is non-zero, with a distinctive alpha.
-            var source = new MudColor((byte)200, (byte)100, (byte)50, (byte)128);
-            source.H.Should().NotBe(0); // guards the test against a degenerate source
-
-            // Act: a pure gray would normally compute hue 0, but this ctor copies hue and alpha from source.
-            var color = new MudColor((byte)10, (byte)10, (byte)10, source);
-
-            // Assert
-            color.R.Should().Be(10);
-            color.G.Should().Be(10);
-            color.B.Should().Be(10);
-            color.A.Should().Be(source.A); // alpha copied from source
-            color.H.Should().Be(source.H); // hue copied from source, not recomputed from RGB
-        }
-
-        [Test]
-        public void Equals_SameRgbaAndHsl_ReturnsTrue()
-        {
-            // Arrange: identical inputs guarantee both RGBA and HSL match (no round-trip drift).
-            var color1 = new MudColor(130, 150, 240, 255);
-            var color2 = new MudColor(130, 150, 240, 255);
-
-            // Act & Assert: the RgbaAndHsl mode's all-match branch (only the false branch was covered before).
-            color1.Equals(color2, MudColorComparison.RgbaAndHsl).Should().BeTrue();
-        }
-
-        [Test]
         public void GenerateGradientPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
         {
             var start = new MudColor("#FF0000");

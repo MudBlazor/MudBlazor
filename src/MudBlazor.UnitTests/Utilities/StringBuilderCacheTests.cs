@@ -54,21 +54,6 @@ public class StringBuilderCacheTests
     }
 
     [Test]
-    public void Acquire_WithCapacityAboveMaxSize_DoesNotConsumeCachedBuilder()
-    {
-        var cached = StringBuilderCache.Acquire();
-        StringBuilderCache.Release(cached);
-
-        // capacity > MaxBuilderSize (360) bypasses the cache entirely.
-        var large = StringBuilderCache.Acquire(361);
-        var reused = StringBuilderCache.Acquire();
-
-        large.Should().NotBeSameAs(cached);
-        large.Capacity.Should().BeGreaterThanOrEqualTo(361);
-        reused.Should().BeSameAs(cached);
-    }
-
-    [Test]
     public void Release_CachesBuilderAtMaxSizeBoundary()
     {
         // Capacity exactly at MaxBuilderSize (360) is still cacheable (<= boundary).

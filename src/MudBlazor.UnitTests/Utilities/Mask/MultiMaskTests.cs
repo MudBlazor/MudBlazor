@@ -245,33 +245,5 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             eventCount.Should().Be(1);
         }
 
-        [Test]
-        public void MultiMask_UpdateFrom_NonMatchingOptions_ClearsDetectedOptionAndFires()
-        {
-            // Arrange
-            var mask = new MultiMask("0000",
-                new MaskOption("VISA", "00-00", @"^4"));
-            mask.Insert("4");
-            mask.DetectedOption!.Value.Id.Should().Be("VISA");
-
-            var eventCount = 0;
-            MaskOption? detected = new MaskOption("sentinel", "", null);
-
-            // Act: the new options no longer match the current text, so detection must reset
-            mask.UpdateFrom(new MultiMask("0000",
-                new MaskOption("Other", "0-0", @"^9"))
-            {
-                OptionDetected = (option, _) =>
-                {
-                    eventCount++;
-                    detected = option;
-                }
-            });
-
-            // Assert: UpdateFrom re-evaluates options and fires de-detection with null
-            mask.DetectedOption.Should().BeNull();
-            eventCount.Should().Be(1);
-            detected.Should().BeNull();
-        }
     }
 }

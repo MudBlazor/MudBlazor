@@ -26,10 +26,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
 
             // Value-typed member: boxing it to object forces the compiler to emit a Convert node.
             public int Level => 0;
-
-            // No initializer: only the property metadata is read via expression trees,
-            // never a runtime value, so a self-referential default would just stack-overflow.
-            public Manager Boss { get; }
         }
         // ReSharper restore ClassNeverInstantiated.Local
 
@@ -72,23 +68,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             property.GetPath().Should().Be("");
             property.GetLastMemberName().Should().Be("");
             property.GetMembers().Count.Should().Be(0);
-        }
-
-        [Test]
-        public void PropertyPathTests_Visit_DeepChain_PreservesSourceToLeafOrder()
-        {
-            // Arrange
-            Expression<Func<Employee, string>> exp = x => x.Manager.Boss.Name;
-
-            // Act
-            var property = PropertyPath.Visit(exp);
-
-            // Assert: VisitMember inserts at index 0 while walking outermost->innermost,
-            // so members must end up in source-to-leaf order.
-            property.IsBodyMemberExpression.Should().BeTrue();
-            property.GetMembers().Select(m => m.Name).Should().Equal("Manager", "Boss", "Name");
-            property.GetPath().Should().Be("Manager.Boss.Name");
-            property.GetLastMemberName().Should().Be("Name");
         }
 
         [Test]

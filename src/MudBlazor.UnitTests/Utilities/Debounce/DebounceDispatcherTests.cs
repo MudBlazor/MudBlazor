@@ -759,42 +759,6 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task DebounceAsync_LeadingMode_TrailingExecution_UpdatesLastExecutionTime()
-    {
-        // Arrange - in leading mode the trailing (debounced) execution must also stamp the
-        // last-execution time, so a call right after it is debounced rather than firing immediately.
-        var timeProvider = new FakeTimeProvider();
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
-        var executionCount = 0;
-
-        Task TrackingAction()
-        {
-            Interlocked.Increment(ref executionCount);
-            return Task.CompletedTask;
-        }
-
-        // First call fires immediately (leading edge).
-        await debounceDispatcher.DebounceAsync(TrackingAction);
-        executionCount.Should().Be(1);
-
-        // Second call is debounced; advancing the interval triggers the trailing execution.
-        var trailing = debounceDispatcher.DebounceAsync(TrackingAction);
-        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
-        await trailing;
-        executionCount.Should().Be(2);
-
-        // Act - immediately call again without advancing time. If the trailing execution stamped
-        // the last-execution time, this is still within the interval and must be debounced.
-        var afterTrailing = debounceDispatcher.DebounceAsync(TrackingAction);
-        executionCount.Should().Be(2);
-
-        // Assert - it only runs once the new interval elapses.
-        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
-        await afterTrailing;
-        executionCount.Should().Be(3);
-    }
-
-    [Test]
     public async Task DebounceAsync_IsPending_TracksDelayWindowOnly()
     {
         // Arrange

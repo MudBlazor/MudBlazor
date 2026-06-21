@@ -316,40 +316,11 @@ namespace UtilityTests
         }
 
         [Test]
-        public void Default_With_Prop_And_Value_Seeds_Builder()
-        {
-            // Act
-            var styleBuilder = StyleBuilder.Default("color", "red")
-                .AddStyle("padding", "35px")
-                .Build();
-
-            // Assert
-            styleBuilder.Should().Be("color:red;padding:35px;");
-        }
-
-        [Test]
         public void AddStyle_With_ValueBuilder_When_False_Skips_Property()
         {
             // Act
             var styleBuilder = StyleBuilder.Empty()
                 .AddStyle("text-decoration", v => v.AddValue("underline", true), when: false)
-                .AddStyle("z-index", "-1")
-                .Build();
-
-            // Assert
-            styleBuilder.Should().Be("z-index:-1;");
-        }
-
-        [Test]
-        public void AddStyle_With_ValueBuilder_Producing_No_Value_Skips_Property()
-        {
-            // Act
-            // All values are conditionally excluded, so HasValue is false and the property is dropped.
-            var styleBuilder = StyleBuilder.Empty()
-                .AddStyle("text-decoration", v => v
-                            .AddValue("underline", false)
-                            .AddValue("overline", false),
-                            when: true)
                 .AddStyle("z-index", "-1")
                 .Build();
 

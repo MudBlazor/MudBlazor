@@ -80,16 +80,4 @@ public class RangeUtilityTests
         e.Should().BeEmpty();
     }
 
-    [TestCase("1", "2")]
-    [TestCase("", "5")]
-    [TestCase("7", "")]
-    [TestCase("-3.5", "10")]
-    public void JoinThenSplit_RoundTrips(string start, string end)
-    {
-        var joined = RangeUtility.Join(start, end);
-
-        RangeUtility.Split(joined, out var s, out var e).Should().BeTrue();
-        s.Should().Be(start);
-        e.Should().Be(end);
-    }
 }

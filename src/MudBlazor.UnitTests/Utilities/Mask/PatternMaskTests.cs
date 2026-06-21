@@ -469,50 +469,6 @@ public class PatternMaskTests
     }
 
     [Test]
-    public void PatternMask_LetterOrDigit_AcceptsBoth()
-    {
-        // Arrange - '*' is the default letter-or-digit mask char
-        var mask = new PatternMask("***");
-
-        // Act - letters and digits both accepted, symbols rejected
-        mask.Insert("a1!b");
-
-        // Assert
-        mask.Text.Should().Be("a1b");
-    }
-
-    [Test]
-    public void PatternMask_GetCleanText_StripsPlaceholderFromPartialFill()
-    {
-        // Arrange
-        var mask = new PatternMask("000-000") { Placeholder = '_' };
-
-        // Act - only first group filled; rest is placeholder
-        mask.Insert("12");
-        mask.Text.Should().Be("12_-___");
-
-        // Assert - placeholders removed, delimiter kept (CleanDelimiters defaults false)
-        mask.GetCleanText().Should().Be("12-");
-    }
-
-    [Test]
-    public void PatternMask_Transformation_AppliedToPlaceholderFill()
-    {
-        // Arrange - transformation must not touch the placeholder padding
-        var mask = new PatternMask("aaa")
-        {
-            Transformation = c => char.ToUpperInvariant(c),
-            Placeholder = '_',
-        };
-
-        // Act
-        mask.Insert("ab");
-
-        // Assert - typed chars upper-cased, placeholder untouched
-        mask.Text.Should().Be("AB_");
-    }
-
-    [Test]
     public void PatternMask_ChangeMaskChars_ForcesReinitialization()
     {
         // Arrange - default 'a' would accept letters

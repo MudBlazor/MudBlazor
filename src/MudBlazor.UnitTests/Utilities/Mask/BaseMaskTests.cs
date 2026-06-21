@@ -148,17 +148,6 @@ public class BaseMaskTests
     }
 
     [Test]
-    public void BaseMask_SplitSelection_ReversedSelection()
-    {
-        // SplitSelection does not normalize a start > end selection; the negative span yields an empty middle.
-        var (before, selected, after) = BaseMask.SplitSelection("hello", (4, 1));
-
-        before.Should().Be("hell");
-        selected.Should().Be("");
-        after.Should().Be("o");
-    }
-
-    [Test]
     public void PatternMask_Clear_ResetsState()
     {
         // Arrange

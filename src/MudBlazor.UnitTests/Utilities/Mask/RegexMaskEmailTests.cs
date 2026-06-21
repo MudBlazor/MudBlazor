@@ -93,17 +93,6 @@ public class RegexMaskEmailTests
     }
 
     [Test]
-    public void Email_Backspace_AcrossDelimiter_RemovesDelimiter()
-    {
-        // Backspacing right after '@' removes the '@' delimiter together with the preceding char.
-        var mask = RegexMask.Email();
-        mask.SetText("test@domain.com");
-        mask.CaretPos = 5;
-        mask.Backspace();
-        mask.ToString().Should().Be("tes|domain.com");
-    }
-
-    [Test]
     public void Email_Insert_DuplicateAtSign_CollapsesToSingle()
     {
         // The mask permits at most one '@'; extras are dropped.

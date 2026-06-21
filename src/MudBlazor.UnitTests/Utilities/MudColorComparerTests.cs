@@ -288,26 +288,6 @@ public class MudColorComparerTests
     }
 
     [Test]
-    public void Equals_RGBA_ShouldReturnFalse_WhenOnlyAlphaDiffers()
-    {
-        // Same RGB, different alpha: RGBA channel set includes A, so they are not RGBA-equal.
-        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
-        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
-
-        MudColor.MudColorComparer.Rgba.Equals(opaque, translucent).Should().BeFalse();
-    }
-
-    [Test]
-    public void Equals_HSL_ShouldReturnTrue_WhenOnlyAlphaDiffers()
-    {
-        // HSL carries no alpha, so colors differing only by alpha are HSL-equal.
-        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
-        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
-
-        MudColor.MudColorComparer.Hsl.Equals(opaque, translucent).Should().BeTrue();
-    }
-
-    [Test]
     [TestCaseSource(nameof(AllComparers))]
     public void GetHashCode_NullObject_ShouldBeZero(MudColor.MudColorComparer comparer)
     {

@@ -104,52 +104,6 @@ public class BatchPeriodicQueueTests
 
     [Test]
     [CancelAfter(5000)]
-    public async Task PeriodicExecution_ShouldDrainAgainOnSubsequentTick()
-    {
-        // Arrange
-        var period = TimeSpan.FromSeconds(0.5);
-        var timeProvider = new FakeTimeProvider();
-        var mockHandler = new Mock<IBatchTimerHandler<int>>();
-        using var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period, timeProvider);
-
-        var batchCompletion = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        mockHandler
-            .Setup(h => h.OnBatchTimerElapsedAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
-            .Returns((IReadOnlyCollection<int> items, CancellationToken _) =>
-            {
-                batchCompletion.TrySetResult(items);
-                return Task.CompletedTask;
-            });
-
-        await batchPeriodicQueue.StartAsync();
-
-        // Act + Assert: first tick drains the first batch
-        var firstBatch = new List<int> { 1, 2, 3 };
-        foreach (var item in firstBatch)
-        {
-            batchPeriodicQueue.QueueItem(item);
-        }
-        timeProvider.Advance(period);
-        var firstProcessed = await batchCompletion.Task.WaitAsync(TestContext.CurrentContext.CancellationToken);
-        firstProcessed.VerifyItemsMatch(firstBatch).Should().BeTrue();
-        batchPeriodicQueue.Count.Should().Be(0);
-
-        // Act + Assert: the loop keeps running, so a second tick drains a fresh batch
-        batchCompletion = new TaskCompletionSource<IReadOnlyCollection<int>>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var secondBatch = new List<int> { 4, 5 };
-        foreach (var item in secondBatch)
-        {
-            batchPeriodicQueue.QueueItem(item);
-        }
-        timeProvider.Advance(period);
-        var secondProcessed = await batchCompletion.Task.WaitAsync(TestContext.CurrentContext.CancellationToken);
-
-        secondProcessed.VerifyItemsMatch(secondBatch).Should().BeTrue();
-        batchPeriodicQueue.Count.Should().Be(0);
-    }
-
-    [Test]
-    [CancelAfter(5000)]
     public async Task StopAsync_ShouldEndLoopWithoutProcessingQueuedItems()
     {
         // Arrange

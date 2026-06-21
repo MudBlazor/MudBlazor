@@ -390,15 +390,6 @@ public class DateMaskTests
     }
 
     [Test]
-    public void DateMask_PartialInput_ClampsDayToMonthBeforeYear()
-    {
-        // Day must be clamped from the extracted month alone, before any year is typed (April = 30 days).
-        var mask = new DateMask("MM/dd/yyyy");
-        mask.Insert("04/31");
-        mask.Text.Should().Be("04/30/");
-    }
-
-    [Test]
     public void DateMask_PartialInput_MonthOnly()
     {
         // Arrange

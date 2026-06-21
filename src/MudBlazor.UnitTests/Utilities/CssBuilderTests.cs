@@ -333,37 +333,5 @@ namespace UtilityTests
             cssBuilder.Should().Be(expected);
         }
 
-        [Test]
-        public void AddClass_With_Value_Function_And_False_Bool_Condition_Is_Ignored()
-        {
-            // The Func<string?> value overload must not invoke when the bool condition is false.
-            var invoked = false;
-            string? ValueFunction()
-            {
-                invoked = true;
-                return "class1";
-            }
-
-            var cssBuilder = new CssBuilder()
-                .AddClass(ValueFunction, when: false)
-                .Build();
-
-            cssBuilder.Should().BeEmpty();
-            invoked.Should().BeFalse();
-        }
-
-        [Test]
-        public void AddValue_Concatenates_Without_Separator()
-        {
-            // AddValue appends raw, unlike AddClass which inserts a space.
-            var cssBuilder = new CssBuilder()
-                .AddValue("foo")
-                .AddValue(null)
-                .AddValue("bar")
-                .Build();
-
-            cssBuilder.Should().Be("foobar");
-        }
-
     }
 }

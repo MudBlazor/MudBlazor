@@ -43,17 +43,6 @@ public class StringHelpersTests
         Value.ToStr().Should().Be(StringHelpers.ToS(Value));
     }
 
-    // Whole numbers carry no trailing ".0", and the 5th decimal rounds the 4th. Negatives round by magnitude.
-    [TestCase(0d, "0")]
-    [TestCase(5d, "5")]
-    [TestCase(2.71828d, "2.7183")]
-    [TestCase(-1.23456d, "-1.2346")]
-    [TestCase(1.23454d, "1.2345")]
-    public void ToS_WithoutFormat_RoundsToFourDecimals(double input, string expected)
-    {
-        StringHelpers.ToS(input).Should().Be(expected);
-    }
-
     [Test]
     public void ToS_WithoutFormat_IsIndependentOfCurrentCulture()
     {

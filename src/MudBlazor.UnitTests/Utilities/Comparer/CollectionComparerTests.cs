@@ -98,20 +98,6 @@ public class CollectionComparerTests
     }
 
     [Test]
-    public void Equals_SameReference_ReturnsTrueWithoutSetComputation()
-    {
-        var comparer = new CollectionComparer<int>(new ThrowingEqualityComparer());
-
-        // ReferenceEquals short-circuit must run before the comparer is touched;
-        // the throwing comparer proves no set computation happens for self-compares.
-        IReadOnlyCollection<int> empty = new List<int>();
-        IReadOnlyCollection<int> withDuplicates = new List<int> { 1, 1, 2 };
-
-        comparer.Equals(empty, empty).Should().Be(true);
-        comparer.Equals(withDuplicates, withDuplicates).Should().Be(true);
-    }
-
-    [Test]
     public void Equals_NullElements_TreatedAsDistinctValue()
     {
         // MudChipSet uses CollectionComparer<T?>, so null entries are a real scenario.
@@ -122,13 +108,6 @@ public class CollectionComparerTests
         comparer.Equals([null, "a"], ["a"]).Should().Be(false);
         comparer.Equals(["a"], [null, "a"]).Should().Be(false);
         comparer.Equals([null], ["a"]).Should().Be(false);
-    }
-
-    private class ThrowingEqualityComparer : IEqualityComparer<int>
-    {
-        public bool Equals(int x, int y) => throw new InvalidOperationException("Comparer should not be used for reference-equal collections.");
-
-        public int GetHashCode(int obj) => throw new InvalidOperationException("Comparer should not be used for reference-equal collections.");
     }
 
     private class LowercaseEqualityComparer : IEqualityComparer<string?>

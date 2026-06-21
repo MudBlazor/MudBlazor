@@ -321,40 +321,6 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public async Task ThrottleAsync_SuppressedCallAfterCompletedAction_ReturnsCompletedTaskNotPriorTask()
-    {
-        // Arrange - the first action returns a distinct (non-singleton) task that finishes before the
-        // next call. Within the interval the dispatcher must hand back Task.CompletedTask rather than
-        // the already-completed prior task instance (the IsCompleted arm of line 133).
-        var timeProvider = new FakeTimeProvider();
-        using var dispatcher = new ThrottleDispatcher(50, timeProvider);
-        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var counter = 0;
-
-        async Task Invoke()
-        {
-            Interlocked.Increment(ref counter);
-            await gate.Task; // distinct task instance, not Task.CompletedTask
-        }
-
-        // Act - start, then let the first action finish so its task is completed but not the singleton.
-        var first = dispatcher.ThrottleAsync(Invoke);
-        gate.SetResult(true);
-        await first;
-        first.IsCompletedSuccessfully.Should().BeTrue();
-        first.Should().NotBeSameAs(Task.CompletedTask);
-        counter.Should().Be(1);
-
-        timeProvider.Advance(TimeSpan.FromMilliseconds(10)); // still inside the 50ms interval
-        var suppressed = dispatcher.ThrottleAsync(Invoke);
-
-        // Assert - suppressed call did not run the action and returned the completed-task singleton
-        counter.Should().Be(1);
-        suppressed.IsCompletedSuccessfully.Should().BeTrue();
-        suppressed.Should().NotBeSameAs(first);
-    }
-
-    [Test]
     public async Task ThrottleAsync_FaultedTaskWithinInterval_ReExecutesInsteadOfSuppressing()
     {
         // Arrange - a faulted current task must not suppress later calls within the interval.

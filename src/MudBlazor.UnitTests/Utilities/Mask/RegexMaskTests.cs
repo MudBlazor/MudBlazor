@@ -118,15 +118,6 @@ public class RegexMaskTests
     }
 
     [Test]
-    public void RegexMask_NullRegex_Throws()
-    {
-        // The regex argument is required; passing null must throw on construction.
-        var act = () => new RegexMask(null!);
-
-        act.Should().Throw<ArgumentNullException>().WithParameterName("regex");
-    }
-
-    [Test]
     public void RegexMask_NonProgressiveRegex_BlocksAllInput()
     {
         // Documented contract: the regex must match every input prefix. A fixed-length

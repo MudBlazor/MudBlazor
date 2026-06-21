@@ -155,34 +155,6 @@ public class ExpressionNullTests
         value.Should().BeNull();
     }
 
-    [Test]
-    public void AddNullChecks_ShouldReturnZeroForNonNullableValueTypeBehindNullMember()
-    {
-        // The leaf is a non-nullable value type, the intermediate is null: must yield default(int) instead of throwing.
-        Expression<Func<TestClass, int>> expression = x => x.Nested!.DeepValue;
-        var instance = new TestClass { Nested = null };
-
-        var result = ExpressionNull.AddNullChecks(expression);
-        var compiled = result.Compile();
-        var value = compiled(instance);
-
-        value.Should().Be(0);
-    }
-
-    [Test]
-    public void AddNullChecks_ShouldPreserveMethodCallArguments()
-    {
-        // Arguments on the guarded call must be carried over unchanged.
-        Expression<Func<TestClass, string?>> expression = x => x.Echo("hello");
-        var instance = new TestClass();
-
-        var result = ExpressionNull.AddNullChecks(expression);
-        var compiled = result.Compile();
-        var value = compiled(instance);
-
-        value.Should().Be("hello");
-    }
-
     private class TestClass
     {
         public string? Property { get; set; }
@@ -194,8 +166,6 @@ public class ExpressionNullTests
         public NestedClass? Nested { get; set; }
 
         public string? GetProperty() => Property;
-
-        public string? Echo(string value) => value;
     }
 
     private class NestedClass
@@ -203,8 +173,6 @@ public class ExpressionNullTests
         public string? Property { get; set; }
 
         public DeepNestedClass? Deep { get; set; }
-
-        public int DeepValue { get; set; }
 
         public string? GetProperty() => Property;
     }

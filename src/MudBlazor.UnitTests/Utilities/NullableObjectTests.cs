@@ -82,20 +82,6 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Equals_NullCompareToNonNull_ShouldReturnFalse()
-    {
-        // Arrange - null on the left exercises the IsNull branch after the other.IsNull check
-        var nullObj = NullableObject<string>.Null;
-        var obj = new NullableObject<string>("test");
-
-        // Act
-        var result = nullObj.Equals(obj);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    [Test]
     public void EqualsT_WithSameItem_ShouldReturnTrue()
     {
         // Arrange

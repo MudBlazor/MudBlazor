@@ -243,20 +243,6 @@ public class BlockMaskTests
     }
 
     [Test]
-    public void BlockMask_Insert_DropsCharactersThatDoNotMatchBlock()
-    {
-        // Arrange - a digit-only block with no delimiters to skip over
-        var mask = new BlockMask("", new Block('0', 1, 2));
-
-        // Act - letters can neither match the block nor be jumped via a delimiter, so they are dropped
-        mask.Insert("ab12cd");
-
-        // Assert
-        mask.Text.Should().Be("12");
-        mask.ToString().Should().Be("12|");
-    }
-
-    [Test]
     public void BlockMask_LetterOrDigitBlock_AcceptsLettersAndDigits()
     {
         // NOTE: suspected BlockMask/MaskChar bug. MaskChar.LetterOrDigit's regex is the

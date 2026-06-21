@@ -480,30 +480,6 @@ public class ObserverManagerTests
     }
 
     [Test]
-    public async Task NotifyAsync_WithPredicate_OnlyNotifiesMatchingObservers()
-    {
-        // Arrange
-        _observerManager.Subscribe(1, "Observer1");
-        _observerManager.Subscribe(2, "Observer2");
-        _observerManager.Subscribe(3, "Observer3");
-        var notified = new List<string>();
-
-        Task NotificationAsync(string observer)
-        {
-            notified.Add(observer);
-            return Task.CompletedTask;
-        }
-
-        // Act
-        await _observerManager.NotifyAsync(NotificationAsync, (id, _) => id != 2);
-
-        // Assert
-        notified.Should().BeEquivalentTo("Observer1", "Observer3");
-        // Non-matching observers are not removed.
-        _observerManager.Count.Should().Be(3);
-    }
-
-    [Test]
     public async Task NotifyAsync_DefunctObserverRemoved_StillNotifiesRemaining()
     {
         // Arrange

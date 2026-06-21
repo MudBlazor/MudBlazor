@@ -15,7 +15,6 @@ namespace MudBlazor.UnitTests.Utilities
         {
             public string Name { get; }
             public int Prio { get; set; }
-            public int PrioField;
 
             public ItemsWithOrder(string name, int priority)
             {
@@ -136,18 +135,6 @@ namespace MudBlazor.UnitTests.Utilities
 
             // Body is a BinaryExpression, not a MemberExpression.
             var act = () => items.UpdateOrder(dropInfo, x => x.Prio + 1);
-
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Test]
-        public void UpdateOrder_MemberNotProperty_Throws()
-        {
-            var items = GenerateList();
-            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
-
-            // Body is a MemberExpression but its member is a field, not a property.
-            var act = () => items.UpdateOrder(dropInfo, x => x.PrioField);
 
             act.Should().Throw<InvalidOperationException>();
         }

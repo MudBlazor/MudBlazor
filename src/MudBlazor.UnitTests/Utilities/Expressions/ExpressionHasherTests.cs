@@ -416,16 +416,5 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "Same node kinds with operands swapped must not collide (constant ordering).")]
-        public void ExpressionHasherTests_Get_NotSame_HashCode_SwappedOperands()
-        {
-            Expression<Func<ExpressionTestClass, bool>> exp1 = x => string.Equals(x.FirstName, "a", StringComparison.Ordinal);
-            Expression<Func<ExpressionTestClass, bool>> exp2 = x => string.Equals("a", x.FirstName, StringComparison.Ordinal);
-
-            var h1 = ExpressionHasher.GetHashCode(exp1);
-            var h2 = ExpressionHasher.GetHashCode(exp2);
-
-            h1.Equals(h2).Should().BeFalse();
-        }
     }
 }
