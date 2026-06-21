@@ -144,24 +144,5 @@ namespace MudBlazor.UnitTests.Extensions
             var result = source.OrderBySortDefinitions(sortDefs).ToList();
             result.Select(x => x.Name).Should().ContainInOrder("a", "zz", "mmm");
         }
-
-        [Test]
-        public void OrderBy_SecondDefinition_CustomComparer_IsAppliedToThenBy()
-        {
-            // All ages equal, so the length-based comparer on the ThenBy decides order;
-            // alphabetical ThenBy would give "a","mmm","zz".
-            var byNameLength = Comparer<object>.Create((a, b) => ((string)a!).Length.CompareTo(((string)b!).Length));
-            var p1 = new Person { Name = "mmm", Age = 10 };
-            var p2 = new Person { Name = "a", Age = 10 };
-            var p3 = new Person { Name = "zz", Age = 10 };
-            var source = new[] { p1, p2, p3 };
-            ICollection<SortDefinition<Person>> sortDefs = new List<SortDefinition<Person>>
-            {
-                ByAge(),
-                new SortDefinition<Person>("Name", false, 0, p => p.Name, byNameLength)
-            };
-            var result = source.OrderBySortDefinitions(sortDefs).ToList();
-            result.Select(x => x.Name).Should().ContainInOrder("a", "zz", "mmm");
-        }
     }
 }

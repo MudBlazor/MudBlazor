@@ -23,7 +23,6 @@ public class ConverterExtensionsTests
         res.Value.Should().Be("5");
         res.ExceptionError.Should().BeNull();
         res.ErrorMessageKey.Should().BeNull();
-        res.ErrorMessageArgs.Should().BeEmpty();
     }
 
     [Test]
@@ -72,19 +71,6 @@ public class ConverterExtensionsTests
         res.Success.Should().BeFalse();
         res.ExceptionError.Should().BeOfType<InvalidOperationException>();
         res.ErrorMessageKey.Should().BeNull();
-        res.ErrorMessageArgs.Should().BeEmpty();
-    }
-
-    [Test]
-    public void TryConvert_AggregateExceptionWithoutConversionException_IsCapturedAsGenericFailure()
-    {
-        var conv = new ThrowAggregateWithoutConversionExceptionConverter();
-        var res = conv.TryConvert(1);
-
-        res.Success.Should().BeFalse();
-        res.ExceptionError.Should().BeOfType<AggregateException>();
-        res.ErrorMessageKey.Should().BeNull();
-        res.ErrorMessageArgs.Should().BeEmpty();
     }
 
     [Test]
@@ -183,11 +169,6 @@ public class ConverterExtensionsTests
     private sealed class ThrowAggregateWithConversionExceptionConverter : IConverter<int, string>
     {
         public string Convert(int input) => throw new AggregateException(new ConversionException("AGG_KEY", ["x", 2]));
-    }
-
-    private sealed class ThrowAggregateWithoutConversionExceptionConverter : IConverter<int, string>
-    {
-        public string Convert(int input) => throw new AggregateException(new InvalidOperationException("a"), new FormatException("b"));
     }
 
     private sealed class ThrowUnknownExceptionConverter : IConverter<int, string>

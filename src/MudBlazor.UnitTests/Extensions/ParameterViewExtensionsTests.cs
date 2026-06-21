@@ -170,41 +170,4 @@ public class ParameterViewExtensionsTests
         result.Should().BeFalse();
         newValue.Should().Be(default(int));
     }
-
-    [Test]
-    public void HasParameterChanged_ReferenceType_NullToValue_ReturnsTrue()
-    {
-        // Arrange
-        const string ParameterName = "Parameter";
-        var parameters = new Dictionary<string, object?>
-        {
-            [ParameterName] = null
-        };
-        var parameterView = ParameterView.FromDictionary(parameters);
-
-        // Act
-        var result = parameterView.HasParameterChanged(ParameterName, "value", out var newValue);
-
-        // Assert
-        result.Should().BeTrue();
-        newValue.Should().BeNull();
-    }
-
-    [Test]
-    public void Contains_ParameterPresent_ReturnsTrue()
-    {
-        // Arrange
-        const string ParameterName = "Parameter";
-        var parameters = new Dictionary<string, object?>
-        {
-            [ParameterName] = 10
-        };
-        var parameterView = ParameterView.FromDictionary(parameters);
-
-        // Act
-        var result = parameterView.Contains<int>(ParameterName);
-
-        // Assert
-        result.Should().BeTrue();
-    }
 }

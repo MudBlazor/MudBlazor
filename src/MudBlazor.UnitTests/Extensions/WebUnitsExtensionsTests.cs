@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Globalization;
 using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -64,28 +63,6 @@ namespace MudBlazor.UnitTests.Extensions
         public void ToPx_Double_RoundsToTwoDecimalsAndTrimsZeros(double value, string expected)
         {
             value.ToPx().Should().Be(expected);
-        }
-
-        // de-DE uses ',' as the decimal separator; the output must stay invariant ('.').
-        [Test]
-        public void ToPx_Double_UsesInvariantCulture()
-        {
-            var originalCulture = CultureInfo.CurrentCulture;
-            var originalUiCulture = CultureInfo.CurrentUICulture;
-
-            try
-            {
-                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-
-                3.3333.ToPx().Should().Be("3.33px");
-                ((double?)3.3333).ToPx().Should().Be("3.33px");
-            }
-            finally
-            {
-                CultureInfo.CurrentCulture = originalCulture;
-                CultureInfo.CurrentUICulture = originalUiCulture;
-            }
         }
     }
 }

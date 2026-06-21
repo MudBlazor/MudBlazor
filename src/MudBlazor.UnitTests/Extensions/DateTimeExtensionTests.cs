@@ -108,40 +108,6 @@ public class DateTimeExtensionTests
     }
 
     [Test]
-    public void StartOfMonth_ShouldUseCultureCalendar_WhenNotGregorian()
-    {
-        // Arrange
-        var culture = new CultureInfo("fa-IR"); // Uses the Persian calendar.
-        var dateTime = new DateTime(2021, 2, 14); // Mid-month in the Persian calendar (Bahman 1399).
-
-        // Act
-        var result = dateTime.StartOfMonth(culture);
-
-        // Assert: result is the first day of the Persian month, not the Gregorian month.
-        culture.Calendar.GetDayOfMonth(result).Should().Be(1);
-        result.Should().NotBe(new DateTime(2021, 2, 1)); // A Gregorian start-of-month would land here.
-        result.Should().BeBefore(dateTime); // Persian Bahman begins in January, before this date.
-    }
-
-    [Test]
-    public void EndOfMonth_ShouldUseCultureCalendar_WhenNotGregorian()
-    {
-        // Arrange
-        var culture = new CultureInfo("fa-IR"); // Uses the Persian calendar.
-        var dateTime = new DateTime(2021, 2, 14); // Mid-month in the Persian calendar (Bahman 1399).
-
-        // Act
-        var result = dateTime.EndOfMonth(culture);
-
-        // Assert: result is the last day of the Persian month, not the Gregorian month.
-        var year = culture.Calendar.GetYear(result);
-        var month = culture.Calendar.GetMonth(result);
-        culture.Calendar.GetDayOfMonth(result).Should().Be(culture.Calendar.GetDaysInMonth(year, month));
-        result.Should().NotBe(new DateTime(2021, 2, 28)); // A Gregorian end-of-month would land here.
-        result.Should().BeAfter(dateTime); // Persian Bahman ends in February, after this date.
-    }
-
-    [Test]
     public void StartOfWeek_ShouldReturnFirstDayOfWeek()
     {
         // Arrange

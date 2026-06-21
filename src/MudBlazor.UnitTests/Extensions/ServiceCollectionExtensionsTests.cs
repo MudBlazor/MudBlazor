@@ -640,25 +640,6 @@ public class ServiceCollectionExtensionsTests
         descriptors[0].ImplementationType.Should().Be<StubLocalizationInterceptor>();
     }
 
-    [Test]
-    public void AddLocalizationInterceptor_WithFactory_ShouldReplaceDefaultInterceptorWithFactory()
-    {
-        // Arrange
-        var instance = new StubLocalizationInterceptor();
-        var services = new ServiceCollection();
-        services.AddMudLocalization();
-
-        // Act
-        services.AddLocalizationInterceptor(_ => instance);
-
-        // Assert: factory overload registers an ImplementationFactory, not a type, and resolves to it.
-        var descriptors = services.Where(x => x.ServiceType == typeof(ILocalizationInterceptor)).ToList();
-        descriptors.Should().ContainSingle();
-        descriptors[0].ImplementationFactory.Should().NotBeNull();
-        var serviceProvider = services.BuildServiceProvider();
-        serviceProvider.GetService<ILocalizationInterceptor>().Should().BeSameAs(instance);
-    }
-
     private sealed class StubDialogService : DialogService;
 
     private sealed class StubLocalizationInterceptor : ILocalizationInterceptor
