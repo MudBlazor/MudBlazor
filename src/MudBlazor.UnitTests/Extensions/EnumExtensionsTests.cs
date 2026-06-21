@@ -12,11 +12,21 @@ namespace MudBlazor.UnitTests.Extensions
         [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
         [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
         [TestCase(typeof(string), new string[0])]
+        [TestCase(typeof(int), new string[0])] // Non-enum value type
+        [TestCase(typeof(List<int>), new string[0])] // Generic but not Nullable<>
         public void GetSafeEnumValues(Type type, string[] expectedNames)
         {
             var values = EnumExtensions.GetSafeEnumValues(type);
             var stringValues = values.Select(x => x.ToString());
             stringValues.Should().BeEquivalentTo(expectedNames);
+        }
+
+        [Test]
+        public void GetSafeEnumValues_ShouldReturnTypedEnumValues()
+        {
+            // Returns the actual boxed enum values, not just their names.
+            EnumExtensions.GetSafeEnumValues(typeof(Adornment))
+                .Should().Equal(Adornment.None, Adornment.Start, Adornment.End);
         }
 
         [Test]

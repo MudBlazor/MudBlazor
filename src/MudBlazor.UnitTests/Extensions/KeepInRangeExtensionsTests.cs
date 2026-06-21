@@ -34,6 +34,19 @@ public class KeepInRangeExtensionsTests
     }
 
     [Test]
+    public void EnsureRange_DoubleMax_UsesZeroAsLowerBound()
+    {
+        // Arrange
+        const double input = -2.5;
+
+        // Act
+        var result = input.EnsureRange(5.0);
+
+        // Assert
+        result.Should().Be(0.0);
+    }
+
+    [Test]
     public void EnsureRange_DoubleMinMax_ReturnsInputWhenInBounds()
     {
         // Arrange
@@ -94,6 +107,31 @@ public class KeepInRangeExtensionsTests
 
         // Assert
         result.Should().Be(0);
+    }
+
+    [Test]
+    public void EnsureRange_IntMinMax_ReturnsInputWhenInBounds()
+    {
+        // Arrange
+        const int input = 5;
+
+        // Act
+        var result = input.EnsureRange(0, 10);
+
+        // Assert
+        result.Should().Be(5);
+    }
+
+    [Test]
+    public void EnsureRangeToByte_KeepsBoundaryValues()
+    {
+        // Act
+        var lowerBound = 0.EnsureRangeToByte();
+        var upperBound = 255.EnsureRangeToByte();
+
+        // Assert
+        lowerBound.Should().Be(byte.MinValue);
+        upperBound.Should().Be(byte.MaxValue);
     }
 
     [Test]

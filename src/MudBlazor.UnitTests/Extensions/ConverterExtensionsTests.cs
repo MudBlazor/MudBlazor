@@ -23,6 +23,7 @@ public class ConverterExtensionsTests
         res.Value.Should().Be("5");
         res.ExceptionError.Should().BeNull();
         res.ErrorMessageKey.Should().BeNull();
+        res.ErrorMessageArgs.Should().BeEmpty();
     }
 
     [Test]
@@ -71,6 +72,30 @@ public class ConverterExtensionsTests
         res.Success.Should().BeFalse();
         res.ExceptionError.Should().BeOfType<InvalidOperationException>();
         res.ErrorMessageKey.Should().BeNull();
+        res.ErrorMessageArgs.Should().BeEmpty();
+    }
+
+    [Test]
+    public void TryConvert_AggregateExceptionWithoutConversionException_IsCapturedAsGenericFailure()
+    {
+        var conv = new ThrowAggregateWithoutConversionExceptionConverter();
+        var res = conv.TryConvert(1);
+
+        res.Success.Should().BeFalse();
+        res.ExceptionError.Should().BeOfType<AggregateException>();
+        res.ErrorMessageKey.Should().BeNull();
+        res.ErrorMessageArgs.Should().BeEmpty();
+    }
+
+    [Test]
+    public void TryConvert_AggregateExceptionWithMultipleConversionExceptions_CapturesFirst()
+    {
+        var conv = new ThrowAggregateWithMultipleConversionExceptionsConverter();
+        var res = conv.TryConvert(1);
+
+        res.Success.Should().BeFalse();
+        res.ExceptionError.Should().BeOfType<ConversionException>();
+        res.ErrorMessageKey.Should().Be("FIRST_KEY");
     }
 
     [Test]
@@ -92,6 +117,30 @@ public class ConverterExtensionsTests
 
         res.Success.Should().BeTrue();
         res.Value.Should().Be(101);
+    }
+
+    [Test]
+    public void TryConvertBack_OnReversible_WhenConvertBackThrowsConversionException_IsCaptured()
+    {
+        var rev = new ThrowOnConvertBackConverter();
+        var res = rev.TryConvertBack("anything");
+
+        res.Success.Should().BeFalse();
+        res.ExceptionError.Should().BeOfType<ConversionException>();
+        res.ErrorMessageKey.Should().Be("BACK_KEY");
+        res.ErrorMessageArgs.Should().Contain("b");
+    }
+
+    [Test]
+    public void TryConvertBack_OnNonReversibleIConverter_CapturesInvalidOperationException()
+    {
+        // The IConverter overload routes through the ConvertBack extension, which throws for non-reversible converters.
+        IConverter<int, string> conv = new NoBackwardConverter();
+        var res = conv.TryConvertBack("test");
+
+        res.Success.Should().BeFalse();
+        res.ExceptionError.Should().BeOfType<InvalidOperationException>();
+        res.ErrorMessageKey.Should().BeNull();
     }
 
     [Test]
@@ -147,6 +196,16 @@ public class ConverterExtensionsTests
         public string Convert(int input) => throw new AggregateException(new ConversionException("AGG_KEY", ["x", 2]));
     }
 
+    private sealed class ThrowAggregateWithoutConversionExceptionConverter : IConverter<int, string>
+    {
+        public string Convert(int input) => throw new AggregateException(new InvalidOperationException("a"), new FormatException("b"));
+    }
+
+    private sealed class ThrowAggregateWithMultipleConversionExceptionsConverter : IConverter<int, string>
+    {
+        public string Convert(int input) => throw new AggregateException(new ConversionException("FIRST_KEY"), new ConversionException("SECOND_KEY"));
+    }
+
     private sealed class ThrowUnknownExceptionConverter : IConverter<int, string>
     {
         public string Convert(int input) => throw new InvalidOperationException("boom");
@@ -156,6 +215,12 @@ public class ConverterExtensionsTests
     {
         public string Convert(int input) => (input + 100).ToString();
         public int ConvertBack(string input) => int.Parse(input) - 100;
+    }
+
+    private sealed class ThrowOnConvertBackConverter : IReversibleConverter<int, string>
+    {
+        public string Convert(int input) => input.ToString();
+        public int ConvertBack(string input) => throw new ConversionException("BACK_KEY", ["b"]);
     }
 
     private sealed class NoBackwardConverter : IConverter<int, string>

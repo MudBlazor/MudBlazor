@@ -53,6 +53,19 @@ public class DateTimeExtensionTests
     }
 
     [Test]
+    public void ToIsoDateString_ShouldZeroPad_WhenComponentsAreSingleDigit()
+    {
+        // Arrange
+        var dateTime = new DateTime(7, 1, 9); // Year 7, January 9th.
+
+        // Act
+        var result = dateTime.ToIsoDateString();
+
+        // Assert
+        result.Should().Be("0007-01-09");
+    }
+
+    [Test]
     public void StartOfMonth_ShouldReturnFirstDayOfMonth()
     {
         // Arrange
@@ -78,6 +91,68 @@ public class DateTimeExtensionTests
 
         // Assert
         result.Should().Be(new DateTime(2023, 10, 31));
+    }
+
+    [Test]
+    public void EndOfMonth_ShouldReturn29Days_ForFebruaryInLeapYear()
+    {
+        // Arrange
+        var dateTime = new DateTime(2024, 2, 10); // 2024 is a leap year.
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.EndOfMonth(culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2024, 2, 29));
+    }
+
+    [Test]
+    public void EndOfMonth_ShouldReturn28Days_ForFebruaryInNonLeapYear()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 2, 10); // 2023 is not a leap year.
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.EndOfMonth(culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 2, 28));
+    }
+
+    [Test]
+    public void StartOfMonth_ShouldUseCultureCalendar_WhenNotGregorian()
+    {
+        // Arrange
+        var culture = new CultureInfo("fa-IR"); // Uses the Persian calendar.
+        var dateTime = new DateTime(2021, 2, 14); // Mid-month in the Persian calendar (Bahman 1399).
+
+        // Act
+        var result = dateTime.StartOfMonth(culture);
+
+        // Assert: result is the first day of the Persian month, not the Gregorian month.
+        culture.Calendar.GetDayOfMonth(result).Should().Be(1);
+        result.Should().NotBe(new DateTime(2021, 2, 1)); // A Gregorian start-of-month would land here.
+        result.Should().BeBefore(dateTime); // Persian Bahman begins in January, before this date.
+    }
+
+    [Test]
+    public void EndOfMonth_ShouldUseCultureCalendar_WhenNotGregorian()
+    {
+        // Arrange
+        var culture = new CultureInfo("fa-IR"); // Uses the Persian calendar.
+        var dateTime = new DateTime(2021, 2, 14); // Mid-month in the Persian calendar (Bahman 1399).
+
+        // Act
+        var result = dateTime.EndOfMonth(culture);
+
+        // Assert: result is the last day of the Persian month, not the Gregorian month.
+        var year = culture.Calendar.GetYear(result);
+        var month = culture.Calendar.GetMonth(result);
+        culture.Calendar.GetDayOfMonth(result).Should().Be(culture.Calendar.GetDaysInMonth(year, month));
+        result.Should().NotBe(new DateTime(2021, 2, 28)); // A Gregorian end-of-month would land here.
+        result.Should().BeAfter(dateTime); // Persian Bahman ends in February, after this date.
     }
 
     [Test]
@@ -137,6 +212,20 @@ public class DateTimeExtensionTests
     }
 
     [Test]
+    public void LastWeekDayOfMonth_ShouldReturnLastDay_WhenItMatchesTargetDay()
+    {
+        // Arrange: October 2023 ends on Tuesday the 31st, so no loop iterations are needed.
+        var dateTime = new DateTime(2023, 10, 15);
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.LastWeekDayOfMonth(DayOfWeek.Tuesday, culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 10, 31));
+    }
+
+    [Test]
     public void FirstWeekDayOfMonth_ShouldReturnFirstWeekDayOfMonth()
     {
         // Arrange
@@ -148,5 +237,19 @@ public class DateTimeExtensionTests
 
         // Assert
         result.Should().Be(new DateTime(2023, 9, 4)); // September 4, 2023 (Monday)
+    }
+
+    [Test]
+    public void FirstWeekDayOfMonth_ShouldReturnFirstDay_WhenItMatchesTargetDay()
+    {
+        // Arrange: October 2023 starts on Sunday the 1st, so no loop iterations are needed.
+        var dateTime = new DateTime(2023, 10, 15);
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.FirstWeekDayOfMonth(DayOfWeek.Sunday, culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 10, 1));
     }
 }

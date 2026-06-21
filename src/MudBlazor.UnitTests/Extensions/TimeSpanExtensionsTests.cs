@@ -51,6 +51,71 @@ public class TimeSpanExtensionsTests
     }
 
     [Test]
+    public void ToIsoString_ShouldIgnoreMilliseconds_WhenSecondsIsFalse()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(0, 10, 30, 45, 123);
+
+        // Act
+        var result = timeSpan.ToIsoString(seconds: false, ms: true);
+
+        // Assert
+        result.Should().Be("10:30");
+    }
+
+    [Test]
+    public void ToIsoString_ShouldNotZeroPadMilliseconds_WhenMillisecondsIsSingleDigit()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(0, 10, 30, 45, 5);
+
+        // Act
+        var result = timeSpan.ToIsoString(seconds: true, ms: true);
+
+        // Assert
+        result.Should().Be("10:30-45,5");
+    }
+
+    [Test]
+    public void ToIsoString_ShouldZeroPadSingleDigitParts()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(1, 2, 3);
+
+        // Act
+        var result = timeSpan.ToIsoString(seconds: true, ms: false);
+
+        // Assert
+        result.Should().Be("01:02-03");
+    }
+
+    [Test]
+    public void ToAmPmHour_ShouldWrapPmHours_WhenHourIsGreaterThan12()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(23, 0, 0);
+
+        // Act
+        var result = timeSpan.ToAmPmHour();
+
+        // Assert
+        result.Should().Be(11);
+    }
+
+    [Test]
+    public void ToAmPmHour_ShouldUseHourComponent_WhenTimeSpanExceedsOneDay()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(2, 13, 0, 0);
+
+        // Act
+        var result = timeSpan.ToAmPmHour();
+
+        // Assert
+        result.Should().Be(1);
+    }
+
+    [Test]
     public void ToAmPmHour_ShouldReturnCorrectAmPmHour_WhenTimeIsIn24HourFormat()
     {
         // Arrange

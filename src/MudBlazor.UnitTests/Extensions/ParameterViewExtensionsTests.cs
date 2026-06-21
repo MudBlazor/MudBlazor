@@ -156,4 +156,87 @@ public class ParameterViewExtensionsTests
         newValue.Should().Be(10);
         result.Should().BeTrue();
     }
+
+    [Test]
+    public void HasParameterChanged_ParameterMissing_ReturnsFalse()
+    {
+        // Arrange
+        var parameterView = ParameterView.FromDictionary(new Dictionary<string, object?>());
+
+        // Act
+        var result = parameterView.HasParameterChanged("Missing", 20, out var newValue);
+
+        // Assert
+        result.Should().BeFalse();
+        newValue.Should().Be(default(int));
+    }
+
+    [Test]
+    public void HasParameterChanged_ReferenceType_NullToValue_ReturnsTrue()
+    {
+        // Arrange
+        const string ParameterName = "Parameter";
+        var parameters = new Dictionary<string, object?>
+        {
+            [ParameterName] = null
+        };
+        var parameterView = ParameterView.FromDictionary(parameters);
+
+        // Act
+        var result = parameterView.HasParameterChanged(ParameterName, "value", out var newValue);
+
+        // Assert
+        result.Should().BeTrue();
+        newValue.Should().BeNull();
+    }
+
+    [Test]
+    public void HasParameterChanged_ReferenceType_SameValue_ReturnsFalse()
+    {
+        // Arrange
+        const string ParameterName = "Parameter";
+        var parameters = new Dictionary<string, object?>
+        {
+            [ParameterName] = "value"
+        };
+        var parameterView = ParameterView.FromDictionary(parameters);
+
+        // Act
+        var result = parameterView.HasParameterChanged(ParameterName, "value", out var newValue);
+
+        // Assert
+        result.Should().BeFalse();
+        newValue.Should().Be("value");
+    }
+
+    [Test]
+    public void Contains_ParameterPresent_ReturnsTrue()
+    {
+        // Arrange
+        const string ParameterName = "Parameter";
+        var parameters = new Dictionary<string, object?>
+        {
+            [ParameterName] = 10
+        };
+        var parameterView = ParameterView.FromDictionary(parameters);
+
+        // Act
+        var result = parameterView.Contains<int>(ParameterName);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void Contains_ParameterMissing_ReturnsFalse()
+    {
+        // Arrange
+        var parameterView = ParameterView.FromDictionary(new Dictionary<string, object?>());
+
+        // Act
+        var result = parameterView.Contains<int>("Missing");
+
+        // Assert
+        result.Should().BeFalse();
+    }
 }

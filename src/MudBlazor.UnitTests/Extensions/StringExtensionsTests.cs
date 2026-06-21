@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using AwesomeAssertions;
 using NUnit.Framework;
 
@@ -139,6 +140,41 @@ public class StringExtensionsTests
 
         // Assert
         result.Should().Be("12");
+    }
+
+    [Test]
+    public void ToPercentage_ShouldStripTrailingZeros_WhenDecimalHasSingleSignificantPlace()
+    {
+        // "0.##" omits trailing zeros, so 12.50 collapses to a single decimal place.
+        const decimal Value = 12.50m;
+
+        // Act
+        var result = Value.ToPercentage();
+
+        // Assert
+        result.Should().Be("12.5");
+    }
+
+    [Test]
+    public void ToPercentage_ShouldUseInvariantCulture_WhenCurrentCultureUsesCommaSeparator()
+    {
+        // Guards the explicit CultureInfo.InvariantCulture: the separator must stay a period
+        // even under a culture that uses a comma as the decimal separator.
+        var originalCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+
+            // Act
+            var result = 12.34m.ToPercentage();
+
+            // Assert
+            result.Should().Be("12.34");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 }
 

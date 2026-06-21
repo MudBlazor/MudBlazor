@@ -84,6 +84,35 @@ public class TableExtensionsTests
     }
 
     [Test]
+    public void OrderByDirection_ShouldSortAscending_WhenDirectionIsNone_ForIEnumerable()
+    {
+        // Arrange
+        var direction = SortDirection.None;
+        string KeySelector(TestItem item) => item.Name;
+
+        // Act
+        var result = _testData.OrderByDirection(direction, KeySelector).ToList();
+
+        // Assert
+        result.Should().BeInAscendingOrder(item => item.Name);
+    }
+
+    [Test]
+    public void OrderByDirection_ShouldSortAscending_WhenDirectionIsNone_ForIQueryable()
+    {
+        // Arrange
+        var direction = SortDirection.None;
+        Expression<Func<TestItem, string>> keySelector = item => item.Name;
+        var queryableData = _testData.AsQueryable();
+
+        // Act
+        var result = queryableData.OrderByDirection(direction, keySelector).ToList();
+
+        // Assert
+        result.Should().BeInAscendingOrder(item => item.Name);
+    }
+
+    [Test]
     public void EditButtonDisabled_ShouldReturnFalse_WhenContextIsNull()
     {
         // Arrange
@@ -118,6 +147,63 @@ public class TableExtensionsTests
         var tableMock = new Mock<MudTable<TestItem>>();
         var context = new TableContext<TestItem> { Table = tableMock.Object };
         var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnFalse_WhenBlockedButNoItemIsEditing()
+    {
+        // Arrange
+        var tableMock = new Mock<MudTable<TestItem>>();
+#pragma warning disable BL0005
+        tableMock.Object.IsEditRowSwitchingBlocked = true;
+#pragma warning restore BL0005
+        tableMock.Object._editingItem = null;
+        var context = new TableContext<TestItem> { Table = tableMock.Object };
+        var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnTrue_WhenBlockedAndAnotherItemIsEditing()
+    {
+        // Arrange
+        var tableMock = new Mock<MudTable<TestItem>>();
+#pragma warning disable BL0005
+        tableMock.Object.IsEditRowSwitchingBlocked = true;
+#pragma warning restore BL0005
+        tableMock.Object._editingItem = new TestItem("A");
+        var context = new TableContext<TestItem> { Table = tableMock.Object };
+        var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnFalse_WhenBlockedAndItemIsTheEditingItem()
+    {
+        // Arrange
+        var item = new TestItem("B");
+        var tableMock = new Mock<MudTable<TestItem>>();
+#pragma warning disable BL0005
+        tableMock.Object.IsEditRowSwitchingBlocked = true;
+#pragma warning restore BL0005
+        tableMock.Object._editingItem = item;
+        var context = new TableContext<TestItem> { Table = tableMock.Object };
 
         // Act
         var result = context.EditButtonDisabled(item);
