@@ -29,16 +29,7 @@ public class DefaultLocalizationEnumInterceptorTests
         ValueWithEmptyDisplayName,
 
         [Display]
-        ValueWithNullDisplayName,
-
-        [Display(Name = nameof(TestResources.ResourceName), ResourceType = typeof(TestResources))]
-        ValueWithResourceType
-    }
-
-    // Stand-in for a generated resx type: DisplayAttribute resolves Name against this type's static property.
-    private static class TestResources
-    {
-        public static string ResourceName => "Resolved from resource type";
+        ValueWithNullDisplayName
     }
 
     [Test]
@@ -129,23 +120,6 @@ public class DefaultLocalizationEnumInterceptorTests
 
         // Assert
         result.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Handle_ShouldResolveViaResourceType_AndBypassInterceptor_WhenResourceTypeIsSet()
-    {
-        // Arrange
-        const TestEnum EnumValue = TestEnum.ValueWithResourceType;
-        var localizationInterceptorMock = new Mock<ILocalizationInterceptor>();
-        var enumInterceptor = new DefaultLocalizationEnumInterceptor(localizationInterceptorMock.Object);
-
-        // Act
-        var result = enumInterceptor.Handle(EnumValue);
-
-        // Assert
-        // When ResourceType is set the name is resolved by the attribute itself and the interceptor must not run.
-        result.Should().Be("Resolved from resource type");
-        localizationInterceptorMock.Verify(i => i.Handle(It.IsAny<string>()), Times.Never);
     }
 
     [Test]

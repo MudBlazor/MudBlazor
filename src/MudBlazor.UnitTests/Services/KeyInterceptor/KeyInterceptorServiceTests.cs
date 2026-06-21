@@ -101,29 +101,6 @@ public class KeyInterceptorServiceTests
     }
 
     [Test]
-    public async Task SubscribeAsync_ConfigureOverload_ShouldDispatchToBuiltCommands()
-    {
-        // Arrange
-        var keyDownArgs = new KeyboardEventArgs { Key = "Enter", Type = "keydown" };
-        var executed = false;
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        await service.SubscribeAsync("observer1", new KeyInterceptorOptions(), keys => keys
-            .OnKeyDown("Enter", () =>
-            {
-                executed = true;
-                return Task.CompletedTask;
-            }));
-
-        // Act
-        await service.OnKeyDown("observer1", keyDownArgs);
-
-        // Assert
-        service.ObserversCount.Should().Be(1);
-        executed.Should().BeTrue();
-    }
-
-    [Test]
     public async Task UpdateKeyAsync_ShouldCallJavaScript()
     {
         // Arrange

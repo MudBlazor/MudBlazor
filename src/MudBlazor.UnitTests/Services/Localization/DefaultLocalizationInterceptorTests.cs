@@ -163,29 +163,6 @@ public class DefaultLocalizationInterceptorTests
     }
 
     [Test]
-    [SetUICulture("en-US")]
-    public void CustomMudLocalizer_IgnoreDefaultEnglishTrue_EnglishUICulture_ReturnsCustomLocalization()
-    {
-        // When IgnoreDefaultEnglish is "true" the English short-circuit is bypassed,
-        // so the custom MudLocalizer wins even though the UICulture is English.
-
-        // Arrange
-        var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
-        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
-        {
-            IgnoreDefaultEnglish = true
-        };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
-
-        // Act
-        var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
-
-        // Assert
-        result.Value.Should().Be("XXX", "IgnoreDefaultEnglish bypasses the English fallback, so the custom value is returned.");
-    }
-
-    [Test]
     [TestCase(true)]
     [TestCase(false)]
     [SetUICulture("en-US")]

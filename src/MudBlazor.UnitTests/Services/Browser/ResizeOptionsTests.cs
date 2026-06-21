@@ -342,6 +342,20 @@ namespace MudBlazor.UnitTests.Services.Browser
         }
 
         [Test]
+        public void OperatorEquals_DifferentInstances_ReturnsTrue()
+        {
+            // Arrange
+            var options1 = new ResizeOptions();
+            var options2 = new ResizeOptions();
+
+            // Act
+            var result = options1 == options2;
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Test]
         public void OperatorEquals_BothNulls_ReturnsTrue()
         {
             // Arrange

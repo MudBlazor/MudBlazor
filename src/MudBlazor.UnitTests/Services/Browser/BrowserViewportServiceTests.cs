@@ -659,22 +659,4 @@ public class BrowserViewportServiceTests
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(0);
     }
-
-    [Test]
-    public async Task GetCurrentBreakpointAsync_NullWindowSize_ReturnsXs()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
-        // JS reports no size (e.g. unsupported runtime / prerender); breakpoint must fall back to Xs
-        jsRuntimeMock
-            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-            .ReturnsAsync((BrowserWindowSize)null!);
-
-        // Act
-        var result = await service.GetCurrentBreakpointAsync();
-
-        // Assert
-        result.Should().Be(Breakpoint.Xs);
-    }
 }

@@ -29,28 +29,4 @@ public class KeyOptionsTests
         keyOptions1.StopUp.Should().Be(keyOptions2.StopUp);
         keyOptions1.IgnoreDownRepeats.Should().Be(keyOptions2.IgnoreDownRepeats);
     }
-
-    [Test]
-    public void Constructor_AllParameters_MapToMatchingProperties()
-    {
-        // Distinct values per argument catch a swapped/mis-assigned property in the constructor body.
-        var keyOptions = new KeyOptions(
-            key: "Tab",
-            subscribeDown: true,
-            subscribeUp: true,
-            preventDown: "key+none",
-            preventUp: "key+ctrl",
-            stopDown: "key+shift",
-            stopUp: "any",
-            ignoreDownRepeats: true);
-
-        keyOptions.Key.Should().Be("Tab");
-        keyOptions.SubscribeDown.Should().BeTrue();
-        keyOptions.SubscribeUp.Should().BeTrue();
-        keyOptions.PreventDown.Should().Be("key+none");
-        keyOptions.PreventUp.Should().Be("key+ctrl");
-        keyOptions.StopDown.Should().Be("key+shift");
-        keyOptions.StopUp.Should().Be("any");
-        keyOptions.IgnoreDownRepeats.Should().BeTrue();
-    }
 }

@@ -156,6 +156,34 @@ public class KeyMapBuilderHookTests
     }
 
     [Test]
+    public async Task HookKeyDown_DoesNotPreventOtherCommandsFromExecuting()
+    {
+        // Arrange
+        var hookExecuted = false;
+        var commandExecuted = false;
+        var builder = KeyMapBuilder.Create()
+            .HookKeyDown(args =>
+            {
+                hookExecuted = true;
+                return Task.CompletedTask;
+            })
+            .OnKeyDown("Enter", () =>
+            {
+                commandExecuted = true;
+                return Task.CompletedTask;
+            });
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert
+        hookExecuted.Should().BeTrue();
+        commandExecuted.Should().BeTrue();
+    }
+
+    [Test]
     public async Task HookKeyDown_ExecutesEvenWhenNoOtherCommandMatches()
     {
         // Arrange
