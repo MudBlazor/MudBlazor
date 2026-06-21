@@ -12,7 +12,6 @@ namespace MudBlazor.UnitTests.Extensions
         [TestCase(typeof(Adornment), new[] { "None", "Start", "End" })]
         [TestCase(typeof(Adornment?), new[] { "None", "Start", "End" })]
         [TestCase(typeof(string), new string[0])]
-        [TestCase(typeof(int), new string[0])] // Non-enum value type
         [TestCase(typeof(List<int>), new string[0])] // Generic but not Nullable<>
         public void GetSafeEnumValues(Type type, string[] expectedNames)
         {

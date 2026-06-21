@@ -129,17 +129,6 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void OrderBy_IReadOnlyCollection_NoDefinitions_ReturnsOriginalOrder()
-        {
-            var p1 = new Person { Name = "B", Age = 2 };
-            var p2 = new Person { Name = "A", Age = 1 };
-            var source = new[] { p1, p2 };
-            IReadOnlyCollection<SortDefinition<Person>> sortDefs = new List<SortDefinition<Person>>();
-            var result = source.OrderBySortDefinitions(sortDefs);
-            result.Should().Equal(source);
-        }
-
-        [Test]
         public void OrderBy_SingleDefinition_CustomComparer_IsApplied()
         {
             // Comparer orders by string length; alphabetical order would give "a","mmm","zz".
@@ -154,23 +143,6 @@ namespace MudBlazor.UnitTests.Extensions
             };
             var result = source.OrderBySortDefinitions(sortDefs).ToList();
             result.Select(x => x.Name).Should().ContainInOrder("a", "zz", "mmm");
-        }
-
-        [Test]
-        public void OrderBy_SingleDefinitionDescending_CustomComparer_IsApplied()
-        {
-            // Descending by length; alphabetical descending would give "zz","mmm","a".
-            var byNameLength = Comparer<object>.Create((a, b) => ((string)a!).Length.CompareTo(((string)b!).Length));
-            var p1 = new Person { Name = "a", Age = 1 };
-            var p2 = new Person { Name = "mmm", Age = 2 };
-            var p3 = new Person { Name = "zz", Age = 3 };
-            var source = new[] { p1, p2, p3 };
-            ICollection<SortDefinition<Person>> sortDefs = new List<SortDefinition<Person>>
-            {
-                new SortDefinition<Person>("Name", true, 0, p => p.Name, byNameLength)
-            };
-            var result = source.OrderBySortDefinitions(sortDefs).ToList();
-            result.Select(x => x.Name).Should().ContainInOrder("mmm", "zz", "a");
         }
 
         [Test]

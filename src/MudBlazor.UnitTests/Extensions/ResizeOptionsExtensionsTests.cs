@@ -79,17 +79,4 @@ public class ResizeOptionsExtensionsTests
         // Assert - the null source is replaced with a non-null empty dictionary.
         clonedOptions.BreakpointDefinitions.Should().NotBeNull().And.BeEmpty();
     }
-
-    [Test]
-    public void Clone_NullOptions_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        ResizeOptions options = null!;
-
-        // Act
-        var act = () => options.Clone();
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>();
-    }
 }

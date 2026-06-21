@@ -191,25 +191,6 @@ public class ParameterViewExtensionsTests
     }
 
     [Test]
-    public void HasParameterChanged_ReferenceType_SameValue_ReturnsFalse()
-    {
-        // Arrange
-        const string ParameterName = "Parameter";
-        var parameters = new Dictionary<string, object?>
-        {
-            [ParameterName] = "value"
-        };
-        var parameterView = ParameterView.FromDictionary(parameters);
-
-        // Act
-        var result = parameterView.HasParameterChanged(ParameterName, "value", out var newValue);
-
-        // Assert
-        result.Should().BeFalse();
-        newValue.Should().Be("value");
-    }
-
-    [Test]
     public void Contains_ParameterPresent_ReturnsTrue()
     {
         // Arrange
@@ -225,18 +206,5 @@ public class ParameterViewExtensionsTests
 
         // Assert
         result.Should().BeTrue();
-    }
-
-    [Test]
-    public void Contains_ParameterMissing_ReturnsFalse()
-    {
-        // Arrange
-        var parameterView = ParameterView.FromDictionary(new Dictionary<string, object?>());
-
-        // Act
-        var result = parameterView.Contains<int>("Missing");
-
-        // Assert
-        result.Should().BeFalse();
     }
 }

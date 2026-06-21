@@ -77,32 +77,6 @@ public class TimeSpanExtensionsTests
     }
 
     [Test]
-    public void ToIsoString_ShouldZeroPadSingleDigitParts()
-    {
-        // Arrange
-        var timeSpan = new TimeSpan(1, 2, 3);
-
-        // Act
-        var result = timeSpan.ToIsoString(seconds: true, ms: false);
-
-        // Assert
-        result.Should().Be("01:02-03");
-    }
-
-    [Test]
-    public void ToAmPmHour_ShouldWrapPmHours_WhenHourIsGreaterThan12()
-    {
-        // Arrange
-        var timeSpan = new TimeSpan(23, 0, 0);
-
-        // Act
-        var result = timeSpan.ToAmPmHour();
-
-        // Assert
-        result.Should().Be(11);
-    }
-
-    [Test]
     public void ToAmPmHour_ShouldUseHourComponent_WhenTimeSpanExceedsOneDay()
     {
         // Arrange

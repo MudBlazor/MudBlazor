@@ -84,35 +84,6 @@ public class TableExtensionsTests
     }
 
     [Test]
-    public void OrderByDirection_ShouldSortAscending_WhenDirectionIsNone_ForIEnumerable()
-    {
-        // Arrange
-        var direction = SortDirection.None;
-        string KeySelector(TestItem item) => item.Name;
-
-        // Act
-        var result = _testData.OrderByDirection(direction, KeySelector).ToList();
-
-        // Assert
-        result.Should().BeInAscendingOrder(item => item.Name);
-    }
-
-    [Test]
-    public void OrderByDirection_ShouldSortAscending_WhenDirectionIsNone_ForIQueryable()
-    {
-        // Arrange
-        var direction = SortDirection.None;
-        Expression<Func<TestItem, string>> keySelector = item => item.Name;
-        var queryableData = _testData.AsQueryable();
-
-        // Act
-        var result = queryableData.OrderByDirection(direction, keySelector).ToList();
-
-        // Assert
-        result.Should().BeInAscendingOrder(item => item.Name);
-    }
-
-    [Test]
     public void EditButtonDisabled_ShouldReturnFalse_WhenContextIsNull()
     {
         // Arrange

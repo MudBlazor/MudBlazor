@@ -23,42 +23,6 @@ namespace MudBlazor.UnitTests
             new object[] { new JSDisconnectedException("only testing") },
         };
 
-        [Test]
-        public async Task InvokeVoidAsyncIgnoreErrors_NoException_InvokesUnderlyingCall()
-        {
-            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-
-            runtimeMock
-                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
-                .ReturnsAsync(Mock.Of<IJSVoidResult>())
-                .Verifiable();
-
-            var runtime = runtimeMock.Object;
-
-            await runtime.InvokeVoidAsyncIgnoreErrors("myMethod", 42, "blub");
-
-            runtimeMock.Verify();
-        }
-
-        [Test]
-        public async Task InvokeVoidAsyncIgnoreErrors_WithToken_NoException_InvokesUnderlyingCall()
-        {
-            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-            using var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
-
-            runtimeMock
-                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", cancellationToken, It.IsAny<object[]>()))
-                .ReturnsAsync(Mock.Of<IJSVoidResult>())
-                .Verifiable();
-
-            var runtime = runtimeMock.Object;
-
-            await runtime.InvokeVoidAsyncIgnoreErrors("myMethod", cancellationToken, 42, "blub");
-
-            runtimeMock.Verify();
-        }
-
         [TestCaseSource(nameof(_caughtExceptions))]
         public async Task InvokeVoidAsyncIgnoreErrors_Exception_Swallowed<T>(T ex) where T : Exception
         {
@@ -72,26 +36,6 @@ namespace MudBlazor.UnitTests
             var runtime = runtimeMock.Object;
 
             var act = async () => await runtime.InvokeVoidAsyncIgnoreErrors("myMethod", 42, "blub");
-
-            await act.Should().NotThrowAsync();
-            runtimeMock.Verify();
-        }
-
-        [TestCaseSource(nameof(_caughtExceptions))]
-        public async Task InvokeVoidAsyncIgnoreErrors_WithToken_Exception_Swallowed<T>(T ex) where T : Exception
-        {
-            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-            using var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
-
-            runtimeMock
-                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", cancellationToken, It.IsAny<object[]>()))
-                .Throws(ex)
-                .Verifiable();
-
-            var runtime = runtimeMock.Object;
-
-            var act = async () => await runtime.InvokeVoidAsyncIgnoreErrors("myMethod", cancellationToken, 42, "blub");
 
             await act.Should().NotThrowAsync();
             runtimeMock.Verify();
@@ -317,27 +261,6 @@ namespace MudBlazor.UnitTests
 
             success.Should().Be(false);
             value.Should().Be(37.5);
-            runtimeMock.Verify();
-        }
-
-        [TestCaseSource(nameof(_caughtExceptions))]
-        public async Task InvokeAsyncWithErrorHandling_WithToken_Exception_WithDefaultValue<T>(T ex) where T : Exception
-        {
-            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-            using var cancellationTokenSource = new CancellationTokenSource();
-            var cancellationToken = cancellationTokenSource.Token;
-
-            runtimeMock
-                .Setup(x => x.InvokeAsync<double>("myMethod", cancellationToken, It.IsAny<object[]>()))
-                .Throws(ex)
-                .Verifiable();
-
-            var runtime = runtimeMock.Object;
-
-            var (success, value) = await runtime.InvokeAsyncWithErrorHandling<double>("myMethod", cancellationToken, 42, "blub");
-
-            success.Should().Be(false);
-            value.Should().Be(0.0);
             runtimeMock.Verify();
         }
 

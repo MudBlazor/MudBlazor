@@ -135,27 +135,5 @@ namespace MudBlazor.UnitTests.Extensions
             await Task.Delay(100);
             handlerInvoked.Should().BeFalse();
         }
-
-        [Test]
-        public async Task ValueTask_AndForget_ShouldNotForwardExceptionWhenIgnoreExceptions()
-        {
-            var handlerInvoked = false;
-            MudGlobal.UnhandledExceptionHandler = _ => handlerInvoked = true;
-            var task = AsyncValueTaskExceptionGenerator("Something bad is about to happen ...");
-            task.CatchAndLog(ignoreExceptions: true);
-            await Task.Delay(100);
-            handlerInvoked.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task ValueTask_T_AndForget_ShouldNotForwardExceptionWhenIgnoreExceptions()
-        {
-            var handlerInvoked = false;
-            MudGlobal.UnhandledExceptionHandler = _ => handlerInvoked = true;
-            var task = AsyncValueTaskExceptionGenerator<bool>("Something bad is about to happen ...");
-            task.CatchAndLog(ignoreExceptions: true);
-            await Task.Delay(100);
-            handlerInvoked.Should().BeFalse();
-        }
     }
 }

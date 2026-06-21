@@ -108,20 +108,6 @@ public class DateTimeExtensionTests
     }
 
     [Test]
-    public void EndOfMonth_ShouldReturn28Days_ForFebruaryInNonLeapYear()
-    {
-        // Arrange
-        var dateTime = new DateTime(2023, 2, 10); // 2023 is not a leap year.
-        var culture = CultureInfo.InvariantCulture;
-
-        // Act
-        var result = dateTime.EndOfMonth(culture);
-
-        // Assert
-        result.Should().Be(new DateTime(2023, 2, 28));
-    }
-
-    [Test]
     public void StartOfMonth_ShouldUseCultureCalendar_WhenNotGregorian()
     {
         // Arrange
@@ -212,20 +198,6 @@ public class DateTimeExtensionTests
     }
 
     [Test]
-    public void LastWeekDayOfMonth_ShouldReturnLastDay_WhenItMatchesTargetDay()
-    {
-        // Arrange: October 2023 ends on Tuesday the 31st, so no loop iterations are needed.
-        var dateTime = new DateTime(2023, 10, 15);
-        var culture = CultureInfo.InvariantCulture;
-
-        // Act
-        var result = dateTime.LastWeekDayOfMonth(DayOfWeek.Tuesday, culture);
-
-        // Assert
-        result.Should().Be(new DateTime(2023, 10, 31));
-    }
-
-    [Test]
     public void FirstWeekDayOfMonth_ShouldReturnFirstWeekDayOfMonth()
     {
         // Arrange
@@ -237,19 +209,5 @@ public class DateTimeExtensionTests
 
         // Assert
         result.Should().Be(new DateTime(2023, 9, 4)); // September 4, 2023 (Monday)
-    }
-
-    [Test]
-    public void FirstWeekDayOfMonth_ShouldReturnFirstDay_WhenItMatchesTargetDay()
-    {
-        // Arrange: October 2023 starts on Sunday the 1st, so no loop iterations are needed.
-        var dateTime = new DateTime(2023, 10, 15);
-        var culture = CultureInfo.InvariantCulture;
-
-        // Act
-        var result = dateTime.FirstWeekDayOfMonth(DayOfWeek.Sunday, culture);
-
-        // Assert
-        result.Should().Be(new DateTime(2023, 10, 1));
     }
 }

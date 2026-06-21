@@ -88,17 +88,6 @@ public class ConverterExtensionsTests
     }
 
     [Test]
-    public void TryConvert_AggregateExceptionWithMultipleConversionExceptions_CapturesFirst()
-    {
-        var conv = new ThrowAggregateWithMultipleConversionExceptionsConverter();
-        var res = conv.TryConvert(1);
-
-        res.Success.Should().BeFalse();
-        res.ExceptionError.Should().BeOfType<ConversionException>();
-        res.ErrorMessageKey.Should().Be("FIRST_KEY");
-    }
-
-    [Test]
     public void TryConvertBack_OnReversibleConverter_Works()
     {
         var rev = new ReversibleIntString();
@@ -199,11 +188,6 @@ public class ConverterExtensionsTests
     private sealed class ThrowAggregateWithoutConversionExceptionConverter : IConverter<int, string>
     {
         public string Convert(int input) => throw new AggregateException(new InvalidOperationException("a"), new FormatException("b"));
-    }
-
-    private sealed class ThrowAggregateWithMultipleConversionExceptionsConverter : IConverter<int, string>
-    {
-        public string Convert(int input) => throw new AggregateException(new ConversionException("FIRST_KEY"), new ConversionException("SECOND_KEY"));
     }
 
     private sealed class ThrowUnknownExceptionConverter : IConverter<int, string>

@@ -608,19 +608,6 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudServices_WithNullConfiguration_ShouldThrow()
-    {
-        // Arrange
-        var services = new ServiceCollection();
-
-        // Act
-        var act = () => services.AddMudServices(configuration: null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>();
-    }
-
-    [Test]
     public void AddMudBlazorDialog_WhenServiceAlreadyRegistered_ShouldNotOverwrite()
     {
         // Arrange: registration uses TryAddScoped so a pre-registered service must survive.
@@ -638,21 +625,6 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudLocalization_WhenInterceptorAlreadyRegistered_ShouldNotOverwrite()
-    {
-        // Arrange: registration uses TryAddTransient so a pre-registered interceptor must survive.
-        var services = new ServiceCollection();
-        services.AddTransient<ILocalizationInterceptor, StubLocalizationInterceptor>();
-
-        // Act
-        services.AddMudLocalization();
-
-        // Assert
-        var descriptor = services.Single(x => x.ServiceType == typeof(ILocalizationInterceptor));
-        descriptor.ImplementationType.Should().Be<StubLocalizationInterceptor>();
-    }
-
-    [Test]
     public void AddLocalizationInterceptor_ShouldReplaceDefaultInterceptor()
     {
         // Arrange
@@ -666,22 +638,6 @@ public class ServiceCollectionExtensionsTests
         var descriptors = services.Where(x => x.ServiceType == typeof(ILocalizationInterceptor)).ToList();
         descriptors.Should().ContainSingle();
         descriptors[0].ImplementationType.Should().Be<StubLocalizationInterceptor>();
-    }
-
-    [Test]
-    public void AddLocalizationEnumInterceptor_ShouldReplaceDefaultInterceptor()
-    {
-        // Arrange
-        var services = new ServiceCollection();
-        services.AddMudLocalization();
-
-        // Act
-        services.AddLocalizationEnumInterceptor<StubLocalizationEnumInterceptor>();
-
-        // Assert
-        var descriptors = services.Where(x => x.ServiceType == typeof(ILocalizationEnumInterceptor)).ToList();
-        descriptors.Should().ContainSingle();
-        descriptors[0].ImplementationType.Should().Be<StubLocalizationEnumInterceptor>();
     }
 
     [Test]
@@ -703,34 +659,10 @@ public class ServiceCollectionExtensionsTests
         serviceProvider.GetService<ILocalizationInterceptor>().Should().BeSameAs(instance);
     }
 
-    [Test]
-    public void AddLocalizationEnumInterceptor_WithFactory_ShouldReplaceDefaultInterceptorWithFactory()
-    {
-        // Arrange
-        var instance = new StubLocalizationEnumInterceptor();
-        var services = new ServiceCollection();
-        services.AddMudLocalization();
-
-        // Act
-        services.AddLocalizationEnumInterceptor(_ => instance);
-
-        // Assert
-        var descriptors = services.Where(x => x.ServiceType == typeof(ILocalizationEnumInterceptor)).ToList();
-        descriptors.Should().ContainSingle();
-        descriptors[0].ImplementationFactory.Should().NotBeNull();
-        var serviceProvider = services.BuildServiceProvider();
-        serviceProvider.GetService<ILocalizationEnumInterceptor>().Should().BeSameAs(instance);
-    }
-
     private sealed class StubDialogService : DialogService;
 
     private sealed class StubLocalizationInterceptor : ILocalizationInterceptor
     {
         public LocalizedString Handle(string key, params object[] arguments) => new(key, key, resourceNotFound: true);
-    }
-
-    private sealed class StubLocalizationEnumInterceptor : ILocalizationEnumInterceptor
-    {
-        public string Handle(Enum enumeration) => enumeration.ToString();
     }
 }

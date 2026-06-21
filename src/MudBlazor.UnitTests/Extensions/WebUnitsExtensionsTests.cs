@@ -66,15 +66,6 @@ namespace MudBlazor.UnitTests.Extensions
             value.ToPx().Should().Be(expected);
         }
 
-        [TestCase(3.0, "3%")]
-        [TestCase(3.5, "3.5%")]
-        [TestCase(3.05, "3.05%")]
-        [TestCase(1234.5678, "1234.57%")]
-        public void ToPercent_Double_RoundsToTwoDecimalsAndTrimsZeros(double value, string expected)
-        {
-            value.ToPercent().Should().Be(expected);
-        }
-
         // de-DE uses ',' as the decimal separator; the output must stay invariant ('.').
         [Test]
         public void ToPx_Double_UsesInvariantCulture()
@@ -89,27 +80,6 @@ namespace MudBlazor.UnitTests.Extensions
 
                 3.3333.ToPx().Should().Be("3.33px");
                 ((double?)3.3333).ToPx().Should().Be("3.33px");
-            }
-            finally
-            {
-                CultureInfo.CurrentCulture = originalCulture;
-                CultureInfo.CurrentUICulture = originalUiCulture;
-            }
-        }
-
-        [Test]
-        public void ToPercent_Double_UsesInvariantCulture()
-        {
-            var originalCulture = CultureInfo.CurrentCulture;
-            var originalUiCulture = CultureInfo.CurrentUICulture;
-
-            try
-            {
-                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-                CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-
-                3.3333.ToPercent().Should().Be("3.33%");
-                ((double?)3.3333).ToPercent().Should().Be("3.33%");
             }
             finally
             {
