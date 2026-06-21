@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
+using System.Reflection;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
@@ -15,6 +16,8 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         // ReSharper disable ClassNeverInstantiated.Local
         private class Employee
         {
+            public string Department = string.Empty;
+
             public string Name => string.Empty;
 
             public Manager Manager { get; } = new();
@@ -23,6 +26,13 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         private class Manager
         {
             public string Name => string.Empty;
+
+            // Value-typed member: boxing it to object forces the compiler to emit a Convert node.
+            public int Level => 0;
+
+            // No initializer: only the property metadata is read via expression trees,
+            // never a runtime value, so a self-referential default would just stack-overflow.
+            public Manager Boss { get; }
         }
         // ReSharper restore ClassNeverInstantiated.Local
 
@@ -65,6 +75,59 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             property.GetPath().Should().Be("");
             property.GetLastMemberName().Should().Be("");
             property.GetMembers().Count.Should().Be(0);
+        }
+
+        [Test]
+        public void PropertyPathTests_Visit_DeepChain_PreservesSourceToLeafOrder()
+        {
+            // Arrange
+            Expression<Func<Employee, string>> exp = x => x.Manager.Boss.Name;
+
+            // Act
+            var property = PropertyPath.Visit(exp);
+
+            // Assert: VisitMember inserts at index 0 while walking outermost->innermost,
+            // so members must end up in source-to-leaf order.
+            property.IsBodyMemberExpression.Should().BeTrue();
+            property.GetMembers().Select(m => m.Name).Should().Equal("Manager", "Boss", "Name");
+            property.GetPath().Should().Be("Manager.Boss.Name");
+            property.GetLastMemberName().Should().Be("Name");
+        }
+
+        [Test]
+        public void PropertyPathTests_Visit_FieldAccess_IsTreatedAsMember()
+        {
+            // Arrange: a field access is also a MemberExpression.
+            Expression<Func<Employee, string>> exp = x => x.Department;
+
+            // Act
+            var property = PropertyPath.Visit(exp);
+
+            // Assert
+            property.IsBodyMemberExpression.Should().BeTrue();
+            property.GetPath().Should().Be("Department");
+            property.GetMembers().Should().ContainSingle()
+                .Which.Should().BeAssignableTo<FieldInfo>();
+        }
+
+        [Test]
+        public void PropertyPathTests_Visit_ConvertBody_NotBodyMemberButStillVisitsMembers()
+        {
+            // Arrange: boxing a value type to object wraps the member in a Convert node,
+            // so the body is a UnaryExpression, not a MemberExpression, even though it
+            // resolves to one. (A reference-type-to-object conversion would NOT add a
+            // Convert node, leaving the body a MemberExpression.)
+            Expression<Func<Employee, object>> exp = x => x.Manager.Level;
+
+            // Act
+            var property = PropertyPath.Visit(exp);
+
+            // Assert: the flag reflects the body node type (Convert, not Member), but the
+            // visitor still descends into the wrapped MemberExpression chain.
+            property.IsBodyMemberExpression.Should().BeFalse();
+            property.GetPath().Should().Be("Manager.Level");
+            property.GetLastMemberName().Should().Be("Level");
+            property.GetMembers().Count.Should().Be(2);
         }
     }
 }

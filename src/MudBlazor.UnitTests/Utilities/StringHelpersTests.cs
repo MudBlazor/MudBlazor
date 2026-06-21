@@ -42,4 +42,79 @@ public class StringHelpersTests
 
         Value.ToStr().Should().Be(StringHelpers.ToS(Value));
     }
+
+    // Whole numbers carry no trailing ".0", and the 5th decimal rounds the 4th. Negatives round by magnitude.
+    [TestCase(0d, "0")]
+    [TestCase(5d, "5")]
+    [TestCase(2.71828d, "2.7183")]
+    [TestCase(-1.23456d, "-1.2346")]
+    [TestCase(1.23454d, "1.2345")]
+    public void ToS_WithoutFormat_RoundsToFourDecimals(double input, string expected)
+    {
+        StringHelpers.ToS(input).Should().Be(expected);
+    }
+
+    [Test]
+    public void ToS_WithoutFormat_IsIndependentOfCurrentCulture()
+    {
+        // The no-format path is the one used to build SVG paths; it must emit '.' regardless of culture.
+        var originalCulture = CultureInfo.CurrentCulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+
+            StringHelpers.ToS(1234.5).Should().Be("1234.5");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
+        }
+    }
+
+    [Test]
+    public void ToS_WithFormat_HonorsCurrentCulture()
+    {
+        // Unlike the no-format path, the format path uses ToString(format) which respects CurrentCulture.
+        var originalCulture = CultureInfo.CurrentCulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+
+            StringHelpers.ToS(1.5, "F2").Should().Be("1,50");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
+        }
+    }
+
+    [Test]
+    public void ToS_WithEmptyFormat_TakesInvariantNoFormatPath()
+    {
+        // An empty format string hits the IsNullOrEmpty branch, not ToString("").
+        var originalCulture = CultureInfo.CurrentCulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+
+            StringHelpers.ToS(1234.5, "").Should().Be("1234.5");
+            StringHelpers.ToS(1234.5, "").Should().Be(StringHelpers.ToS(1234.5));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
+        }
+    }
 }

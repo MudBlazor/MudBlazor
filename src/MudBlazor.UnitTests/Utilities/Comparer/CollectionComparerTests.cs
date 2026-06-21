@@ -97,6 +97,62 @@ public class CollectionComparerTests
         comparer.GetHashCode(["a", "b", "c"]).Should().NotBe(comparer.GetHashCode(["a", "a", "x"]));
     }
 
+    [Test]
+    public void Equals_SameReference_ReturnsTrueWithoutSetComputation()
+    {
+        var comparer = new CollectionComparer<int>(new ThrowingEqualityComparer());
+
+        // ReferenceEquals short-circuit must run before the comparer is touched;
+        // the throwing comparer proves no set computation happens for self-compares.
+        IReadOnlyCollection<int> empty = new List<int>();
+        IReadOnlyCollection<int> withDuplicates = new List<int> { 1, 1, 2 };
+
+        comparer.Equals(empty, empty).Should().Be(true);
+        comparer.Equals(withDuplicates, withDuplicates).Should().Be(true);
+    }
+
+    [Test]
+    public void Equals_NullElements_TreatedAsDistinctValue()
+    {
+        // MudChipSet uses CollectionComparer<T?>, so null entries are a real scenario.
+        var comparer = new CollectionComparer<string?>();
+
+        comparer.Equals([null], [null]).Should().Be(true);
+        comparer.Equals([null, "a", null], ["a", null]).Should().Be(true);
+        comparer.Equals([null, "a"], ["a"]).Should().Be(false);
+        comparer.Equals(["a"], [null, "a"]).Should().Be(false);
+        comparer.Equals([null], ["a"]).Should().Be(false);
+    }
+
+    [Test]
+    public void HashCode_NullElements_AreStableAndSetBased()
+    {
+        var comparer = new CollectionComparer<string?>();
+
+        comparer.GetHashCode([null]).Should().Be(comparer.GetHashCode([null]));
+        comparer.GetHashCode([null, "a", null]).Should().Be(comparer.GetHashCode(["a", null]));
+        // Order/duplicate insensitivity still holds when a null element is present.
+        comparer.GetHashCode([null, "a", "b"]).Should().Be(comparer.GetHashCode(["b", null, "a", "a"]));
+    }
+
+    [Test]
+    public void HashCode_EmptyCollection_UsesStableNonZeroSeedDistinctFromNull()
+    {
+        var comparer = CollectionComparer<int>.Default;
+
+        var empty = comparer.GetHashCode([]);
+        empty.Should().Be(comparer.GetHashCode([]));
+        empty.Should().NotBe(0);
+        empty.Should().NotBe(comparer.GetHashCode(null));
+    }
+
+    private class ThrowingEqualityComparer : IEqualityComparer<int>
+    {
+        public bool Equals(int x, int y) => throw new InvalidOperationException("Comparer should not be used for reference-equal collections.");
+
+        public int GetHashCode(int obj) => throw new InvalidOperationException("Comparer should not be used for reference-equal collections.");
+    }
+
     private class LowercaseEqualityComparer : IEqualityComparer<string?>
     {
         public bool Equals(string? x, string? y) => EqualityComparer<string>.Default.Equals(x?.ToLowerInvariant(), y?.ToLowerInvariant());

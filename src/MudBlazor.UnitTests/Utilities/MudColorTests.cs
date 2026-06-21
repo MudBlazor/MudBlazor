@@ -1051,7 +1051,7 @@ namespace MudBlazor.UnitTests.Utilities
             var actualUint = (uint)mudColor;
 
             actualUint.Should().Be(expectedUint);
-            mudColor.UInt32.Should().Be(mudColor.UInt32);
+            mudColor.UInt32.Should().Be(expectedUint);
         }
 
         [Test]
@@ -1151,6 +1151,92 @@ namespace MudBlazor.UnitTests.Utilities
             // Assert
             result1.Should().Be("#47586301");
             result2.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void FromRGB_CopyHueFromColor()
+        {
+            // Arrange: a non-gray source color so its hue is non-zero, with a distinctive alpha.
+            var source = new MudColor((byte)200, (byte)100, (byte)50, (byte)128);
+            source.H.Should().NotBe(0); // guards the test against a degenerate source
+
+            // Act: a pure gray would normally compute hue 0, but this ctor copies hue and alpha from source.
+            var color = new MudColor((byte)10, (byte)10, (byte)10, source);
+
+            // Assert
+            color.R.Should().Be(10);
+            color.G.Should().Be(10);
+            color.B.Should().Be(10);
+            color.A.Should().Be(source.A); // alpha copied from source
+            color.H.Should().Be(source.H); // hue copied from source, not recomputed from RGB
+        }
+
+        [Test]
+        public void Empty_IsBlackWithFullOpacity()
+        {
+            MudColor.Empty.R.Should().Be(0);
+            MudColor.Empty.G.Should().Be(0);
+            MudColor.Empty.B.Should().Be(0);
+            MudColor.Empty.A.Should().Be(255);
+            MudColor.Empty.Should().Be(new MudColor());
+        }
+
+        [Test]
+        public void Equals_SameRgbaAndHsl_ReturnsTrue()
+        {
+            // Arrange: identical inputs guarantee both RGBA and HSL match (no round-trip drift).
+            var color1 = new MudColor(130, 150, 240, 255);
+            var color2 = new MudColor(130, 150, 240, 255);
+
+            // Act & Assert: the RgbaAndHsl mode's all-match branch (only the false branch was covered before).
+            color1.Equals(color2, MudColorComparison.RgbaAndHsl).Should().BeTrue();
+        }
+
+        [Test]
+        public void GenerateGradientPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
+        {
+            var start = new MudColor("#FF0000");
+            var end = new MudColor("#0000FF");
+
+            var act = () => MudColor.GenerateGradientPalette(start, end, numberOfColors).ToList();
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        public void GenerateMultiGradientPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
+        {
+            IReadOnlyList<MudColor> colors = ["#FF0000", "#0000FF"];
+
+            var act = () => MudColor.GenerateMultiGradientPalette(colors, numberOfColors).ToList();
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        public void GenerateAnalogousPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
+        {
+            var act = () => MudColor.GenerateAnalogousPalette("#FF0000", numberOfColors).ToList();
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        public void GenerateTintShadePalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
+        {
+            var act = () => MudColor.GenerateTintShadePalette("#808080", numberOfColors).ToList();
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        public void GenerateTintShadePalette_NegativeStep_Throws()
+        {
+            var negativeTint = () => MudColor.GenerateTintShadePalette("#808080", 5, tintStep: -0.1, shadeStep: 0.1).ToList();
+            var negativeShade = () => MudColor.GenerateTintShadePalette("#808080", 5, tintStep: 0.1, shadeStep: -0.1).ToList();
+
+            negativeTint.Should().Throw<ArgumentOutOfRangeException>();
+            negativeShade.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         private static readonly object[] _multiGradientTestCases =

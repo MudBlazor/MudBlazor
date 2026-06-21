@@ -148,6 +148,17 @@ public class BaseMaskTests
     }
 
     [Test]
+    public void BaseMask_SplitSelection_ReversedSelection()
+    {
+        // SplitSelection does not normalize a start > end selection; the negative span yields an empty middle.
+        var (before, selected, after) = BaseMask.SplitSelection("hello", (4, 1));
+
+        before.Should().Be("hell");
+        selected.Should().Be("");
+        after.Should().Be("o");
+    }
+
+    [Test]
     public void PatternMask_Clear_ResetsState()
     {
         // Arrange
@@ -201,6 +212,31 @@ public class BaseMaskTests
 
         // Assert
         mask.Text.Should().BeNullOrEmpty();
+    }
+
+    [Test]
+    public void BaseMask_AllowOnlyDelimiters_False_BlanksDelimiterOnlyText()
+    {
+        // BaseMask.UpdateText (used by RegexMask) blanks text that is only delimiters when the flag is off.
+        // IPv4 leaves AllowOnlyDelimiters at its default of false and uses '.' as a delimiter.
+        var mask = RegexMask.IPv4();
+        mask.AllowOnlyDelimiters.Should().BeFalse();
+
+        mask.Insert(".");
+
+        mask.Text.Should().BeNullOrEmpty();
+    }
+
+    [Test]
+    public void BaseMask_AllowOnlyDelimiters_True_KeepsDelimiterOnlyText()
+    {
+        // The contrasting branch: IPv6 sets AllowOnlyDelimiters = true so a lone delimiter is preserved.
+        var mask = RegexMask.IPv6();
+        mask.AllowOnlyDelimiters.Should().BeTrue();
+
+        mask.Insert(":");
+
+        mask.Text.Should().Be(":");
     }
 
     [Test]
@@ -258,6 +294,17 @@ public class BaseMaskTests
 
         // Act & Assert
         mask.ToString().Should().Be("12|");
+    }
+
+    [Test]
+    public void PatternMask_ToString_NegativeCaret()
+    {
+        // ConsolidateCaret clamps a negative caret to 0, so the marker lands at the start.
+        var mask = new PatternMask("000");
+        mask.Insert("123");
+        mask.CaretPos = -5;
+
+        mask.ToString().Should().Be("|123");
     }
 
     [Test]

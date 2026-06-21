@@ -56,6 +56,14 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             // ReSharper restore MemberCanBeMadeStatic.Local
         }
 
+        // Distinct type that intentionally declares a property with the same name as
+        // ExpressionTestClass.FirstName, to exercise the declaring-type part of UpdateHash(MemberInfo).
+        private class OtherTestClass
+        {
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
+            public string? FirstName { get; set; }
+        }
+
         [Test(Description = "VisitMethodCall")]
         public void ExpressionHasherTests_Get_Same_HashCode_Test1()
         {
@@ -388,6 +396,53 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         {
             Expression<Func<ExpressionTestClass, int>> exp1 = x => x.Nested1[0];
             Expression<Func<ExpressionTestClass, int>> exp2 = x => x.Nested1[1];
+
+            var h1 = ExpressionHasher.GetHashCode(exp1);
+            var h2 = ExpressionHasher.GetHashCode(exp2);
+
+            h1.Equals(h2).Should().BeFalse();
+        }
+
+        [Test(Description = "Same member name on different declaring types must not collide (UpdateHash AssemblyQualifiedName branch).")]
+        public void ExpressionHasherTests_Get_NotSame_HashCode_DifferentDeclaringType()
+        {
+            // Both select a 'FirstName' member; only the declaring type differs.
+            Expression<Func<ExpressionTestClass, string?>> exp1 = x => x.FirstName;
+            Expression<Func<OtherTestClass, string?>> exp2 = x => x.FirstName;
+
+            var h1 = ExpressionHasher.GetHashCode(exp1);
+            var h2 = ExpressionHasher.GetHashCode(exp2);
+
+            h1.Equals(h2).Should().BeFalse();
+        }
+
+        [Test(Description = "A real expression must not hash to the null sentinel; the null contract is non-vacuous.")]
+        public void ExpressionHasherTests_Get_HashCode_NonNull_DiffersFromNull()
+        {
+            Expression<Func<ExpressionTestClass, string?>> exp = x => x.FirstName;
+
+            var nonNullHash = ExpressionHasher.GetHashCode(exp);
+            var nullHash = ExpressionHasher.GetHashCode(null);
+
+            nonNullHash.Equals(nullHash).Should().BeFalse();
+        }
+
+        [Test(Description = "Hashing is deterministic across independent visitor instances (cache-key stability).")]
+        public void ExpressionHasherTests_Get_HashCode_IsDeterministicAcrossCalls()
+        {
+            Expression<Func<ExpressionTestClass, bool>> exp = x => string.Equals(x.FirstName, "stable", StringComparison.Ordinal);
+
+            var first = ExpressionHasher.GetHashCode(exp);
+            var second = ExpressionHasher.GetHashCode(exp);
+
+            second.Should().Be(first);
+        }
+
+        [Test(Description = "Same node kinds with operands swapped must not collide (constant ordering).")]
+        public void ExpressionHasherTests_Get_NotSame_HashCode_SwappedOperands()
+        {
+            Expression<Func<ExpressionTestClass, bool>> exp1 = x => string.Equals(x.FirstName, "a", StringComparison.Ordinal);
+            Expression<Func<ExpressionTestClass, bool>> exp2 = x => string.Equals("a", x.FirstName, StringComparison.Ordinal);
 
             var h1 = ExpressionHasher.GetHashCode(exp1);
             var h2 = ExpressionHasher.GetHashCode(exp2);

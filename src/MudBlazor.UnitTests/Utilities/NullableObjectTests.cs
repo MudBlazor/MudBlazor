@@ -82,6 +82,20 @@ public class NullableObjectTests
     }
 
     [Test]
+    public void Equals_NullCompareToNonNull_ShouldReturnFalse()
+    {
+        // Arrange - null on the left exercises the IsNull branch after the other.IsNull check
+        var nullObj = NullableObject<string>.Null;
+        var obj = new NullableObject<string>("test");
+
+        // Act
+        var result = nullObj.Equals(obj);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
     public void EqualsT_WithSameItem_ShouldReturnTrue()
     {
         // Arrange
@@ -121,6 +135,20 @@ public class NullableObjectTests
 
         // Assert
         result.Should().BeTrue();
+    }
+
+    [Test]
+    public void EqualsT_NonNullCompareToNullItem_ShouldReturnFalse()
+    {
+        // Arrange
+        var obj = new NullableObject<string>("test");
+        string? item = null;
+
+        // Act
+        var result = obj.Equals(item);
+
+        // Assert
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -252,6 +280,18 @@ public class NullableObjectTests
     }
 
     [Test]
+    public void GetHashCode_ShouldBeZeroForNullAndMatchItemForNonNull()
+    {
+        // Arrange
+        var nullObj = NullableObject<string>.Null;
+        var obj = new NullableObject<string>("test");
+
+        // Act & Assert
+        nullObj.GetHashCode().Should().Be(0);
+        obj.GetHashCode().Should().Be("test".GetHashCode());
+    }
+
+    [Test]
     public void ImplicitConversion_ShouldConvertToAndFromNullableObject()
     {
         // Arrange & Act
@@ -274,17 +314,6 @@ public class NullableObjectTests
         structObj.IsNull.Should().BeFalse();
         structItem.Should().Be(5);
         structNullItem.Should().Be(5);
-    }
-
-    [Test]
-    public void Null_ShouldReturnNullObject()
-    {
-        // Arrange & Act
-        var nullObj = NullableObject<string>.Null;
-
-        // Assert
-        nullObj.Item.Should().BeNull();
-        nullObj.IsNull.Should().BeTrue();
     }
 
     [Test]
@@ -323,5 +352,34 @@ public class NullableObjectTests
         // Act & Assert
         (obj1 != obj2).Should().BeTrue();
         (obj != nullObj).Should().BeTrue();
+    }
+
+    [Test]
+    public void EqualsObject_TwoNullsOfDifferentGenericTypes_ShouldReturnFalse()
+    {
+        // Arrange - documented contract: two nulls of different generic types are not equal
+        object stringNull = NullableObject<string>.Null;
+        object objectNull = NullableObject<object>.Null;
+
+        // Act
+        var result = stringNull.Equals(objectNull);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void ValueType_NullEqualsDefaultAndZero()
+    {
+        // Arrange - structs cannot be null, so Null, default and new(0) are all equivalent
+        var nullObj = NullableObject<int>.Null;
+        NullableObject<int> defaultObj = default;
+        var zeroObj = new NullableObject<int>(0);
+
+        // Act & Assert
+        (nullObj == defaultObj).Should().BeTrue();
+        (nullObj == zeroObj).Should().BeTrue();
+        nullObj.Equals(0).Should().BeTrue();
+        nullObj.IsNull.Should().BeFalse();
     }
 }

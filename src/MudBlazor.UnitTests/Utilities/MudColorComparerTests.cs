@@ -142,18 +142,6 @@ public class MudColorComparerTests
     }
 
     [Test]
-    [TestCaseSource(nameof(AllComparers))]
-    public void GetHashCode_NullObject(MudColor.MudColorComparer comparer)
-    {
-        // Arrange & Act
-        var h1 = comparer.GetHashCode(null);
-        var h2 = comparer.GetHashCode(null);
-
-        // Assert
-        h1.Should().Be(h2);
-    }
-
-    [Test]
     public void GetHashCode_RGBA_ShouldDifferForDifferentColors()
     {
         // Arrange
@@ -297,6 +285,68 @@ public class MudColorComparerTests
 
         // Assert
         h1.Should().NotBe(h2);
+    }
+
+    [Test]
+    public void Equals_RGBA_ShouldReturnFalse_WhenOnlyAlphaDiffers()
+    {
+        // Same RGB, different alpha: RGBA channel set includes A, so they are not RGBA-equal.
+        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
+        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
+
+        MudColor.MudColorComparer.Rgba.Equals(opaque, translucent).Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_HSL_ShouldReturnTrue_WhenOnlyAlphaDiffers()
+    {
+        // HSL carries no alpha, so colors differing only by alpha are HSL-equal.
+        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
+        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
+
+        MudColor.MudColorComparer.Hsl.Equals(opaque, translucent).Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_Both_ShouldReturnFalse_WhenOnlyAlphaDiffers()
+    {
+        // RgbaAndHsl requires both to match; the RGBA half fails on alpha.
+        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
+        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
+
+        MudColor.MudColorComparer.RgbaAndHsl.Equals(opaque, translucent).Should().BeFalse();
+    }
+
+    [Test]
+    public void GetHashCode_RGBA_ShouldDiffer_WhenOnlyAlphaDiffers()
+    {
+        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
+        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
+
+        var h1 = MudColor.MudColorComparer.Rgba.GetHashCode(opaque);
+        var h2 = MudColor.MudColorComparer.Rgba.GetHashCode(translucent);
+
+        h1.Should().NotBe(h2);
+    }
+
+    [Test]
+    public void GetHashCode_HSL_ShouldMatch_WhenOnlyAlphaDiffers()
+    {
+        var opaque = new MudColor((byte)255, (byte)0, (byte)0, (byte)255);
+        var translucent = new MudColor((byte)255, (byte)0, (byte)0, (byte)128);
+
+        var h1 = MudColor.MudColorComparer.Hsl.GetHashCode(opaque);
+        var h2 = MudColor.MudColorComparer.Hsl.GetHashCode(translucent);
+
+        h1.Should().Be(h2);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(AllComparers))]
+    public void GetHashCode_NullObject_ShouldBeZero(MudColor.MudColorComparer comparer)
+    {
+        // Documented contract: the comparer hashes null to 0 regardless of mode.
+        comparer.GetHashCode(null).Should().Be(0);
     }
 
     [Test]

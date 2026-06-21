@@ -22,8 +22,36 @@ public class BackgroundWorkerTests
 
         startTask.IsCompleted.Should().BeTrue();
         tcs.Task.IsCompleted.Should().BeFalse();
+        // While running, StartAsync returns Task.CompletedTask, not the still-executing task
+        startTask.Should().NotBeSameAs(worker.ExecuteTask);
+        worker.ExecuteTask!.IsCompleted.Should().BeFalse();
 
         // Complete the task
+        tcs.TrySetResult(null!);
+    }
+
+    [Test]
+    public void StartAsync_ReturnsExecuteTaskWhenCompletedSynchronously()
+    {
+        var tcs = new TaskCompletionSource<object>();
+        tcs.TrySetResult(null!);
+        var worker = new MyBackgroundWorkerMock(tcs.Task);
+
+        var startTask = worker.StartAsync(CancellationToken.None);
+
+        // When ExecuteAsync finishes synchronously, the started task itself is returned
+        startTask.IsCompletedSuccessfully.Should().BeTrue();
+        worker.ExecuteTask.Should().BeSameAs(startTask);
+    }
+
+    [Test]
+    public void ExecuteTask_BeforeStart_IsNull()
+    {
+        var tcs = new TaskCompletionSource<object>();
+        var worker = new MyBackgroundWorkerMock(tcs.Task);
+
+        worker.ExecuteTask.Should().BeNull();
+
         tcs.TrySetResult(null!);
     }
 
@@ -110,6 +138,9 @@ public class BackgroundWorkerTests
         await worker.StartAsync(CancellationToken.None);
 
         worker.Dispose();
+
+        // Dispose cancels the linked stopping token, which cancels the executing task
+        Assert.ThrowsAsync<TaskCanceledException>(() => worker.ExecutingTask);
     }
 
     [Test]
@@ -131,6 +162,34 @@ public class BackgroundWorkerTests
     {
         var worker = new WaitForCancelledTokenWorkerMock();
 
+        worker.Dispose();
+    }
+
+    [Test]
+    public async Task StopAsync_CalledTwice_DoesNotThrow()
+    {
+        var tcs = new TaskCompletionSource<object>();
+        var worker = new MyBackgroundWorkerMock(tcs.Task);
+
+        await worker.StartAsync(CancellationToken.None);
+        await worker.StopAsync(CancellationToken.None);
+
+        // Second stop re-cancels the already-cancelled token source; must remain a no-throw no-op
+        await worker.StopAsync(CancellationToken.None);
+
+        worker.ExecuteTask!.IsCompleted.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task Dispose_AfterStop_DoesNotThrow()
+    {
+        var tcs = new TaskCompletionSource<object>();
+        var worker = new MyBackgroundWorkerMock(tcs.Task);
+
+        await worker.StartAsync(CancellationToken.None);
+        await worker.StopAsync(CancellationToken.None);
+
+        // Dispose cancels the stopping token source again; already-cancelled cancel must not throw
         worker.Dispose();
     }
 }

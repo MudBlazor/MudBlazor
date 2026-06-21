@@ -141,6 +141,100 @@ public class ExpressionNullTests
         value.Should().BeNull();
     }
 
+    [Test]
+    public void AddNullChecks_ShouldReturnDefaultWhenMidChainMemberIsNull()
+    {
+        // Deep chain where the intermediate (Nested.Deep) is null; every level must be guarded, not just the last.
+        Expression<Func<TestClass, string?>> expression = x => x.Nested!.Deep!.Property;
+        var instance = new TestClass { Nested = new NestedClass { Deep = null } };
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        value.Should().BeNull();
+    }
+
+    [Test]
+    public void AddNullChecks_ShouldResolveFullDeepChainWhenNothingIsNull()
+    {
+        Expression<Func<TestClass, string?>> expression = x => x.Nested!.Deep!.Property;
+        var instance = new TestClass { Nested = new NestedClass { Deep = new DeepNestedClass { Property = "Deep" } } };
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        value.Should().Be("Deep");
+    }
+
+    [Test]
+    public void AddNullChecks_ShouldReturnZeroForNonNullableValueTypeBehindNullMember()
+    {
+        // The leaf is a non-nullable value type, the intermediate is null: must yield default(int) instead of throwing.
+        Expression<Func<TestClass, int>> expression = x => x.Nested!.DeepValue;
+        var instance = new TestClass { Nested = null };
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        value.Should().Be(0);
+    }
+
+    [Test]
+    public void AddNullChecks_ShouldReturnNullForNullableValueTypeWhenValueIsNull()
+    {
+        Expression<Func<TestClass, int?>> expression = x => x.NullableValueTypeProperty;
+        var instance = new TestClass { NullableValueTypeProperty = null };
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        value.Should().BeNull();
+    }
+
+    [Test]
+    public void AddNullChecks_ShouldPreserveMethodCallArguments()
+    {
+        // Arguments on the guarded call must be carried over unchanged.
+        Expression<Func<TestClass, string?>> expression = x => x.Echo("hello");
+        var instance = new TestClass();
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        value.Should().Be("hello");
+    }
+
+    [Test]
+    public void AddNullChecks_ShouldReturnSameLambdaParameter()
+    {
+        // The transformed lambda must reuse the original parameter so the body stays bound.
+        Expression<Func<TestClass, string?>> expression = x => x.Property;
+
+        var result = ExpressionNull.AddNullChecks(expression);
+
+        result.Parameters[0].Should().BeSameAs(expression.Parameters[0]);
+    }
+
+    [Test]
+    public void AddNullChecks_ShouldPassThroughParameterOnlyBody()
+    {
+        // An identity body has no member/method to guard and is returned unchanged.
+        Expression<Func<TestClass, TestClass>> expression = x => x;
+        var instance = new TestClass { Property = "Self" };
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        result.Body.Should().BeSameAs(expression.Body);
+        value.Should().BeSameAs(instance);
+    }
+
     private class TestClass
     {
         public string? Property { get; set; }
@@ -152,12 +246,23 @@ public class ExpressionNullTests
         public NestedClass? Nested { get; set; }
 
         public string? GetProperty() => Property;
+
+        public string? Echo(string value) => value;
     }
 
     private class NestedClass
     {
         public string? Property { get; set; }
 
+        public DeepNestedClass? Deep { get; set; }
+
+        public int DeepValue { get; set; }
+
         public string? GetProperty() => Property;
+    }
+
+    private class DeepNestedClass
+    {
+        public string? Property { get; set; }
     }
 }

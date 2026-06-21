@@ -11,17 +11,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 public class MaskCharTests
 {
     [Test]
-    public void MaskChar_Constructor()
-    {
-        // Arrange & Act
-        var maskChar = new MaskChar('x', @"\d");
-
-        // Assert
-        maskChar.Char.Should().Be('x');
-        maskChar.Regex.Should().Be(@"\d");
-    }
-
-    [Test]
     public void MaskChar_Letter_CreatesCorrectRegex()
     {
         // Arrange & Act
@@ -52,17 +41,6 @@ public class MaskCharTests
         // Assert
         maskChar.Char.Should().Be('*');
         maskChar.Regex.Should().Be(@"\p{L}|\d");
-    }
-
-    [Test]
-    public void MaskChar_CustomRegex_WorksCorrectly()
-    {
-        // Arrange & Act
-        var maskChar = new MaskChar('h', @"[0-9A-Fa-f]");
-
-        // Assert
-        maskChar.Char.Should().Be('h');
-        maskChar.Regex.Should().Be(@"[0-9A-Fa-f]");
     }
 
     [Test]
@@ -99,13 +77,68 @@ public class MaskCharTests
     }
 
     [Test]
-    public void MaskChar_Constructor_CreatesImmutableStruct()
+    public void MaskChar_EqualsObject_SameValue_ReturnsTrue()
     {
-        // Arrange & Act
-        var maskChar = new MaskChar('z', @"[a-z]");
+        // Arrange
+        var maskChar = new MaskChar('x', @"\d");
+        object boxed = new MaskChar('x', @"\d");
 
-        // Assert
-        maskChar.Char.Should().Be('z');
-        maskChar.Regex.Should().Be(@"[a-z]");
+        // Act & Assert
+        maskChar.Equals(boxed).Should().BeTrue();
+    }
+
+    [Test]
+    public void MaskChar_EqualsObject_Null_ReturnsFalse()
+    {
+        // Arrange
+        var maskChar = new MaskChar('x', @"\d");
+
+        // Act & Assert
+        maskChar.Equals(null).Should().BeFalse();
+    }
+
+    [Test]
+    public void MaskChar_EqualsObject_DifferentType_ReturnsFalse()
+    {
+        // Arrange
+        var maskChar = new MaskChar('x', @"\d");
+
+        // Act & Assert
+        maskChar.Equals("x").Should().BeFalse();
+    }
+
+    [Test]
+    public void MaskChar_GetHashCode_EqualInstances_ProduceSameHashCode()
+    {
+        // Arrange
+        var maskChar1 = new MaskChar('x', @"\d");
+        var maskChar2 = new MaskChar('x', @"\d");
+
+        // Act & Assert
+        maskChar1.GetHashCode().Should().Be(maskChar2.GetHashCode());
+    }
+
+    [Test]
+    public void MaskChar_OperatorEquals_SameValue_ReturnsTrue()
+    {
+        // Arrange
+        var maskChar1 = new MaskChar('x', @"\d");
+        var maskChar2 = new MaskChar('x', @"\d");
+
+        // Act & Assert
+        (maskChar1 == maskChar2).Should().BeTrue();
+        (maskChar1 != maskChar2).Should().BeFalse();
+    }
+
+    [Test]
+    public void MaskChar_OperatorEquals_DifferentValue_ReturnsFalse()
+    {
+        // Arrange
+        var maskChar1 = new MaskChar('x', @"\d");
+        var maskChar2 = new MaskChar('x', @"\w");
+
+        // Act & Assert
+        (maskChar1 == maskChar2).Should().BeFalse();
+        (maskChar1 != maskChar2).Should().BeTrue();
     }
 }

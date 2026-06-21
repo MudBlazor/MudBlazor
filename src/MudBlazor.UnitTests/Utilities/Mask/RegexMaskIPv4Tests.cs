@@ -66,6 +66,44 @@ public class RegexMaskIPv4Tests
     }
 
     [Test]
+    public void IPv4_OctetOutOfRange_RollsOverToNextOctet()
+    {
+        // An octet may not exceed 255: the offending digit is pushed past the delimiter into the next octet.
+        var mask = RegexMask.IPv4();
+        mask.Insert("256");
+        mask.ToString().Should().Be("25.6|");
+        mask.Clear();
+        // A 3-digit octet starting with 9 caps at two digits (regex allows max 199 for a leading-0/1 octet).
+        mask.Insert("9999");
+        mask.ToString().Should().Be("99.99|");
+        mask.Clear();
+        // A complete max octet (255) followed by another digit starts the next octet.
+        mask.Insert("2552");
+        mask.ToString().Should().Be("255.2|");
+        mask.Clear();
+        // Exactly 255 is accepted verbatim as a single octet.
+        mask.Insert("255");
+        mask.ToString().Should().Be("255|");
+    }
+
+    [Test]
+    public void IPv4WithPort_PortOutOfRange_ClampsToValidPrefix()
+    {
+        // The maximum valid port (65535) is accepted in full.
+        var mask = RegexMask.IPv4(true);
+        mask.Insert("0.0.0.0:65535");
+        mask.ToString().Should().Be("0.0.0.0:65535|");
+        mask.Clear();
+        // 65536 exceeds the max: the trailing digit is rejected, leaving the longest valid prefix.
+        mask.Insert("0.0.0.0:65536");
+        mask.ToString().Should().Be("0.0.0.0:6553|");
+        mask.Clear();
+        // Port 0 is not a valid port token, so the lone trailing zero is dropped.
+        mask.Insert("0.0.0.0:0");
+        mask.ToString().Should().Be("0.0.0.0:|");
+    }
+
+    [Test]
     public void IPv4_Delete()
     {
         var mask = RegexMask.IPv4();

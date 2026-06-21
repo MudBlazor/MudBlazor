@@ -10,16 +10,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class PatternMaskTests
 {
-
-    [Test]
-    public void BaseMask_Internals()
-    {
-        BaseMask.SplitAt("asdf", 1).Should().Be(("a", "sdf"));
-        BaseMask.SplitAt("", 1).Should().Be(("", ""));
-        BaseMask.SplitAt("asdf", -1).Should().Be(("", "asdf"));
-        BaseMask.SplitAt("asdf", 10).Should().Be(("asdf", ""));
-    }
-
     [Test]
     public void PatternMask_Insert()
     {
@@ -476,6 +466,151 @@ public class PatternMaskTests
 
         // Assert
         mask.Text.Should().Be("1---2");
+    }
+
+    [Test]
+    public void PatternMask_LetterOrDigit_AcceptsBoth()
+    {
+        // Arrange - '*' is the default letter-or-digit mask char
+        var mask = new PatternMask("***");
+
+        // Act - letters and digits both accepted, symbols rejected
+        mask.Insert("a1!b");
+
+        // Assert
+        mask.Text.Should().Be("a1b");
+    }
+
+    [Test]
+    public void PatternMask_Insert_RejectsLetterIntoDigitSlot()
+    {
+        // Arrange
+        var mask = new PatternMask("0a0");
+
+        // Act - first '0' rejects 'x', so nothing aligns
+        mask.Insert("x");
+
+        // Assert
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void PatternMask_AllowOnlyDelimiters_IgnoredByPatternMask()
+    {
+        // Arrange - PatternMask.UpdateText blanks delimiter-only text regardless of AllowOnlyDelimiters
+        var mask = new PatternMask("(0)") { AllowOnlyDelimiters = true };
+
+        // Act - typing only a delimiter yields no real input
+        mask.Insert("(");
+
+        // Assert
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void PatternMask_GetCleanText_StripsPlaceholderFromPartialFill()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000") { Placeholder = '_' };
+
+        // Act - only first group filled; rest is placeholder
+        mask.Insert("12");
+        mask.Text.Should().Be("12_-___");
+
+        // Assert - placeholders removed, delimiter kept (CleanDelimiters defaults false)
+        mask.GetCleanText().Should().Be("12-");
+    }
+
+    [Test]
+    public void PatternMask_GetCleanText_StripsPlaceholderAndDelimiters()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000") { Placeholder = '_', CleanDelimiters = true };
+
+        // Act
+        mask.Insert("12");
+
+        // Assert - both placeholder and delimiter removed
+        mask.GetCleanText().Should().Be("12");
+    }
+
+    [Test]
+    public void PatternMask_Transformation_AppliedToPlaceholderFill()
+    {
+        // Arrange - transformation must not touch the placeholder padding
+        var mask = new PatternMask("aaa")
+        {
+            Transformation = c => char.ToUpperInvariant(c),
+            Placeholder = '_',
+        };
+
+        // Act
+        mask.Insert("ab");
+
+        // Assert - typed chars upper-cased, placeholder untouched
+        mask.Text.Should().Be("AB_");
+    }
+
+    [Test]
+    public void PatternMask_Delete_AtEndOfText_NoOp()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000");
+        mask.Insert("123456");
+
+        // Act - caret already at end, Delete should do nothing
+        mask.Delete();
+
+        // Assert
+        mask.ToString().Should().Be("123-456|");
+    }
+
+    [Test]
+    public void PatternMask_Backspace_AtStart_NoOp()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000");
+        mask.Insert("123456");
+        mask.CaretPos = 0;
+
+        // Act - caret at start, Backspace should do nothing
+        mask.Backspace();
+
+        // Assert
+        mask.ToString().Should().Be("|123-456");
+    }
+
+    [Test]
+    public void PatternMask_ChangeMaskChars_ForcesReinitialization()
+    {
+        // Arrange - default 'a' would accept letters
+        var mask = new PatternMask("aa");
+        mask.Insert("xy");
+        mask.Text.Should().Be("xy");
+
+        // Act - swap mask chars so 'a' now means digit, then re-evaluate
+        mask.MaskChars = [MaskChar.Digit('a')];
+        mask.SetText("xy");
+
+        // Assert - letters no longer accepted after reinitialization
+        mask.Text.Should().BeEmpty();
+        mask.SetText("12");
+        mask.Text.Should().Be("12");
+    }
+
+    [Test]
+    public void PatternMask_UpdateFrom_ChangesMaskAndPreservesAlignedText()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000");
+        mask.SetText("123456");
+        mask.Text.Should().Be("123-456");
+
+        // Act - widen the mask; existing text is re-aligned against the new mask
+        mask.UpdateFrom(new PatternMask("00-00-00"));
+
+        // Assert
+        mask.Text.Should().Be("12-34-56");
     }
 
 }

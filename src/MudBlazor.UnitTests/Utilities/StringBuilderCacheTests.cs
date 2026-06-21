@@ -54,6 +54,43 @@ public class StringBuilderCacheTests
     }
 
     [Test]
+    public void Acquire_AfterCacheEmptied_ReturnsNewBuilder()
+    {
+        // Acquire empties the cache, so a second consecutive Acquire must allocate a fresh builder.
+        var first = StringBuilderCache.Acquire();
+        var second = StringBuilderCache.Acquire();
+
+        second.Should().NotBeSameAs(first);
+    }
+
+    [Test]
+    public void Acquire_WithCapacityAboveMaxSize_DoesNotConsumeCachedBuilder()
+    {
+        var cached = StringBuilderCache.Acquire();
+        StringBuilderCache.Release(cached);
+
+        // capacity > MaxBuilderSize (360) bypasses the cache entirely.
+        var large = StringBuilderCache.Acquire(361);
+        var reused = StringBuilderCache.Acquire();
+
+        large.Should().NotBeSameAs(cached);
+        large.Capacity.Should().BeGreaterThanOrEqualTo(361);
+        reused.Should().BeSameAs(cached);
+    }
+
+    [Test]
+    public void Release_CachesBuilderAtMaxSizeBoundary()
+    {
+        // Capacity exactly at MaxBuilderSize (360) is still cacheable (<= boundary).
+        var builder = new StringBuilder(360);
+        StringBuilderCache.Release(builder);
+
+        var acquired = StringBuilderCache.Acquire();
+
+        acquired.Should().BeSameAs(builder);
+    }
+
+    [Test]
     public void GetStringAndRelease_ReturnsTextAndCachesBuilder()
     {
         var builder = StringBuilderCache.Acquire();
@@ -65,6 +102,19 @@ public class StringBuilderCacheTests
         result.Should().Be("mud");
         reused.Should().BeSameAs(builder);
         reused.Length.Should().Be(0);
+    }
+
+    [Test]
+    public void GetStringAndRelease_WithOversizedBuilder_ReturnsTextWithoutCaching()
+    {
+        var builder = new StringBuilder(361);
+        builder.Append("mud");
+
+        var result = StringBuilderCache.GetStringAndRelease(builder);
+        var acquired = StringBuilderCache.Acquire();
+
+        result.Should().Be("mud");
+        acquired.Should().NotBeSameAs(builder);
     }
 
     private static void DrainCache()

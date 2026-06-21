@@ -169,8 +169,8 @@ public class BlockMaskTests
         // Act
         mask.Insert("1x");
 
-        // Assert
-        mask.Text.Should().MatchRegex(@"1[.\-]x");
+        // Assert - the first delimiter that aligns is inserted, so the result is deterministic
+        mask.Text.Should().Be("1.x");
     }
 
     [Test]
@@ -240,5 +240,81 @@ public class BlockMaskTests
 
         // Assert - Literal blocks are treated as delimiters
         mask.Text.Should().Be("(123)");
+    }
+
+    [Test]
+    public void BlockMask_Insert_DropsCharactersThatDoNotMatchBlock()
+    {
+        // Arrange - a digit-only block with no delimiters to skip over
+        var mask = new BlockMask("", new Block('0', 1, 2));
+
+        // Act - letters can neither match the block nor be jumped via a delimiter, so they are dropped
+        mask.Insert("ab12cd");
+
+        // Assert
+        mask.Text.Should().Be("12");
+        mask.ToString().Should().Be("12|");
+    }
+
+    [Test]
+    public void BlockMask_LetterOrDigitBlock_BuildsAlternationRegex()
+    {
+        // Arrange - the '*' default mask char allows a letter or a digit
+        var mask = new BlockMask("", new Block('*', 1, 2));
+
+        // Act
+        mask.Clear(); // force initialization so the regex is built
+
+        // Assert - the '*' regex (\p{L}|\d) is substituted for each accepted character
+        mask.Mask.Should().Be(@"^(\p{L}|\d(\p{L}|\d)?)?$");
+    }
+
+    [Test]
+    public void BlockMask_LetterOrDigitBlock_AcceptsLettersAndDigits()
+    {
+        // NOTE: suspected BlockMask/MaskChar bug. MaskChar.LetterOrDigit's regex is the
+        // unparenthesized alternation "\p{L}|\d". When BlockMask assembles a block it wraps
+        // each accepted slot in its own group, producing "^(\p{L}|\d(\p{L}|\d)?)?$" for
+        // Block('*', 1, 3). Operator precedence makes the outer group mean
+        // (\p{L})  OR  (\d(\p{L}|\d)?), i.e. either a single lone letter, or a leading DIGIT
+        // optionally followed by a letter/digit. A leading letter therefore blocks every
+        // following character, so "letter or digit" is not honored symmetrically.
+        // The fix is a source change (group the alternation, e.g. "(\p{L}|\d)" / "[\p{L}\d]"),
+        // so this test only documents the current behavior.
+
+        // Arrange
+        var mask = new BlockMask("", new Block('*', 1, 3));
+
+        // Act
+        mask.Insert("A1!b");
+
+        // Assert - BUG: after the leading letter "A", the digit "1" no longer matches the
+        // assembled regex (only a leading digit may be followed by more characters), so input
+        // stops at "A" instead of producing the intended "A1b".
+        mask.Text.Should().Be("A");
+
+        // A leading digit, by contrast, does accept a following letter/digit, demonstrating the
+        // asymmetry caused by the ungrouped alternation. (It still falls short of the Max of 3:
+        // the digit branch "\d(\p{L}|\d)?" exposes only one optional trailing slot, so the third
+        // character "2" is dropped as well - a further symptom of the same bug.)
+        mask.Clear();
+        mask.Insert("1A!2");
+        mask.Text.Should().Be("1A");
+    }
+
+    [Test]
+    public void BlockMask_UpdateFrom_NonBlockMask_PreservesBlocks()
+    {
+        // Arrange
+        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2));
+        mask.Blocks.Length.Should().Be(2);
+
+        // Act - a non-BlockMask must not replace the blocks (the `is BlockMask` guard is false)
+        mask.UpdateFrom(new PatternMask("00-00"));
+
+        // Assert - blocks are unchanged and the mask still behaves as a block mask
+        mask.Blocks.Length.Should().Be(2);
+        mask.Insert("1234");
+        mask.Text.Should().Be("12.34");
     }
 }

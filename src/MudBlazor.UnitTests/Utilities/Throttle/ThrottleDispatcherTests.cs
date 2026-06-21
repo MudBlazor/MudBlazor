@@ -136,32 +136,6 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public async Task ThrottleAsync_MultipleCallersWithinInterval_GetSameTask()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        var tcs = new TaskCompletionSource<bool>();
-
-        async Task SlowAction()
-        {
-            await tcs.Task;
-        }
-
-        // Act
-        var task1 = dispatcher.ThrottleAsync(SlowAction);
-        var task2 = dispatcher.ThrottleAsync(SlowAction);
-        var task3 = dispatcher.ThrottleAsync(SlowAction);
-
-        // Complete the action
-        tcs.SetResult(true);
-        await Task.WhenAll(task1, task2, task3);
-
-        // Assert - All should be the same task
-        task1.Should().BeSameAs(task2);
-        task2.Should().BeSameAs(task3);
-    }
-
-    [Test]
     public async Task ThrottleAsync_ZeroInterval_AllowsEveryCall()
     {
         // Arrange
@@ -344,6 +318,75 @@ public class ThrottleDispatcherTests
         // Act & Assert
         Assert.ThrowsAsync<ArgumentNullException>(
             async () => await dispatcher.ThrottleAsync(null!));
+    }
+
+    [Test]
+    public void Constructor_NullTimeProvider_ThrowsArgumentNullException()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => _ = new ThrottleDispatcher(100, null!));
+        Assert.Throws<ArgumentNullException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(100), null!));
+    }
+
+    [Test]
+    public async Task ThrottleAsync_SuppressedCallAfterCompletedAction_ReturnsCompletedTaskNotPriorTask()
+    {
+        // Arrange - the first action returns a distinct (non-singleton) task that finishes before the
+        // next call. Within the interval the dispatcher must hand back Task.CompletedTask rather than
+        // the already-completed prior task instance (the IsCompleted arm of line 133).
+        var timeProvider = new FakeTimeProvider();
+        using var dispatcher = new ThrottleDispatcher(50, timeProvider);
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var counter = 0;
+
+        async Task Invoke()
+        {
+            Interlocked.Increment(ref counter);
+            await gate.Task; // distinct task instance, not Task.CompletedTask
+        }
+
+        // Act - start, then let the first action finish so its task is completed but not the singleton.
+        var first = dispatcher.ThrottleAsync(Invoke);
+        gate.SetResult(true);
+        await first;
+        first.IsCompletedSuccessfully.Should().BeTrue();
+        first.Should().NotBeSameAs(Task.CompletedTask);
+        counter.Should().Be(1);
+
+        timeProvider.Advance(TimeSpan.FromMilliseconds(10)); // still inside the 50ms interval
+        var suppressed = dispatcher.ThrottleAsync(Invoke);
+
+        // Assert - suppressed call did not run the action and returned the completed-task singleton
+        counter.Should().Be(1);
+        suppressed.IsCompletedSuccessfully.Should().BeTrue();
+        suppressed.Should().NotBeSameAs(first);
+    }
+
+    [Test]
+    public async Task ThrottleAsync_FaultedTaskWithinInterval_ReExecutesInsteadOfSuppressing()
+    {
+        // Arrange - a faulted current task must not suppress later calls within the interval.
+        var timeProvider = new FakeTimeProvider();
+        using var dispatcher = new ThrottleDispatcher(1000, timeProvider);
+        var counter = 0;
+
+        Task ThrowingAction()
+        {
+            Interlocked.Increment(ref counter);
+            return Task.FromException(new InvalidOperationException());
+        }
+
+        // Act - first call faults; second call is well within the interval but should still execute.
+        Func<Task> first = () => dispatcher.ThrottleAsync(ThrowingAction);
+        await first.Should().ThrowAsync<InvalidOperationException>();
+        counter.Should().Be(1);
+
+        timeProvider.Advance(TimeSpan.FromMilliseconds(1)); // far inside the 1000ms interval
+        Func<Task> second = () => dispatcher.ThrottleAsync(ThrowingAction);
+        await second.Should().ThrowAsync<InvalidOperationException>();
+
+        // Assert
+        counter.Should().Be(2);
     }
 
     [Test]

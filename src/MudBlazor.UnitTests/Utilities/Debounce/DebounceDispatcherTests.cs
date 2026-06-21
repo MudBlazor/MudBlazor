@@ -160,6 +160,54 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    public async Task DebounceAsync_PreCancelledToken_ReturnsWithoutExecuting()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var executed = false;
+        Task Invoke()
+        {
+            executed = true;
+            return Task.CompletedTask;
+        }
+
+        // Act - token is already cancelled before the call; the guard short-circuits before scheduling
+        var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
+
+        // Assert - completes synchronously, action never runs, nothing pending
+        task.IsCompleted.Should().BeTrue();
+        await task;
+        executed.Should().BeFalse();
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task DebounceAsync_LeadingMode_PreCancelledToken_DoesNotExecuteImmediately()
+    {
+        // Arrange - leading mode would normally fire on the first call, but a pre-cancelled
+        // token must short-circuit before the leading-edge check runs.
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var executed = false;
+        Task Invoke()
+        {
+            executed = true;
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await debounceDispatcher.DebounceAsync(Invoke, cts.Token);
+
+        // Assert
+        executed.Should().BeFalse();
+    }
+
+    [Test]
     public async Task DebounceAsync_CancelMethod_CancelsPendingOperation()
     {
         // Arrange
@@ -386,6 +434,14 @@ public class DebounceDispatcherTests
         // Act & Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
+    }
+
+    [Test]
+    public void Constructor_NullTimeProvider_ThrowsArgumentNullException()
+    {
+        // Act & Assert - both interval overloads guard the time provider
+        Assert.Throws<ArgumentNullException>(() => _ = new DebounceDispatcher(100, false, null!));
+        Assert.Throws<ArgumentNullException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(100), false, null!));
     }
 
     [Test]
@@ -731,6 +787,42 @@ public class DebounceDispatcherTests
 
         // Assert
         executionCount.Should().Be(2);
+    }
+
+    [Test]
+    public async Task DebounceAsync_LeadingMode_TrailingExecution_UpdatesLastExecutionTime()
+    {
+        // Arrange - in leading mode the trailing (debounced) execution must also stamp the
+        // last-execution time, so a call right after it is debounced rather than firing immediately.
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
+        var executionCount = 0;
+
+        Task TrackingAction()
+        {
+            Interlocked.Increment(ref executionCount);
+            return Task.CompletedTask;
+        }
+
+        // First call fires immediately (leading edge).
+        await debounceDispatcher.DebounceAsync(TrackingAction);
+        executionCount.Should().Be(1);
+
+        // Second call is debounced; advancing the interval triggers the trailing execution.
+        var trailing = debounceDispatcher.DebounceAsync(TrackingAction);
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        await trailing;
+        executionCount.Should().Be(2);
+
+        // Act - immediately call again without advancing time. If the trailing execution stamped
+        // the last-execution time, this is still within the interval and must be debounced.
+        var afterTrailing = debounceDispatcher.DebounceAsync(TrackingAction);
+        executionCount.Should().Be(2);
+
+        // Assert - it only runs once the new interval elapses.
+        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+        await afterTrailing;
+        executionCount.Should().Be(3);
     }
 
     [Test]

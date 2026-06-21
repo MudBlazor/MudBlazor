@@ -133,22 +133,6 @@ namespace UtilityTests
         }
 
         [Test]
-        public void AddClass_With_Value_And_Condition_Func_Adds_Class_Correctly()
-        {
-            // Arrange
-            const bool ConditionResult = true;
-
-            // Act
-            var cssBuilder = new CssBuilder()
-                .AddClass("class1", () => ConditionResult)
-                .AddClass("class2", () => !ConditionResult)
-                .AddClass("class3", () => ConditionResult);
-
-            // Assert
-            cssBuilder.Build().Should().Be("class1 class3");
-        }
-
-        [Test]
         public void AddClass_With_Value_Function_And_Condition_Func_Adds_Class_Correctly()
         {
             // Arrange
@@ -334,6 +318,93 @@ namespace UtilityTests
 
             // Assert
             classToRender.Should().Be("item-one");
+        }
+
+        [Test]
+        public void AddClass_TrimsLeadingSeparator_ForSingleClass()
+        {
+            // AddClass prepends a space; Build must trim it so the result has no leading space.
+            var cssBuilder = new CssBuilder().AddClass("solo").Build();
+
+            cssBuilder.Should().Be("solo");
+        }
+
+        [Test]
+        public void AddClass_With_Null_Value_Emits_Only_Separator()
+        {
+            // AddClass(string?) always appends the separator, then skips the null value;
+            // a standalone null class therefore builds to empty once Build trims the space.
+            var cssBuilder = new CssBuilder()
+                .AddClass((string?)null)
+                .Build();
+
+            cssBuilder.Should().BeEmpty();
+        }
+
+        [TestCase(true, "base extra")]
+        [TestCase(false, "base")]
+        [TestCase(null, "base")]
+        public void AddClass_With_Nullable_Bool_Condition(bool? when, string expected)
+        {
+            // when==true adds; both false and null skip.
+            var cssBuilder = new CssBuilder("base")
+                .AddClass("extra", when)
+                .Build();
+
+            cssBuilder.Should().Be(expected);
+        }
+
+        [Test]
+        public void AddClass_With_Value_Function_And_False_Bool_Condition_Is_Ignored()
+        {
+            // The Func<string?> value overload must not invoke when the bool condition is false.
+            var invoked = false;
+            string? ValueFunction()
+            {
+                invoked = true;
+                return "class1";
+            }
+
+            var cssBuilder = new CssBuilder()
+                .AddClass(ValueFunction, when: false)
+                .Build();
+
+            cssBuilder.Should().BeEmpty();
+            invoked.Should().BeFalse();
+        }
+
+        [Test]
+        public void AddValue_Concatenates_Without_Separator()
+        {
+            // AddValue appends raw, unlike AddClass which inserts a space.
+            var cssBuilder = new CssBuilder()
+                .AddValue("foo")
+                .AddValue(null)
+                .AddValue("bar")
+                .Build();
+
+            cssBuilder.Should().Be("foobar");
+        }
+
+        [Test]
+        public void AddClassFromAttributes_Without_Class_Key_Is_NoOp()
+        {
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "id", "x" } };
+
+            var cssBuilder = new CssBuilder("item-one")
+                .AddClassFromAttributes(attributes)
+                .Build();
+
+            cssBuilder.Should().Be("item-one");
+        }
+
+        [Test]
+        public void ToString_Returns_Same_As_Build()
+        {
+            // ToString must delegate to Build per the documented contract.
+            var cssBuilder = new CssBuilder("item-one").AddClass("item-two");
+
+            cssBuilder.ToString().Should().Be("item-one item-two");
         }
     }
 }

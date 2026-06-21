@@ -314,5 +314,97 @@ namespace UtilityTests
             // Assert
             styleBuilder.Should().Be(string.Empty);
         }
+
+        [Test]
+        public void Default_With_Prop_And_Value_Seeds_Builder()
+        {
+            // Act
+            var styleBuilder = StyleBuilder.Default("color", "red")
+                .AddStyle("padding", "35px")
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("color:red;padding:35px;");
+        }
+
+        [Test]
+        public void AddStyleFromAttributes_With_Null_Dictionary_Is_NoOp()
+        {
+            // Act
+            var styleBuilder = StyleBuilder.Default("color", "red")
+                .AddStyleFromAttributes(null)
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("color:red;");
+        }
+
+        [Test]
+        public void AddStyleFromAttributes_Without_Style_Key_Is_NoOp()
+        {
+            // Arrange
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-class" } };
+
+            // Act
+            var styleBuilder = StyleBuilder.Default("color", "red")
+                .AddStyleFromAttributes(attributes)
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("color:red;");
+        }
+
+        [Test]
+        public void AddStyle_With_ValueBuilder_When_False_Skips_Property()
+        {
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle("text-decoration", v => v.AddValue("underline", true), when: false)
+                .AddStyle("z-index", "-1")
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("z-index:-1;");
+        }
+
+        [Test]
+        public void AddStyle_With_ValueBuilder_Producing_No_Value_Skips_Property()
+        {
+            // Act
+            // All values are conditionally excluded, so HasValue is false and the property is dropped.
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle("text-decoration", v => v
+                            .AddValue("underline", false)
+                            .AddValue("overline", false),
+                            when: true)
+                .AddStyle("z-index", "-1")
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("z-index:-1;");
+        }
+
+        [Test]
+        public void AddStyle_With_Func_Value_And_True_Condition_Func_Adds_Style()
+        {
+            // Act
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle("color", () => "red", () => true)
+                .Build();
+
+            // Assert
+            styleBuilder.Should().Be("color:red;");
+        }
+
+        [Test]
+        public void ToString_Returns_Same_As_Build()
+        {
+            // Arrange
+            var styleBuilder = StyleBuilder.Default("color", "red")
+                .AddStyle("padding", "35px");
+
+            // Act & Assert
+            styleBuilder.ToString().Should().Be("color:red;padding:35px;");
+        }
     }
 }

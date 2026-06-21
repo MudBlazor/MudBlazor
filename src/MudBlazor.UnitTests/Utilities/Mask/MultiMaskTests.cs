@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
 
             mask.Selection = (0, 2);
             mask.Insert("4");
-            mask.DetectedOption.Value.Id.Should().Be("VISA");
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
             mask.Text.Should().Be("4123 4567 8901 ");
             option.Value.Id.Should().Be("VISA");
             eventCount.Should().Be(4);
@@ -224,6 +224,87 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             // Assert
             initialOption.Should().NotBeNull();
             mask.DetectedOption.Should().BeNull();
+        }
+
+        [Test]
+        public void MultiMask_OptionDetected_DoesNotRefireWhileOptionUnchanged()
+        {
+            // Arrange
+            var mask = new MultiMask("0000 0000",
+                new MaskOption("VISA", "0000 0000", @"^4"));
+            var eventCount = 0;
+            mask.OptionDetected = (_, _) => eventCount++;
+
+            // Act
+            mask.Insert("4");
+            mask.Insert("123");
+            mask.Insert("5678");
+
+            // Assert: event fires once on detection, not for every keystroke within the same option
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
+            eventCount.Should().Be(1);
+        }
+
+        [Test]
+        public void MultiMask_CheckOption_ReturnsFirstMatchingOptionInDeclarationOrder()
+        {
+            // Arrange: two options whose regexes both match the same input
+            var mask = new MultiMask("0000",
+                new MaskOption("First", "00-00", @"^1"),
+                new MaskOption("Second", "0000", @"^1"));
+
+            // Act
+            mask.Insert("12");
+
+            // Assert: the first declared matching option wins
+            mask.DetectedOption.Should().NotBeNull();
+            mask.DetectedOption.Value.Id.Should().Be("First");
+        }
+
+        [Test]
+        public void MultiMask_UpdateFrom_NonMultiMask_PreservesDetectedOption()
+        {
+            // Arrange
+            var mask = new MultiMask("0000",
+                new MaskOption("VISA", "00-00", @"^4"));
+            mask.Insert("4");
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
+
+            // Act: updating from a plain PatternMask must not touch multi-mask option state
+            mask.UpdateFrom(new PatternMask("000000"));
+
+            // Assert
+            mask.DetectedOption.Should().NotBeNull();
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
+        }
+
+        [Test]
+        public void MultiMask_UpdateFrom_NonMatchingOptions_ClearsDetectedOptionAndFires()
+        {
+            // Arrange
+            var mask = new MultiMask("0000",
+                new MaskOption("VISA", "00-00", @"^4"));
+            mask.Insert("4");
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
+
+            var eventCount = 0;
+            MaskOption? detected = new MaskOption("sentinel", "", null);
+
+            // Act: the new options no longer match the current text, so detection must reset
+            mask.UpdateFrom(new MultiMask("0000",
+                new MaskOption("Other", "0-0", @"^9"))
+            {
+                OptionDetected = (option, _) =>
+                {
+                    eventCount++;
+                    detected = option;
+                }
+            });
+
+            // Assert: UpdateFrom re-evaluates options and fires de-detection with null
+            mask.DetectedOption.Should().BeNull();
+            eventCount.Should().Be(1);
+            detected.Should().BeNull();
         }
     }
 }

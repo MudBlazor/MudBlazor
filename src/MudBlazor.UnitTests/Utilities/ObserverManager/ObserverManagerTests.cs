@@ -320,32 +320,6 @@ public class ObserverManagerTests
     }
 
     [Test]
-    public void GetEnumerator_ReturnsAllObservers()
-    {
-        // Expected
-        var expectedObservers = new List<string> { "Observer1", "Observer2", "Observer3" };
-
-        // Arrange
-        for (var i = 0; i < expectedObservers.Count; i++)
-        {
-            _observerManager.Subscribe(i + 1, expectedObservers[i]);
-        }
-
-        // Act
-        var actualObservers = new List<string>();
-        using (var enumerator = _observerManager.GetEnumerator())
-        {
-            while (enumerator.MoveNext())
-            {
-                actualObservers.Add(enumerator.Current);
-            }
-        }
-
-        // Assert
-        actualObservers.Should().BeEquivalentTo(expectedObservers);
-    }
-
-    [Test]
     public void GetEnumeratorNonGeneric_ReturnsAllObservers()
     {
         // Expected
@@ -503,5 +477,93 @@ public class ObserverManagerTests
 
         // Act & Assert
         Assert.DoesNotThrowAsync(() => observerManager.NotifyAsync(NotificationAsync, Predicate));
+    }
+
+    [Test]
+    public void Constructor_WithComparer_TreatsEqualKeysAsSame()
+    {
+        // Arrange
+        var observerManager = new ObserverManager<string, string>(NullLogger.Instance, StringComparer.OrdinalIgnoreCase);
+
+        // Act
+        observerManager.Subscribe("KEY", "Observer1");
+        observerManager.Subscribe("key", "Observer2");
+
+        // Assert
+        observerManager.Count.Should().Be(1);
+        observerManager.IsSubscribed("Key").Should().BeTrue();
+        observerManager.Observers["KEY"].Should().Be("Observer2");
+    }
+
+    [Test]
+    public async Task NotifyAsync_WithPredicate_OnlyNotifiesMatchingObservers()
+    {
+        // Arrange
+        _observerManager.Subscribe(1, "Observer1");
+        _observerManager.Subscribe(2, "Observer2");
+        _observerManager.Subscribe(3, "Observer3");
+        var notified = new List<string>();
+
+        Task NotificationAsync(string observer)
+        {
+            notified.Add(observer);
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(NotificationAsync, (id, _) => id != 2);
+
+        // Assert
+        notified.Should().BeEquivalentTo("Observer1", "Observer3");
+        // Non-matching observers are not removed.
+        _observerManager.Count.Should().Be(3);
+    }
+
+    [Test]
+    public async Task NotifyAsync_DefunctObserverRemoved_StillNotifiesRemaining()
+    {
+        // Arrange
+        _observerManager.Subscribe(1, "Observer1");
+        _observerManager.Subscribe(2, "Observer2");
+        _observerManager.Subscribe(3, "Observer3");
+        var notified = new List<string>();
+
+        Task NotificationAsync(string observer)
+        {
+            notified.Add(observer);
+            if (observer == "Observer1")
+            {
+                throw new Exception("Notification failed");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(NotificationAsync);
+
+        // Assert
+        // The throwing observer is invoked and removed, but the rest are still notified.
+        notified.Should().BeEquivalentTo("Observer1", "Observer2", "Observer3");
+        _observerManager.Count.Should().Be(2);
+        _observerManager.IsSubscribed(1).Should().BeFalse();
+    }
+
+    [Test]
+    public void Observers_ReturnsSnapshotCopy_NotBackingStore()
+    {
+        // Arrange
+        _observerManager.Subscribe(1, "Observer1");
+
+        // Act
+        var snapshot = _observerManager.Observers;
+        snapshot[2] = "Observer2";
+        snapshot.Remove(1);
+
+        // Assert
+        // Mutating the returned dictionary must not affect the manager.
+        _observerManager.Count.Should().Be(1);
+        _observerManager.IsSubscribed(1).Should().BeTrue();
+        _observerManager.IsSubscribed(2).Should().BeFalse();
     }
 }

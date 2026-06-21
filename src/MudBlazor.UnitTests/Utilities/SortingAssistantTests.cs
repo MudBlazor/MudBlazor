@@ -15,6 +15,7 @@ namespace MudBlazor.UnitTests.Utilities
         {
             public string Name { get; }
             public int Prio { get; set; }
+            public int PrioField;
 
             public ItemsWithOrder(string name, int priority)
             {
@@ -125,6 +126,56 @@ namespace MudBlazor.UnitTests.Utilities
             var actualOrders = items.Select(x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
+        }
+
+        [Test]
+        public void UpdateOrder_ZoneOffset_AddedToIndexInZone()
+        {
+            var items = GenerateList();
+
+            // IndexInZone (-2) + zoneOffset (2) == target index 0, equivalent to UpdateOrder_MoveUp.
+            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[4], "something", -2);
+            items.UpdateOrder(dropInfo, x => x.Prio, zoneOffset: 2);
+
+            var expectedOrders = new[] { 1, 2, 3, 4, 0, 5, 6, 7, 8, 9 };
+            var actualOrders = items.Select(x => x.Prio).ToList();
+
+            actualOrders.Should().ContainInOrder(expectedOrders);
+        }
+
+        [Test]
+        public void UpdateOrder_SingleItem_GetsTargetIndex()
+        {
+            var items = new List<ItemsWithOrder> { new("Item-1", 7) };
+
+            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
+            items.UpdateOrder(dropInfo, x => x.Prio);
+
+            items[0].Prio.Should().Be(0);
+        }
+
+        [Test]
+        public void UpdateOrder_BodyNotMemberExpression_Throws()
+        {
+            var items = GenerateList();
+            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
+
+            // Body is a BinaryExpression, not a MemberExpression.
+            var act = () => items.UpdateOrder(dropInfo, x => x.Prio + 1);
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void UpdateOrder_MemberNotProperty_Throws()
+        {
+            var items = GenerateList();
+            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
+
+            // Body is a MemberExpression but its member is a field, not a property.
+            var act = () => items.UpdateOrder(dropInfo, x => x.PrioField);
+
+            act.Should().Throw<InvalidOperationException>();
         }
 
         private static List<ItemsWithOrder> GenerateList()
