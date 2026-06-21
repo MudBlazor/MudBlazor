@@ -100,7 +100,7 @@ public sealed partial class DocsPageHeader
         {
             ComputedSubTitle = SubTitle;
         }
-        else if (!string.IsNullOrEmpty(DocumentedType.Summary))
+        else if (!string.IsNullOrWhiteSpace(DocumentedType.Summary))
         {
             ComputedSubTitle = DocumentedType.Summary;
         }
