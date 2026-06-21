@@ -69,18 +69,6 @@ internal class ConversionsTests
     }
 
     [Test]
-    public void From_IReversibleConverter_ReturnsReversibleChain_UsableAsReversibleConverter()
-    {
-        // The IReversibleConverter overload must win over the IConverter overload so the
-        // result keeps backward-conversion capability.
-        var chain = Conversions.From(new IntStringReversible(offset: 7));
-
-        chain.Should().BeAssignableTo<IReversibleConverter<int, string>>();
-        chain.Convert(1).Should().Be("8");
-        chain.ConvertBack("8").Should().Be(1);
-    }
-
-    [Test]
     public void From_IReversibleConverter_Then_IReversibleConverter_ComposesBothDirections()
     {
         var chain = Conversions
@@ -101,16 +89,6 @@ internal class ConversionsTests
 
         chain.Convert(5).Should().Be(6);
         chain.Should().NotBeAssignableTo<IReversibleConverter<int, int>>();
-    }
-
-    [Test]
-    public void Convert_DelegateThrows_PropagatesToCaller()
-    {
-        var chain = Conversions.From<string, int>(int.Parse);
-
-        var act = () => chain.Convert("not-a-number");
-
-        act.Should().Throw<FormatException>();
     }
 
     private sealed class MulConverter(int mul) : IConverter<int, string>

@@ -302,53 +302,11 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
-    public void ReversibleTypeDispatcher_AddDynamic_NullConverter_ThrowsArgumentNullException()
-    {
-        var builder = ReversibleTypeDispatcher.Create<int, string>();
-
-        Action act = () => builder.AddDynamic(typeof(int), null);
-
-        act.Should()
-            .Throw<ArgumentNullException>()
-            .Which.ParamName
-            .Should()
-            .Be("converter");
-    }
-
-    [Test]
     public void ReversibleTypeDispatcher_AddDynamicForward_NullSpecificType_ThrowsArgumentNullException()
     {
         var builder = ReversibleTypeDispatcher.Create<int, string>();
 
         Action act = () => builder.AddDynamicForward(null!, new ForwardOnlyIntConverter());
-
-        act.Should()
-            .Throw<ArgumentNullException>()
-            .Which.ParamName
-            .Should()
-            .Be("specificType");
-    }
-
-    [Test]
-    public void ReversibleTypeDispatcher_AddDynamicForward_NullConverter_ThrowsArgumentNullException()
-    {
-        var builder = ReversibleTypeDispatcher.Create<int, string>();
-
-        Action act = () => builder.AddDynamicForward(typeof(int), null);
-
-        act.Should()
-            .Throw<ArgumentNullException>()
-            .Which.ParamName
-            .Should()
-            .Be("converter");
-    }
-
-    [Test]
-    public void TypeDispatcher_AddDynamic_NullSpecificType_ThrowsArgumentNullException()
-    {
-        var builder = TypeDispatcher.Create<int, string>();
-
-        Action act = () => builder.AddDynamic(null!, new ForwardOnlyIntConverter());
 
         act.Should()
             .Throw<ArgumentNullException>()

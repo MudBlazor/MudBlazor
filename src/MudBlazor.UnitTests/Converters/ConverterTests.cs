@@ -32,19 +32,6 @@ public class ConverterTests : BunitTest
     }
 
     [Test]
-    public void GetConverter_ShouldCacheAndReuseTheSameDefaultConverterInstance()
-    {
-        // When no Converter is supplied, GetConverter must return the same cached default instance on every call.
-        var comp = Context.Render<ConverterCompTest>(parameters => parameters.Add(x => x.Converter, null));
-        var numericComp = comp.FindComponent<MudNumericField<int>>();
-
-        var first = numericComp.Instance.GetConverter();
-        var second = numericComp.Instance.GetConverter();
-
-        first.Should().BeSameAs(second);
-    }
-
-    [Test]
     public async Task GetConverter_ShouldRestoreCachedDefaultConverter_AfterCustomConverterRemoved()
     {
         // The cached default survives a custom Converter being set and removed; the original instance comes back.

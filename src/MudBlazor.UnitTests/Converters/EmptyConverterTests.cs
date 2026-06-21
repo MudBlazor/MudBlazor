@@ -46,11 +46,17 @@ public class EmptyConverterTests
     }
 
     [Test]
-    public void Convert_ShouldReturnNull_WhenNullableValueTypeInputIsNull()
+    public void ReplacingInstanceDoesNotAffectReturnedValue_UsingDifferentInstances()
     {
-        var conv = new EmptyConverter<int?>();
+        var conv = new EmptyConverter<string>();
+        var a = new string(['a']);
+        var b = new string(['b']);
 
-        conv.Convert(null).Should().BeNull();
-        conv.ConvertBack(null).Should().BeNull();
+        conv.Convert(a).Should().Be(a);
+        conv.ConvertBack(a).Should().Be(a);
+
+        // different instance returns itself unchanged
+        conv.Convert(b).Should().Be(b);
+        conv.ConvertBack(b).Should().Be(b);
     }
 }

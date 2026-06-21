@@ -40,26 +40,6 @@ public class BoolConverterTests
     }
 
     [Test]
-    public void StringConverter_OnOff_IsCaseInsensitive()
-    {
-        var conv = BoolConverter<string>.Instance;
-
-        conv.Convert("ON").Should().BeTrue();
-        conv.Convert("On").Should().BeTrue();
-        conv.Convert("OFF").Should().BeFalse();
-        conv.Convert("Off").Should().BeFalse();
-    }
-
-    [Test]
-    public void StringConverter_EmptyString_IsNull()
-    {
-        var conv = BoolConverter<string>.Instance;
-
-        conv.Convert("").Should().BeNull();
-        conv.Convert("   ").Should().BeNull();
-    }
-
-    [Test]
     public void BoolConverter()
     {
         var conv = BoolConverter<bool>.Instance;

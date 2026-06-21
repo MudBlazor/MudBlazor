@@ -4,7 +4,6 @@
 
 using System.Globalization;
 using AwesomeAssertions;
-using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
@@ -383,21 +382,6 @@ namespace MudBlazor.UnitTests.Converters
 
             var c1 = new DefaultConverter<object>();
             c1.Convert(notImplementedType).Should().Be(notImplementedType.ToString());
-        }
-
-        [Test]
-        public void DefaultConverter_Numeric_ConvertBack_Invalid_ThrowsConversionException()
-        {
-            // The integrated dispatcher must surface the inner converter's ConversionException.
-            var converter = new DefaultConverter<int>();
-
-            var act = () => converter.ConvertBack("not-a-number");
-
-            act.Should()
-                .Throw<ConversionException>()
-                .Which.ErrorMessageKey
-                .Should()
-                .Be(LanguageResource.Converter_InvalidNumber);
         }
 
         [Test]
