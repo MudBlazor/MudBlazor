@@ -83,4 +83,33 @@ internal class DeferredConverterTests
         conv.SetBackward(s => int.Parse(s) + 3);
         conv.ConvertBack("4").Should().Be(7);
     }
+
+    [Test]
+    public void Set_OverwritesDelegatesPreviouslySetIndividually()
+    {
+        var conv = new DeferredConverter<int, string>();
+
+        conv.SetForward(i => "old:" + i);
+        conv.SetBackward(_ => -1);
+
+        conv.Set(i => "new:" + i, int.Parse);
+
+        conv.Convert(5).Should().Be("new:5");
+        conv.ConvertBack("8").Should().Be(8);
+    }
+
+    [Test]
+    public void WorksWhenConsumedThroughReversibleConverterInterface()
+    {
+        var deferred = new DeferredConverter<int, string>();
+        deferred.Set(i => (i * 10).ToString(), s => int.Parse(s) / 10);
+
+        IReversibleConverter<int, string> conv = deferred;
+        conv.Convert(3).Should().Be("30");
+        conv.ConvertBack("70").Should().Be(7);
+
+        // Forward conversion is also reachable via the base IConverter contract.
+        IConverter<int, string> forwardOnly = deferred;
+        forwardOnly.Convert(4).Should().Be("40");
+    }
 }

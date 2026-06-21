@@ -27,6 +27,39 @@ public class BoolConverterTests
     }
 
     [Test]
+    public void StringConverter_ParsesBoolLiterals_CaseInsensitive()
+    {
+        var conv = BoolConverter<string>.Instance;
+
+        // bool.TryParse branch: "true"/"false" (and any casing) parse before the on/off switch.
+        conv.Convert("true").Should().BeTrue();
+        conv.Convert("True").Should().BeTrue();
+        conv.Convert("TRUE").Should().BeTrue();
+        conv.Convert("false").Should().BeFalse();
+        conv.Convert("False").Should().BeFalse();
+    }
+
+    [Test]
+    public void StringConverter_OnOff_IsCaseInsensitive()
+    {
+        var conv = BoolConverter<string>.Instance;
+
+        conv.Convert("ON").Should().BeTrue();
+        conv.Convert("On").Should().BeTrue();
+        conv.Convert("OFF").Should().BeFalse();
+        conv.Convert("Off").Should().BeFalse();
+    }
+
+    [Test]
+    public void StringConverter_EmptyString_IsNull()
+    {
+        var conv = BoolConverter<string>.Instance;
+
+        conv.Convert("").Should().BeNull();
+        conv.Convert("   ").Should().BeNull();
+    }
+
+    [Test]
     public void BoolConverter()
     {
         var conv = BoolConverter<bool>.Instance;
@@ -36,6 +69,8 @@ public class BoolConverterTests
 
         conv.ConvertBack(true).Should().BeTrue();
         conv.ConvertBack(false).Should().BeFalse();
+        // For the non-nullable bool converter, a null bool? maps back to false (value == true).
+        conv.ConvertBack(null).Should().BeFalse();
     }
 
     [Test]
