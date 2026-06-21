@@ -99,6 +99,20 @@ public class DateRangeTests
     }
 
     [Test]
+    public void TryParse_CanonicalRangeString_RoundTrips()
+    {
+        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        var converter = new DateTimeConverter();
+
+        var ok = DateRange.TryParse(range.ToString(converter), converter, out var result);
+
+        ok.Should().BeTrue();
+        result.Should().NotBeNull();
+        result!.Start.Should().Be(range.Start);
+        result.End.Should().Be(range.End);
+    }
+
+    [Test]
     public void EqualityOperator_BothNull_ReturnsTrue()
     {
         DateRange? a = null;
@@ -132,11 +146,45 @@ public class DateRangeTests
     }
 
     [Test]
+    public void EqualityOperator_EqualRanges_ReturnsTrue()
+    {
+        var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        var b = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        (a == b).Should().BeTrue();
+    }
+
+    [Test]
+    public void EqualityOperator_SameReference_ReturnsTrue()
+    {
+        var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        var b = a;
+        (a == b).Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_BothEndpointsNull_ReturnsTrue()
+    {
+        // DateRange.Equals (unlike base Range<T>.Equals) treats two ranges with null endpoints as equal.
+        var a = new DateRange(null, null);
+        var b = new DateRange(null, null);
+        a.Equals(b).Should().BeTrue();
+        (a == b).Should().BeTrue();
+    }
+
+    [Test]
     public void Equals_NonDateRangeObject_ReturnsFalse()
     {
         var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         range.Equals("not a range").Should().BeFalse();
         range.Equals(null).Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_DifferentEndpoints_ReturnsFalse()
+    {
+        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 7, 1)).Equals(range).Should().BeFalse();
+        new DateRange(new DateTime(2023, 1, 1), new DateTime(2024, 6, 1)).Equals(range).Should().BeFalse();
     }
 
     [Test]
