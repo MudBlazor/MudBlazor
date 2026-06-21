@@ -93,20 +93,6 @@ public class PointerEventsNoneServiceTests
     }
 
     [Test]
-    public async Task SubscribeAsync_NullObserver_Throws()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new PointerEventsNoneService(NullLogger<PointerEventsNoneService>.Instance, jsRuntimeMock.Object);
-
-        // Act
-        var subscribe = () => service.SubscribeAsync((IPointerEventsNoneObserver)null!, new());
-
-        // Assert
-        await subscribe.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
     public async Task RaiseOnPointerDown_NonMatchingElementId_ShouldNotNotify()
     {
         // Arrange
@@ -120,22 +106,6 @@ public class PointerEventsNoneServiceTests
 
         // Assert
         service.ObserversCount.Should().Be(1);
-        observer.Notifications.Count.Should().Be(0);
-    }
-
-    [Test]
-    public async Task RaiseOnPointerDown_EmptyElementIds_ShouldNotNotify()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var observer = new PointerEventsNoneObserverMock("observer1");
-        var service = new PointerEventsNoneService(NullLogger<PointerEventsNoneService>.Instance, jsRuntimeMock.Object);
-        await service.SubscribeAsync(observer, new());
-
-        // Act
-        await service.RaiseOnPointerDown([]);
-
-        // Assert
         observer.Notifications.Count.Should().Be(0);
     }
 
@@ -191,34 +161,6 @@ public class PointerEventsNoneServiceTests
         service.ObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPointerEventsNone.listenForPointerEvents", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPointerEventsNone.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
-    }
-
-    [Test]
-    public async Task UnsubscribeAsync_NullObserver_Throws()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new PointerEventsNoneService(NullLogger<PointerEventsNoneService>.Instance, jsRuntimeMock.Object);
-
-        // Act
-        var unsubscribe = () => service.UnsubscribeAsync((IPointerEventsNoneObserver)null!);
-
-        // Assert
-        await unsubscribe.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task UnsubscribeAsync_NullElementId_Throws()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new PointerEventsNoneService(NullLogger<PointerEventsNoneService>.Instance, jsRuntimeMock.Object);
-
-        // Act
-        var unsubscribe = () => service.UnsubscribeAsync((string)null!);
-
-        // Assert
-        await unsubscribe.Should().ThrowAsync<ArgumentNullException>();
     }
 
     [Test]

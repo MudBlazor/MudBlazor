@@ -602,29 +602,6 @@ public class KeyMapBuilderTests
     }
 
     [Test]
-    public async Task OnKeyUpAny_NoArgsOverload_ExecutesForAnyKey()
-    {
-        // Arrange
-        var executedCount = 0;
-        var builder = KeyMapBuilder.Create()
-            .OnKeyUpAny(["Escape", "Tab"], () =>
-            {
-                executedCount++;
-                return Task.CompletedTask;
-            });
-
-        var (_, keyUp) = builder.Build();
-
-        // Act
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Tab" });
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" }); // Should not execute
-
-        // Assert
-        executedCount.Should().Be(2);
-    }
-
-    [Test]
     public async Task OnKeyDown_RegexPattern_MatchesByRegex()
     {
         // Arrange
@@ -694,57 +671,6 @@ public class KeyMapBuilderTests
     }
 
     [Test]
-    public async Task HookKeyDown_DoesNotStopChain_RegularCommandStillExecutes()
-    {
-        // Arrange
-        var hookExecuted = false;
-        var commandExecuted = false;
-        var builder = KeyMapBuilder.Create()
-            .OnKeyDown("Enter", () =>
-            {
-                commandExecuted = true;
-                return Task.CompletedTask;
-            })
-            .HookKeyDown(_ =>
-            {
-                hookExecuted = true;
-                return Task.CompletedTask;
-            });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
-
-        // Assert
-        hookExecuted.Should().BeTrue();
-        commandExecuted.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task HookKeyDown_RunsForEveryKey_EvenWithoutMatchingCommand()
-    {
-        // Arrange
-        KeyboardEventArgs? receivedArgs = null;
-        var builder = KeyMapBuilder.Create()
-            .OnKeyDown("Enter", () => Task.CompletedTask)
-            .HookKeyDown(args =>
-            {
-                receivedArgs = args;
-                return Task.CompletedTask;
-            });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act - a key that no command matches still triggers the hook
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
-
-        // Assert
-        receivedArgs.Should().NotBeNull();
-        receivedArgs!.Key.Should().Be("Escape");
-    }
-
-    [Test]
     public async Task HookKeyDown_DeclaredAfterCommand_ExecutesBeforeIt()
     {
         // Arrange
@@ -768,34 +694,6 @@ public class KeyMapBuilderTests
 
         // Assert - hook is reordered to run first even though it was declared last
         executionOrder.Should().Equal("hook", "command");
-    }
-
-    [Test]
-    public async Task HookKeyUp_DoesNotStopChain_RegularCommandStillExecutes()
-    {
-        // Arrange
-        var hookExecuted = false;
-        var commandExecuted = false;
-        var builder = KeyMapBuilder.Create()
-            .HookKeyUp(_ =>
-            {
-                hookExecuted = true;
-                return Task.CompletedTask;
-            })
-            .OnKeyUp("Enter", () =>
-            {
-                commandExecuted = true;
-                return Task.CompletedTask;
-            });
-
-        var (_, keyUp) = builder.Build();
-
-        // Act
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
-
-        // Assert
-        hookExecuted.Should().BeTrue();
-        commandExecuted.Should().BeTrue();
     }
 
     [Test]

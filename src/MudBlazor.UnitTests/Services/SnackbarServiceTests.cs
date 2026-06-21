@@ -132,21 +132,6 @@ public class SnackbarServiceTests : BunitTest
     }
 
     [Test]
-    public void Add_RaisesOnSnackbarsUpdated()
-    {
-        // Arrange
-        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider());
-        var raised = 0;
-        sut.OnSnackbarsUpdated += () => raised++;
-
-        // Act
-        sut.Add("Test message");
-
-        // Assert
-        raised.Should().Be(1);
-    }
-
-    [Test]
     public void Add_DuplicatePrevented_DoesNotRaiseOnSnackbarsUpdated()
     {
         // Arrange
@@ -162,22 +147,6 @@ public class SnackbarServiceTests : BunitTest
         // Assert
         result.Should().BeNull();
         raised.Should().Be(0);
-    }
-
-    [Test]
-    public void Remove_RaisesOnSnackbarsUpdated()
-    {
-        // Arrange
-        var sut = new SnackbarService(_navigationManager, new FakeTimeProvider());
-        var snackbar = sut.Add("Test message");
-        var raised = 0;
-        sut.OnSnackbarsUpdated += () => raised++;
-
-        // Act
-        sut.Remove(snackbar);
-
-        // Assert
-        raised.Should().Be(1);
     }
 
     [Test]

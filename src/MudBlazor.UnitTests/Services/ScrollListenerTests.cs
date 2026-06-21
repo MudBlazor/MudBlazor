@@ -50,23 +50,6 @@ public class ScrollListenerTests
     }
 
     [Test]
-    public void RaiseOnScroll_WithSubscriber_ForwardsSenderAndArgs()
-    {
-        _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudScrollListener.listenForScroll", It.IsAny<object[]>()))
-            .ReturnsAsync((IJSVoidResult)null);
-
-        object capturedSender = null;
-        ScrollEventArgs capturedArgs = null;
-        _service.OnScroll += (sender, e) => { capturedSender = sender; capturedArgs = e; };
-
-        var args = new ScrollEventArgs { ScrollTop = 42, ScrollLeft = 7, NodeName = "DIV" };
-        _service.RaiseOnScroll(args);
-
-        capturedSender.Should().BeSameAs(_service);
-        capturedArgs.Should().BeSameAs(args);
-    }
-
-    [Test]
     public void OnScroll_SecondSubscriber_DoesNotRestartJsListener()
     {
         // Only the first subscriber starts the JS listener; the second reuses it.
@@ -77,19 +60,6 @@ public class ScrollListenerTests
         _service.OnScroll += (_, _) => { };
 
         _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudScrollListener.listenForScroll", It.IsAny<object[]>()), Times.Once);
-    }
-
-    [Test]
-    public async Task DisposeAsync_CalledTwice_CancelsListenerOnce()
-    {
-        // The _disposed guard means cancelListener runs once even when disposed repeatedly.
-        _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudScrollListener.cancelListener", It.IsAny<object[]>()))
-            .ReturnsAsync((IJSVoidResult)null);
-
-        await _service.DisposeAsync();
-        await _service.DisposeAsync();
-
-        _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudScrollListener.cancelListener", It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]

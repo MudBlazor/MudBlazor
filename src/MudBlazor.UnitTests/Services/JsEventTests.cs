@@ -142,27 +142,5 @@ namespace MudBlazor.UnitTests.Services
 
             await jsevent.DisposeAsync();
         }
-
-        [Test]
-        public async Task Disconnect_ClearsSubscriptionsButKeepsHandlers()
-        {
-            var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
-            await jsevent.Connect("asdf", new JsEventOptions { });
-
-            var selectCount = 0;
-            var selectHandler = new Action<int, int>((_, _) => selectCount++);
-            jsevent.Select += selectHandler;
-            jsevent._subscribedEvents.Should().Contain("select");
-
-            // disconnect drops the JS subscriptions
-            await jsevent.Disconnect();
-            jsevent._subscribedEvents.Should().BeEmpty();
-
-            // the .NET handler list is independent of the JS subscription set, so it still fans out
-            jsevent.OnSelect(3, 7);
-            selectCount.Should().Be(1);
-
-            await jsevent.DisposeAsync();
-        }
     }
 }

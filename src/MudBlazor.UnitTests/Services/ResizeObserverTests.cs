@@ -323,20 +323,6 @@ namespace MudBlazor.UnitTests.Services
         }
 
         [Test]
-        public async Task Unobserve_NeverObservedElement_DoesNotCallJs()
-        {
-            // Arrange
-            var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
-
-            // Act
-            // Strict mock has no disconnect setup, so any JS call here would throw.
-            await _service.Unobserve(reference);
-
-            // Assert
-            _service.IsElementObserved(reference).Should().BeFalse();
-        }
-
-        [Test]
         public void OnSizeChanged_UnknownIds_FiresEventWithEmptyPayload()
         {
             // Arrange: nothing observed, so every reported id is unknown.

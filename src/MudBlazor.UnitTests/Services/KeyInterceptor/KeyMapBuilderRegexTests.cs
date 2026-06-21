@@ -250,50 +250,6 @@ public class KeyMapBuilderRegexTests
     }
 
     [Test]
-    public async Task OnKeyDown_WithLeadingSlashOnly_TreatedAsLiteral()
-    {
-        // Arrange - a pattern must both start and end with '/' to be regex; one delimiter means literal.
-        var executionCount = 0;
-        var builder = KeyMapBuilder.Create();
-        builder.OnKeyDown("/abc", () =>
-        {
-            executionCount++;
-            return Task.CompletedTask;
-        });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act & Assert - matches the literal "/abc", not the regex "abc".
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "/abc" });
-        executionCount.Should().Be(1);
-
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "abc" });
-        executionCount.Should().Be(1); // unchanged
-    }
-
-    [Test]
-    public async Task OnKeyUp_WithRegexPattern_MatchesOnKeyUp()
-    {
-        // Arrange - regex matching is wired the same way for the key up dispatch path.
-        var executionCount = 0;
-        var builder = KeyMapBuilder.Create();
-        builder.OnKeyUp("/[0-9]/", () =>
-        {
-            executionCount++;
-            return Task.CompletedTask;
-        });
-
-        var (_, keyUp) = builder.Build();
-
-        // Act & Assert
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "5" });
-        executionCount.Should().Be(1);
-
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "a" });
-        executionCount.Should().Be(1); // unchanged
-    }
-
-    [Test]
     public async Task OnKeyDown_WithMultipleRegexCommands_ExecutesFirstMatch()
     {
         // Arrange

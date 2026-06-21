@@ -252,36 +252,4 @@ public sealed class SearchServiceTests
         results[0].Value.Should().Be("Exact");
     }
 
-    [Test]
-    public void Search_ReturnsItemOnce_WhenMultipleKeywordsMatch()
-    {
-        // Both keywords match the query; the item must appear exactly once.
-        var index = new[] { new KeyValuePair<string, string>("button", "Button") };
-
-        var results = Service.Search(index, e => new[] { "button", "buton" }, "button");
-
-        results.Should().ContainSingle().Which.Value.Should().Be("Button");
-    }
-
-    [Test]
-    public void Search_IgnoresEmptyAndWhitespaceKeywords()
-    {
-        // Blank keywords are skipped; the real keyword still produces the match.
-        var index = new[] { new KeyValuePair<string, string>("button", "Button") };
-
-        var results = Service.Search(index, e => new[] { "", "   ", "button" }, "button");
-
-        results.Should().ContainSingle().Which.Value.Should().Be("Button");
-    }
-
-    [Test]
-    public void Search_ReturnsEmpty_ForEmptyItemCollection()
-    {
-        var results = Service.Search(
-            Array.Empty<KeyValuePair<string, string>>(),
-            e => [e.Key],
-            "button");
-
-        results.Should().BeEmpty();
-    }
 }

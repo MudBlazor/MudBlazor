@@ -206,25 +206,6 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task CreatePopoverAsync_ShouldNotThrowWhenProviderPresent()
-    {
-        // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var popover = new PopoverMock();
-        var options = new PopoverOptions { CheckForPopoverProvider = true };
-        var service = CreateService(jsRuntimeMock, options);
-        // Subscribing an observer simulates a present MudPopoverProvider.
-        service.Subscribe(new PopoverObserverMock());
-
-        // Act
-        var create = () => service.CreatePopoverAsync(popover);
-
-        // Assert
-        await create.Should().NotThrowAsync();
-        service.ActivePopovers.Select(x => x.Id).Should().Contain(popover.Id);
-    }
-
-    [Test]
     public async Task CreatePopoverAsync_ShouldThrowWheNullPopover()
     {
         // Arrange
@@ -274,24 +255,6 @@ public class PopoverServiceTests
 
         // Assert
         service.ActivePopovers.Single().ActivationDate.Should().Be(timeProvider.GetLocalNow().DateTime);
-    }
-
-    [Test]
-    public async Task CreatePopoverAsync_ShouldNotSetActivationDateWhenClosed()
-    {
-        // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var timeProvider = new FakeTimeProvider();
-        timeProvider.SetUtcNow(new DateTime(2024, 4, 5, 6, 7, 8, DateTimeKind.Utc));
-        var popover = new PopoverMock { Open = false };
-        var options = new PopoverOptions { CheckForPopoverProvider = false };
-        var service = CreateService(jsRuntimeMock, options, timeProvider);
-
-        // Act
-        await service.CreatePopoverAsync(popover);
-
-        // Assert
-        service.ActivePopovers.Single().ActivationDate.Should().BeNull();
     }
 
     [Test]

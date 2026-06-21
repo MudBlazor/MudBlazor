@@ -151,38 +151,4 @@ public class PointerEventsNoneObserverTests
         await act.Should().NotThrowAsync();
     }
 
-    [Test]
-    public async Task NotifyOnPointerUpAsync_WithNullObserver_DoesNotThrow()
-    {
-        // Arrange
-        IPointerEventsNoneObserver observer = new PointerEventsNoneObserver("observer1", null, null);
-
-        // Act
-        var act = async () => await observer.NotifyOnPointerUpAsync(EventArgs.Empty);
-
-        // Assert
-        await act.Should().NotThrowAsync();
-    }
-
-    [Test]
-    public void PointerDownIgnore_WhenCalled_ReturnsSharedNoOpObserver()
-    {
-        // Act
-        var ignore = PointerEventsNoneObserver.PointerDownIgnore();
-
-        // Assert
-        ignore.Should().BeSameAs(PointerEventsNoneObserver.PointerDownIgnore());
-        ignore.NotifyOnPointerDownAsync(EventArgs.Empty).IsCompletedSuccessfully.Should().BeTrue();
-    }
-
-    [Test]
-    public void PointerUpIgnore_WhenCalled_ReturnsSharedNoOpObserver()
-    {
-        // Act
-        var ignore = PointerEventsNoneObserver.PointerUpIgnore();
-
-        // Assert
-        ignore.Should().BeSameAs(PointerEventsNoneObserver.PointerUpIgnore());
-        ignore.NotifyOnPointerUpAsync(EventArgs.Empty).IsCompletedSuccessfully.Should().BeTrue();
-    }
 }

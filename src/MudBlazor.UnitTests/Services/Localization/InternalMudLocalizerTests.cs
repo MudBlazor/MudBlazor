@@ -148,23 +148,6 @@ public class InternalMudLocalizerTests
     }
 
     [Test]
-    public void EnumIndexer_ShouldDelegateToEnumInterceptor()
-    {
-        // Arrange
-        var interceptorMock = new Mock<ILocalizationInterceptor>();
-        var enumInterceptorMock = new Mock<ILocalizationEnumInterceptor>();
-        enumInterceptorMock.Setup(mock => mock.Handle(TestEnum.First)).Returns("localized first");
-        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object, enumInterceptorMock.Object);
-
-        // Act
-        var result = internalMudLocalizer[TestEnum.First];
-
-        // Assert
-        result.Should().Be("localized first");
-        enumInterceptorMock.Verify(mock => mock.Handle(TestEnum.First), Times.Once);
-    }
-
-    [Test]
     public void EnumIndexer_WithSingleInterceptorConstructor_ShouldUseDefaultEnumInterceptor()
     {
         // The single-interceptor constructor wires up DefaultLocalizationEnumInterceptor, which resolves

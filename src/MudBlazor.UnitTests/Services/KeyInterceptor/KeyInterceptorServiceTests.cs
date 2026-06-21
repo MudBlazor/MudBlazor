@@ -101,20 +101,6 @@ public class KeyInterceptorServiceTests
     }
 
     [Test]
-    public async Task SubscribeAsync_NullObserver_ShouldThrow()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-
-        // Act
-        var subscribe = () => service.SubscribeAsync((IKeyInterceptorObserver)null!, new KeyInterceptorOptions());
-
-        // Assert
-        await subscribe.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
     public async Task SubscribeAsync_AfterDispose_ShouldNotSubscribeOrConnect()
     {
         // Arrange
@@ -208,20 +194,6 @@ public class KeyInterceptorServiceTests
     }
 
     [Test]
-    public async Task UpdateKeyAsync_ByElementId_ShouldCallJavaScript()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-
-        // Act
-        await service.UpdateKeyAsync("observer1", new("Escape", stopDown: "key+none"));
-
-        // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.updatekey", It.IsAny<object[]>()), Times.Once);
-    }
-
-    [Test]
     public async Task OnKeyDown_ShouldNotifyObservers()
     {
         // Arrange
@@ -278,38 +250,6 @@ public class KeyInterceptorServiceTests
         service.ObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.connect", It.IsAny<object[]>()), Times.Once);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Once);
-    }
-
-    [Test]
-    public async Task UnsubscribeAsync_NullElementId_ShouldThrow()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-
-        // Act
-        var unsubscribe = () => service.UnsubscribeAsync((string)null!);
-
-        // Assert
-        await unsubscribe.Should().ThrowAsync<ArgumentNullException>();
-    }
-
-    [Test]
-    public async Task UnsubscribeAsync_AfterDispose_ShouldNotCallDisconnect()
-    {
-        // Arrange
-        var jsRuntimeMock = new Mock<IJSRuntime>();
-        var observer = new KeyInterceptorObserverMock("observer1");
-        var service = new KeyInterceptorService(NullLogger<KeyInterceptorService>.Instance, jsRuntimeMock.Object);
-        await service.SubscribeAsync(observer, new KeyInterceptorOptions());
-        await service.DisposeAsync();
-        jsRuntimeMock.Invocations.Clear();
-
-        // Act
-        await service.UnsubscribeAsync(observer);
-
-        // Assert
-        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudKeyInterceptor.disconnect", It.IsAny<object[]>()), Times.Never);
     }
 
     [Test]

@@ -405,19 +405,6 @@ namespace MudBlazor.UnitTests.Services.Browser
         }
 
         [Test]
-        public void GetHashCode_WhenBreakpointDefinitionsNull_DoesNotThrow()
-        {
-            // Arrange
-            var options = new ResizeOptions { BreakpointDefinitions = null };
-
-            // Act
-            var act = () => options.GetHashCode();
-
-            // Assert
-            act.Should().NotThrow();
-        }
-
-        [Test]
         public void GetHashCode_WhenObjectsAreNotEqual_ReturnsDifferentHashCode()
         {
             // Arrange

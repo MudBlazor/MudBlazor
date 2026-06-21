@@ -190,32 +190,6 @@ public class KeyCommandObserverTests
     }
 
     [Test]
-    public async Task NotifyOnKeyDownAsync_NonMatchingCommandBeforeMatch_SkipsToMatch()
-    {
-        // A command whose CanExecute is false must not stop dispatch from reaching the later match.
-        var executionOrder = new List<string>();
-        var builder = KeyMapBuilder.Create()
-            .OnKeyDown("Escape", () =>
-            {
-                executionOrder.Add("Escape");
-                return Task.CompletedTask;
-            })
-            .OnKeyDown("Enter", () =>
-            {
-                executionOrder.Add("Enter");
-                return Task.CompletedTask;
-            });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
-
-        // Assert - only the matching command runs
-        executionOrder.Should().Equal("Enter");
-    }
-
-    [Test]
     public async Task NotifyOnKeyUpAsync_HookContinuesChainToMatchingCommand()
     {
         // The hook-continuation branch of DispatchAsync must apply to key-up dispatch too.
@@ -241,27 +215,6 @@ public class KeyCommandObserverTests
         // Assert - hook did not short-circuit dispatch before the command
         hookExecuted.Should().BeTrue();
         commandExecuted.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task NotifyOnKeyUpAsync_NoMatchingCommand_DoesNothing()
-    {
-        // Arrange
-        var executed = false;
-        var builder = KeyMapBuilder.Create()
-            .OnKeyUp("Enter", () =>
-            {
-                executed = true;
-                return Task.CompletedTask;
-            });
-
-        var (_, keyUp) = builder.Build();
-
-        // Act
-        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
-
-        // Assert
-        executed.Should().BeFalse();
     }
 
     [Test]

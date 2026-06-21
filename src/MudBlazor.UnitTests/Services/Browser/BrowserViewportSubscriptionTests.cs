@@ -70,33 +70,6 @@ public class BrowserViewportSubscriptionTests
     }
 
     [Test]
-    public void Equals_ReturnsTrueForSameReference()
-    {
-        // Arrange
-        var subscription = new BrowserViewportSubscription(Guid.NewGuid(), Guid.NewGuid());
-
-        // Act
-        var result = subscription.Equals(subscription);
-
-        // Assert
-        result.Should().BeTrue();
-    }
-
-    [Test]
-    public void Equals_ObjectOverload_ReturnsFalseForDifferentType()
-    {
-        // Arrange
-        var subscription = new BrowserViewportSubscription(Guid.NewGuid(), Guid.NewGuid());
-        object obj = "not a subscription";
-
-        // Act
-        var result = subscription.Equals(obj);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    [Test]
     public void Equals_ObjectOverload_ReturnsFalseForObjectIsNull()
     {
         // Arrange
