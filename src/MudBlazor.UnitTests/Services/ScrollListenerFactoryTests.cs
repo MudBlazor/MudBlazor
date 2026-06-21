@@ -33,6 +33,47 @@ public class ScrollListenerFactoryTests
         listener.ReportRateMs.Should().Be(25);
     }
 
+    [Test]
+    public void Create_PassesNullSelector()
+    {
+        var factory = CreateFactory();
+
+        var listener = factory.Create(null);
+
+        listener.Selector.Should().BeNull();
+    }
+
+    [Test]
+    public void Create_AcceptsZeroReportRate()
+    {
+        var factory = CreateFactory();
+
+        var listener = factory.Create("#main", 0);
+
+        listener.ReportRateMs.Should().Be(0);
+    }
+
+    [Test]
+    public void Create_WithNegativeReportRate_Throws()
+    {
+        var factory = CreateFactory();
+
+        var create = () => factory.Create("#main", -1);
+
+        create.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Test]
+    public void Create_ReturnsNewInstancePerCall()
+    {
+        var factory = CreateFactory();
+
+        var first = factory.Create("#main");
+        var second = factory.Create("#main");
+
+        second.Should().NotBeSameAs(first);
+    }
+
     private static ScrollListenerFactory CreateFactory()
     {
         var services = new ServiceCollection();

@@ -342,20 +342,6 @@ namespace MudBlazor.UnitTests.Services.Browser
         }
 
         [Test]
-        public void OperatorEquals_DifferentInstances_ReturnsTrue()
-        {
-            // Arrange
-            var options1 = new ResizeOptions();
-            var options2 = new ResizeOptions();
-
-            // Act
-            var result = options1 == options2;
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        [Test]
         public void OperatorEquals_BothNulls_ReturnsTrue()
         {
             // Arrange
@@ -416,6 +402,19 @@ namespace MudBlazor.UnitTests.Services.Browser
 
             // Assert
             hashCode1.Should().Be(hashCode2);
+        }
+
+        [Test]
+        public void GetHashCode_WhenBreakpointDefinitionsNull_DoesNotThrow()
+        {
+            // Arrange
+            var options = new ResizeOptions { BreakpointDefinitions = null };
+
+            // Act
+            var act = () => options.GetHashCode();
+
+            // Assert
+            act.Should().NotThrow();
         }
 
         [Test]

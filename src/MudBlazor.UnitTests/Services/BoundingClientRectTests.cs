@@ -86,6 +86,45 @@ public class BoundingClientRectTests
     }
 
     [Test]
+    public void Detect_OutsideBottomAndRight()
+    {
+        var client = new BoundingClientRect
+        {
+            Top = 0,
+            Left = 0,
+            Height = 100,
+            Width = 100,
+            WindowHeight = 50,
+            WindowWidth = 50
+        };
+
+        client.IsOutsideBottom.Should().BeTrue();
+        client.IsOutsideRight.Should().BeTrue();
+        client.IsOutsideTop.Should().BeFalse();
+        client.IsOutsideLeft.Should().BeFalse();
+    }
+
+    [Test]
+    public void IsOutside_ShouldBeFalseWhenExactlyOnTheEdge()
+    {
+        // Edges use strict comparisons: flush against the viewport is still inside.
+        var client = new BoundingClientRect
+        {
+            Top = 0,
+            Left = 0,
+            Height = 100,
+            Width = 100,
+            WindowHeight = 100,
+            WindowWidth = 100
+        };
+
+        client.IsOutsideBottom.Should().BeFalse();
+        client.IsOutsideRight.Should().BeFalse();
+        client.IsOutsideTop.Should().BeFalse();
+        client.IsOutsideLeft.Should().BeFalse();
+    }
+
+    [Test]
     public void BoundingClientRectIsEqualTo_ShouldReturnTrueForEqualRects()
     {
         // Arrange
@@ -116,5 +155,59 @@ public class BoundingClientRectTests
         // Act & Assert
         rect.IsEqualTo(null).Should().BeFalse();
         ((BoundingClientRect)null).IsEqualTo(rect).Should().BeFalse();
+        ((BoundingClientRect)null).IsEqualTo(null).Should().BeFalse();
+    }
+
+    [Test]
+    public void BoundingClientRectIsEqualTo_ShouldTreatDifferenceBelowToleranceAsEqual()
+    {
+        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
+        var rect2 = new BoundingClientRect { Top = 10.000001, Left = 20, Width = 100, Height = 200 };
+
+        // Difference is smaller than the default tolerance of 0.00001.
+        rect1.IsEqualTo(rect2).Should().BeTrue();
+    }
+
+    [Test]
+    public void BoundingClientRectIsEqualTo_ShouldHonorCustomTolerance()
+    {
+        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
+        var rect2 = new BoundingClientRect { Top = 11, Left = 20, Width = 100, Height = 200 };
+
+        rect1.IsEqualTo(rect2, tolerance: 2).Should().BeTrue();
+        rect1.IsEqualTo(rect2, tolerance: 0.5).Should().BeFalse();
+    }
+
+    [TestCase(nameof(BoundingClientRect.Top))]
+    [TestCase(nameof(BoundingClientRect.Left))]
+    [TestCase(nameof(BoundingClientRect.Width))]
+    [TestCase(nameof(BoundingClientRect.Height))]
+    [TestCase(nameof(BoundingClientRect.WindowHeight))]
+    [TestCase(nameof(BoundingClientRect.WindowWidth))]
+    [TestCase(nameof(BoundingClientRect.ScrollX))]
+    [TestCase(nameof(BoundingClientRect.ScrollY))]
+    public void BoundingClientRectIsEqualTo_ShouldDetectDifferenceInAnyField(string field)
+    {
+        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200, WindowHeight = 1080, WindowWidth = 1920, ScrollX = 5, ScrollY = 10 };
+        var rect2 = rect1.Clone();
+
+        static void SetField(BoundingClientRect rect, string name)
+        {
+            switch (name)
+            {
+                case nameof(BoundingClientRect.Top): rect.Top += 1; break;
+                case nameof(BoundingClientRect.Left): rect.Left += 1; break;
+                case nameof(BoundingClientRect.Width): rect.Width += 1; break;
+                case nameof(BoundingClientRect.Height): rect.Height += 1; break;
+                case nameof(BoundingClientRect.WindowHeight): rect.WindowHeight += 1; break;
+                case nameof(BoundingClientRect.WindowWidth): rect.WindowWidth += 1; break;
+                case nameof(BoundingClientRect.ScrollX): rect.ScrollX += 1; break;
+                case nameof(BoundingClientRect.ScrollY): rect.ScrollY += 1; break;
+            }
+        }
+
+        SetField(rect2, field);
+
+        rect1.IsEqualTo(rect2).Should().BeFalse();
     }
 }

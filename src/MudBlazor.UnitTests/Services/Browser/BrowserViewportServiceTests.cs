@@ -659,4 +659,136 @@ public class BrowserViewportServiceTests
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(0);
     }
+
+    [Test]
+    public async Task DisposeAsync_UnsubscribeShouldBeIgnored()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var observer = new BrowserViewportObserverMock();
+        await service.SubscribeAsync(observer, fireImmediately: false);
+
+        // Act
+        await service.DisposeAsync();
+        await service.UnsubscribeAsync(observer);
+
+        // Assert
+        // Dispose already cleared observers and the JS listener; a late unsubscribe must not cancel anything again
+        service.ObserversCount.Should().Be(0);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
+
+    [Test]
+    public async Task SubscribeAsync_NullObserver_Throws()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        var subscribe = () => service.SubscribeAsync((IBrowserViewportObserver)null!);
+
+        // Assert
+        await subscribe.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task SubscribeAsync_NullAction_Throws()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        var subscribe = () => service.SubscribeAsync(Guid.NewGuid(), (Action<BrowserViewportEventArgs>)null!);
+
+        // Assert
+        await subscribe.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task SubscribeAsync_NullFunc_Throws()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        var subscribe = () => service.SubscribeAsync(Guid.NewGuid(), (Func<BrowserViewportEventArgs, Task>)null!);
+
+        // Assert
+        await subscribe.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task UnsubscribeAsync_NullObserver_Throws()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        var unsubscribe = () => service.UnsubscribeAsync((IBrowserViewportObserver)null!);
+
+        // Assert
+        await unsubscribe.Should().ThrowAsync<ArgumentNullException>();
+    }
+
+    [Test]
+    public async Task UnsubscribeAsync_UnknownObserverId_DoesNotCancelListener()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var observer = new BrowserViewportObserverMock();
+        await service.SubscribeAsync(observer, fireImmediately: false);
+
+        // Act
+        // Unsubscribing an id that was never subscribed must be a no-op and leave the existing observer untouched
+        await service.UnsubscribeAsync(Guid.NewGuid());
+
+        // Assert
+        service.ObserversCount.Should().Be(1);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListener", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
+
+    [Test]
+    public async Task GetCurrentBreakpointAsync_NullWindowSize_ReturnsXs()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        // JS reports no size (e.g. unsupported runtime / prerender); breakpoint must fall back to Xs
+        jsRuntimeMock
+            .Setup(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync((BrowserWindowSize)null!);
+
+        // Act
+        var result = await service.GetCurrentBreakpointAsync();
+
+        // Assert
+        result.Should().Be(Breakpoint.Xs);
+    }
+
+    [Test]
+    public async Task GetCurrentBreakpointAsync_CachesLatestWindowSize_DoesNotQueryJsAgain()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+        var observer = new BrowserViewportObserverMock();
+        await service.SubscribeAsync(observer, fireImmediately: false);
+        var subscription = service.GetInternalSubscription(observer);
+        Debug.Assert(subscription is not null, nameof(subscription) + " != null");
+        // RaiseOnResized populates the cached window size, so GetCurrentBreakpointAsync should not call JS
+        await service.RaiseOnResized(new BrowserWindowSize { Width = 1280, Height = 1024 }, Breakpoint.Lg, subscription.JavaScriptListenerId);
+
+        // Act
+        var result = await service.GetCurrentBreakpointAsync();
+
+        // Assert
+        result.Should().Be(Breakpoint.Lg);
+        jsRuntimeMock.Verify(x => x.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
 }

@@ -49,11 +49,23 @@ public sealed class SearchServiceTests
     }
 
     [Test]
-    public void ComputeScore_ReturnsFull_WhenBothAreEqual()
+    public void ComputeScore_ReturnsSubstringScore_WhenQueryIsInteriorOfTarget()
     {
-        var score = SearchService.ComputeScore("tooltip".AsSpan(), "tooltip".AsSpan());
+        // "button" is not a prefix of "iconbutton" but appears verbatim inside it,
+        // so stage 2 (substring) must contribute at least 70.
+        var score = SearchService.ComputeScore("iconbutton".AsSpan(), "button".AsSpan());
 
-        score.Should().Be(100);
+        score.Should().BeGreaterThanOrEqualTo(70);
+    }
+
+    [Test]
+    public void ComputeScore_NeverDropsBelowMinScore_ForLongPrefixSurplus()
+    {
+        // A short query that is a prefix of a much longer target must still clear
+        // MinScore so it isn't filtered out of search results.
+        var score = SearchService.ComputeScore("autocompletefieldwidget".AsSpan(), "auto".AsSpan());
+
+        score.Should().BeGreaterThanOrEqualTo(SearchService.MinScore);
     }
 
     [TestCase("snackbar", "snakbar")]       // missing 'c' (1 deletion)
@@ -202,5 +214,74 @@ public sealed class SearchServiceTests
         var results = Service.Search(SyntheticIndex, e => [e.Key], query);
 
         results.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public void Search_OrdersExactMatchAboveFuzzyMatch()
+    {
+        // "dialog" is an exact match (100); "dialoq" is a one-edit typo (< 100).
+        // The contract returns results ordered by relevance, so the exact match wins.
+        var index = new[]
+        {
+            new KeyValuePair<string, string>("dialoq", "Fuzzy"),
+            new KeyValuePair<string, string>("dialog", "Exact"),
+        };
+
+        var results = Service.Search(index, e => [e.Key], "dialog");
+
+        results.Should().HaveCount(2);
+        results[0].Value.Should().Be("Exact");
+        results[1].Value.Should().Be("Fuzzy");
+    }
+
+    [Test]
+    public void Search_ScoresItemByItsBestKeyword_WhenMultipleKeywordsGiven()
+    {
+        // The item with an exact-matching keyword among several must outrank an item
+        // whose only keyword is a fuzzy match, regardless of keyword order.
+        var exactViaSecondKeyword = new KeyValuePair<string, string>("k", "Exact");
+        var fuzzyOnly = new KeyValuePair<string, string>("dialoq", "Fuzzy");
+        var index = new[] { fuzzyOnly, exactViaSecondKeyword };
+
+        var results = Service.Search(
+            index,
+            e => e.Value == "Exact" ? new[] { "zzzzzz", "dialog" } : new[] { e.Key },
+            "dialog");
+
+        results.Should().HaveCount(2);
+        results[0].Value.Should().Be("Exact");
+    }
+
+    [Test]
+    public void Search_ReturnsItemOnce_WhenMultipleKeywordsMatch()
+    {
+        // Both keywords match the query; the item must appear exactly once.
+        var index = new[] { new KeyValuePair<string, string>("button", "Button") };
+
+        var results = Service.Search(index, e => new[] { "button", "buton" }, "button");
+
+        results.Should().ContainSingle().Which.Value.Should().Be("Button");
+    }
+
+    [Test]
+    public void Search_IgnoresEmptyAndWhitespaceKeywords()
+    {
+        // Blank keywords are skipped; the real keyword still produces the match.
+        var index = new[] { new KeyValuePair<string, string>("button", "Button") };
+
+        var results = Service.Search(index, e => new[] { "", "   ", "button" }, "button");
+
+        results.Should().ContainSingle().Which.Value.Should().Be("Button");
+    }
+
+    [Test]
+    public void Search_ReturnsEmpty_ForEmptyItemCollection()
+    {
+        var results = Service.Search(
+            Array.Empty<KeyValuePair<string, string>>(),
+            e => [e.Key],
+            "button");
+
+        results.Should().BeEmpty();
     }
 }

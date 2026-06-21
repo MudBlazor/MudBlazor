@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using MudBlazor.Services;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services.Browser;
@@ -69,6 +70,33 @@ public class BrowserViewportSubscriptionTests
     }
 
     [Test]
+    public void Equals_ReturnsTrueForSameReference()
+    {
+        // Arrange
+        var subscription = new BrowserViewportSubscription(Guid.NewGuid(), Guid.NewGuid());
+
+        // Act
+        var result = subscription.Equals(subscription);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_ObjectOverload_ReturnsFalseForDifferentType()
+    {
+        // Arrange
+        var subscription = new BrowserViewportSubscription(Guid.NewGuid(), Guid.NewGuid());
+        object obj = "not a subscription";
+
+        // Act
+        var result = subscription.Equals(obj);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
     public void Equals_ObjectOverload_ReturnsFalseForObjectIsNull()
     {
         // Arrange
@@ -124,5 +152,20 @@ public class BrowserViewportSubscriptionTests
 
         // Assert
         hashCode2.Should().NotBe(hashCode1);
+    }
+
+    [Test]
+    public void Equality_IgnoresOptions()
+    {
+        // Equality is keyed on the listener/observer ids only; the service consults Options separately.
+        // Arrange
+        var javaScriptListenerId = Guid.NewGuid();
+        var observerId = Guid.NewGuid();
+        var subscription1 = new BrowserViewportSubscription(javaScriptListenerId, observerId, new ResizeOptions { ReportRate = 100 });
+        var subscription2 = new BrowserViewportSubscription(javaScriptListenerId, observerId, new ResizeOptions { ReportRate = 500 });
+
+        // Act & Assert
+        subscription1.Equals(subscription2).Should().BeTrue();
+        subscription2.GetHashCode().Should().Be(subscription1.GetHashCode());
     }
 }

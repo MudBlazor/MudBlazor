@@ -156,34 +156,6 @@ public class KeyMapBuilderHookTests
     }
 
     [Test]
-    public async Task HookKeyDown_DoesNotPreventOtherCommandsFromExecuting()
-    {
-        // Arrange
-        var hookExecuted = false;
-        var commandExecuted = false;
-        var builder = KeyMapBuilder.Create()
-            .HookKeyDown(args =>
-            {
-                hookExecuted = true;
-                return Task.CompletedTask;
-            })
-            .OnKeyDown("Enter", () =>
-            {
-                commandExecuted = true;
-                return Task.CompletedTask;
-            });
-
-        var (keyDown, _) = builder.Build();
-
-        // Act
-        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
-
-        // Assert
-        hookExecuted.Should().BeTrue();
-        commandExecuted.Should().BeTrue();
-    }
-
-    [Test]
     public async Task HookKeyDown_ExecutesEvenWhenNoOtherCommandMatches()
     {
         // Arrange
@@ -614,6 +586,35 @@ public class KeyMapBuilderHookTests
         executionOrder.Should().HaveCount(2);
         executionOrder[0].Should().Be("HookInside");
         executionOrder[1].Should().Be("CommandOutside");
+    }
+
+    [Test]
+    public async Task HookKeyDown_TopLevelHookWithFalseWhenScopedHook_OnlyTopLevelHookExecutes()
+    {
+        // Arrange - a top-level hook plus a When-scoped hook whose condition is false
+        var condition = false;
+        var executionOrder = new List<string>();
+        var builder = KeyMapBuilder.Create()
+            .HookKeyDown(args =>
+            {
+                executionOrder.Add("TopLevelHook");
+                return Task.CompletedTask;
+            })
+            .When(() => condition, b => b
+                .HookKeyDown(args =>
+                {
+                    executionOrder.Add("ScopedHook");
+                    return Task.CompletedTask;
+                }));
+
+        var (keyDown, _) = builder.Build();
+
+        // Act
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+        // Assert - top-level hook fires; scoped hook is suppressed by its false condition
+        executionOrder.Should().HaveCount(1);
+        executionOrder[0].Should().Be("TopLevelHook");
     }
 
     [Test]

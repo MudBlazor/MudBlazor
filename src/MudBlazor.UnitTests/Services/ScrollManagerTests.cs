@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using AwesomeAssertions;
+using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using NUnit.Framework;
@@ -62,6 +63,21 @@ public class ScrollManagerTests
     }
 
     [Test]
+    public async Task ScrollToTopAsync_ForwardsScrollBehaviorToScrollTo()
+    {
+        SetupVoidInvocation("mudScrollManager.scrollTo", args =>
+            args.Length == 4 &&
+            (args[0] as string) == "#list" &&
+            (int)args[1] == 0 &&
+            (int)args[2] == 0 &&
+            (args[3] as string) == "smooth");
+
+        await _service.ScrollToTopAsync("#list", ScrollBehavior.Smooth);
+
+        _runtimeMock.VerifyAll();
+    }
+
+    [Test]
     public async Task ScrollToBottomAsync_CallsJsWithExpectedArguments()
     {
         SetupVoidInvocation("mudScrollManager.scrollToBottom", args =>
@@ -117,6 +133,46 @@ public class ScrollManagerTests
     }
 
     [Test]
+    public async Task LockAndUnlockScroll_UseDefaultBodyAndScrollLockedArguments()
+    {
+        SetupVoidInvocation("mudScrollManager.lockScroll", args =>
+            args.Length == 2 &&
+            (args[0] as string) == "body" &&
+            (args[1] as string) == "scroll-locked");
+        SetupVoidInvocation("mudScrollManager.unlockScroll", args =>
+            args.Length == 2 &&
+            (args[0] as string) == "body" &&
+            (args[1] as string) == "scroll-locked");
+
+        await _service.LockScrollAsync();
+        await _service.UnlockScrollAsync();
+
+        _runtimeMock.VerifyAll();
+    }
+
+    [Test]
+    public async Task LockScrollAsync_PropagatesJsRuntimeError()
+    {
+        // lockScroll must surface failures; only the unlock/dispose paths swallow them.
+        SetupThrowingInvocation("mudScrollManager.lockScroll", new JSDisconnectedException("disconnected"));
+
+        var act = async () => await _service.LockScrollAsync("#dialog", "locked");
+
+        await act.Should().ThrowAsync<JSDisconnectedException>();
+    }
+
+    [Test]
+    public async Task UnlockScrollAsync_SwallowsJsRuntimeError()
+    {
+        // Unlock runs during teardown when the circuit may already be gone, so it must not throw.
+        SetupThrowingInvocation("mudScrollManager.unlockScroll", new JSDisconnectedException("disconnected"));
+
+        var act = async () => await _service.UnlockScrollAsync("#dialog", "locked");
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
     public async Task ScrollToVirtualizedItemAsync_CallsJsWithExpectedArguments()
     {
         SetupVoidInvocation("mudScrollManager.scrollToVirtualizedItem", args =>
@@ -132,11 +188,28 @@ public class ScrollManagerTests
         _runtimeMock.VerifyAll();
     }
 
+    [Test]
+    public async Task ScrollToVirtualizedItemAsync_SwallowsJsRuntimeError()
+    {
+        SetupThrowingInvocation("mudScrollManager.scrollToVirtualizedItem", new JSDisconnectedException("disconnected"));
+
+        var act = async () => await _service.ScrollToVirtualizedItemAsync("table", 7, 42.5, "row-7", ScrollBehavior.Smooth);
+
+        await act.Should().NotThrowAsync();
+    }
+
     private void SetupVoidInvocation(string identifier, Func<object[], bool> argumentMatcher)
     {
         _runtimeMock
             .Setup(x => x.InvokeAsync<IJSVoidResult>(identifier, It.Is<object[]>(args => argumentMatcher(args))))
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
+    }
+
+    private void SetupThrowingInvocation(string identifier, Exception exception)
+    {
+        _runtimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>(identifier, It.IsAny<object[]>()))
+            .Throws(exception);
     }
 }

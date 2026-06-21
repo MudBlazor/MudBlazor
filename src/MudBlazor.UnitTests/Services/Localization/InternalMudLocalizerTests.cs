@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System.ComponentModel.DataAnnotations;
+using AwesomeAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -67,21 +68,6 @@ public class InternalMudLocalizerTests
     }
 
     [Test]
-    [SetUICulture("de-DE")]
-    public void CustomLocalizationInterceptor_NonEnglishUICulture()
-    {
-        // Assert
-        var interceptorMock = new Mock<ILocalizationInterceptor>();
-        interceptorMock.Setup(mock => mock.Handle(LanguageResource.MudDataGrid_Clear)).Returns(new LocalizedString(LanguageResource.MudDataGrid_Clear, "Reset", false));
-        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
-
-        // Act
-        var result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
-
-        result.Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Clear, "Reset", false));
-    }
-
-    [Test]
     [SetUICulture("en-US")]
     public void DefaultLocalizationInterceptor_EnglishUICulture()
     {
@@ -99,9 +85,9 @@ public class InternalMudLocalizerTests
     [SetUICulture("de-DE")]
     public void DefaultLocalizationInterceptor_NonEnglishUICulture()
     {
-        // Arrange
-        var interceptorMock = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
-        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock);
+        // With no custom MudLocalizer, the interceptor short-circuits to the internal English resources regardless of UI culture.
+        var interceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
+        var internalMudLocalizer = new InternalMudLocalizer(interceptor);
 
         // Act & Assert
         internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
@@ -141,5 +127,62 @@ public class InternalMudLocalizerTests
         internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
         internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", false));
         internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsNotEmpty, "is not empty", false, typeof(LanguageResource).FullName));
+    }
+
+    [Test]
+    public void StringIndexer_ShouldForwardArgumentsToInterceptor()
+    {
+        // Arrange
+        var interceptorMock = new Mock<ILocalizationInterceptor>();
+        interceptorMock
+            .Setup(mock => mock.Handle("Greeting", "World"))
+            .Returns(new LocalizedString("Greeting", "Hello World", false));
+        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
+
+        // Act
+        var result = internalMudLocalizer["Greeting", "World"];
+
+        // Assert
+        result.Should().BeEquivalentTo(new LocalizedString("Greeting", "Hello World", false));
+        interceptorMock.Verify(mock => mock.Handle("Greeting", "World"), Times.Once);
+    }
+
+    [Test]
+    public void EnumIndexer_ShouldDelegateToEnumInterceptor()
+    {
+        // Arrange
+        var interceptorMock = new Mock<ILocalizationInterceptor>();
+        var enumInterceptorMock = new Mock<ILocalizationEnumInterceptor>();
+        enumInterceptorMock.Setup(mock => mock.Handle(TestEnum.First)).Returns("localized first");
+        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object, enumInterceptorMock.Object);
+
+        // Act
+        var result = internalMudLocalizer[TestEnum.First];
+
+        // Assert
+        result.Should().Be("localized first");
+        enumInterceptorMock.Verify(mock => mock.Handle(TestEnum.First), Times.Once);
+    }
+
+    [Test]
+    public void EnumIndexer_WithSingleInterceptorConstructor_ShouldUseDefaultEnumInterceptor()
+    {
+        // The single-interceptor constructor wires up DefaultLocalizationEnumInterceptor, which resolves
+        // the enum's DisplayAttribute name (no LanguageResource match, so the display name is returned verbatim).
+        var interceptorMock = new Mock<ILocalizationInterceptor>();
+        interceptorMock.Setup(mock => mock.Handle(It.IsAny<string>())).Returns(new LocalizedString("x", "x", resourceNotFound: true));
+        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
+
+        // Act & Assert
+        internalMudLocalizer[TestEnum.First].Should().Be("First display");
+        internalMudLocalizer[TestEnum.Second].Should().Be(nameof(TestEnum.Second));
+    }
+
+    private enum TestEnum
+    {
+        [Display(Name = "First display")]
+        First,
+
+        Second
     }
 }
