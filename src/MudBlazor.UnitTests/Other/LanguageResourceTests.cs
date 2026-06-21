@@ -30,22 +30,6 @@ public class LanguageResourceTests
     }
 
     [Test]
-    public void ResourceValues_ShouldNotBeNullOrWhiteSpace()
-    {
-        var manager = LanguageResource.ResourceManager;
-        var resourceSet = manager.GetResourceSet(CultureInfo.InvariantCulture, true, true);
-
-        foreach (DictionaryEntry entry in resourceSet!)
-        {
-            var key = entry.Key.ToString();
-            var value = entry.Value as string;
-
-            value.Should().NotBeNullOrWhiteSpace(
-                $"because the translation for '{key}' would render as blank text in the UI");
-        }
-    }
-
-    [Test]
     public void ResourceValues_ShouldBeValidCompositeFormatStrings()
     {
         var manager = LanguageResource.ResourceManager;

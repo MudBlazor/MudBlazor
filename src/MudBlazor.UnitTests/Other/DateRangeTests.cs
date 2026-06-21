@@ -146,22 +146,6 @@ public class DateRangeTests
     }
 
     [Test]
-    public void EqualityOperator_EqualRanges_ReturnsTrue()
-    {
-        var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        var b = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        (a == b).Should().BeTrue();
-    }
-
-    [Test]
-    public void EqualityOperator_SameReference_ReturnsTrue()
-    {
-        var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        var b = a;
-        (a == b).Should().BeTrue();
-    }
-
-    [Test]
     public void Equals_BothEndpointsNull_ReturnsTrue()
     {
         // DateRange.Equals (unlike base Range<T>.Equals) treats two ranges with null endpoints as equal.

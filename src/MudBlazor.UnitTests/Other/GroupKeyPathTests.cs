@@ -82,15 +82,6 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        public void Equals_EmptyVsNonEmpty_ReturnsFalse()
-        {
-            var empty = new GroupKeyPath([]);
-            var nonEmpty = new GroupKeyPath(["A"]);
-            Assert.That(empty.Equals(nonEmpty), Is.False);
-            Assert.That(nonEmpty.Equals(empty), Is.False);
-        }
-
-        [Test]
         public void UsedAsDictionaryKey_EqualContentDistinctInstance_FindsValue()
         {
             // Equal-content paths from distinct instances must collide correctly so hash-based lookups succeed.

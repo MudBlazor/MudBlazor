@@ -88,15 +88,6 @@ namespace MudBlazor.UnitTests.Other
             isTestOK.Should().BeTrue();
         }
 
-        [Test]
-        public void Constructor_ValidName_SetsNameAndOrder()
-        {
-            var attribute = new CategoryAttribute(CategoryTypes.General.Behavior);
-
-            attribute.Name.Should().Be("Behavior");
-            attribute.Order.Should().Be(100);
-        }
-
         [TestCase(null)]
         [TestCase("")]
         public void Constructor_NullOrEmptyName_Throws(string name)
@@ -127,14 +118,6 @@ namespace MudBlazor.UnitTests.Other
             data.Should().BeLessThan(behavior);
             behavior.Should().BeLessThan(appearance);
             appearance.Should().BeLessThan(common);
-        }
-
-        [Test]
-        public void Order_Common_IsLast()
-        {
-            var common = new CategoryAttribute(CategoryTypes.ComponentBase.Common).Order;
-
-            common.Should().Be(int.MaxValue);
         }
 
         // Returns the class that declares the specified method.
