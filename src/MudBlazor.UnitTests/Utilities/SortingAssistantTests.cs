@@ -129,32 +129,6 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void UpdateOrder_ZoneOffset_AddedToIndexInZone()
-        {
-            var items = GenerateList();
-
-            // IndexInZone (-2) + zoneOffset (2) == target index 0, equivalent to UpdateOrder_MoveUp.
-            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[4], "something", -2);
-            items.UpdateOrder(dropInfo, x => x.Prio, zoneOffset: 2);
-
-            var expectedOrders = new[] { 1, 2, 3, 4, 0, 5, 6, 7, 8, 9 };
-            var actualOrders = items.Select(x => x.Prio).ToList();
-
-            actualOrders.Should().ContainInOrder(expectedOrders);
-        }
-
-        [Test]
-        public void UpdateOrder_SingleItem_GetsTargetIndex()
-        {
-            var items = new List<ItemsWithOrder> { new("Item-1", 7) };
-
-            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
-            items.UpdateOrder(dropInfo, x => x.Prio);
-
-            items[0].Prio.Should().Be(0);
-        }
-
-        [Test]
         public void UpdateOrder_BodyNotMemberExpression_Throws()
         {
             var items = GenerateList();

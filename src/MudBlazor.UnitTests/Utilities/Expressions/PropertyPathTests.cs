@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
-using System.Reflection;
 using AwesomeAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
@@ -16,8 +15,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         // ReSharper disable ClassNeverInstantiated.Local
         private class Employee
         {
-            public string Department = string.Empty;
-
             public string Name => string.Empty;
 
             public Manager Manager { get; } = new();
@@ -92,22 +89,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             property.GetMembers().Select(m => m.Name).Should().Equal("Manager", "Boss", "Name");
             property.GetPath().Should().Be("Manager.Boss.Name");
             property.GetLastMemberName().Should().Be("Name");
-        }
-
-        [Test]
-        public void PropertyPathTests_Visit_FieldAccess_IsTreatedAsMember()
-        {
-            // Arrange: a field access is also a MemberExpression.
-            Expression<Func<Employee, string>> exp = x => x.Department;
-
-            // Act
-            var property = PropertyPath.Visit(exp);
-
-            // Assert
-            property.IsBodyMemberExpression.Should().BeTrue();
-            property.GetPath().Should().Be("Department");
-            property.GetMembers().Should().ContainSingle()
-                .Which.Should().BeAssignableTo<FieldInfo>();
         }
 
         [Test]

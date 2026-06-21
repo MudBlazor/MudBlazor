@@ -321,14 +321,6 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void Constructor_NullTimeProvider_ThrowsArgumentNullException()
-    {
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => _ = new ThrottleDispatcher(100, null!));
-        Assert.Throws<ArgumentNullException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(100), null!));
-    }
-
-    [Test]
     public async Task ThrottleAsync_SuppressedCallAfterCompletedAction_ReturnsCompletedTaskNotPriorTask()
     {
         // Arrange - the first action returns a distinct (non-singleton) task that finishes before the

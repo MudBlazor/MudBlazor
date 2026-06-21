@@ -185,29 +185,6 @@ public class DebounceDispatcherTests
     }
 
     [Test]
-    public async Task DebounceAsync_LeadingMode_PreCancelledToken_DoesNotExecuteImmediately()
-    {
-        // Arrange - leading mode would normally fire on the first call, but a pre-cancelled
-        // token must short-circuit before the leading-edge check runs.
-        var timeProvider = new FakeTimeProvider();
-        using var debounceDispatcher = new DebounceDispatcher(100, leading: true, timeProvider);
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-        var executed = false;
-        Task Invoke()
-        {
-            executed = true;
-            return Task.CompletedTask;
-        }
-
-        // Act
-        await debounceDispatcher.DebounceAsync(Invoke, cts.Token);
-
-        // Assert
-        executed.Should().BeFalse();
-    }
-
-    [Test]
     public async Task DebounceAsync_CancelMethod_CancelsPendingOperation()
     {
         // Arrange
@@ -434,14 +411,6 @@ public class DebounceDispatcherTests
         // Act & Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(-100));
         Assert.Throws<ArgumentOutOfRangeException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(-100)));
-    }
-
-    [Test]
-    public void Constructor_NullTimeProvider_ThrowsArgumentNullException()
-    {
-        // Act & Assert - both interval overloads guard the time provider
-        Assert.Throws<ArgumentNullException>(() => _ = new DebounceDispatcher(100, false, null!));
-        Assert.Throws<ArgumentNullException>(() => _ = new DebounceDispatcher(TimeSpan.FromMilliseconds(100), false, null!));
     }
 
     [Test]

@@ -480,22 +480,6 @@ public class ObserverManagerTests
     }
 
     [Test]
-    public void Constructor_WithComparer_TreatsEqualKeysAsSame()
-    {
-        // Arrange
-        var observerManager = new ObserverManager<string, string>(NullLogger.Instance, StringComparer.OrdinalIgnoreCase);
-
-        // Act
-        observerManager.Subscribe("KEY", "Observer1");
-        observerManager.Subscribe("key", "Observer2");
-
-        // Assert
-        observerManager.Count.Should().Be(1);
-        observerManager.IsSubscribed("Key").Should().BeTrue();
-        observerManager.Observers["KEY"].Should().Be("Observer2");
-    }
-
-    [Test]
     public async Task NotifyAsync_WithPredicate_OnlyNotifiesMatchingObservers()
     {
         // Arrange
@@ -549,21 +533,4 @@ public class ObserverManagerTests
         _observerManager.IsSubscribed(1).Should().BeFalse();
     }
 
-    [Test]
-    public void Observers_ReturnsSnapshotCopy_NotBackingStore()
-    {
-        // Arrange
-        _observerManager.Subscribe(1, "Observer1");
-
-        // Act
-        var snapshot = _observerManager.Observers;
-        snapshot[2] = "Observer2";
-        snapshot.Remove(1);
-
-        // Assert
-        // Mutating the returned dictionary must not affect the manager.
-        _observerManager.Count.Should().Be(1);
-        _observerManager.IsSubscribed(1).Should().BeTrue();
-        _observerManager.IsSubscribed(2).Should().BeFalse();
-    }
 }

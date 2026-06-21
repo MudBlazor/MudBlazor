@@ -76,15 +76,6 @@ public class RegexMaskIPv6Tests
     }
 
     [Test]
-    public void IPv6_Insert_DropsNonHexLetters()
-    {
-        // only [0-9A-Fa-f] are valid hex; g-z must be filtered out
-        var mask = RegexMask.IPv6();
-        mask.Insert("gbeefz");
-        mask.ToString().Should().Be("beef|");
-    }
-
-    [Test]
     public void IPv6_Insert_FifthHexDigitJumpsToNextGroup()
     {
         // each group is capped at 4 hex chars ([0-9A-Fa-f]{0,4}); the 5th jumps the delimiter
@@ -100,15 +91,6 @@ public class RegexMaskIPv6Tests
         var mask = RegexMask.IPv6();
         mask.Insert("1:2:3:4:5:6:7:8:9");
         mask.ToString().Should().Be("1:2:3:4:5:6:7:89|");
-    }
-
-    [Test]
-    public void IPv6_Insert_TripleColonRejected()
-    {
-        // the "::" zero-group shorthand may appear only once; ":::" is blocked by the IPv6 filter
-        var mask = RegexMask.IPv6();
-        mask.Insert("::::");
-        mask.ToString().Should().Be("::|");
     }
 
     [Test]

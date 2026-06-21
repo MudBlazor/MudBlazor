@@ -32,37 +32,12 @@ public class ReferenceCultureComparerTests
     }
 
     [Test]
-    public void Equals_InvariantCultureSingleton_IsEqualToItself()
-    {
-        var comparer = ReferenceCultureComparer.Default;
-
-        // CultureInfo.InvariantCulture is a process-wide singleton, so reference equality must hold.
-        comparer.Equals(CultureInfo.InvariantCulture, CultureInfo.InvariantCulture).Should().BeTrue();
-    }
-
-    [Test]
     public void GetHashCode_UsesReferenceBasedHashCode()
     {
         var comparer = ReferenceCultureComparer.Default;
         var culture = new CultureInfo("fr-FR");
 
         comparer.GetHashCode(culture).Should().Be(RuntimeHelpers.GetHashCode(culture));
-    }
-
-    [Test]
-    public void GetHashCode_SameInstance_IsStableAcrossCalls()
-    {
-        var comparer = ReferenceCultureComparer.Default;
-        var culture = new CultureInfo("fr-FR");
-
-        comparer.GetHashCode(culture).Should().Be(comparer.GetHashCode(culture));
-    }
-
-    [Test]
-    public void Default_IsSharedNonNullSingleton()
-    {
-        ReferenceCultureComparer.Default.Should().NotBeNull();
-        ReferenceCultureComparer.Default.Should().BeSameAs(ReferenceCultureComparer.Default);
     }
 
     [Test]

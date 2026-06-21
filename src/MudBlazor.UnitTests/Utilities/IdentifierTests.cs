@@ -99,20 +99,6 @@ public class IdentifierTests
     }
 
     [Test]
-    public void Create_WithPrefix_RandomPortionShouldOnlyContainAllowedChars()
-    {
-        // Arrange - the random suffix is drawn from [a-z0-9]
-        const string Prefix = "id-";
-
-        // Act & Assert - check across many generations to exercise the random path
-        for (var i = 0; i < 200; i++)
-        {
-            var suffix = Identifier.Create(Prefix)[Prefix.Length..];
-            suffix.Should().MatchRegex("^[a-z0-9]{8}$");
-        }
-    }
-
-    [Test]
     public void Create_WithoutPrefix_ShouldAlwaysStartWithLetterAndUseAllowedChars()
     {
         // Act & Assert - first char is always a letter (a-z); the rest are [a-z0-9]

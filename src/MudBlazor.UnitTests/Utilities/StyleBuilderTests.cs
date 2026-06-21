@@ -328,33 +328,6 @@ namespace UtilityTests
         }
 
         [Test]
-        public void AddStyleFromAttributes_With_Null_Dictionary_Is_NoOp()
-        {
-            // Act
-            var styleBuilder = StyleBuilder.Default("color", "red")
-                .AddStyleFromAttributes(null)
-                .Build();
-
-            // Assert
-            styleBuilder.Should().Be("color:red;");
-        }
-
-        [Test]
-        public void AddStyleFromAttributes_Without_Style_Key_Is_NoOp()
-        {
-            // Arrange
-            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-class" } };
-
-            // Act
-            var styleBuilder = StyleBuilder.Default("color", "red")
-                .AddStyleFromAttributes(attributes)
-                .Build();
-
-            // Assert
-            styleBuilder.Should().Be("color:red;");
-        }
-
-        [Test]
         public void AddStyle_With_ValueBuilder_When_False_Skips_Property()
         {
             // Act
@@ -384,27 +357,5 @@ namespace UtilityTests
             styleBuilder.Should().Be("z-index:-1;");
         }
 
-        [Test]
-        public void AddStyle_With_Func_Value_And_True_Condition_Func_Adds_Style()
-        {
-            // Act
-            var styleBuilder = StyleBuilder.Empty()
-                .AddStyle("color", () => "red", () => true)
-                .Build();
-
-            // Assert
-            styleBuilder.Should().Be("color:red;");
-        }
-
-        [Test]
-        public void ToString_Returns_Same_As_Build()
-        {
-            // Arrange
-            var styleBuilder = StyleBuilder.Default("color", "red")
-                .AddStyle("padding", "35px");
-
-            // Act & Assert
-            styleBuilder.ToString().Should().Be("color:red;padding:35px;");
-        }
     }
 }

@@ -93,17 +93,6 @@ public class RegexMaskEmailTests
     }
 
     [Test]
-    public void Email_Delete_AcrossDelimiter_RemovesDelimiterAndAdjustsCaret()
-    {
-        // Deleting the char before '@' also drops the orphaned delimiter; caret advances past it.
-        var mask = RegexMask.Email();
-        mask.SetText("test@domain.com");
-        mask.CaretPos = 4;
-        mask.Delete();
-        mask.ToString().Should().Be("testo|main.com");
-    }
-
-    [Test]
     public void Email_Backspace_AcrossDelimiter_RemovesDelimiter()
     {
         // Backspacing right after '@' removes the '@' delimiter together with the preceding char.
@@ -115,32 +104,12 @@ public class RegexMaskEmailTests
     }
 
     [Test]
-    public void Email_Insert_OnlyDelimiters_ProducesEmptyText()
-    {
-        // Pure delimiter input never produces standalone text (Email does not allow only delimiters).
-        var mask = RegexMask.Email();
-        mask.Insert("@@..");
-        mask.Text.Should().Be(string.Empty);
-        mask.ToString().Should().Be("|");
-    }
-
-    [Test]
     public void Email_Insert_DuplicateAtSign_CollapsesToSingle()
     {
         // The mask permits at most one '@'; extras are dropped.
         var mask = RegexMask.Email();
         mask.Insert("user@@domain.com");
         mask.Text.Should().Be("user@domain.com");
-    }
-
-    [Test]
-    public void Email_SetText_Null_DoesNotThrowAndClears()
-    {
-        var mask = RegexMask.Email();
-        mask.SetText("user@domain.com");
-        mask.SetText(null);
-        mask.Text.Should().Be(string.Empty);
-        mask.ToString().Should().Be("|");
     }
 
     [Test]

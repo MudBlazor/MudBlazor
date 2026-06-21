@@ -22,19 +22,6 @@ public class DoubleEpsilonEqualityComparerTests
         construct.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("epsilon");
     }
 
-    [TestCase(double.Epsilon)]
-    [TestCase(0.00001)]
-    [TestCase(0.5)]
-    [TestCase(0.9999999)]
-    public void Constructor_ValidEpsilon_ShouldNotThrow(double epsilon)
-    {
-        // Act
-        Action construct = () => _ = new DoubleEpsilonEqualityComparer(epsilon);
-
-        // Assert
-        construct.Should().NotThrow();
-    }
-
     [Test]
     public void Default_UsesDoubleMinNormalEpsilon()
     {

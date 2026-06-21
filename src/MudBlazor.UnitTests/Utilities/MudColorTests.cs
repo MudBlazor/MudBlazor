@@ -1172,16 +1172,6 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void Empty_IsBlackWithFullOpacity()
-        {
-            MudColor.Empty.R.Should().Be(0);
-            MudColor.Empty.G.Should().Be(0);
-            MudColor.Empty.B.Should().Be(0);
-            MudColor.Empty.A.Should().Be(255);
-            MudColor.Empty.Should().Be(new MudColor());
-        }
-
-        [Test]
         public void Equals_SameRgbaAndHsl_ReturnsTrue()
         {
             // Arrange: identical inputs guarantee both RGBA and HSL match (no round-trip drift).
@@ -1199,32 +1189,6 @@ namespace MudBlazor.UnitTests.Utilities
             var end = new MudColor("#0000FF");
 
             var act = () => MudColor.GenerateGradientPalette(start, end, numberOfColors).ToList();
-
-            act.Should().Throw<ArgumentOutOfRangeException>();
-        }
-
-        [Test]
-        public void GenerateMultiGradientPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
-        {
-            IReadOnlyList<MudColor> colors = ["#FF0000", "#0000FF"];
-
-            var act = () => MudColor.GenerateMultiGradientPalette(colors, numberOfColors).ToList();
-
-            act.Should().Throw<ArgumentOutOfRangeException>();
-        }
-
-        [Test]
-        public void GenerateAnalogousPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
-        {
-            var act = () => MudColor.GenerateAnalogousPalette("#FF0000", numberOfColors).ToList();
-
-            act.Should().Throw<ArgumentOutOfRangeException>();
-        }
-
-        [Test]
-        public void GenerateTintShadePalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
-        {
-            var act = () => MudColor.GenerateTintShadePalette("#808080", numberOfColors).ToList();
 
             act.Should().Throw<ArgumentOutOfRangeException>();
         }

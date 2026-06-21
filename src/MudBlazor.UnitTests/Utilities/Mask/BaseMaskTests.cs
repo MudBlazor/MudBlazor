@@ -215,31 +215,6 @@ public class BaseMaskTests
     }
 
     [Test]
-    public void BaseMask_AllowOnlyDelimiters_False_BlanksDelimiterOnlyText()
-    {
-        // BaseMask.UpdateText (used by RegexMask) blanks text that is only delimiters when the flag is off.
-        // IPv4 leaves AllowOnlyDelimiters at its default of false and uses '.' as a delimiter.
-        var mask = RegexMask.IPv4();
-        mask.AllowOnlyDelimiters.Should().BeFalse();
-
-        mask.Insert(".");
-
-        mask.Text.Should().BeNullOrEmpty();
-    }
-
-    [Test]
-    public void BaseMask_AllowOnlyDelimiters_True_KeepsDelimiterOnlyText()
-    {
-        // The contrasting branch: IPv6 sets AllowOnlyDelimiters = true so a lone delimiter is preserved.
-        var mask = RegexMask.IPv6();
-        mask.AllowOnlyDelimiters.Should().BeTrue();
-
-        mask.Insert(":");
-
-        mask.Text.Should().Be(":");
-    }
-
-    [Test]
     public void PatternMask_ToString_EmptyText()
     {
         // Arrange

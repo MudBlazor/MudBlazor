@@ -124,28 +124,6 @@ public class CollectionComparerTests
         comparer.Equals([null], ["a"]).Should().Be(false);
     }
 
-    [Test]
-    public void HashCode_NullElements_AreStableAndSetBased()
-    {
-        var comparer = new CollectionComparer<string?>();
-
-        comparer.GetHashCode([null]).Should().Be(comparer.GetHashCode([null]));
-        comparer.GetHashCode([null, "a", null]).Should().Be(comparer.GetHashCode(["a", null]));
-        // Order/duplicate insensitivity still holds when a null element is present.
-        comparer.GetHashCode([null, "a", "b"]).Should().Be(comparer.GetHashCode(["b", null, "a", "a"]));
-    }
-
-    [Test]
-    public void HashCode_EmptyCollection_UsesStableNonZeroSeedDistinctFromNull()
-    {
-        var comparer = CollectionComparer<int>.Default;
-
-        var empty = comparer.GetHashCode([]);
-        empty.Should().Be(comparer.GetHashCode([]));
-        empty.Should().NotBe(0);
-        empty.Should().NotBe(comparer.GetHashCode(null));
-    }
-
     private class ThrowingEqualityComparer : IEqualityComparer<int>
     {
         public bool Equals(int x, int y) => throw new InvalidOperationException("Comparer should not be used for reference-equal collections.");

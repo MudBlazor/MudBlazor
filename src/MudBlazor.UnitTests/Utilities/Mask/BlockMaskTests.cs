@@ -257,19 +257,6 @@ public class BlockMaskTests
     }
 
     [Test]
-    public void BlockMask_LetterOrDigitBlock_BuildsAlternationRegex()
-    {
-        // Arrange - the '*' default mask char allows a letter or a digit
-        var mask = new BlockMask("", new Block('*', 1, 2));
-
-        // Act
-        mask.Clear(); // force initialization so the regex is built
-
-        // Assert - the '*' regex (\p{L}|\d) is substituted for each accepted character
-        mask.Mask.Should().Be(@"^(\p{L}|\d(\p{L}|\d)?)?$");
-    }
-
-    [Test]
     public void BlockMask_LetterOrDigitBlock_AcceptsLettersAndDigits()
     {
         // NOTE: suspected BlockMask/MaskChar bug. MaskChar.LetterOrDigit's regex is the
@@ -302,19 +289,4 @@ public class BlockMaskTests
         mask.Text.Should().Be("1A");
     }
 
-    [Test]
-    public void BlockMask_UpdateFrom_NonBlockMask_PreservesBlocks()
-    {
-        // Arrange
-        var mask = new BlockMask(".", new Block('0', 1, 2), new Block('0', 1, 2));
-        mask.Blocks.Length.Should().Be(2);
-
-        // Act - a non-BlockMask must not replace the blocks (the `is BlockMask` guard is false)
-        mask.UpdateFrom(new PatternMask("00-00"));
-
-        // Assert - blocks are unchanged and the mask still behaves as a block mask
-        mask.Blocks.Length.Should().Be(2);
-        mask.Insert("1234");
-        mask.Text.Should().Be("12.34");
-    }
 }

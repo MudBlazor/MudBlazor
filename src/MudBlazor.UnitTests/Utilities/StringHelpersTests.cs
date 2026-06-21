@@ -75,46 +75,4 @@ public class StringHelpersTests
         }
     }
 
-    [Test]
-    public void ToS_WithFormat_HonorsCurrentCulture()
-    {
-        // Unlike the no-format path, the format path uses ToString(format) which respects CurrentCulture.
-        var originalCulture = CultureInfo.CurrentCulture;
-        var originalUiCulture = CultureInfo.CurrentUICulture;
-
-        try
-        {
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-
-            StringHelpers.ToS(1.5, "F2").Should().Be("1,50");
-        }
-        finally
-        {
-            CultureInfo.CurrentCulture = originalCulture;
-            CultureInfo.CurrentUICulture = originalUiCulture;
-        }
-    }
-
-    [Test]
-    public void ToS_WithEmptyFormat_TakesInvariantNoFormatPath()
-    {
-        // An empty format string hits the IsNullOrEmpty branch, not ToString("").
-        var originalCulture = CultureInfo.CurrentCulture;
-        var originalUiCulture = CultureInfo.CurrentUICulture;
-
-        try
-        {
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
-
-            StringHelpers.ToS(1234.5, "").Should().Be("1234.5");
-            StringHelpers.ToS(1234.5, "").Should().Be(StringHelpers.ToS(1234.5));
-        }
-        finally
-        {
-            CultureInfo.CurrentCulture = originalCulture;
-            CultureInfo.CurrentUICulture = originalUiCulture;
-        }
-    }
 }

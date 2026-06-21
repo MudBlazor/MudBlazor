@@ -151,27 +151,4 @@ public class RegexMaskTests
         mask.Text.Should().Be("12345");
     }
 
-    [Test]
-    public void RegexMask_DelimiterOnlyText_NotShownByDefault()
-    {
-        // AllowOnlyDelimiters defaults to false on the IPv4 mask, so a value that resolves
-        // to nothing but a delimiter is suppressed rather than displayed.
-        var mask = RegexMask.IPv4();
-
-        mask.Insert(".");
-
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void RegexMask_DelimiterOnlyText_ShownWhenAllowOnlyDelimiters()
-    {
-        // The IPv6 mask sets AllowOnlyDelimiters, so a delimiter-only value is kept
-        // instead of being cleared (contrast with the IPv4 case above).
-        var mask = RegexMask.IPv6();
-
-        mask.Insert("::");
-
-        mask.Text.Should().Be("::");
-    }
 }

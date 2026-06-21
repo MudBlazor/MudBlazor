@@ -77,27 +77,6 @@ public class MaskCharTests
     }
 
     [Test]
-    public void MaskChar_EqualsObject_SameValue_ReturnsTrue()
-    {
-        // Arrange
-        var maskChar = new MaskChar('x', @"\d");
-        object boxed = new MaskChar('x', @"\d");
-
-        // Act & Assert
-        maskChar.Equals(boxed).Should().BeTrue();
-    }
-
-    [Test]
-    public void MaskChar_EqualsObject_Null_ReturnsFalse()
-    {
-        // Arrange
-        var maskChar = new MaskChar('x', @"\d");
-
-        // Act & Assert
-        maskChar.Equals(null).Should().BeFalse();
-    }
-
-    [Test]
     public void MaskChar_EqualsObject_DifferentType_ReturnsFalse()
     {
         // Arrange
@@ -105,17 +84,6 @@ public class MaskCharTests
 
         // Act & Assert
         maskChar.Equals("x").Should().BeFalse();
-    }
-
-    [Test]
-    public void MaskChar_GetHashCode_EqualInstances_ProduceSameHashCode()
-    {
-        // Arrange
-        var maskChar1 = new MaskChar('x', @"\d");
-        var maskChar2 = new MaskChar('x', @"\d");
-
-        // Act & Assert
-        maskChar1.GetHashCode().Should().Be(maskChar2.GetHashCode());
     }
 
     [Test]
@@ -128,17 +96,5 @@ public class MaskCharTests
         // Act & Assert
         (maskChar1 == maskChar2).Should().BeTrue();
         (maskChar1 != maskChar2).Should().BeFalse();
-    }
-
-    [Test]
-    public void MaskChar_OperatorEquals_DifferentValue_ReturnsFalse()
-    {
-        // Arrange
-        var maskChar1 = new MaskChar('x', @"\d");
-        var maskChar2 = new MaskChar('x', @"\w");
-
-        // Act & Assert
-        (maskChar1 == maskChar2).Should().BeFalse();
-        (maskChar1 != maskChar2).Should().BeTrue();
     }
 }

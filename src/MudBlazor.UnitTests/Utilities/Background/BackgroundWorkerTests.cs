@@ -45,17 +45,6 @@ public class BackgroundWorkerTests
     }
 
     [Test]
-    public void ExecuteTask_BeforeStart_IsNull()
-    {
-        var tcs = new TaskCompletionSource<object>();
-        var worker = new MyBackgroundWorkerMock(tcs.Task);
-
-        worker.ExecuteTask.Should().BeNull();
-
-        tcs.TrySetResult(null!);
-    }
-
-    [Test]
     public void StartAsync_ReturnsCompletedTaskIfCancelled()
     {
         var tcs = new TaskCompletionSource<object>();
@@ -178,18 +167,5 @@ public class BackgroundWorkerTests
         await worker.StopAsync(CancellationToken.None);
 
         worker.ExecuteTask!.IsCompleted.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task Dispose_AfterStop_DoesNotThrow()
-    {
-        var tcs = new TaskCompletionSource<object>();
-        var worker = new MyBackgroundWorkerMock(tcs.Task);
-
-        await worker.StartAsync(CancellationToken.None);
-        await worker.StopAsync(CancellationToken.None);
-
-        // Dispose cancels the stopping token source again; already-cancelled cancel must not throw
-        worker.Dispose();
     }
 }

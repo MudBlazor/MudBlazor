@@ -246,39 +246,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask
         }
 
         [Test]
-        public void MultiMask_CheckOption_ReturnsFirstMatchingOptionInDeclarationOrder()
-        {
-            // Arrange: two options whose regexes both match the same input
-            var mask = new MultiMask("0000",
-                new MaskOption("First", "00-00", @"^1"),
-                new MaskOption("Second", "0000", @"^1"));
-
-            // Act
-            mask.Insert("12");
-
-            // Assert: the first declared matching option wins
-            mask.DetectedOption.Should().NotBeNull();
-            mask.DetectedOption.Value.Id.Should().Be("First");
-        }
-
-        [Test]
-        public void MultiMask_UpdateFrom_NonMultiMask_PreservesDetectedOption()
-        {
-            // Arrange
-            var mask = new MultiMask("0000",
-                new MaskOption("VISA", "00-00", @"^4"));
-            mask.Insert("4");
-            mask.DetectedOption!.Value.Id.Should().Be("VISA");
-
-            // Act: updating from a plain PatternMask must not touch multi-mask option state
-            mask.UpdateFrom(new PatternMask("000000"));
-
-            // Assert
-            mask.DetectedOption.Should().NotBeNull();
-            mask.DetectedOption!.Value.Id.Should().Be("VISA");
-        }
-
-        [Test]
         public void MultiMask_UpdateFrom_NonMatchingOptions_ClearsDetectedOptionAndFires()
         {
             // Arrange

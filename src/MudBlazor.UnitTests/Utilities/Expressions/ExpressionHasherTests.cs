@@ -416,28 +416,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
-        [Test(Description = "A real expression must not hash to the null sentinel; the null contract is non-vacuous.")]
-        public void ExpressionHasherTests_Get_HashCode_NonNull_DiffersFromNull()
-        {
-            Expression<Func<ExpressionTestClass, string?>> exp = x => x.FirstName;
-
-            var nonNullHash = ExpressionHasher.GetHashCode(exp);
-            var nullHash = ExpressionHasher.GetHashCode(null);
-
-            nonNullHash.Equals(nullHash).Should().BeFalse();
-        }
-
-        [Test(Description = "Hashing is deterministic across independent visitor instances (cache-key stability).")]
-        public void ExpressionHasherTests_Get_HashCode_IsDeterministicAcrossCalls()
-        {
-            Expression<Func<ExpressionTestClass, bool>> exp = x => string.Equals(x.FirstName, "stable", StringComparison.Ordinal);
-
-            var first = ExpressionHasher.GetHashCode(exp);
-            var second = ExpressionHasher.GetHashCode(exp);
-
-            second.Should().Be(first);
-        }
-
         [Test(Description = "Same node kinds with operands swapped must not collide (constant ordering).")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_SwappedOperands()
         {

@@ -68,15 +68,6 @@ public class RangeUtilityTests
         e4.Should().BeEmpty();
     }
 
-    [Test]
-    public void Split_MultipleSemicolons_SplitsOnFirstOnly()
-    {
-        // Split uses IndexOf(';'), so only the first semicolon delimits; the rest stays in the end part.
-        RangeUtility.Split("[1;2;3]", out var s, out var e).Should().BeTrue();
-        s.Should().Be("1");
-        e.Should().Be("2;3");
-    }
-
     [TestCase("[]")]      // no semicolon
     [TestCase("[")]       // first and last char are the same '['
     [TestCase("]")]

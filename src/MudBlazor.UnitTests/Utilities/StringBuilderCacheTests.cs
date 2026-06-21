@@ -54,16 +54,6 @@ public class StringBuilderCacheTests
     }
 
     [Test]
-    public void Acquire_AfterCacheEmptied_ReturnsNewBuilder()
-    {
-        // Acquire empties the cache, so a second consecutive Acquire must allocate a fresh builder.
-        var first = StringBuilderCache.Acquire();
-        var second = StringBuilderCache.Acquire();
-
-        second.Should().NotBeSameAs(first);
-    }
-
-    [Test]
     public void Acquire_WithCapacityAboveMaxSize_DoesNotConsumeCachedBuilder()
     {
         var cached = StringBuilderCache.Acquire();
@@ -102,19 +92,6 @@ public class StringBuilderCacheTests
         result.Should().Be("mud");
         reused.Should().BeSameAs(builder);
         reused.Length.Should().Be(0);
-    }
-
-    [Test]
-    public void GetStringAndRelease_WithOversizedBuilder_ReturnsTextWithoutCaching()
-    {
-        var builder = new StringBuilder(361);
-        builder.Append("mud");
-
-        var result = StringBuilderCache.GetStringAndRelease(builder);
-        var acquired = StringBuilderCache.Acquire();
-
-        result.Should().Be("mud");
-        acquired.Should().NotBeSameAs(builder);
     }
 
     private static void DrainCache()

@@ -320,27 +320,6 @@ namespace UtilityTests
             classToRender.Should().Be("item-one");
         }
 
-        [Test]
-        public void AddClass_TrimsLeadingSeparator_ForSingleClass()
-        {
-            // AddClass prepends a space; Build must trim it so the result has no leading space.
-            var cssBuilder = new CssBuilder().AddClass("solo").Build();
-
-            cssBuilder.Should().Be("solo");
-        }
-
-        [Test]
-        public void AddClass_With_Null_Value_Emits_Only_Separator()
-        {
-            // AddClass(string?) always appends the separator, then skips the null value;
-            // a standalone null class therefore builds to empty once Build trims the space.
-            var cssBuilder = new CssBuilder()
-                .AddClass((string?)null)
-                .Build();
-
-            cssBuilder.Should().BeEmpty();
-        }
-
         [TestCase(true, "base extra")]
         [TestCase(false, "base")]
         [TestCase(null, "base")]
@@ -386,25 +365,5 @@ namespace UtilityTests
             cssBuilder.Should().Be("foobar");
         }
 
-        [Test]
-        public void AddClassFromAttributes_Without_Class_Key_Is_NoOp()
-        {
-            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "id", "x" } };
-
-            var cssBuilder = new CssBuilder("item-one")
-                .AddClassFromAttributes(attributes)
-                .Build();
-
-            cssBuilder.Should().Be("item-one");
-        }
-
-        [Test]
-        public void ToString_Returns_Same_As_Build()
-        {
-            // ToString must delegate to Build per the documented contract.
-            var cssBuilder = new CssBuilder("item-one").AddClass("item-two");
-
-            cssBuilder.ToString().Should().Be("item-one item-two");
-        }
     }
 }

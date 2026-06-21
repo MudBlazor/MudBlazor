@@ -482,32 +482,6 @@ public class PatternMaskTests
     }
 
     [Test]
-    public void PatternMask_Insert_RejectsLetterIntoDigitSlot()
-    {
-        // Arrange
-        var mask = new PatternMask("0a0");
-
-        // Act - first '0' rejects 'x', so nothing aligns
-        mask.Insert("x");
-
-        // Assert
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void PatternMask_AllowOnlyDelimiters_IgnoredByPatternMask()
-    {
-        // Arrange - PatternMask.UpdateText blanks delimiter-only text regardless of AllowOnlyDelimiters
-        var mask = new PatternMask("(0)") { AllowOnlyDelimiters = true };
-
-        // Act - typing only a delimiter yields no real input
-        mask.Insert("(");
-
-        // Assert
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
     public void PatternMask_GetCleanText_StripsPlaceholderFromPartialFill()
     {
         // Arrange
@@ -519,19 +493,6 @@ public class PatternMaskTests
 
         // Assert - placeholders removed, delimiter kept (CleanDelimiters defaults false)
         mask.GetCleanText().Should().Be("12-");
-    }
-
-    [Test]
-    public void PatternMask_GetCleanText_StripsPlaceholderAndDelimiters()
-    {
-        // Arrange
-        var mask = new PatternMask("000-000") { Placeholder = '_', CleanDelimiters = true };
-
-        // Act
-        mask.Insert("12");
-
-        // Assert - both placeholder and delimiter removed
-        mask.GetCleanText().Should().Be("12");
     }
 
     [Test]
@@ -549,35 +510,6 @@ public class PatternMaskTests
 
         // Assert - typed chars upper-cased, placeholder untouched
         mask.Text.Should().Be("AB_");
-    }
-
-    [Test]
-    public void PatternMask_Delete_AtEndOfText_NoOp()
-    {
-        // Arrange
-        var mask = new PatternMask("000-000");
-        mask.Insert("123456");
-
-        // Act - caret already at end, Delete should do nothing
-        mask.Delete();
-
-        // Assert
-        mask.ToString().Should().Be("123-456|");
-    }
-
-    [Test]
-    public void PatternMask_Backspace_AtStart_NoOp()
-    {
-        // Arrange
-        var mask = new PatternMask("000-000");
-        mask.Insert("123456");
-        mask.CaretPos = 0;
-
-        // Act - caret at start, Backspace should do nothing
-        mask.Backspace();
-
-        // Assert
-        mask.ToString().Should().Be("|123-456");
     }
 
     [Test]

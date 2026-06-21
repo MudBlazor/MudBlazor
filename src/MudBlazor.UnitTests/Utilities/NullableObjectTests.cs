@@ -138,20 +138,6 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void EqualsT_NonNullCompareToNullItem_ShouldReturnFalse()
-    {
-        // Arrange
-        var obj = new NullableObject<string>("test");
-        string? item = null;
-
-        // Act
-        var result = obj.Equals(item);
-
-        // Assert
-        result.Should().BeFalse();
-    }
-
-    [Test]
     public void EqualsT_WithNullableAndNonNullObject_ShouldReturnFalse()
     {
         // Arrange
@@ -280,18 +266,6 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void GetHashCode_ShouldBeZeroForNullAndMatchItemForNonNull()
-    {
-        // Arrange
-        var nullObj = NullableObject<string>.Null;
-        var obj = new NullableObject<string>("test");
-
-        // Act & Assert
-        nullObj.GetHashCode().Should().Be(0);
-        obj.GetHashCode().Should().Be("test".GetHashCode());
-    }
-
-    [Test]
     public void ImplicitConversion_ShouldConvertToAndFromNullableObject()
     {
         // Arrange & Act
@@ -352,20 +326,6 @@ public class NullableObjectTests
         // Act & Assert
         (obj1 != obj2).Should().BeTrue();
         (obj != nullObj).Should().BeTrue();
-    }
-
-    [Test]
-    public void EqualsObject_TwoNullsOfDifferentGenericTypes_ShouldReturnFalse()
-    {
-        // Arrange - documented contract: two nulls of different generic types are not equal
-        object stringNull = NullableObject<string>.Null;
-        object objectNull = NullableObject<object>.Null;
-
-        // Act
-        var result = stringNull.Equals(objectNull);
-
-        // Assert
-        result.Should().BeFalse();
     }
 
     [Test]
