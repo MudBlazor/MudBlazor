@@ -1173,7 +1173,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
 
-            //no restrictions - maximum of 7 days 
+            //no restrictions - maximum of 7 days
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("17")).ToMarkup().Should().Contain("disabled"); //2 days not allowed
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("18")).ToMarkup().Should().NotContain("disabled"); //3 days valid
