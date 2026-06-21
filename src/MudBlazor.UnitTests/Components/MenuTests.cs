@@ -6,7 +6,9 @@ using System.Reflection;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
@@ -675,34 +677,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MenuContext_Should_ToggleMenu_Via_ToggleMenu()
+        public async Task MenuContext_Should_ControlMenu()
         {
-            // Arrange - Create a menu and test the MenuContext operations directly
-            var comp = Context.Render<MudMenu>(parameters => parameters
-                .Add(p => p.Label, "Test Menu"));
+            // MenuContext (passed to ActivatorContent) forwards to the menu's open/close/toggle methods.
+            var comp = Context.Render<MudMenu>(parameters => parameters.Add(p => p.Label, "Test Menu"));
             var menu = comp.Instance;
+            var context = new MenuContext(menu);
 
-            // Act - Open menu via OpenAsync
-            await comp.InvokeAsync(() => menu.OpenMenuAsync(EventArgs.Empty));
-            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when OpenAsync is called"));
-
-            // Act - Close menu via CloseAsync
-            await comp.InvokeAsync(() => menu.CloseMenuAsync());
-            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when CloseAsync is called"));
-
-            // Act - Use ToggleAsync to open
-            await comp.InvokeAsync(() => menu.ToggleMenuAsync(EventArgs.Empty));
-            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when ToggleAsync is called"));
-
-            // Act - Use ToggleAsync to close
-            await comp.InvokeAsync(() => menu.ToggleMenuAsync(EventArgs.Empty));
-            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when ToggleAsync is called again"));
-
-            // Act - Use CloseAllAsync
-            await comp.InvokeAsync(() => menu.OpenMenuAsync(EventArgs.Empty));
+            await comp.InvokeAsync(() => context.OpenAsync());
             await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
-            await comp.InvokeAsync(() => menu.CloseAllMenusAsync());
-            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should close when CloseAllAsync is called"));
+
+            await comp.InvokeAsync(() => context.CloseAsync());
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
+
+            // Explicit args flow through the `args ?? EventArgs.Empty` overloads (Button 0 matches the default LeftClick).
+            await comp.InvokeAsync(() => context.ToggleAsync(new MouseEventArgs { Button = 0 }));
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+
+            await comp.InvokeAsync(() => context.ToggleAsync());
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
+
+            await comp.InvokeAsync(() => context.OpenAsync(new MouseEventArgs()));
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+
+            await comp.InvokeAsync(() => context.CloseAllAsync());
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
         }
 
         [Test]
@@ -906,14 +905,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MenuKeydownTest>();
 
-            // Open the menu (focus starts at index 0)
+            // Open with the mouse, so no item is focused (_focusedIndex == -1).
             await comp.Find(".mud-menu-button-activator").ClickAsync(new MouseEventArgs());
 
-            // Press ArrowRight to go back to close menu
+            // With nothing focused, ArrowRight is a no-op and must not close the menu.
             var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
             await menuWrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
 
-            // Ensure the menu hasn't closed
             comp.FindAll(".mud-popover-open").Count.Should().Be(1);
         }
 
@@ -1202,6 +1200,197 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button:contains('1')").ClickAsync();
             var icon = comp.Find(".mud-menu-submenu-icon");
             icon.InnerHtml.Should().Contain("M14 7l-5 5 5 5V7z"); // ArrowLeft path
+        }
+
+        [Test]
+        public void MenuContext_Constructor_NullMenu_Throws()
+        {
+            var act = () => new MenuContext(null!);
+
+            act.Should().Throw<ArgumentNullException>().WithParameterName("menu");
+        }
+
+        [Test]
+        public async Task Menu_EmptyMenu_KeyboardKeys_AreNoOps()
+        {
+            var comp = Context.Render<MenuEmptyKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            // With no items, every keyboard handler returns early: the menu stays open and nothing throws.
+            var wrapper = comp.Find("[data-testid='menu-wrapper']");
+            foreach (var key in new[] { "ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft", "Enter", " ", "Tab", "Escape" })
+            {
+                await wrapper.KeyDownAsync(new KeyboardEventArgs { Key = key });
+            }
+
+            menu.GetState(x => x.Open).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task Menu_Escape_OnTopLevelMenu_ClosesMenu()
+        {
+            // Escape on a top-level (parent-less) menu takes the CloseAllMenusAsync branch; the nested case is covered elsewhere.
+            var comp = Context.Render<MenuKeydownTest>();
+            await comp.Find(".mud-menu-button-activator").ClickAsync(new MouseEventArgs());
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            await comp.Find("[data-testid='menu-wrapper']").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task Menu_ArrowRight_OnFocusedItem_InvokesOnClick()
+        {
+            // ArrowRight on a focused leaf item invokes its OnClick directly (the Enter path goes through OnClickHandlerAsync instead).
+            var comp = Context.Render<MenuKeydownTest>();
+            await comp.Find(".mud-menu-button-activator").ClickAsync(new MouseEventArgs());
+
+            var wrapper = comp.Find("[data-testid='menu-wrapper']");
+            await wrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await wrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowRight" });
+
+            comp.Instance.LastInvokedIndex.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Menu_Enter_OnFocusedSubMenu_OpensSubmenu()
+        {
+            // Existing keyboard tests open submenus with ArrowRight; this covers Enter on a focused submenu.
+            var comp = Context.Render<MenuSiblingSubmenusTest>();
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            var wrapper = comp.Find("[data-testid='menu-wrapper']");
+            await wrapper.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await wrapper.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(2));
+        }
+
+        [Test]
+        [TestCase("touch")]
+        [TestCase("pen")]
+        public async Task Menu_PointerEnter_TouchOrPen_DoesNotOpen(string pointerType)
+        {
+            // Touch and pen pointers are not hoverable, so a MouseOver menu must not open from them.
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MenuTestMouseOver>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            await comp.Find("div.mud-menu").PointerEnterAsync(new PointerEventArgs { PointerType = pointerType });
+            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay + 100)));
+
+            menu.GetState(x => x.Open).Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Menu_ActivatorContent_KeyboardActivation_TogglesAndFocusesFirstItem()
+        {
+            var comp = Context.Render<MenuActivatorContentTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            var activator = comp.Find("div.mud-menu-activator");
+
+            // A non-activation key on the activator is ignored.
+            await activator.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            menu.GetState(x => x.Open).Should().BeFalse();
+
+            // Enter opens via HandleActivatorKeydown, and a keyboard-opened menu auto-focuses its first item.
+            await activator.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var focusedIndex = (int)typeof(MudMenu)
+                    .GetField("_focusedIndex", BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .GetValue(menu)!;
+                focusedIndex.Should().Be(0);
+            });
+
+            // Enter again closes; Space also opens.
+            await activator.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
+            await activator.KeyDownAsync(new KeyboardEventArgs { Key = " " });
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+        }
+
+        [Test]
+        public async Task Menu_ActivatorContent_SyntheticClickAfterKeyboard_IsSuppressed()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MenuActivatorContentTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+            var activator = comp.Find("div.mud-menu-activator");
+
+            // Keyboard activation opens the menu and stamps the activation time.
+            await activator.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeTrue());
+
+            // The synthetic mouse click the browser fires right after (<50ms) is suppressed: the menu stays open.
+            await comp.Find("button.mud-button-root").ClickAsync(new MouseEventArgs { Button = 0 });
+            menu.GetState(x => x.Open).Should().BeTrue();
+
+            // Past the 50ms window, a real click is honored and closes it.
+            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(100)));
+            await comp.Find("button.mud-button-root").ClickAsync(new MouseEventArgs { Button = 0 });
+            await comp.WaitForAssertionAsync(() => menu.GetState(x => x.Open).Should().BeFalse());
+        }
+
+        [Test]
+        public async Task Menu_SiblingSubMenu_OpeningOne_ClosesOther()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var hoverDelay = MudGlobal.MenuDefaults.HoverDelay;
+            var comp = Context.Render<MenuSiblingSubmenusTest>();
+
+            await comp.Find("button.mud-button-root").ClickAsync();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+
+            comp.Find("div.mud-menu:contains('Alpha')").PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
+            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay + 50)));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(2));
+
+            // Opening the second sibling closes the first, so only root + Bravo remain (not three).
+            comp.Find("div.mud-menu:contains('Bravo')").PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
+            await comp.InvokeAsync(() => timeProvider.Advance(TimeSpan.FromMilliseconds(hoverDelay + 50)));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(2));
+        }
+
+        [Test]
+        public async Task Menu_AnchorOrigin_Explicit_OverridesDefault()
+        {
+            // An explicit AnchorOrigin overrides the default top-level BottomLeft anchor.
+            var comp = Context.Render<MenuAnchorOriginTest>(p => p.Add(x => x.AnchorOrigin, Origin.BottomRight));
+            await comp.Find("button.mud-button-root").ClickAsync();
+
+            var popover = comp.FindAll("div.mud-popover").Single(p => p.QuerySelector(".mud-menu-list") is not null);
+            popover.ClassList.Should().Contain("mud-popover-anchor-bottom-right");
+            popover.ClassList.Should().NotContain("mud-popover-anchor-bottom-left");
+        }
+
+        [Test]
+        [TestCase(0, true)]   // ForceLoad + Href + no Target -> manual NavigateTo
+        [TestCase(1, false)]  // Href only, no ForceLoad -> anchor handles navigation
+        [TestCase(2, false)]  // ForceLoad + Href + Target -> anchor handles navigation
+        public async Task MenuItem_ForceLoad_NavigatesOnlyWithHrefAndNoTarget(int itemIndex, bool shouldNavigate)
+        {
+            var nav = Context.Services.GetRequiredService<NavigationManager>();
+            var comp = Context.Render<MenuForceLoadTest>();
+            var before = nav.Uri;
+
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await comp.FindAll("a.mud-menu-item")[itemIndex].ClickAsync();
+
+            if (shouldNavigate)
+            {
+                nav.Uri.Should().EndWith("menu-force-target");
+            }
+            else
+            {
+                nav.Uri.Should().Be(before);
+            }
         }
 
         [Test]

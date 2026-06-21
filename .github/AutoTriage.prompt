@@ -162,7 +162,7 @@ Rules:
 ## 7. Title Editing Rules
 
 When to edit:
-- Use `newTitle` field to propose changes
+- Use a `set_title` operation to propose changes
 - Typos, spelling, capitalization, grammar, or something similar can be improved
 - Title is misleading, unclear/vague, or violates Format Guidelines
 - New context was added since it was last edited (e.g., new reproduction, logs, confirmations, commits) that makes the current title no longer accurate

@@ -101,4 +101,33 @@ public class BatchPeriodicQueueTests
                 It.IsAny<CancellationToken>()),
             Times.Never);
     }
+
+    [Test]
+    [CancelAfter(5000)]
+    public async Task StopAsync_ShouldEndLoopWithoutProcessingQueuedItems()
+    {
+        // Arrange
+        var expectedItems = new List<int> { 1, 2, 3 };
+        var period = TimeSpan.FromSeconds(0.5);
+        var timeProvider = new FakeTimeProvider();
+        var mockHandler = new Mock<IBatchTimerHandler<int>>();
+        using var batchPeriodicQueue = new BatchPeriodicQueue<int>(mockHandler.Object, period, timeProvider);
+
+        // Act
+        await batchPeriodicQueue.StartAsync();
+        foreach (var item in expectedItems)
+        {
+            batchPeriodicQueue.QueueItem(item);
+        }
+
+        // Graceful shutdown cancels the linked token, so the periodic tick after stop must not fire
+        await batchPeriodicQueue.StopAsync(CancellationToken.None);
+        timeProvider.Advance(period);
+
+        // Assert: queued items are left untouched and the handler is never invoked
+        batchPeriodicQueue.Count.Should().Be(3);
+        mockHandler.Verify(
+            h => h.OnBatchTimerElapsedAsync(It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
 }

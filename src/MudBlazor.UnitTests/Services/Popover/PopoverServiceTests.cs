@@ -237,6 +237,23 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task CreatePopoverAsync_ShouldNotAddDuplicateWhenCalledTwiceWithSameId()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var popover = new PopoverMock();
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = CreateService(jsRuntimeMock, options);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+        await service.CreatePopoverAsync(popover);
+
+        // Assert
+        service.ActivePopovers.Should().ContainSingle().Which.Id.Should().Be(popover.Id);
+    }
+
+    [Test]
     public async Task UpdatePopoverAsync_ShouldThrowWheNullPopover()
     {
         // Arrange

@@ -42,4 +42,26 @@ public class StringHelpersTests
 
         Value.ToStr().Should().Be(StringHelpers.ToS(Value));
     }
+
+    [Test]
+    public void ToS_WithoutFormat_IsIndependentOfCurrentCulture()
+    {
+        // The no-format path is the one used to build SVG paths; it must emit '.' regardless of culture.
+        var originalCulture = CultureInfo.CurrentCulture;
+        var originalUiCulture = CultureInfo.CurrentUICulture;
+
+        try
+        {
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-DE");
+
+            StringHelpers.ToS(1234.5).Should().Be("1234.5");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+            CultureInfo.CurrentUICulture = originalUiCulture;
+        }
+    }
+
 }

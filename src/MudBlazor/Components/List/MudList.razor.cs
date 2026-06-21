@@ -361,9 +361,14 @@ namespace MudBlazor
 
         internal async Task SelectValueAsync(T? value)
         {
-            if (SelectionMode != SelectionMode.MultiSelection || value is null)
+            if (SelectionMode != SelectionMode.MultiSelection)
             {
                 return;
+            }
+            // #13232: a null value can't be tracked in SelectedValues; fail loudly instead of silently ignoring the click.
+            if (value is null)
+            {
+                throw new InvalidOperationException($"{nameof(MudListItem<T>)} requires {nameof(MudListItem<T>.Value)} to be set for multi-selection.");
             }
             _selection.Add(value);
             UpdateSelectedItems(_selection);

@@ -546,7 +546,11 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
             }
 
-            FieldChanged(value);
+            // Only user interaction notifies the form; the validation below runs either way.
+            if (!_suppressInteractionEffects)
+            {
+                FieldChanged(value);
+            }
             await BeginValidateAsync();
         }
 
@@ -569,7 +573,7 @@ namespace MudBlazor
                 // External value changes, non-Immediate commits, and explicit forced updates still refresh.
                 if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
                 {
-                    await UpdateTextPropertyAsync(false);
+                    await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
                 }
             }
 
@@ -624,14 +628,14 @@ namespace MudBlazor
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         protected override async Task ValidateValue()
@@ -651,7 +655,7 @@ namespace MudBlazor
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
 
             if (Label == null && For != null)
@@ -702,7 +706,7 @@ namespace MudBlazor
 
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
         }
 
@@ -796,7 +800,7 @@ namespace MudBlazor
 
             _validated = false;
 
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
             {
                 Touched = true;
             }
@@ -808,22 +812,23 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
-            _validated = false;
-
-            if (!string.IsNullOrEmpty(arg.Value))
+            // A Text parameter change is always parameter-driven (a user edit updates Text via the internal
+            // state without re-triggering this handler), so it must not touch the input. The whole handler
+            // runs suppressed, so the gated Touched write in UpdateValuePropertyAsync's chain is skipped.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                Touched = true;
-            }
+                _validated = false;
 
-            // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
-            // But only if Value is not also being set in the same parameter update
-            // Check ParameterView to see if Value is also present
-            if (!arg.ParameterView.Contains<T?>(nameof(Value)))
-            {
-                await UpdateValuePropertyAsync(updateText: false);
-            }
+                // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
+                // But only if Value is not also being set in the same parameter update
+                // Check ParameterView to see if Value is also present
+                if (!arg.ParameterView.Contains<T?>(nameof(Value)))
+                {
+                    await UpdateValuePropertyAsync(updateText: false);
+                }
+            });
         }
 
         private async Task UpdateInputIdStateAsync()

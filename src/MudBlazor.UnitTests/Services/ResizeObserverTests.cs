@@ -267,6 +267,32 @@ namespace MudBlazor.UnitTests.Services
             _runtimeMock.Verify();
         }
 
+        [Test]
+        public async Task Observe_AlreadyCachedElement_SkipsSecondJsConnect()
+        {
+            // Arrange
+            var random = new Random();
+            var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+            var rect = GetRandomRect(random);
+
+            // Strict mock allows exactly one connect; a second call would throw.
+            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
+                "mudResizeObserver.connect",
+                It.IsAny<object[]>()
+            )).ReturnsAsync([rect]).Verifiable();
+
+            await _service.Observe(reference);
+
+            // Act
+            var actual = await _service.Observe(reference);
+
+            // Assert
+            // Already-cached elements are filtered out, so the second Observe connects to nothing and returns no rect.
+            actual.Should().BeNull();
+            _service.GetSizeInfo(reference).Should().BeEquivalentTo(rect);
+            _runtimeMock.Verify(x => x.InvokeAsync<BoundingClientRect[]>("mudResizeObserver.connect", It.IsAny<object[]>()), Times.Once);
+        }
+
         private static BoundingClientRect GetRandomRect(Random random)
         {
             return new BoundingClientRect

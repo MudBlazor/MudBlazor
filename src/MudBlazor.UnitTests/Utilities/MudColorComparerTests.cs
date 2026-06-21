@@ -142,18 +142,6 @@ public class MudColorComparerTests
     }
 
     [Test]
-    [TestCaseSource(nameof(AllComparers))]
-    public void GetHashCode_NullObject(MudColor.MudColorComparer comparer)
-    {
-        // Arrange & Act
-        var h1 = comparer.GetHashCode(null);
-        var h2 = comparer.GetHashCode(null);
-
-        // Assert
-        h1.Should().Be(h2);
-    }
-
-    [Test]
     public void GetHashCode_RGBA_ShouldDifferForDifferentColors()
     {
         // Arrange
@@ -297,6 +285,14 @@ public class MudColorComparerTests
 
         // Assert
         h1.Should().NotBe(h2);
+    }
+
+    [Test]
+    [TestCaseSource(nameof(AllComparers))]
+    public void GetHashCode_NullObject_ShouldBeZero(MudColor.MudColorComparer comparer)
+    {
+        // Documented contract: the comparer hashes null to 0 regardless of mode.
+        comparer.GetHashCode(null).Should().Be(0);
     }
 
     [Test]

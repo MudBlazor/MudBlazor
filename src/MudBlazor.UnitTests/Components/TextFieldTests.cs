@@ -944,12 +944,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("span").TrimmedText().Should().Be("value: The Stormlight Archive");
             input.Instance.ReadValue.Should().Be("The Stormlight Archive");
             input.Instance.ReadText.Should().Be("The Stormlight Archive");
+            comp.Find("input").GetAttribute("value").Should().Be("The Stormlight Archive");
 
             // now hit Enter to cause the clearing of the focused text field
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => comp.Find("span").TrimmedText().Should().Be("value:"));
             await comp.WaitForAssertionAsync(() => input.Instance.ReadValue.Should().Be(""));
             await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be(""));
+            // Assert the rendered value attribute too: the displayed text (not just ReadText) must clear while
+            // focused. This is the user-visible part that regressed on Server in #8565 / #10486.
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be(""));
         }
 
         [Test]
