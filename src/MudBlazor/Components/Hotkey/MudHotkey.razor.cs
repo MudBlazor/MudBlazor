@@ -45,8 +45,13 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when <see cref="Key"/> and <see cref="KeyModifiers"/> are pressed.
     /// </summary>
+    /// <remarks>
+    /// The <see cref="HotkeyEventArgs"/> identifies which hotkey was pressed, which is useful when
+    /// multiple hotkeys share a single handler. Handlers that do not need the arguments can keep
+    /// using a parameterless method or lambda.
+    /// </remarks>
     [Parameter, Category(CategoryTypes.Hotkey.Behavior)]
-    public EventCallback OnHotkeyPressed { get; set; }
+    public EventCallback<HotkeyEventArgs> OnHotkeyPressed { get; set; }
 
     /// <summary>
     /// Whether to hide the child content when the hotkey is pressed again, allowing for a toggle behavior.
@@ -151,7 +156,7 @@ public partial class MudHotkey : MudComponentBase, IAsyncDisposable
             await InvokeAsync(StateHasChanged);
         }
 
-        await OnHotkeyPressed.InvokeAsync();
+        await OnHotkeyPressed.InvokeAsync(new HotkeyEventArgs(Key, KeyModifiers.ToArray(), this));
     }
 
     /// <inheritdoc />
