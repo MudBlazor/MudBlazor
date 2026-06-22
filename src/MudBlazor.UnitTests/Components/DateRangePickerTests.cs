@@ -1489,6 +1489,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void DateRangePicker_ShowAdjacentMonthDays_ShowsAdjacentDays()
         {
             var displayedMonth = new DateTime(2025, 3, 15);
@@ -1502,7 +1503,47 @@ namespace MudBlazor.UnitTests.Components
                 .ToList();
 
             adjacentDays.Should().NotBeEmpty();
-            adjacentDays.Should().OnlyContain(x => !x.ClassList.Contains("mud-hidden"));
+            // Adjacent days on the outer edges of the two-month view stay visible.
+            adjacentDays.Should().Contain(x => !x.ClassList.Contains("mud-hidden"));
+        }
+
+        [Test]
+        [SetCulture("en-US")]
+        public void DateRangePicker_ShowAdjacentMonthDays_DoesNotDuplicateBoundaryDaysAcrossPanels()
+        {
+            // March/April 2025: without the fix March 30-31 and April 1-5 are visible in both panels.
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.StartMonth, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+
+            var panels = comp.FindAll("div.mud-picker-calendar-container");
+            panels.Count.Should().Be(2);
+
+            static List<IElement> DayButtons(IElement panel) =>
+                panel.QuerySelectorAll("button.mud-picker-calendar-day").ToList();
+
+            static bool IsAdjacent(IElement button) => button.ClassList.Contains("mud-adjacent-month");
+
+            var firstPanel = DayButtons(panels[0]);
+            var secondPanel = DayButtons(panels[1]);
+
+            // The current-month days form a contiguous block; adjacent days only appear before/after it.
+            var firstPrimaryStart = firstPanel.FindIndex(b => !IsAdjacent(b));
+            var firstPrimaryEnd = firstPanel.FindLastIndex(b => !IsAdjacent(b));
+            var secondPrimaryStart = secondPanel.FindIndex(b => !IsAdjacent(b));
+            var secondPrimaryEnd = secondPanel.FindLastIndex(b => !IsAdjacent(b));
+
+            // First panel: previous-month days (outer edge) stay visible, next-month days
+            // (also rendered as real days in the second panel) are hidden.
+            firstPanel.Take(firstPrimaryStart).Should().OnlyContain(b => !b.ClassList.Contains("mud-hidden"));
+            firstPanel.Skip(firstPrimaryEnd + 1).Should().NotBeEmpty().And.OnlyContain(b => b.ClassList.Contains("mud-hidden"));
+
+            // Second panel: next-month days (outer edge) stay visible, previous-month days
+            // (also rendered as real days in the first panel) are hidden.
+            secondPanel.Take(secondPrimaryStart).Should().NotBeEmpty().And.OnlyContain(b => b.ClassList.Contains("mud-hidden"));
+            secondPanel.Skip(secondPrimaryEnd + 1).Should().OnlyContain(b => !b.ClassList.Contains("mud-hidden"));
         }
 
         private sealed class DateRangePickerImpl : MudDateRangePicker

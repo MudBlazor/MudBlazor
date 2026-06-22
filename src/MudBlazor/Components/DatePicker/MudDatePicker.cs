@@ -127,9 +127,8 @@ namespace MudBlazor
         {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            var isAdjacentMonthDay = IsAdjacentMonthDay(month, day);
-            b.AddClass("mud-adjacent-month", isAdjacentMonthDay);
-            if (isAdjacentMonthDay && !ShowAdjacentMonthDays)
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
