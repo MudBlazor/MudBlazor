@@ -60,8 +60,7 @@ namespace MudBlazor
 
         public async Task StringValueChangedAsync(string? value)
         {
-            // In cell edit mode, raise StartedEditingItem before the value is written so consumers
-            // can snapshot the pre-edit item, then commit the change immediately.
+            // In cell edit mode, raise StartedEditingItem before the value is written so consumers can snapshot the pre-edit item, then commit the change immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.BeginCellEditAsync(_item);
 
@@ -73,8 +72,7 @@ namespace MudBlazor
 
         public async Task NumberValueChangedAsync(double? value)
         {
-            // In cell edit mode, raise StartedEditingItem before the value is written so consumers
-            // can snapshot the pre-edit item, then commit the change immediately.
+            // In cell edit mode, raise StartedEditingItem before the value is written so consumers can snapshot the pre-edit item, then commit the change immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.BeginCellEditAsync(_item);
 

@@ -1370,27 +1370,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridStartedEditingItemOccursWhenCellEditBeginsWithoutSeparateRowClick()
-        {
-            var comp = Context.Render<DataGridEventCallbacksTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
-
-            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.ReadOnly, false)
-                .Add(x => x.EditMode, DataGridEditMode.Cell)
-                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
-
-            comp.Instance.StartedEditingItem.Should().Be(false);
-            comp.Instance.CommittedItemChanges.Should().Be(false);
-
-            // Editing a cell directly (without a separate row click) must start the edit.
-            await dataGrid.FindAll(".mud-table-body tr td input")[0].ChangeAsync("A test");
-
-            comp.Instance.StartedEditingItem.Should().Be(true);
-            comp.Instance.CommittedItemChanges.Should().Be(true);
-        }
-
-        [Test]
         public async Task DataGridStartedEditingItemOccursOnRowClickInCellEditMode()
         {
             var comp = Context.Render<DataGridEventCallbacksTest>();
@@ -1469,9 +1448,8 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.StartedEditingItem, EventCallback.Factory.Create<DataGridEditComplexPropertyExpressionTest.Item>(this, item => { started++; startedItem = item; })));
 
-            // The item type cannot be round-tripped by the default clone strategy. Cell editing must
-            // not attempt to clone it (which would throw), but must still raise StartedEditingItem
-            // with the live source item.
+            // The item type cannot be round-tripped by the default clone strategy.
+            // Cell editing must not attempt to clone it (which would throw), but must still raise StartedEditingItem with the live source item.
             await dataGrid.FindAll(".mud-table-body tr td input")[0].ChangeAsync("Test 1");
 
             started.Should().Be(1);

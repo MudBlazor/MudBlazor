@@ -2460,8 +2460,7 @@ namespace MudBlazor
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
 
-            // In cell edit mode changes are written directly to the source item, so there is no
-            // working copy to clone and no edit form to open; only StartedEditingItem is raised.
+            // In cell edit mode changes are written directly to the source item, so there is no working copy to clone and no edit form to open; only StartedEditingItem is raised.
             if (EditMode == DataGridEditMode.Cell)
             {
                 _editingItem = default;
@@ -2477,15 +2476,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Raises <see cref="StartedEditingItem"/> when cell editing begins for an item, without
-        /// re-raising it for subsequent cell changes on the same item.
+        /// Raises <see cref="StartedEditingItem"/> when cell editing begins for an item, without re-raising it for subsequent cell changes on the same item.
         /// </summary>
         /// <param name="item">The item whose cell is being edited.</param>
         internal async Task BeginCellEditAsync(T item)
         {
-            // Use the grid's Comparer (same identity used for selection) so a custom comparer can
-            // distinguish otherwise-equal rows, e.g. records. The first edit always starts since
-            // nothing is being edited yet.
+            // Use the grid's Comparer (same identity used for selection) so a custom comparer can distinguish otherwise-equal rows, e.g. records.
+            // The first edit always starts since nothing is being edited yet.
             var comparer = Comparer ?? EqualityComparer<T>.Default;
             if (_editingSourceItem is not null && comparer.Equals(_editingSourceItem, item))
                 return;
