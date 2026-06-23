@@ -2,7 +2,6 @@
   display: inline-flex;
   color: #ffb400;
 
-  // Keyboard focus only. :active is excluded so clicking no longer greys the whole block.
   &:focus-visible {
     outline: none;
 
@@ -28,18 +27,6 @@
     & * {
       cursor: default;
       color: var(--mud-palette-text-disabled);
-    }
-  }
-
-  @media(hover: hover) and (pointer: fine) {
-    .mud-disabled:hover {
-      cursor: default;
-      pointer-events: none;
-
-      & * {
-        cursor: default;
-        color: var(--mud-palette-text-disabled);
-      }
     }
   }
 
