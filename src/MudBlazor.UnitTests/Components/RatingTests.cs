@@ -222,14 +222,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Rating_RippleClass_SuppressedWhenReadOnly()
+        public async Task Rating_RippleOffByDefault()
         {
             var comp = Context.Render<MudRating>();
             IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
 
+            RatingItemsSpans()[0].ClassName.Should().NotContain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, true));
+            RatingItemsSpans()[0].ClassName.Should().Contain("mud-ripple");
+        }
+
+        [Test]
+        public async Task Rating_RippleClass_SuppressedWhenReadOnly()
+        {
+            var comp = Context.Render<MudRating>(parameters => parameters.Add(p => p.Ripple, true));
+            IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+
             RatingItemsSpans()[0].ClassName.Should().Contain("mud-ripple");
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Ripple, true)
+                .Add(p => p.ReadOnly, true));
             RatingItemsSpans()[0].ClassName.Should().NotContain("mud-ripple");
         }
 

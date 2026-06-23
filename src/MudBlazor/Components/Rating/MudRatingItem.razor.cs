@@ -67,10 +67,10 @@ namespace MudBlazor
         /// Show a ripple effect when the user clicks the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Can be overridden by <see cref="MudRating.Ripple"/>.
+        /// Defaults to <c>false</c>.  Can be overridden by <see cref="MudRating.Ripple"/>.
         /// </remarks>
         [Parameter]
-        public bool Ripple { get; set; } = true;
+        public bool Ripple { get; set; } = false;
 
         /// <summary>
         /// Prevents the user from interacting with this item, and uses a disabled style.

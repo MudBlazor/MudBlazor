@@ -138,11 +138,11 @@ namespace MudBlazor
         /// Shows a ripple effect when an item is clicked.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public bool Ripple { get; set; } = true;
+        public bool Ripple { get; set; } = false;
 
         /// <summary>
         /// Prevents the user from interacting with this rating and shows a disabled color.
