@@ -10,9 +10,9 @@
         <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
             @if (IsVirtualized)
             {
-                <MudVirtualize Items="@GetVisibleItems()" Enabled="true" SpacerElement="li" Context="itemContext">
-                    <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="itemContext.Item" IsFixed="true">
-                        <CascadingValue Name="@MudTreeViewCascadingValues.ItemDepth" Value="(int?)itemContext.Depth" IsFixed="true">
+                <MudVirtualize Items="@GetVisibleItems()" Enabled="true" SpacerElement="li" OverscanCount="@OverscanCount" ItemSize="@ItemSize" MaxItemCount="@MaxItemCount" Context="itemContext">
+                    <CascadingValue @key="itemContext.Item" Name="@MudTreeViewCascadingValues.ItemData" Value="itemContext.Item">
+                        <CascadingValue Name="@MudTreeViewCascadingValues.ItemDepth" Value="(int?)itemContext.Depth">
                             @ItemTemplate(itemContext.Item)
                         </CascadingValue>
                     </CascadingValue>

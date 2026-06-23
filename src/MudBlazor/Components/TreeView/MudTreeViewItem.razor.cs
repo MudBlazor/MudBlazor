@@ -76,7 +76,7 @@ namespace MudBlazor
 
         // When the item comes from ItemTemplate, this links the component instance to its backing node object.
         [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
-        private ITreeItemData<T>? CurrentItemData { get; set; }
+        internal ITreeItemData<T>? CurrentItemData { get; set; }
 
         [CascadingParameter(Name = MudTreeViewCascadingValues.ItemDepth)]
         private int? CurrentItemDepth { get; set; }
@@ -431,6 +431,11 @@ namespace MudBlazor
 
         private bool? GetCheckBoxStateTriState()
         {
+            if (IsVirtualizedItem && CurrentItemData is not null && MudTreeRoot is not null)
+            {
+                return MudTreeRoot.GetVirtualizedCheckBoxState(CurrentItemData);
+            }
+
             var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
             var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
             if (allChildrenChecked && _selectedState)
@@ -549,8 +554,7 @@ namespace MudBlazor
             // note: when both click and doubleClick are enabled, doubleClick wins
             if (HasChildren() && GetExpandOnClick() && !GetExpandOnDoubleClick())
             {
-                await _expandedState.SetValueAsync(!_expandedState);
-                await TryInvokeServerLoadFunc();
+                await SetExpandedAsync(!_expandedState);
             }
             if (GetDisabled())
             {
@@ -570,8 +574,7 @@ namespace MudBlazor
         {
             if (HasChildren() && GetExpandOnDoubleClick())
             {
-                await _expandedState.SetValueAsync(!_expandedState);
-                await TryInvokeServerLoadFunc();
+                await SetExpandedAsync(!_expandedState);
             }
             if (GetDisabled())
             {
@@ -591,9 +594,20 @@ namespace MudBlazor
         {
             if (_expandedState != expanded)
             {
-                await _expandedState.SetValueAsync(expanded);
-                await TryInvokeServerLoadFunc();
+                await SetExpandedAsync(expanded);
             }
+        }
+
+        private async Task SetExpandedAsync(bool expanded)
+        {
+            if (CurrentItemData is not null)
+            {
+                CurrentItemData.Expanded = expanded;
+            }
+
+            await _expandedState.SetValueAsync(expanded);
+            await TryInvokeServerLoadFunc();
+            MudTreeRoot?.RefreshVirtualizedItems();
         }
 
         /// <summary>
@@ -602,6 +616,11 @@ namespace MudBlazor
         public async Task ReloadAsync()
         {
             SetServerDataLoaded(false);
+
+            if (CurrentItemData is not null)
+            {
+                CurrentItemData.Children = Array.Empty<ITreeItemData<T>>();
+            }
 
             if (_itemsState.Value is not null)
             {
@@ -655,6 +674,10 @@ namespace MudBlazor
             try
             {
                 var items = await MudTreeRoot.ServerData(GetValue());
+                if (CurrentItemData is not null)
+                {
+                    CurrentItemData.Children = items;
+                }
                 await _itemsState.SetValueAsync(items);
                 loaded = true;
             }

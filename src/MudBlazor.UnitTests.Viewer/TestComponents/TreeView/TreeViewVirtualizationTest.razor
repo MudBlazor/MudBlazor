@@ -1,10 +1,20 @@
-﻿<MudTreeView T="string" Items="_treeItems" Virtualize="true" Height="@Height" MaxHeight="@MaxHeight">
+﻿<MudTreeView @ref="_treeView" T="string" Items="_treeItems" Virtualize="true" Height="@Height" MaxHeight="@MaxHeight"
+             SelectionMode="@SelectionMode" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" AutoSelectParent="@AutoSelectParent"
+             TriState="@TriState" AutoExpand="@AutoExpand" ItemSize="@ItemSize" OverscanCount="@OverscanCount" MaxItemCount="@MaxItemCount">
     <ItemTemplate>
-        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" />
+        @if (BindExpanded)
+        {
+            <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" />
+        }
+        else
+        {
+            <MudTreeViewItem Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" />
+        }
     </ItemTemplate>
 </MudTreeView>
 
 @code {
+    private MudTreeView<string> _treeView = null!;
     private readonly List<TreeItemData<string>> _treeItems = [];
 
     [Parameter]
@@ -13,25 +23,65 @@
     [Parameter]
     public string? MaxHeight { get; set; }
 
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
+
+    [Parameter]
+    public string? SelectedValue { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<string>? SelectedValues { get; set; }
+
+    [Parameter]
+    public bool AutoSelectParent { get; set; } = true;
+
+    [Parameter]
+    public bool TriState { get; set; } = true;
+
+    [Parameter]
+    public bool AutoExpand { get; set; }
+
+    [Parameter]
+    public float ItemSize { get; set; } = 40f;
+
+    [Parameter]
+    public int OverscanCount { get; set; } = 3;
+
+    [Parameter]
+    public int MaxItemCount { get; set; } = int.MaxValue;
+
+    [Parameter]
+    public bool BindExpanded { get; set; } = true;
+
+    [Parameter]
+    public bool RootExpanded { get; set; } = true;
+
+    [Parameter]
+    public bool UseTextOnlyValues { get; set; }
+
     public IReadOnlyList<TreeItemData<string>> TreeItems => _treeItems;
+
+    public Task ExpandAllAsync() => _treeView.ExpandAllAsync();
+
+    public Task CollapseAllAsync() => _treeView.CollapseAllAsync();
 
     protected override void OnInitialized()
     {
         _treeItems.Add(new TreeItemData<string>
         {
-            Value = "Root",
+            Value = GetValue("Root"),
             Text = "Root",
-            Expanded = true,
+            Expanded = RootExpanded,
             Children =
             [
-                new TreeItemData<string> { Value = "Child A", Text = "Child A" },
+                new TreeItemData<string> { Value = GetValue("Child A"), Text = "Child A" },
                 new TreeItemData<string>
                 {
-                    Value = "Child B",
+                    Value = GetValue("Child B"),
                     Text = "Child B",
                     Children =
                     [
-                        new TreeItemData<string> { Value = "Grandchild", Text = "Grandchild" }
+                        new TreeItemData<string> { Value = GetValue("Grandchild"), Text = "Grandchild" }
                     ]
                 }
             ]
@@ -39,8 +89,13 @@
 
         _treeItems.Add(new TreeItemData<string>
         {
-            Value = "Other",
+            Value = GetValue("Other"),
             Text = "Other"
         });
+    }
+
+    private string? GetValue(string text)
+    {
+        return UseTextOnlyValues ? null : text;
     }
 }

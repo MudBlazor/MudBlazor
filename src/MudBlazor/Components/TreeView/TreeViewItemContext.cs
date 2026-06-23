@@ -8,7 +8,7 @@ namespace MudBlazor;
 /// Represents a visible item in a flattened <see cref="MudTreeView{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of value associated with each item.</typeparam>
-public sealed class TreeViewItemContext<T>
+internal sealed class TreeViewItemContext<T>
 {
     /// <summary>
     /// The tree item being displayed.

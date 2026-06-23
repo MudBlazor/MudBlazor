@@ -119,7 +119,7 @@
                     </p>
                     <br/>
                     <p>
-                        To expand or collapse all nodes at once, you can call the public <CodeInline>ExpandAll()</CodeInline> and <CodeInline>CollapseAll()</CodeInline> methods on the TreeView instance.
+                        To expand or collapse all nodes at once, you can call the public <CodeInline>ExpandAllAsync()</CodeInline> and <CodeInline>CollapseAllAsync()</CodeInline> methods on the TreeView instance.
                     </p>
                 </Description>
             </SectionHeader>
@@ -144,7 +144,9 @@
             <SectionHeader Title="Virtualization">
                 <Description>
                     The items in the <CodeInline>&lt;MudTreeView></CodeInline> can be virtualized to provide better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property
-                    to <CodeInline>true</CodeInline> will cause the items to be rendered virtually. You must restrict the height or max-height for virtualization to work.
+                    to <CodeInline>true</CodeInline> will cause data-driven items to be rendered virtually when <CodeInline>Items</CodeInline>, <CodeInline>ItemTemplate</CodeInline>, and either
+                    <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> are set. Bind item expansion to the data item, and use <CodeInline>ItemSize</CodeInline>,
+                    <CodeInline>OverscanCount</CodeInline>, and <CodeInline>MaxItemCount</CodeInline> to tune custom row layouts.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewVirtualizationExample)" ShowCode="false">
