@@ -29,6 +29,7 @@ namespace MudBlazor
         protected string ClassName =>
             new CssBuilder("mud-rating-root")
                 .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-readonly", ReadOnly)
                 .AddClass(Class)
                 .Build();
 

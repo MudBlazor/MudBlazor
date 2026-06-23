@@ -21,7 +21,7 @@ namespace MudBlazor
         /// </summary>
         protected string ClassName =>
             new CssBuilder("mud-rating-item")
-                .AddClass("mud-ripple mud-ripple-icon", Ripple)
+                .AddClass("mud-ripple mud-ripple-icon", Ripple && !ReadOnly)
                 .AddClass("yellow-text.text-darken-3", Color == Color.Default)
                 .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default)
                 .AddClass("mud-rating-item-active", Active)
@@ -191,7 +191,7 @@ namespace MudBlazor
         // rating item lose hover
         internal Task HandlePointerOutAsync(PointerEventArgs e)
         {
-            if (Disabled || Rating is null)
+            if (Disabled || ReadOnly || Rating is null)
             {
                 return Task.CompletedTask;
             }
@@ -203,7 +203,7 @@ namespace MudBlazor
 
         internal Task HandlePointerOverAsync(PointerEventArgs e)
         {
-            if (Disabled)
+            if (Disabled || ReadOnly)
             {
                 return Task.CompletedTask;
             }

@@ -5,7 +5,7 @@
   &:focus-visible, &:active {
     outline: none;
 
-    &:not(.mud-disabled) {
+    &:not(.mud-disabled):not(.mud-readonly) {
       background-color: var(--mud-palette-action-default-hover);
     }
   }

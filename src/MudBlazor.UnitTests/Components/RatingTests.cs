@@ -222,6 +222,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Rating_RippleClass_SuppressedWhenReadOnly()
+        {
+            var comp = Context.Render<MudRating>();
+            IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+
+            RatingItemsSpans()[0].ClassName.Should().Contain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            RatingItemsSpans()[0].ClassName.Should().NotContain("mud-ripple");
+        }
+
+        [Test]
+        public async Task Rating_RootGetsReadOnlyClassWhenReadOnly()
+        {
+            var comp = Context.Render<MudRating>();
+            comp.Find("span.mud-rating-root").ClassName.Should().NotContain("mud-readonly");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            comp.Find("span.mud-rating-root").ClassName.Should().Contain("mud-readonly");
+        }
+
+        [Test]
+        public void Rating_ReadOnly_DoesNotActivateItemOnHover()
+        {
+            var comp = Context.Render<MudRating>(parameters => parameters.Add(p => p.ReadOnly, true));
+            IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+
+            RatingItemsSpans()[2].PointerOver();
+            comp.Instance.HoveredValue.Should().BeNull();
+            RatingItemsSpans()[2].ClassName.Should().NotContain("mud-rating-item-active");
+        }
+
+        [Test]
         public async Task Rating_KeyboardNavigation()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
