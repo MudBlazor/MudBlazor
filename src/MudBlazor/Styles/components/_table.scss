@@ -73,6 +73,10 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   flex-direction: inherit;
   justify-content: flex-start;
 
+  &.mud-table-sort-label-full-width {
+    width: 100%;
+  }
+
   &.mud-clickable {
     cursor: pointer;
     user-select: none;

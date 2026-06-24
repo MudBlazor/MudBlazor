@@ -2854,6 +2854,24 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
         }
 
+        [Test]
+        public void TableSortLabelFullWidthAddsFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.FullWidth, true)
+            );
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthFalseDoesNotAddFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
+        }
+
         private Mock<IScrollManager> _mockScrollManager = null!;
 
         public class TestItem { public int Id { get; set; } public string Name { get; set; } }

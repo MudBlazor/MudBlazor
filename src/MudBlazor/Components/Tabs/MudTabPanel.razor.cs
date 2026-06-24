@@ -113,6 +113,16 @@ public partial class MudTabPanel : MudComponentBase
     public object? BadgeData { get; set; }
 
     /// <summary>
+    /// The maximum number allowed in the badge.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>99</c>. Applies when <see cref="BadgeData"/> is an <c>int</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public int BadgeMax { get; set; } = 99;
+
+    /// <summary>
     /// Optional icon to be shown in the badge instead of text.
     /// </summary>
     [Parameter]
