@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
+using System.Collections;
 using AwesomeAssertions;
 using MudBlazor.Extensions;
 using NUnit.Framework;
@@ -39,44 +40,52 @@ public class EnumerableExtensionsTests
     }
 
     [Test]
-    public void AsReadOnlyCollection_ICollectionSource_ReflectsCount()
+    public void AsReadOnlyCollection_ListSource_ReturnsSameInstance()
     {
-        // Arrange
-        ICollection<string> source = new List<string> { "a", "b", "c" };
+        // List<T> implements IReadOnlyCollection<T>, so the fast path must return it directly (not wrap or copy).
+        var source = new List<int> { 1, 2, 3 };
 
-        // Act
         var result = source.AsReadOnlyCollection();
 
-        // Assert
-        result.Count.Should().Be(3);
+        result.Should().BeSameAs(source);
     }
 
     [Test]
-    public void AsReadOnlyCollection_ICollectionSource_ReflectsEnumeration()
+    public void AsReadOnlyCollection_PlainCollectionSource_WrapsWithoutCopying()
     {
-        // Arrange
-        ICollection<string> source = new List<string> { "a", "b", "c" };
+        // A type that is ICollection<T> but NOT IReadOnlyCollection<T> hits the wrapper path.
+        var inner = new PlainCollection<string> { "a", "b", "c" };
 
-        // Act
-        var result = source.AsReadOnlyCollection();
+        var result = inner.AsReadOnlyCollection();
 
-        // Assert
+        // Wrapped, not the same instance and not a materialized copy.
+        result.Should().NotBeSameAs(inner);
+        result.Count.Should().Be(3);
         result.Should().Equal("a", "b", "c");
     }
 
     [Test]
-    public void AsReadOnlyCollection_ICollectionSource_ReflectsLiveCount()
+    public void AsReadOnlyCollection_PlainCollectionSource_ReflectsLiveMutations()
     {
-        // Arrange
-        var inner = new List<int> { 1, 2 };
-        ICollection<int> source = inner;
-        var result = source.AsReadOnlyCollection();
+        // The wrapper must adapt the live collection rather than snapshot it.
+        var inner = new PlainCollection<int> { 1, 2 };
+        var result = inner.AsReadOnlyCollection();
 
-        // Act – mutate the underlying collection
         inner.Add(3);
 
-        // Assert – the wrapper reflects the live count
         result.Count.Should().Be(3);
+        result.Should().Equal(1, 2, 3);
+    }
+
+    [Test]
+    public void AsReadOnlyCollection_EmptyEnumerable_ReturnsEmptyCollection()
+    {
+        // Empty non-collection sequence still materializes to an empty result.
+        static IEnumerable<int> Source() { yield break; }
+
+        var result = Source().AsReadOnlyCollection();
+
+        result.Should().BeEmpty();
     }
 
     [Test]
@@ -102,5 +111,21 @@ public class EnumerableExtensionsTests
         // Assert
         enumerationCount.Should().Be(1);
         result.Should().Equal(1, 2, 3);
+    }
+
+    // ICollection<T> that intentionally does NOT implement IReadOnlyCollection<T>, forcing the wrapper path.
+    private sealed class PlainCollection<T> : ICollection<T>
+    {
+        private readonly List<T> _items = [];
+
+        public int Count => _items.Count;
+        public bool IsReadOnly => false;
+        public void Add(T item) => _items.Add(item);
+        public void Clear() => _items.Clear();
+        public bool Contains(T item) => _items.Contains(item);
+        public void CopyTo(T[] array, int arrayIndex) => _items.CopyTo(array, arrayIndex);
+        public bool Remove(T item) => _items.Remove(item);
+        public IEnumerator<T> GetEnumerator() => _items.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

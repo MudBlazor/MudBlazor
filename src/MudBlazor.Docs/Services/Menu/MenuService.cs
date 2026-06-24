@@ -79,6 +79,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
             .AddItem("Split Panel", typeof(MudSplitPanel))
+            .AddItem("Exit Prompt", typeof(MudExitPrompt))
+            .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
 
@@ -130,12 +132,6 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
                 .AddItem("Scatter Plot Chart", typeof(ScatterPlot<T>), typeof(ScatterPlotChartOptions), typeof(Legend<T>))
                 .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
-            )
-
-            // Functional
-            .AddNavGroup("Functional", false, new DocsComponents()
-                .AddItem("Exit Prompt", typeof(MudExitPrompt))
-                .AddItem("Hotkey", typeof(MudHotkey))
             )
 
             // this must be last!

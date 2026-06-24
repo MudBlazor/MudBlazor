@@ -1108,5 +1108,73 @@ namespace MudBlazor.UnitTests.Components
             // Assert
             textField.ReadText.Should().Be(autofillValue);
         }
+
+        [Test]
+        public async Task TextFieldWithMask_OnKeyUp_ShouldFire()
+        {
+            var receivedKey = "";
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.OnKeyUp, (KeyboardEventArgs e) => receivedKey = e.Key)
+            );
+            var input = comp.Find("input");
+
+            await comp.InvokeAsync(() => input.KeyUp(new KeyboardEventArgs { Key = "1" }));
+
+            receivedKey.Should().Be("1");
+        }
+
+        [Test]
+        public async Task TextFieldWithMask_OnKeyDown_ShouldFireAndPreserveTyping()
+        {
+            var receivedKeys = new List<string>();
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.OnKeyDown, (KeyboardEventArgs e) => receivedKeys.Add(e.Key))
+            );
+            var mask = comp.FindComponent<MudMask>().Instance;
+
+            // HandleKeyDown is invoked by the KeyInterceptor and raises OnKeyDown in its finally block.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = "1" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = "2" }));
+
+            receivedKeys.Should().Equal("1", "2");
+            // The second keystroke must not be dropped by the resync triggered from the first callback.
+            mask.ReadText.Should().Be("12");
+        }
+
+        [Test]
+        public async Task Mask_OnKeyUp_ShouldFire()
+        {
+            var receivedKey = "";
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.OnKeyUp, (KeyboardEventArgs e) => receivedKey = e.Key)
+            );
+            var input = comp.Find("input");
+
+            await comp.InvokeAsync(() => input.KeyUp(new KeyboardEventArgs { Key = "1" }));
+
+            receivedKey.Should().Be("1");
+        }
+
+        [Test]
+        public async Task TextFieldWithMask_OnKeyDownForwarding_ShouldNotDropCharacter()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudTextField<int?>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("(0)0-0)") { Placeholder = '_', CleanDelimiters = true })
+                .Add(p => p.OnKeyDown, (KeyboardEventArgs e) => { })
+            );
+            var mask = comp.FindComponent<MudMask>().Instance;
+
+            await comp.InvokeAsync(() => mask.OnCaretPositionChanged(1));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = "1" }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = "2" }));
+
+            // The second keystroke must survive the parent Value echo triggered by the first forwarded callback.
+            mask.ReadText.Should().Be("(1)2-_)");
+        }
     }
 }

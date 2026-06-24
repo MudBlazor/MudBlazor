@@ -98,6 +98,27 @@
             </SectionContent>
             <SectionSubGroups>
                 <DocsPageSection>
+                    <SectionHeader Title="Writing a progressive regex">
+                        <Description>
+                            <CodeInline>RegexMask</CodeInline> validates input as it grows, one character at a time, so your
+                            expression must match <b>every partial input</b> — the empty string, then <CodeInline>1</CodeInline>,
+                            then <CodeInline>12</CodeInline>, and so on. If a prefix doesn't match, that keystroke is rejected,
+                            which is the most common cause of a mask that appears to block all input.
+                            <br /><br />
+                            Avoid exact (<CodeInline>{5}</CodeInline>) and lower-bounded (<CodeInline>{6,14}</CodeInline>)
+                            quantifiers, which never match shorter prefixes. Use open-ended or zero-bounded quantifiers instead:
+                            <ul>
+                                <li><CodeInline>^[0-9]{5}$</CodeInline> blocks input → use <CodeInline>^[0-9]{0,5}$</CodeInline></li>
+                                <li><CodeInline>^\+[0-9]{6,14}$</CodeInline> blocks input → use <CodeInline>^\+?[0-9]{0,14}$</CodeInline></li>
+                            </ul>
+                            The left field below won't accept any input; the right field accepts up to five digits.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskProgressiveExample)" ShowCode="false">
+                        <RegexMaskProgressiveExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
                     <SectionHeader Title="RegexMask.IPv4">
                         <Description>
                             <CodeInline>RegexMask.IPv4()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for an <b>IPv4</b> Address with or without port masking. 

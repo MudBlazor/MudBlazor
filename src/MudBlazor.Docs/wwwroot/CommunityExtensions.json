@@ -103,5 +103,13 @@
     "Link": "https://github.com/mcbodge/MudMCP",
     "GitHubUserPath": "mcbodge",
     "GitHubRepoPath": "MudMCP"
+  },
+  {
+    "Category": "Components",
+    "Name": "MudKeyboard",
+    "Description": "A pure Blazor on-screen virtual keyboard for MudBlazor applications. Includes full QWERTY, numpad, and a pence-first pricepad. Automatic dark and light mode via MudBlazor CSS variables. AOT and trim-friendly with no JavaScript dependency.",
+    "Link": "https://mudkeyboard.pages.dev",
+    "GitHubUserPath": "sardar97",
+    "GitHubRepoPath": "mudkeyboard"
   }
 ]

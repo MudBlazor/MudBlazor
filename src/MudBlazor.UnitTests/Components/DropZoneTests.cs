@@ -114,6 +114,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DropZone_UserProvidedId_OverridesZoneId_AndInitTargetsIt()
+        {
+            var comp = Context.Render<DropZoneOverriddenIdTest>();
+
+            // The consumer id wins on the rendered zone div (attribute splat comes after the explicit id).
+            comp.Find(".first-drop-zone").GetAttribute("id").Should().Be("custom-zone");
+
+            // Regression for #13070: mudDragAndDrop.initDropZone runs document.getElementById on this value with no
+            // null guard, so it must target the rendered id, not the internal generated one, or it throws when a
+            // consumer sets a custom id and the drop zone never wires up its drag listeners.
+            var initCalls = Context.JSInterop.VerifyInvoke("mudDragAndDrop.initDropZone", 2);
+            initCalls.Select(i => i.Arguments[0]).Should().Contain("custom-zone");
+        }
+
+        [Test]
+        public async Task DynamicDropItem_UserProvidedId_TouchInteropFollowsIt()
+        {
+            var comp = Context.Render<DropZoneDynamicItemTouchTest>();
+
+            var item = comp.Find(".mud-drop-item");
+            item.GetAttribute("id").Should().Be("custom-item");
+
+            // Start a touch drag, then move it. mudDragAndDrop.moveItemByDifference does document.getElementById on the
+            // id, so it must target the overridden rendered id, not the internal generated one (regression for #13070).
+            await item.TouchStartAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 0, ClientY = 0 }] });
+            await item.TouchMoveAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 5, ClientY = 5 }] });
+
+            Context.JSInterop.VerifyInvoke("mudDragAndDrop.moveItemByDifference").Arguments[0].Should().Be("custom-item");
+        }
+
+        [Test]
         public void DropZone_DropZoneOverrideContainerRendered()
         {
             var comp = Context.Render<DropZoneCustomItemSelectorTest>();

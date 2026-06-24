@@ -3238,95 +3238,57 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudTd_OnContextMenu_HandlerSuppliedViaUserAttributesFires()
+        public void Pager_RendersAboveTable_WhenPagerPositionIsTop()
         {
-            var fired = 0;
-            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => fired++);
-            var comp = Context.Render<MudTd>(parameters => parameters
-                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler })
-                .Add(p => p.ChildContent, b => b.AddContent(0, "cell")));
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Top)
+            );
 
-            await comp.Find("td").ContextMenuAsync(new MouseEventArgs());
+            var html = comp.Markup;
+            var toolbarIndex = html.IndexOf("test-toolbar");
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
 
-            fired.Should().Be(1);
+            toolbarIndex.Should().NotBe(-1);
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            toolbarIndex.Should().BeLessThan(pagerIndex);
+            pagerIndex.Should().BeLessThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().Contain("mud-table-pagination-top");
         }
 
         [Test]
-        public async Task MudTh_OnContextMenu_HandlerSuppliedViaUserAttributesFires()
+        public void Pager_RendersBelowTable_WhenPagerPositionIsBottom()
         {
-            var fired = 0;
-            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => fired++);
-            var comp = Context.Render<MudTh>(parameters => parameters
-                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler })
-                .Add(p => p.ChildContent, b => b.AddContent(0, "header")));
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Bottom)
+            );
 
-            await comp.Find("th").ContextMenuAsync(new MouseEventArgs());
+            var html = comp.Markup;
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
 
-            fired.Should().Be(1);
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            pagerIndex.Should().BeGreaterThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().NotContain("mud-table-pagination-top");
         }
 
         [Test]
-        public async Task MudTr_OnContextMenu_HandlerSuppliedViaUserAttributesFires()
+        public void TablePagerPosition_TopAndBottom_RendersTwoPagers()
         {
-            var fired = 0;
-            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => fired++);
-            var comp = Context.Render<MudTr>(parameters => parameters
-                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.TopAndBottom)
+            );
 
-            await comp.Find("tr").ContextMenuAsync(new MouseEventArgs());
+            var pagers = comp.FindAll(".mud-table-pagination");
 
-            fired.Should().Be(1);
-        }
+            pagers.Count.Should().Be(2);
 
-        [Test]
-        public void MudTd_PreventContextMenuDefault_TracksHandlerPresence()
-        {
-            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => { });
-
-            var withoutHandler = Context.Render<MudTd>();
-            GetPreventContextMenuDefault(withoutHandler.Instance).Should().BeFalse();
-
-            var withHandler = Context.Render<MudTd>(parameters => parameters
-                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
-            GetPreventContextMenuDefault(withHandler.Instance).Should().BeTrue();
-        }
-
-        [Test]
-        public void MudTh_PreventContextMenuDefault_TracksHandlerPresence()
-        {
-            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => { });
-
-            var withoutHandler = Context.Render<MudTh>();
-            GetPreventContextMenuDefault(withoutHandler.Instance).Should().BeFalse();
-
-            var withHandler = Context.Render<MudTh>(parameters => parameters
-                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
-            GetPreventContextMenuDefault(withHandler.Instance).Should().BeTrue();
-        }
-
-        [Test]
-        public void MudTr_PreventContextMenuDefault_TracksHandlerPresence()
-        {
-            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => { });
-
-            var withoutHandler = Context.Render<MudTr>();
-            GetPreventContextMenuDefault(withoutHandler.Instance).Should().BeFalse();
-
-            var withHandler = Context.Render<MudTr>(parameters => parameters
-                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
-            GetPreventContextMenuDefault(withHandler.Instance).Should().BeTrue();
-        }
-
-        /// <summary>
-        /// Reads the protected <c>PreventContextMenuDefault</c> property from a table cell or row component via reflection.
-        /// </summary>
-        /// <param name="instance">The component instance whose derived flag should be read.</param>
-        private static bool GetPreventContextMenuDefault(object instance)
-        {
-            var property = instance.GetType().GetProperty(
-                "PreventContextMenuDefault",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            return (bool)property!.GetValue(instance)!;
+            pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
+            pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
         }
     }
 }
