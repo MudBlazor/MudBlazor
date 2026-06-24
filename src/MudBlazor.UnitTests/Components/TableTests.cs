@@ -3220,71 +3220,95 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MudTd_OnContextMenu_FiresCallbackAndPassesPreventDefault()
+        public async Task MudTd_OnContextMenu_HandlerSuppliedViaUserAttributesFires()
         {
             var fired = 0;
+            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => fired++);
             var comp = Context.Render<MudTd>(parameters => parameters
-                .Add(p => p.OnContextMenu, () => { fired++; })
-                .Add(p => p.OnContextMenuPreventDefault, true)
+                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler })
                 .Add(p => p.ChildContent, b => b.AddContent(0, "cell")));
 
-            var td = comp.Find("td");
-            await td.ContextMenuAsync(new MouseEventArgs());
+            await comp.Find("td").ContextMenuAsync(new MouseEventArgs());
 
             fired.Should().Be(1);
-            comp.Instance.OnContextMenuPreventDefault.Should().BeTrue();
         }
 
         [Test]
-        public async Task MudTh_OnContextMenu_FiresCallbackAndPassesPreventDefault()
+        public async Task MudTh_OnContextMenu_HandlerSuppliedViaUserAttributesFires()
         {
             var fired = 0;
+            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => fired++);
             var comp = Context.Render<MudTh>(parameters => parameters
-                .Add(p => p.OnContextMenu, () => { fired++; })
-                .Add(p => p.OnContextMenuPreventDefault, true)
+                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler })
                 .Add(p => p.ChildContent, b => b.AddContent(0, "header")));
 
-            var th = comp.Find("th");
-            await th.ContextMenuAsync(new MouseEventArgs());
+            await comp.Find("th").ContextMenuAsync(new MouseEventArgs());
 
             fired.Should().Be(1);
-            comp.Instance.OnContextMenuPreventDefault.Should().BeTrue();
         }
 
         [Test]
-        public async Task MudTr_OnContextMenu_FiresCallbackAndPassesPreventDefault()
+        public async Task MudTr_OnContextMenu_HandlerSuppliedViaUserAttributesFires()
         {
             var fired = 0;
+            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => fired++);
             var comp = Context.Render<MudTr>(parameters => parameters
-                .Add(p => p.OnContextMenu, () => { fired++; })
-                .Add(p => p.OnContextMenuPreventDefault, true));
+                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
 
-            var tr = comp.Find("tr");
-            await tr.ContextMenuAsync(new MouseEventArgs());
+            await comp.Find("tr").ContextMenuAsync(new MouseEventArgs());
 
             fired.Should().Be(1);
-            comp.Instance.OnContextMenuPreventDefault.Should().BeTrue();
         }
 
         [Test]
-        public void MudTd_OnContextMenuPreventDefault_DefaultsToFalse()
+        public void MudTd_PreventContextMenuDefault_TracksHandlerPresence()
         {
-            var comp = Context.Render<MudTd>();
-            comp.Instance.OnContextMenuPreventDefault.Should().BeFalse();
+            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => { });
+
+            var withoutHandler = Context.Render<MudTd>();
+            GetPreventContextMenuDefault(withoutHandler.Instance).Should().BeFalse();
+
+            var withHandler = Context.Render<MudTd>(parameters => parameters
+                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
+            GetPreventContextMenuDefault(withHandler.Instance).Should().BeTrue();
         }
 
         [Test]
-        public void MudTh_OnContextMenuPreventDefault_DefaultsToFalse()
+        public void MudTh_PreventContextMenuDefault_TracksHandlerPresence()
         {
-            var comp = Context.Render<MudTh>();
-            comp.Instance.OnContextMenuPreventDefault.Should().BeFalse();
+            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => { });
+
+            var withoutHandler = Context.Render<MudTh>();
+            GetPreventContextMenuDefault(withoutHandler.Instance).Should().BeFalse();
+
+            var withHandler = Context.Render<MudTh>(parameters => parameters
+                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
+            GetPreventContextMenuDefault(withHandler.Instance).Should().BeTrue();
         }
 
         [Test]
-        public void MudTr_OnContextMenuPreventDefault_DefaultsToFalse()
+        public void MudTr_PreventContextMenuDefault_TracksHandlerPresence()
         {
-            var comp = Context.Render<MudTr>();
-            comp.Instance.OnContextMenuPreventDefault.Should().BeFalse();
+            var handler = EventCallback.Factory.Create<MouseEventArgs>(this, _ => { });
+
+            var withoutHandler = Context.Render<MudTr>();
+            GetPreventContextMenuDefault(withoutHandler.Instance).Should().BeFalse();
+
+            var withHandler = Context.Render<MudTr>(parameters => parameters
+                .Add(p => p.UserAttributes, new Dictionary<string, object> { ["oncontextmenu"] = handler }));
+            GetPreventContextMenuDefault(withHandler.Instance).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Reads the protected <c>PreventContextMenuDefault</c> property from a table cell or row component via reflection.
+        /// </summary>
+        /// <param name="instance">The component instance whose derived flag should be read.</param>
+        private static bool GetPreventContextMenuDefault(object instance)
+        {
+            var property = instance.GetType().GetProperty(
+                "PreventContextMenuDefault",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            return (bool)property!.GetValue(instance)!;
         }
     }
 }

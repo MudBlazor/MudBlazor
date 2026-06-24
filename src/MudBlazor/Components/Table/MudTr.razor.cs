@@ -110,19 +110,9 @@ namespace MudBlazor
         public string DisabledClass { get; set; } = "mud-table-row-disabled";
 
         /// <summary>
-        /// Occurs when the user triggers a contextmenu event (typically right-click) on this row.
+        /// Suppresses the browser's default context menu when a custom <c>@oncontextmenu</c> handler is supplied via <see cref="MudComponentBase.UserAttributes"/>.
         /// </summary>
-        [Parameter]
-        public EventCallback OnContextMenu { get; set; }
-
-        /// <summary>
-        /// Prevents the browser's default context menu from appearing when <see cref="OnContextMenu"/> is triggered.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter]
-        public bool OnContextMenuPreventDefault { get; set; }
+        protected bool PreventContextMenuDefault => UserAttributes is not null && UserAttributes.ContainsKey("oncontextmenu");
 
         /// <summary>
         /// The state of the checkbox when <see cref="Checkable"/> is <c>true</c>.
