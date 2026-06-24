@@ -1,0 +1,40 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Components.Grid
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Class="d-flex align-center justify-center pa-4 mud-width-full">
+            <MudSlider Min="1" Max="18" Immediate="true" Step="1" @bind-Value="_count">
+                Item Count: @_count
+            </MudSlider>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudGrid Template="true" ColumnTemplate="GridTemplate.Fixed(GridSpan.Px(100), GridSpan.Fr(1))" Rows="1">
+            <MudItem>
+                <MudPaper Class="d-flex align-center justify-center pa-4 mud-height-full"/>
+            </MudItem>
+
+            <MudItem>
+                <MudGrid Template="true" ColumnTemplate="GridTemplate.Fixed(GridSpan.Px(150), GridSpan.Fr(), GridSpan.Fr(2))">
+                    @for (int i = 0; i < _count; i++)
+                    {
+                        int index = i + 1;
+                        <MudItem>
+                            <MudPaper Class="d-flex align-center justify-center pa-4">
+                                <MudText>@index</MudText>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    
+</MudGrid>
+@code {
+    int _count = 3;
+
+}

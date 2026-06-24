@@ -6,9 +6,16 @@ $columns: 12; // Number of columns in the grid system.
 
 .mud-grid {
   width: 100%;
+  box-sizing: border-box;
+}
+
+.mud-grid-flex {
   display: flex;
   flex-wrap: wrap;
-  box-sizing: border-box;
+}
+
+.mud-grid-template {
+    display: grid;
 }
 
 .mud-grid-item {
@@ -27,6 +34,10 @@ $columns: 12; // Number of columns in the grid system.
   .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
     padding-left: #{$base-spacing * $i}; // Add spacing.
     padding-top: #{$base-spacing * $i}; // Add spacing.
+  }
+
+  .mud-grid-gap-#{$i} {
+    gap: #{$base-spacing * $i};
   }
 }
 

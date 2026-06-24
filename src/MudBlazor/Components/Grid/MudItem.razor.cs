@@ -25,6 +25,13 @@ public partial class MudItem : MudComponentBase
             .AddClass(Class)
             .Build();
 
+    protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("grid-column", $"span {ColumnSpan}", Parent?.Template == true)
+            .AddStyle("grid-row", $"span {RowSpan}", Parent?.Template == true)
+            .AddStyle(Style)
+            .Build();
+
     [CascadingParameter]
     private MudGrid? Parent { get; set; }
 
@@ -78,6 +85,22 @@ public partial class MudItem : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Item.Behavior)]
     public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Number of columns this item spans.
+    /// Ignored if <see cref="MudGrid.Template"/> is false.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int ColumnSpan { get; set; } = 1;
+
+    /// <summary>
+    /// Number of rows this item spans.
+    /// Ignored if <see cref="MudGrid.Template"/> is false.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int RowSpan { get; set; } = 1;
 
     /// <inheritdoc />
     protected override void OnInitialized()
