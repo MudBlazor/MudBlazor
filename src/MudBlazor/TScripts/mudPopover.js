@@ -647,7 +647,7 @@ window.mudpopoverHelper = {
 
     // returns the count of providers
     countProviders: function () {
-        return document.querySelectorAll(`.${window.mudpopoverHelper.mainContainerClass}`).length;
+        return !window.mudpopoverHelper.mainContainerClass ? 0 : document.querySelectorAll(`.${window.mudpopoverHelper.mainContainerClass}`).length;
     },
 
     // sets popoveroverlay to the right z-index
