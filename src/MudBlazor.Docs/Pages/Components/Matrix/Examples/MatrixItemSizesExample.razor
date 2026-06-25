@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(_columnDimensions)"
+           ExplicitRows="ExplicitMatrix.Pattern(_rowDimensions)"
+           Style="height: 500px;">
+
+    @for (int i = 0; i < _columnDimensions.Length * _rowDimensions.Length; i++)
+    {
+        int index = i;
+        int col = index % _columnDimensions.Length;
+        int row = index / _columnDimensions.Length;
+
+        <MudMatrixItem>
+            <MudPaper Outlined="true" Class="d-flex align-center justify-center mud-width-full mud-height-full">
+                <MudStack AlignItems="AlignItems.Center" Spacing="0">
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">col @col · row @row</MudText>
+                    <MudText Typo="Typo.body2">Width: @_columnDimensions[col]</MudText>
+                    <MudText Typo="Typo.body2">Height: @_rowDimensions[row]</MudText>
+                </MudStack>
+            </MudPaper>
+        </MudMatrixItem>
+    }
+
+</MudMatrix>
+
+@code {
+    Units[] _columnDimensions = [Units.Px(75), Units.Rem(2), Units.Fr(1), Units.Percent(25)];
+    Units[] _rowDimensions = [Units.Px(100), Units.Rem(1), Units.Fr(2), Units.Percent(15)];
+}

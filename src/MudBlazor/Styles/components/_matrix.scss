@@ -1,0 +1,36 @@
+@import '../abstracts/variables';
+
+// note: about the following in _grid.scss: "It's important to keep this in sync with the grid values in the variables file."
+//       for context im copying this over from hte _grid.scss
+//       IDK what file that is referring to, bc the only file with mention to @base-spacing is _grid.scss
+
+$base-gap: 4px; // Base unit for gap in the matrix.
+$max-gap-steps: 20; // Maximum gap steps.
+
+.mud-matrix {
+  width: 100%;
+  display: grid;
+  box-sizing: border-box;
+}
+
+.mud-matrix-item {
+  margin: 0;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+}
+
+// Generate gap classes.
+@for $i from 0 through $max-gap-steps {
+  .mud-matrix-gap-#{$i} {
+    gap: #{$base-gap * $i};
+  }
+
+  .mud-matrix-row-gap-#{$i} {
+    row-gap: #{$base-gap * $i};
+  }
+
+  .mud-matrix-column-gap-#{$i} {
+    column-gap: #{$base-gap * $i};
+  }
+}

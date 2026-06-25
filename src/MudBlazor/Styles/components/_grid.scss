@@ -6,16 +6,9 @@ $columns: 12; // Number of columns in the grid system.
 
 .mud-grid {
   width: 100%;
-  box-sizing: border-box;
-}
-
-.mud-grid-flex {
   display: flex;
   flex-wrap: wrap;
-}
-
-.mud-grid-template {
-    display: grid;
+  box-sizing: border-box;
 }
 
 .mud-grid-item {
@@ -31,14 +24,10 @@ $columns: 12; // Number of columns in the grid system.
     margin-top: -#{$base-spacing * $i}; // Negative margin for item spacing.
   }
 
-  .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
-    padding-left: #{$base-spacing * $i}; // Add spacing.
-    padding-top: #{$base-spacing * $i}; // Add spacing.
-  }
-
-  .mud-grid-gap-#{$i} {
-    gap: #{$base-spacing * $i};
-  }
+    .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
+      padding-left: #{$base-spacing * $i}; // Add spacing.
+      padding-top: #{$base-spacing * $i}; // Add spacing.
+    }
 }
 
 // Responsive grid sizes using predefined breakpoints.

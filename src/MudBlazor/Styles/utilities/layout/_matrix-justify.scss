@@ -1,0 +1,61 @@
+@import '../../abstracts/variables';
+
+@mixin mud-matrix-justify {
+  .mud-matrix-justify-rows-start {
+    align-content: start;
+  }
+
+  .mud-matrix-justify-rows-center {
+    align-content: center;
+  }
+
+  .mud-matrix-justify-rows-end {
+    align-content: end;
+  }
+
+  .mud-matrix-justify-rows-space-between {
+    align-content: space-between;
+  }
+
+  .mud-matrix-justify-rows-space-around {
+    align-content: space-around;
+  }
+
+  .mud-matrix-justify-rows-space-evenly {
+    align-content: space-evenly;
+  }
+
+  .mud-matrix-justify-rows-stretch {
+    align-content: stretch;
+  }
+
+  .mud-matrix-justify-columns-start {
+    justify-content: start;
+  }
+
+  .mud-matrix-justify-columns-center {
+    justify-content: center;
+  }
+
+  .mud-matrix-justify-columns-end {
+    justify-content: end;
+  }
+
+  .mud-matrix-justify-columns-space-between {
+    justify-content: space-between;
+  }
+
+  .mud-matrix-justify-columns-space-around {
+    justify-content: space-around;
+  }
+
+  .mud-matrix-justify-columns-space-evenly {
+    justify-content: space-evenly;
+  }
+
+  .mud-matrix-justify-columns-stretch {
+    justify-content: stretch;
+  }
+}
+
+@include mud-matrix-justify;

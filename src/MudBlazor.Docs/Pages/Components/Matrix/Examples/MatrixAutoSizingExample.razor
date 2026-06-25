@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Auto(), Units.Auto())"
+            ExplicitRows="ExplicitMatrix.Pattern(Units.Auto(), Units.Auto())">
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="d-flex align-center justify-center pa-4">
+            <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icons.Material.Filled.Rocket" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.caption">Launch</MudText>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="d-flex align-center justify-center pa-6">
+            <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icons.Material.Filled.BarChart" Size="Size.Large" Color="Color.Secondary" />
+                <MudText Typo="Typo.subtitle2">Q4 Revenue: $1,240,000</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Success">↑ 18% from last quarter</MudText>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="d-flex align-center justify-center pa-4">
+            <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" Color="Color.Tertiary" />
+                <MudText Typo="Typo.subtitle2">Ada Lovelace</MudText>
+                <MudText Typo="Typo.body2">Engineer</MudText>
+                <MudText Typo="Typo.body2">London, UK</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Active since 1842</MudText>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="d-flex align-center justify-center pa-4">
+            <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Large" Color="Color.Success" />
+                <MudText Typo="Typo.caption">All systems go</MudText>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+
+</MudMatrix>
+
+@code {
+
+}

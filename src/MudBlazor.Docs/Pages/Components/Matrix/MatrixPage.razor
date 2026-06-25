@@ -1,0 +1,37 @@
+﻿@page "/components/matrix"
+
+<DocsPage>
+    <DocsPageHeader Title="Matrix" Component="@nameof(MudMatrix)">
+        <Description></Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Matrix">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixBasicExample)" ShowCode="false">
+                <MatrixBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Matrix Sizes">
+                <Description>You can define an explicit layout for your matrix by ordering the sizes of your rows and columns</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixItemSizesExample)" ShowCode="false">
+                <MatrixItemSizesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Auto Sizing">
+                <Description>The size <c>Units.Auto()</c> allows the content of the <c>MudMatrixItems</c> to define the size of the column or row</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixAutoSizingExample)" ShowCode="false">
+                <MatrixAutoSizingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
