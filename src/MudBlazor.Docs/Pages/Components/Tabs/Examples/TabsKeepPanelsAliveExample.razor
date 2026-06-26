@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs @key="@($"{_keepPanelsAlive}-{_lazyLoadPanels}")" Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6" KeepPanelsAlive="@_keepPanelsAlive" LazyLoadPanels="@_lazyLoadPanels">
+    <MudTabPanel Text="Item One">
+        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@(x => _firstRenderCounts[0]++)" />
+    </MudTabPanel>
+    <MudTabPanel Text="Item Two">
+        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@(x => _firstRenderCounts[1]++)" />
+    </MudTabPanel>
+    <MudTabPanel Text="Item Three">
+        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@(x => _firstRenderCounts[2]++)" />
+    </MudTabPanel>
+</MudTabs>
+
+<MudText GutterBottom="true" Class="mt-4"><b>Number of first renders per panel:</b></MudText>
+<p>Panel 1: @_firstRenderCounts[0]</p>
+<p>Panel 2: @_firstRenderCounts[1]</p>
+<p>Panel 3: @_firstRenderCounts[2]</p>
+
+<MudSwitch T="bool" Value="@_keepPanelsAlive" ValueChanged="HandleKeepPanelsAliveChanged" Color="Color.Primary">Keep Panels Alive</MudSwitch>
+<MudSwitch T="bool" Value="@_lazyLoadPanels" ValueChanged="HandleLazyLoadPanelsChanged" Color="Color.Primary" Disabled="!_keepPanelsAlive">Lazy Load Panels</MudSwitch>
+
+
+@code {
+    private List<int> _firstRenderCounts = [0, 0, 0];
+
+    bool _keepPanelsAlive = false;
+    bool _lazyLoadPanels = false;
+
+    private void HandleKeepPanelsAliveChanged(bool value)
+    {
+        _keepPanelsAlive = value;
+        _firstRenderCounts = [0, 0, 0];
+        if (!_keepPanelsAlive)
+        {
+            _lazyLoadPanels = false;
+        }
+    }
+
+    private void HandleLazyLoadPanelsChanged(bool value)
+    {
+        _lazyLoadPanels = value;
+        _firstRenderCounts = [0, 0, 0];
+    }
+}
