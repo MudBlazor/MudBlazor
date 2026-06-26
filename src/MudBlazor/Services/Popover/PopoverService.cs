@@ -118,9 +118,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 
         if (PopoverOptions.CheckForPopoverProvider && ObserversCount == 0 && !_missingProviderLogged)
         {
-            // No MudPopoverProvider is subscribed in this render scope. Throwing here (this runs from the popover's
-            // OnInitializedAsync) tears down the circuit mid-render and surfaces as a cryptic ObjectDisposedException
-            // on sibling components (#11887), so log once and continue; the holder is harmless without a provider.
+            // No MudPopoverProvider is subscribed in this render scope.
+            // Throwing here (this runs from the popover's OnInitializedAsync) tears down the circuit mid-render and surfaces as a cryptic ObjectDisposedException on sibling components (#11887), so log once and continue; the holder is harmless without a provider.
             _missingProviderLogged = true;
             _logger.LogError(MissingProviderMessage);
         }
