@@ -15,6 +15,7 @@ namespace MudBlazor;
 public partial class MudTabPanel : MudComponentBase
 {
     private bool _disposed;
+    private bool _alreadyRendered;
 
     internal string Classname =>
         new CssBuilder("mud-tab-panel")
