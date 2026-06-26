@@ -390,9 +390,9 @@ namespace MudBlazor
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
-
+            // Fire OnKeyUp even when disabled/read-only, mirroring HandleKeyDownAsync and
+            // MudBaseInput.InvokeKeyUpAsync (which MudTextField uses). Read-only only suppresses
+            // value changes, never the events themselves (#11585).
             _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
