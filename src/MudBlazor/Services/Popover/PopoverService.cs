@@ -22,8 +22,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
 {
     internal const string MissingProviderMessage =
         "Missing <MudPopoverProvider /> in the active render scope, so popovers cannot be displayed. " +
-        "Add <MudPopoverProvider /> within the same interactive render mode as the components that use it: " +
-        "in your layout for global interactivity, or on each page for per-page interactivity. " +
+        "Add <MudPopoverProvider /> within the same interactive render mode as the components that use it: in your layout for global interactivity, or on each page for per-page interactivity. " +
         "See https://mudblazor.com/getting-started/installation#manual-install-add-components";
 
     private bool _disposed;
