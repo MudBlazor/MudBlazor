@@ -20,8 +20,15 @@ namespace MudBlazor;
 /// </remarks>
 internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHolder>
 {
+    internal const string MissingProviderMessage =
+        "Missing <MudPopoverProvider /> in the active render scope, so popovers cannot be displayed. " +
+        "Add <MudPopoverProvider /> within the same interactive render mode as the components that use it: " +
+        "in your layout for global interactivity, or on each page for per-page interactivity. " +
+        "See https://mudblazor.com/getting-started/installation#manual-install-add-components";
+
     private bool _disposed;
     private bool _isInitializing;
+    private bool _missingProviderLogged;
     private readonly PopoverJsInterop _popoverJsInterop;
     private readonly CancellationToken _cancellationToken;
     private readonly Dictionary<Guid, MudPopoverHolder> _holders;
@@ -29,6 +36,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     private readonly BatchPeriodicQueue<MudPopoverHolder> _batchExecutor;
     private readonly ObserverManager<Guid, IPopoverObserver> _observerManager;
     private readonly TimeProvider _timeProvider;
+    private readonly ILogger<PopoverService> _logger;
 
     /// <inheritdoc />
     public IEnumerable<IMudPopoverHolder> ActivePopovers => _holders.Values;
@@ -65,6 +73,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IOptions<PopoverOptions>? options = null)
     {
         _timeProvider = timeProvider;
+        _logger = logger;
         PopoverOptions = options?.Value ?? new PopoverOptions();
         _holders = new Dictionary<Guid, MudPopoverHolder>();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -107,12 +116,13 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return;
         }
 
-        if (PopoverOptions.CheckForPopoverProvider)
+        if (PopoverOptions.CheckForPopoverProvider && ObserversCount == 0 && !_missingProviderLogged)
         {
-            if (ObserversCount == 0)
-            {
-                throw new InvalidOperationException($"Missing <{nameof(MudPopoverProvider)} />, please add it to your layout. See https://mudblazor.com/getting-started/installation#manual-install-add-components");
-            }
+            // No MudPopoverProvider is subscribed in this render scope. Throwing here (this runs from the popover's
+            // OnInitializedAsync) tears down the circuit mid-render and surfaces as a cryptic ObjectDisposedException
+            // on sibling components (#11887), so log once and continue; the holder is harmless without a provider.
+            _missingProviderLogged = true;
+            _logger.LogError(MissingProviderMessage);
         }
 
         var holder = new MudPopoverHolder(popover.Id, _timeProvider)

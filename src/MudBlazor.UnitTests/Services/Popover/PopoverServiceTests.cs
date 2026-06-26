@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
@@ -138,22 +139,55 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var loggerMock = new Mock<ILogger<PopoverService>>();
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = checkForPopoverProvider };
-        var service = CreateService(jsRuntimeMock, options);
+        var service = new PopoverService(loggerMock.Object, jsRuntimeMock, new FakeTimeProvider(), new OptionsWrapper<PopoverOptions>(options));
 
         // Act
+        // No MudPopoverProvider is subscribed (ObserversCount == 0). This must never throw: throwing from the
+        // popover's OnInitializedAsync tears down the circuit mid-render and surfaces as a cryptic
+        // ObjectDisposedException on the other components (#11887). With the check on, it logs an error instead.
         var create = () => service.CreatePopoverAsync(popover);
 
         // Assert
-        if (checkForPopoverProvider)
-        {
-            await create.Should().ThrowAsync<InvalidOperationException>();
-        }
-        else
-        {
-            await create.Should().NotThrowAsync<InvalidOperationException>();
-        }
+        await create.Should().NotThrowAsync();
+        service.ActivePopovers.Should().ContainSingle(x => x.Id == popover.Id);
+        loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Exactly(checkForPopoverProvider ? 1 : 0));
+    }
+
+    [Test]
+    public async Task CreatePopoverAsync_LogsMissingProviderOnlyOnce()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var loggerMock = new Mock<ILogger<PopoverService>>();
+        var options = new PopoverOptions { CheckForPopoverProvider = true };
+        var service = new PopoverService(loggerMock.Object, jsRuntimeMock, new FakeTimeProvider(), new OptionsWrapper<PopoverOptions>(options));
+
+        // Act
+        // Several popovers are created without a provider (e.g. multiple pickers on a page). The actionable error
+        // must be logged only once so the log is not flooded with the same message.
+        await service.CreatePopoverAsync(new PopoverMock());
+        await service.CreatePopoverAsync(new PopoverMock());
+
+        // Assert
+        service.ActivePopovers.Should().HaveCount(2);
+        loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Error,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once());
     }
 
     [Test]
