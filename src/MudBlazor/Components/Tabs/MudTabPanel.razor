@@ -2,7 +2,6 @@
 @inherits MudComponentBase
 @implements IAsyncDisposable
 
-
 @if (Parent?.KeepPanelsAlive == true && (Parent?.LazyLoadPanels == false || Parent?.ActivePanel == this || _alreadyRendered))
 {
     _alreadyRendered = true;
