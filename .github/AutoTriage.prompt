@@ -205,7 +205,7 @@ General Inactivity Rules:
 Mark issues as `stale` when ONE of these inactivity thresholds are met. For the time-based thresholds, only a comment by a human (non-bot) account counts as activity: bot comments, bot actions, and labeled/unlabeled/renamed/assigned/unassigned events never reset the clock. Measure elapsed time from the last human comment, or from the issue's creation date if there are none.
 - Bug: >=18 months since the last human activity
 - Feature: >=36 months since the last human activity
-- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days. This trigger-label list is exhaustive; labels not named here (for example `has workaround`, `regression`, `breaking change`, or environment labels) do not trigger staleness.
+- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days.
 
 Post this comment verbatim (exclude default footer) when marking an issue stale:
 ```
