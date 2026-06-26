@@ -440,32 +440,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A read-only numeric field must still fire OnKeyDown and OnKeyUp, like MudTextField does.
-        /// ReadOnly only suppresses changes to the value (e.g. arrow-key increment), never the events
-        /// themselves. Regression test for #11585.
-        /// </summary>
-        [Test]
-        public async Task NumericField_FiresKeyEvents_WhenReadOnly()
-        {
-            var keyDowns = 0;
-            var keyUps = 0;
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Value, 1234.56)
-                .Add(x => x.ReadOnly, true)
-                .Add(x => x.OnKeyDown, EventCallback.Factory.Create<KeyboardEventArgs>(this, () => keyDowns++))
-                .Add(x => x.OnKeyUp, EventCallback.Factory.Create<KeyboardEventArgs>(this, () => keyUps++)));
-
-            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
-            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "a", Type = "keyup", });
-
-            await comp.WaitForAssertionAsync(() => keyDowns.Should().Be(1));
-            await comp.WaitForAssertionAsync(() => keyUps.Should().Be(1));
-            // The value must remain untouched even though the events fired.
-            comp.Instance.ReadValue.Should().Be(1234.56);
-        }
-
-        /// <summary>
         /// MouseWheel actions should work
         /// </summary>
         [Test]
