@@ -236,6 +236,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Incrementing a double with a fractional Step must not introduce IEEE 754 precision errors.
+        /// Regression test for #6762: 0 + 0.1 * 3 used to display "0.30000000000000004".
+        /// </summary>
+        [Test]
+        public async Task NumericField_Double_FractionalStep_ShouldNotIntroducePrecisionError()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0.0)
+                .Add(x => x.Step, 0.1));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(0.3);
+            comp.Find("input").GetAttribute("value").Should().Be("0.3");
+
+            // decrement back across 0.0 must land exactly on zero, not 1.38e-16.
+            await comp.InvokeAsync(() => numericField.Decrement());
+            await comp.InvokeAsync(() => numericField.Decrement());
+            await comp.InvokeAsync(() => numericField.Decrement());
+
+            numericField.ReadValue.Should().Be(0.0);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
         [Test, CancelAfter(1000)]
