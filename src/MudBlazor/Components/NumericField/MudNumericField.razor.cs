@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2022
+F﻿// Copyright (c) MudBlazor 2022
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -390,9 +390,6 @@ namespace MudBlazor
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            // Fire OnKeyUp even when disabled/read-only, mirroring HandleKeyDownAsync and
-            // MudBaseInput.InvokeKeyUpAsync (which MudTextField uses). Read-only only suppresses
-            // value changes, never the events themselves (#11585).
             _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
