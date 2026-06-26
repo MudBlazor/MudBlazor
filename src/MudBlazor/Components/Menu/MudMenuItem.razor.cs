@@ -151,9 +151,6 @@ namespace MudBlazor
             }
 
             // Invoke the user's handler first, before navigating or closing the menu.
-            // A forced reload would otherwise interrupt the handler, and closing tears down
-            // the popover (and any component wrapping this item), disposing it mid-await of an
-            // async OnClick. This matches HTML anchor and MudListItem click semantics.
             if (OnClick.HasDelegate)
             {
                 await OnClick.InvokeAsync(ev);
