@@ -153,14 +153,7 @@ public class PopoverServiceTests
         // Assert
         await create.Should().NotThrowAsync();
         service.ActivePopovers.Should().ContainSingle(x => x.Id == popover.Id);
-        loggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception?>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Exactly(checkForPopoverProvider ? 1 : 0));
+        loggerMock.VerifyLogging(PopoverService.MissingProviderMessage, LogLevel.Error, Times.Exactly(checkForPopoverProvider ? 1 : 0));
     }
 
     [Test]
@@ -180,14 +173,7 @@ public class PopoverServiceTests
 
         // Assert
         service.ActivePopovers.Should().HaveCount(2);
-        loggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception?>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-            Times.Once());
+        loggerMock.VerifyLogging(PopoverService.MissingProviderMessage, LogLevel.Error, Times.Once());
     }
 
     [Test]
