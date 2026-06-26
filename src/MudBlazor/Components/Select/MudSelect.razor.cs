@@ -1410,9 +1410,10 @@ namespace MudBlazor
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                    // The user-facing OnKeyUp/OnKeyDown callbacks fire unconditionally; readonly only suppresses the value-changing/menu key handlers below.
                     .HookKeyUp(args => OnKeyUp.InvokeAsync(args))
+                    .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
                     .When(CanHandleKeys, builder => builder
-                        .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
                         .OnKeyDown("Tab", () => CloseMenu(false))
                         .OnKeyDown("ArrowUp", HandleArrowUpAsync)
                         .OnKeyDown("ArrowDown", HandleArrowDownAsync)

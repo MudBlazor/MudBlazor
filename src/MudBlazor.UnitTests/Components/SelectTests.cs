@@ -1437,6 +1437,37 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(null));
         }
 
+        /// <summary>
+        /// ReadOnly only suppresses value-changing/menu operations, never the user-facing key callbacks.
+        /// Regression for the OnKeyDown gap, mirroring https://github.com/MudBlazor/MudBlazor/issues/11585 (MudNumericField OnKeyUp).
+        /// </summary>
+        [Test]
+        public async Task Select_FiresKeyEvents_WhenReadOnly()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var keyDownKey = "";
+            var keyUpKey = "";
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.Value, "2")
+                .Add(p => p.OnKeyDown, (KeyboardEventArgs e) => keyDownKey = e.Key)
+                .Add(p => p.OnKeyUp, (KeyboardEventArgs e) => keyUpKey = e.Key)
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "1"))
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "2"))
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "3")));
+
+            // Pressing "3" would character-search-select item "3" if the select were editable; ReadOnly must suppress that.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp.Instance.ElementId, new KeyboardEventArgs { Key = "3", Type = "keydown", }));
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyUp(comp.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keyup", }));
+
+            // Both user-facing callbacks fire regardless of ReadOnly.
+            await comp.WaitForAssertionAsync(() => keyDownKey.Should().Be("3"));
+            await comp.WaitForAssertionAsync(() => keyUpKey.Should().Be("Enter"));
+
+            // ReadOnly still prevents the selection from changing.
+            comp.Instance.ReadValue.Should().Be("2");
+        }
+
         [Test]
         public async Task MultiSelectWithCustomComparer()
         {
