@@ -12,12 +12,6 @@
 
     public int Counter { get; set; } = 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await Task.Delay(2000);
-        await base.OnInitializedAsync();
-    }
-
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
