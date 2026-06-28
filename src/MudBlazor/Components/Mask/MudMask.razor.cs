@@ -2,9 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -27,6 +29,13 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IMask _mask = new PatternMask("** **-** **");
+        private readonly Lazy<DotNetObjectReference<MudMask>> _dotNetReferenceLazy;
+
+        [DynamicDependency(nameof(CallOnBlurredAsync))]
+        public MudMask()
+        {
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudMask>>(DotNetObjectReference.Create(this));
+        }
 
         internal string ElementId { get; } = Identifier.Create("mask");
 
@@ -78,6 +87,9 @@ namespace MudBlazor
 
         [Inject]
         private IJsApiService JsApiService { get; set; } = null!;
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// The content within this input.
@@ -183,6 +195,9 @@ namespace MudBlazor
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDown);
+
+                // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
+                await _elementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
             }
 
             if (_isFocused && Mask.Selection == null)
@@ -421,6 +436,16 @@ namespace MudBlazor
             _isFocused = false;
         }
 
+        [JSInvokable]
+        public async Task CallOnBlurredAsync()
+        {
+            // If native blur already ran, do not process the fallback callback again.
+            if (!_isFocused)
+                return;
+
+            await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
+        }
+
         private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null)
         {
             if (!_isFocused)
@@ -498,6 +523,7 @@ namespace MudBlazor
             if (IsJSRuntimeAvailable)
             {
                 await KeyInterceptorService.UnsubscribeAsync(ElementId);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", _elementReference);
                 if (_jsEvent is not null)
                 {
                     _jsEvent.CaretPositionChanged -= OnCaretPositionChanged;
@@ -505,6 +531,11 @@ namespace MudBlazor
                     _jsEvent.Select -= OnSelect;
                     await _jsEvent.DisposeAsync();
                 }
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
             }
         }
 
