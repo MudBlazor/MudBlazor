@@ -121,6 +121,9 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        protected internal override BaseMask CreateBlank() => new MultiMask(_defaultMask, _options);
+
+        /// <inheritdoc />
         public override void UpdateFrom(IMask? mask)
         {
             base.UpdateFrom(mask);

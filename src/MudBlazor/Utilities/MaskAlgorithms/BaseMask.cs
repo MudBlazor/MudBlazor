@@ -172,6 +172,46 @@ public abstract class BaseMask : IMask
         return Delimiters.Contains(maskChar);
     }
 
+    /// <summary>
+    /// Creates an empty mask of the same runtime type, capturing this mask's constructor-supplied configuration.
+    /// </summary>
+    /// <remarks>
+    /// Used to make a defensive copy so that components don't share the mutable per-edit state of a single mask
+    /// instance. <see cref="UpdateFrom"/> is called on the result afterward to copy the remaining configuration.
+    /// </remarks>
+    protected internal abstract BaseMask CreateBlank();
+
+    /// <summary>
+    /// Resolves which mask instance a component should own, given its current mask and an incoming bound mask.
+    /// </summary>
+    /// <param name="current">The mask the component currently owns.</param>
+    /// <param name="incoming">The mask the component was just bound to.</param>
+    /// <returns>
+    /// The instance the component should own. When <paramref name="incoming"/> is the same runtime type as a
+    /// non-null <paramref name="current"/>, the current instance is updated in place and returned so typed input is
+    /// retained across re-renders. Otherwise a fresh defensive copy is returned so two components bound to one
+    /// instance never share mutable per-edit state (#7583, #8299). A third-party <see cref="IMask"/> that does not
+    /// derive from <see cref="BaseMask"/> cannot be safely copied and is adopted directly; such implementations
+    /// should derive from <see cref="BaseMask"/> to be shareable across components.
+    /// </returns>
+    internal static IMask Adopt(IMask? current, IMask incoming)
+    {
+        if (current is not null && current.GetType() == incoming.GetType())
+        {
+            current.UpdateFrom(incoming);
+            return current;
+        }
+
+        if (incoming is BaseMask baseMask)
+        {
+            var copy = baseMask.CreateBlank();
+            copy.UpdateFrom(baseMask);
+            return copy;
+        }
+
+        return incoming;
+    }
+
     /// <inheritdoc />
     public virtual void UpdateFrom(IMask? mask)
     {
@@ -189,6 +229,8 @@ public abstract class BaseMask : IMask
                 _maskChars = baseMask.MaskChars;
                 _initialized = false;
             }
+
+            AllowOnlyDelimiters = baseMask.AllowOnlyDelimiters;
 
             Refresh();
         }

@@ -466,17 +466,16 @@ namespace MudBlazor
                 return;
             }
 
-            if (_mask.GetType() == other.GetType())
-            {
-                // update mask while retaining current state
-                _mask.UpdateFrom(other);
+            // Resolve the instance this component owns. Same-type masks are updated in place to retain typed state;
+            // a different type yields a fresh defensive copy so two components binding one instance don't corrupt
+            // each other's input state (#7583, #8299).
+            var owned = BaseMask.Adopt(_mask, other);
+            if (ReferenceEquals(owned, _mask))
                 return;
-            }
 
-            // swap masks while retaining text
-            // note: this is required for `BaseMask` instances other than `PatternMask` to work as expected
-            other.SetText(ReadText);
-            _mask = other;
+            // Swapped to a new instance; seed it with the currently displayed text.
+            owned.SetText(ReadText);
+            _mask = owned;
         }
 
         private async Task OnCutAsync()

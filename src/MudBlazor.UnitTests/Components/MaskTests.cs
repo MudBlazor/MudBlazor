@@ -1176,5 +1176,115 @@ namespace MudBlazor.UnitTests.Components
             // The second keystroke must survive the parent Value echo triggered by the first forwarded callback.
             mask.ReadText.Should().Be("(1)2-_)");
         }
+
+        /// <summary>
+        /// Two MudMask components bound to one non-PatternMask instance must not share input state (#7583, #8299).
+        /// </summary>
+        [Test]
+        public async Task SharedMaskInstance_MudMasksAreIndependent()
+        {
+            // Arrange : one mask instance bound to two MudMask components
+            var sharedMask = new RegexMask("^[0-9]+$");
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp1 = Context.Render<MudMask>(parameters => parameters.Add(x => x.Mask, sharedMask));
+            var comp2 = Context.Render<MudMask>(parameters => parameters.Add(x => x.Mask, sharedMask));
+
+            // Act : drive different input into each
+            await comp1.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp1.Instance.ElementId, new KeyboardEventArgs { Key = "1" }));
+            await comp2.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp2.Instance.ElementId, new KeyboardEventArgs { Key = "9" }));
+            await comp1.InvokeAsync(() => keyInterceptorService.OnKeyDown(comp1.Instance.ElementId, new KeyboardEventArgs { Key = "2" }));
+
+            // Assert : the two components hold independent values and own different instances
+            await comp1.WaitForAssertionAsync(() => comp1.Instance.ReadText.Should().Be("12"));
+            await comp2.WaitForAssertionAsync(() => comp2.Instance.ReadText.Should().Be("9"));
+            comp1.Instance.Mask.Should().NotBeSameAs(comp2.Instance.Mask);
+            comp1.Instance.Mask.Should().NotBeSameAs(sharedMask);
+        }
+
+        /// <summary>
+        /// Two MudTextField components bound to one mask instance must not corrupt each other's value (#7583, #8299).
+        /// This is the gap the original fix missed: MudTextField mutated the bound instance directly.
+        /// </summary>
+        [Test]
+        public async Task SharedMaskInstance_TextFieldsAreIndependent()
+        {
+            // Arrange : one mask instance bound to two MudTextField components. MudTextField mutates the mask
+            // directly in SetValueAndUpdateTextAsync/SetTextAndUpdateValueAsync, so without a defensive copy the
+            // value set on one field would leak into the shared instance the other field reads from.
+            var sharedMask = new PatternMask("0000");
+            var comp1 = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Mask, sharedMask)
+                .Add(x => x.Value, "1111"));
+            var comp2 = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Mask, sharedMask)
+                .Add(x => x.Value, "2222"));
+
+            // Act : change one field's value
+            await comp1.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, "3333"));
+
+            // Assert : each field owns its own instance, the other field keeps its value, and the caller's instance
+            // was never mutated by either field.
+            comp1.Instance.ReadText.Should().Be("3333");
+            comp2.Instance.ReadText.Should().Be("2222");
+            comp1.Instance.Mask.Should().NotBeSameAs(comp2.Instance.Mask);
+            comp1.Instance.Mask.Should().NotBeSameAs(sharedMask);
+            comp2.Instance.Mask.Should().NotBeSameAs(sharedMask);
+            sharedMask.Text.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// A masked MudTextField must keep its typed state when the parent re-renders with the same mask instance.
+        /// Verifies the defensive copy does not reset the live mask on every parameter set.
+        /// </summary>
+        [Test]
+        public async Task MaskedTextField_RetainsState_AcrossParentRerender()
+        {
+            // Arrange
+            var mask = new PatternMask("0000");
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Mask, mask)
+                .Add(x => x.Value, "1234"));
+
+            comp.Instance.ReadText.Should().Be("1234");
+
+            // Act : re-render with the same mask instance and value (a typical parent StateHasChanged)
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Mask, mask));
+
+            // Assert : state survives
+            comp.Instance.ReadText.Should().Be("1234");
+        }
+
+        /// <summary>
+        /// Switching the bound mask to a different type must adopt the new configuration.
+        /// </summary>
+        [Test]
+        public async Task SharedMaskInstance_NonBaseMask_IsAdoptedDirectly()
+        {
+            // Arrange : a third-party IMask that does not derive from BaseMask cannot be safely copied
+            var custom = new PassthroughMask();
+            var comp = Context.Render<MudMask>(parameters => parameters.Add(x => x.Mask, custom));
+
+            // Assert : adopted directly so custom behavior is preserved
+            comp.Instance.Mask.Should().BeSameAs(custom);
+        }
+
+#nullable enable
+        /// <summary>
+        /// A minimal third-party <see cref="IMask"/> for exercising the non-BaseMask adoption path.
+        /// </summary>
+        private sealed class PassthroughMask : IMask
+        {
+            public string? Mask => null;
+            public string? Text { get; private set; }
+            public int CaretPos { get; set; }
+            public (int, int)? Selection { get; set; }
+            public void Insert(string? input) => Text += input;
+            public void Delete() { }
+            public void Backspace() { }
+            public void Clear() => Text = null;
+            public void SetText(string? text) => Text = text;
+            public void UpdateFrom(IMask? mask) { }
+        }
+#nullable restore
     }
 }

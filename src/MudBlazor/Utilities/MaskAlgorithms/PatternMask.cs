@@ -290,6 +290,9 @@ public class PatternMask : BaseMask
     }
 
     /// <inheritdoc />
+    protected internal override BaseMask CreateBlank() => new PatternMask(Mask ?? string.Empty);
+
+    /// <inheritdoc />
     public override void UpdateFrom(IMask? mask)
     {
         base.UpdateFrom(mask);

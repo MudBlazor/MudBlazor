@@ -248,6 +248,9 @@ public partial class DateMask : PatternMask
     }
 
     /// <inheritdoc />
+    protected internal override BaseMask CreateBlank() => new DateMask(Mask ?? string.Empty);
+
+    /// <inheritdoc />
     public override void UpdateFrom(IMask? mask)
     {
         base.UpdateFrom(mask);

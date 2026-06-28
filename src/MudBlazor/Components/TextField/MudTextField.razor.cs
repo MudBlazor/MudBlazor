@@ -80,7 +80,16 @@ namespace MudBlazor
         public IMask? Mask
         {
             get => _maskReference?.Mask ?? _mask; // this might look strange, but it is absolutely necessary due to how MudMask works.
-            set => _mask = value;
+            set => SetMask(value);
+        }
+
+        // Own a defensive copy of the bound mask instead of storing the caller's instance directly. Otherwise two
+        // text fields (or pickers) bound to one mask would corrupt each other's input state through the direct
+        // SetText calls in SetValueAndUpdateTextAsync/SetTextAndUpdateValueAsync (#7583, #8299). Same-type masks are
+        // updated in place so typed state is retained across re-renders; only a different type yields a fresh copy.
+        private void SetMask(IMask? value)
+        {
+            _mask = value is null ? null : BaseMask.Adopt(_mask, value);
         }
 
         /// <summary>

@@ -190,6 +190,10 @@ public class RegexMask : BaseMask
     }
 
     /// <inheritdoc />
+    // Pass _regexPattern through the constructor because UpdateFrom does not copy it.
+    protected internal override BaseMask CreateBlank() => new RegexMask(_regexPattern, Mask);
+
+    /// <inheritdoc />
     public override void UpdateFrom(IMask? other)
     {
         base.UpdateFrom(other);

@@ -157,6 +157,9 @@ public class BlockMask : RegexMask
     }
 
     /// <inheritdoc />
+    protected internal override BaseMask CreateBlank() => new BlockMask(Blocks ?? []);
+
+    /// <inheritdoc />
     public override void UpdateFrom(IMask? mask)
     {
         base.UpdateFrom(mask);

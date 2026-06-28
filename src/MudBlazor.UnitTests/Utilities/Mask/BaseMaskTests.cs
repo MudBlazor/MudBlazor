@@ -285,4 +285,129 @@ public class BaseMaskTests
         // Assert
         mask.Text.Should().Be(originalText);
     }
+
+    [Test]
+    public void Adopt_StartsEmpty_AndIsIndependentOfOriginal()
+    {
+        // Arrange
+        var original = new RegexMask("^[0-9]+$");
+        original.SetText("123");
+
+        // Act : a different/absent current forces a defensive copy
+        var copy = (RegexMask)BaseMask.Adopt(null, original);
+        copy.SetText("9");
+        original.Insert("4");
+
+        // Assert : the copy starts empty and the two never share state
+        copy.Should().NotBeSameAs(original);
+        copy.Text.Should().Be("9");
+        original.Text.Should().Be("1234");
+    }
+
+    [Test]
+    public void Adopt_SameType_UpdatesInPlace_RetainingState()
+    {
+        // Arrange
+        var current = new PatternMask("0000");
+        current.SetText("12");
+        var incoming = new PatternMask("0000") { Placeholder = '_' };
+
+        // Act
+        var owned = (PatternMask)BaseMask.Adopt(current, incoming);
+
+        // Assert : same instance is reused (typed input retained) and the new config is copied in
+        owned.Should().BeSameAs(current);
+        owned.GetCleanText().Should().Be("12");
+        owned.Placeholder.Should().Be('_');
+    }
+
+    [Test]
+    public void Adopt_PatternMask_PreservesConfiguration()
+    {
+        // Arrange
+        var original = new PatternMask("(000) 000") { Placeholder = '_', CleanDelimiters = true };
+
+        // Act
+        var copy = (PatternMask)BaseMask.Adopt(null, original);
+        copy.SetText("12");
+
+        // Assert : placeholder fills the remaining slots, proving the config survived the copy
+        copy.Placeholder.Should().Be('_');
+        copy.CleanDelimiters.Should().BeTrue();
+        copy.Text.Should().Be("(12_) ___");
+    }
+
+    [Test]
+    public void Adopt_RegexMask_PreservesPattern()
+    {
+        // Arrange
+        var original = new RegexMask("^[0-9]+$");
+
+        // Act
+        var copy = (RegexMask)BaseMask.Adopt(null, original);
+
+        // Assert : the regex still validates (only digits accepted), so _regexPattern was carried via the constructor
+        copy.SetText("12ab34");
+        copy.GetCleanText().Should().Be("1234");
+    }
+
+    [Test]
+    public void Adopt_RegexMask_PreservesAllowOnlyDelimiters()
+    {
+        // Arrange : RegexMask.IPv6 sets AllowOnlyDelimiters, which UpdateFrom must carry over
+        var original = RegexMask.IPv6();
+
+        // Act
+        var copy = (RegexMask)BaseMask.Adopt(null, original);
+
+        // Assert
+        copy.AllowOnlyDelimiters.Should().BeTrue();
+    }
+
+    [Test]
+    public void Adopt_DateMask_PreservesFormat()
+    {
+        // Arrange
+        var original = new DateMask("MM/dd/yyyy");
+
+        // Act
+        var copy = (DateMask)BaseMask.Adopt(null, original);
+        copy.SetText("12312024");
+
+        // Assert : day/month/year alignment still applies, so the date format survived the copy
+        copy.Text.Should().Be("12/31/2024");
+    }
+
+    [Test]
+    public void Adopt_MultiMask_PreservesOptions_AndResetsDetectedOption()
+    {
+        // Arrange
+        var original = new MultiMask("0000 0000 0000 0000",
+            new MaskOption("American Express", "0000 000000 00000", @"^(34|37)"));
+        original.Insert("3712");
+        original.DetectedOption.Should().NotBeNull();
+
+        // Act
+        var copy = (MultiMask)BaseMask.Adopt(null, original);
+
+        // Assert : copy starts with no detected option, but option detection still works
+        copy.DetectedOption.Should().BeNull();
+        copy.Insert("3712");
+        copy.DetectedOption.Should().NotBeNull();
+        copy.Mask.Should().Be("0000 000000 00000");
+    }
+
+    [Test]
+    public void Adopt_BlockMask_PreservesPattern()
+    {
+        // Arrange
+        var original = new BlockMask("-", new Block('0', 1, 4), new Block('a', 1, 4));
+
+        // Act
+        var copy = (BlockMask)BaseMask.Adopt(null, original);
+        copy.SetText("12ab");
+
+        // Assert : the block pattern (digits then letters, '-' delimiter) survived the copy
+        copy.Text.Should().Be("12-ab");
+    }
 }
