@@ -81,8 +81,8 @@ Apply `help wanted` when ALL conditions are met:
 - Has no `needs:` labels
 - Does not qualify for `good first issue`
 - At least one of the following is true:
-  - There have been repeated requests to move the issue forward
-  - There are explicit signals that outside contributions are welcome
+  - Two or more distinct users who are neither the author nor a maintainer have explicitly asked for the issue to be fixed or moved forward (a single extra "+1"/"same here" does not qualify)
+  - A maintainer has explicitly invited outside contributions on this issue
 
 ### Awaiting Triage
 Apply `awaiting triage` while ALL conditions are met:
@@ -130,7 +130,7 @@ Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
 - When mirroring a maintainer's explicit request, add the corresponding `needs:` label only if their comment is the latest human guidance and the information is still outstanding.
 - `needs: example`, `needs: visuals`, and `needs: info` may be cleared when any human comment or update provides the missing material; it does not need to come from the original author.
-- Remove `needs:` labels as soon as the requested information or changes arrive, or if a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction).
+- Remove `needs:` labels only when the timeline contains an explicit, citable event that resolves them: the requested information or changes have actually arrived in a human comment, commit, or update, or a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction). Do not remove a `needs:` label on the inference that the requirement is probably satisfied.
 
 ## 5. Questions
 
@@ -202,10 +202,10 @@ General Inactivity Rules:
 ### Issues Only
 - Set `state: not_planned` on issues that have been stale for >=84 consecutive days
 
-Mark issues as `stale` when ONE of these inactivity thresholds are met:
-- Bug: >=18 months without a timeline event (excluding labeled/unlabeled/renamed/unassigned)
-- Feature: >=36 months without a timeline event (excluding labeled/unlabeled/renamed/unassigned)
-- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days
+Mark issues as `stale` when ONE of these inactivity thresholds are met. For the time-based thresholds, only a comment by a human (non-bot) account counts as activity: bot comments, bot actions, and labeled/unlabeled/renamed/assigned/unassigned events never reset the clock. Measure elapsed time from the last human comment, or from the issue's creation date if there are none.
+- Bug: >=18 months since the last human activity
+- Feature: >=36 months since the last human activity
+- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days.
 
 Post this comment verbatim (exclude default footer) when marking an issue stale:
 ```

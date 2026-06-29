@@ -390,9 +390,6 @@ namespace MudBlazor
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
-
             _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
