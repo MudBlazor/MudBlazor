@@ -3,7 +3,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>$(MudBlazorTargetFramework)</TargetFramework>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
 
