@@ -46,9 +46,12 @@ public static class Paths
     public static string ApiDocumentationStampFilePath => Path.Join(StampDirPath, ApiDocumentationFile + ".stamp");
 
     // Records that the generator has validated its output against the current inputs.
-    public static void TouchStamp(string stampFilePath)
+    public static void TouchStamp(string stampFilePath) => WriteStamp(stampFilePath, DateTime.UtcNow.ToString("O"));
+
+    // Writes arbitrary content (e.g. an input hash) to a stamp file, creating the directory if needed.
+    public static void WriteStamp(string stampFilePath, string content)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(stampFilePath)!);
-        File.WriteAllText(stampFilePath, DateTime.UtcNow.ToString("O"));
+        File.WriteAllText(stampFilePath, content);
     }
 }

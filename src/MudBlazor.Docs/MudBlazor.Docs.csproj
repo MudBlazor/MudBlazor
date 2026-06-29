@@ -15,9 +15,13 @@
 
   <!--Execute the code generator-->
   <Target Name="GenerateDocs" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+    <!--MudBlazor's reference assembly: byte-stable unless the public API changes, so the generator can skip the API-doc reflection after method-body-only edits.-->
+    <PropertyGroup>
+      <_MudBlazorRefAssembly>$(MSBuildThisFileDirectory)../MudBlazor/obj/$(Configuration)/net10.0/ref/MudBlazor.dll</_MudBlazorRefAssembly>
+    </PropertyGroup>
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs" Importance="high" />
-    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
+    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot; -- &quot;$(_MudBlazorRefAssembly)&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->

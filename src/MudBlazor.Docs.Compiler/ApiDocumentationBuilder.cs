@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities.Converter.Base;
@@ -134,6 +136,43 @@ public class ApiDocumentationBuilder
     }
 
     /// <summary>
+    /// Path to MudBlazor's reference assembly, if known (passed by the build).
+    /// </summary>
+    /// <remarks>
+    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us
+    /// skip regeneration after library edits that only touch method bodies. Falls back to the
+    /// implementation assembly (which changes on every build) when not supplied.
+    /// </remarks>
+    public string? ReferenceAssemblyPath { get; set; }
+
+    /// <summary>
+    /// Hashes the inputs that the generated API documentation depends on: the public API surface
+    /// (reference assembly), the XML doc comments, and the generator version. Lets the build skip
+    /// the expensive reflection pass when none of them changed.
+    /// </summary>
+    private string ComputeInputHash()
+    {
+        using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+
+        var apiSurface = ReferenceAssemblyPath is { Length: > 0 } refPath && File.Exists(refPath)
+            ? refPath
+            : Assemblies[0].Location;
+        hash.AppendData(File.ReadAllBytes(apiSurface));
+
+        var xmlPath = Path.ChangeExtension(Assemblies[0].Location, ".xml");
+        if (File.Exists(xmlPath))
+        {
+            hash.AppendData(File.ReadAllBytes(xmlPath));
+        }
+
+        // Generator identity, so changing the compiler invalidates the cache.
+        var generator = typeof(ApiDocumentationBuilder).Assembly.Location;
+        hash.AppendData(Encoding.UTF8.GetBytes(generator + File.GetLastWriteTimeUtc(generator).Ticks));
+
+        return Convert.ToHexString(hash.GetHashAndReset());
+    }
+
+    /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
     /// <param name="type">The type to check.</param>
@@ -186,20 +225,14 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
-        // Early exit: if the generated file exists and our stamp is newer than all input assemblies, skip generation.
-        if (File.Exists(Paths.ApiDocumentationFilePath) && File.Exists(Paths.ApiDocumentationStampFilePath))
+        // Early exit: skip generation when the generated file exists and the public API surface,
+        // XML comments, and generator are unchanged since the stamp was last written.
+        var inputHash = ComputeInputHash();
+        if (File.Exists(Paths.ApiDocumentationFilePath) && File.Exists(Paths.ApiDocumentationStampFilePath)
+            && File.ReadAllText(Paths.ApiDocumentationStampFilePath).Trim() == inputHash)
         {
-            var stampLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationStampFilePath);
-            var newestInputTime = Assemblies
-                .Select(a => File.GetLastWriteTimeUtc(a.Location))
-                .DefaultIfEmpty(DateTime.MinValue)
-                .Max();
-
-            if (stampLastWrite > newestInputTime)
-            {
-                Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date, skipping generation.");
-                return true;
-            }
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date (API surface unchanged), skipping generation.");
+            return true;
         }
 
         AddTypesToDocument();
@@ -208,6 +241,9 @@ public class ApiDocumentationBuilder
         AddGlobalsToDocument();
         ExportApiDocumentation();
         CalculateDocumentationCoverage();
+
+        // Record the inputs we generated from so the next build can skip when nothing changed.
+        Paths.WriteStamp(Paths.ApiDocumentationStampFilePath, inputHash);
         return true;
     }
 
@@ -749,9 +785,6 @@ public class ApiDocumentationBuilder
         {
             Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged.");
         }
-
-        // Stamp (not the .cs) so the next build's early-exit works without forcing a recompile.
-        Paths.TouchStamp(Paths.ApiDocumentationStampFilePath);
     }
 
     /// <summary>
