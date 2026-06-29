@@ -7,10 +7,11 @@ namespace MudBlazor;
 /// <summary>
 /// Defines the template for a row or column within a <see cref="MudMatrix"/>.
 /// </summary>
+/// <seealso cref="MudMatrix"/>
 /// <seealso cref="Units"/>
 public class ExplicitMatrix
 {
-    private string _value = "auto";
+    private string _value = "none";
 
     /// <summary>
     /// Defines the sizing pattern for columns or rows in the matrix.
@@ -38,19 +39,25 @@ public class ExplicitMatrix
     }
 
     /// <summary>
-    /// Creates as many columns or rows as can fit in the available space.
+    /// Creates as many columns or rows as can fit in the available space, preserving empty tracks.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// If there are not enough items to fill the row or column, there will be an empty space.
+    /// Unlike <see cref="Fit(Units)"/>, if there arent enough items to fill the column or row, there will be empty space left.
+    /// </para>
+    /// <para>
+    /// Maps to CSS <c>repeat(auto-fill, size)</c>.
+    /// </para>
+    /// <para>
+    /// <c>Fr is not a valid parameter!</c> It must be a unit of fixed size.
     /// </para>
     /// </remarks>
-    /// <param name="items">The size of each <see cref="MudMatrixItem"/> in order to repeat.</param>
-    public static ExplicitMatrix Fill(params Units[] items) 
+    /// <param name="size">The fixed size of each <see cref="MudMatrixItem"/> to repeat.</param>
+    public static ExplicitMatrix Fill(Units size)
     {
         return new() 
         {
-            _value = $"repeat(auto-fill,  {string.Join(" ", items.Select(i => i.ToString()))})" 
+            _value = $"repeat(auto-fill, {size})"
         };
     }
 
@@ -59,15 +66,21 @@ public class ExplicitMatrix
     /// </summary>
     /// <remarks>
     /// <para>
-    /// If there are not enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
+    /// Unlike <see cref="Fill(Units)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
+    /// </para>
+    /// <para>
+    /// Maps to CSS <c>repeat(auto-fit, size)</c>.
+    /// </para>
+    /// <para>
+    /// <c>Fr is not a valid parameter!!</c> It must be a unit of fixed size
     /// </para>
     /// </remarks>
-    /// <param name="items">The size of each <see cref="MudMatrixItem"/> in order to repeat.</param>
-    public static ExplicitMatrix Fit(params Units[] items)
+    /// <param name="size">The fixed size of <see cref="MudMatrixItem"/> to repeat.</param>
+    public static ExplicitMatrix Fit(Units size)
     {
         return new()
         {
-            _value = $"repeat(auto-fit, {string.Join(" ", items.Select(i => i.ToString()))})"
+            _value = $"repeat(auto-fit, {size})"
         };
     }
 

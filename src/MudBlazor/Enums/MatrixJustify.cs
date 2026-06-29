@@ -48,10 +48,4 @@ public enum MatrixJustify
     /// </summary>
     [Description("space-evenly")]
     SpaceEvenly,
-
-    /// <summary>
-    /// Items are stretched to fill the available space.
-    /// </summary>
-    [Description("stretch")]
-    Stretch
 }

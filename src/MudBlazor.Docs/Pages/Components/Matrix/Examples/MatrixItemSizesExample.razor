@@ -1,29 +1,114 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(_columnDimensions)"
-           ExplicitRows="ExplicitMatrix.Pattern(_rowDimensions)"
-           Style="height: 500px;">
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Px(100), Units.Fr())">
 
-    @for (int i = 0; i < _columnDimensions.Length * _rowDimensions.Length; i++)
-    {
-        int index = i;
-        int col = index % _columnDimensions.Length;
-        int row = index / _columnDimensions.Length;
+    <MudMatrixItem ColumnSpan="2">
+        <MudStack Row="true" Justify="Justify.SpaceEvenly" Style="margin-left: 24px">
 
-        <MudMatrixItem>
-            <MudPaper Outlined="true" Class="d-flex align-center justify-center mud-width-full mud-height-full">
-                <MudStack AlignItems="AlignItems.Center" Spacing="0">
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">col @col · row @row</MudText>
-                    <MudText Typo="Typo.body2">Width: @_columnDimensions[col]</MudText>
-                    <MudText Typo="Typo.body2">Height: @_rowDimensions[row]</MudText>
-                </MudStack>
-            </MudPaper>
-        </MudMatrixItem>
-    }
+            @for (int i = 0; i < _unitsInputProperties.Length; i++)
+            {
+                int index = i;
+                int columnSize = _columnSizes[index];
 
+                <MudSlider T="int"
+                           Immediate="true"
+                           Color="Color.Secondary"
+                           Style="width: 100px;"
+                           Min="_unitsInputProperties[index].Min"
+                           Max="_unitsInputProperties[index].Max"
+                           Value="columnSize"
+                           ValueChanged="@((v) => { _columnSizes[index] = v; RebuildDimensions(); })">
+                    @(columnSize + _unitsInputProperties[index].Adornment)
+                </MudSlider>
+                
+            }
+        </MudStack>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudStack Justify="Justify.SpaceEvenly" Class="mud-height-full">
+            @for (int i = 0; i < _unitsInputProperties.Length; i++)
+            {
+                int index = i;
+                int rowSize = _rowSizes[index];
+
+                <MudSlider T="int"
+                           Vertical="true"
+                           Immediate="true"
+                           Style="height: 100px;"
+                           Min="_unitsInputProperties[index].Min"
+                           Max="_unitsInputProperties[index].Max"
+                           Value="rowSize"
+                           Color="Color.Primary"
+                           ValueChanged="@((v) => { _rowSizes[index] = v; RebuildDimensions(); })">
+                    @(rowSize + _unitsInputProperties[index].Adornment)
+                </MudSlider>
+                
+            }
+        </MudStack>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(_columnDimensions)"
+                    ExplicitRows="ExplicitMatrix.Pattern(_rowDimensions)"
+                    Style="height: 600px;"
+                    Class="overflow-auto">
+
+            @for (int i = 0; i < _columnDimensions.Length * _rowDimensions.Length; i++)
+            {
+                int index = i;
+                int col = index % _columnDimensions.Length;
+                int row = index / _columnDimensions.Length;
+
+                <MudMatrixItem>
+                    <MudPaper Outlined="true" Class="d-flex align-center justify-center mud-width-full mud-height-full" />
+                </MudMatrixItem>
+            }
+
+        </MudMatrix>
+    </MudMatrixItem>
+    
 </MudMatrix>
 
 @code {
-    Units[] _columnDimensions = [Units.Px(75), Units.Rem(2), Units.Fr(1), Units.Percent(25)];
-    Units[] _rowDimensions = [Units.Px(100), Units.Rem(1), Units.Fr(2), Units.Percent(15)];
+    Units[] _columnDimensions = null!;
+    Units[] _rowDimensions = null!;
+
+    int[] _columnSizes = [1, 175, 10, 1, 25];
+    int[] _rowSizes = [2, 100, 8, 1, 15];
+
+    record UnitInputProperties(string Adornment, int Min, int Max);
+
+    // these do not reflect real mins or maxes, just conveinience for the slider
+    static readonly UnitInputProperties[] _unitsInputProperties = [
+        new("fr", 0, 10),
+        new("px", 10, 300),
+        new("rem", 2, 25),
+        new("fr", 0, 10),
+        new("%", 0, 50),
+    ];
+
+    protected override void OnInitialized()
+    {
+        RebuildDimensions();
+    }
+
+    void RebuildDimensions()
+    {
+        _columnDimensions = [
+            Units.Fr(_columnSizes[0]),
+            Units.Px(_columnSizes[1]),
+            Units.Rem(_columnSizes[2]),
+            Units.Fr(_columnSizes[3]),
+            Units.Pct(_columnSizes[4])
+        ];
+
+        _rowDimensions = [
+            Units.Fr(_rowSizes[0]),
+            Units.Px(_rowSizes[1]),
+            Units.Rem(_rowSizes[2]),
+            Units.Fr(_rowSizes[3]),
+            Units.Pct(_rowSizes[4])
+        ];
+    }
 }

@@ -11,13 +11,14 @@ namespace MudBlazor;
 /// A CSS grid based layout component for organizing content into defined rows and columns.
 /// </summary>
 /// <seealso cref="MudMatrixItem"/>
+/// <seealso cref="ExplicitMatrix"/>
+/// <seealso cref="ImplicitMatrix"/>
 public partial class MudMatrix : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-matrix")
-            .AddClass($"mud-matrix-gap-{Gap.ToString()}")
-            .AddClass($"mud-matrix-row-gap-{Gap.ToString()}", RowGap is not null)
-            .AddClass($"mud-matrix-column-gap-{Gap.ToString()}", ColumnGap is not null)
+            .AddClass($"gap-y-{RowGap.ToString()}")
+            .AddClass($"gap-x-{ColumnGap.ToString()}")
             .AddClass($"mud-matrix-justify-rows-{JustifyRows.ToStringFast(true)}")
             .AddClass($"mud-matrix-justify-columns-{JustifyColumns.ToStringFast(true)}")
             .AddClass(Class)
@@ -29,47 +30,33 @@ public partial class MudMatrix : MudComponentBase
             .AddStyle("grid-template-rows", ExplicitRows.ToString())
             .AddStyle($"grid-auto-columns", ImplicitColumns.ToString())
             .AddStyle($"grid-auto-rows", ImplicitRows.ToString())
-            .AddStyle($"grid-auto-flow", FlowColumn ? "column" : "row")
+            .AddStyle($"grid-auto-flow", HorizontalFlow ? "column" : "row")
             .AddStyle(Style)
             .Build();
 
     /// <summary>
-    /// The gap between items, measured in increments of <c>4px</c>.
-    /// </summary>
-    /// <remarks>
-    /// <para>Defaults to 6.</para>
-    /// <para>Maximum is 20.</para>
-    /// <para>The increment was halved in v7, so the default is now 6 instead of 3.</para>
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Matrix.Behavior)]
-    public int Gap { set; get; } = 6;
-
-    /// <summary>
     /// The gap between columns, measured in increments of <c>4px</c>.
-    /// If set will override <see cref="Gap"/>
     /// </summary>
     /// <remarks>
-    /// <para>Defaults to null which falls back and uses <see cref="Gap"/>.</para>
+    /// <para>Default is 6.</para>
     /// <para>Minimum is 0.</para>
     /// <para>Maximum is 20.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Matrix.Behavior)]
-    public int? ColumnGap { set; get; } = 0;
+    public int ColumnGap { set; get; } = 6;
 
     /// <summary>
     /// The gap between rows, measured in increments of <c>4px</c>.
-    /// If set will override <see cref="Gap"/>
     /// </summary>
     /// <remarks>
-    /// <para>Defaults to null which falls back and uses <see cref="Gap"/>.</para>
+    /// <para>Default is 6.</para>
     /// <para>Minimum is 0.</para>
     /// <para>Maximum is 20.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Matrix.Behavior)]
-    public int? RowGap { set; get; }
+    public int? RowGap { set; get; } = 6;
 
     /// <summary>
     /// Controls the direction in which items are placed into the grid.
@@ -86,7 +73,7 @@ public partial class MudMatrix : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Matrix.Behavior)]
-    public bool FlowColumn { get; set; }
+    public bool HorizontalFlow { get; set; }
 
     /// <summary>
     /// Defines how columns are aligned when there is leftover space within a row.

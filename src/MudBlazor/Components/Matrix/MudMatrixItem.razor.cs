@@ -9,19 +9,27 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A portion of a <see cref="MudMatrix"/>.
+/// An item within the layout of a <see cref="MudMatrix"/>.
 /// </summary>
 /// <seealso cref="MudMatrix"/>
 public partial class MudMatrixItem : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-matrix-item")
-        .AddClass(Class)
-        .Build();
+            .AddClass(Class)
+            .Build();
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("grid-column", $"span {ColumnSpan}")
-            .AddStyle("grid-row", $"span {RowSpan}")
+            .AddStyle("grid-column", ColumnPosition is not null
+                ? ColumnSpanBackward
+                    ? $"span {ColumnSpan} / {ColumnPosition}"
+                    : $"{ColumnPosition} / span {ColumnSpan}"
+                : $"span {ColumnSpan}")
+            .AddStyle("grid-row", RowPosition is not null
+                ? RowSpanBackward
+                    ? $"span {RowSpan} / {RowPosition}"
+                    : $"{RowPosition} / span {RowSpan}"
+                : $"span {RowSpan}")
             .AddStyle(Style)
             .Build();
 
@@ -42,7 +50,63 @@ public partial class MudMatrixItem : MudComponentBase
     [Category(CategoryTypes.Item.Behavior)]
     public int RowSpan { get; set; } = 1;
 
-    // ToDo false,auto,true on all sizes.
+    /// <summary>
+    /// When <see cref="ColumnPosition"/> is set, controls whether this item spans forward or backward from that position.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Has no effect when <see cref="ColumnPosition"/> is not set.
+    /// </para>
+    /// <para>
+    /// <c>Default is false. </c>
+    /// </para>
+    /// </remarks>
+    [Parameter]
+    public bool ColumnSpanBackward { get; set; }
+
+    /// <summary>
+    /// When <see cref="RowPosition"/> is set, controls whether this item spans forward or backward from that position.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Has no effect when <see cref="RowPosition"/> is not set.
+    /// </para>
+    /// <para>
+    /// <c>Default is false </c>
+    /// </para>
+    /// </remarks>
+    [Parameter]
+    public bool RowSpanBackward { get; set; }
+
+    /// <summary>
+    /// The column this item is placed in. 
+    /// Positive values are forwards from the beginning of the row.
+    /// Negative values are backwards from the end of the row.
+    /// </summary>
+    ///  <para>
+    /// <c>Default is null</c>, allows <see cref="MudMatrix"/> to control placement
+    /// </para>
+    /// <para>
+    /// <c>0 is invalid</c>
+    /// </para>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? ColumnPosition { get; set; }
+
+    /// <summary>
+    /// The row this item is placed in. 
+    /// Positive values are forwards from the beginning of the column.
+    /// Negative values are backwards from the end of the column.
+    /// </summary>
+    ///  <para>
+    /// <c>Default is null</c>, allows <see cref="MudMatrix"/> to control placement
+    /// </para>
+    /// <para>
+    /// <c>0 is invalid</c>
+    /// </para>
+    [Parameter]
+    [Category(CategoryTypes.Item.Behavior)]
+    public int? RowPosition { get; set; }
 
     /// <summary>
     /// Child content of the component.

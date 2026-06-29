@@ -7,17 +7,98 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Basic Matrix">
+            <SectionHeader Title="Explicit Matrix">
+                <Description>
+                    <CodeInline>ExplicitMatrix.Pattern()</CodeInline> allows you to define a fixed 
+                    grid blueprint. You declare exactly how many tracks exist and how large each one is.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixExplicitExample)" ShowCode="false">
+                <MatrixExplicitExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Implicit Matrix">
+                <Description>
+                    When items exceed what <CodeInline>ExplicitMatrix</CodeInline> defines, the grid
+                    auto-generates tracks to hold them. <CodeInline>ImplicitMatrix</CodeInline> defines
+                    the sizing for those auto-generated tracks. That is why in the last example, if you
+                    had more items than your <CodeInline>ExplicitMatrix</CodeInline> could hold, the
+                    rows were small, because the default <CodeInline>ImplicitMatrix</CodeInline>
+                    definition is <CodeInline>ImplicitMatrix.Pattern(Units.Auto())</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixImplicitExample)" ShowCode="false">
+                <MatrixImplicitExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Fit Vs Fill">
+                <Description>
+                    <CodeInline>ExplicitMatrix.Fit()</CodeInline> and <CodeInline>ExplicitMatrix.Fill()</CodeInline>
+                    let you define a track size and automatically pack as many tracks of that size as the
+                    grid can fit and wrapping when there's no more room. The difference is how they handle
+                    leftover space: <CodeInline>Fill()</CodeInline> adds empty ghost tracks to consume it,
+                    while <CodeInline>ExplicitMatrix.Fit()</CodeInline> does not. This difference is subtle
+                    but affects how sizing and justify apply. Although, once they wrap past the first row, they 
+                    function nearly identically. You can see the ghost tracks (or lack thereof) yourself by
+                    inspecting the matrix in the justify example using your browser's DevTools <CodeInline>CTRL + SHIFT + I</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixFitVsFillExample)" ShowCode="false">
+                <MatrixFitVsFillExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Flow Direction">
+                <Description>
+                    By default, a grid flows vertically and items fill across columns row by row.
+                    Setting <CodeInline>HorizontalFlow="true"</CodeInline> reverses this: items
+                    instead fill down rows column by column. As a rule of thumb, your
+                    <CodeInline>ImplicitMatrix</CodeInline> should follow your flow axis. define
+                    your columns explicitly when <CodeInline>HorizontalFlow="false"</CodeInline>,
+                    and your rows explicitly when <CodeInline>HorizontalFlow="true"</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixFlowExample)" ShowCode="false">
+                <MatrixFlowExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Column & Row: Justify">
+                <Description>
+                    Justify controls how tracks are distributed within the grid's remaining space.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixJustifyExample)" ShowCode="false">
+                <MatrixJustifyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Column & Row: Span">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(MatrixBasicExample)" ShowCode="false">
-                <MatrixBasicExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixSpanExample)" ShowCode="false">
+                <MatrixSpanExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Column & Row: Gap">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixGapExample)" ShowCode="false">
+                <MatrixGapExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Matrix Sizes">
-                <Description>You can define an explicit layout for your matrix by ordering the sizes of your rows and columns</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(MatrixItemSizesExample)" ShowCode="false">
                 <MatrixItemSizesExample />
@@ -26,10 +107,27 @@
 
         <DocsPageSection>
             <SectionHeader Title="Auto Sizing">
-                <Description>The size <c>Units.Auto()</c> allows the content of the <c>MudMatrixItems</c> to define the size of the column or row</Description>
+                <Description>
+                    The size <CodeInline>Units.Auto()</CodeInline> allows the content of the 
+                    <CodeInline>MudMatrixItems</CodeInline> to define the size of the column or row
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(MatrixAutoSizingExample)" ShowCode="false">
                 <MatrixAutoSizingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Item Position">
+                <Description>
+                    Positive values count forward from the start of the track, negative values count backward from the end, 
+                    and 0 is invalid. Leave it null to let the grid place the item automatically. 
+                    <CodeInline>ColumnSpanBackward</CodeInline> and <CodeInline>RowSpanBackward</CodeInline> 
+                    control which direction the item spans from its position.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(MatrixItemPositionExample)" ShowCode="false">
+                <MatrixItemPositionExample />
             </SectionContent>
         </DocsPageSection>
 

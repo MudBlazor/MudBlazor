@@ -1,0 +1,113 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(2, Units.Auto())" 
+           ColumnGap="3"           
+           RowGap="3" 
+           JustifyColumns="MatrixJustify.Center">
+
+    <MudMatrixItem>
+        <MudText Color="Color.Primary">Fit: </MudText>
+    </MudMatrixItem>
+    <MudMatrixItem Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" />
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudText Color="Color.Secondary">Fill: </MudText>
+    </MudMatrixItem>
+    <MudMatrixItem Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" />
+    </MudMatrixItem>
+</MudMatrix>
+
+<MudSplitPanel PanelGap="16" Style="height: 500px;" Class="mud-width-full">
+
+    <FirstPanel>
+        <MudStack Class="mud-height-full">
+            <MudMatrix ExplicitColumns="ExplicitMatrix.Fit(_showMinMaxExample ? _minMaxExampleUnits : _justifyExampleUnits)"
+                       ImplicitRows="ImplicitMatrix.Pattern(Units.Px(_pixels))"
+                       JustifyColumns="@(_showMinMaxExample ? MatrixJustify.Start : MatrixJustify.End)"
+                       Style="height: 50%; overflow: auto;">
+
+                @for (int i = 0; i < _itemCount; i++)
+                {
+                    int index = i + 1;
+                    <MudMatrixItem>
+                        <MudPaper Outlined="true" Class="mud-width-full mud-height-full d-flex align-center justify-center" Style="background: var(--mud-palette-primary);">
+                            <MudText Color="Color.Tertiary">@index</MudText>
+                        </MudPaper>
+                    </MudMatrixItem>
+                }
+            </MudMatrix>
+
+            <MudMatrix ExplicitColumns="ExplicitMatrix.Fill(_showMinMaxExample ? _minMaxExampleUnits : _justifyExampleUnits)"
+                       ImplicitRows="ImplicitMatrix.Pattern(Units.Px(_pixels))"
+                       JustifyColumns="@(_showMinMaxExample ? MatrixJustify.Start : MatrixJustify.End)"
+                       Style="height: 50%; overflow: auto;">
+
+                @for (int i = 0; i < _itemCount; i++)
+                {
+                    int index = i + 1;
+                    <MudMatrixItem>
+                        <MudPaper Outlined="true" Class="mud-width-full mud-height-full d-flex align-center justify-center" Style="background: var(--mud-palette-secondary);">
+                            <MudText Color="Color.Tertiary">@index</MudText>
+                        </MudPaper>
+                    </MudMatrixItem>
+                }
+            </MudMatrix>
+        </MudStack>
+        
+        
+    </FirstPanel>
+    <SecondPanel>
+        <MudStack Class="mud-height-full" AlignItems="AlignItems.Start" Justify="Justify.Center">
+            <MudStack Row="true">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Tertiary"/>
+                <MudText Color="Color.Tertiary">Drag</MudText>
+            </MudStack>
+        </MudStack>
+    </SecondPanel>
+</MudSplitPanel>
+
+
+
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(2, Units.Fr())" RowGap="3">
+    <MudMatrixItem ColumnSpan="2">
+        <MudToggleGroup Class="mud-width-full" T="bool" @bind-Value="_showMinMaxExample" Color="Color.Tertiary" CheckMark="true" SelectionMode="SelectionMode.SingleSelection">
+            <MudToggleItem Value="false" Text="Justify End Example" />
+            <MudToggleItem Value="true" Text="MinMax Example" />
+        </MudToggleGroup>
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudAlert Severity="Severity.Info">
+            The 'Justify End Example' sets <CodeInline>JustifyColumns="MatrixJustify.End"</CodeInline>
+            on both grids. With <CodeInline>Fit</CodeInline>, there is empty space left after the tracks
+            are placed, so the columns shift to the end. With <CodeInline>Fill</CodeInline>, ghost tracks
+            consume that space, so justification has nothing to act on and the behavior looks identical
+            to <CodeInline>MatrixJustify.Start</CodeInline>.
+        </MudAlert>
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudAlert Severity="Severity.Info">
+            The 'MinMax Example' replaces the column units with
+            <CodeInline>Units.MinMax(Units.Px(100), Units.Fr())</CodeInline> on both grids.
+            With <CodeInline>Fit</CodeInline>, the <CodeInline>1fr</CodeInline> is split only
+            among the visible tracks, so they grow to fill the space. With
+            <CodeInline>Fill</CodeInline>, the ghost tracks are also part of the fraction
+            calculation, so the visible tracks stay roughly <CodeInline>100px</CodeInline> wide.
+        </MudAlert>
+    </MudMatrixItem>
+    
+</MudMatrix>
+
+
+
+@code {
+    const int _itemCount = 4;
+    const int _pixels = 100;
+
+    bool _showMinMaxExample;
+
+    Units _minMaxExampleUnits = Units.MinMax(Units.Px(_pixels), Units.Fr());
+    Units _justifyExampleUnits = Units.Px(_pixels);
+}
