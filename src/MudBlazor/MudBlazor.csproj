@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <!-- Build the full set when needed; otherwise build only one for the local Debug inner loop to save time. -->
-    <TargetFrameworks Condition="'$(_IsPacking)' == 'true' Or '$(Configuration)' == 'Release' Or '$(BuildAllTargetFrameworks)' == 'true'">net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">$(MudBlazorTargetFramework)</TargetFrameworks>
+    <!-- The package targets all of these. For a fast local build of just one, use `dotnet build -f net10.0` (restore still covers every TFM, so it stays consistent). -->
+    <TargetFrameworks>net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
