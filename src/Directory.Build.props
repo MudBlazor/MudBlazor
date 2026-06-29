@@ -8,9 +8,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- The .NET version every project here targets. Defined once so bumping it is a single edit.
-         (The analyzers are netstandard2.0 and MudBlazor additionally packs older runtimes; both set
-         their own TargetFramework(s).) -->
     <MudBlazorTargetFramework>net10.0</MudBlazorTargetFramework>
   </PropertyGroup>
 
