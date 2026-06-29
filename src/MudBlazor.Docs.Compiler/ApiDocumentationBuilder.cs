@@ -186,16 +186,16 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
-        // Early exit: if ApiDocumentation.generated.cs exists and is newer than all input assemblies, skip generation
-        if (File.Exists(Paths.ApiDocumentationFilePath))
+        // Early exit: if the generated file exists and our stamp is newer than all input assemblies, skip generation.
+        if (File.Exists(Paths.ApiDocumentationFilePath) && File.Exists(Paths.ApiDocumentationStampFilePath))
         {
-            var outputLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationFilePath);
+            var stampLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationStampFilePath);
             var newestInputTime = Assemblies
                 .Select(a => File.GetLastWriteTimeUtc(a.Location))
                 .DefaultIfEmpty(DateTime.MinValue)
                 .Max();
 
-            if (outputLastWrite > newestInputTime)
+            if (stampLastWrite > newestInputTime)
             {
                 Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date, skipping generation.");
                 return true;
@@ -747,10 +747,11 @@ public class ApiDocumentationBuilder
         }
         else
         {
-            // Touch the file to update its timestamp so future checks skip regeneration
-            File.SetLastWriteTimeUtc(Paths.ApiDocumentationFilePath, DateTime.UtcNow);
-            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged, touched timestamp.");
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged.");
         }
+
+        // Stamp (not the .cs) so the next build's early-exit works without forcing a recompile.
+        Paths.TouchStamp(Paths.ApiDocumentationStampFilePath);
     }
 
     /// <summary>
