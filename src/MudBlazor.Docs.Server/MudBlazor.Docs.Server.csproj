@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>$(MudBlazorTargetFramework)</TargetFramework>
+    <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

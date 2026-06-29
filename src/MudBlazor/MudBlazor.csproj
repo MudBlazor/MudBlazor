@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <!-- Build the full set when needed; otherwise build only one for the local Debug inner loop to save time. -->
-    <TargetFrameworks Condition="'$(_IsPacking)' == 'true' Or '$(Configuration)' == 'Release' Or '$(BuildAllTargetFrameworks)' == 'true'">net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
-    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">$(MudBlazorTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;$(PrimaryTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
@@ -32,7 +30,8 @@
   <PropertyGroup>
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>link</TrimMode>
-    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <!-- The trim (IL2xxx) analyzer only matters for consumers who trim the packaged library, so run it only in Release/pack where the package is actually produced; skipping it shaves the local Debug inner loop without losing CI coverage. -->
+    <EnableTrimAnalyzer Condition="'$(Configuration)' == 'Release' Or '$(_IsPacking)' == 'true'">true</EnableTrimAnalyzer>
   </PropertyGroup>
 
   <PropertyGroup>
