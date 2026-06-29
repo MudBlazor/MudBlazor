@@ -146,9 +146,8 @@ public class ApiDocumentationBuilder
     public string? ReferenceAssemblyPath { get; set; }
 
     /// <summary>
-    /// Hashes the inputs that the generated API documentation depends on: the public API surface
-    /// (reference assembly), the XML doc comments, and the generator version. Lets the build skip
-    /// the expensive reflection pass when none of them changed.
+    /// Hashes the inputs that the generated API documentation depends on: the public API surface (reference assembly), the XML doc comments, and the generator version.
+    /// Lets the build skip the expensive reflection pass when none of them changed.
     /// </summary>
     private string ComputeInputHash()
     {
