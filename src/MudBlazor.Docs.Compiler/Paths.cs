@@ -36,16 +36,12 @@ public static class Paths
 
     public static string ApiDocumentationFilePath => Path.Join(ApiDocumentationPath, ApiDocumentationFile);
 
-    // Stamp files live in obj/ (git-ignored, never a Compile input). They record that the generator
-    // validated its output against the current inputs, so the generated .cs keeps its old timestamp
-    // when content is unchanged and does not force a full Docs recompile after every library rebuild.
     private static string StampDirPath => Path.Join(DocsDirPath, "obj");
 
     public static string SnippetsStampFilePath => Path.Join(StampDirPath, SnippetsFile + ".stamp");
 
     public static string ApiDocumentationStampFilePath => Path.Join(StampDirPath, ApiDocumentationFile + ".stamp");
 
-    // Records that the generator has validated its output against the current inputs.
     public static void TouchStamp(string stampFilePath)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(stampFilePath)!);
