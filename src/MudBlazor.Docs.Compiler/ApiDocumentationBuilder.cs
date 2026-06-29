@@ -155,12 +155,12 @@ public class ApiDocumentationBuilder
         var apiSurface = ReferenceAssemblyPath is { Length: > 0 } refPath && File.Exists(refPath)
             ? refPath
             : Assemblies[0].Location;
-        hash.AppendData(File.ReadAllBytes(apiSurface));
+        AppendFile(hash, apiSurface);
 
         var xmlPath = Path.ChangeExtension(Assemblies[0].Location, ".xml");
         if (File.Exists(xmlPath))
         {
-            hash.AppendData(File.ReadAllBytes(xmlPath));
+            AppendFile(hash, xmlPath);
         }
 
         // Generator identity, so changing the compiler invalidates the cache.
@@ -168,6 +168,18 @@ public class ApiDocumentationBuilder
         hash.AppendData(Encoding.UTF8.GetBytes(generator + File.GetLastWriteTimeUtc(generator).Ticks));
 
         return Convert.ToHexString(hash.GetHashAndReset());
+
+        // Stream the file through the hash in chunks instead of allocating the whole file (the reference assembly is several MB).
+        static void AppendFile(IncrementalHash hash, string path)
+        {
+            using var stream = File.OpenRead(path);
+            var buffer = new byte[81920];
+            int read;
+            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                hash.AppendData(buffer, 0, read);
+            }
+        }
     }
 
     /// <summary>
