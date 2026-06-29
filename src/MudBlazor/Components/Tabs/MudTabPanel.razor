@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 @implements IAsyncDisposable
 
-@if (Parent?.KeepPanelsAlive == true && (Parent.LazyLoadPanels == false || Parent.ActivePanel == this || _alreadyRendered))
+@if (Parent?.KeepPanelsAlive == true && (!Parent.LazyLoadPanels || Parent.ActivePanel == this || _alreadyRendered))
 {
     _alreadyRendered = true;
     <div @attributes="UserAttributes" class="@PanelClassname" style="@Style" role="tabpanel" id="@Parent.GetTabPanelId(this)" aria-labelledby="@Parent.GetTabId(this)">
