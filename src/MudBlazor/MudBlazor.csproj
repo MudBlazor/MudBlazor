@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <!-- Build the full set when needed; otherwise build only one for the local Debug inner loop to save time. -->
-    <TargetFrameworks Condition="'$(_IsPacking)' == 'true' Or '$(Configuration)' == 'Release' Or '$(BuildAllTargetFrameworks)' == 'true'">net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
+    <!-- Always restore every TFM (cheap and cached) so a later build/pack never hits a missing-assets error; only the compile is reduced for speed. Build the full set when needed; otherwise build only one for the local Debug inner loop to save time. -->
+    <TargetFrameworks Condition="'$(MSBuildRestoreSessionId)' != '' Or '$(_IsPacking)' == 'true' Or '$(Configuration)' == 'Release' Or '$(BuildAllTargetFrameworks)' == 'true'">net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">$(MudBlazorTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
