@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <!-- Build the full set for any Release build (dotnet pack and CI both use -c Release) or when BuildAllTargetFrameworks=true is passed; otherwise build only one for the local Debug inner loop. -->
-    <TargetFrameworks Condition="'$(BuildAllTargetFrameworks)' == 'true' Or '$(Configuration)' == 'Release'">net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
+    <!-- Build the full set when packing (any configuration, so `dotnet pack` is never net10-only), for any Release build, or when BuildAllTargetFrameworks=true is passed; otherwise build only one for the local Debug inner loop. -->
+    <TargetFrameworks Condition="'$(_IsPacking)' == 'true' Or '$(Configuration)' == 'Release' Or '$(BuildAllTargetFrameworks)' == 'true'">net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">$(MudBlazorTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
