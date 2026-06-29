@@ -92,7 +92,9 @@
           Condition="'$(IsCrossTargetingBuild)' != 'true'
                 AND '$(DesignTimeBuild)' != 'true'
                 AND '$(WebAssetsBuilt)' != 'true'
-                AND '$(SkipBunCompile)' != 'true'">
+                AND '$(SkipBunCompile)' != 'true'"
+          Inputs="@(WebAssetInputs)"
+          Outputs="wwwroot/MudBlazorDocs.min.css">
 
     <PropertyGroup>
       <WebAssetsBuilt>true</WebAssetsBuilt>
