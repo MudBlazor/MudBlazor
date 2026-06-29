@@ -12,13 +12,13 @@
 
     public int Counter { get; set; } = 0;
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            FirstRender.InvokeAsync();
+            await FirstRender.InvokeAsync();
         }
 
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

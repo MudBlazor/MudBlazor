@@ -2,13 +2,13 @@
 
 <MudTabs @key="@($"{_keepPanelsAlive}-{_lazyLoadPanels}")" Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6" KeepPanelsAlive="@_keepPanelsAlive" LazyLoadPanels="@_lazyLoadPanels">
     <MudTabPanel Text="Item One">
-        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@(x => _firstRenderCounts[0]++)" />
+        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@(() => _firstRenderCounts[0]++)" />
     </MudTabPanel>
     <MudTabPanel Text="Item Two">
-        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@(x => _firstRenderCounts[1]++)" />
+        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@(() => _firstRenderCounts[1]++)" />
     </MudTabPanel>
     <MudTabPanel Text="Item Three">
-        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@(x => _firstRenderCounts[2]++)" />
+        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@(() => _firstRenderCounts[2]++)" />
     </MudTabPanel>
 </MudTabs>
 

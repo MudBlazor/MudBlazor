@@ -177,7 +177,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using
-        /// a button click counter on every tab and a callback that is fired only when OnRenderAsync of the tab panel
+        /// a button click counter on every tab and a callback that is fired only when OnAfterRenderAsync of the tab panel
         /// happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
