@@ -24,10 +24,10 @@ $columns: 12; // Number of columns in the grid system.
     margin-top: -#{$base-spacing * $i}; // Negative margin for item spacing.
   }
 
-    .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
-      padding-left: #{$base-spacing * $i}; // Add spacing.
-      padding-top: #{$base-spacing * $i}; // Add spacing.
-    }
+  .mud-grid-spacing-xs-#{$i} > .mud-grid-item {
+    padding-left: #{$base-spacing * $i}; // Add spacing.
+    padding-top: #{$base-spacing * $i}; // Add spacing.
+  }
 }
 
 // Responsive grid sizes using predefined breakpoints.

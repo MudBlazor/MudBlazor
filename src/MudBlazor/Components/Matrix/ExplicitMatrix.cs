@@ -18,10 +18,10 @@ public class ExplicitMatrix
     /// </summary>
     /// <param name="items">The size of each column or row in order.</param>
     public static ExplicitMatrix Pattern(params Units[] items)
-    { 
-        return new() 
-        { 
-            _value = string.Join(" ", items.Select(i => i.ToString())) 
+    {
+        return new()
+        {
+            _value = string.Join(" ", items.Select(i => i.ToString()))
         };
     }
 
@@ -55,7 +55,7 @@ public class ExplicitMatrix
     /// <param name="size">The fixed size of each <see cref="MudMatrixItem"/> to repeat.</param>
     public static ExplicitMatrix Fill(Units size)
     {
-        return new() 
+        return new()
         {
             _value = $"repeat(auto-fill, {size})"
         };

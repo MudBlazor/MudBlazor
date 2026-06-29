@@ -40,14 +40,14 @@ public partial class MudMatrixItem : MudComponentBase
     /// Number of columns this item spans.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Item.Behavior)]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public int ColumnSpan { get; set; } = 1;
 
     /// <summary>
     /// Number of rows this item spans.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Item.Behavior)]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public int RowSpan { get; set; } = 1;
 
     /// <summary>
@@ -62,6 +62,7 @@ public partial class MudMatrixItem : MudComponentBase
     /// </para>
     /// </remarks>
     [Parameter]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public bool ColumnSpanBackward { get; set; }
 
     /// <summary>
@@ -76,6 +77,7 @@ public partial class MudMatrixItem : MudComponentBase
     /// </para>
     /// </remarks>
     [Parameter]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public bool RowSpanBackward { get; set; }
 
     /// <summary>
@@ -90,7 +92,7 @@ public partial class MudMatrixItem : MudComponentBase
     /// <c>0 is invalid</c>
     /// </para>
     [Parameter]
-    [Category(CategoryTypes.Item.Behavior)]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public int? ColumnPosition { get; set; }
 
     /// <summary>
@@ -105,22 +107,13 @@ public partial class MudMatrixItem : MudComponentBase
     /// <c>0 is invalid</c>
     /// </para>
     [Parameter]
-    [Category(CategoryTypes.Item.Behavior)]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public int? RowPosition { get; set; }
 
     /// <summary>
     /// Child content of the component.
     /// </summary>
     [Parameter]
-    [Category(CategoryTypes.Item.Behavior)]
+    [Category(CategoryTypes.MatrixItem.Behavior)]
     public RenderFragment? ChildContent { get; set; }
-
-    /// <inheritdoc />
-    protected override void OnInitialized()
-    {
-        // NOTE: we can't throw here, the component must be able to live alone for the docs API to infer default parameters
-        //if (Parent == null)
-        //    throw new ArgumentNullException(nameof(Parent), "Item must exist within a Grid");
-        base.OnInitialized();
-    }
 }

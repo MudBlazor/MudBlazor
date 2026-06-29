@@ -16,7 +16,7 @@ public class Units
     /// Takes up a fraction of the available space.
     /// </summary>
     /// <param name="value">The number of fractions to take up.</param>
-    public static Units Fr(double value = 1) 
+    public static Units Fr(double value = 1)
     {
         return new() { _value = $"{value}fr" };
     }
@@ -25,7 +25,7 @@ public class Units
     /// A fixed size in pixels.
     /// </summary>
     /// <param name="value">The size in pixels.</param>
-    public static Units Px(int value) 
+    public static Units Px(int value)
     {
         return new() { _value = $"{value}px" };
     }
@@ -34,7 +34,7 @@ public class Units
     /// A fixed size in rem units.
     /// </summary>
     /// <param name="value">The size in rem units.</param>
-    public static Units Rem(double value) 
+    public static Units Rem(double value)
     {
         return new() { _value = $"{value}rem" };
     }
@@ -111,6 +111,39 @@ public class Units
     public static Units operator /(Units a, Units b)
     {
         return new() { _value = $"calc({a} / {b})" };
+    }
+
+    /// <summary>
+    /// <c>Returns true</c> when the CSS representation of the Units are the same.
+    /// </summary>
+    /// <returns></returns>
+    public static bool operator ==(Units a, Units b)
+    {
+        return a._value == b._value;
+    }
+
+    /// <summary>
+    /// <c>Returns true</c> when the CSS representation of the Units are different.
+    /// </summary>
+    public static bool operator !=(Units a, Units b)
+    {
+        return a._value != b._value;
+    }
+
+    /// <summary>
+    /// <c>Returns true</c> when the CSS representation of the Units are the same.
+    /// </summary>
+    public override bool Equals(object? obj)
+    {
+        return obj is Units units && _value == units._value;
+    }
+
+    /// <summary>
+    /// Returns hash code of the CSS representation.
+    /// </summary>
+    public override int GetHashCode()
+    {
+        return _value.GetHashCode();
     }
 
     public override string ToString() => _value;
