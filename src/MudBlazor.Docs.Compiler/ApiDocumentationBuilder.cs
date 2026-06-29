@@ -139,9 +139,8 @@ public class ApiDocumentationBuilder
     /// Path to MudBlazor's reference assembly, if known (passed by the build).
     /// </summary>
     /// <remarks>
-    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us
-    /// skip regeneration after library edits that only touch method bodies. Falls back to the
-    /// implementation assembly (which changes on every build) when not supplied.
+    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us skip regeneration after library edits that only touch method bodies. 
+    /// Falls back to the implementation assembly (which changes on every build) when not supplied.
     /// </remarks>
     public string? ReferenceAssemblyPath { get; set; }
 
