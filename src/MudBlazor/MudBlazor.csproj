@@ -1,16 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <!--
-      The shipped NuGet package targets net8.0;net9.0;net10.0. Compiling all three on every local
-      build is wasteful: nothing in this repository consumes the net8.0/net9.0 assets (every other
-      project is net10.0), so they only matter when packing the NuGet. Build the full set for any
-      Release build (dotnet pack and CI both use -c Release, so the package can never accidentally
-      ship net10-only) or when BuildAllTargetFrameworks=true is passed; otherwise (local Debug inner
-      loop) build only net10.0. Pass -p:BuildAllTargetFrameworks=true to force all TFMs in Debug.
-    -->
-    <MudBlazorAllTargetFrameworks>net8.0;net9.0;net10.0</MudBlazorAllTargetFrameworks>
-    <TargetFrameworks Condition="'$(BuildAllTargetFrameworks)' == 'true' Or '$(Configuration)' == 'Release'">$(MudBlazorAllTargetFrameworks)</TargetFrameworks>
+    <!-- Build the full set for any Release build (dotnet pack and CI both use -c Release) or when BuildAllTargetFrameworks=true is passed; otherwise build only one for the local Debug inner loop. -->
+    <TargetFrameworks Condition="'$(BuildAllTargetFrameworks)' == 'true' Or '$(Configuration)' == 'Release'">net8.0;net9.0;net10.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net10.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
