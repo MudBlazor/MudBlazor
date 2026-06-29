@@ -150,21 +150,21 @@ namespace MudBlazor
                 return;
             }
 
-            if (AutoClose && ParentMenu is not null)
+            // Invoke the user's handler first, before navigating or closing the menu.
+            if (OnClick.HasDelegate)
             {
-                await ParentMenu.CloseAllMenusAsync();
+                await OnClick.InvokeAsync(ev);
             }
 
-            // Manual navigation is only required when the target is empty and a
-            // forced reload is necessary; all other scenarios are managed by the HTML anchor.
+            // Manual navigation is only required when the target is empty and a forced reload is necessary; all other scenarios are managed by the HTML anchor.
             if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
 
-            if (OnClick.HasDelegate)
+            if (AutoClose && ParentMenu is not null)
             {
-                await OnClick.InvokeAsync(ev);
+                await ParentMenu.CloseAllMenusAsync();
             }
         }
 

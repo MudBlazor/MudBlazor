@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>$(MudBlazorTargetFramework)</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>MudBlazor.UnitTests</RootNamespace>
   </PropertyGroup>

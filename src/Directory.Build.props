@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <MudBlazorTargetFramework>net10.0</MudBlazorTargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- NetEscapades.EnumGenerators.Generators uses DescriptionAttribute to generate the enum values -->
     <EnumGenerator_EnumMetadataSource>DescriptionAttribute</EnumGenerator_EnumMetadataSource>
   </PropertyGroup>
