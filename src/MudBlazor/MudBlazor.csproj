@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;$(MudBlazorTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;$(PrimaryTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>

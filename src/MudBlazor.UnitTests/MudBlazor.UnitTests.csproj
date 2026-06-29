@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>$(MudBlazorTargetFramework)</TargetFramework>
+    <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
     <OutputType>Exe</OutputType>
     <EnableNUnitRunner>true</EnableNUnitRunner>
   </PropertyGroup>
