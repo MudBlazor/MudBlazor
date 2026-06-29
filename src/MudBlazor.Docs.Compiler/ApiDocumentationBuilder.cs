@@ -223,8 +223,7 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
-        // Early exit: skip generation when the generated file exists and the public API surface,
-        // XML comments, and generator are unchanged since the stamp was last written.
+        // Early exit: skip generation when the generated file exists and the public API surface, XML comments, and generator are unchanged since the stamp was last written.
         var inputHash = ComputeInputHash();
         if (File.Exists(Paths.ApiDocumentationFilePath) && File.Exists(Paths.ApiDocumentationStampFilePath)
             && File.ReadAllText(Paths.ApiDocumentationStampFilePath).Trim() == inputHash)
