@@ -24,6 +24,13 @@ public class ImplicitMatrix
             _value = string.Join(" ", items.Select(i => i.ToString()))
         };
     }
-    public override string ToString() => _value;
+
+    /// <summary>
+    /// Returns CSS representation.
+    /// </summary>
+    public override string ToString()
+    {
+        return _value;
+    }
 }
 

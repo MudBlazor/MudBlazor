@@ -146,5 +146,11 @@ public class Units
         return _value.GetHashCode();
     }
 
-    public override string ToString() => _value;
+    /// <summary>
+    /// Returns CSS representation.
+    /// </summary>
+    public override string ToString()
+    {
+        return _value;
+    }
 }
