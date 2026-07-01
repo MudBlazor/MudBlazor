@@ -60,6 +60,19 @@ public class ScrollSpyTests
     }
 
     [Test]
+    public async Task ScrollToSection_WithUriWithoutFragment_UsesEmptyId()
+    {
+        SetupVoidInvocation("mudScrollSpy.scrollToSection", args =>
+            args.Length == 1 &&
+            (args[0] as string) == string.Empty);
+
+        await _service.ScrollToSection(new Uri("https://mudblazor.test/docs"));
+
+        _service.CenteredSection.Should().Be(string.Empty);
+        _runtimeMock.VerifyAll();
+    }
+
+    [Test]
     public async Task SetSectionAsActive_TrimsFragmentAndUpdatesCenteredSection()
     {
         SetupVoidInvocation("mudScrollSpy.activateSection", args =>

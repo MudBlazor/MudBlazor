@@ -28,4 +28,26 @@ public class LanguageResourceTests
             char.IsAsciiLetterUpper(key![0]).Should().BeTrue("because keys must start with an uppercase letter");
         }
     }
+
+    [Test]
+    public void ResourceValues_ShouldBeValidCompositeFormatStrings()
+    {
+        var manager = LanguageResource.ResourceManager;
+        var resourceSet = manager.GetResourceSet(CultureInfo.InvariantCulture, true, true);
+
+        // Several values are used as string.Format templates (e.g. "Page {0}", "{0}-{1} of {2}").
+        // A malformed placeholder such as an unbalanced brace would throw FormatException at runtime.
+        var arguments = new object[10];
+
+        foreach (DictionaryEntry entry in resourceSet!)
+        {
+            var key = entry.Key.ToString();
+            var value = (string)entry.Value!;
+
+            var format = () => string.Format(CultureInfo.InvariantCulture, value, arguments);
+
+            format.Should().NotThrow<FormatException>(
+                $"because the translation for '{key}' must be a valid composite format string");
+        }
+    }
 }

@@ -32,7 +32,7 @@
     [Parameter]
     public Color Color { get; set; } = Color.Primary;
 
-    public void SetSelectedValue(string value)
+    public void SetSelectedValue(string? value)
     {
         _selectedValue = value;
         StateHasChanged();

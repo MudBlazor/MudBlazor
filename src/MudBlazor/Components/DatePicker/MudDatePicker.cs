@@ -147,7 +147,7 @@ namespace MudBlazor
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                await Task.Run(() => InvokeAsync(SubmitAsync));
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {

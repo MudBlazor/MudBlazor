@@ -358,17 +358,22 @@ public class DateMaskTests
     }
 
     [Test]
-    public void DateMask_GetCleanText()
+    public void DateMask_GetCleanText_CleanDelimiters_StripsDateSeparators()
     {
-        // Arrange
-        var mask = new DateMask("MM/dd/yyyy");
+        // CleanDelimiters must drop the date separators, leaving only the digit blocks.
+        var mask = new DateMask("MM/dd/yyyy") { CleanDelimiters = true };
         mask.Insert("12/31/2023");
+        mask.Text.Should().Be("12/31/2023");
+        mask.GetCleanText().Should().Be("12312023");
+    }
 
-        // Act
-        var cleanText = mask.GetCleanText();
-
-        // Assert
-        cleanText.Should().Be("12/31/2023");
+    [Test]
+    public void DateMask_FullYearZero_AllowsFebruary29()
+    {
+        // Year 0000 is treated as a leap year (GetDaysInMonth substitutes year 4), so Feb 29 is not clamped to 28.
+        var mask = new DateMask("yyyy-MM-dd");
+        mask.Insert("0000-02-29");
+        mask.Text.Should().Be("0000-02-29");
     }
 
     [Test]

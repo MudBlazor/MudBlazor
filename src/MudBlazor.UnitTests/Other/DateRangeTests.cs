@@ -50,6 +50,13 @@ public class DateRangeTests
     }
 
     [Test]
+    public void ToIsoDateString_BothDatesSet_JoinsIsoParts()
+    {
+        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        range.ToIsoDateString().Should().Contain("2024-01-01").And.Contain("2024-06-01");
+    }
+
+    [Test]
     public void TryParse_InvalidRangeFormat_ReturnsFalse()
     {
         var ok = DateRange.TryParse("not-a-range", new DateTimeConverter(), out var result);
@@ -92,6 +99,20 @@ public class DateRangeTests
     }
 
     [Test]
+    public void TryParse_CanonicalRangeString_RoundTrips()
+    {
+        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        var converter = new DateTimeConverter();
+
+        var ok = DateRange.TryParse(range.ToString(converter), converter, out var result);
+
+        ok.Should().BeTrue();
+        result.Should().NotBeNull();
+        result!.Start.Should().Be(range.Start);
+        result.End.Should().Be(range.End);
+    }
+
+    [Test]
     public void EqualityOperator_BothNull_ReturnsTrue()
     {
         DateRange? a = null;
@@ -125,6 +146,16 @@ public class DateRangeTests
     }
 
     [Test]
+    public void Equals_BothEndpointsNull_ReturnsTrue()
+    {
+        // DateRange.Equals (unlike base Range<T>.Equals) treats two ranges with null endpoints as equal.
+        var a = new DateRange(null, null);
+        var b = new DateRange(null, null);
+        a.Equals(b).Should().BeTrue();
+        (a == b).Should().BeTrue();
+    }
+
+    [Test]
     public void Equals_NonDateRangeObject_ReturnsFalse()
     {
         var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
@@ -133,20 +164,19 @@ public class DateRangeTests
     }
 
     [Test]
+    public void Equals_DifferentEndpoints_ReturnsFalse()
+    {
+        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
+        new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 7, 1)).Equals(range).Should().BeFalse();
+        new DateRange(new DateTime(2023, 1, 1), new DateTime(2024, 6, 1)).Equals(range).Should().BeFalse();
+    }
+
+    [Test]
     public void GetHashCode_EqualRanges_ReturnsSameHash()
     {
         var a = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         var b = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
         a.GetHashCode().Should().Be(b.GetHashCode());
-    }
-
-    [Test]
-    public void GetHashCode_ConsistentAcrossMultipleCalls()
-    {
-        var range = new DateRange(new DateTime(2024, 1, 1), new DateTime(2024, 6, 1));
-        var hash1 = range.GetHashCode();
-        var hash2 = range.GetHashCode();
-        hash1.Should().Be(hash2);
     }
 
     /// <summary>

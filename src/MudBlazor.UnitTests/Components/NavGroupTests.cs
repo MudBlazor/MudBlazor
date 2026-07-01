@@ -58,6 +58,23 @@ namespace MudBlazor.UnitTests.Components
 
             bool GetExpandedState() => comp.FindComponent<MudCollapse>().Instance.Expanded;
         }
+
+        /// <summary>
+        /// The expand/collapse icon shows by default, is hidden when ExpandIcon is empty, and is still hidden by the obsolete HideExpandIcon flag.
+        /// </summary>
+        [Test]
+        public void NavGroup_ExpandIconVisibility_FollowsExpandIconAndHideExpandIcon()
+        {
+            Context.Render<MudNavGroup>().Markup.Should().Contain("mud-nav-link-expand-icon");
+
+            Context.Render<MudNavGroup>(parameters => parameters.Add(p => p.ExpandIcon, string.Empty))
+                .Markup.Should().NotContain("mud-nav-link-expand-icon");
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            Context.Render<MudNavGroup>(parameters => parameters.Add(p => p.HideExpandIcon, true))
+                .Markup.Should().NotContain("mud-nav-link-expand-icon");
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
     }
 }
 

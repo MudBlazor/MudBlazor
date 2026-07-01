@@ -358,6 +358,7 @@ namespace MudBlazor
             if (NestedList != null)
             {
                 await _expandedState.SetValueAsync(!_expandedState.Value);
+                await OnClick.InvokeAsync(eventArgs);
                 return;
             }
             if (TopLevelList is not null && !GetReadOnly())
@@ -528,6 +529,7 @@ namespace MudBlazor
             if (NestedList is not null)
             {
                 await _expandedState.SetValueAsync(!_expandedState.Value);
+                await OnClick.InvokeAsync(new MouseEventArgs());
                 return;
             }
 

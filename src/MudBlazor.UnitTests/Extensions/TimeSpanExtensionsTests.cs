@@ -51,6 +51,19 @@ public class TimeSpanExtensionsTests
     }
 
     [Test]
+    public void ToIsoString_ShouldIgnoreMilliseconds_WhenSecondsIsFalse()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(0, 10, 30, 45, 123);
+
+        // Act
+        var result = timeSpan.ToIsoString(seconds: false, ms: true);
+
+        // Assert
+        result.Should().Be("10:30");
+    }
+
+    [Test]
     public void ToAmPmHour_ShouldReturnCorrectAmPmHour_WhenTimeIsIn24HourFormat()
     {
         // Arrange

@@ -113,11 +113,17 @@ namespace MudBlazor
         public bool SuppressRenderingOnValidation { get; set; } = false;
 
         /// <summary>
-        /// Prevents this form from being submitted when <c>Enter</c> is pressed.
+        /// Prevents <c>Enter</c> from triggering the browser's implicit submission of this form.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>false</c>, the form will submit when <c>Enter</c> is pressed, and any parent dialog will close.  See: 
-        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
+        /// Defaults to <c>true</c>, which adds a hidden disabled submit button so that pressing <c>Enter</c> in an input does nothing.  This is also what stops a parent dialog from closing when <c>Enter</c> is pressed.
+        /// <para>
+        /// Setting this to <c>false</c> only removes that suppression; it does not add a submit-on-<c>Enter</c> feature, and <see cref="MudForm"/> has no submit handler.  Whether <c>Enter</c> then submits is decided by the browser's
+        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">implicit submission</see> rules: a form with a single text field submits, but a form with two or more text fields and no enabled submit button does nothing.
+        /// </para>
+        /// <para>
+        /// To run logic when <c>Enter</c> is pressed, use <see cref="OnEnterPressed"/>.  For standard submit semantics such as an <c>OnValidSubmit</c> handler, wrap your inputs in an <see cref="Microsoft.AspNetCore.Components.Forms.EditForm"/> rather than placing a submit button inside <see cref="MudForm"/>.
+        /// </para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]

@@ -152,6 +152,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
+        [Obsolete("Set ExpandIcon to an empty string to hide the expand/collapse icon instead. This property will be removed in v10.")]
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public bool HideExpandIcon { get; set; }
@@ -170,11 +171,11 @@ namespace MudBlazor
         /// The icon for expanding and collapsing this group.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.  Only shows when <see cref="HideExpandIcon"/> is <c>false</c>.
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.  Set to <c>null</c> or an empty string to hide the expand/collapse icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public string ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        public string? ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The content within this group.

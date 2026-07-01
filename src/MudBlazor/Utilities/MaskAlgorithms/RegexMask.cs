@@ -39,7 +39,7 @@ public class RegexMask : BaseMask
     /// <param name="regex">The regular expression used to validate inputs.  Must begin with <c>^</c> and end with <c>$</c>.</param>
     /// <param name="mask">The structure of the accepted input.  When <c>null</c>, the regular expression is used for the mask.</param>
     /// <remarks>
-    /// The regular expression must be able to match partial inputs, must begin with <c>^</c>, and must end with <c>$</c> to work properly (e.g. <c>^[0-9]+$</c>).<br />
+    /// The regular expression must be able to match partial inputs, must begin with <c>^</c>, and must end with <c>$</c> to work properly (e.g. <c>^[0-9]+$</c>). Use open-ended quantifiers like <c>^[0-9]{0,5}$</c>, not exact ones like <c>^[0-9]{5}$</c>, which never match a shorter prefix and block all input.<br />
     /// Consider using <see cref="BlockMask"/> to generate the regular expression automatically.
     /// </remarks>
     public RegexMask(string regex, string? mask = null)

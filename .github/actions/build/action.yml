@@ -14,13 +14,13 @@ runs:
 
     # We try to restore from our 'format-check' job cache if available because it contains all dependencies
     - name: Cache NuGet packages
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v6
       with:
         key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
         path: ${{ env.NUGET_PACKAGES }}
 
     - name: Cache Bun binary
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         # We use the hash of 'Directory.Build.props' because the version is defined there
         key: ${{ github.repository }}-bun-binary-${{ hashFiles('**/Directory.Build.props') }}
