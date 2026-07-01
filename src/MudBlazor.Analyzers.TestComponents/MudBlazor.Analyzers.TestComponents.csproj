@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>MudBlazor.Analyzers.TestComponents</RootNamespace>
     <Nullable>enable</Nullable>
+    <!-- These fixtures deliberately use component parameters (including the now-[Obsolete] Text, #12556) as analyzer inputs. The analyzer tests assert on the exact diagnostics these produce, so the source must not change; suppress the deprecation warning here instead. -->
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

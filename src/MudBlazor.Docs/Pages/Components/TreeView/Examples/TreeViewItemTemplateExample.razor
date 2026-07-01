@@ -9,7 +9,7 @@
                 var presenter = context as TreeItemPresenter;
             }
             <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
-                             Icon="@context.Icon" Text="@context.Text" EndText="@presenter?.Number?.ToString()" EndTextTypo="@Typo.caption" />
+                             Icon="@context.Icon" EndText="@presenter?.Number?.ToString()" EndTextTypo="@Typo.caption" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>

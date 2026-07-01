@@ -10,19 +10,19 @@
 
 <MudStack Row="true" Justify="Justify.Center">
     <MudRadioGroup T="bool" @bind-Value="@_row">
-        <MudRadio Value="false" Dense="true">Column</MudRadio>
-        <MudRadio Value="true" Dense="true">Row</MudRadio>
+        <MudRadio Value='"false"' Dense="true">Column</MudRadio>
+        <MudRadio Value='"true"' Dense="true">Row</MudRadio>
     </MudRadioGroup>
 </MudStack>
 
 <MudStack Row="true">
     <MudChipSet T="string" CheckMark Class="d-flex justify-center">
-        <MudChip Text="Justify Start" OnClick="@(() => _justify = Justify.FlexStart)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
-        <MudChip Text="Justify End" OnClick="@(() => _justify = Justify.FlexEnd)" SelectedColor="Color.Primary" Variant="Variant.Text" />
+        <MudChip Value='"Justify Start"' OnClick="@(() => _justify = Justify.FlexStart)" SelectedColor="Color.Primary" Variant="Variant.Text" Default="true" />
+        <MudChip Value='"Justify End"' OnClick="@(() => _justify = Justify.FlexEnd)" SelectedColor="Color.Primary" Variant="Variant.Text" />
     </MudChipSet>
     <MudChipSet T="string" CheckMark Class="d-flex justify-center">
-        <MudChip Text="Align Start" OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
-        <MudChip Text="Align End" OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Secondary" Variant="Variant.Text" />
+        <MudChip Value='"Align Start"' OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Secondary" Variant="Variant.Text" Default="true" />
+        <MudChip Value='"Align End"' OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Secondary" Variant="Variant.Text" />
     </MudChipSet>
 </MudStack>
 

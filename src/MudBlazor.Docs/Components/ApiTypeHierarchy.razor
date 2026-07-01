@@ -1,6 +1,6 @@
 ﻿<MudTreeView Class="api-type-hierarchy" T="DocumentedType" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
     <ItemTemplate>
-        <MudTreeViewItem T="DocumentedType" Expanded="@context.Expanded" Text="@context.Text" Items="@context.Children" ReadOnly>
+        <MudTreeViewItem T="DocumentedType" Expanded="@context.Expanded" Items="@context.Children" ReadOnly>
             <Content>
                 <MudIcon Icon="@GetIcon(context)" Size="Size.Small" />
 

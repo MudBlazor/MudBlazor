@@ -3,6 +3,10 @@
 @typeparam T
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
+@* Text is obsolete (removed in v10, #12556) but still rendered here for v9 back-compat. *@
+@{
+#pragma warning disable CS0618
+}
 
 <div class="mud-chip-container"
      id="@_chipContainerId"

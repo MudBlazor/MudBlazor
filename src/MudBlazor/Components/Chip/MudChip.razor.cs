@@ -331,8 +331,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// The text label for the chip.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.  This will be shown so long as <see cref="ChildContent"/> is not set.
+    /// Deprecated and removed in v10. Set <see cref="Value"/> instead, and use <see cref="ChildContent"/> when the displayed text differs from the value. See https://github.com/MudBlazor/MudBlazor/issues/12556.<br />
+    /// This will be shown so long as <see cref="ChildContent"/> is not set.
     /// </remarks>
+    [Obsolete("Text is being removed in v10; set Value instead, and use ChildContent when the displayed text differs from the value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
     [Parameter]
     [Category(CategoryTypes.Chip.Behavior)]
     public string? Text { get; set; }
@@ -393,8 +395,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     internal T? GetValue()
     {
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
         if (typeof(T) == typeof(string) && Value is null && Text is not null)
             return (T)(object)Text;
+#pragma warning restore CS0618
 
         return Value;
     }

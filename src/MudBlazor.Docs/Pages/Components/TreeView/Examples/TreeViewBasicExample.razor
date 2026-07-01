@@ -1,11 +1,19 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudTreeView T="string" ReadOnly>
-    <MudTreeViewItem Text="Getting Started">
-        <MudTreeViewItem Text="Installation" />
+    <MudTreeViewItem Value='"Getting Started"'>
+        <MudTreeViewItem Value='"Installation"' />
     </MudTreeViewItem>
     <MudTreeViewItem Value='"Components"'>
-        <MudTreeViewItem Text="Avatar" Value='"MudAvatar"' />
-        <MudTreeViewItem Text="Button" Value='"MudButton"' />
+        <MudTreeViewItem Value='"MudAvatar"'>
+            <BodyContent>
+                <MudText Class="mud-treeview-item-label">Avatar</MudText>
+            </BodyContent>
+        </MudTreeViewItem>
+        <MudTreeViewItem Value='"MudButton"'>
+            <BodyContent>
+                <MudText Class="mud-treeview-item-label">Button</MudText>
+            </BodyContent>
+        </MudTreeViewItem>
     </MudTreeViewItem>
 </MudTreeView>

@@ -23,7 +23,7 @@
 			}
 		</ChildContent>
 		<ItemRenderer>
-            <MudListItem T="string" Text="@($"{context.Name} ({context.Order})")" />
+            <MudListItem T="string" Value="@($"{context.Name} ({context.Order})")">@($"{context.Name} ({context.Order})")</MudListItem>
 		</ItemRenderer>
 	</MudDropContainer>
 </div>

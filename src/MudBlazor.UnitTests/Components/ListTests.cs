@@ -5,6 +5,9 @@ using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
 using NUnit.Framework;
 
+// ListRender exercises the obsolete Text + SecondaryText render path (Text removed in v10, #12556); SecondaryText only renders via the Text branch, and it still works in v9.
+#pragma warning disable CS0618
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
@@ -20,6 +23,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("Roger Waters");
             comp.Markup.Should().NotContain("High Hopes");
             await listItem.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, (Microsoft.AspNetCore.Components.RenderFragment)null)
                 .Add(x => x.Text, "Roger Waters")
                 .Add(x => x.SecondaryText, "High Hopes"));
             comp.Markup.Should().NotContain("Sparkling Water");
@@ -99,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Milk", "Cafe Latte"]));
             var list = comp.FindComponent<MudList<string>>().Instance;
             comp.Find("p.selected-values").TrimmedText().Should().Be("Cafe Latte, Milk");
-            var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
+            var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Value == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
             GetCheckBox("Milk").ReadValue.Should().Be(true);
             GetCheckBox("Cafe Latte").ReadValue.Should().Be(true);
         }
@@ -109,15 +113,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<ListMultiSelectionTest>(self => self.Add(x => x.SelectedValues, ["Apple Juice", "Orange Juice"]));
             var list = comp.FindComponent<MudList<string>>().Instance;
-            var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
+            var GetCheckBox = (string text) => comp.FindComponents<MudListItem<string>>().FirstOrDefault(x => x.Instance.Value == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
             comp.Find("p.selected-values").TrimmedText().Should().Be("Apple Juice, Orange Juice");
             GetCheckBox("Apple Juice").ReadValue.Should().Be(true);
             GetCheckBox("Orange Juice").ReadValue.Should().Be(true);
             // attempt to click disabled items: selection state must not change
             var appleItem = comp.FindComponents<MudListItem<string>>()
-                .FirstOrDefault(x => x.Instance.Text == "Apple Juice");
+                .FirstOrDefault(x => x.Instance.Value == "Apple Juice");
             var orangeItem = comp.FindComponents<MudListItem<string>>()
-                .FirstOrDefault(x => x.Instance.Text == "Orange Juice");
+                .FirstOrDefault(x => x.Instance.Value == "Orange Juice");
             await appleItem.Find("div.mud-list-item").ClickAsync();
             await orangeItem.Find("div.mud-list-item").ClickAsync();
             // after click attempts, disabled items should remain selected
@@ -134,53 +138,53 @@ namespace MudBlazor.UnitTests.Components
             var list2 = comp.FindComponents<MudList<string>>().FirstOrDefault(x => x.Instance.Class == "list-2");
             list1.FindComponents<MudListItem<string>>().Count.Should().Be(8);
             var GetCheckBox = (IRenderedComponent<MudList<string>> list, string text) => list.FindComponents<MudListItem<string>>()
-                        .FirstOrDefault(x => x.Instance.Text == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
+                        .FirstOrDefault(x => x.Instance.Value == text)?.FindComponent<MudCheckBox<bool?>>().Instance;
             var Select = async (IRenderedComponent<MudList<string>> list, string text) =>
                         await list.FindComponents<MudListItem<string>>()
-                        .FirstOrDefault(x => x.Instance.Text == text).Find("div.mud-list-item").ClickAsync();
+                        .FirstOrDefault(x => x.Instance.Value == text).Find("div.mud-list-item").ClickAsync();
             // click water on list1
-            await Select(list1, "Sparkling Water");
+            await Select(list1, "Carbonated H²O");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O");
             GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(true);
-            GetCheckBox(list1, "English Tea").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Carbonated H²O").ReadValue.Should().Be(true);
+            GetCheckBox(list1, "Earl Grey").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Wu Long Cha").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Irish Coffee").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Double Espresso").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Milk").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "Sparkling Water").ReadValue.Should().Be(true);
-            GetCheckBox(list2, "English Tea").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Carbonated H²O").ReadValue.Should().Be(true);
+            GetCheckBox(list2, "Earl Grey").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Wu Long Cha").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
             // click Irish on list2
             await Select(list2, "Irish Coffee");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Carbonated H²O, Irish Coffee");
             GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(true);
-            GetCheckBox(list1, "English Tea").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Carbonated H²O").ReadValue.Should().Be(true);
+            GetCheckBox(list1, "Earl Grey").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Wu Long Cha").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Irish Coffee").ReadValue.Should().Be(true);
             GetCheckBox(list1, "Double Espresso").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Milk").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "Sparkling Water").ReadValue.Should().Be(true);
-            GetCheckBox(list2, "English Tea").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Carbonated H²O").ReadValue.Should().Be(true);
+            GetCheckBox(list2, "Earl Grey").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Wu Long Cha").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(true);
             GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
             // click off water on list2
-            await Select(list2, "Sparkling Water");
+            await Select(list2, "Carbonated H²O");
             comp.Find("p.selected-values").TrimmedText().Should().Be("Irish Coffee");
             GetCheckBox(list1, "Milk").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "Sparkling Water").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "English Tea").ReadValue.Should().Be(false);
-            GetCheckBox(list1, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Carbonated H²O").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Earl Grey").ReadValue.Should().Be(false);
+            GetCheckBox(list1, "Wu Long Cha").ReadValue.Should().Be(false);
             GetCheckBox(list1, "Irish Coffee").ReadValue.Should().Be(true);
             GetCheckBox(list1, "Double Espresso").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Milk").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "Sparkling Water").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "English Tea").ReadValue.Should().Be(false);
-            GetCheckBox(list2, "Chinese Tea").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Carbonated H²O").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Earl Grey").ReadValue.Should().Be(false);
+            GetCheckBox(list2, "Wu Long Cha").ReadValue.Should().Be(false);
             GetCheckBox(list2, "Irish Coffee").ReadValue.Should().Be(true);
             GetCheckBox(list2, "Double Espresso").ReadValue.Should().Be(false);
         }
@@ -448,12 +452,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .AddChildContent<MudListItem<string>>(item => item
-                    .Add(x => x.Text, "Custom attrs")
+                    .Add(x => x.Value, "Custom attrs")
                     .AddUnmatched("id", "custom-id")
                     .AddUnmatched("tabindex", "-1")
                     .AddUnmatched("data-test", "custom-marker"))
                 .AddChildContent<MudListItem<string>>(item => item
-                    .Add(x => x.Text, "Default item"))
+                    .Add(x => x.Value, "Default item"))
             );
 
             var customIdItem = comp.Find("div.mud-list-item[data-test='custom-marker']");

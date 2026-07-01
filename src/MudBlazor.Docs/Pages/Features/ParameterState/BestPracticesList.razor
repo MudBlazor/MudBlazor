@@ -3,9 +3,9 @@
         <MudListSubheader>
             Parameter Do's
         </MudListSubheader>
-        @foreach (var item in Dos) 
+        @foreach (var item in Dos)
         {
-            <MudListItem Text="@item" />
+            <MudListItem Value="@item">@item</MudListItem>
         }
     </MudList>
 </MudPaper>
@@ -17,7 +17,7 @@
         </MudListSubheader>
         @foreach (var item in Donts)
         {
-            <MudListItem Text="@item" />
+            <MudListItem Value="@item">@item</MudListItem>
         }
     </MudList>
 </MudPaper>

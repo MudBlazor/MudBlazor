@@ -1,13 +1,15 @@
 ﻿<MudTreeView Items="@_treeItems" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="this.SelectedValue">
     <ItemTemplate>
-        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" />
+        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value">
+            <BodyContent Context="node">@context.Text</BodyContent>
+        </MudTreeViewItem>
     </ItemTemplate>
 </MudTreeView>
 
 <MudChipSet T="MyItem" @bind-SelectedValue="@SelectedValue" Color="Color.Primary" Variant="Variant.Text">
     @foreach (var item in _myItems)
     {
-        <MudChip Value="item" Text="@item.Name" />
+        <MudChip Value="item">@item.Name</MudChip>
     }
 </MudChipSet>
 

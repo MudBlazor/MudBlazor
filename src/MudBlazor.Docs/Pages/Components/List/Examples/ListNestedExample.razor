@@ -6,7 +6,8 @@
         <MudListSubheader>
             Nested List Items
         </MudListSubheader>
-        <MudListItem Icon="@Icons.Material.Filled.Inbox" Text="Inbox" Expanded>
+        <MudListItem Icon="@Icons.Material.Filled.Inbox" Value='"Inbox"' Expanded>
+            <ChildContent>Inbox</ChildContent>
             <NestedList>
                 <MudListItem Icon="@Icons.Material.Filled.StarRate">
                     Starred
@@ -16,7 +17,8 @@
                 </MudListItem>
             </NestedList>
         </MudListItem>
-        <MudListItem Icon="@Icons.Material.Filled.Send" Text="Sent mail" @bind-Expanded="_expanded">
+        <MudListItem Icon="@Icons.Material.Filled.Send" Value='"Sent mail"' @bind-Expanded="_expanded">
+            <ChildContent>Sent mail</ChildContent>
             <NestedList>
                 <MudListItem>Re: Meeting tomorrow</MudListItem>
                 <MudListItem>Fwd: JavaScript memes xD</MudListItem>

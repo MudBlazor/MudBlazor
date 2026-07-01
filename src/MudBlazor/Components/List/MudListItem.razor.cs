@@ -57,6 +57,10 @@ namespace MudBlazor
         /// <summary>
         /// The text to display.
         /// </summary>
+        /// <remarks>
+        /// Deprecated and removed in v10. Set <see cref="Value"/> instead, and use <see cref="ChildContent"/> when the displayed text differs from the value. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// </remarks>
+        [Obsolete("Text is being removed in v10; set Value instead, and use ChildContent when the displayed text differs from the value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? Text { get; set; }
@@ -439,10 +443,12 @@ namespace MudBlazor
 
         internal T? GetValue()
         {
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
             if (typeof(T) == typeof(string) && Value is null && Text is not null)
             {
                 return (T)(object)Text;
             }
+#pragma warning restore CS0618
             return Value;
         }
 
