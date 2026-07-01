@@ -14,9 +14,8 @@ namespace MudBlazor.Interfaces
         /// Validates every form control, awaiting async validators, then refreshes <see cref="IsValid"/> and <see cref="Errors"/>.
         /// </summary>
         /// <remarks>
-        /// The synchronous <see cref="IsValid"/> getter cannot await, so callers that must react to async
-        /// validation (such as gating a commit) should await this first, then read <see cref="Errors"/>.
-        /// The default keeps existing external implementers source-compatible.
+        /// The synchronous <see cref="IsValid"/> getter cannot await, so callers that must react to async validation should await this first, then read <see cref="Errors"/>.
+        /// The default implementation keeps existing external implementers source-compatible.
         /// </remarks>
         public Task ValidateAsync() => Task.CompletedTask;
 

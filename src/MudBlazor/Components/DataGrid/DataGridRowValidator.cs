@@ -25,8 +25,7 @@ namespace MudBlazor
         {
             get
             {
-                // IForm.IsValid is synchronous. Drive validation without awaiting; synchronous validators
-                // complete inline, and any exception is forwarded to MudGlobal.UnhandledExceptionHandler.
+                // IForm.IsValid must remain synchronous, so drive validation without awaiting; exceptions are forwarded to MudGlobal.UnhandledExceptionHandler.
                 ValidateAsync().CatchAndLog();
                 return Errors.Length <= 0;
             }
@@ -81,7 +80,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Checks this row for any validation errors.
+        /// Checks this row for any validation errors, awaiting asynchronous validators before collecting their errors.
         /// </summary>
         public async Task ValidateAsync()
         {

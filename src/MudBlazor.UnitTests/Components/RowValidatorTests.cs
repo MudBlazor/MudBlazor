@@ -62,8 +62,7 @@ public class RowValidatorTests
     }
 
     /// <summary>
-    /// An <see cref="IForm"/> implementation that predates <see cref="IForm.ValidateAsync"/> must keep
-    /// compiling and running: the default implementation completes without validating anything.
+    /// An <see cref="IForm"/> implementation that predates <see cref="IForm.ValidateAsync"/> must keep compiling and running: the default implementation completes without validating anything.
     /// </summary>
     [Test]
     public async Task IForm_ValidateAsync_DefaultImplementation_IsANoOp()
@@ -105,8 +104,7 @@ public class RowValidatorTests
     }
 
     /// <summary>
-    /// A form component whose async validation only produces its errors after the
-    /// awaited continuation resumes, so a fire-and-forget caller would miss them.
+    /// A form component whose async validation only produces its errors after the awaited continuation resumes, so a fire-and-forget caller would miss them.
     /// </summary>
     private sealed class TestFormComponent : IFormComponent
     {

@@ -20,7 +20,7 @@
 </MudTable>
 
 @code {
-    public static string __description__ = "Inline Edit Table: an async validator must block the commit";
+    public static string __description__ = "Inline Edit Table: async validation gates the commit";
 
     private readonly List<Item> _items = [new Item { Name = "A" }];
 
@@ -28,11 +28,11 @@
 
     public int CommitCount { get; private set; }
 
-    // Only produces its error after an awaited continuation, so a fire-and-forget caller reads it stale.
+    // Only produces its result after an awaited continuation, so a fire-and-forget caller reads it stale.
     private async Task<string?> ValidateNameAsync(string value)
     {
         await Task.Yield();
-        return "always invalid (async)";
+        return value == "B" ? null : "invalid (async)";
     }
 
     private void OnRowCommit(object? item) => CommitCount++;

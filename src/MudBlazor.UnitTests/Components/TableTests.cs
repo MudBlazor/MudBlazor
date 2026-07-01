@@ -1598,24 +1598,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A row whose editor uses an asynchronous validation function must not commit while invalid.
-        /// The commit path awaits <see cref="TableRowValidator.ValidateAsync"/> instead of reading the
-        /// synchronous <c>IsValid</c>, which used to report async validators as valid.
+        /// A row whose editor uses an asynchronous validation function must not commit while invalid, and must commit once valid.
+        /// The commit path awaits <see cref="TableRowValidator.ValidateAsync"/> instead of reading the synchronous <c>IsValid</c>, which reported async validators as valid.
         /// </summary>
         [Test]
-        public async Task TableInlineEdit_AsyncValidation_BlocksCommit()
+        public async Task TableInlineEdit_AsyncValidation_GatesCommit()
         {
             var comp = Context.Render<TableInlineEditAsyncValidationTest>();
 
-            // Enter edit mode.
             await comp.Find("button[aria-label=\"Edit row\"]").ClickAsync();
 
-            // The async validator always fails, so committing must be rejected.
+            // The initial value fails the async rule, so committing is rejected and the row stays in edit mode.
             await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
-
             comp.Instance.CommitCount.Should().Be(0);
-            // The row is still being edited (its input is still present).
-            comp.FindAll("input").Count.Should().BeGreaterThan(0);
+            comp.FindAll("input").Should().NotBeEmpty();
+
+            // A value that passes the async rule commits and leaves edit mode.
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "B" });
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(1);
+            comp.FindAll("input").Should().BeEmpty();
         }
 
         [Theory]
