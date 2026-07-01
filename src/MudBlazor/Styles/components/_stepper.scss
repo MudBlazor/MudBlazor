@@ -145,15 +145,14 @@
           text-align: center;
 
           .mud-step-label-content-title {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal;
+            overflow-wrap: break-word;
           }
         }
       }
 
       > .mud-stepper-nav > .mud-stepper-nav-connector {
-        margin: 35px -67px 0;
+        margin: 35px 0 0;
         align-self: flex-start;
       }
     }
