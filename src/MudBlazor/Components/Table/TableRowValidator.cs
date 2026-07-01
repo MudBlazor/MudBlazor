@@ -14,16 +14,12 @@ namespace MudBlazor
         /// <summary>
         /// Whether the table row is valid.
         /// </summary>
-        public bool IsValid
-        {
-            get
-            {
-                // IForm.IsValid is synchronous. Drive validation without awaiting; synchronous validators
-                // complete inline, and any exception is forwarded to MudGlobal.UnhandledExceptionHandler.
-                ValidateAsync().CatchAndLog();
-                return Errors.Length <= 0;
-            }
-        }
+        /// <remarks>
+        /// A pure read of the last <see cref="ValidateAsync"/> result; it no longer drives validation.
+        /// A synchronous getter cannot await async validators, so it reported invalid rows as valid.
+        /// Await <see cref="ValidateAsync"/> before reading this.
+        /// </remarks>
+        public bool IsValid => Errors.Length <= 0;
 
         /// <summary>
         /// The validation errors for this row.
