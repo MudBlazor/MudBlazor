@@ -86,6 +86,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
+        [Obsolete("Set Icon to an empty string to hide the expand icon instead. This property will be removed in v10.")]
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool HideIcon { get; set; }
@@ -94,11 +95,11 @@ namespace MudBlazor
         /// The icon for expanding this panel.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.  Set to <c>null</c> or an empty string to hide the icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+        public string? Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// Removes vertical padding from the panel.
