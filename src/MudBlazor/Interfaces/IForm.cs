@@ -15,7 +15,7 @@ namespace MudBlazor.Interfaces
         /// </summary>
         /// <remarks>
         /// The synchronous <see cref="IsValid"/> getter cannot await, so callers that must react to async
-        /// validation (such as gating a commit) should await this first, then read <see cref="IsValid"/>.
+        /// validation (such as gating a commit) should await this first, then read <see cref="Errors"/>.
         /// The default keeps existing external implementers source-compatible.
         /// </remarks>
         public Task ValidateAsync() => Task.CompletedTask;

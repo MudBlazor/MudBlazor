@@ -305,14 +305,15 @@ namespace MudBlazor
 
         private async Task FinishEdit(MouseEventArgs ev)
         {
-            // Validate the row, awaiting any async validators, before reading validity.
-            // IsValid is a synchronous getter, so gating the commit on it alone let an async validator's
-            // errors arrive too late and an invalid row could commit.
+            // Await the row's validation so async validators finish before validity is read.
+            // Gating on the synchronous IsValid let an async validator's errors arrive after the check,
+            // committing an invalid row. Read Errors directly: the IsValid getter starts a fresh
+            // fire-and-forget validation pass, which would clear the errors gathered here.
             var validator = Context?.Table?.Validator;
             if (validator is not null)
             {
                 await validator.ValidateAsync();
-                if (!validator.IsValid) return;
+                if (validator.Errors.Length > 0) return;
             }
 
             // Set the item value to cancel edit mode
