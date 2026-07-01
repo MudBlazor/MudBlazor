@@ -205,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
             var originalHandler = MudGlobal.UnhandledExceptionHandler;
             try
             {
-                Exception observed = null;
+                Exception? observed = null;
                 MudGlobal.UnhandledExceptionHandler = ex => observed = ex;
 
                 var timeProvider = Context.AddFakeTimeProvider();
@@ -214,9 +214,15 @@ namespace MudBlazor.UnitTests.Components
                     .Add(p => p.OnDebounceIntervalElapsed, (string _) => throw new InvalidOperationException("from debounced callback")));
 
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Some Value" });
-                timeProvider.Advance(TimeSpan.FromMilliseconds(200));
 
-                await comp.WaitForAssertionAsync(() => observed.Should().BeOfType<InvalidOperationException>());
+                // The debounce delay registers with the time provider asynchronously, so keep advancing until the callback has run.
+                for (var i = 0; i < 100 && observed is null; i++)
+                {
+                    timeProvider.Advance(TimeSpan.FromMilliseconds(200));
+                    await Task.Delay(10);
+                }
+
+                observed.Should().BeOfType<InvalidOperationException>();
             }
             finally
             {
