@@ -197,6 +197,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// An exception thrown by the debounced update must reach <see cref="MudGlobal.UnhandledExceptionHandler"/> instead of vanishing with the fire-and-forget task.
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextField_CallbackException_ReachesUnhandledExceptionHandler()
+        {
+            var originalHandler = MudGlobal.UnhandledExceptionHandler;
+            try
+            {
+                Exception observed = null;
+                MudGlobal.UnhandledExceptionHandler = ex => observed = ex;
+
+                var timeProvider = Context.AddFakeTimeProvider();
+                var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                    .Add(p => p.DebounceInterval, 200d)
+                    .Add(p => p.OnDebounceIntervalElapsed, (string _) => throw new InvalidOperationException("from debounced callback")));
+
+                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Some Value" });
+                timeProvider.Advance(TimeSpan.FromMilliseconds(200));
+
+                await comp.WaitForAssertionAsync(() => observed.Should().BeOfType<InvalidOperationException>());
+            }
+            finally
+            {
+                MudGlobal.UnhandledExceptionHandler = originalHandler;
+            }
+        }
+
+        /// <summary>
         /// DebounceInterval updates with epsilon-equivalent values should not break debouncing
         /// </summary>
         [Test]

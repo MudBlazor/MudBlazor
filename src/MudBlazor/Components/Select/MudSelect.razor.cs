@@ -991,7 +991,7 @@ namespace MudBlazor
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
-                SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
+                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
             }
         }
 

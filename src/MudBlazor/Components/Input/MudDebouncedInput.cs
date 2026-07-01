@@ -71,8 +71,9 @@ namespace MudBlazor
                 return base.UpdateValuePropertyAsync(updateText);
             }
 
-            // Debounce the update - use fire-and-forget pattern to match the old Timer implementation.
-            _ = _debouncer.DebounceAsync(OnDebouncedUpdate);
+            // Debounce the update; kept fire-and-forget to match the old Timer implementation.
+            // CatchAndLog forwards exceptions from the debounced callback to MudGlobal.UnhandledExceptionHandler instead of discarding them.
+            _debouncer.DebounceAsync(OnDebouncedUpdate).CatchAndLog();
             return Task.CompletedTask;
         }
 

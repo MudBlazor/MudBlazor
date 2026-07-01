@@ -235,11 +235,16 @@ namespace MudBlazor
 
                 await _visibleState.SetValueAsync(true);
 
-                // Do not await this!
-                _reference.Result.ContinueWith(t =>
+                // Reset the visible state when the dialog closes; not awaited so ShowAsync doesn't block on the dialog's lifetime.
+                // The old ContinueWith produced a Task<Task> whose inner task was never observed, so exceptions from SetValueAsync were lost.
+                var reference = _reference;
+                HideWhenClosedAsync().CatchAndLog();
+
+                async Task HideWhenClosedAsync()
                 {
-                    return InvokeAsync(() => _visibleState.SetValueAsync(false));
-                }).CatchAndLog();
+                    await reference.Result;
+                    await InvokeAsync(() => _visibleState.SetValueAsync(false));
+                }
             }
             finally
             {

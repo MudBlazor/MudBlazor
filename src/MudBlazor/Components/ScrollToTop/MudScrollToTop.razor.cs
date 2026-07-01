@@ -127,7 +127,13 @@ namespace MudBlazor
         /// </summary>
         /// <param name="sender">The <see cref="ScrollListener"/> instance.</param>
         /// <param name="e">Information about the position of the scrolled element.</param>
-        private async void ScrollListener_OnScroll(object? sender, ScrollEventArgs e)
+        private void ScrollListener_OnScroll(object? sender, ScrollEventArgs e)
+        {
+            // The event requires a void handler; CatchAndLog forwards exceptions to MudGlobal.UnhandledExceptionHandler instead of letting async void lose them.
+            OnScrollAsync(e).CatchAndLog();
+        }
+
+        private async Task OnScrollAsync(ScrollEventArgs e)
         {
             await OnScroll.InvokeAsync(e);
 
