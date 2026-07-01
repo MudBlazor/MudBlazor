@@ -1597,6 +1597,27 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// A row whose editor uses an asynchronous validation function must not commit while invalid.
+        /// The commit path awaits <see cref="TableRowValidator.ValidateAsync"/> instead of reading the
+        /// synchronous <c>IsValid</c>, which used to report async validators as valid.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEdit_AsyncValidation_BlocksCommit()
+        {
+            var comp = Context.Render<TableInlineEditAsyncValidationTest>();
+
+            // Enter edit mode.
+            await comp.Find("button[aria-label=\"Edit row\"]").ClickAsync();
+
+            // The async validator always fails, so committing must be rejected.
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+
+            comp.Instance.CommitCount.Should().Be(0);
+            // The row is still being edited (its input is still present).
+            comp.FindAll("input").Count.Should().BeGreaterThan(0);
+        }
+
         [Theory]
         [TestCase(TableApplyButtonPosition.StartAndEnd)]
         [TestCase(TableApplyButtonPosition.Start)]

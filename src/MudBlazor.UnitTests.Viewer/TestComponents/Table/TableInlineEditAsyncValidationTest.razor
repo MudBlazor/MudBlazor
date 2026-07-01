@@ -1,0 +1,44 @@
+﻿@using System.Threading.Tasks
+
+<MudTable @ref="Table" T="Item" Items="_items" Editable="true" CanCancelEdit="true"
+          EditTrigger="TableEditTrigger.EditButton"
+          ApplyButtonPosition="TableApplyButtonPosition.End"
+          EditButtonPosition="TableEditButtonPosition.End"
+          RowEditCommit="OnRowCommit">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField @bind-Value="@context.Name"
+                          Validation="@(new Func<string, Task<string?>>(ValidateNameAsync))" />
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Inline Edit Table: an async validator must block the commit";
+
+    private readonly List<Item> _items = [new Item { Name = "A" }];
+
+    public MudTable<Item> Table { get; private set; } = null!;
+
+    public int CommitCount { get; private set; }
+
+    // Only produces its error after an awaited continuation, so a fire-and-forget caller reads it stale.
+    private async Task<string?> ValidateNameAsync(string value)
+    {
+        await Task.Yield();
+        return "always invalid (async)";
+    }
+
+    private void OnRowCommit(object? item) => CommitCount++;
+
+    public class Item
+    {
+        public string Name { get; set; } = "";
+    }
+}
