@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MudBlazor.Interfaces;
 
@@ -17,7 +18,9 @@ namespace MudBlazor
         {
             get
             {
-                Validate();
+                // IForm.IsValid is synchronous, so drive validation without awaiting.
+                // Synchronous validators complete inline; asynchronous ones should use ValidateAsync.
+                _ = ValidateAsync();
                 return Errors.Length <= 0;
             }
         }
@@ -58,12 +61,22 @@ namespace MudBlazor
         /// <summary>
         /// Checks for data errors within this row.
         /// </summary>
+        [Obsolete("Use ValidateAsync instead.")]
+        [ExcludeFromCodeCoverage]
         public void Validate()
+        {
+            _ = ValidateAsync();
+        }
+
+        /// <summary>
+        /// Checks for data errors within this row.
+        /// </summary>
+        public async Task ValidateAsync()
         {
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                formControl.ValidateAsync();
+                await formControl.ValidateAsync();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);
