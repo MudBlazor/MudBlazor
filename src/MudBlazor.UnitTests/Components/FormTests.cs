@@ -628,6 +628,83 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #13381: Blurring after a failed submit must not duplicate the external validator's message,
+        /// which would show twice in a ValidationSummary.
+        /// </summary>
+        [Test]
+        public async Task EditForm_SubmitThenBlur_NoDuplicateMessage()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var editContext = comp.Instance.EditContext;
+
+            editContext.Validate().Should().BeFalse();
+            editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
+
+            // The external message is still in its store; blur must defer to it instead of staging a copy.
+            await comp.FindAll("input")[0].BlurAsync();
+            editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
+            comp.FindComponents<MudTextField<string>>()[0].Instance.HasErrors.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// #13381: ResetValidationAsync must clear a blur-staged message so it cannot resurface
+        /// on the next validation-state notification from another field.
+        /// </summary>
+        [Test]
+        public async Task EditForm_ResetValidation_ClearsStagedMessage()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var nameField = comp.FindComponents<MudTextField<string>>()[0].Instance;
+
+            await comp.FindAll("input")[0].BlurAsync();
+            nameField.HasErrors.Should().BeTrue();
+
+            await comp.InvokeAsync(() => nameField.ResetValidationAsync());
+            nameField.HasErrors.Should().BeFalse();
+
+            // A validation-state event from another field must not resurrect the reset error.
+            await comp.FindAll("input")[1].BlurAsync();
+            nameField.HasErrors.Should().BeFalse();
+            comp.Instance.EditContext.GetValidationMessages().Should().NotContain("Name is required");
+        }
+
+        /// <summary>
+        /// #13381: On submit the external validators own the verdict; a blur-staged component-Required
+        /// error must not linger as a stale display after a successful submit.
+        /// </summary>
+        [Test]
+        public async Task EditForm_SubmitWithComponentRequiredError_ReconcilesDisplay()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var otherField = comp.FindComponents<MudTextField<string>>()[1].Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "Sam" });
+            await comp.FindAll("input")[1].BlurAsync();
+            otherField.HasErrors.Should().BeTrue();
+
+            comp.Instance.EditContext.Validate().Should().BeTrue("only external validators decide the submit verdict");
+            await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeFalse("the staged error must be reconciled, not left as a stale display"));
+        }
+
+        /// <summary>
+        /// #13381: Emptying a field guarded only by the component's Required parameter keeps its error
+        /// even though the external validators have nothing to say about it.
+        /// </summary>
+        [Test]
+        public async Task EditForm_ComponentRequired_EmptiedValue_ShowsError()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var otherField = comp.FindComponents<MudTextField<string>>()[1].Instance;
+
+            await comp.FindAll("input")[1].ChangeAsync(new ChangeEventArgs { Value = "x" });
+            otherField.HasErrors.Should().BeFalse();
+
+            await comp.FindAll("input")[1].ChangeAsync(new ChangeEventArgs { Value = "" });
+            await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeTrue());
+            otherField.GetState(x => x.ErrorText).Should().Be("Other is required");
+        }
+
+        /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]

@@ -442,12 +442,8 @@ namespace MudBlazor
                 {
                     if (EditContext is not null)
                     {
-                        // Under a cascaded EditContext, surface MudBlazor's own assessment (Required, the
-                        // Validation delegate, For data-annotations, conversion errors) through our message
-                        // store + NotifyValidationStateChanged instead of writing ErrorState directly.
-                        // This validates on blur without marking the form dirty or firing OnFieldChanged
-                        // (#13381/#12790); OnValidationStateChanged then writes ErrorState from the merged
-                        // messages.
+                        // Surface the assessment through the message store instead of writing ErrorState directly.
+                        // OnValidationStateChanged then applies the merged messages (#13381).
                         StageEditContextValidationMessages(errors);
                     }
                     else
@@ -708,6 +704,14 @@ namespace MudBlazor
             await ErrorTextState.SetValueAsync(null);
             await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
+            _lastInternalErrors = [];
+            if (_hasStagedEditContextMessages)
+            {
+                // Otherwise the staged messages resurface on the next validation-state notification.
+                ClearStagedEditContextMessages();
+                EditContext?.NotifyValidationStateChanged();
+            }
+
             await InvokeAsync(StateHasChanged);
         }
 
@@ -731,41 +735,63 @@ namespace MudBlazor
         {
             if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
             {
-                // A genuine value change hands the field back to the external validators: drop our
-                // staged messages first so they can never duplicate what NotifyFieldChanged produces.
-                _editContextValidationMessages?.Clear(_fieldIdentifier);
+                // A genuine value change hands the field to the external validators.
+                // If they stay silent for it, restore our own assessment so it isn't lost.
+                ClearStagedEditContextMessages();
                 EditContext?.NotifyFieldChanged(_fieldIdentifier);
+                StageEditContextValidationMessages(_lastInternalErrors);
             }
         }
 
         /// <summary>
-        /// Stages this component's own validation errors into the EditContext-bound message store and
-        /// surfaces them via <see cref="EditContext.NotifyValidationStateChanged"/>. Unlike
-        /// <see cref="EditContext.NotifyFieldChanged"/>, this does not set <c>IsModified</c> or raise
-        /// <c>OnFieldChanged</c>, so a field validates on blur without the form becoming dirty (#13381/#12790).
+        /// Publishes this component's own validation errors to the EditContext through its message store.
+        /// NotifyValidationStateChanged shows them without setting IsModified or raising OnFieldChanged (#13381, #12790).
         /// </summary>
         private void StageEditContextValidationMessages(List<string> errors)
         {
-            // Without a field identity (no For / no bound member) there is nothing to key the store on.
+            // Without a field identity (no For) there is nothing to key the store on.
             if (_editContextValidationMessages is null || _fieldIdentifier.Equals(default(FieldIdentifier)))
             {
                 return;
             }
 
-            _editContextValidationMessages.Clear(_fieldIdentifier);
-            foreach (var error in errors)
+            var changed = _hasStagedEditContextMessages;
+            ClearStagedEditContextMessages();
+            _lastInternalErrors = errors;
+
+            // While an external validator holds messages for this field it is authoritative;
+            // staging ours alongside would duplicate them in a ValidationSummary.
+            if (errors.Count > 0 && !EditContext!.GetValidationMessages(_fieldIdentifier).Any())
             {
-                _editContextValidationMessages.Add(_fieldIdentifier, error);
+                foreach (var error in errors)
+                {
+                    _editContextValidationMessages.Add(_fieldIdentifier, error);
+                }
+
+                _hasStagedEditContextMessages = true;
+                changed = true;
             }
 
-            EditContext!.NotifyValidationStateChanged();
+            if (changed)
+            {
+                EditContext!.NotifyValidationStateChanged();
+            }
+        }
+
+        private void ClearStagedEditContextMessages()
+        {
+            _editContextValidationMessages?.Clear(_fieldIdentifier);
+            _hasStagedEditContextMessages = false;
         }
 
         private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
         {
-            // Full-form validation (submit) re-runs the external validators over every field, so drop
-            // our staged messages to avoid duplicating theirs in the input and the ValidationSummary.
-            _editContextValidationMessages?.Clear();
+            // Submit re-runs the external validators over every field; ours must not duplicate theirs.
+            if (_hasStagedEditContextMessages)
+            {
+                ClearStagedEditContextMessages();
+                EditContext?.NotifyValidationStateChanged();
+            }
         }
 
         /// <summary>
@@ -795,9 +821,7 @@ namespace MudBlazor
             {
                 if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
                 {
-                    // Distinct(): an external validator and our own staged assessment can momentarily
-                    // hold the same message for a field; show it once.
-                    var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).Distinct().ToArray();
+                    var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                     var hasError = errorMessages.Length > 0;
                     //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
                     await ErrorState.SetValueAsync(hasError);
@@ -841,11 +865,17 @@ namespace MudBlazor
         private EditContext? _currentEditContext;
 
         /// <summary>
-        /// MudBlazor-owned message store used to surface this component's own validation assessment
-        /// (Required, the Validation delegate, For data-annotations, conversion errors) to a cascaded
-        /// EditContext without marking the form dirty. Created when an EditContext attaches.
+        /// Surfaces this component's own validation assessment to a cascaded EditContext (#13381).
         /// </summary>
         private ValidationMessageStore? _editContextValidationMessages;
+
+        private bool _hasStagedEditContextMessages;
+
+        /// <summary>
+        /// The most recent internal assessment, kept so <see cref="EditFormValidate"/> can restore it
+        /// when the external validators produce nothing for the field.
+        /// </summary>
+        private List<string> _lastInternalErrors = [];
 
         protected override void OnParametersSet()
         {
@@ -854,9 +884,7 @@ namespace MudBlazor
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
-                // Extract validation attributes so MudBlazor can assess them itself. This now runs even
-                // under an EditContext so blur validation can stage the For data-annotations
-                // ([Required]/[MinLength]/...) without a value change (#13381).
+                // Extract validation attributes
                 // Sourced from https://stackoverflow.com/a/43076222/4839162
                 // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
                 var expression = (MemberExpression)For.Body;
@@ -868,7 +896,14 @@ namespace MudBlazor
 #pragma warning restore IL2075
                 _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
-                _fieldIdentifier = FieldIdentifier.Create(For);
+                var fieldIdentifier = FieldIdentifier.Create(For);
+                if (!_fieldIdentifier.Equals(fieldIdentifier))
+                {
+                    // Drop staged messages keyed on the previous field before rebinding.
+                    ClearStagedEditContextMessages();
+                }
+
+                _fieldIdentifier = fieldIdentifier;
                 _currentFor = For;
             }
 
@@ -890,6 +925,7 @@ namespace MudBlazor
                 _currentEditContext.OnValidationRequested -= OnValidationRequested;
                 _editContextValidationMessages?.Clear();
                 _editContextValidationMessages = null;
+                _hasStagedEditContextMessages = false;
             }
         }
 
