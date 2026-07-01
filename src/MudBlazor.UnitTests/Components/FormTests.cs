@@ -564,6 +564,70 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #13381: Blurring an empty required field inside an EditForm/EditContext must validate it -
+        /// both a data-annotation [Required] (via For) and the component's own Required parameter -
+        /// without marking the form dirty or firing OnFieldChanged (the #12790 contract).
+        /// </summary>
+        [Test]
+        public async Task EditForm_BlurEmptyRequiredField_Validates_WithoutDirtying()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var textFields = comp.FindComponents<MudTextField<string>>();
+            var nameField = textFields[0].Instance;   // guarded by data-annotation [Required]
+            var otherField = textFields[1].Instance;  // guarded by the component's Required parameter
+
+            nameField.HasErrors.Should().BeFalse();
+            otherField.HasErrors.Should().BeFalse();
+
+            // Blur the empty [Required] (data-annotation) field.
+            await comp.FindAll("input")[0].BlurAsync();
+            nameField.HasErrors.Should().BeTrue("blurring an empty [Required] field under an EditContext should validate it (#13381)");
+            nameField.GetState(x => x.ErrorText).Should().Be("Name is required");
+
+            // Blur the empty component-Required field (no data-annotation).
+            await comp.FindAll("input")[1].BlurAsync();
+            otherField.HasErrors.Should().BeTrue("blurring an empty Required field under an EditContext should validate it (#13381)");
+            otherField.GetState(x => x.ErrorText).Should().Be("Other is required");
+
+            // #12790: blur must not dirty the form nor fire OnFieldChanged.
+            comp.Instance.EditContext.IsModified().Should().BeFalse("blur validation must not mark the form dirty (#12790)");
+            comp.Instance.FieldChangedCount.Should().Be(0, "blur validation must not fire OnFieldChanged (#12790)");
+        }
+
+        /// <summary>
+        /// #13381: After a blur-triggered required error, entering a valid value clears the error.
+        /// </summary>
+        [Test]
+        public async Task EditForm_BlurRequired_ThenValidInput_ClearsError()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var nameField = comp.FindComponents<MudTextField<string>>()[0].Instance;
+
+            await comp.FindAll("input")[0].BlurAsync();
+            nameField.HasErrors.Should().BeTrue();
+
+            await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "Sam" });
+            nameField.HasErrors.Should().BeFalse("a valid value clears the blur-triggered required error (#13381)");
+        }
+
+        /// <summary>
+        /// #13381: A blur-staged message must not duplicate the external validator's message on submit.
+        /// </summary>
+        [Test]
+        public async Task EditForm_BlurThenSubmit_NoDuplicateMessage()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var editContext = comp.Instance.EditContext;
+
+            await comp.FindAll("input")[0].BlurAsync();
+
+            // Simulate submit: full-form validation runs the external DataAnnotationsValidator.
+            editContext.Validate().Should().BeFalse();
+            editContext.GetValidationMessages().Count(m => m == "Name is required")
+                .Should().Be(1, "the blur-staged message must be handed back to the external validator, not duplicated (#13381)");
+        }
+
+        /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]
