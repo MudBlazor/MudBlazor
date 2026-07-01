@@ -122,7 +122,12 @@
 
       > .mud-stepper-nav > .mud-step {
         flex-basis: 175px;
-        overflow: hidden;
+      }
+
+      // Only allow steps to collapse (and titles to truncate) when the nav is
+      // not scrollable, so the scrollable nav keeps its `min-width: fit-content`
+      // and still scrolls wide enough to show full titles.
+      > .mud-stepper-nav:not(.mud-stepper-nav-scrollable) > .mud-step {
         min-width: 0;
       }
 
@@ -138,8 +143,6 @@
         .mud-step-label-content {
           margin-top: 12px;
           text-align: center;
-          min-width: 0;
-          overflow: hidden;
 
           .mud-step-label-content-title {
             overflow: hidden;
