@@ -36,7 +36,7 @@ namespace MudBlazor
         protected MudBaseInput()
         {
             using var registerScope = CreateRegisterScope();
-#pragma warning disable CS0618 // Text/TextChanged are obsolete but remain wired up for v9 back-compat; removed in v10 (#13320)
+#pragma warning disable CS0618 // Text/TextChanged are obsolete but remain wired up for v9 back-compat; removed in v10 (#12556)
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
                 .WithEventCallback(() => TextChanged)
@@ -307,9 +307,9 @@ namespace MudBlazor
         /// The text displayed in the input.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth; bind <c>@bind-Value</c> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/13320.
+        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth; bind <c>@bind-Value</c> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/12556.
         /// </remarks>
-        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth. Bind @bind-Value instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/13320")]
+        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth. Bind @bind-Value instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
@@ -349,9 +349,9 @@ namespace MudBlazor
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. React to changes via <c>@bind-Value</c>/<see cref="ValueChanged"/> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/13320.
+        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. React to changes via <c>@bind-Value</c>/<see cref="ValueChanged"/> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/12556.
         /// </remarks>
-        [Obsolete("TextChanged is being removed in v10 along with the settable Text. React to changes via @bind-Value/ValueChanged instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/13320")]
+        [Obsolete("TextChanged is being removed in v10 along with the settable Text. React to changes via @bind-Value/ValueChanged instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         public EventCallback<string?> TextChanged { get; set; }
 
@@ -572,7 +572,7 @@ namespace MudBlazor
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
             // Check ParameterView to see if Text is also present
-#pragma warning disable CS0618 // Text is obsolete (removed in v10, #13320); referenced here only for v9 back-compat
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
 #pragma warning restore CS0618
             {
@@ -697,7 +697,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-#pragma warning disable CS0618 // Text is obsolete (removed in v10, #13320); referenced here only for v9 back-compat
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
             var hasText = parameters.Contains<string>(nameof(Text));
 #pragma warning restore CS0618
             var hasValue = parameters.Contains<T>(nameof(Value));
