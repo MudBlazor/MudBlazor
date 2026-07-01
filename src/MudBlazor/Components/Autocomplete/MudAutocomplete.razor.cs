@@ -661,14 +661,21 @@ namespace MudBlazor
 
         private void CancelToken()
         {
+            // Swap in a fresh source before cancelling so the next search never observes the cancelled one.
+            // The previous source must be disposed or it leaks along with its registrations on every search.
+            var previous = _cancellationTokenSrc;
+            _cancellationTokenSrc = new CancellationTokenSource();
             try
             {
-                _cancellationTokenSrc?.Cancel();
+                previous?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch (ObjectDisposedException)
+            {
+                // Already disposed, such as when the component was disposed mid-search.
+            }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                previous?.Dispose();
             }
         }
 
