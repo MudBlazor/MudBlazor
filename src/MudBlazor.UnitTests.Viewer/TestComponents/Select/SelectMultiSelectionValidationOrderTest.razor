@@ -1,0 +1,24 @@
+﻿<MudPopoverProvider />
+
+<MudForm ValidationDelay="0">
+    <MudSelect T="int" MultiSelection="true" @bind-SelectedValues="Selected"
+               Validation="@(new Func<int, string?>(_ => Observe()))" Label="Options">
+        <MudSelectItem Value="1" />
+        <MudSelectItem Value="2" />
+        <MudSelectItem Value="3" />
+    </MudSelect>
+</MudForm>
+
+@code {
+    public static string __description__ = "#11796: the Validation function must observe the already-committed SelectedValues binding.";
+
+    public IReadOnlyCollection<int>? Selected { get; set; } = [];
+
+    public List<int> ObservedCounts { get; } = new();
+
+    private string? Observe()
+    {
+        ObservedCounts.Add(Selected?.Count ?? 0);
+        return null;
+    }
+}

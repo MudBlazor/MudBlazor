@@ -1096,6 +1096,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #11796: In multi-selection, the Validation function must run after the SelectedValues
+        /// binding has been committed, so it observes the new selection - exactly once per click.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Validation_RunsAfterSelectedValuesCommit()
+        {
+            var comp = Context.Render<SelectMultiSelectionValidationOrderTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(3));
+            comp.Instance.ObservedCounts.Clear();
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1 },
+                "validation runs once per selection and sees the committed binding (#11796)");
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2 });
+
+            // deselect the first option again
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1 });
+        }
+
+        /// <summary>
         /// Selected option should be hilighted when drop-down opens
         /// </summary>
         [Test]
