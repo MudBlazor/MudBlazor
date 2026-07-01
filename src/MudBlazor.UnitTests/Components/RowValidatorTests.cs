@@ -62,6 +62,49 @@ public class RowValidatorTests
     }
 
     /// <summary>
+    /// An <see cref="IForm"/> implementation that predates <see cref="IForm.ValidateAsync"/> must keep
+    /// compiling and running: the default implementation completes without validating anything.
+    /// </summary>
+    [Test]
+    public async Task IForm_ValidateAsync_DefaultImplementation_IsANoOp()
+    {
+        IForm form = new LegacyForm();
+
+        await form.ValidateAsync();
+
+        form.IsValid.Should().BeTrue();
+        form.Errors.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// A minimal external implementer from before ValidateAsync was added to IForm.
+    /// </summary>
+    private sealed class LegacyForm : IForm
+    {
+        public bool IsValid => Errors.Length <= 0;
+
+        public string[] Errors => [];
+
+        public object? Model { get; set; }
+
+        public void FieldChanged(IFormComponent formControl, object? newValue)
+        {
+        }
+
+        void IForm.Add(IFormComponent formControl)
+        {
+        }
+
+        void IForm.Remove(IFormComponent formControl)
+        {
+        }
+
+        void IForm.Update(IFormComponent formControl)
+        {
+        }
+    }
+
+    /// <summary>
     /// A form component whose async validation only produces its errors after the
     /// awaited continuation resumes, so a fire-and-forget caller would miss them.
     /// </summary>
