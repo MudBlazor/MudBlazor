@@ -23,6 +23,22 @@ namespace MudBlazor
         private readonly string _elementId = Identifier.Create("radio");
         private readonly string _ariaId = Identifier.Create("radio-aria-");
 
+        public MudRadio()
+        {
+            // The MudRadioGroup is the form participant; individual radios must not register (#11540).
+            SubscribeToParentForm = false;
+        }
+
+        /// <inheritdoc />
+        protected override async Task ValidateValue()
+        {
+            // The group owns validation; a radio must not notify the form itself.
+            if (SubscribeToParentForm)
+            {
+                await base.ValidateValue();
+            }
+        }
+
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())

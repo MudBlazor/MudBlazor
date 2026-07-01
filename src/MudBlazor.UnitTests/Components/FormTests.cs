@@ -704,6 +704,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #11540: An input nested inside a MudRadioGroup must register with the surrounding MudForm.
+        /// </summary>
+        [Test]
+        public async Task FormRadioGroup_NestedInput_ParticipatesInValidation()
+        {
+            var comp = Context.Render<FormRadioGroupNestedInputTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+
+            form.IsValid.Should().BeFalse("the nested required text field must count against form validity (#11540)");
+
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.Errors.Should().Contain("Detail is required");
+
+            await comp.Find("input[type=text]").ChangeAsync(new ChangeEventArgs { Value = "some detail" });
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue();
+            form.Errors.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// #11540 guard: individual radios must still not register with the form (#9472);
+        /// selecting one must not raise FieldChanged for the radio itself.
+        /// </summary>
+        [Test]
+        public async Task FormRadioGroup_RadioSelection_DoesNotRegisterRadiosWithForm()
+        {
+            var comp = Context.Render<FormRadioGroupNestedInputTest>();
+
+            await comp.Find("input[type=radio]").ClickAsync();
+
+            comp.Instance.FieldChangedFieldTypes.Should().NotContain("MudRadio`1",
+                "radios participate through their group, not as form fields themselves");
+        }
+
+        /// <summary>
         /// Setting the required radiogroup value should set IsValid true
         /// Clearing the value of a required radiogroup should set form's IsValid to false.
         /// </summary>
