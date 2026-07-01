@@ -224,7 +224,6 @@ namespace MudBlazor
 
         private void StopTimer()
         {
-            State.StopTransition(_timeProvider.GetUtcNow());
             _timer?.Dispose();
             _timer = null;
         }
