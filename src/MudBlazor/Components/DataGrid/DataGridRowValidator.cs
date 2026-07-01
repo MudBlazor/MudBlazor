@@ -21,9 +21,9 @@ namespace MudBlazor
         {
             get
             {
-                // IForm.IsValid is synchronous, so drive validation without awaiting.
-                // Synchronous validators complete inline; asynchronous ones should use ValidateAsync.
-                _ = ValidateAsync();
+                // IForm.IsValid is synchronous. Drive validation without awaiting; synchronous validators
+                // complete inline, and any exception is forwarded to MudGlobal.UnhandledExceptionHandler.
+                ValidateAsync().CatchAndLog();
                 return Errors.Length <= 0;
             }
         }
@@ -73,7 +73,7 @@ namespace MudBlazor
         [ExcludeFromCodeCoverage]
         public void Validate()
         {
-            _ = ValidateAsync();
+            ValidateAsync().CatchAndLog();
         }
 
         /// <summary>
