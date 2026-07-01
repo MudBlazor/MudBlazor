@@ -1,12 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTextField @ref="multilineReference" T="string" Label="Multiline Select" Lines="3" Variant="Variant.Outlined" @bind-Value="sampleText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => multilineReference.SelectRangeAsync(5, 10))" />
-<MudTextField @ref="singleLineReference" T="string" Label="Single Select" Variant="Variant.Outlined" @bind-Value="sampleText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => singleLineReference.SelectRangeAsync(5, 10))" />
+<MudTextField @ref="multilineReference" T="string" Label="Multiline Select" Lines="3" Variant="Variant.Outlined" @bind-Value="multilineText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => multilineReference.SelectRangeAsync(5, 10))" />
+<MudTextField @ref="singleLineReference" T="string" Label="Single Select" Variant="Variant.Outlined" @bind-Value="singleLineText" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => singleLineReference.SelectRangeAsync(5, 10))" />
 
 @code
 {
     private MudTextField<string> multilineReference;
     private MudTextField<string> singleLineReference;
 
-    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."; 
+    string multilineText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    string singleLineText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 }

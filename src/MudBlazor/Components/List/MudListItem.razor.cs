@@ -58,9 +58,9 @@ namespace MudBlazor
         /// The text to display.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10. Set <see cref="Value"/> instead, and use <see cref="ChildContent"/> when the displayed text differs from the value. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// Deprecated and removed in v10. Provide the display text as child content and set <see cref="Value"/> for the selectable value; <see cref="Value"/> alone is not displayed. Note that <see cref="SecondaryText"/> only renders together with Text; include secondary content in the child content instead. See https://github.com/MudBlazor/MudBlazor/issues/12556.
         /// </remarks>
-        [Obsolete("Text is being removed in v10; set Value instead, and use ChildContent when the displayed text differs from the value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
+        [Obsolete("Text is being removed in v10; provide the display text as child content and set Value for the selectable value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? Text { get; set; }

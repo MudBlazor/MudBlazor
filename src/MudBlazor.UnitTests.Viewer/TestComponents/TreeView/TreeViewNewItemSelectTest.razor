@@ -1,7 +1,9 @@
 ﻿<MudTreeView Items="@_treeItems" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="this.SelectedValue">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value">
-            <BodyContent Context="node">@context.Text</BodyContent>
+            <BodyContent Context="node">
+                <MudText Typo="Typo.body1" Class="mud-treeview-item-label">@context.Text</MudText>
+            </BodyContent>
         </MudTreeViewItem>
     </ItemTemplate>
 </MudTreeView>

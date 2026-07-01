@@ -79,9 +79,8 @@
                             <MudChip T="string"
                                      Color="Color.Secondary"
                                      Disabled="GetDisabledState()"
-                                     Text="@file"
                                      CloseIcon="@Icons.Material.Outlined.Close"
-                                     OnClose="@(() => OnFileChipCloseAsync(file))" />
+                                     OnClose="@(() => OnFileChipCloseAsync(file))">@file</MudChip>
                         }
                     </span>
                 }

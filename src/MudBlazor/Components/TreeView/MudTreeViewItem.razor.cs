@@ -85,11 +85,11 @@ namespace MudBlazor
         /// The text to display.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10. Set <see cref="Value"/> instead, and use <see cref="BodyContent"/> when the displayed text differs from the value. See https://github.com/MudBlazor/MudBlazor/issues/12556.<br />
-        /// When no value is set, the <see cref="Value"/> is used if it is a basic value such as <c>string</c> or <c>int</c>, etc.<br />
+        /// Deprecated and removed in v10. Set <see cref="Value"/> instead, which renders as the label; use <see cref="BodyContent"/> when the displayed content should differ from the value, noting it replaces the whole item body including <see cref="EndText"/> and <see cref="EndIcon"/>. See https://github.com/MudBlazor/MudBlazor/issues/12556.<br />
+        /// When Text is not set, the <see cref="Value"/> is displayed if it is a basic value such as <c>string</c> or <c>int</c>, etc.<br />
         /// Ignored if <see cref="BodyContent"/> is set.
         /// </remarks>
-        [Obsolete("Text is being removed in v10; set Value instead, and use BodyContent when the displayed text differs from the value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
+        [Obsolete("Text is being removed in v10; set Value instead, which renders as the label. Use BodyContent for fully custom content (it replaces the whole item body including EndText and EndIcon). https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? Text { get; set; }

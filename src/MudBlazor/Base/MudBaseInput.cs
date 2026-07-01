@@ -307,9 +307,9 @@ namespace MudBlazor
         /// The text displayed in the input.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth; bind <c>@bind-Value</c> instead, and observe typed text via <see cref="OnInternalInputChanged"/>. See https://github.com/MudBlazor/MudBlazor/issues/13320.
+        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth; bind <c>@bind-Value</c> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/13320.
         /// </remarks>
-        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth. Bind @bind-Value instead, and observe typed text via OnInternalInputChanged. https://github.com/MudBlazor/MudBlazor/issues/13320")]
+        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth. Bind @bind-Value instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/13320")]
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
@@ -349,9 +349,9 @@ namespace MudBlazor
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. Observe typed text via <see cref="OnInternalInputChanged"/>, or bind <c>@bind-Value</c> to react to value changes. See https://github.com/MudBlazor/MudBlazor/issues/13320.
+        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. React to changes via <c>@bind-Value</c>/<see cref="ValueChanged"/> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/13320.
         /// </remarks>
-        [Obsolete("TextChanged is being removed in v10 along with the settable Text. Observe typed text via OnInternalInputChanged, or bind @bind-Value to react to value changes. https://github.com/MudBlazor/MudBlazor/issues/13320")]
+        [Obsolete("TextChanged is being removed in v10 along with the settable Text. React to changes via @bind-Value/ValueChanged instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/13320")]
         [Parameter]
         public EventCallback<string?> TextChanged { get; set; }
 
