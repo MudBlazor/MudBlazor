@@ -242,10 +242,9 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// In this render the <c>&lt;input&gt;</c> is <c>type="hidden"</c> and the display <c>div</c> is what actually receives focus and clicks.
-        /// Every consumer-supplied attribute must move there — event handlers such as <c>@onfocus</c>, <c>data-*</c>, and accessibility attributes alike —
-        /// or it silently stops working once a value is selected. The hidden input can no longer fire them, so forwarding them here does not double up.
-        /// Caller-provided <c>UserAttributes</c> take precedence over the computed accessibility fallbacks. Returns <c>null</c> for every other render so the
-        /// always-emitted (but hidden) presenter <c>div</c> does not get spurious attributes or allocate on the common input path.
+        /// Every consumer-supplied attribute must move there — event handlers such as <c>@onfocus</c>, <c>data-*</c>, and accessibility attributes alike — or it silently stops working once a value is selected.
+        // The hidden input can no longer fire them, so forwarding them here does not double up.
+        /// Caller-provided <c>UserAttributes</c> take precedence over the computed accessibility fallbacks. Returns <c>null</c> for every other render so the always-emitted (but hidden) presenter <c>div</c> does not get spurious attributes or allocate on the common input path.
         /// </remarks>
         private Dictionary<string, object?>? GetDisplayUserAttributes()
         {
@@ -256,9 +255,8 @@ namespace MudBlazor
 
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
 
-            // The hidden input still owns the id, and the presenter markup owns tabindex (the disabled branch deliberately omits it
-            // so a disabled control cannot take focus). Forwarding either would duplicate the id across both elements or make a
-            // disabled presenter focusable again.
+            // The hidden input still owns the id, and the presenter markup owns tabindex (the disabled branch deliberately omits it so a disabled control cannot take focus).
+            // Forwarding either would duplicate the id across both elements or make a disabled presenter focusable again.
             attributes.Remove("id");
             attributes.Remove("tabindex");
 
