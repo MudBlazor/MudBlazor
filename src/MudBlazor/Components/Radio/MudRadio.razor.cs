@@ -29,16 +29,6 @@ namespace MudBlazor
             SubscribeToParentForm = false;
         }
 
-        /// <inheritdoc />
-        protected override async Task ValidateValue()
-        {
-            // The group owns validation; a radio must not notify the form itself.
-            if (SubscribeToParentForm)
-            {
-                await base.ValidateValue();
-            }
-        }
-
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
