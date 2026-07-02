@@ -152,8 +152,6 @@
 
 .mud-tab {
   width: 100%;
-  // Positioning context for the notification badge.
-  // mud-ripple also sets this, but the badge must stay anchored when Ripple is off.
   position: relative;
   display: inline-flex;
   padding: 6px 12px;
@@ -203,9 +201,7 @@
     display: none;
   }
 
-  // Keep the notification badge out of the layout flow so adding one never changes the
-  // tab's width, but anchor it to the tab's own box instead of a zero-width point after
-  // the label, so it can no longer spill past the edge and get clipped (#1668).
+  // Keep the notification badge out of the layout flow so adding one never changes the tab's width, but anchor it to the tab's own box instead of a zero-width point after the label, so it can no longer spill past the edge and get clipped (#1668).
   .mud-tab-badge.mud-badge-root {
     position: static;
     margin: 0;
