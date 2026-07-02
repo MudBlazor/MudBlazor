@@ -456,6 +456,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RadioColor_ReadOnly_ShouldKeepColor()
+        {
+            // #9524: a read-only radio keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.ReadOnly, true)
+                .Add(x => x.Value, 1)
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 1)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error))
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 2)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error)));
+
+            var icons = comp.FindAll("span.mud-button-root");
+            // first radio is checked -> Color; second is unchecked -> UncheckedColor
+            icons[0].ClassList.Should().Contain("mud-success-text");
+            icons[0].ClassList.Should().NotContain("hover:mud-success-hover");
+            icons[1].ClassList.Should().Contain("mud-error-text");
+            icons[1].ClassList.Should().NotContain("hover:mud-error-hover");
+        }
+
+        [Test]
         public void RadioLabel()
         {
             var value = new DisplayNameLabelClass();
