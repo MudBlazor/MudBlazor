@@ -42,6 +42,9 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
+        /// <inheritdoc />
+        public override bool IsDisabled => GetDisabledState();
+
         /// <summary>
         /// Prevents the user from changing the input.
         /// </summary>

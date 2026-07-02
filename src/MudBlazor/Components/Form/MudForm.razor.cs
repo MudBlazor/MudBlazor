@@ -244,7 +244,8 @@ namespace MudBlazor
             // - none have an error
             // - all required fields have been touched (and thus validated)
             var noErrors = _formControls.All(x => x.HasErrors == false);
-            var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
+            // disabled inputs are excluded from validation, matching the HTML standard (#2341).
+            var requiredAllTouched = _formControls.Where(x => x.Required && !x.IsDisabled).All(x => x.Touched);
             var valid = noErrors && requiredAllTouched;
 
             var oldTouched = _touched;
@@ -278,7 +279,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = _formControls.All(x => x.Required == false || x.IsDisabled);
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid, and it conflicts with our state.
@@ -426,7 +427,7 @@ namespace MudBlazor
 
         void IForm.Add(IFormComponent formControl)
         {
-            if (formControl.Required)
+            if (formControl.Required && !formControl.IsDisabled)
                 SetIsValid(false);
             _formControls.Add(formControl);
             SetDefaultControlValidation(formControl);

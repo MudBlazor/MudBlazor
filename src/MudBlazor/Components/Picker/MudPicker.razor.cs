@@ -495,6 +495,9 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
+        /// <inheritdoc />
+        public override bool IsDisabled => GetDisabledState();
+
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         protected virtual async Task SetTextAsync(string? value, bool callback)

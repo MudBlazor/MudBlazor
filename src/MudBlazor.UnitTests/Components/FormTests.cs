@@ -564,6 +564,77 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #2341: A disabled required input must not block form validity nor show a required error.
+        /// </summary>
+        [Test]
+        public async Task DisabledRequiredField_DoesNotBlockFormValidity()
+        {
+            var comp = Context.Render<FormDisabledRequiredTest>(p => p.Add(x => x.Disabled, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var guarded = comp.FindComponents<MudTextField<string>>()[0].Instance;
+
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue("a disabled required field is excluded from validation (#2341)");
+            form.Errors.Should().BeEmpty();
+            guarded.HasErrors.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// #2341: Enabling a previously-disabled required field re-introduces the requirement.
+        /// </summary>
+        [Test]
+        public async Task EnablingDisabledRequiredField_ReintroducesRequirement()
+        {
+            var comp = Context.Render<FormDisabledRequiredTest>(p => p.Add(x => x.Disabled, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, false));
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeFalse("enabling the field re-introduces its requirement (#2341)");
+            form.Errors.Should().Contain("Required");
+        }
+
+        /// <summary>
+        /// #2341: Disabling a field that is currently showing a required error re-validates it live -
+        /// the error clears and the form becomes valid without an explicit re-validation.
+        /// </summary>
+        [Test]
+        public async Task DisablingErroredField_LiveClearsErrorAndValidatesForm()
+        {
+            var comp = Context.Render<FormDisabledRequiredTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var guarded = comp.FindComponents<MudTextField<string>>()[0].Instance;
+
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeFalse();
+            guarded.HasErrors.Should().BeTrue();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Disabled, true));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                guarded.HasErrors.Should().BeFalse("disabling re-validates and drops the required error (#2341)");
+                form.IsValid.Should().BeTrue("the form re-evaluates when a field's disabled state changes (#2341)");
+            });
+        }
+
+        /// <summary>
+        /// #2341: ReadOnly (unlike Disabled) does not exclude a required field from validation.
+        /// </summary>
+        [Test]
+        public async Task ReadOnlyRequiredField_StillValidates()
+        {
+            var comp = Context.Render<FormDisabledRequiredTest>(p => p.Add(x => x.ReadOnly, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeFalse("ReadOnly inputs still validate (#2341)");
+            form.Errors.Should().Contain("Required");
+        }
+
+        /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]

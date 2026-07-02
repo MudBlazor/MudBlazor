@@ -427,6 +427,9 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
+        /// <inheritdoc />
+        public override bool IsDisabled => GetDisabledState();
+
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>

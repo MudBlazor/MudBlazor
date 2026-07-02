@@ -242,6 +242,14 @@ namespace MudBlazor
         /// </remarks>
         public bool Touched { get; protected set; }
 
+        /// <summary>
+        /// Indicates whether this input is disabled, so a <see cref="MudForm"/> can exclude it from validation.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Overridden by inputs that support a <c>Disabled</c> parameter.
+        /// </remarks>
+        public virtual bool IsDisabled => false;
+
         // While set, a programmatic / parameter-driven value sync is running and the gated Touched /
         // FieldChanged writes are skipped - those reflect genuine user interaction only. This stops a
         // non-default initial or async-loaded value from touching the input (and its MudForm) on load
@@ -433,7 +441,8 @@ namespace MudBlazor
                 }
 
                 // required error (must be last, because it is least important!)
-                if (Required)
+                // a disabled input is barred from constraint validation, matching the HTML standard (#2341).
+                if (Required && !IsDisabled)
                 {
                     if (Touched && !HasValue(ReadValue))
                     {
@@ -798,9 +807,26 @@ namespace MudBlazor
         /// </summary>
         private EditContext? _currentEditContext;
 
+        /// <summary>
+        /// Tracks the disabled state so a change can re-run validation (#2341).
+        /// </summary>
+        private bool? _lastIsDisabled;
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
+            // When the disabled state changes, re-validate: a disabled input drops its (now excluded)
+            // required error, an enabled one regains it, and the form re-evaluates its validity (#2341).
+            if (_lastIsDisabled is null)
+            {
+                _lastIsDisabled = IsDisabled;
+            }
+            else if (_lastIsDisabled != IsDisabled)
+            {
+                _lastIsDisabled = IsDisabled;
+                ValidateValue().CatchAndLog();
+            }
 
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)

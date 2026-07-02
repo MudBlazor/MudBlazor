@@ -285,6 +285,9 @@ namespace MudBlazor
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
+        /// <inheritdoc />
+        public override bool IsDisabled => GetDisabledState();
+
         private async Task OnDragResetAsync()
         {
             await _draggingState.SetValueAsync(false);

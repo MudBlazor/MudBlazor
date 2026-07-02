@@ -111,6 +111,9 @@ namespace MudBlazor
 
         internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
 
+        /// <inheritdoc />
+        public override bool IsDisabled => GetDisabledState();
+
         internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
         protected async Task SetSelectedOptionAsync(T? option, bool updateRadio, bool updateValue = true)
