@@ -1143,7 +1143,7 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputBlurredAsync(FocusEventArgs args)
+        private async Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
             _handleNextFocus = false;
@@ -1152,13 +1152,21 @@ namespace MudBlazor
             // So only coerce the value on blur when Immediate is disabled
             if (!Immediate)
             {
-                return CoerceValueToTextAsync();
+                await CoerceValueToTextAsync();
+                return;
             }
 
-            return OnBlur.InvokeAsync(args);
-            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
-            // resulting in a premature validation. thus, don't call base
-            //base.OnBlurred(args);
+            // A blur while the menu is open (or opening/committing a value) is part of selecting an
+            // item: the item's mousedown blurs the input before its click lands, so validating now
+            // would flag a premature error. Only a genuine leave (menu closed, nothing pending) runs
+            // the base blur, so a required autocomplete surfaces its error on blur like other inputs (#5489).
+            if (Open || _opening || _isProcessingValue)
+            {
+                await OnBlur.InvokeAsync(args);
+                return;
+            }
+
+            await base.OnBlurredAsync(args);
         }
 
         private Task OnOverlayClosedAsync()

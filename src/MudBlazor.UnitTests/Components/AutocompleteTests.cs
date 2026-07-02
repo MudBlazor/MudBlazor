@@ -851,6 +851,53 @@ namespace MudBlazor.UnitTests.Components
             calls.Should().Be(1);
         }
 
+        /// <summary>
+        /// #5489: A required autocomplete validates when the user leaves it (blur with the menu closed).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Required_ValidatesOnBlur()
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(a => a
+                .Add(x => x.Required, true)
+                .Add(x => x.RequiredError, "Required")
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, (s, t) => System.Threading.Tasks.Task.FromResult<System.Collections.Generic.IEnumerable<string>>(new[] { "a", "b" })));
+            var ac = comp.Instance;
+
+            ac.Touched.Should().BeFalse();
+            ac.HasErrors.Should().BeFalse();
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                ac.Touched.Should().BeTrue("leaving an empty required autocomplete validates it (#5489)");
+                ac.HasErrors.Should().BeTrue();
+                ac.ValidationErrors.Should().Contain("Required");
+            });
+        }
+
+        /// <summary>
+        /// #9425: A required autocomplete pre-filled with a value is valid on blur.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Required_PreFilledValue_IsValidOnBlur()
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(a => a
+                .Add(x => x.Required, true)
+                .Add(x => x.RequiredError, "Required")
+                .Add(x => x.Value, "a")
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, (s, t) => System.Threading.Tasks.Task.FromResult<System.Collections.Generic.IEnumerable<string>>(new[] { "a", "b" })));
+            var ac = comp.Instance;
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                ac.HasErrors.Should().BeFalse("a pre-filled required autocomplete is valid on blur (#9425)");
+                ac.ValidationErrors.Should().BeEmpty();
+            });
+        }
+
         [Test]
         public async Task AutoCompleteClearable()
         {
