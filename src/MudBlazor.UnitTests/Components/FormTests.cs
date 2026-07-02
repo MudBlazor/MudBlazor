@@ -713,6 +713,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #13381: staged state must not outlive a removed cascaded EditContext; the next value change must not throw.
+        /// </summary>
+        [Test]
+        public async Task EditForm_EditContextRemovedAfterBlur_DoesNotThrow()
+        {
+            var comp = Context.Render<FormEditContextRemovedTest>();
+            var field = comp.FindComponent<MudTextField<string>>().Instance;
+
+            // Blur the empty Required field so it stages an error against the cascaded EditContext.
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => field.HasErrors.Should().BeTrue());
+
+            // Remove the cascaded EditContext while the field stays alive.
+            await comp.InvokeAsync(() => comp.Instance.RemoveEditContext());
+
+            // A later value change once ran EditContext!.GetValidationMessages on the now-null context (NRE).
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "Sam" });
+            field.HasErrors.Should().BeFalse();
+        }
+
+        /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]

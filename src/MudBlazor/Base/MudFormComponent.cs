@@ -705,12 +705,8 @@ namespace MudBlazor
             await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
             _lastInternalErrors = [];
-            if (_hasStagedEditContextMessages)
-            {
-                // Otherwise the staged messages resurface on the next validation-state notification.
-                ClearStagedEditContextMessages();
-                EditContext?.NotifyValidationStateChanged();
-            }
+            // Otherwise the staged messages resurface on the next validation-state notification.
+            RetractStagedEditContextMessages();
 
             await InvokeAsync(StateHasChanged);
         }
@@ -748,8 +744,9 @@ namespace MudBlazor
         /// </summary>
         private void StageEditContextValidationMessages(List<string> errors)
         {
-            // Without a field identity (no For) there is nothing to key the store on.
-            if (_editContextValidationMessages is null || _fieldIdentifier.Equals(default(FieldIdentifier)))
+            // Without an EditContext or a field identity (no For) there is nothing to stage against.
+            var editContext = EditContext;
+            if (editContext is null || _editContextValidationMessages is null || _fieldIdentifier.Equals(default(FieldIdentifier)))
             {
                 return;
             }
@@ -760,7 +757,7 @@ namespace MudBlazor
 
             // While an external validator holds messages for this field it is authoritative;
             // staging ours alongside would duplicate them in a ValidationSummary.
-            if (errors.Count > 0 && !EditContext!.GetValidationMessages(_fieldIdentifier).Any())
+            if (errors.Count > 0 && !editContext.GetValidationMessages(_fieldIdentifier).Any())
             {
                 foreach (var error in errors)
                 {
@@ -773,19 +770,32 @@ namespace MudBlazor
 
             if (changed)
             {
-                EditContext!.NotifyValidationStateChanged();
+                editContext.NotifyValidationStateChanged();
             }
         }
 
         private void ClearStagedEditContextMessages()
         {
-            _editContextValidationMessages?.Clear(_fieldIdentifier);
+            // Clear(default) would hash a null field name and throw, so guard the empty identity.
+            if (_editContextValidationMessages is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
+            {
+                _editContextValidationMessages.Clear(_fieldIdentifier);
+            }
+
             _hasStagedEditContextMessages = false;
         }
 
         private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
         {
             // Submit re-runs the external validators over every field; ours must not duplicate theirs.
+            RetractStagedEditContextMessages();
+        }
+
+        /// <summary>
+        /// Clears any staged messages and refreshes the display so a retracted error can't linger.
+        /// </summary>
+        private void RetractStagedEditContextMessages()
+        {
             if (_hasStagedEditContextMessages)
             {
                 ClearStagedEditContextMessages();
@@ -883,26 +893,35 @@ namespace MudBlazor
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
-                // Extract validation attributes
-                // Sourced from https://stackoverflow.com/a/43076222/4839162
-                // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
-                var expression = (MemberExpression)For.Body;
-
-                // Currently we have no solution for this which is trimming incompatible
-                // A possible solution is to use source gen
-#pragma warning disable IL2075
-                var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
-#pragma warning restore IL2075
-                _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
-
+                // For is a fresh expression instance on every render for an inline lambda, so only
+                // do the reflection and rebinding work when the field it points at actually changed.
                 var fieldIdentifier = FieldIdentifier.Create(For);
                 if (!_fieldIdentifier.Equals(fieldIdentifier))
                 {
-                    // Drop staged messages keyed on the previous field before rebinding.
+                    // Extract validation attributes
+                    // Sourced from https://stackoverflow.com/a/43076222/4839162
+                    // and also https://stackoverflow.com/questions/59407225/getting-a-custom-attribute-from-a-property-using-an-expression
+                    var expression = (MemberExpression)For.Body;
+
+                    // Currently we have no solution for this which is trimming incompatible
+                    // A possible solution is to use source gen
+#pragma warning disable IL2075
+                    var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
+#pragma warning restore IL2075
+                    _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+
+                    // Drop anything staged for the previous field and reconcile the display so its
+                    // error can't linger on the newly bound field.
+                    var wasStaged = _hasStagedEditContextMessages;
                     ClearStagedEditContextMessages();
+                    _lastInternalErrors = [];
+                    _fieldIdentifier = fieldIdentifier;
+                    if (wasStaged)
+                    {
+                        EditContext?.NotifyValidationStateChanged();
+                    }
                 }
 
-                _fieldIdentifier = fieldIdentifier;
                 _currentFor = For;
             }
 
@@ -913,6 +932,12 @@ namespace MudBlazor
                 EditContext.OnValidationRequested += OnValidationRequested;
                 _editContextValidationMessages = new ValidationMessageStore(EditContext);
                 _currentEditContext = EditContext;
+            }
+            else if (EditContext is null && _currentEditContext is not null)
+            {
+                // The cascaded EditContext was removed; detach so staged state can't outlive it.
+                DetachValidationStateChangedListener();
+                _currentEditContext = null;
             }
         }
 
