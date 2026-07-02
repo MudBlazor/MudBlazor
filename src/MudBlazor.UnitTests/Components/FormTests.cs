@@ -708,7 +708,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormRadioGroup_NestedInput_ParticipatesInValidation()
         {
             var comp = Context.Render<FormRadioGroupNestedInputTest>();
-            var form = comp.FindComponent<MudForm>().Instance;
+            var form = comp.FindComponent<MudFormTestable>().Instance;
 
             form.IsValid.Should().BeFalse("the nested required text field must count against form validity (#11540)");
 
@@ -726,7 +726,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FormRadioGroup_RadioSelection_DoesNotRegisterRadiosWithForm()
         {
             var comp = Context.Render<FormRadioGroupNestedInputTest>();
-            var form = comp.FindComponent<MudForm>().Instance;
+            var form = comp.FindComponent<MudFormTestable>().Instance;
 
             await comp.Find("input[type=radio]").ClickAsync();
 
@@ -735,10 +735,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert registration directly - a click cannot reveal it (the radio's own
             // FieldChanged is unreachable from markup even when wrongly registered).
-            var formControls = (System.Collections.IEnumerable)typeof(MudForm)
-                .GetField("_formControls", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
-                .GetValue(form)!;
-            var registeredTypes = formControls.Cast<object>().Select(c => c.GetType()).ToList();
+            var registeredTypes = form.FormControls.Select(c => c.GetType()).ToList();
             registeredTypes.Should().NotContain(typeof(MudRadio<string>));
             registeredTypes.Should().Contain(typeof(MudRadioGroup<string>));
             registeredTypes.Should().Contain(typeof(MudTextField<string>), "the nested input registers (#11540)");

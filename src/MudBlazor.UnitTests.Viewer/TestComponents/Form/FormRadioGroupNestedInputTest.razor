@@ -1,11 +1,11 @@
 ﻿@using MudBlazor.Utilities
-<MudForm ValidationDelay="0" FieldChanged="OnFieldChanged">
+<MudFormTestable ValidationDelay="0" FieldChanged="OnFieldChanged">
     <MudRadioGroup T="string" @bind-Value="_choice">
         <MudRadio Value="@("A")">Option A</MudRadio>
         <MudRadio Value="@("B")">Option B</MudRadio>
         <MudTextField T="string" @bind-Value="_detail" Required="true" RequiredError="Detail is required" Label="Detail" />
     </MudRadioGroup>
-</MudForm>
+</MudFormTestable>
 
 @code {
     public static string __description__ = "#11540: an input nested inside a MudRadioGroup must register with the surrounding MudForm; individual radios must not.";
