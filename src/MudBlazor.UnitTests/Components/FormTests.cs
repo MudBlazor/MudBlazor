@@ -2343,6 +2343,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "ABCDE" });
             field.ConversionError.Should().BeTrue();
             field.GetErrorText().Should().Be("Not a valid number");
+            comp.Find("input").GetAttribute("value").Should().Be("ABCDE", "the unparsable text is preserved, not silently discarded");
 
             await comp.InvokeAsync(form.ValidateAsync);
             form.IsValid.Should().BeFalse();
