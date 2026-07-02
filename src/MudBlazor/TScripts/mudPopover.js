@@ -521,10 +521,7 @@ window.mudpopoverHelper = {
                     }
                 }
 
-                // Anchor-aware floor for the edge clamp below: clamp no further than the anchor's
-                // own edge, so a dropdown near the viewport edge stays aligned with its box (#11894).
-                // Bounded to >= 0 so the clamp never targets an off-screen position, unlike the
-                // reverted #13053 which skipped the clamp entirely and let popovers overflow (#13199).
+                // Anchor-aware floor for the edge clamp below: clamp no further than the anchor's own edge, so a dropdown near the viewport edge stays aligned with its box (#11894).
                 const minLeft = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.left));
                 const minTop = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.top));
 
