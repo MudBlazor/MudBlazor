@@ -945,8 +945,7 @@ namespace MudBlazor
                 _hasStagedEditContextMessages = false;
                 if (hadStagedMessages)
                 {
-                    // We just removed our staged messages from the context (on dispose or an EditContext
-                    // swap); refresh subscribers like a ValidationSummary so a cleared error can't linger.
+                    // We just removed our staged messages from the context (on dispose or an EditContext swap); refresh subscribers like a ValidationSummary so a cleared error can't linger.
                     _currentEditContext.NotifyValidationStateChanged();
                 }
             }
