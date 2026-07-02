@@ -1118,6 +1118,10 @@ namespace MudBlazor.UnitTests.Components
             // deselect the first option again
             await comp.FindAll("div.mud-list-item")[0].ClickAsync();
             comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1 });
+
+            // the Clearable X button must also validate against the committed (now empty) binding
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1, 0 });
         }
 
         /// <summary>

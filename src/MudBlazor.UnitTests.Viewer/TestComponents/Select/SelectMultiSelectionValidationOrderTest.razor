@@ -1,7 +1,7 @@
 ﻿<MudPopoverProvider />
 
 <MudForm ValidationDelay="0">
-    <MudSelect T="int" MultiSelection="true" @bind-SelectedValues="Selected"
+    <MudSelect T="int" MultiSelection="true" Clearable="true" @bind-SelectedValues="Selected"
                Validation="@(new Func<int, string?>(_ => Observe()))" Label="Options">
         <MudSelectItem Value="1" />
         <MudSelectItem Value="2" />

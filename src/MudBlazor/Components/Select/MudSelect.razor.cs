@@ -1504,10 +1504,10 @@ namespace MudBlazor
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
-            await BeginValidateAsync();
             StateHasChanged();
             await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
