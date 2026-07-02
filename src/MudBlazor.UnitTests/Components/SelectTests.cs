@@ -2262,6 +2262,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_UserAttributes_ForwardedToSelectedValuePresenter()
+        {
+            // A value is preselected and its item renders child content, so the hidden input
+            // is swapped for the focusable presenter div (#13086).
+            var comp = Context.Render<SelectOnFocusTest>();
+            IElement Presenter() => comp.Find("div.mud-select-input[tabindex='0']");
+
+            // Arbitrary consumer attributes reach the presenter, not just role/aria.
+            Presenter().GetAttribute("data-testid").Should().Be("vehicle-select");
+
+            // The consumer @onfocus splat fires when the presenter receives focus.
+            comp.Find("#focus-count").TextContent.Should().Be("0");
+            await Presenter().TriggerEventAsync("onfocus", new FocusEventArgs());
+            await comp.WaitForAssertionAsync(() => comp.Find("#focus-count").TextContent.Should().Be("1"));
+        }
+
+        [Test]
+        public void Select_PresenterAttributes_DoNotDuplicateIdOrFocusDisabled()
+        {
+            var comp = Context.Render<SelectPresenterAttributeTest>();
+
+            // The consumer id stays on the hidden input only; forwarding it to the presenter too would duplicate the DOM id.
+            comp.FindAll("[id='select-with-id']").Count.Should().Be(1);
+            comp.FindAll("div.mud-select-input[id='select-with-id']").Should().BeEmpty();
+
+            // A forwarded tabindex must not make the disabled presenter focusable.
+            comp.Find("div.mud-select-input[data-scenario='disabled']").HasAttribute("tabindex").Should().BeFalse();
+        }
+
+        [Test]
         public async Task Select_MultiSelect_ShouldKeepSelectionStateIndependentOfActiveDescendant()
         {
             var comp = Context.Render<MultiSelectTest6>();
