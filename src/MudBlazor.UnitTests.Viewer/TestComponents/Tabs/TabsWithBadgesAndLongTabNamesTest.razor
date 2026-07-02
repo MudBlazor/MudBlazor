@@ -1,0 +1,23 @@
+<MudText Typo="Typo.subtitle2">Text badge</MudText>
+<MudTabs>
+    <MudTabPanel Text="A long Text" BadgeData='"live"' BadgeColor="Color.Info" />
+    <MudTabPanel Text="Even much longer Text" BadgeData='"live"' BadgeColor="Color.Info" />
+    <MudTabPanel Text="Short" BadgeData='"live"' BadgeColor="Color.Info" />
+</MudTabs>
+
+<MudText Typo="Typo.subtitle2" Class="mt-4">Numeric badge</MudText>
+<MudTabs>
+    <MudTabPanel Text="Deliveries and returns" BadgeData="27" BadgeColor="Color.Error" />
+    <MudTabPanel Text="Outstanding invoices" BadgeData="4" BadgeColor="Color.Error" />
+    <MudTabPanel Text="Archive" BadgeData="99" BadgeColor="Color.Error" />
+</MudTabs>
+
+<MudText Typo="Typo.subtitle2" Class="mt-4">Icon and text</MudText>
+<MudTabs>
+    <MudTabPanel Text="Notifications and alerts" Icon="@Icons.Material.Filled.Notifications" BadgeData="99" BadgeColor="Color.Error" />
+    <MudTabPanel Text="Chat" Icon="@Icons.Material.Filled.Chat" BadgeDot="true" BadgeColor="Color.Error" />
+</MudTabs>
+
+@code {
+    public static string __description__ = "Badges stay inside the tab and do not change its width, even with long tab names.";
+}
