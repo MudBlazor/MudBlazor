@@ -53,8 +53,7 @@
 }
 
 label.mud-input-label.mud-input-label-inputcontrol {
-  // Browser autofill applies :-webkit-autofill without firing an input event, so mud-shrink is never set
-  // and the label would overlap the prefilled value. Treat the autofilled state as shrunk directly in CSS (#9050).
+  // Browser autofill applies :-webkit-autofill without firing an input event, so mud-shrink is never set and the label would overlap the prefilled value. Treat the autofilled state as shrunk directly in CSS (#9050).
   .mud-shrink ~ &,
   .mud-input:has(:-webkit-autofill) ~ & {
     color: var(--mud-palette-text-primary);
