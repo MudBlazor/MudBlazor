@@ -373,6 +373,58 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(Color.Secondary, Color.Error)]
+        [TestCase(Color.Info, Color.Warning)]
+        public void CheckBoxColor_ReadOnly_ShouldKeepColor(Color color, Color uncheckedColor)
+        {
+            // #9524: a read-only checkbox keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var uncheckedComp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(c => c.UncheckedColor, uncheckedColor)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, false));
+            var uncheckedIcon = uncheckedComp.Find(".mud-button-root.mud-icon-button");
+            uncheckedIcon.ClassList.Should().Contain($"mud-{uncheckedColor.ToStringFast(true)}-text");
+            uncheckedIcon.ClassList.Should().NotContain($"hover:mud-{uncheckedColor.ToStringFast(true)}-hover");
+
+            var checkedComp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(c => c.UncheckedColor, uncheckedColor)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, true));
+            var checkedIcon = checkedComp.Find(".mud-button-root.mud-icon-button");
+            checkedIcon.ClassList.Should().Contain($"mud-{color.ToStringFast(true)}-text");
+            checkedIcon.ClassList.Should().NotContain($"hover:mud-{color.ToStringFast(true)}-hover");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CheckBoxColor_ReadOnlyWithoutUncheckedColor_ShouldKeepColor(bool value)
+        {
+            // #9524: with only Color set, a read-only checkbox keeps that color in both states.
+            var comp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, Color.Success)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, value));
+            comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().Contain("mud-success-text");
+        }
+
+        [Test]
+        public void CheckBoxColor_Disabled_ShouldDropColorClass()
+        {
+            // #9524: Disabled (unlike ReadOnly) greys out, so no color utility class is emitted.
+            var comp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, Color.Success)
+                .Add(c => c.UncheckedColor, Color.Error)
+                .Add(c => c.Disabled, true));
+            var icon = comp.Find(".mud-button-root.mud-icon-button");
+            icon.ClassList.Should().NotContain("mud-error-text");
+            icon.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
         public void CheckBoxDisabled()
         {
             var comp = Context.Render<CheckBoxLabelTest>();

@@ -32,8 +32,12 @@ namespace MudBlazor
 
         protected string SwitchClassname => new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
             .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
-            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
-            .AddClass($"mud-{UncheckedColor.ToStringFast(true)}-text hover:mud-{UncheckedColor.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
+            // The text color is kept when read-only; only Disabled greys the switch out.
+            // The hover effect is separated out so it can be suppressed whenever the switch is not interactive.
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToStringFast(true)}-text", !GetDisabledState() && BoolValue == false)
+            .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+            .AddClass($"hover:mud-{UncheckedColor.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
             .AddClass($"mud-switch-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-checked", BoolValue)
