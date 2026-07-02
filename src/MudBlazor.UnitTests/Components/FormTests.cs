@@ -563,8 +563,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("Field3 changed");
         }
 
-        // #13381: blurring an empty required field under an EditContext validates it (both [Required] via For and the
-        // Required parameter) without dirtying the form or firing OnFieldChanged (the #12790 contract).
+        /// <summary>
+        /// #13381: blurring an empty required field under an EditContext validates it (both [Required] via For and the
+        /// Required parameter) without dirtying the form or firing OnFieldChanged (the #12790 contract).
+        /// </summary>
         [Test]
         public async Task EditForm_BlurEmptyRequiredField_Validates_WithoutDirtying()
         {
@@ -591,7 +593,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FieldChangedCount.Should().Be(0, "blur validation must not fire OnFieldChanged (#12790)");
         }
 
-        // #13381: after a blur-triggered required error, entering a valid value clears it.
+        /// <summary>
+        /// #13381: after a blur-triggered required error, entering a valid value clears it.
+        /// </summary>
         [Test]
         public async Task EditForm_BlurRequired_ThenValidInput_ClearsError()
         {
@@ -605,7 +609,9 @@ namespace MudBlazor.UnitTests.Components
             nameField.HasErrors.Should().BeFalse("a valid value clears the blur-triggered required error (#13381)");
         }
 
-        // #13381: a blur-staged message must not duplicate the external validator's message on submit.
+        /// <summary>
+        /// #13381: a blur-staged message must not duplicate the external validator's message on submit.
+        /// </summary>
         [Test]
         public async Task EditForm_BlurThenSubmit_NoDuplicateMessage()
         {
@@ -620,7 +626,9 @@ namespace MudBlazor.UnitTests.Components
                 .Should().Be(1, "the blur-staged message must be handed back to the external validator, not duplicated (#13381)");
         }
 
-        // #13381: blurring after a failed submit must not duplicate the external validator's message (would double in a ValidationSummary).
+        /// <summary>
+        /// #13381: blurring after a failed submit must not duplicate the external validator's message (would double in a ValidationSummary).
+        /// </summary>
         [Test]
         public async Task EditForm_SubmitThenBlur_NoDuplicateMessage()
         {
@@ -636,7 +644,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTextField<string>>()[0].Instance.HasErrors.Should().BeTrue();
         }
 
-        // #13381: ResetValidationAsync clears a blur-staged message so it can't resurface on the next validation-state notification.
+        /// <summary>
+        /// #13381: ResetValidationAsync clears a blur-staged message so it can't resurface on the next validation-state notification.
+        /// </summary>
         [Test]
         public async Task EditForm_ResetValidation_ClearsStagedMessage()
         {
@@ -655,7 +665,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.EditContext.GetValidationMessages().Should().NotContain("Name is required");
         }
 
-        // #13381: on submit the external validators own the verdict; a blur-staged component-Required error must not linger as stale display.
+        /// <summary>
+        /// #13381: on submit the external validators own the verdict; a blur-staged component-Required error must not linger as stale display.
+        /// </summary>
         [Test]
         public async Task EditForm_SubmitWithComponentRequiredError_ReconcilesDisplay()
         {
@@ -670,7 +682,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeFalse("the staged error must be reconciled, not left as a stale display"));
         }
 
-        // #13381: emptying a field guarded only by the Required parameter keeps its error, though external validators say nothing.
+        /// <summary>
+        /// #13381: emptying a field guarded only by the Required parameter keeps its error, though external validators say nothing.
+        /// </summary>
         [Test]
         public async Task EditForm_ComponentRequired_EmptiedValue_ShowsError()
         {
