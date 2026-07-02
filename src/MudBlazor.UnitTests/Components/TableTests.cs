@@ -2398,6 +2398,40 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        public async Task TableGrouping_NestedGroupCheckboxesUpdateWhenParentExpandsAfterSelection()
+        {
+            // Regression for https://github.com/MudBlazor/MudBlazor/issues/9474
+            var comp = Context.Render<TableGroupingNestedTest>();
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingNestedTest.Item>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
+            var table = tableComponent.Instance;
+
+            IRenderedComponent<MudTableGroupRow<TableGroupingNestedTest.Item>> FindGroup(string key)
+            {
+                return comp.FindComponents<MudTableGroupRow<TableGroupingNestedTest.Item>>()
+                    .Single(group => group.Instance.Items?.Key.ToString() == key);
+            }
+
+            // Control: expanding an unselected parent creates unchecked child groups.
+            var unselectedParent = FindGroup("G2");
+            await unselectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N1").Checked.Should().BeFalse();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N2").Checked.Should().BeFalse();
+
+            // Select a different parent while its child groups have not been rendered.
+            table.Context.GroupRows.Should().NotContain(group => group.Items != null && group.Items.Key.ToString().StartsWith("G1 >"));
+            var selectedParent = FindGroup("G1");
+            await selectedParent.FindComponent<MudCheckBox<bool?>>().Find("input").ChangeAsync(true);
+            table.SelectedItems.Should().HaveCount(3);
+            table.SelectedItems.Should().OnlyContain(item => item.Group == "G1");
+
+            // Expanding the selected parent must immediately initialize its child checkboxes.
+            await selectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N1").Checked.Should().BeTrue();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N2").Checked.Should().BeTrue();
+        }
+
         /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
