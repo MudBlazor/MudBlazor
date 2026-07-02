@@ -1148,12 +1148,11 @@ namespace MudBlazor
             _isFocused = false;
             _handleNextFocus = false;
 
-            // When Immediate is enabled, then the CoerceValue is set by TextChanged
-            // So only coerce the value on blur when Immediate is disabled
+            // When Immediate is enabled, then the CoerceValue is set by TextChanged.
+            // So only coerce the value on blur when Immediate is disabled, then fall through to the same validation path.
             if (!Immediate)
             {
                 await CoerceValueToTextAsync();
-                return;
             }
 
             // A blur while the menu is open or a value is being committed is part of selecting an item: the item's mousedown blurs the input before its click lands, so validating now would flag a premature error.
