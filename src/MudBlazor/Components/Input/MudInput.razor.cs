@@ -35,6 +35,7 @@ namespace MudBlazor
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
                 .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
+                .AddClass("mud-input-full-width", FullWidth)
                 .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
