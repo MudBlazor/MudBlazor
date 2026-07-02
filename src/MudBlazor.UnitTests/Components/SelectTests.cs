@@ -1096,6 +1096,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #11796: in multi-selection the Validation function runs after SelectedValues commits, so it observes the new selection - once per click.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Validation_RunsAfterSelectedValuesCommit()
+        {
+            var comp = Context.Render<SelectMultiSelectionValidationOrderTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(3));
+            comp.Instance.ObservedCounts.Clear();
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1 },
+                "validation runs once per selection and sees the committed binding (#11796)");
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2 });
+
+            // deselect the first option again
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1 });
+
+            // the Clearable X button must also validate against the committed (now empty) binding
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1, 0 });
+        }
+
+        /// <summary>
         /// Selected option should be hilighted when drop-down opens
         /// </summary>
         [Test]

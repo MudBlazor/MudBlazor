@@ -621,7 +621,6 @@ namespace MudBlazor
                 }
 
                 UpdateSelectAllChecked();
-                await BeginValidateAsync();
             }
             else
             {
@@ -653,6 +652,13 @@ namespace MudBlazor
             await UpdateSelectedValuesStateAsync(comparer);
 
             FieldChanged(_selectedValues);
+
+            if (MultiSelection)
+            {
+                // Validate only now that SelectedValuesChanged has committed the new selection,
+                // so validation functions observe the updated binding (#11796).
+                await BeginValidateAsync();
+            }
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
@@ -739,10 +745,10 @@ namespace MudBlazor
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
-            await BeginValidateAsync();
             StateHasChanged();
             await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
         }
 
         /// <summary>
@@ -985,9 +991,9 @@ namespace MudBlazor
 
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
-            await BeginValidateAsync();
             await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
@@ -1498,10 +1504,10 @@ namespace MudBlazor
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
-            await BeginValidateAsync();
             StateHasChanged();
             await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
 
