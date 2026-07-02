@@ -2069,5 +2069,27 @@ namespace MudBlazor.UnitTests.Components
             await textField.InsertTextAtCurrentCaretPositionAsync("test");
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudInput.insertAtCurrentCaretPosition", It.IsAny<object[]>()), Times.Exactly(1));
         }
+
+        [TestCase(2, InputSizing.Fixed)]
+        [TestCase(1, InputSizing.Auto)]
+        [TestCase(2, InputSizing.Auto)]
+        public async Task TextFieldWithTextArea_Should_TriggerUserDefinedPasteEventAsync(int lines, InputSizing sizing)
+        {
+            var pasteEventCalled = false;
+            var onPasteHandler = EventCallback.Factory.Create<ClipboardEventArgs>(this, _ =>
+            {
+                pasteEventCalled = true;
+            });
+
+            var comp = Context.Render<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Lines, lines)
+                    .Add(p => p.Sizing, sizing)
+                    .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "onpaste", onPasteHandler } }));
+
+            var textarea = comp.Find("textarea");
+            await textarea.TriggerEventAsync("onpaste", new ClipboardEventArgs());
+            pasteEventCalled.Should().BeTrue();
+        }
     }
 }

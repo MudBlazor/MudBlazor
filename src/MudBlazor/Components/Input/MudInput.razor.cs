@@ -196,14 +196,6 @@ namespace MudBlazor
             await SetTextAndUpdateValueAsync(args);
         }
 
-        /// <summary>
-        /// Paste hook for descendants.
-        /// </summary>
-        protected virtual Task OnPaste(ClipboardEventArgs args)
-        {
-            return Task.CompletedTask;
-        }
-
         /// <inheritdoc />
         public override async ValueTask FocusAsync()
         {
