@@ -883,7 +883,6 @@ namespace MudBlazor
 
         private bool _hasStagedEditContextMessages;
 
-        // True while this component's own validation (Validation/Required/For/conversion) is the source of ErrorState, so a later empty pass may clear it. Distinguishes internal errors from a consumer-set Error parameter.
         private bool _hasInternalError;
 
         /// <summary>
