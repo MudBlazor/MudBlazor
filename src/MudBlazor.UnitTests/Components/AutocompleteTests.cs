@@ -893,6 +893,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").BlurAsync();
             await comp.WaitForAssertionAsync(() =>
             {
+                ac.Touched.Should().BeTrue("leaving the field marks it touched (#9425)");
                 ac.HasErrors.Should().BeFalse("a pre-filled required autocomplete is valid on blur (#9425)");
                 ac.ValidationErrors.Should().BeEmpty();
             });
