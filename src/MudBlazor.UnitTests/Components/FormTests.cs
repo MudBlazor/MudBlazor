@@ -703,7 +703,9 @@ namespace MudBlazor.UnitTests.Components
             // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
 
-        // #11540: an input nested inside a MudRadioGroup must register with the surrounding MudForm.
+        /// <summary>
+        /// #11540: an input nested inside a MudRadioGroup must register with the surrounding MudForm.
+        /// </summary>
         [Test]
         public async Task FormRadioGroup_NestedInput_ParticipatesInValidation()
         {
@@ -721,7 +723,9 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Should().BeEmpty();
         }
 
-        // #11540 guard: radios must still not register with the form (#9472); only the group and the nested input do.
+        /// <summary>
+        /// #11540 guard: radios must still not register with the form (#9472); only the group and the nested input do.
+        /// </summary>
         [Test]
         public async Task FormRadioGroup_RadioSelection_DoesNotRegisterRadiosWithForm()
         {
