@@ -578,15 +578,22 @@ namespace MudBlazor.UnitTests.Components
             nameField.HasErrors.Should().BeFalse();
             otherField.HasErrors.Should().BeFalse();
 
-            // Blur the empty [Required] (data-annotation) field.
+            // Blur the empty [Required] (data-annotation) field. The error state is applied via
+            // EditContext.OnValidationStateChanged (async), so wait for it.
             await comp.FindAll("input")[0].BlurAsync();
-            nameField.HasErrors.Should().BeTrue("blurring an empty [Required] field under an EditContext should validate it (#13381)");
-            nameField.GetState(x => x.ErrorText).Should().Be("Name is required");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                nameField.HasErrors.Should().BeTrue("blurring an empty [Required] field under an EditContext should validate it (#13381)");
+                nameField.GetState(x => x.ErrorText).Should().Be("Name is required");
+            });
 
             // Blur the empty component-Required field (no data-annotation).
             await comp.FindAll("input")[1].BlurAsync();
-            otherField.HasErrors.Should().BeTrue("blurring an empty Required field under an EditContext should validate it (#13381)");
-            otherField.GetState(x => x.ErrorText).Should().Be("Other is required");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                otherField.HasErrors.Should().BeTrue("blurring an empty Required field under an EditContext should validate it (#13381)");
+                otherField.GetState(x => x.ErrorText).Should().Be("Other is required");
+            });
 
             // #12790: blur must not dirty the form nor fire OnFieldChanged.
             comp.Instance.EditContext.IsModified().Should().BeFalse("blur validation must not mark the form dirty (#12790)");
@@ -603,10 +610,10 @@ namespace MudBlazor.UnitTests.Components
             var nameField = comp.FindComponents<MudTextField<string>>()[0].Instance;
 
             await comp.FindAll("input")[0].BlurAsync();
-            nameField.HasErrors.Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => nameField.HasErrors.Should().BeTrue());
 
             await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "Sam" });
-            nameField.HasErrors.Should().BeFalse("a valid value clears the blur-triggered required error (#13381)");
+            await comp.WaitForAssertionAsync(() => nameField.HasErrors.Should().BeFalse("a valid value clears the blur-triggered required error (#13381)"));
         }
 
         /// <summary>
@@ -640,8 +647,11 @@ namespace MudBlazor.UnitTests.Components
 
             // The external message is still in its store; blur must defer to it instead of staging a copy.
             await comp.FindAll("input")[0].BlurAsync();
-            editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
-            comp.FindComponents<MudTextField<string>>()[0].Instance.HasErrors.Should().BeTrue();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
+                comp.FindComponents<MudTextField<string>>()[0].Instance.HasErrors.Should().BeTrue();
+            });
         }
 
         /// <summary>
@@ -654,15 +664,18 @@ namespace MudBlazor.UnitTests.Components
             var nameField = comp.FindComponents<MudTextField<string>>()[0].Instance;
 
             await comp.FindAll("input")[0].BlurAsync();
-            nameField.HasErrors.Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => nameField.HasErrors.Should().BeTrue());
 
             await comp.InvokeAsync(() => nameField.ResetValidationAsync());
             nameField.HasErrors.Should().BeFalse();
 
             // A validation-state event from another field must not resurrect the reset error.
             await comp.FindAll("input")[1].BlurAsync();
-            nameField.HasErrors.Should().BeFalse();
-            comp.Instance.EditContext.GetValidationMessages().Should().NotContain("Name is required");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                nameField.HasErrors.Should().BeFalse();
+                comp.Instance.EditContext.GetValidationMessages().Should().NotContain("Name is required");
+            });
         }
 
         /// <summary>
@@ -676,7 +689,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "Sam" });
             await comp.FindAll("input")[1].BlurAsync();
-            otherField.HasErrors.Should().BeTrue();
+            await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeTrue());
 
             comp.Instance.EditContext.Validate().Should().BeTrue("only external validators decide the submit verdict");
             await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeFalse("the staged error must be reconciled, not left as a stale display"));

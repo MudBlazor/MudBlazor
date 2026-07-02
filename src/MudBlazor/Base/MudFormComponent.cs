@@ -744,8 +744,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Publishes this component's own validation errors to the EditContext through its message store.
-        /// NotifyValidationStateChanged shows them without setting IsModified or raising OnFieldChanged (#13381, #12790).
+        /// Surfaces this component's own errors to the EditContext without dirtying the form (#13381, #12790).
         /// </summary>
         private void StageEditContextValidationMessages(List<string> errors)
         {
