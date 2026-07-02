@@ -564,6 +564,193 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #13381: blurring an empty required field under an EditContext validates it (both [Required] via For and the Required parameter) without dirtying the form or firing OnFieldChanged (the #12790 contract).
+        /// </summary>
+        [Test]
+        public async Task EditForm_BlurEmptyRequiredField_Validates_WithoutDirtying()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var textFields = comp.FindComponents<MudTextField<string>>();
+            var nameField = textFields[0].Instance;   // guarded by data-annotation [Required]
+            var otherField = textFields[1].Instance;  // guarded by the component's Required parameter
+
+            nameField.HasErrors.Should().BeFalse();
+            otherField.HasErrors.Should().BeFalse();
+
+            // Blur the empty [Required] (data-annotation) field. The error state is applied via
+            // EditContext.OnValidationStateChanged (async), so wait for it.
+            await comp.FindAll("input")[0].BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                nameField.HasErrors.Should().BeTrue("blurring an empty [Required] field under an EditContext should validate it (#13381)");
+                nameField.GetState(x => x.ErrorText).Should().Be("Name is required");
+            });
+
+            // Blur the empty component-Required field (no data-annotation).
+            await comp.FindAll("input")[1].BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                otherField.HasErrors.Should().BeTrue("blurring an empty Required field under an EditContext should validate it (#13381)");
+                otherField.GetState(x => x.ErrorText).Should().Be("Other is required");
+            });
+
+            // #12790: blur must not dirty the form nor fire OnFieldChanged.
+            comp.Instance.EditContext.IsModified().Should().BeFalse("blur validation must not mark the form dirty (#12790)");
+            comp.Instance.FieldChangedCount.Should().Be(0, "blur validation must not fire OnFieldChanged (#12790)");
+        }
+
+        /// <summary>
+        /// #13381: after a blur-triggered required error, entering a valid value clears it.
+        /// </summary>
+        [Test]
+        public async Task EditForm_BlurRequired_ThenValidInput_ClearsError()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var nameField = comp.FindComponents<MudTextField<string>>()[0].Instance;
+
+            await comp.FindAll("input")[0].BlurAsync();
+            await comp.WaitForAssertionAsync(() => nameField.HasErrors.Should().BeTrue());
+
+            await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "Sam" });
+            await comp.WaitForAssertionAsync(() => nameField.HasErrors.Should().BeFalse("a valid value clears the blur-triggered required error (#13381)"));
+        }
+
+        /// <summary>
+        /// #13381: a blur-staged message must not duplicate the external validator's message on submit.
+        /// </summary>
+        [Test]
+        public async Task EditForm_BlurThenSubmit_NoDuplicateMessage()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var editContext = comp.Instance.EditContext;
+
+            await comp.FindAll("input")[0].BlurAsync();
+
+            // Simulate submit: full-form validation runs the external DataAnnotationsValidator.
+            editContext.Validate().Should().BeFalse();
+            editContext.GetValidationMessages().Count(m => m == "Name is required")
+                .Should().Be(1, "the blur-staged message must be handed back to the external validator, not duplicated (#13381)");
+        }
+
+        /// <summary>
+        /// #13381: blurring after a failed submit must not duplicate the external validator's message (would double in a ValidationSummary).
+        /// </summary>
+        [Test]
+        public async Task EditForm_SubmitThenBlur_NoDuplicateMessage()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var editContext = comp.Instance.EditContext;
+
+            editContext.Validate().Should().BeFalse();
+            editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
+
+            // The external message is still in its store; blur must defer to it instead of staging a copy.
+            await comp.FindAll("input")[0].BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
+                comp.FindComponents<MudTextField<string>>()[0].Instance.HasErrors.Should().BeTrue();
+            });
+        }
+
+        /// <summary>
+        /// #13381: ResetValidationAsync clears a blur-staged message so it can't resurface on the next validation-state notification.
+        /// </summary>
+        [Test]
+        public async Task EditForm_ResetValidation_ClearsStagedMessage()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var nameField = comp.FindComponents<MudTextField<string>>()[0].Instance;
+
+            await comp.FindAll("input")[0].BlurAsync();
+            await comp.WaitForAssertionAsync(() => nameField.HasErrors.Should().BeTrue());
+
+            await comp.InvokeAsync(() => nameField.ResetValidationAsync());
+            nameField.HasErrors.Should().BeFalse();
+
+            // A validation-state event from another field must not resurrect the reset error.
+            await comp.FindAll("input")[1].BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                nameField.HasErrors.Should().BeFalse();
+                comp.Instance.EditContext.GetValidationMessages().Should().NotContain("Name is required");
+            });
+        }
+
+        /// <summary>
+        /// #13381: on submit the external validators own the verdict; a blur-staged component-Required error must not linger as stale display.
+        /// </summary>
+        [Test]
+        public async Task EditForm_SubmitWithComponentRequiredError_ReconcilesDisplay()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var otherField = comp.FindComponents<MudTextField<string>>()[1].Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "Sam" });
+            await comp.FindAll("input")[1].BlurAsync();
+            await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeTrue());
+
+            comp.Instance.EditContext.Validate().Should().BeTrue("only external validators decide the submit verdict");
+            await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeFalse("the staged error must be reconciled, not left as a stale display"));
+        }
+
+        /// <summary>
+        /// #13381: emptying a field guarded only by the Required parameter keeps its error, though external validators say nothing.
+        /// </summary>
+        [Test]
+        public async Task EditForm_ComponentRequired_EmptiedValue_ShowsError()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+            var otherField = comp.FindComponents<MudTextField<string>>()[1].Instance;
+
+            await comp.FindAll("input")[1].ChangeAsync(new ChangeEventArgs { Value = "x" });
+            otherField.HasErrors.Should().BeFalse();
+
+            await comp.FindAll("input")[1].ChangeAsync(new ChangeEventArgs { Value = "" });
+            await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeTrue());
+            otherField.GetState(x => x.ErrorText).Should().Be("Other is required");
+        }
+
+        /// <summary>
+        /// #13381: staged state must not outlive a removed cascaded EditContext; the next value change must not throw.
+        /// </summary>
+        [Test]
+        public async Task EditForm_EditContextRemovedAfterBlur_DoesNotThrow()
+        {
+            var comp = Context.Render<FormEditContextRemovedTest>();
+            var field = comp.FindComponent<MudTextField<string>>().Instance;
+
+            // Blur the empty Required field so it stages an error against the cascaded EditContext.
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => field.HasErrors.Should().BeTrue());
+
+            // Remove the cascaded EditContext while the field stays alive.
+            await comp.InvokeAsync(() => comp.Instance.RemoveEditContext());
+
+            // A later value change once ran EditContext!.GetValidationMessages on the now-null context (NRE).
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "Sam" });
+            field.HasErrors.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// #13381: disposing a field that staged a blur error refreshes the ValidationSummary instead of leaving it stale.
+        /// </summary>
+        [Test]
+        public async Task EditForm_DisposeFieldWithStagedError_RefreshesValidationSummary()
+        {
+            var comp = Context.Render<FormDisposedFieldValidationSummaryTest>();
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+                comp.FindAll("li.validation-message").Select(x => x.TextContent).Should().Contain("Name is required"));
+
+            // Removing the field disposes it; its staged message must not linger in the summary.
+            await comp.InvokeAsync(() => comp.Instance.HideField());
+            await comp.WaitForAssertionAsync(() =>
+                comp.FindAll("li.validation-message").Should().BeEmpty("disposing the field must refresh the summary (#13381)"));
+        }
+
+        /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]
