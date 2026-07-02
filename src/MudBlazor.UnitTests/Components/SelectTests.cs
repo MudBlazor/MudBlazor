@@ -1095,10 +1095,7 @@ namespace MudBlazor.UnitTests.Components
             select.ValidationErrors.First().Should().Be("Required");
         }
 
-        /// <summary>
-        /// #11796: In multi-selection, the Validation function must run after the SelectedValues
-        /// binding has been committed, so it observes the new selection - exactly once per click.
-        /// </summary>
+        // #11796: in multi-selection the Validation function runs after SelectedValues commits, so it observes the new selection - once per click.
         [Test]
         public async Task MultiSelect_Validation_RunsAfterSelectedValuesCommit()
         {
