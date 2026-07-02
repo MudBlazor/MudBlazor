@@ -185,14 +185,20 @@ namespace MudBlazor
         /// <param name="text">The new text value to use.</param>
         public async Task SetTextAsync(string? text)
         {
+            // A programmatic text set is not a user interaction, so it must leave the touched state unchanged (it still updates the value and notifies the form) (#12997).
+            var wasTouched = Touched;
+
             if (!HasMask)
             {
                 await InputReference.SetText(text);
-                return;
+            }
+            else
+            {
+                await _maskReference.Clear();
+                await _maskReference.OnPasteAsync(text);
             }
 
-            await _maskReference.Clear();
-            await _maskReference.OnPasteAsync(text);
+            Touched = wasTouched;
         }
 
         /// <summary>

@@ -555,6 +555,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #12997: calling SetTextAsync programmatically is not a user interaction, so it must not mark the field touched, and ResetAsync afterwards leaves it untouched.
+        /// </summary>
+        [Test]
+        public async Task SetTextAsync_ProgrammaticSet_DoesNotMarkTouched()
+        {
+            var comp = Context.Render<MudTextField<string>>();
+            var textField = comp.Instance;
+            textField.Touched.Should().BeFalse();
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+
+            textField.GetState(x => x.Text).Should().Be("hello");
+            textField.Touched.Should().BeFalse("programmatic SetTextAsync is not a user interaction (#12997)");
+
+            await comp.InvokeAsync(() => textField.ResetAsync());
+            textField.Touched.Should().BeFalse();
+        }
+
+        /// <summary>
         /// This is based on a bug reported by a user
         /// </summary>
         [Test]
