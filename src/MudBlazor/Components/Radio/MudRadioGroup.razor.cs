@@ -199,8 +199,7 @@ namespace MudBlazor
         {
             // Route through SetSelectedOptionAsync so the value, selected radio, and checked markup stay in sync.
             await SetSelectedOptionAsync(default, updateRadio: true);
-            Touched = false;
-            await InvokeAsync(StateHasChanged);
+            await base.ResetValueAsync();
         }
 
         /// <inheritdoc />
