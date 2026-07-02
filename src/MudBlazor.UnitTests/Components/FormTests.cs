@@ -677,8 +677,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
-        // #12732/#4593: when a component has no validation source of its own, Error/ErrorText are consumer-managed
-        // and a validate pass (here a value change) must not wipe them.
+        /// <summary>
+        /// #12732/#4593: when a component has no validation source of its own, Error/ErrorText are consumer-managed and a validate pass (here a value change) must not wipe them.
+        /// </summary>
         [Test]
         public async Task ValidateValue_KeepsConsumerManagedError_WhenNoValidationSource()
         {
@@ -697,7 +698,9 @@ namespace MudBlazor.UnitTests.Components
             textField.HasErrors.Should().BeTrue();
         }
 
-        // #11244: selecting an option must not clear an Error the consumer manages on a MudSelect with no validation source.
+        /// <summary>
+        /// #11244: selecting an option must not clear an Error the consumer manages on a MudSelect with no validation source.
+        /// </summary>
         [Test]
         public async Task MudSelect_KeepsConsumerManagedError_OnSelection()
         {
@@ -716,8 +719,9 @@ namespace MudBlazor.UnitTests.Components
             select.GetState(x => x.ErrorText).Should().Be("consumer error");
         }
 
-        // The consumer-error guard must still let a component clear its OWN error: a conversion error set on a
-        // bad edit is cleared once the value is corrected, even though no validation source remains configured.
+        /// <summary>
+        /// The consumer-error guard must still let a component clear its own error: a conversion error set on a bad edit is cleared once the value is corrected, even though no validation source remains configured.
+        /// </summary>
         [Test]
         public async Task ValidateValue_ClearsOwnConversionError_AfterCorrection()
         {
@@ -732,8 +736,9 @@ namespace MudBlazor.UnitTests.Components
             textField.HasErrors.Should().BeFalse("correcting the value must clear the component's own error");
         }
 
-        // A For whose target property carries no ValidationAttribute is not a validation source (the attribute
-        // enumerable is non-null but empty), so a consumer-managed Error must still survive a validate pass.
+        /// <summary>
+        /// A For whose target property carries no ValidationAttribute is not a validation source (the attribute enumerable is non-null but empty), so a consumer-managed Error must still survive a validate pass.
+        /// </summary>
         [Test]
         public async Task ValidateValue_KeepsConsumerManagedError_WhenForHasNoValidationAttributes()
         {
@@ -751,6 +756,29 @@ namespace MudBlazor.UnitTests.Components
 
             textField.GetState(x => x.Error).Should().BeTrue("a For without validation attributes is not a validation source (#13415 review)");
             textField.GetState(x => x.ErrorText).Should().Be("consumer error");
+        }
+
+        /// <summary>
+        /// #13389: selecting a value in a Required MudSelect (wrapped by a one-way forwarding component) marks the field touched and the form valid on the first selection.
+        /// </summary>
+        [Test]
+        public async Task MudForm_FirstSelectionOnWrappedRequiredSelect_MarksTouchedAndValid()
+        {
+            var comp = Context.Render<FormWrappedRequiredSelectTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+
+            form.IsValid.Should().BeFalse();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                select.Touched.Should().BeTrue("the first selection is a user interaction and must touch the field (#13389)");
+                form.IsValid.Should().BeTrue("selecting a value in the only required field makes the form valid (#13389)");
+            });
         }
 
         /// <summary>
