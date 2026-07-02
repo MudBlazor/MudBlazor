@@ -521,9 +521,10 @@ window.mudpopoverHelper = {
                     }
                 }
 
-                // Pull the popover back on screen, but never past the anchor's own edge, so a
-                // dropdown attached to a box near the viewport edge stays aligned with it (#11894).
-                // Clamped to at least 0 so the popover can never overflow off screen (#13199).
+                // Anchor-aware floor for the edge clamp below: clamp no further than the anchor's
+                // own edge, so a dropdown near the viewport edge stays aligned with its box (#11894).
+                // Bounded to >= 0 so the clamp never targets an off-screen position, unlike the
+                // reverted #13053 which skipped the clamp entirely and let popovers overflow (#13199).
                 const minLeft = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.left));
                 const minTop = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.top));
 
@@ -537,7 +538,7 @@ window.mudpopoverHelper = {
 
                 // ensure the top is inside bounds
                 if (top + offsetY < minTop && // it's starting above the anchor or gutter
-                    boundingRect.top >= 0 && // the popoverNode is still on screen
+                    boundingRect.top >= 0 && // the anchor hasn't scrolled above the viewport top
                     Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
                     top = minTop;
                     // set offsetY to 0 to avoid double offset
