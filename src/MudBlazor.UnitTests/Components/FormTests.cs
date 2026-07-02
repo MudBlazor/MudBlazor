@@ -2334,7 +2334,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
-        // #11828: while unparsable text is present, the conversion error fails the form.
+        /// <summary>
+        /// #11828: while unparsable text is present, the conversion error fails the form.
+        /// </summary>
         [Test]
         public async Task ConversionError_WhileInvalidTextPresent_FailsForm()
         {
@@ -2350,7 +2352,9 @@ namespace MudBlazor.UnitTests.Components
             form.Errors.Should().Contain("Not a valid number");
         }
 
-        // #11828: clearing the unparsable text clears the conversion error; the non-required form validates clean again.
+        /// <summary>
+        /// #11828: clearing the unparsable text clears the conversion error; the non-required form validates clean again.
+        /// </summary>
         [Test]
         public async Task ConversionError_UserClearsInvalidText_FormBecomesValid()
         {
@@ -2368,7 +2372,9 @@ namespace MudBlazor.UnitTests.Components
             field.HasErrors.Should().BeFalse();
         }
 
-        // #11828: ResetValidationAsync drops the conversion error so a later form validation cannot resurrect it.
+        /// <summary>
+        /// #11828: ResetValidationAsync drops the conversion error so a later form validation cannot resurrect it.
+        /// </summary>
         [Test]
         public async Task ConversionError_ResetValidation_ClearsIt()
         {
