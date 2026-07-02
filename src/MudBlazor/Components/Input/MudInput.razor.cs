@@ -123,12 +123,6 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Occurs when a mouse wheel event is raised.
-        /// </summary>
-        [Parameter]
-        public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
-
-        /// <summary>
         /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
