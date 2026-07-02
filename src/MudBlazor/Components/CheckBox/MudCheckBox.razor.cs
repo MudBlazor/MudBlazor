@@ -33,8 +33,6 @@ namespace MudBlazor
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            // The text color is kept when read-only; only Disabled greys the checkbox out.
-            // The hover effect is separated out so it can be suppressed whenever the checkbox is not interactive.
             .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && (UncheckedColor == null || BoolValue == true))
             .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text", !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || BoolValue == true))
