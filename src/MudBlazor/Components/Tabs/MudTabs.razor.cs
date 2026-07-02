@@ -98,6 +98,18 @@ namespace MudBlazor
         public bool KeepPanelsAlive { get; set; }
 
         /// <summary>
+        /// Initializes tab panels only once visited. Only has an effect when <see cref="KeepPanelsAlive"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, all tabs' contents are initialized immediately.<br />
+        /// When <c>true</c>, a tab's content is initialized only once it is visited.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool LazyLoadPanels { get; set; }
+
+        /// <summary>
         /// Disables user interaction for all tab panels.
         /// </summary>
         /// <remarks>
