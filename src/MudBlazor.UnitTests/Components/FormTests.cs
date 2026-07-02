@@ -725,17 +725,28 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// #11540 guard: individual radios must still not register with the form (#9472);
-        /// selecting one must not raise FieldChanged for the radio itself.
+        /// only the group and the nested input are form fields.
         /// </summary>
         [Test]
         public async Task FormRadioGroup_RadioSelection_DoesNotRegisterRadiosWithForm()
         {
             var comp = Context.Render<FormRadioGroupNestedInputTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
 
             await comp.Find("input[type=radio]").ClickAsync();
 
             comp.Instance.FieldChangedFieldTypes.Should().NotContain("MudRadio`1",
                 "radios participate through their group, not as form fields themselves");
+
+            // Assert registration directly - a click cannot reveal it (the radio's own
+            // FieldChanged is unreachable from markup even when wrongly registered).
+            var formControls = (System.Collections.IEnumerable)typeof(MudForm)
+                .GetField("_formControls", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+                .GetValue(form)!;
+            var registeredTypes = formControls.Cast<object>().Select(c => c.GetType()).ToList();
+            registeredTypes.Should().NotContain(typeof(MudRadio<string>));
+            registeredTypes.Should().Contain(typeof(MudRadioGroup<string>));
+            registeredTypes.Should().Contain(typeof(MudTextField<string>), "the nested input registers (#11540)");
         }
 
         /// <summary>
