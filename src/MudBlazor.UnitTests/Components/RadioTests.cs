@@ -274,10 +274,53 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
+            // Backspace is not a standard radio interaction and no longer clears the selection.
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
             //Can't tabbed around the radios in test.
+        }
+
+        [Test]
+        public async Task RadioGroup_ResetAsync_ResetsToDefault()
+        {
+            // #11369: ResetAsync must set the group to default(T) consistently across the value, the selected
+            // radio, and the rendered markup - and a fresh selection must still work afterwards.
+
+            // Non-nullable bool: default is false, so resetting selects the "false" radio.
+            var boolGroup = Context.Render<MudRadioGroup<bool>>(self => self
+                .Add(x => x.Value, true)
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, false)));
+
+            await boolGroup.InvokeAsync(() => boolGroup.Instance.ResetAsync());
+            boolGroup.Instance.Value.Should().BeFalse();
+            boolGroup.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Selecting another option right after a reset still updates the value (the original #11369 symptom).
+            await boolGroup.FindAll("input.mud-radio-input")[0].ClickAsync(new MouseEventArgs());
+            boolGroup.Instance.Value.Should().BeTrue();
+
+            // Nullable with a matching null option: resets to null and selects that option.
+            var nullableWithNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, (bool?)null)));
+
+            await nullableWithNull.InvokeAsync(() => nullableWithNull.Instance.ResetAsync());
+            nullableWithNull.Instance.Value.Should().BeNull();
+            nullableWithNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Nullable without a null option: resets to null and clears the selection entirely.
+            var nullableNoNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false)));
+
+            await nullableNoNull.InvokeAsync(() => nullableNoNull.Instance.ResetAsync());
+            nullableNoNull.Instance.Value.Should().BeNull();
+            nullableNoNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(0);
         }
 
         [Test]

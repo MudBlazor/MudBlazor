@@ -195,15 +195,14 @@ namespace MudBlazor
             }
         }
 
-        protected override Task ResetValueAsync()
+        protected override async Task ResetValueAsync()
         {
-            if (_selectedRadio is not null)
-            {
-                _selectedRadio.SetChecked(false);
-                _selectedRadio = null;
-            }
-
-            return base.ResetValueAsync();
+            // Route through SetSelectedOptionAsync so the value, the selected radio, and the checked markup
+            // stay consistent: default(T) selects the matching radio (false for a bool group) or clears the
+            // selection when nothing matches (null for a nullable group).
+            await SetSelectedOptionAsync(default, updateRadio: true);
+            Touched = false;
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <inheritdoc />

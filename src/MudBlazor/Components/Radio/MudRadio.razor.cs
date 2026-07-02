@@ -189,14 +189,6 @@ namespace MudBlazor
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState() && !(MudRadioGroup?.GetReadOnlyState() ?? false);
 
-        private async Task HandleBackspaceAsync()
-        {
-            if (MudRadioGroup is not null)
-            {
-                await MudRadioGroup.ResetAsync();
-            }
-        }
-
         /// <inheritdoc />
         protected override async Task OnInitializedAsync()
         {
@@ -219,14 +211,12 @@ namespace MudBlazor
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
                         new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
+                        new("NumpadEnter", preventDown: "key+none")
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)
-                        .OnKeyDown("Backspace", HandleBackspaceAsync)));
+                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
