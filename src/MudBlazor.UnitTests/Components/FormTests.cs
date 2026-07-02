@@ -677,6 +677,82 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        // #12732/#4593: when a component has no validation source of its own, Error/ErrorText are consumer-managed
+        // and a validate pass (here a value change) must not wipe them.
+        [Test]
+        public async Task ValidateValue_KeepsConsumerManagedError_WhenNoValidationSource()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Error, true)
+                .Add(x => x.ErrorText, "consumer error"));
+            var textField = comp.Instance;
+
+            textField.GetState(x => x.Error).Should().BeTrue();
+
+            // A value change runs ValidateValue; with no Validation/Required/For it produces no errors of its own.
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "hello" });
+
+            textField.GetState(x => x.Error).Should().BeTrue("a validate pass must not clobber a consumer-managed Error (#12732)");
+            textField.GetState(x => x.ErrorText).Should().Be("consumer error");
+            textField.HasErrors.Should().BeTrue();
+        }
+
+        // #11244: selecting an option must not clear an Error the consumer manages on a MudSelect with no validation source.
+        [Test]
+        public async Task MudSelect_KeepsConsumerManagedError_OnSelection()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Error, true)
+                .Add(x => x.ErrorText, "consumer error")
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "1"))
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "2")));
+            var select = comp.Instance;
+
+            select.GetState(x => x.Error).Should().BeTrue();
+
+            await comp.InvokeAsync(() => select.SelectOption("2"));
+
+            select.GetState(x => x.Error).Should().BeTrue("selecting an option must not clobber a consumer-managed Error (#11244)");
+            select.GetState(x => x.ErrorText).Should().Be("consumer error");
+        }
+
+        // The consumer-error guard must still let a component clear its OWN error: a conversion error set on a
+        // bad edit is cleared once the value is corrected, even though no validation source remains configured.
+        [Test]
+        public async Task ValidateValue_ClearsOwnConversionError_AfterCorrection()
+        {
+            var comp = Context.Render<MudTextField<int?>>(parameters => parameters
+                .Add(x => x.Value, 5));
+            var textField = comp.Instance;
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "not a number" });
+            textField.HasErrors.Should().BeTrue("an unparseable edit is a conversion error");
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "10" });
+            textField.HasErrors.Should().BeFalse("correcting the value must clear the component's own error");
+        }
+
+        // A For whose target property carries no ValidationAttribute is not a validation source (the attribute
+        // enumerable is non-null but empty), so a consumer-managed Error must still survive a validate pass.
+        [Test]
+        public async Task ValidateValue_KeepsConsumerManagedError_WhenForHasNoValidationAttributes()
+        {
+            var model = new { data = "asdf" };
+            Expression<Func<string>> expression = () => model.data;
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Error, true)
+                .Add(x => x.ErrorText, "consumer error")
+                .Add(x => x.For, expression));
+            var textField = comp.Instance;
+
+            textField.GetState(x => x.Error).Should().BeTrue();
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "hello" });
+
+            textField.GetState(x => x.Error).Should().BeTrue("a For without validation attributes is not a validation source (#13415 review)");
+            textField.GetState(x => x.ErrorText).Should().Be("consumer error");
+        }
+
         /// <summary>
         /// #13381: on submit the external validators own the verdict; a blur-staged component-Required error must not linger as stale display.
         /// </summary>

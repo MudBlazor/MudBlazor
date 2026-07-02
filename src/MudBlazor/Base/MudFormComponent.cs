@@ -447,12 +447,19 @@ namespace MudBlazor
                     }
                     else
                     {
-                        // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                        // if Error and ErrorText are set by the user, setting them here will have no effect.
-                        // if Error, create an error id that can be used by aria-describedby on input control
-                        ValidationErrors = errors;
-                        await ErrorState.SetValueAsync(errors.Count > 0);
-                        await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
+                        // Error/ErrorText are consumer-managed unless this component has its own validation source; publishing an empty assessment here would wipe a consumer-set error on every validate pass (#12732, #11244, #4593).
+                        // _hasInternalError keeps us writing long enough to clear an error this component previously published (e.g. a resolved conversion error) even after its source goes away.
+                        // _validationAttrsFor is non-null but empty when the For-targeted property carries no ValidationAttribute, so require an actual attribute rather than just a non-null For.
+                        var hasValidationSource = Validation is not null || Required || _validationAttrsFor?.Any() == true || ConversionError;
+                        if (hasValidationSource || _hasInternalError)
+                        {
+                            _hasInternalError = errors.Count > 0;
+                            ValidationErrors = errors;
+                            await ErrorState.SetValueAsync(errors.Count > 0);
+                            await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
+                        }
+
+                        // Refresh the aria-describedby error id and the form/render regardless, so a consumer-managed error stays wired up.
                         await UpdateErrorIdStateAsync(HasErrors);
                         Form?.Update(this);
                         StateHasChanged();
@@ -704,6 +711,7 @@ namespace MudBlazor
             await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
             _lastInternalErrors = [];
+            _hasInternalError = false;
             RetractStagedEditContextMessages();
 
             await InvokeAsync(StateHasChanged);
@@ -874,6 +882,9 @@ namespace MudBlazor
         private ValidationMessageStore? _editContextValidationMessages;
 
         private bool _hasStagedEditContextMessages;
+
+        // True while this component's own validation (Validation/Required/For/conversion) is the source of ErrorState, so a later empty pass may clear it. Distinguishes internal errors from a consumer-set Error parameter.
+        private bool _hasInternalError;
 
         /// <summary>
         /// The most recent internal assessment, kept so <see cref="EditFormValidate"/> can restore it when the external validators produce nothing for the field.
