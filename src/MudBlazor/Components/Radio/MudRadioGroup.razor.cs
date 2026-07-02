@@ -197,9 +197,7 @@ namespace MudBlazor
 
         protected override async Task ResetValueAsync()
         {
-            // Route through SetSelectedOptionAsync so the value, the selected radio, and the checked markup
-            // stay consistent: default(T) selects the matching radio (false for a bool group) or clears the
-            // selection when nothing matches (null for a nullable group).
+            // Route through SetSelectedOptionAsync so the value, selected radio, and checked markup stay in sync.
             await SetSelectedOptionAsync(default, updateRadio: true);
             Touched = false;
             await InvokeAsync(StateHasChanged);

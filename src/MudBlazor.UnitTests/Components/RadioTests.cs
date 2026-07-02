@@ -284,8 +284,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RadioGroup_ResetAsync_ResetsToDefault()
         {
-            // #11369: ResetAsync must set the group to default(T) consistently across the value, the selected
-            // radio, and the rendered markup - and a fresh selection must still work afterwards.
+            // #11369: ResetAsync must reset the group to default(T) consistently, and re-selection must still work.
 
             // Non-nullable bool: default is false, so resetting selects the "false" radio.
             var boolGroup = Context.Render<MudRadioGroup<bool>>(self => self
@@ -297,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
             boolGroup.Instance.Value.Should().BeFalse();
             boolGroup.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
 
-            // Selecting another option right after a reset still updates the value (the original #11369 symptom).
+            // Re-selecting right after a reset still updates the value (the #11369 symptom).
             await boolGroup.FindAll("input.mud-radio-input")[0].ClickAsync(new MouseEventArgs());
             boolGroup.Instance.Value.Should().BeTrue();
 
