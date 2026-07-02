@@ -743,7 +743,7 @@ namespace MudBlazor
         {
             // Without an EditContext or a field identity (no For) there is nothing to stage against.
             var editContext = EditContext;
-            if (editContext is null || _editContextValidationMessages is null || _fieldIdentifier.Equals(default(FieldIdentifier)))
+            if (editContext is null || _editContextValidationMessages is null || _fieldIdentifier.Equals(default))
             {
                 return;
             }
@@ -772,7 +772,7 @@ namespace MudBlazor
 
         private void ClearStagedEditContextMessages()
         {
-            if (_editContextValidationMessages is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
+            if (_editContextValidationMessages is not null && !_fieldIdentifier.Equals(default))
             {
                 _editContextValidationMessages.Clear(_fieldIdentifier);
             }
@@ -823,7 +823,7 @@ namespace MudBlazor
         {
             try
             {
-                if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
+                if (EditContext is not null && !_fieldIdentifier.Equals(default))
                 {
                     var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                     var hasError = errorMessages.Length > 0;

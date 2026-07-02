@@ -1,6 +1,4 @@
-﻿@using System.ComponentModel.DataAnnotations
-
-<CascadingValue Value="@CurrentEditContext">
+﻿<CascadingValue Value="@CurrentEditContext">
     <MudTextField @bind-Value="_model.Name" For="@(() => _model.Name)" Required="true" RequiredError="Name is required" Label="Name" />
 </CascadingValue>
 
