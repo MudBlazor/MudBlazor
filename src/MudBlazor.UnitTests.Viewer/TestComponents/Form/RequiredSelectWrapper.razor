@@ -1,0 +1,17 @@
+﻿@typeparam T
+
+<MudSelect T="T" Value="Value" ValueChanged="OnValueChanged" Required="Required" RequiredError="@RequiredError">
+    @ChildContent
+</MudSelect>
+
+@code {
+    public static string __description__ = "#13389: forwards Value/ValueChanged one-way into an inner MudSelect to reproduce the wrapper case.";
+
+    [Parameter] public T? Value { get; set; }
+    [Parameter] public EventCallback<T?> ValueChanged { get; set; }
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public string? RequiredError { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private Task OnValueChanged(T? value) => ValueChanged.InvokeAsync(value);
+}

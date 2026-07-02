@@ -759,6 +759,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #13389: selecting a value in a Required MudSelect (wrapped by a one-way forwarding component) marks the field touched and the form valid on the first selection.
+        /// </summary>
+        [Test]
+        public async Task MudForm_FirstSelectionOnWrappedRequiredSelect_MarksTouchedAndValid()
+        {
+            var comp = Context.Render<FormWrappedRequiredSelectTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+
+            form.IsValid.Should().BeFalse();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                select.Touched.Should().BeTrue("the first selection is a user interaction and must touch the field (#13389)");
+                form.IsValid.Should().BeTrue("selecting a value in the only required field makes the form valid (#13389)");
+            });
+        }
+
+        /// <summary>
         /// #13381: on submit the external validators own the verdict; a blur-staged component-Required error must not linger as stale display.
         /// </summary>
         [Test]
