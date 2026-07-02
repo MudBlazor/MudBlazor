@@ -449,7 +449,8 @@ namespace MudBlazor
                     {
                         // Error/ErrorText are consumer-managed unless this component has its own validation source; publishing an empty assessment here would wipe a consumer-set error on every validate pass (#12732, #11244, #4593).
                         // _hasInternalError keeps us writing long enough to clear an error this component previously published (e.g. a resolved conversion error) even after its source goes away.
-                        var hasValidationSource = Validation is not null || Required || _validationAttrsFor is not null || ConversionError;
+                        // _validationAttrsFor is non-null but empty when the For-targeted property carries no ValidationAttribute, so require an actual attribute rather than just a non-null For.
+                        var hasValidationSource = Validation is not null || Required || _validationAttrsFor?.Any() == true || ConversionError;
                         if (hasValidationSource || _hasInternalError)
                         {
                             _hasInternalError = errors.Count > 0;
