@@ -733,6 +733,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #13381: disposing a field that staged a blur error refreshes the ValidationSummary instead of leaving it stale.
+        /// </summary>
+        [Test]
+        public async Task EditForm_DisposeFieldWithStagedError_RefreshesValidationSummary()
+        {
+            var comp = Context.Render<FormDisposedFieldValidationSummaryTest>();
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() =>
+                comp.FindAll("li.validation-message").Select(x => x.TextContent).Should().Contain("Name is required"));
+
+            // Removing the field disposes it; its staged message must not linger in the summary.
+            await comp.InvokeAsync(() => comp.Instance.HideField());
+            await comp.WaitForAssertionAsync(() =>
+                comp.FindAll("li.validation-message").Should().BeEmpty("disposing the field must refresh the summary (#13381)"));
+        }
+
+        /// <summary>
         /// Based on error report. Clicking the checkbox should not influence the other form fields.
         /// </summary>
         [Test]

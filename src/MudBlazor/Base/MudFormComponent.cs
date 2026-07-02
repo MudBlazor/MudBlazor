@@ -939,9 +939,16 @@ namespace MudBlazor
             {
                 _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
                 _currentEditContext.OnValidationRequested -= OnValidationRequested;
+                var hadStagedMessages = _hasStagedEditContextMessages;
                 _editContextValidationMessages?.Clear();
                 _editContextValidationMessages = null;
                 _hasStagedEditContextMessages = false;
+                if (hadStagedMessages)
+                {
+                    // We just removed our staged messages from the context (on dispose or an EditContext
+                    // swap); refresh subscribers like a ValidationSummary so a cleared error can't linger.
+                    _currentEditContext.NotifyValidationStateChanged();
+                }
             }
         }
 
