@@ -412,15 +412,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CheckBoxColor_Disabled_ShouldDropColorClass()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CheckBoxColor_Disabled_ShouldDropColorClass(bool value)
         {
-            // #9524: Disabled (unlike ReadOnly) greys out, so no color utility class is emitted.
+            // #9524: Disabled (unlike ReadOnly) greys out, so no color utility class is emitted in either state.
             var comp = Context.Render<MudCheckBox<bool>>(x => x
                 .Add(c => c.Color, Color.Success)
                 .Add(c => c.UncheckedColor, Color.Error)
-                .Add(c => c.Disabled, true));
+                .Add(c => c.Disabled, true)
+                .Add(c => c.Value, value));
             var icon = comp.Find(".mud-button-root.mud-icon-button");
             icon.ClassList.Should().NotContain("mud-error-text");
+            icon.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
+        public void CheckBoxColor_Indeterminate_ShouldUseUncheckedColor()
+        {
+            // #9524: UncheckedColor is documented to apply when Value is false or null, so the
+            // indeterminate (null) tri-state must use UncheckedColor rather than no color at all.
+            var comp = Context.Render<MudCheckBox<bool?>>(x => x
+                .Add(c => c.TriState, true)
+                .Add(c => c.Color, Color.Success)
+                .Add(c => c.UncheckedColor, Color.Error)
+                .Add(c => c.Value, null));
+            var icon = comp.Find(".mud-button-root.mud-icon-button");
+            icon.ClassList.Should().Contain("mud-error-text");
             icon.ClassList.Should().NotContain("mud-success-text");
         }
 
