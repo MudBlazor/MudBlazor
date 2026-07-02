@@ -704,6 +704,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #11540: an input nested inside a MudRadioGroup must register with the surrounding MudForm.
+        /// </summary>
+        [Test]
+        public async Task FormRadioGroup_NestedInput_ParticipatesInValidation()
+        {
+            var comp = Context.Render<FormRadioGroupNestedInputTest>();
+            var form = comp.FindComponent<MudFormTestable>().Instance;
+
+            form.IsValid.Should().BeFalse("the nested required text field must count against form validity (#11540)");
+
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.Errors.Should().Contain("Detail is required");
+
+            await comp.Find("input[type=text]").ChangeAsync(new ChangeEventArgs { Value = "some detail" });
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue();
+            form.Errors.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// #11540 guard: radios must still not register with the form (#9472); only the group and the nested input do.
+        /// </summary>
+        [Test]
+        public async Task FormRadioGroup_RadioSelection_DoesNotRegisterRadiosWithForm()
+        {
+            var comp = Context.Render<FormRadioGroupNestedInputTest>();
+            var form = comp.FindComponent<MudFormTestable>().Instance;
+
+            await comp.Find("input[type=radio]").ClickAsync();
+
+            comp.Instance.FieldChangedFieldTypes.Should().NotContain("MudRadio`1",
+                "radios participate through their group, not as form fields themselves");
+
+            // Assert registration directly - a click cannot reveal it (the radio's own
+            // FieldChanged is unreachable from markup even when wrongly registered).
+            var registeredTypes = form.FormControls.Select(c => c.GetType()).ToList();
+            registeredTypes.Should().NotContain(typeof(MudRadio<string>));
+            registeredTypes.Should().Contain(typeof(MudRadioGroup<string>));
+            registeredTypes.Should().Contain(typeof(MudTextField<string>), "the nested input registers (#11540)");
+        }
+
+        /// <summary>
         /// Setting the required radiogroup value should set IsValid true
         /// Clearing the value of a required radiogroup should set form's IsValid to false.
         /// </summary>
