@@ -1156,10 +1156,8 @@ namespace MudBlazor
                 return;
             }
 
-            // A blur while the menu is open (or opening/committing a value) is part of selecting an
-            // item: the item's mousedown blurs the input before its click lands, so validating now
-            // would flag a premature error. Only a genuine leave (menu closed, nothing pending) runs
-            // the base blur, so a required autocomplete surfaces its error on blur like other inputs (#5489).
+            // A blur while the menu is open (or opening/committing a value) is part of selecting an item: the item's mousedown blurs the input before its click lands, so validating now would flag a premature error.
+            // Only a genuine leave (menu closed, nothing pending) runs the base blur, so a required autocomplete surfaces its error on blur like other inputs (#5489).
             if (Open || _opening || _isProcessingValue)
             {
                 await OnBlur.InvokeAsync(args);
