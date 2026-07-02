@@ -442,8 +442,7 @@ namespace MudBlazor
                 {
                     if (EditContext is not null)
                     {
-                        // Surface the assessment through the message store instead of writing ErrorState directly.
-                        // OnValidationStateChanged then applies the merged messages (#13381).
+                        // Surface the assessment through the message store instead of writing ErrorState directly. OnValidationStateChanged then applies the merged messages (#13381).
                         StageEditContextValidationMessages(errors);
                     }
                     else
@@ -705,7 +704,6 @@ namespace MudBlazor
             await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
             _lastInternalErrors = [];
-            // Otherwise the staged messages resurface on the next validation-state notification.
             RetractStagedEditContextMessages();
 
             await InvokeAsync(StateHasChanged);
@@ -731,8 +729,7 @@ namespace MudBlazor
         {
             if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
             {
-                // A genuine value change hands the field to the external validators.
-                // If they stay silent for it, restore our own assessment so it isn't lost.
+                // A genuine value change hands the field to the external validators. If they stay silent for it, restore our own assessment so it isn't lost.
                 ClearStagedEditContextMessages();
                 EditContext?.NotifyFieldChanged(_fieldIdentifier);
                 StageEditContextValidationMessages(_lastInternalErrors);
@@ -740,7 +737,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Surfaces this component's own errors to the EditContext without dirtying the form (#13381, #12790).
+        /// Surfaces this component's own errors to the EditContext without dirtying the form.
         /// </summary>
         private void StageEditContextValidationMessages(List<string> errors)
         {
@@ -755,8 +752,7 @@ namespace MudBlazor
             ClearStagedEditContextMessages();
             _lastInternalErrors = errors;
 
-            // While an external validator holds messages for this field it is authoritative;
-            // staging ours alongside would duplicate them in a ValidationSummary.
+            // While an external validator holds messages for this field it is authoritative; staging ours alongside would duplicate them in a ValidationSummary.
             if (errors.Count > 0 && !editContext.GetValidationMessages(_fieldIdentifier).Any())
             {
                 foreach (var error in errors)
@@ -776,7 +772,6 @@ namespace MudBlazor
 
         private void ClearStagedEditContextMessages()
         {
-            // Clear(default) would hash a null field name and throw, so guard the empty identity.
             if (_editContextValidationMessages is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
             {
                 _editContextValidationMessages.Clear(_fieldIdentifier);
@@ -881,8 +876,7 @@ namespace MudBlazor
         private bool _hasStagedEditContextMessages;
 
         /// <summary>
-        /// The most recent internal assessment, kept so <see cref="EditFormValidate"/> can restore it
-        /// when the external validators produce nothing for the field.
+        /// The most recent internal assessment, kept so <see cref="EditFormValidate"/> can restore it when the external validators produce nothing for the field.
         /// </summary>
         private List<string> _lastInternalErrors = [];
 
@@ -893,8 +887,7 @@ namespace MudBlazor
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
-                // For is a fresh expression instance on every render for an inline lambda, so only
-                // do the reflection and rebinding work when the field it points at actually changed.
+                // For is a fresh expression instance on every render for an inline lambda, so only do the reflection and rebinding work when the field it points at actually changed.
                 var fieldIdentifier = FieldIdentifier.Create(For);
                 if (!_fieldIdentifier.Equals(fieldIdentifier))
                 {
@@ -910,8 +903,7 @@ namespace MudBlazor
 #pragma warning restore IL2075
                     _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
-                    // Drop anything staged for the previous field and reconcile the display so its
-                    // error can't linger on the newly bound field.
+                    // Drop anything staged for the previous field and reconcile the display so its error can't linger on the newly bound field.
                     var wasStaged = _hasStagedEditContextMessages;
                     ClearStagedEditContextMessages();
                     _lastInternalErrors = [];

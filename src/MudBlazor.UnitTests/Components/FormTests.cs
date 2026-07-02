@@ -564,8 +564,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// #13381: blurring an empty required field under an EditContext validates it (both [Required] via For and the
-        /// Required parameter) without dirtying the form or firing OnFieldChanged (the #12790 contract).
+        /// #13381: blurring an empty required field under an EditContext validates it (both [Required] via For and the Required parameter) without dirtying the form or firing OnFieldChanged (the #12790 contract).
         /// </summary>
         [Test]
         public async Task EditForm_BlurEmptyRequiredField_Validates_WithoutDirtying()
