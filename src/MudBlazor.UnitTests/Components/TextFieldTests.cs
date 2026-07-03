@@ -554,9 +554,6 @@ namespace MudBlazor.UnitTests.Components
             textfield.HasErrors.Should().Be(false);
         }
 
-        /// <summary>
-        /// #12997: calling SetTextAsync programmatically is not a user interaction, so it must not mark the field touched, and ResetAsync afterwards leaves it untouched.
-        /// </summary>
         [Test]
         public async Task SetTextAsync_ProgrammaticSet_DoesNotMarkTouched()
         {
