@@ -751,6 +751,15 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        /// <inheritdoc />
+        public override async Task ResetValidationAsync()
+        {
+            // Clear _validated so the next blur re-runs validation.
+            // Otherwise OnBlurredAsync short-circuits on the stale flag and a required error never reappears (#11503).
+            _validated = false;
+            await base.ResetValidationAsync();
+        }
+
         protected string? GetHelperId()
         {
             if (HelperId is not null)
