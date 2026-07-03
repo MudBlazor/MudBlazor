@@ -125,6 +125,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
+        /// <summary>
+        /// After ResetValidationAsync, blurring an empty required field must re-run validation and show the required error again (#11503).
+        /// </summary>
+        [Test]
+        public async Task TextField_ResetValidation_ThenBlur_RevalidatesRequired()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.RequiredError, "required"));
+
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
+
+            await comp.InvokeAsync(() => comp.Instance.ResetValidationAsync());
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // Without resetting _validated, this blur short-circuits and the error never returns.
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
+        }
+
         [Test]
         public async Task TextField_Should_PreserveInvalidTextOnKeyRerender()
         {
