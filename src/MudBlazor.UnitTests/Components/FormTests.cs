@@ -1187,6 +1187,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #12400: a required MudDatePicker participates in MudForm.IsValid — an empty one is invalid on load, and a preset date is valid on load.
+        /// </summary>
+        [Test]
+        public async Task MudForm_RequiredDatePicker_EmptyIsInvalid_PresetIsValid()
+        {
+            var empty = Context.Render<FormRequiredDatePickerTest>();
+            await empty.WaitForAssertionAsync(() => empty.Instance.Form.IsValid.Should().BeFalse("an empty required date picker (and text field) is invalid on load"));
+
+            var preset = Context.Render<FormRequiredDatePickerTest>(parameters => parameters
+                .Add(x => x.Name, "Sam")
+                .Add(x => x.Date, new DateTime(2020, 1, 1)));
+            await preset.WaitForAssertionAsync(() => preset.Instance.Form.IsValid.Should().BeTrue("a preset required date picker and text field are valid on load (#12400)"));
+        }
+
+        /// <summary>
+        /// #5196: a form with a validator and pre-populated required fields is valid on load and does not flip IsValid to false.
+        /// </summary>
+        [Test]
+        public async Task MudForm_ValidatorWithPrefilledRequiredFields_IsValidOnLoad()
+        {
+            var comp = Context.Render<FormValidatorPrefilledTest>();
+            await comp.WaitForAssertionAsync(() => comp.Instance.Form.IsValid.Should().BeTrue("pre-populated required fields with a passing validator are valid on load (#5196)"));
+        }
+
+        /// <summary>
         /// ColorPicker should be validated like every other form component when color is changed via inputs
         /// </summary>
         [Test]
