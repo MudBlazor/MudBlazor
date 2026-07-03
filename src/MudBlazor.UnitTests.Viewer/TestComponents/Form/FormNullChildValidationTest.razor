@@ -1,16 +1,18 @@
 ﻿<MudForm @ref="Form" Validation="@FormValidation" ValidationDelay="0">
-    <MudTextField T="string" @ref="Field" @bind-Value="_value" For="@(() => _value)" Validation="_childValidation" />
+    <MudTextField T="string" @ref="Field" @bind-Value="_value" For="@(() => _value)"
+                  Validation="@(UseChildValidation ? _childValidation : null)" />
 </MudForm>
 
 @code {
-    public static string __description__ = "#12842: a form-level Validation with a child whose own Validation binds to null must re-apply on every validation, not only the first.";
+    public static string __description__ = "#12842: when a child binds Validation to a conditional that evaluates to null, the form-level Validation must re-apply on every validation, not only the first.";
+
+    // Mirrors a consumer's Validation="@(condition ? someFunc : null)": flipping this to false makes the child's Validation null on the next render, overwriting the copy the form made at registration.
+    [Parameter] public bool UseChildValidation { get; set; } = true;
 
     public MudForm Form { get; set; } = null!;
     public MudTextField<string> Field { get; set; } = null!;
     private string? _value;
-
-    // Always null, mimicking a consumer binding Validation="@(condition ? someFunc : null)" that a parent render keeps overwriting.
-    private readonly object? _childValidation = null;
+    private readonly Func<string?, string?> _childValidation = _ => null;
 
     public Func<string?, string?> FormValidation { get; } = value => string.IsNullOrEmpty(value) ? "form: required" : null;
 }

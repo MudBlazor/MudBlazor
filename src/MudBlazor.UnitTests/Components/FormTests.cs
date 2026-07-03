@@ -2137,8 +2137,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.ValidateAsync());
             field.HasErrors.Should().BeTrue();
 
-            // A parent re-render overwrites the child's Validation parameter back to null.
-            comp.Render();
+            // The child's Validation expression now evaluates to null, overwriting the copy the form made at registration.
+            // The child's Validation expression now evaluates to null, overwriting the copy the form made at registration.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.UseChildValidation, false));
 
             await comp.InvokeAsync(() => form.ValidateAsync());
             field.HasErrors.Should().BeTrue();
