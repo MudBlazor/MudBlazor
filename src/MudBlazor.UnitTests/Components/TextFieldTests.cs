@@ -570,6 +570,21 @@ namespace MudBlazor.UnitTests.Components
             textField.Touched.Should().BeFalse();
         }
 
+        [Test]
+        public async Task SetTextAsync_InForm_DoesNotMarkFormTouched()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .Add(f => f.ValidationDelay, 0)
+                .AddChildContent<MudTextField<string>>());
+            var form = comp.Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+
+            textField.Touched.Should().BeFalse("a programmatic set is not a user interaction (#12997)");
+            form.IsTouched.Should().BeFalse("a programmatic set must not mark the form touched, even briefly during the value sync (#12997)");
+        }
+
         /// <summary>
         /// This is based on a bug reported by a user
         /// </summary>

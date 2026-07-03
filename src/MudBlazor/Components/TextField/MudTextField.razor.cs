@@ -185,20 +185,22 @@ namespace MudBlazor
         /// <param name="text">The new text value to use.</param>
         public async Task SetTextAsync(string? text)
         {
-            // A programmatic text set is not a user interaction, so it must leave the touched state unchanged.
-            var wasTouched = Touched;
-
-            if (HasMask)
+            // A programmatic text set is not a user interaction, so suppress the touched/FieldChanged side effects during the sync: otherwise the value change validates and updates the form while Touched is momentarily true (#12997).
+            await SuppressInteractionEffectsWhileAsync(async () =>
             {
-                await _maskReference.Clear();
-                await _maskReference.OnPasteAsync(text);
-            }
-            else
-            {
-                await InputReference.SetText(text);
-            }
+                if (HasMask)
+                {
+                    await _maskReference.Clear();
+                    await _maskReference.OnPasteAsync(text);
+                }
+                else
+                {
+                    await InputReference.SetText(text);
+                }
+            });
 
-            Touched = wasTouched;
+            // Notify the form of the value change explicitly, keeping the SetTextAsync-fires-FieldChanged contract.
+            FieldChanged(ReadValue);
         }
 
         /// <summary>
