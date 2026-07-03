@@ -283,7 +283,8 @@ namespace MudBlazor.UnitTests.Components
             textField[1].Instance.ReadText.Should().Be("password");
             textField[1].Instance.ReadValue.Should().Be("password");
             comp.Instance.Model.Password.Should().Be("password");
-            form.IsValid.Should().BeTrue();
+            // #13421: the debounced Username's value has not committed yet (ReadValue is null), so its required field is not yet satisfied and the form stays invalid until the pending value commits (on validate below).
+            form.IsValid.Should().BeFalse();
 
             await comp.Find("#validate-button").ClickAsync();
 

@@ -10,6 +10,11 @@ namespace MudBlazor.Interfaces
         public bool Error { get; set; }
         public bool HasErrors { get; }
         public bool Touched { get; }
+
+        /// <summary>
+        /// Whether this component currently holds a value (used by <see cref="MudForm"/> to tell a satisfied required field from an empty one without relying on <see cref="Touched"/>).
+        /// </summary>
+        public bool HasValue();
         public object? Validation { get; set; }
         public bool IsForNull { get; }
         public List<string> ValidationErrors { get; set; }

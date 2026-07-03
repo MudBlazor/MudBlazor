@@ -240,12 +240,7 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
-            // form can only be valid if:
-            // - none have an error
-            // - all required fields have been touched (and thus validated)
-            var noErrors = _formControls.All(x => x.HasErrors == false);
-            var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
-            var valid = noErrors && requiredAllTouched;
+            var valid = EvaluateIsValid();
 
             var oldTouched = _touched;
             _touched = _formControls.Any(x => x.Touched);
@@ -269,6 +264,15 @@ namespace MudBlazor
             }
         }
 
+        // The form is valid when no control has an error and every required control holds a value.
+        // A required field is satisfied by having a value, not by being touched: #13328 stopped marking Touched on parameter-driven value sets, which left pre-populated forms reporting invalid on load (#13421).
+        private bool EvaluateIsValid()
+        {
+            var noErrors = _formControls.All(x => x.HasErrors == false);
+            var requiredAllHaveValue = _formControls.Where(x => x.Required).All(x => x.HasValue());
+            return noErrors && requiredAllHaveValue;
+        }
+
         protected override bool ShouldRender()
         {
             return !SuppressRenderingOnValidation || _shouldRender;
@@ -278,7 +282,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = EvaluateIsValid();
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid, and it conflicts with our state.

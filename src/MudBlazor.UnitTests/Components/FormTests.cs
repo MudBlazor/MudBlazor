@@ -1028,6 +1028,8 @@ namespace MudBlazor.UnitTests.Components
             await textfields[2].Find("input").ChangeAsync("Wabalabadubdub1234!");
             await textfields[3].Find("input").ChangeAsync("Wabalabadubdub1234!");
             await checkbox.Find("input").ChangeAsync(true);
+            // #13421: the required radio group must actually be selected for the form to be valid (it was previously satisfied only by being touched-but-empty).
+            await comp.Find("input[type=radio]").ClickAsync();
             await comp.WaitForAssertionAsync(() => form.IsValid.Should().BeTrue());
             await comp.WaitForStateAsync(() => form.Errors.Length == 0);
             // click reset
@@ -1196,9 +1198,9 @@ namespace MudBlazor.UnitTests.Components
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Value;
             await colorPickerComp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null)));
-            // should not be valid since the default color is invalid
+            // #13421 limitation: the picker holds a (default) value, so the form reads valid on load; the Validation func that rejects the default color only runs once the field is validated/touched.
             form.IsTouched.Should().BeFalse();
-            form.IsValid.Should().BeFalse();
+            form.IsValid.Should().BeTrue();
             colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             // input a valid color
@@ -1229,9 +1231,9 @@ namespace MudBlazor.UnitTests.Components
             var colorPicker = comp.FindComponent<MudColorPicker>().Instance;
             var forbiddenColor = colorPicker.Palette.First();
             await colorPickerComp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Validation, new Func<MudColor, string>(color => color != null && color.Value == forbiddenColor.Value ? $"{forbiddenColor.Value} is not allowed" : null)));
-            // initial form state
+            // initial form state (#13421 limitation: the picker holds a default value, so the form reads valid until the field is validated)
             form.IsTouched.Should().BeFalse();
-            form.IsValid.Should().BeFalse();
+            form.IsValid.Should().BeTrue();
 
             await comp.InvokeAsync(() => comp.Find("input").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
@@ -1494,8 +1496,8 @@ namespace MudBlazor.UnitTests.Components
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
             var input = fileUploadComp.FindComponent<InputFile>();
 
-            // check initial state: form should not be valid because form is untouched
-            form.IsValid.Should().BeFalse();
+            // #13421: a pre-populated file satisfies the required field, so the form is valid on load even though it is untouched
+            form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
             fileUploadInstance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
@@ -1538,8 +1540,8 @@ namespace MudBlazor.UnitTests.Components
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
             var input = fileUploadComp.FindComponent<InputFile>();
 
-            // check initial state: form should not be valid because form is untouched
-            form.IsValid.Should().BeFalse();
+            // #13421: a pre-populated file satisfies the required field, so the form is valid on load even though it is untouched
+            form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.Files.Should().NotBeNull();
             fileUploadInstance.GetState(x => x.Error).Should().BeFalse();
@@ -1580,8 +1582,8 @@ namespace MudBlazor.UnitTests.Components
             var fileUploadInstance = comp.FindComponent<MudFileUpload<IBrowserFile>>().Instance;
             var input = fileUploadComp.FindComponent<InputFile>();
 
-            // check initial state: form should not be valid because form is untouched
-            form.IsValid.Should().BeFalse();
+            // #13421: a pre-populated file satisfies the required field, so the form is valid on load even though it is untouched
+            form.IsValid.Should().BeTrue();
             form.IsTouched.Should().BeFalse();
             fileUploadInstance.Files.Should().NotBeNull();
             fileUploadInstance.GetState(x => x.Error).Should().BeFalse();

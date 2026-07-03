@@ -125,6 +125,8 @@ public class RowValidatorTests
 
         public bool Touched => false;
 
+        public bool HasValue() => true;
+
         public object? Validation { get; set; }
 
         public bool IsForNull => false;

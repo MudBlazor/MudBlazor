@@ -478,6 +478,9 @@ namespace MudBlazor
             return value is not null;
         }
 
+        /// <inheritdoc />
+        bool IFormComponent.HasValue() => HasValue(ReadValue);
+
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T? value, List<string> errors)
         {
