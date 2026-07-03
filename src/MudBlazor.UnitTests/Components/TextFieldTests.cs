@@ -16,6 +16,7 @@ using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 #nullable enable
