@@ -2125,6 +2125,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A form-level Validation must keep applying to a child whose own Validation binds to null, even after a parent re-render overwrites the copied default (#12842).
+        /// </summary>
+        [Test]
+        public async Task MudForm_ChildValidationNull_ReappliesFormValidationEachValidate()
+        {
+            var comp = Context.Render<FormNullChildValidationTest>();
+            var form = comp.Instance.Form;
+            var field = comp.Instance.Field;
+
+            await comp.InvokeAsync(() => form.ValidateAsync());
+            field.HasErrors.Should().BeTrue();
+
+            // The child's Validation expression now evaluates to null, overwriting the copy the form made at registration.
+            // The child's Validation expression now evaluates to null, overwriting the copy the form made at registration.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.UseChildValidation, false));
+
+            await comp.InvokeAsync(() => form.ValidateAsync());
+            field.HasErrors.Should().BeTrue();
+        }
+
+        /// <summary>
         /// When the field is initialised from cache, the value can be set before the cascading parameter "Form",
         /// triggering validation. Validations requiring "Form" or "For" properties should not crash.
         /// </summary>
