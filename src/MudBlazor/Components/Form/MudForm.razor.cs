@@ -317,6 +317,13 @@ namespace MudBlazor
         /// </remarks>
         public async Task ValidateAsync()
         {
+            // Re-apply the form-level default Validation before validating.
+            // A child that binds Validation to an expression evaluating to null (e.g. a conditional) has the copy made at registration overwritten to null on every parent render, so without this the form's Validation would only run on the first validation (#12842).
+            foreach (var control in _formControls)
+            {
+                SetDefaultControlValidation(control);
+            }
+
             await Task.WhenAll(_formControls.Select(x => x.ValidateAsync()));
 
             if (ChildForms.Count > 0)
