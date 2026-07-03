@@ -16,6 +16,7 @@ using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 #nullable enable
@@ -552,6 +553,54 @@ namespace MudBlazor.UnitTests.Components
             textfield.Touched.Should().BeFalse();
             textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
+        }
+
+        [Test]
+        public async Task SetTextAsync_ProgrammaticSet_DoesNotMarkTouched()
+        {
+            var comp = Context.Render<MudTextField<string>>();
+            var textField = comp.Instance;
+            textField.Touched.Should().BeFalse();
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+
+            textField.GetState(x => x.Text).Should().Be("hello");
+            textField.Touched.Should().BeFalse("programmatic SetTextAsync is not a user interaction (#12997)");
+
+            await comp.InvokeAsync(() => textField.ResetAsync());
+            textField.Touched.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task SetTextAsync_InForm_DoesNotMarkFormTouched()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .Add(f => f.ValidationDelay, 0)
+                .AddChildContent<MudTextField<string>>());
+            var form = comp.Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+
+            textField.Touched.Should().BeFalse("a programmatic set is not a user interaction (#12997)");
+            form.IsTouched.Should().BeFalse("a programmatic set must not mark the form touched, even briefly during the value sync (#12997)");
+        }
+
+        [Test]
+        public async Task SetTextAsync_FiresFieldChangedOnChangeButNotOnNoOp()
+        {
+            var fieldChangedCount = 0;
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .Add(f => f.ValidationDelay, 0)
+                .Add(f => f.FieldChanged, EventCallback.Factory.Create<FormFieldChangedEventArgs>(this, () => fieldChangedCount++))
+                .AddChildContent<MudTextField<string>>());
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+            fieldChangedCount.Should().Be(1, "a programmatic set that changes the value still notifies the form");
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+            fieldChangedCount.Should().Be(1, "setting the same value is a no-op and must not fire a spurious FieldChanged (#12997)");
         }
 
         /// <summary>
