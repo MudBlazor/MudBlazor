@@ -10,7 +10,7 @@ namespace MudBlazor.Interfaces
         public bool Error { get; set; }
         public bool HasErrors { get; }
         public bool Touched { get; }
-        public bool HasValue() => Touched; // Default implementation for backwards compatability; the built-in inputs override this to report actual value presence.
+        public bool HasValue() => Touched; // Default implementation for backwards compatibility; built-in inputs override this to report actual value presence.
         public object? Validation { get; set; }
         public bool IsForNull { get; }
         public List<string> ValidationErrors { get; set; }
