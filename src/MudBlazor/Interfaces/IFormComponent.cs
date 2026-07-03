@@ -10,9 +10,7 @@ namespace MudBlazor.Interfaces
         public bool Error { get; set; }
         public bool HasErrors { get; }
         public bool Touched { get; }
-
-        // Defaults to Touched so existing external IFormComponent implementers keep compiling and behaving as before; the built-in inputs override this to report actual value presence (#13421).
-        public bool HasValue() => Touched;
+        public bool HasValue() => Touched; // Default implementation for backwards compatability; the built-in inputs override this to report actual value presence.
         public object? Validation { get; set; }
         public bool IsForNull { get; }
         public List<string> ValidationErrors { get; set; }

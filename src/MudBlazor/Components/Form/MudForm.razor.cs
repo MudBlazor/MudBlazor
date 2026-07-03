@@ -264,10 +264,10 @@ namespace MudBlazor
             }
         }
 
-        // The form is valid when no control has an error and every required control holds a value.
-        // A required field is satisfied by having a value, not by being touched: #13328 stopped marking Touched on parameter-driven value sets, which left pre-populated forms reporting invalid on load (#13421).
         private bool EvaluateIsValid()
         {
+            // The form is valid when no control has an error and every required control holds a value.
+            // A required field is satisfied by having a value, not by being touched.
             var noErrors = _formControls.All(x => x.HasErrors == false);
             var requiredAllHaveValue = _formControls.Where(x => x.Required).All(x => x.HasValue());
             return noErrors && requiredAllHaveValue;
