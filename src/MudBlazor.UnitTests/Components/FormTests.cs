@@ -564,6 +564,61 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #12406: an empty Required MudSelect under an EditForm/DataAnnotationsValidator fails validation on submit and shows the error, like other inputs.
+        /// </summary>
+        [Test]
+        public async Task EditForm_RequiredSelect_EmptySubmit_IsInvalidAndShowsError()
+        {
+            var comp = Context.Render<EditFormRequiredSelectTest>();
+            var select = comp.FindComponent<MudSelect<int?>>().Instance;
+
+            await comp.Find("button[type=submit]").ClickAsync();
+
+            comp.Instance.InvalidSubmits.Should().Be(1);
+            comp.Instance.ValidSubmits.Should().Be(0);
+            select.HasErrors.Should().BeTrue("an empty required select fails EditForm validation on submit (#12406)");
+        }
+
+        /// <summary>
+        /// #11946: selecting a value in a Required MudAutocomplete inside a MudForm updates the form to touched and valid.
+        /// </summary>
+        [Test]
+        public async Task MudForm_AutocompleteSelection_UpdatesFormValidity()
+        {
+            var comp = Context.Render<FormAutocompleteRequiredTest>();
+            var form = comp.FindComponent<MudForm>().Instance;
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+
+            form.IsValid.Should().BeFalse();
+
+            await autocomplete.Find("div.mud-input-control").FocusAsync();
+            await autocomplete.Find("input").InputAsync(new ChangeEventArgs { Value = "Al" });
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                form.IsTouched.Should().BeTrue("typing then selecting is a user interaction (#11946)");
+                form.IsValid.Should().BeTrue("selecting a valid value makes the required form valid (#11946)");
+            });
+        }
+
+        /// <summary>
+        /// #6127: a MudTextField with For under an EditContext raises OnFieldChanged exactly once per change, including the second and later changes.
+        /// </summary>
+        [Test]
+        public async Task EditForm_FieldChange_RaisesOnFieldChangedOncePerChange()
+        {
+            var comp = Context.Render<FormRequiredValidationEditContextTest>();
+
+            await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "first" });
+            comp.Instance.FieldChangedCount.Should().Be(1, "the first change raises OnFieldChanged once");
+
+            await comp.FindAll("input")[0].ChangeAsync(new ChangeEventArgs { Value = "second" });
+            comp.Instance.FieldChangedCount.Should().Be(2, "the second change raises OnFieldChanged once more, not twice (#6127)");
+        }
+
+        /// <summary>
         /// #13381: blurring an empty required field under an EditContext validates it (both [Required] via For and the Required parameter) without dirtying the form or firing OnFieldChanged (the #12790 contract).
         /// </summary>
         [Test]
