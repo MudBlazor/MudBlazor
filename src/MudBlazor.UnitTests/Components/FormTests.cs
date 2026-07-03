@@ -1212,6 +1212,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A required multi-file MudFileUpload bound to an empty (non-null) collection is not satisfied, so the form is invalid until a file is present.
+        /// </summary>
+        [Test]
+        public async Task MudForm_RequiredMultiFileUpload_EmptyCollectionIsInvalid()
+        {
+            var empty = Context.Render<FormRequiredMultiFileUploadTest>();
+            await empty.WaitForAssertionAsync(() => empty.Instance.Form.IsValid.Should().BeFalse("a required multi-file upload bound to an empty list is invalid on load"));
+
+            var withFile = Context.Render<FormRequiredMultiFileUploadTest>(parameters => parameters
+                .Add(x => x.Files, new List<IBrowserFile> { new DummyBrowserFile("cat.jpg", DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>()) }));
+            await withFile.WaitForAssertionAsync(() => withFile.Instance.Form.IsValid.Should().BeTrue("a required multi-file upload holding a file is valid on load"));
+        }
+
+        /// <summary>
         /// ColorPicker should be validated like every other form component when color is changed via inputs
         /// </summary>
         [Test]

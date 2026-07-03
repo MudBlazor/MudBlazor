@@ -475,6 +475,12 @@ namespace MudBlazor
                 return !IsNullOrWhiteSpace(valueString);
             }
 
+            // A collection value (e.g. a multi-file MudFileUpload bound to an empty list) only counts as a value when it holds at least one element.
+            if (value is System.Collections.IEnumerable enumerable)
+            {
+                return enumerable.Cast<object?>().Any();
+            }
+
             return value is not null;
         }
 
