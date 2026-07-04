@@ -231,7 +231,8 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(9, 3, 2)]
         [TestCase(5, 1, 1)]
         [TestCase(5, -1, 1)]
-        [TestCase(5, 1, -1)]
+        [TestCase(4, 1, -1)]
+        [TestCase(4, 1, 0)]
         [Test]
         public async Task PaginationCountWithoutEllipsis(int count, int middleCount, int boundaryCount)
         {
@@ -243,7 +244,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             pagination.GetState(x => x.MiddleCount).Should().Be(Math.Max(1, middleCount));
-            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(1, boundaryCount));
+            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(0, boundaryCount));
 
             for (var i = 1; i <= count; i++)
             {
@@ -276,6 +277,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
         [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(8, 30, 11, 0, new[] { "...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "..." })]
+        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "..." })]
+        [TestCase(30, 30, 11, 0, new[] { "...", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
         [Test]
         public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
@@ -298,6 +302,27 @@ namespace MudBlazor.UnitTests.Components
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);
             }
+        }
+
+        /// <summary>
+        /// Tests that a <see cref="MudPagination.BoundaryCount"/> of zero set via the initial parameters
+        /// hides the boundary pages instead of being clamped to one.
+        /// Verifies https://github.com/MudBlazor/MudBlazor/issues/13181
+        /// </summary>
+        [Test]
+        public void PaginationBoundaryCountZeroInitialParameter()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(x => x.Count, 30)
+                .Add(x => x.MiddleCount, 11)
+                .Add(x => x.BoundaryCount, 0)
+                .Add(x => x.Selected, 8)
+                .Add(x => x.ShowPreviousButton, false)
+                .Add(x => x.ShowNextButton, false));
+
+            var items = comp.FindAll(".mud-pagination-item");
+            items.Select(x => x.TextContent).Should()
+                .Equal("...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "...");
         }
 
         /// <summary>

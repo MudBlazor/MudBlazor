@@ -76,8 +76,9 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>1</c>. <br />
+        /// A value of <c>0</c> would hide the page numbers at the edge: <c>&lt; ... 4 5 6 ... &gt;</c> <br />
         /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
-        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
+        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c>
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
@@ -378,7 +379,7 @@ namespace MudBlazor
 
         private Task SetBoundaryCount(int count)
         {
-            var newCount = Math.Max(1, count);
+            var newCount = Math.Max(0, count);
 
             return _boundaryCountState.SetValueAsync(newCount);
         }
