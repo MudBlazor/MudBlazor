@@ -25,13 +25,18 @@ jobs:
       COMMIT_SHA: ${{ steps.get-version.outputs.COMMIT_SHA }}
       VERSION: ${{ steps.get-version.outputs.VERSION }}
     steps:
+      # Don't persist the token: this checks out untrusted PR code.
       - uses: actions/checkout@v7
         with:
           ref: refs/pull/${{ inputs.pr-number }}/head
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Get latest tag and generate snapshot version
         id: get-version
+        # Pass PR_NUMBER via env to avoid script injection.
+        env:
+          PR_NUMBER: ${{ inputs.pr-number }}
         run: |
           LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 
@@ -40,7 +45,8 @@ jobs:
           fi
 
           VERSION="${LATEST_TAG#v}"
-          SNAPSHOT_VERSION="${VERSION}-pr.${{ inputs.pr-number }}.${GITHUB_RUN_NUMBER}"
+          # Run attempt keeps re-runs from colliding under --skip-duplicate.
+          SNAPSHOT_VERSION="${VERSION}-pr.${PR_NUMBER}.${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}"
           COMMIT_SHA=$(git rev-parse HEAD)
 
           echo "Latest tag: $LATEST_TAG"
@@ -57,9 +63,11 @@ jobs:
       packages: write
       contents: read
     steps:
+      # Pin the resolved SHA so a mid-run push can't swap the built commit; don't persist the token.
       - uses: actions/checkout@v7
         with:
-          ref: refs/pull/${{ inputs.pr-number }}/head
+          ref: ${{ needs.get-snapshot-version.outputs.COMMIT_SHA }}
+          persist-credentials: false
 
       - name: Cache NuGet packages
         uses: actions/cache@v6
@@ -102,11 +110,13 @@ jobs:
           retention-days: 30
 
       - name: Write job summary
+        env:
+          PR_NUMBER: ${{ inputs.pr-number }}
         run: |
           {
             echo "## PR snapshot package"
             echo
-            echo "- PR: #${{ inputs.pr-number }}"
+            echo "- PR: #${PR_NUMBER}"
             echo "- Commit: \`${{ needs.get-snapshot-version.outputs.COMMIT_SHA }}\`"
             echo "- Version: \`${{ needs.get-snapshot-version.outputs.VERSION }}\`"
             echo
