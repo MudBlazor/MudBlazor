@@ -1,0 +1,119 @@
+name: deploy-mudblazor-pr-snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'Pull request number to package'
+        required: true
+        type: number
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.pr-number }}
+  cancel-in-progress: true
+
+env:
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+jobs:
+  get-snapshot-version:
+    runs-on: ubuntu-latest
+    if: github.repository == 'MudBlazor/MudBlazor'
+    permissions:
+      contents: read
+    outputs:
+      COMMIT_SHA: ${{ steps.get-version.outputs.COMMIT_SHA }}
+      VERSION: ${{ steps.get-version.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/pull/${{ inputs.pr-number }}/head
+          fetch-depth: 0
+
+      - name: Get latest tag and generate snapshot version
+        id: get-version
+        run: |
+          LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.1"
+          fi
+
+          VERSION="${LATEST_TAG#v}"
+          SNAPSHOT_VERSION="${VERSION}-pr.${{ inputs.pr-number }}.${GITHUB_RUN_NUMBER}"
+          COMMIT_SHA=$(git rev-parse HEAD)
+
+          echo "Latest tag: $LATEST_TAG"
+          echo "Commit SHA: $COMMIT_SHA"
+          echo "Snapshot version: $SNAPSHOT_VERSION"
+          echo "COMMIT_SHA=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "VERSION=$SNAPSHOT_VERSION" >> $GITHUB_OUTPUT
+
+  deploy-snapshot:
+    runs-on: ubuntu-latest
+    needs: get-snapshot-version
+    if: github.repository == 'MudBlazor/MudBlazor'
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/pull/${{ inputs.pr-number }}/head
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+
+      - name: Restore dependencies
+        working-directory: src/MudBlazor
+        run: dotnet restore
+
+      - name: Pack nuget package
+        working-directory: ./src/MudBlazor
+        run: dotnet pack -c Release --no-restore --output nupkgs /p:Version=${{ needs.get-snapshot-version.outputs.VERSION }}
+
+      - name: Check package contains css
+        shell: pwsh
+        run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.css
+
+      - name: Check package contains js
+        shell: pwsh
+        run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.js
+
+      - name: Publish snapshot package to GitHub Packages
+        working-directory: ./src/MudBlazor
+        run: |
+          dotnet nuget push nupkgs/*.nupkg \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --skip-duplicate
+
+      - name: Upload snapshot package as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: mudblazor-pr-snapshot-${{ needs.get-snapshot-version.outputs.VERSION }}
+          path: ./src/MudBlazor/nupkgs/*.nupkg
+          retention-days: 30
+
+      - name: Write job summary
+        run: |
+          {
+            echo "## PR snapshot package"
+            echo
+            echo "- PR: #${{ inputs.pr-number }}"
+            echo "- Commit: \`${{ needs.get-snapshot-version.outputs.COMMIT_SHA }}\`"
+            echo "- Version: \`${{ needs.get-snapshot-version.outputs.VERSION }}\`"
+            echo
+            echo "GitHub Packages requires a PAT with \`read:packages\` to consume this package."
+            echo
+            echo '```bash'
+            echo 'dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name mudblazor-github --username YOUR_GITHUB_USERNAME --password YOUR_GITHUB_PAT --store-password-in-clear-text'
+            echo "dotnet add package MudBlazor --version ${{ needs.get-snapshot-version.outputs.VERSION }} --source mudblazor-github"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
