@@ -409,8 +409,7 @@ namespace MudBlazor
                     SyncAutoSizingTextSnapshot();
                 }
             }
-            // Skip when disposed: a teardown during the await above disposes _dotNetReferenceLazy.Value,
-            // and serializing a disposed DotNetObjectReference throws ObjectDisposedException, crashing the circuit.
+
             if (firstRender && !_disposed)
             {
                 // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
