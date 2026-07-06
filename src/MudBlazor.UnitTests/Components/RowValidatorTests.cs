@@ -76,6 +76,19 @@ public class RowValidatorTests
     }
 
     /// <summary>
+    /// An <see cref="IFormComponent"/> implementation that predates <see cref="IFormComponent.HasValue"/> must keep compiling and running: the default implementation falls back to <see cref="IFormComponent.Touched"/>.
+    /// </summary>
+    [Test]
+    public void IFormComponent_HasValue_DefaultImplementation_FallsBackToTouched()
+    {
+        var component = new TestFormComponent(isAsync: false) { Touched = false };
+        ((IFormComponent)component).HasValue().Should().BeFalse();
+
+        component.Touched = true;
+        ((IFormComponent)component).HasValue().Should().BeTrue();
+    }
+
+    /// <summary>
     /// A minimal external implementer from before ValidateAsync was added to IForm.
     /// </summary>
     private sealed class LegacyForm : IForm
@@ -123,7 +136,7 @@ public class RowValidatorTests
 
         public bool HasErrors => ValidationErrors.Count > 0;
 
-        public bool Touched => false;
+        public bool Touched { get; set; }
 
         public object? Validation { get; set; }
 
