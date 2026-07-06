@@ -89,6 +89,11 @@
       cursor: pointer;
     }
 
+    &:focus-visible {
+      outline: 2px solid var(--mud-palette-action-default);
+      outline-offset: -2px;
+    }
+
     & .mud-expand-panel-text {
       flex: 1 1 auto;
     }
