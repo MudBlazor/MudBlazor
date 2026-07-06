@@ -17,6 +17,7 @@ namespace MudBlazor
         private bool _shouldInitSizing;
         private bool _shouldUpdateSizingParams;
         private bool _shouldAdjustSizingAfterRender;
+        private bool _disposed;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -408,7 +409,9 @@ namespace MudBlazor
                     SyncAutoSizingTextSnapshot();
                 }
             }
-            if (firstRender)
+            // Skip when disposed: a teardown during the await above disposes _dotNetReferenceLazy.Value,
+            // and serializing a disposed DotNetObjectReference throws ObjectDisposedException, crashing the circuit.
+            if (firstRender && !_disposed)
             {
                 // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
                 await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
@@ -447,6 +450,9 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
+            // Set before disposing the reference so a racing first-render blur attach skips.
+            _disposed = true;
+
             if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference);
