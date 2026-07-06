@@ -274,54 +274,50 @@ namespace MudBlazor
 
             var totalCountIsEven = totalCount % 2 == 0;
 
-            var leftBoundary = Math.Clamp(boundary, 0, totalCountIsEven ? totalCount / 2 : (totalCount - 1) / 2);
-            var rightBoundary = Math.Clamp(boundary, 0, totalCountIsEven ? totalCount / 2 : (totalCount - 1) / 2);
+            var actualBoundary = Math.Clamp(boundary, 0, totalCountIsEven ? totalCount / 2 : (totalCount - 1) / 2);
 
-            var middleCount = Math.Clamp(_middleCountState.Value, 0, totalCount - leftBoundary - rightBoundary);
+            var middleCount = Math.Clamp(_middleCountState.Value, 0, totalCount - actualBoundary - actualBoundary);
 
             var middleCountIsEven = middleCount % 2 == 0;
-
-            var pageIsInLowerBoundary = page <= boundary;
-            var pageIsInUpperBoundary = page >= totalCount - boundary;
 
             var firstPageOfMiddle =
                 Math.Clamp(
                     page - ((middleCountIsEven ? middleCount : middleCount - 1) / 2),
-                    leftBoundary + 1,
-                    totalCount - rightBoundary - middleCount + 1);
+                    actualBoundary + 1,
+                    totalCount - actualBoundary - middleCount + 1);
 
             var lastPageOfMiddle = firstPageOfMiddle + middleCount - 1;
 
-            var leftElipsis = firstPageOfMiddle > leftBoundary + 1;
-            var rightElipsis = lastPageOfMiddle < totalCount - rightBoundary;
+            var leftElipsis = firstPageOfMiddle > actualBoundary + 1;
+            var rightElipsis = lastPageOfMiddle < totalCount - actualBoundary;
 
-            var length = Math.Min(totalCount, leftBoundary + rightBoundary + middleCount + (leftElipsis ? 1 : 0) + (rightElipsis ? 1 : 0));
+            var length = Math.Min(totalCount, actualBoundary + actualBoundary + middleCount + (leftElipsis ? 1 : 0) + (rightElipsis ? 1 : 0));
 
             var pages = new int[length];
 
-            for (var i = 0; i < Math.Min(totalCount, leftBoundary); i++)
+            for (var i = 0; i < Math.Min(totalCount, actualBoundary); i++)
             {
                 pages[i] = i + 1;
             }
 
-            for (var i = length - 1; i > length - rightBoundary - 1; i--)
+            for (var i = length - 1; i > length - actualBoundary - 1; i--)
             {
                 pages[i] = totalCount - (length - i - 1);
             }
 
             if (leftElipsis)
             {
-                pages[leftBoundary] = -1;
+                pages[actualBoundary] = -1;
             }
 
             if (rightElipsis)
             {
-                pages[length - rightBoundary - 1] = -1;
+                pages[length - actualBoundary - 1] = -1;
             }
 
             for (var i = 0; i < middleCount; i++)
             {
-                pages[leftBoundary + (leftElipsis ? 1 : 0) + i] = firstPageOfMiddle + i;
+                pages[actualBoundary + (leftElipsis ? 1 : 0) + i] = firstPageOfMiddle + i;
             }
 
             return pages;
