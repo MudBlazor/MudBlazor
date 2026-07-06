@@ -267,7 +267,7 @@ namespace MudBlazor
          -1 is displayed as "..." in the ui*/
         private int[] GeneratePagination()
         {
-            //return array {1, ..., Count} if Count is small 
+            //return array {1, ..., Count} if Count is small
             if (_countState.Value <= 4 || _countState.Value <= (2 * _boundaryCountState.Value) + _middleCountState.Value + 2)
             {
                 var result = new int[_countState.Value];
@@ -277,6 +277,34 @@ namespace MudBlazor
                 }
 
                 return result;
+            }
+
+            //BoundaryCount==0 has no fixed boundary pages to bridge a single-page gap into, so the
+            //"absorb the gap into a real page" trick below (used when BoundaryCount>=1) would show one
+            //extra page beyond MiddleCount; handle it separately as a pure sliding window instead.
+            if (_boundaryCountState.Value == 0)
+            {
+                var tightMin = 1;
+                var tightMax = _countState.Value - _middleCountState.Value + 1;
+                var start = Math.Clamp(_selectedState.Value - (_middleCountState.Value / 2), tightMin, tightMax);
+
+                var leftGap = start - 1;
+                var rightGap = _countState.Value - (start + _middleCountState.Value - 1);
+
+                var list = new List<int>(_middleCountState.Value + 2);
+                if (leftGap > 0)
+                {
+                    list.Add(-1);
+                }
+                for (var i = 0; i < _middleCountState.Value; i++)
+                {
+                    list.Add(start + i);
+                }
+                if (rightGap > 0)
+                {
+                    list.Add(-1);
+                }
+                return list.ToArray();
             }
 
             var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;

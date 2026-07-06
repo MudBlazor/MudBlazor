@@ -278,8 +278,13 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [TestCase(8, 30, 11, 0, new[] { "...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "..." })]
-        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "..." })]
-        [TestCase(30, 30, 11, 0, new[] { "...", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "..." })]
+        [TestCase(30, 30, 11, 0, new[] { "...", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        // Regression cases for https://github.com/MudBlazor/MudBlazor/pull/13424#issuecomment (OFark):
+        // with BoundaryCount=0 and MiddleCount=11, Selected=6 must show exactly 11 pages (1-11, 5 before/5 after),
+        // not 12 as previously; Selected=7 is the first page for which the window can be fully centered on both sides.
+        [TestCase(6, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "..." })]
+        [TestCase(7, 30, 11, 0, new[] { "...", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "..." })]
         [Test]
         public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
@@ -297,7 +302,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
-            items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
+            items.Count.Should().Be(expectedValues.Length);
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);
