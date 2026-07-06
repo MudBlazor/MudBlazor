@@ -133,11 +133,10 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="expectedSelectedPage">The expected selected page.</param>
         [TestCase(0, 6, 1)]
         [TestCase(6, 6, 11)]
-        [TestCase(5, 5, 6)]
-        [TestCase(2, 5, 3)]
+        [TestCase(5, 5, 10)]
+        [TestCase(2, 5, 4)]
         [Test]
-        public async Task PaginationPageButtonClick(int clickIndexPage, int initiallySelectedPage,
-            int expectedSelectedPage)
+        public async Task PaginationPageButtonClick(int clickIndexPage, int initiallySelectedPage, int expectedSelectedPage)
         {
             var comp = Context.Render<PaginationButtonTest>();
 
@@ -227,11 +226,12 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="count">The number of total items.</param>
         /// <param name="middleCount">The number of items displayed in the middle.</param>
         /// <param name="boundaryCount">The number of items displayed on the start and end.</param>
-        [TestCase(21, 5, 7)]
-        [TestCase(9, 3, 2)]
-        [TestCase(5, 1, 1)]
-        [TestCase(5, -1, 1)]
-        [TestCase(5, 1, -1)]
+        [TestCase(19, 5, 7)]
+        [TestCase(7, 3, 2)]
+        [TestCase(3, 1, 1)]
+        [TestCase(3, -1, 1)]
+        [TestCase(1, 1, -1)]
+        [TestCase(1, 1, 0)]
         [Test]
         public async Task PaginationCountWithoutEllipsis(int count, int middleCount, int boundaryCount)
         {
@@ -243,14 +243,16 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             pagination.GetState(x => x.MiddleCount).Should().Be(Math.Max(1, middleCount));
-            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(1, boundaryCount));
+            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(0, boundaryCount));
 
             for (var i = 1; i <= count; i++)
             {
                 await comp.Find(".mud-pagination-test-count input").ChangeAsync(i.ToString());
                 var buttons = comp.FindAll(".mud-pagination-item");
                 //Expected values
-                buttons.Count.Should().Be(i);
+                //buttons.Count.Should().Be(i);
+                string.Join(", ", buttons.Select(i => i.TextContent)).Should().BeEquivalentTo(string.Join(", ", Enumerable.Range(1, i).Select(i => i.ToString())));
+
                 for (var j = 0; j < buttons.Count; j++)
                 {
                     buttons[j].TextContent.Should().Be((j + 1).ToString());
@@ -266,19 +268,25 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="boundaryCount">The number of items at the start and end of the pagination.</param>
         /// <param name="expectedValues">The expected content of the items.</param>
         [TestCase(6, 11, 3, 2, new[] { "1", "2", "...", "5", "6", "7", "...", "10", "11" })]
-        [TestCase(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(11, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
+        [TestCase(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "...", "10", "11" })]
+        [TestCase(11, 11, 3, 2, new[] { "1", "2", "...", "7", "8", "9", "10", "11" })]
+        [TestCase(5, 11, 3, 2, new[] { "1", "2", "...", "4", "5", "6", "...", "10", "11" })]
+        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "...", "10", "11" })]
         [TestCase(11, 22, 1, 1, new[] { "1", "...", "11", "...", "22" })]
-        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "...", "22" })]
+        [TestCase(1, 22, 1, 1, new[] { "1", "2", "...", "22" })]
         [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22" })]
-        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
-        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
-        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "...", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
+        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "...", "20", "21", "22" })]
+        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(8, 30, 11, 0, new[] { "...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "..." })]
+        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "..." })]
+        [TestCase(30, 30, 11, 0, new[] { "...", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        [TestCase(28, 30, 11, 0, new[] { "...", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        [TestCase(28, 30, 11, 1, new[] { "1", "...", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        [TestCase(27, 30, 11, 1, new[] { "1", "...", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        [TestCase(26, 30, 11, 1, new[] { "1", "...", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
         [Test]
-        public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
-            int boundaryCount, string[] expectedValues)
+        public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount, int boundaryCount, string[] expectedValues)
         {
             var comp = Context.Render<PaginationCountTest>();
 
@@ -293,11 +301,33 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
-            items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
+            //items.Count.Should().Be(expectedValues.Length);
+            string.Join(", ", items.Select(i => i.TextContent)).Should().BeEquivalentTo(string.Join(", ", expectedValues));
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);
             }
+        }
+
+        /// <summary>
+        /// Tests that a <see cref="MudPagination.BoundaryCount"/> of zero set via the initial parameters
+        /// hides the boundary pages instead of being clamped to one.
+        /// Verifies https://github.com/MudBlazor/MudBlazor/issues/13181
+        /// </summary>
+        [Test]
+        public void PaginationBoundaryCountZeroInitialParameter()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(x => x.Count, 30)
+                .Add(x => x.MiddleCount, 11)
+                .Add(x => x.BoundaryCount, 0)
+                .Add(x => x.Selected, 8)
+                .Add(x => x.ShowPreviousButton, false)
+                .Add(x => x.ShowNextButton, false));
+
+            var items = comp.FindAll(".mud-pagination-item");
+            items.Select(x => x.TextContent).Should()
+                .Equal("...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "...");
         }
 
         /// <summary>
@@ -313,7 +343,7 @@ namespace MudBlazor.UnitTests.Components
             var paginationItems = comp.FindAll("mud-pagination-item");
 
             //test if previous and next buttons are hidden
-            buttons.Count.Should().Be(8);
+            buttons.Count.Should().Be(7);
 
             //test if variant is filled
             pagination.ClassName.Should().Contain("mud-pagination-filled");
