@@ -298,14 +298,20 @@ class MudElementReference {
      */
     addTooltipHover(element, dotNetReference) {
         if (!element) return;
+        const invokeHoverChanged = function (hovered) {
+            dotNetReference.invokeMethodAsync('OnHoverChangedAsync', hovered).catch(err => {
+                console.warn("Error invoking OnHoverChangedAsync, possibly disposed:", err);
+                window.mudElementRef.removeTooltipHover(element);
+            });
+        };
         element._mudTooltipOver = function (e) {
             if (!element.contains(e.relatedTarget)) {
-                dotNetReference.invokeMethodAsync('OnHoverChangedAsync', true).catch(() => { });
+                invokeHoverChanged(true);
             }
         };
         element._mudTooltipOut = function (e) {
             if (!element.contains(e.relatedTarget)) {
-                dotNetReference.invokeMethodAsync('OnHoverChangedAsync', false).catch(() => { });
+                invokeHoverChanged(false);
             }
         };
         element.addEventListener('pointerover', element._mudTooltipOver);

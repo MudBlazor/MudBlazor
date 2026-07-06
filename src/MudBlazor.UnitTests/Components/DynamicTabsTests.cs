@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -97,16 +98,20 @@ namespace MudBlazor.UnitTests.Components
             closeButtons.Should().HaveCount(3);
 
             // Tooltips are shown via a JS hover bridge (display:contents wrapper, issue #1167) which
-            // bUnit can't dispatch, so drive the matching tooltip instance directly. Render order of the
-            // tooltip components aligns with the DOM order of the close buttons they wrap.
-            var closeTooltips = comp.FindComponents<MudTooltip>()
-                .Where(x => x.Instance.Text == "close here")
-                .ToList();
-            closeTooltips.Should().HaveCount(3);
-
-            for (var index = 0; index < closeButtons.Count; index++)
+            // bUnit can't dispatch, so drive the matching tooltip instance directly. Each button maps
+            // to its tooltip through the popover marker id rendered inside the tooltip's wrapper.
+            // The marker must be a direct child of the tooltip's own wrapper, otherwise an outer
+            // tooltip (each tab is wrapped in one too) would also match by containing the nested marker.
+            MudTooltip TooltipOf(IElement button)
             {
-                var item = closeButtons[index];
+                var markerId = button.ParentElement!.Children[1].Id;
+                return comp.FindComponents<MudTooltip>()
+                    .Single(x => x.Nodes.OfType<IElement>().Any(root => root.Children.Any(child => child.Id == markerId)))
+                    .Instance;
+            }
+
+            foreach (var item in closeButtons)
+            {
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -117,7 +122,8 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
-                await comp.InvokeAsync(() => closeTooltips[index].Instance.OnHoverChangedAsync(true));
+                var tooltip = TooltipOf(item);
+                await comp.InvokeAsync(() => tooltip.OnHoverChangedAsync(true));
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -126,20 +132,14 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("close here");
 
-                await comp.InvokeAsync(() => closeTooltips[index].Instance.OnHoverChangedAsync(false));
+                await comp.InvokeAsync(() => tooltip.OnHoverChangedAsync(false));
             }
 
             var addButtons = comp.FindAll(".my-add-icon-class");
 
             addButtons.Should().HaveCount(1);
-            var addTooltips = comp.FindComponents<MudTooltip>()
-                .Where(x => x.Instance.Text == "add here")
-                .ToList();
-            addTooltips.Should().HaveCount(1);
-
-            for (var index = 0; index < addButtons.Count; index++)
+            foreach (var item in addButtons)
             {
-                var item = addButtons[index];
                 item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
@@ -150,7 +150,8 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
-                await comp.InvokeAsync(() => addTooltips[index].Instance.OnHoverChangedAsync(true));
+                var tooltip = TooltipOf(item);
+                await comp.InvokeAsync(() => tooltip.OnHoverChangedAsync(true));
 
                 var popoverId = parent.Children[1].Id.Substring(8);
 
@@ -159,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
                 toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("add here");
 
-                await comp.InvokeAsync(() => addTooltips[index].Instance.OnHoverChangedAsync(false));
+                await comp.InvokeAsync(() => tooltip.OnHoverChangedAsync(false));
             }
         }
 
