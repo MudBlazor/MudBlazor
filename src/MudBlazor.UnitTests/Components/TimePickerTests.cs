@@ -417,6 +417,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task TimeChanged_ShouldNotFire_WhenTimeSetFromParent()
+        {
+            var eventCount = 0;
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.TimeChanged, (TimeSpan? _) => eventCount++));
+
+            // Assigning Time from a parent is programmatic, not user interaction; it must update the value
+            // without raising TimeChanged (#10834, follow-up to #13428).
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Time, new TimeSpan(9, 15, 0)));
+
+            comp.Instance.Time.Should().Be(new TimeSpan(9, 15, 0));
+            eventCount.Should().Be(0);
+        }
+
+        [Test]
+        public async Task TimeChanged_ShouldFire_WhenUserPicksTime()
+        {
+            var eventCount = 0;
+            TimeSpan? changed = null;
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Time, new TimeSpan(10, 30, 0)) // parent init must NOT count as a change
+                .Add(p => p.TimeChanged, (TimeSpan? t) => { eventCount++; changed = t; }));
+            var picker = comp.Instance;
+
+            // A user clock pick followed by a commit is the user-driven path that MUST notify the parent.
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
+            await comp.InvokeAsync(picker.SubmitAsync);
+
+            eventCount.Should().Be(1);
+            changed.Should().Be(picker.Time);
+            picker.Time.Should().NotBe(new TimeSpan(10, 30, 0));
+        }
+
+        [Test]
         public async Task SelectTimeFromStick_IgnoresSentinelValue()
         {
             var comp = await OpenPicker(parameters => parameters.Add(x => x.Time, new TimeSpan(8, 20, 0)));

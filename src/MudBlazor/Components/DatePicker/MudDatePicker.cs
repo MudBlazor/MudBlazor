@@ -27,10 +27,12 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            // Assigning Date from the parameter is programmatic, not user interaction. Pass the suppression
-            // as an explicit argument (NOT an instance flag) so it cannot leak across the awaits inside
-            // SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
-            set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true).CatchAndLog();
+            // Assigning Date from the parameter is programmatic, not user interaction. Pass suppression AND
+            // notify: false as explicit arguments (NOT instance flags) so they cannot leak across the awaits
+            // inside SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            // notify: false stops DateChanged from firing on a parent/programmatic assignment - echoing back an
+            // event the parent never triggered is the feedback loop reported in #10834 (follow-up to #13428).
+            set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true, notify: false).CatchAndLog();
         }
 
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
@@ -39,7 +41,7 @@ namespace MudBlazor
         protected Task SetDateAsync(DateTime? date, bool updateValue)
             => SetDateAsync(date, updateValue, false);
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false)
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false, bool notify = true)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
@@ -92,7 +94,13 @@ namespace MudBlazor
                     await SetTextAsync(ConvertSet(_value), false);
                 }
 
-                await DateChanged.InvokeAsync(_value);
+                // Programmatic/parent assignments pass notify: false and must not raise DateChanged (#10834);
+                // genuine user changes keep the default notify: true. The display update above still runs either
+                // way, so a parent assignment (even null, to clear stale invalid text) is fully reflected.
+                if (notify)
+                {
+                    await DateChanged.InvokeAsync(_value);
+                }
                 await BeginValidateAsync();
                 if (!suppressInteraction)
                 {
