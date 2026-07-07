@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -76,8 +77,9 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>1</c>. <br />
+        /// A value of <c>0</c> would hide the page numbers at the edge: <c>&lt; ... 4 5 6 ... &gt;</c> <br />
         /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
-        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
+        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c>
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
@@ -266,67 +268,56 @@ namespace MudBlazor
          -1 is displayed as "..." in the ui*/
         private int[] GeneratePagination()
         {
-            //return array {1, ..., Count} if Count is small 
-            if (_countState.Value <= 4 || _countState.Value <= (2 * _boundaryCountState.Value) + _middleCountState.Value + 2)
-            {
-                var result = new int[_countState.Value];
-                for (var i = 0; i < _countState.Value; i++)
-                {
-                    result[i] = i + 1;
-                }
+            var totalCount = _countState.Value;
+            var page = _selectedState.Value;
+            var boundary = _boundaryCountState.Value;
 
-                return result;
-            }
+            var totalCountIsEven = totalCount % 2 == 0;
 
-            var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;
+            var actualBoundary = Math.Clamp(boundary, 0, totalCountIsEven ? totalCount / 2 : (totalCount - 1) / 2);
+
+            var middleCount = Math.Clamp(_middleCountState.Value, 0, totalCount - actualBoundary - actualBoundary);
+
+            var middleCountIsEven = middleCount % 2 == 0;
+
+            var firstPageOfMiddle =
+                Math.Clamp(
+                    page - ((middleCountIsEven ? middleCount : middleCount - 1) / 2),
+                    actualBoundary + 1,
+                    totalCount - actualBoundary - middleCount + 1);
+
+            var lastPageOfMiddle = firstPageOfMiddle + middleCount - 1;
+
+            var leftElipsis = firstPageOfMiddle > actualBoundary + 1;
+            var rightElipsis = lastPageOfMiddle < totalCount - actualBoundary;
+
+            var length = Math.Min(totalCount, actualBoundary + actualBoundary + middleCount + (leftElipsis ? 1 : 0) + (rightElipsis ? 1 : 0));
+
             var pages = new int[length];
 
-            //set start boundary items, e.g. if BoundaryCount == 3 => [1, 2, 3, ...]
-            for (var i = 0; i < _boundaryCountState.Value; i++)
+            for (var i = 0; i < Math.Min(totalCount, actualBoundary); i++)
             {
                 pages[i] = i + 1;
             }
 
-            //set end boundary items, e.g. if BoundaryCount == 3 and Count == 11 => [..., 9, 10, 11]
-            for (var i = 0; i < _boundaryCountState.Value; i++)
+            for (var i = length - 1; i > length - actualBoundary - 1; i--)
             {
-                pages[length - i - 1] = _countState.Value - i;
+                pages[i] = totalCount - (length - i - 1);
             }
 
-            //calculate start value for middle items
-            int startValue;
-            if (_selectedState.Value <= _boundaryCountState.Value + (_middleCountState.Value / 2) + 1)
+            if (leftElipsis)
             {
-                startValue = _boundaryCountState.Value + 2;
-            }
-            else if (_selectedState.Value >= _countState.Value - _boundaryCountState.Value - (_middleCountState.Value / 2))
-            {
-                startValue = _countState.Value - _boundaryCountState.Value - _middleCountState.Value;
-            }
-            else
-            {
-                startValue = _selectedState.Value - (_middleCountState.Value / 2);
+                pages[actualBoundary] = -1;
             }
 
-            //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
-            for (var i = 0; i < _middleCountState.Value; i++)
+            if (rightElipsis)
             {
-                pages[_boundaryCountState.Value + 1 + i] = startValue + i;
+                pages[length - actualBoundary - 1] = -1;
             }
 
-            //set start delimiter "..." when selected page is far enough to the end, dots are represented as -1
-            pages[_boundaryCountState.Value] = (_boundaryCountState.Value + (_middleCountState.Value / 2) + 1 < _selectedState.Value) ? -1 : _boundaryCountState.Value + 1;
-
-            //set end delimiter "..." when selected page is far enough to the start, dots are represented as -1
-            pages[length - _boundaryCountState.Value - 1] = (_countState.Value - _boundaryCountState.Value - (_middleCountState.Value / 2) > _selectedState.Value) ? -1 : _countState.Value - _boundaryCountState.Value;
-
-            //remove ellipsis if difference is small enough, e.g convert [..., 5 , -1 , 7, ...] to [..., 5, 6, 7, ...]
-            for (var i = 0; i < length - 2; i++)
+            for (var i = 0; i < middleCount; i++)
             {
-                if (pages[i] + 2 == pages[i + 2])
-                {
-                    pages[i + 1] = pages[i] + 1;
-                }
+                pages[actualBoundary + (leftElipsis ? 1 : 0) + i] = firstPageOfMiddle + i;
             }
 
             return pages;
@@ -378,7 +369,7 @@ namespace MudBlazor
 
         private Task SetBoundaryCount(int count)
         {
-            var newCount = Math.Max(1, count);
+            var newCount = Math.Max(0, count);
 
             return _boundaryCountState.SetValueAsync(newCount);
         }
