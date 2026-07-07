@@ -98,7 +98,7 @@
     }
 
     &:focus-visible {
-      background-color: var(--mud-palette-action-default-hover) !important;
+      background-color: var(--mud-palette-action-default-hover);
     }
 
     & .mud-expand-panel-text {
