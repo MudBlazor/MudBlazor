@@ -1176,5 +1176,32 @@ namespace MudBlazor.UnitTests.Components
             // The second keystroke must survive the parent Value echo triggered by the first forwarded callback.
             mask.ReadText.Should().Be("(1)2-_)");
         }
+
+        [Test]
+        public void AutoFocus_ShouldFocusWithoutScrolling()
+        {
+            Context.AddKeyInterceptorService();
+            Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.AutoFocus, true));
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FocusAsync_ShouldFocusWithScrolling()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeFalse();
+        }
     }
 }
