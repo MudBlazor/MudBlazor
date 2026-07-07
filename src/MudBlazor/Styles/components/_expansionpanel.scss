@@ -83,11 +83,10 @@
     outline: none;
     padding: 16px 0px;
     position: relative;
-    transition: min-height .3s cubic-bezier(.25,.8,.5,1);
+    transition: min-height .3s cubic-bezier(.25,.8,.5,1), border-radius .3s cubic-bezier(.25,.8,.5,1);
     user-select: none;
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
-    transition: border-radius .3s cubic-bezier(.25,.8,.5,1);
 
     &.mud-expand-panel-header-gutters {
       padding-left: 24px;
