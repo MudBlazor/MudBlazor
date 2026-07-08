@@ -25,11 +25,18 @@ window.mudpopoverHelper = {
         };
     },
 
-    basePopoverZIndex: Number.parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--mud-zindex-popover')) || 1200,
+    basePopoverZIndex: null,
 
-    baseTooltipZIndex: Number.parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--mud-zindex-tooltip')) || 1600,
+    baseTooltipZIndex: null,
+
+    // updates the ZIndex of the popover and tooltip from the css variable on initialzie and by the MudThemeProvider
+    updateBaseZIndexValues: function () {
+        console.log("update");
+        this.basePopoverZIndex = Number.parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue('--mud-zindex-popover')) || 1200;
+        this.baseTooltipZIndex = Number.parseInt(getComputedStyle(document.documentElement)
+            .getPropertyValue('--mud-zindex-tooltip')) || 1600;
+    },
 
     // static set of replacement values
     flipClassReplacements: {
@@ -1321,6 +1328,7 @@ class MudPopover {
 
         window.mudpopoverHelper.mainContainerClass = containerClass;
         window.mudpopoverHelper.overflowPadding = overflowPadding;
+        window.mudpopoverHelper.updateBaseZIndexValues();
 
         if (flipMargin) {
             window.mudpopoverHelper.flipMargin = flipMargin;
