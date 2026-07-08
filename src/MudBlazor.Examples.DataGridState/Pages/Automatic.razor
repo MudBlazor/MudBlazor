@@ -1,0 +1,187 @@
+@page "/automatic"
+@inject LocalStorageService LocalStorage
+@inject PersonDataStore PersonDataStore
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3">
+    <MudPaper Class="pa-4" Elevation="1">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h5">Automatic DataGrid State Persistence</MudText>
+            <MudText Typo="Typo.body2">
+                Sorting, filters, paging, grouping, and selection are saved automatically to localStorage.
+                Reload the page to restore the last grid state.
+            </MudText>
+            <MudStack Row="true" Spacing="2">
+                <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ClearStateAsync">Clear Saved State</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="@(_groupingEnabled ? Color.Secondary : Color.Default)" OnClick="ToggleGroupingAsync">
+                    @(_groupingEnabled ? "Disable Grouping" : "Enable Grouping")
+                </MudButton>
+            </MudStack>
+            <MudText Typo="Typo.body2">@_statusMessage</MudText>
+            @if (!string.IsNullOrWhiteSpace(_loadError))
+            {
+                <MudAlert Severity="Severity.Error">@_loadError</MudAlert>
+            }
+        </MudStack>
+    </MudPaper>
+
+    @if (!_dataLoaded)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+    }
+    else
+    {
+        <MudDataGrid @ref="_dataGrid"
+                     T="Person"
+                     Items="@_people"
+                     Filterable="true"
+                     Groupable="@_groupingEnabled"
+                     MultiSelection="true"
+                     SortMode="SortMode.Multiple"
+                     RowsPerPage="10"
+                     Height="520px"
+                     FixedHeader="true"
+                     SortChanged="@(_ => AutoSaveStateAsync())"
+                     FilterChanged="@(_ => AutoSaveStateAsync())"
+                     CurrentPageChanged="@(_ => AutoSaveStateAsync())"
+                     RowsPerPageChanged="@(_ => AutoSaveStateAsync())"
+                     SelectedItemsChanged="@(_ => AutoSaveStateAsync())">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">People</MudText>
+                <MudSpacer />
+                <MudText Typo="Typo.body2">@_people.Count records</MudText>
+            </ToolBarContent>
+            <Columns>
+                <SelectColumn T="Person" />
+                <PropertyColumn Property="x => x.Company" Title="Company" Groupable="true" Grouping="@_groupingEnabled" GroupingChanged="@(_ => AutoSaveStateAsync())" />
+                <PropertyColumn Property="x => x.FullName" Title="Name" />
+                <PropertyColumn Property="x => x.Email" Title="Email" />
+                <PropertyColumn Property="x => x.City" Title="City" />
+                <PropertyColumn Property="x => x.Age" Title="Age" />
+                <PropertyColumn Property="x => x.Salary" Title="Salary" Format="C0" />
+                <PropertyColumn Property="x => x.Joined" Title="Joined" Format="d" />
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="Person" />
+            </PagerContent>
+        </MudDataGrid>
+    }
+</MudStack>
+
+@code {
+    private const string StateStorageKey = "mudblazor.datagrid-state.demo.automatic-state";
+
+    private MudDataGrid<Person>? _dataGrid;
+    private IReadOnlyList<Person> _people = [];
+    private DataGridPersistedState? _pendingStateRestore;
+    private bool _dataLoaded;
+    private bool _groupingEnabled = true;
+    private bool _stateRestored;
+    private bool _readyForAutoSave;
+    private bool _suppressAutoSave;
+    private string? _loadError;
+    private string _statusMessage = "Change the grid, then reload the page to verify automatic restore.";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _people = await PersonDataStore.EnsureInitializedAsync();
+                _pendingStateRestore = await LocalStorage.GetItemAsync<DataGridPersistedState>(StateStorageKey);
+                if (_pendingStateRestore is not null)
+                {
+                    _groupingEnabled = _pendingStateRestore.Groups.Count > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                _loadError = $"Failed to load sample data: {ex.Message}";
+                _people = PersonDataGenerator.CreatePeople();
+            }
+            finally
+            {
+                _dataLoaded = true;
+                await InvokeAsync(StateHasChanged);
+            }
+
+            return;
+        }
+
+        if (!_dataLoaded || _stateRestored || _dataGrid is null)
+        {
+            return;
+        }
+
+        _stateRestored = true;
+        _suppressAutoSave = true;
+        try
+        {
+            if (_pendingStateRestore is not null)
+            {
+                await _dataGrid.SetStateAsync(_pendingStateRestore, ResolvePersonKey);
+                _groupingEnabled = _pendingStateRestore.Groups.Count > 0;
+                _statusMessage = "Restored state from localStorage.";
+            }
+            else
+            {
+                _statusMessage = "No saved state found. Changes will be saved automatically.";
+            }
+        }
+        finally
+        {
+            _readyForAutoSave = true;
+            _suppressAutoSave = false;
+            _pendingStateRestore = null;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task AutoSaveStateAsync()
+    {
+        if (!_readyForAutoSave || _suppressAutoSave || _dataGrid is null)
+        {
+            return;
+        }
+
+        var state = _dataGrid.GetState(person => person.Id.ToString());
+        await LocalStorage.SetItemAsync(StateStorageKey, state);
+        _statusMessage = $"Auto-saved page {state.Page + 1}, {state.Filters.Count} filter(s), {state.Sorts.Count} sort(s), and {state.SelectedItemKeys.Count} selected row(s).";
+    }
+
+    private async Task ClearStateAsync()
+    {
+        await LocalStorage.RemoveItemAsync(StateStorageKey);
+        _suppressAutoSave = true;
+        try
+        {
+            if (_dataGrid is not null)
+            {
+                await _dataGrid.SetStateAsync(new DataGridPersistedState());
+            }
+
+            _groupingEnabled = false;
+            _statusMessage = "Cleared saved state.";
+        }
+        finally
+        {
+            _suppressAutoSave = false;
+        }
+
+        Snackbar.Add("Cleared saved DataGrid state.", Severity.Info);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ToggleGroupingAsync()
+    {
+        _groupingEnabled = !_groupingEnabled;
+        _dataGrid?.GroupItems();
+        await AutoSaveStateAsync();
+        Snackbar.Add(_groupingEnabled ? "Grouping enabled." : "Grouping disabled.", Severity.Info);
+    }
+
+    private Person? ResolvePersonKey(string key) =>
+        Guid.TryParse(key, out var id) ? _people.FirstOrDefault(person => person.Id == id) : null;
+}

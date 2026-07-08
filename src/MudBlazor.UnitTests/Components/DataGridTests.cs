@@ -7296,6 +7296,312 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(0, "Filter should be removable");
         }
 
+        [Test]
+        public async Task DataGridGetStateCapturesPagingSortAndFilter()
+        {
+            var items = Enumerable.Range(1, 20).Select(i => new DataGridStateTestModel(i, $"Item {i}", i * 10)).ToList();
+            var comp = Context.Render<MudDataGrid<DataGridStateTestModel>>(parameters => parameters
+                .Add(grid => grid.Items, items)
+                .Add(grid => grid.Filterable, true)
+                .Add(grid => grid.RowsPerPage, 5)
+                .Add(grid => grid.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<DataGridStateTestModel, string>.Property), (Expression<Func<DataGridStateTestModel, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, int>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<DataGridStateTestModel, int>.Property), (Expression<Func<DataGridStateTestModel, int>>)(x => x.Score));
+                    builder.CloseComponent();
+                })
+                .Add(grid => grid.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudDataGridPager<DataGridStateTestModel>>(0);
+                    builder.CloseComponent();
+                }));
+
+            var dataGrid = comp;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(nameof(DataGridStateTestModel.Name), SortDirection.Descending, x => x.Name));
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
+
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName(nameof(DataGridStateTestModel.Name));
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridStateTestModel>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Value = "Item 1",
+                Title = "Name",
+            }));
+
+            var state = dataGrid.Instance.GetState();
+
+            state.Page.Should().Be(1);
+            state.PageSize.Should().Be(5);
+            state.Sorts.Should().ContainSingle();
+            state.Sorts[0].Column.Should().Be(nameof(DataGridStateTestModel.Name));
+            state.Sorts[0].Descending.Should().BeTrue();
+            state.Filters.Should().ContainSingle();
+            state.Filters[0].Column.Should().Be(nameof(DataGridStateTestModel.Name));
+            state.Filters[0].Operator.Should().Be(FilterOperator.String.Contains);
+            state.Filters[0].ValueJson.Should().Contain("Item 1");
+        }
+
+        [Test]
+        public async Task DataGridSetStateRestoresPagingSortAndFilter()
+        {
+            var items = Enumerable.Range(1, 20).Select(i => new DataGridStateTestModel(i, $"Item {i}", i * 10)).ToList();
+            var savedState = new DataGridPersistedState
+            {
+                Page = 2,
+                PageSize = 4,
+                Sorts =
+                [
+                    new DataGridSortState
+                    {
+                        Column = nameof(DataGridStateTestModel.Score),
+                        Descending = false,
+                        Index = 0,
+                    }
+                ],
+                Filters =
+                [
+                    new DataGridFilterState
+                    {
+                        Column = nameof(DataGridStateTestModel.Name),
+                        Operator = FilterOperator.String.StartsWith,
+                        Title = "Name",
+                        ValueJson = "\"Item 1\"",
+                        ValueType = typeof(string).AssemblyQualifiedName,
+                    }
+                ],
+            };
+
+            var comp = Context.Render<MudDataGrid<DataGridStateTestModel>>(parameters => parameters
+                .Add(grid => grid.Items, items)
+                .Add(grid => grid.Filterable, true)
+                .Add(grid => grid.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<DataGridStateTestModel, string>.Property), (Expression<Func<DataGridStateTestModel, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, int>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<DataGridStateTestModel, int>.Property), (Expression<Func<DataGridStateTestModel, int>>)(x => x.Score));
+                    builder.CloseComponent();
+                })
+                .Add(grid => grid.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudDataGridPager<DataGridStateTestModel>>(0);
+                    builder.CloseComponent();
+                }));
+
+            var dataGrid = comp;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetStateAsync(savedState));
+
+            dataGrid.Instance.CurrentPage.Should().Be(2);
+            dataGrid.Instance.RowsPerPage.Should().Be(4);
+            dataGrid.Instance.SortDefinitions.Should().ContainKey(nameof(DataGridStateTestModel.Score));
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be("Item 1");
+            dataGrid.Instance.FilteredItems.Count().Should().BeLessThan(items.Count);
+        }
+
+        [Test]
+        public async Task DataGridSetStateRestoresGrouping()
+        {
+            var items = new List<DataGridStateTestModel>
+            {
+                new(1, "Alpha", 10),
+                new(2, "Alpha", 20),
+                new(3, "Beta", 30),
+            };
+
+            var savedState = new DataGridPersistedState
+            {
+                Groups =
+                [
+                    new DataGridGroupState
+                    {
+                        Column = nameof(DataGridStateTestModel.Name),
+                        Order = 0,
+                        Expanded = true,
+                    }
+                ],
+            };
+
+            var comp = Context.Render<MudDataGrid<DataGridStateTestModel>>(parameters => parameters
+                .Add(grid => grid.Items, items)
+                .Add(grid => grid.Groupable, true)
+                .Add(grid => grid.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<DataGridStateTestModel, string>.Property), (Expression<Func<DataGridStateTestModel, string>>)(x => x.Name));
+                    builder.AddAttribute(2, nameof(PropertyColumn<DataGridStateTestModel, string>.Grouping), true);
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, int>>(3);
+                    builder.AddAttribute(4, nameof(PropertyColumn<DataGridStateTestModel, int>.Property), (Expression<Func<DataGridStateTestModel, int>>)(x => x.Score));
+                    builder.CloseComponent();
+                }));
+
+            var dataGrid = comp;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetStateAsync(savedState));
+
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName(nameof(DataGridStateTestModel.Name));
+            nameColumn!.GroupingState.Value.Should().BeTrue();
+            dataGrid.Instance.GetState().Groups.Should().ContainSingle(group => group.Column == nameof(DataGridStateTestModel.Name));
+        }
+
+        [Test]
+        public async Task DataGridSetStateRestoresSelection()
+        {
+            var items = new List<DataGridStateTestModel>
+            {
+                new(1, "Alpha", 10),
+                new(2, "Beta", 20),
+                new(3, "Gamma", 30),
+            };
+
+            var savedState = new DataGridPersistedState
+            {
+                SelectedItemKeys = ["2", "3"],
+            };
+
+            var comp = Context.Render<MudDataGrid<DataGridStateTestModel>>(parameters => parameters
+                .Add(grid => grid.Items, items)
+                .Add(grid => grid.MultiSelection, true)
+                .Add(grid => grid.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<DataGridStateTestModel>>(0);
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, string>>(1);
+                    builder.AddAttribute(2, nameof(PropertyColumn<DataGridStateTestModel, string>.Property), (Expression<Func<DataGridStateTestModel, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var dataGrid = comp;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetStateAsync(
+                savedState,
+                key => items.FirstOrDefault(item => item.Id.ToString() == key)));
+
+            dataGrid.Instance.Selection.Select(item => item.Id).Should().BeEquivalentTo([2, 3]);
+        }
+
+        [Test]
+        public async Task DataGridGetStateAndSetStateRoundTripSelection()
+        {
+            var items = new List<DataGridStateTestModel>
+            {
+                new(1, "Alpha", 10),
+                new(2, "Beta", 20),
+            };
+
+            var comp = Context.Render<MudDataGrid<DataGridStateTestModel>>(parameters => parameters
+                .Add(grid => grid.Items, items)
+                .Add(grid => grid.MultiSelection, true)
+                .Add(grid => grid.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<DataGridStateTestModel>>(0);
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, string>>(1);
+                    builder.AddAttribute(2, nameof(PropertyColumn<DataGridStateTestModel, string>.Property), (Expression<Func<DataGridStateTestModel, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            var dataGrid = comp;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, items[1]));
+            var savedState = dataGrid.Instance.GetState(item => item.Id.ToString());
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetStateAsync(
+                new DataGridPersistedState(),
+                key => items.FirstOrDefault(item => item.Id.ToString() == key)));
+
+            dataGrid.Instance.Selection.Should().BeEmpty();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetStateAsync(
+                savedState,
+                key => items.FirstOrDefault(item => item.Id.ToString() == key)));
+
+            dataGrid.Instance.Selection.Single().Id.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridSetStateReloadsServerDataWithRestoredState()
+        {
+            var items = Enumerable.Range(1, 20).Select(i => new DataGridStateTestModel(i, $"Item {i}", i * 10)).ToList();
+            var capturedStates = new List<GridState<DataGridStateTestModel>>();
+            Task<GridData<DataGridStateTestModel>> ServerData(GridState<DataGridStateTestModel> state, CancellationToken _)
+            {
+                capturedStates.Add(state);
+                return Task.FromResult(new GridData<DataGridStateTestModel>
+                {
+                    Items = items.Skip(state.Page * state.PageSize).Take(state.PageSize),
+                    TotalItems = items.Count,
+                });
+            }
+
+            var savedState = new DataGridPersistedState
+            {
+                Page = 1,
+                PageSize = 6,
+                Sorts =
+                [
+                    new DataGridSortState
+                    {
+                        Column = nameof(DataGridStateTestModel.Score),
+                        Descending = true,
+                        Index = 0,
+                    }
+                ],
+                Filters =
+                [
+                    new DataGridFilterState
+                    {
+                        Column = nameof(DataGridStateTestModel.Name),
+                        Operator = FilterOperator.String.Contains,
+                        Title = "Name",
+                        ValueJson = "\"Item\"",
+                        ValueType = typeof(string).AssemblyQualifiedName,
+                    }
+                ],
+            };
+
+            var comp = Context.Render<MudDataGrid<DataGridStateTestModel>>(parameters => parameters
+                .Add(grid => grid.ServerData, ServerData)
+                .Add(grid => grid.Filterable, true)
+                .Add(grid => grid.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<DataGridStateTestModel, string>.Property), (Expression<Func<DataGridStateTestModel, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridStateTestModel, int>>(2);
+                    builder.AddAttribute(3, nameof(PropertyColumn<DataGridStateTestModel, int>.Property), (Expression<Func<DataGridStateTestModel, int>>)(x => x.Score));
+                    builder.CloseComponent();
+                })
+                .Add(grid => grid.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudDataGridPager<DataGridStateTestModel>>(0);
+                    builder.CloseComponent();
+                }));
+
+            var dataGrid = comp;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetStateAsync(savedState));
+
+            capturedStates.Should().NotBeEmpty();
+            var restoredState = capturedStates.Last();
+            restoredState.Page.Should().Be(1);
+            restoredState.PageSize.Should().Be(6);
+            restoredState.SortDefinitions.Should().ContainSingle();
+            restoredState.SortDefinitions.Single().SortBy.Should().Be(nameof(DataGridStateTestModel.Score));
+            restoredState.FilterDefinitions.Should().ContainSingle();
+            restoredState.FilterDefinitions.Single().Value.Should().Be("Item");
+        }
+
+        private sealed record DataGridStateTestModel(int Id, string Name, int Score);
+
         #endregion
     }
 }

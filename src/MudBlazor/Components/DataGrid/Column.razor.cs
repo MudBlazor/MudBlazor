@@ -378,6 +378,16 @@ namespace MudBlazor
         /// </summary>
         public string? Identifier { get; set; }
 
+        /// <summary>
+        /// A stable identifier used when saving and restoring grid state.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="PropertyName"/>. Set this on <see cref="TemplateColumn{T}"/> columns so persisted state can be restored across page reloads.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Data)]
+        public string? StateIdentifier { get; set; }
+
         private CultureInfo? _culture;
 
         /// <summary>
@@ -585,6 +595,9 @@ namespace MudBlazor
 
         private Func<T, object?>? _sortBy;
         internal Func<T, object?>? groupBy;
+
+        internal string? GetStateIdentifier() =>
+            !string.IsNullOrWhiteSpace(StateIdentifier) ? StateIdentifier : PropertyName;
 
         // These are set in OnInitialized() so they can't be null
         internal HeaderContext<T> headerContext = null!;

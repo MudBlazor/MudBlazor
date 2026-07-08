@@ -1,0 +1,77 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudStack Spacing="2">
+    <MudStack Row="true" Spacing="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveStateAsync">Save State</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RestoreStateAsync">Restore State</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="ClearSavedStateAsync">Clear Saved State</MudButton>
+    </MudStack>
+
+    <MudText Typo="Typo.body2">@_statusMessage</MudText>
+
+    <MudDataGrid @ref="_dataGrid"
+                 T="Employee"
+                 Items="@_employees"
+                 Filterable="true"
+                 Groupable="true"
+                 MultiSelection="true"
+                 SortMode="SortMode.Multiple"
+                 RowsPerPage="5">
+        <Columns>
+            <SelectColumn T="Employee" />
+            <PropertyColumn Property="x => x.Department" Grouping="true" />
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Salary" Format="C0" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Employee" />
+        </PagerContent>
+    </MudDataGrid>
+</MudStack>
+
+@code {
+    private MudDataGrid<Employee> _dataGrid = null!;
+    private readonly List<Employee> _employees =
+    [
+        new(1, "Alex", "Sales", 62000),
+        new(2, "Bailey", "Sales", 58000),
+        new(3, "Casey", "Engineering", 91000),
+        new(4, "Dana", "Engineering", 88000),
+        new(5, "Ellis", "Support", 54000),
+        new(6, "Finley", "Support", 56000),
+    ];
+
+    private DataGridPersistedState _savedState = new();
+    private bool _hasSavedState;
+    private string _statusMessage = "Change sorting, filters, paging, grouping, or selection, then save and restore the state.";
+
+    private async Task SaveStateAsync()
+    {
+        _savedState = _dataGrid.GetState(employee => employee.Id.ToString());
+        _hasSavedState = true;
+        _statusMessage = $"Saved page {_savedState.Page + 1}, {_savedState.Filters.Count} filter(s), {_savedState.Sorts.Count} sort(s), and {_savedState.SelectedItemKeys.Count} selected row(s).";
+        await Task.CompletedTask;
+    }
+
+    private async Task RestoreStateAsync()
+    {
+        if (!_hasSavedState)
+        {
+            _statusMessage = "Save state before restoring.";
+            return;
+        }
+
+        await _dataGrid.SetStateAsync(_savedState, key => _employees.FirstOrDefault(employee => employee.Id.ToString() == key));
+        _statusMessage = "Restored the last saved grid state.";
+    }
+
+    private async Task ClearSavedStateAsync()
+    {
+        _hasSavedState = false;
+        _savedState = new DataGridPersistedState();
+        await _dataGrid.SetStateAsync(_savedState);
+        _statusMessage = "Cleared saved state and reset the grid.";
+    }
+
+    private sealed record Employee(int Id, string Name, string Department, decimal Salary);
+}
