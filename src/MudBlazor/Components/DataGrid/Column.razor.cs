@@ -524,6 +524,8 @@ namespace MudBlazor
             new CssBuilder("mud-table-cell")
                 .AddClass("footer-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
+                .AddClass("sticky-left", StickyLeft)
+                .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
                 .Build();
 

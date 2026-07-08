@@ -4726,6 +4726,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridAggregateFooterSticky()
+        {
+            var comp = Context.Render<DataGridAggregationStickyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationStickyTest.Model>>();
+
+            var allFooter = dataGrid.FindAll("tfoot td");
+            allFooter.First().ClassList.Should().Contain("sticky-left");
+            allFooter.Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
         public void DataGridStickyColumnsResizer()
         {
             var comp = Context.Render<DataGridStickyColumnsResizerTest>();
