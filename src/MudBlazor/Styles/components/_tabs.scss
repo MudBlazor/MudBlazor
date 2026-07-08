@@ -133,6 +133,11 @@
   &.mud-tabs-vertical {
     display: flex;
     flex-grow: 1;
+    min-width: 0;
+
+    > .mud-tab-panel-active > * {
+      min-width: 0;
+    }
   }
 }
 
