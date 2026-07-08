@@ -88,7 +88,6 @@
                         <ErrorBoundary @key="_selectedType">
                             <ChildContent>
                                 @* Positive readiness marker so tooling can wait on a mounted, non-errored component. *@
-                                @* display:contents keeps the wrapper out of layout so the surface renders identically. *@
                                 <div class="test-viewer-ready" data-viewer-state="ready">
                                     @TestComponent()
                                 </div>
@@ -209,7 +208,6 @@
         overflow: auto;
     }
 
-    /* Transparent box: carries the data-viewer-state=ready marker without affecting the surface layout. */
     .test-viewer-ready {
         display: contents;
     }
