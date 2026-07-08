@@ -2229,6 +2229,67 @@ namespace MudBlazor.UnitTests.Components
 
             #endregion
 
+            #region FilterOperator.Enum.IsAnyOf
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { Severity.Normal, Severity.Info }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Warning, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+
+            // single value in list
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { Severity.Normal }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+
+            // empty list
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
             #region FilterOperator.Enum.Empty
 
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
@@ -2277,6 +2338,36 @@ namespace MudBlazor.UnitTests.Components
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+        }
+
+        [Test]
+        public async Task DataGridEnumIsAnyOfOperatorSwitchClearsValueAndDoesNotThrow()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            var statusColumn = dataGrid.Instance.GetColumnByPropertyName("Status");
+
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Id = Guid.NewGuid(),
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { Severity.Normal, Severity.Info }
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            var operatorSelect = comp.FindComponents<MudSelect<string>>().Single(x => x.Instance.Class == "filter-operator");
+
+            // Switching from IsAnyOf (list value) to a scalar operator must drop the stale list and not throw
+            // when the single-select re-renders (regression: list value previously cast to a scalar Enum).
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.Is));
+            filterDefinition.Operator.Should().Be(FilterOperator.Enum.Is);
+            filterDefinition.Value.Should().BeNull();
+
+            // And back: scalar -> IsAnyOf must not throw when the multi-select re-renders.
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.IsAnyOf));
+            filterDefinition.Operator.Should().Be(FilterOperator.Enum.IsAnyOf);
         }
 
         [Test]

@@ -552,4 +552,7 @@
   <data name="MudExitPrompt_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="MudDataGrid_IsAnyOf" xml:space="preserve">
+    <value>is any of</value>
+  </data>
 </root>

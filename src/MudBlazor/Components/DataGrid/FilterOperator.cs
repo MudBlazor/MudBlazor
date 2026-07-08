@@ -126,6 +126,11 @@ namespace MudBlazor
             public const string IsNot = "is not";
 
             /// <summary>
+            /// Find text which is any of the filter values.
+            /// </summary>
+            public const string IsAnyOf = "is any of";
+
+            /// <summary>
             /// Find rows where the nullable enum column is <c>null</c>.
             /// </summary>
             public const string Empty = "is empty";
@@ -296,6 +301,7 @@ namespace MudBlazor
                 return new[] {
                     Enum.Is,
                     Enum.IsNot,
+                    Enum.IsAnyOf,
                     Enum.Empty,
                     Enum.NotEmpty,
                 };
@@ -370,6 +376,7 @@ namespace MudBlazor
             //Number.NotEmpty => LanguageResource.MudDataGrid_IsNotEmpty,
             Enum.Is => LanguageResource.MudDataGrid_Is,
             Enum.IsNot => LanguageResource.MudDataGrid_IsNot,
+            Enum.IsAnyOf => LanguageResource.MudDataGrid_IsAnyOf,
             //Boolean.Is => LanguageResource.MudDataGrid_Is,
             //DateTime.Is => LanguageResource.MudDataGrid_Is,
             //DateTime.IsNot => LanguageResource.MudDataGrid_IsNot,

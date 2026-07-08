@@ -18,6 +18,7 @@ namespace MudBlazor
         internal string? _valueString;
         internal double? _valueNumber;
         internal Enum? _valueEnum;
+        internal IReadOnlyList<Enum?>? _valueEnumList;
         internal bool? _valueBool;
         internal DateTime? _valueDateOnlyForPicker;
         internal DateTime? _valueDateTimeForPicker;
@@ -40,7 +41,14 @@ namespace MudBlazor
             else if (fieldType.IsNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
             else if (fieldType.IsEnum)
-                _valueEnum = (Enum?)_filterDefinition.Value;
+                if (_filterDefinition.Operator is FilterOperator.Enum.IsAnyOf)
+                {
+                    _valueEnumList = _filterDefinition.Value as IReadOnlyList<Enum> ?? [];
+                }
+                else
+                {
+                    _valueEnum = (Enum?)_filterDefinition.Value;
+                }
             else if (fieldType.IsBoolean)
                 _valueBool = _filterDefinition.Value == null ? null : Convert.ToBoolean(_filterDefinition.Value);
             else if (fieldType.IsDateTime)
@@ -75,6 +83,22 @@ namespace MudBlazor
             }
         }
 
+        internal void OperatorChanged(string? value)
+        {
+            _filterDefinition.Operator = value;
+            // IsAnyOf holds a list of enums while the other operators hold a single value, so a value
+            // left over from the previous operator can be the wrong shape. Drop it when it no longer
+            // matches the new operator to avoid binding a list to a single-select (or vice versa).
+            var isAnyOf = value == FilterOperator.Enum.IsAnyOf;
+            if (isAnyOf
+                ? _filterDefinition.Value is not (null or IReadOnlyList<Enum>)
+                : _filterDefinition.Value is IReadOnlyList<Enum>)
+            {
+                _filterDefinition.Value = null;
+            }
+            _dataGrid.GroupItems();
+        }
+
         internal void StringValueChanged(string value)
         {
             _valueString = value;
@@ -93,6 +117,13 @@ namespace MudBlazor
         {
             _valueEnum = value;
             _filterDefinition.Value = _valueEnum;
+            _dataGrid.GroupItems();
+        }
+
+        internal void EnumListValueChanged(IReadOnlyCollection<Enum?>? value)
+        {
+            _valueEnumList = value?.ToList();
+            _filterDefinition.Value = _valueEnumList;
             _dataGrid.GroupItems();
         }
 
