@@ -27,7 +27,7 @@
          Analyzer.Testing), so it is not referenced directly. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.4" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.4" />
-    <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.3.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
   </ItemGroup>
