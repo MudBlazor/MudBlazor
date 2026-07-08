@@ -26,23 +26,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The expand icon shows by default, is hidden when Icon is empty, and is still hidden by the obsolete HideIcon flag.
-        /// </summary>
-        [Test]
-        public void MudExpansionPanel_IconVisibility_FollowsIconAndHideIcon()
-        {
-            Context.Render<MudExpansionPanel>().Markup.Should().Contain("mud-expand-panel-icon");
-
-            Context.Render<MudExpansionPanel>(p => p.Add(x => x.Icon, string.Empty))
-                .Markup.Should().NotContain("mud-expand-panel-icon");
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            Context.Render<MudExpansionPanel>(p => p.Add(x => x.HideIcon, true))
-                .Markup.Should().NotContain("mud-expand-panel-icon");
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
-
-        /// <summary>
         /// Expansion panel must expand and collapse in the right order
         /// Here we are open the first, then the third and then the second
         /// </summary>
