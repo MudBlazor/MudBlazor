@@ -29,6 +29,39 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task Exclusive_OnlyOneOpen()
+        {
+            var comp = Context.Render<NavMenuExclusive>();
+
+            var buttons = comp.FindAll(".mud-nav-group>button");
+            buttons.Count.Should().BeGreaterThanOrEqualTo(2);
+
+            // Expand first
+            await buttons[0].ClickAsync();
+            comp.Markup.Should().Contain("mud-expanded");
+            // Expand second. Should collapse first because ExpandSingleGroup==true by default in component
+            await buttons[1].ClickAsync();
+            int expandedCount = comp.FindAll(".mud-expanded").Count;
+            expandedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task NonExclusive_AllowsMultipleOpen()
+        {
+            var comp = Context.Render<NavMenuExclusive>(ps => ps.Add(p => p.ExpandSingle, false));
+
+            var buttons = comp.FindAll(".mud-nav-group>button");
+            buttons.Count.Should().BeGreaterThanOrEqualTo(2);
+
+            // Expand first
+            await buttons[0].ClickAsync();
+            // Expand second. Should not collapse first because ExpandSingleGroup==false
+            await buttons[1].ClickAsync();
+            int expandedCount = comp.FindAll(".mud-expanded").Count;
+            expandedCount.Should().Be(2);
+        }
+
         /// <summary>
         /// Change all styling parameters from its default values and check that the correct classes are added.
         /// </summary>
