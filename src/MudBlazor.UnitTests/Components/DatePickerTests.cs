@@ -2111,6 +2111,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
 
+        [Test]
+        public void Static_StartMonth_IsShownOnFirstRender()
+        {
+            var startMonth = new DateTime(2025, 12, 3);
+
+            var comp = Context.Render<MudDatePicker>(ps => ps
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, startMonth)
+            );
+
+            var expectedMonthName = new DateTime(2025, 12, 1).ToString(CultureInfo.CurrentCulture.DateTimeFormat.YearMonthPattern, CultureInfo.CurrentCulture);
+            comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
+        }
+
         private async Task<IRenderedComponent<SimpleMudDatePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudDatePickerTest>>? parameterBuilder = null)
         {
             IRenderedComponent<SimpleMudDatePickerTest> comp;
