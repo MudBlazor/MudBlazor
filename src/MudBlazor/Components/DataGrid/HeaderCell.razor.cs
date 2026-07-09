@@ -554,6 +554,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
+                DataGrid.HideColumnsPanel();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -576,6 +577,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
+                DataGrid.HideColumnsPanel();
                 DataGrid.DropContainerHasChanged();
             }
         }
