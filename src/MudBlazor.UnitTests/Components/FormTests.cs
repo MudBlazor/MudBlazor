@@ -2733,6 +2733,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/11193.
+        /// The Errors property should aggregate the errors of child forms, the same way
+        /// that IsValid reflects the validity of child forms.
+        /// </summary>
+        [Test]
+        public async Task ChildForm_ErrorsPropagateToParent()
+        {
+            var comp = Context.Render<FormWithChildFormTest>();
+            var childFormSwitch = comp.Find(".mud-switch-input");
+            var parentForm = comp.FindComponent<MudForm>().Instance;
+            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
+
+            // Satisfy the parent's own required field, so that any error on the
+            // parent form can only have come from the child form.
+            await parentTextFieldCmp.Find("input").ChangeAsync("Marilyn Manson");
+            parentForm.IsValid.Should().BeTrue();
+            parentForm.Errors.Should().BeEmpty();
+
+            // Display the child form, which holds a second required field.
+            await childFormSwitch.ChangeAsync(true);
+            var forms = comp.FindComponents<MudForm>();
+            forms.Count.Should().Be(2);
+            var childForm = forms[1];
+            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
+
+            // Touch the child's required field and clear it, producing an error.
+            await childTextFieldCmp.Find("input").ChangeAsync("Trent Reznor");
+            await childTextFieldCmp.Find("input").ChangeAsync("");
+
+            childForm.Instance.IsValid.Should().BeFalse();
+            childForm.Instance.Errors.Should().BeEquivalentTo(["Required"]);
+
+            // The parent form has no errors of its own, but must surface the child's.
+            parentForm.IsValid.Should().BeFalse();
+            parentForm.Errors.Should().BeEquivalentTo(["Required"]);
+        }
+
+        /// <summary>
         /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/12012.
         /// When a form has a validation error and the bound property is updated through code,
         /// the validation error should be cleared if the new value is valid, or updated if still invalid.
