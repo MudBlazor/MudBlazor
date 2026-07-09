@@ -109,6 +109,11 @@
   fill: var(--mud-palette-text-primary);
 }
 
+.mud-chart-value-label {
+  fill: var(--mud-palette-text-primary);
+  user-select: none;
+}
+
 .mud-chart-donut {
   & .mud-donut-hole {
     fill: transparent;
