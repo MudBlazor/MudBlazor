@@ -18,43 +18,54 @@ namespace MudBlazor.UnitTests.Charts
 
         }
 
-        [Test]
-        public void TimeSeriesChartBasicExample()
+        // Mirrors the X/Y axis label measurement that the chart requests via JS during layout so
+        // that the line/area paths are produced with realistic geometry in a headless test.
+        private void SetupBBoxInterop()
         {
-            var mockYAxisLabelSize = new ElementSize
-            {
-                Width = 27.5,
-                Height = 14.8,
-            };
-            var mockXAxisLabelSize = new ElementSize
-            {
-                Width = 670.5,
-                Height = 14.8,
-            };
-
+            var mockYAxisLabelSize = new ElementSize { Width = 27.5, Height = 14.8 };
+            var mockXAxisLabelSize = new ElementSize { Width = 670.5, Height = 14.8 };
             var counter = 1;
 
-            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
+            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ =>
             {
                 if (counter % 2 == 0)
                 {
                     counter++;
                     return true;
                 }
-
                 return false;
             }).SetResult(mockXAxisLabelSize);
 
-            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
+            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ =>
             {
                 if (counter % 2 == 1)
                 {
                     counter++;
                     return true;
                 }
-
                 return false;
             }).SetResult(mockYAxisLabelSize);
+        }
+
+        private static List<ChartSeries<double>> BuildSeries(DateTime time, int count = 4, double value = 1000, double spacingHours = 1)
+        {
+            return new List<ChartSeries<double>>
+            {
+                new()
+                {
+                    Name = "Series 1",
+                    Data = Enumerable.Range(0, count)
+                        .Select(x => new TimeValue<double>(time.AddHours(x * spacingHours), value))
+                        .ToList(),
+                    Visible = true,
+                }
+            };
+        }
+
+        [Test]
+        public void TimeSeriesChartBasicExample()
+        {
+            SetupBBoxInterop();
 
             var time = new DateTime(2000, 1, 1);
 
@@ -71,51 +82,18 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
 
             // check the line path
-            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 30 320 L 243.3333 320 L 456.6667 320 L 670 320\"></path>");
+            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 30 320 L 670 320\"></path></g></g>");
-            comp.Markup.Should().ContainEquivalentOf("<text x='20' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
-            comp.Markup.Should().ContainEquivalentOf("<text x='30' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 30 340)'>23:00</text><text x='243.3333' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 243.3333 340)'>00:00</text><text x='456.6667' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 456.6667 340)'>01:00</text><text x='670' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 340)'>02:00</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 38 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='28' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='38' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 38 342.5)'>23:00</text><text x='248.6667' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 248.6667 342.5)'>00:00</text><text x='459.3333' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 459.3333 342.5)'>01:00</text><text x='670' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 342.5)'>02:00</text></g>");
         }
 
         [Test]
         public void TimeSeriesChartRendersWithIntData()
         {
-            var mockYAxisLabelSize = new ElementSize
-            {
-                Width = 27.5,
-                Height = 14.8,
-            };
-            var mockXAxisLabelSize = new ElementSize
-            {
-                Width = 670.5,
-                Height = 14.8,
-            };
-
-            var counter = 1;
-
-            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
-            {
-                if (counter % 2 == 0)
-                {
-                    counter++;
-                    return true;
-                }
-
-                return false;
-            }).SetResult(mockXAxisLabelSize);
-
-            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
-            {
-                if (counter % 2 == 1)
-                {
-                    counter++;
-                    return true;
-                }
-
-                return false;
-            }).SetResult(mockYAxisLabelSize);
+            SetupBBoxInterop();
 
             var time = new DateTime(2000, 1, 1);
 
@@ -132,51 +110,18 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
 
             // check the line path
-            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 30 320 L 243.3333 320 L 456.6667 320 L 670 320\"></path>");
+            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 30 320 L 670 320\"></path></g></g>");
-            comp.Markup.Should().ContainEquivalentOf("<text x='20' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
-            comp.Markup.Should().ContainEquivalentOf("<text x='30' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 30 340)'>23:00</text><text x='243.3333' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 243.3333 340)'>00:00</text><text x='456.6667' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 456.6667 340)'>01:00</text><text x='670' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 340)'>02:00</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 38 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='28' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='38' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 38 342.5)'>23:00</text><text x='248.6667' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 248.6667 342.5)'>00:00</text><text x='459.3333' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 459.3333 342.5)'>01:00</text><text x='670' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 342.5)'>02:00</text></g>");
         }
 
         [Test]
         public void TimeSeriesChartMatchBounds()
         {
-            var mockYAxisLabelSize = new ElementSize
-            {
-                Width = 27.5,
-                Height = 14.8,
-            };
-            var mockXAxisLabelSize = new ElementSize
-            {
-                Width = 670.5,
-                Height = 14.8,
-            };
-
-            var counter = 1;
-
-            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
-            {
-                if (counter % 2 == 0)
-                {
-                    counter++;
-                    return true;
-                }
-
-                return false;
-            }).SetResult(mockXAxisLabelSize);
-
-            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
-            {
-                if (counter % 2 == 1)
-                {
-                    counter++;
-                    return true;
-                }
-
-                return false;
-            }).SetResult(mockYAxisLabelSize);
+            SetupBBoxInterop();
 
             var time = new DateTime(2000, 1, 1);
 
@@ -292,6 +237,105 @@ namespace MudBlazor.UnitTests.Charts
                 var expectedTimeString = time.AddDays(i).ToString(format);
                 comp.Markup.Should().Contain(expectedTimeString);
             }
+        }
+
+        [Test]
+        public async Task TimeSeriesChart_AsOverlay_NestedInLineChart_BecomesOverlayAndRenders()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var hostSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Host", Data = new double[] { 100, 200, 300, 250 }, Visible = true }
+            };
+            var overlaySeries = BuildSeries(time, value: 500);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, hostSeries)
+                .Add(p => p.ChartOptions, new ChartOptions())
+                .AddChildContent<TimeSeries<double>>(cp => cp
+                    .Add(l => l.ChartSeries, overlaySeries)
+                    .Add(l => l.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1) })));
+
+            // The nested TimeSeries registers itself as an overlay child of the Line host.
+            var overlay = comp.FindComponents<TimeSeries<double>>()
+                .Select(c => c.Instance)
+                .First(i => i.IsOverlayChart);
+
+            overlay.IsOverlayChart.Should().BeTrue();
+
+            // Re-rendering the host re-runs RebuildChart, which now propagates SharedData to the
+            // overlay and renders its line alongside the host line.
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, hostSeries)
+                .Add(p => p.ChartOptions, new ChartOptions())
+                .AddChildContent<TimeSeries<double>>(cp => cp
+                    .Add(l => l.ChartSeries, overlaySeries)
+                    .Add(l => l.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1) })));
+
+            overlay.SharedData.Should().NotBeNull();
+            comp.FindAll("path.mud-chart-line").Count.Should().BeGreaterThan(1);
+        }
+
+        [Test]
+        public void TimeSeriesChart_AreaDisplayType_RequiresZeroPoint_RendersAreaPath()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, value: 1000))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    LineDisplayType = LineDisplayType.Area,
+                }));
+
+            // Area display closes the path back to the zero baseline (" Z") and adds a second
+            // mud-chart-line path (the fill) on top of the stroke path.
+            comp.Markup.Should().Contain(" Z");
+            comp.FindAll("path.mud-chart-line").Count.Should().BeGreaterThanOrEqualTo(2);
+        }
+
+        [Test]
+        public async Task TimeSeriesChart_HoverDataPoint_ShowsTooltip()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowToolTips = true,
+                }));
+
+            comp.FindComponents<ChartTooltip>().Count.Should().Be(0);
+
+            var point = comp.FindAll("circle.mud-chart-point").First();
+            await point.MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.FindComponents<ChartTooltip>().Count.Should().BeGreaterThan(0);
+
+            await point.MouseOutAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+            comp.FindComponents<ChartTooltip>().Count.Should().Be(0);
+        }
+
+        [Test]
+        public void TimeSeriesChart_CreateInterpolator_Throws()
+        {
+            var comp = Context.Render<TimeSeries<double>>();
+            var instance = comp.Instance;
+
+            Action act = () => instance.CreateInterpolator(0, 0, 20d, 1d, 1d);
+            act.Should().Throw<NotImplementedException>()
+                .WithMessage("*not implemented*");
         }
 
         [Test]

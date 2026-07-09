@@ -7,7 +7,10 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.7.0" />
+    <!-- Workspaces transitively pins Microsoft.CodeAnalysis.CSharp to the same band as the analyzer
+         (MudBlazorRoslynShippedVersion in src/Directory.Build.props); both DLLs ship together in
+         analyzers/dotnet/cs and must stay on the same Roslyn band. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MudBlazorRoslynShippedVersion)" />
   </ItemGroup>
 
   <ItemGroup>

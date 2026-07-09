@@ -1,0 +1,23 @@
+@namespace MudBlazor.UnitTests.TestComponents.Dialog
+
+<MudDialog>
+    <DialogContent>
+        Inner dialog instance @InstanceId
+    </DialogContent>
+</MudDialog>
+
+@code {
+    // Incremented every time a new instance of this component is constructed/initialized.
+    public static int InitCount;
+
+    private int InstanceId;
+
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        InstanceId = ++InitCount;
+    }
+}

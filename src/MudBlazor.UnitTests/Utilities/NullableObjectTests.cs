@@ -277,17 +277,6 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Null_ShouldReturnNullObject()
-    {
-        // Arrange & Act
-        var nullObj = NullableObject<string>.Null;
-
-        // Assert
-        nullObj.Item.Should().BeNull();
-        nullObj.IsNull.Should().BeTrue();
-    }
-
-    [Test]
     public void OperatorEquals_ShouldReturnTrueForEqualObjects()
     {
         // Arrange
@@ -323,5 +312,20 @@ public class NullableObjectTests
         // Act & Assert
         (obj1 != obj2).Should().BeTrue();
         (obj != nullObj).Should().BeTrue();
+    }
+
+    [Test]
+    public void ValueType_NullEqualsDefaultAndZero()
+    {
+        // Arrange - structs cannot be null, so Null, default and new(0) are all equivalent
+        var nullObj = NullableObject<int>.Null;
+        NullableObject<int> defaultObj = default;
+        var zeroObj = new NullableObject<int>(0);
+
+        // Act & Assert
+        (nullObj == defaultObj).Should().BeTrue();
+        (nullObj == zeroObj).Should().BeTrue();
+        nullObj.Equals(0).Should().BeTrue();
+        nullObj.IsNull.Should().BeFalse();
     }
 }

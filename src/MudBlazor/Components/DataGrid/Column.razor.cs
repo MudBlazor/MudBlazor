@@ -314,8 +314,13 @@ namespace MudBlazor
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        [Obsolete("Column-level sort icon customization is no longer supported. Configure MudDataGrid.SortIcon or use HeaderTemplate for full header customization.", true)]
+        public string? SortIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -379,7 +384,7 @@ namespace MudBlazor
         /// The culture used to parse, filter, and display values in this column.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.
+        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.  When neither value is set, formatting uses the current culture.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
@@ -519,6 +524,8 @@ namespace MudBlazor
             new CssBuilder("mud-table-cell")
                 .AddClass("footer-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
+                .AddClass("sticky-left", StickyLeft)
+                .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
                 .Build();
 
@@ -642,9 +649,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
             _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
                 .WithParameter(() => GroupExpanded)
+                .WithEventCallback(() => GroupExpandedChanged)
                 .WithChangeHandler(OnGroupExpandedChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
+                .WithEventCallback(() => GroupByOrderChanged)
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 

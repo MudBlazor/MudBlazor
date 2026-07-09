@@ -1,16 +1,9 @@
-﻿<MudTextField T="string"
+<MudTextField T="string"
               @bind-Value="@Value"
               Immediate="@true"
               DebounceInterval="@DebounceInterval"
               Required="@true"
               RequiredError="Enter a star" />
-
-<MudButton id="re-render-button"
-           Variant="@Variant.Filled"
-           Color="@Color.Primary"
-           OnClick="@LaunchDelayedRerender">
-    Launch delayed re-render
-</MudButton>
 
 <MudText>
     RenderCount: @_renderCount
@@ -28,8 +21,6 @@
 
     public int DebounceInterval => 500;
 
-    public int RerenderDelay => 2000;
-
     private int _renderCount;
 
     protected override void OnAfterRender(bool firstRender)
@@ -39,9 +30,5 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task LaunchDelayedRerender()
-    {
-        await Task.Delay(RerenderDelay);
-        StateHasChanged();
-    }
+    public void TriggerExternalRerender() => StateHasChanged();
 }

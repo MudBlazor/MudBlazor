@@ -20,7 +20,7 @@
                 .AddClass("mud-step-skipped", step.SkippedState.Value)
                 .Build();
 
-            <button class="@stepClassname" role="tab" type="button" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
+            <button class="@stepClassname" role="tab" type="button" id="@GetStepButtonId(step)" aria-controls="@GetStepPanelIdIfRendered(step)" aria-selected="@(isActive.ToString().ToLower())"
                     @onclick="@(async e => await OnStepClickAsync(step, e))" disabled="@step.DisabledState.Value">
                 @RenderStepLabel(step, isActive)
             </button>
@@ -163,7 +163,7 @@
 
     private RenderFragment StepContent(MudStep step) =>
         @<CascadingValue Value="@CreateStepContext(step)">
-            <div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
+            <div @attributes="@step.UserAttributes" id="@GetStepPanelId(step)" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@GetStepButtonId(step)" tabindex="0">
                 @if (step.ChildContent is not null)
                 {
                     if (Vertical)

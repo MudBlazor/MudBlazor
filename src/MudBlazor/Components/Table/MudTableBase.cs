@@ -628,6 +628,16 @@ namespace MudBlazor
         public float ItemSize { get; set; } = 50f;
 
         /// <summary>
+        /// The position of the pager.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="PagerPosition.Bottom"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Pagination)]
+        public PagerPosition PagerPosition { get; set; } = PagerPosition.Bottom;
+
+        /// <summary>
         /// The current state of this table.
         /// </summary>
         /// <remarks>

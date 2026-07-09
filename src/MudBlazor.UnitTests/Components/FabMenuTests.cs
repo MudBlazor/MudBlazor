@@ -116,4 +116,27 @@ public class FabMenuTests : BunitTest
         container.ClassList.Contains("fixed").Should().BeFalse();
         container.ClassList.Contains("mud-fab-anchor-top-left").Should().BeFalse();
     }
+
+    [Test]
+    [Combinatorial]
+    public void FabMenuItem_ShouldRenderAnchorIfHrefIsSet(
+        [Values("", "ASDF", "_blank")] string target,
+        [Values(null, "noopener", "nofollow")] string rel)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .AddChildContent<MudFabMenuItem>(item => item
+                .Add(x => x.Href, "https://example.com")
+                .Add(x => x.Target, target)
+                .Add(x => x.Rel, rel)
+                .Add(x => x.Label, "Link")));
+
+        var item = comp.Find(".mud-fab-menu-item");
+
+        item.TagName.Should().Be("A");
+        item.GetAttribute("href").Should().Be("https://example.com");
+        item.GetAttribute("target").Should().Be(target);
+
+        var expectedRel = rel ?? (target == "_blank" ? "noopener" : null);
+        item.GetAttribute("rel").Should().Be(expectedRel);
+    }
 }

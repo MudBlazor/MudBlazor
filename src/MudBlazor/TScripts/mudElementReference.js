@@ -232,31 +232,47 @@ class MudElementReference {
         }
     }
 
-    // ios doesn't trigger Blazor/React/Other dom style blur event so add a base event listener here
-    // that will trigger with IOS Done button and regular blur events
+    // Some virtual keyboard flows can dismiss focus without Blazor observing the blur.
+    // Bridge only those fallback cases and keep normal focus-to-control transitions on Blazor's native path.
     /**
      * Attaches a blur bridge that calls back into .NET.
-     * Used to normalize blur behavior on iOS virtual keyboard flows.
+     * Used as a fallback when blur doesn't move focus to another interactive element.
      */
     addOnBlurEvent(element, dotNetReference) {
         if (!element) return;
 
         element._mudBlurHandler = function (e) {
-            if (!element || !document.contains(element)) {
-                // iOS keyboard flows can blur after disposal; clean up to prevent stale callbacks.
-                window.mudElementRef.removeOnBlurEvent(element);
-                return;
-            }
-            e.preventDefault();
+            const relatedTarget = e.relatedTarget;
 
-            if (dotNetReference) {
-                dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
-                    console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);
+            window.setTimeout(() => {
+                if (!element || !document.contains(element)) {
+                    // Virtual keyboard flows can blur after disposal; clean up to prevent stale callbacks.
                     window.mudElementRef.removeOnBlurEvent(element);
-                });
-            } else {
-                console.error("No dotNetReference found for iosKeyboardFocus");
-            }
+                    return;
+                }
+
+                const activeElement = document.activeElement;
+                const nextFocusedElement = relatedTarget && document.contains(relatedTarget)
+                    ? relatedTarget
+                    : activeElement;
+                const movedFocusToAnotherElement = !!nextFocusedElement
+                    && nextFocusedElement !== element
+                    && nextFocusedElement !== document.body
+                    && nextFocusedElement !== document.documentElement;
+
+                if (movedFocusToAnotherElement) {
+                    return;
+                }
+
+                if (dotNetReference) {
+                    dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
+                        console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);
+                        window.mudElementRef.removeOnBlurEvent(element);
+                    });
+                } else {
+                    console.error("No dotNetReference found for blur fallback");
+                }
+            }, 0);
         };
 
         element.addEventListener('blur', element._mudBlurHandler);

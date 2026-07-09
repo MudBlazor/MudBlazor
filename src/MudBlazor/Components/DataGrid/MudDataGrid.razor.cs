@@ -10,6 +10,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -46,7 +47,9 @@ namespace MudBlazor
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
-        internal (double Top, double Left) _openPosition = (0, 0);
+        private (double Top, double Left) _filtersMenuPosition = (0, 0);
+        private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -55,10 +58,16 @@ namespace MudBlazor
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
-        internal Dictionary<string, object> PositionAttributes => new()
+        internal Dictionary<string, object> FiltersPositionAttributes => new()
         {
-            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
-            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+            { "data-pc-x", _filtersMenuPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _filtersMenuPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
+
+        internal Dictionary<string, object> ColumnsPanelPositionAttributes => new()
+        {
+            { "data-pc-x", _columnsPanelPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _columnsPanelPosition.Top.ToString(CultureInfo.InvariantCulture) }
         };
 
         public MudDataGrid()
@@ -482,6 +491,16 @@ namespace MudBlazor
         public SortMode SortMode { get; set; } = SortMode.Multiple;
 
         /// <summary>
+        /// The icon shown when a column is sortable.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowUpward"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+
+        /// <summary>
         /// Allows filtering of data in this grid.
         /// </summary>
         /// <remarks>
@@ -632,19 +651,32 @@ namespace MudBlazor
         /// The empty filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and no filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconEmpty { get; set; } = Icons.Material.Outlined.FilterAlt;
 
         /// <summary>
         /// The filled filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and filters are applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconFilled { get; set; } = Icons.Material.Filled.FilterAlt;
 
         /// <summary>
         /// The clear filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> to remove filters applied to this column.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
+
+        /// <summary>
+        /// The icon used for column options menus in header cells.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.MoreVert"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public string ColumnOptionsIcon { get; set; } = Icons.Material.Filled.MoreVert;
 
         /// <summary>
         /// The way that this grid filters data.
@@ -1117,7 +1149,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
@@ -1827,6 +1860,42 @@ namespace MudBlazor
             return context;
         }
 
+        internal bool HasFilter(Column<T>? column)
+        {
+            if (column is null)
+            {
+                return false;
+            }
+
+            return FilterDefinitions.Any(x =>
+                (ReferenceEquals(x.Column, column) || (column.PropertyName is not null && x.Column?.PropertyName == column.PropertyName)) &&
+                IsFilterApplied(x));
+        }
+
+        private static bool IsFilterApplied(IFilterDefinition<T> filterDefinition)
+        {
+            return (filterDefinition is FilterDefinition<T> dataGridFilterDefinition && dataGridFilterDefinition.FilterFunction is not null) ||
+                   filterDefinition.Value is not null ||
+                   filterDefinition.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
+                       FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
+                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
+        }
+
+        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
+        {
+            if (column is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return args.Key switch
+            {
+                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
+                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
+                _ => Task.CompletedTask
+            };
+        }
+
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -1911,6 +1980,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -1978,14 +2048,12 @@ namespace MudBlazor
             await NotifyFilterChangedAsync();
         }
 
-        private Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
+        internal Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
-            var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-
-            if (selectColumn?.DisabledFunc?.Invoke(item) is true)
+            if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
             if (value)
@@ -2053,13 +2121,8 @@ namespace MudBlazor
             if (value) // Logic for selecting all
             {
                 var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
-
-                var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-                if (selectColumn?.DisabledFunc != null)
-                {
-                    // Filter out disabled items before adding to selection
-                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.DisabledFunc(item));
-                }
+                var selectColumn = GetSelectColumn();
+                itemsToSelect = itemsToSelect.Where(item => !IsRowSelectionDisabled(item, selectColumn));
 
                 Selection.UnionWith(itemsToSelect);
             }
@@ -2070,6 +2133,32 @@ namespace MudBlazor
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        private SelectColumn<T>? GetSelectColumn()
+        {
+            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+        }
+
+        internal bool? GetRowSelectionState(T item)
+        {
+            var selectColumn = GetSelectColumn();
+            if (selectColumn is null || IsRowSelectionDisabled(item, selectColumn))
+            {
+                return null;
+            }
+
+            return Selection.Contains(item);
+        }
+
+        private static bool IsRowSelectionDisabled(T item, SelectColumn<T>? selectColumn)
+        {
+            return selectColumn?.DisabledFunc?.Invoke(item) is true;
+        }
+
+        internal bool IsRowSelectionDisabled(T item)
+        {
+            return IsRowSelectionDisabled(item, GetSelectColumn());
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
@@ -2158,8 +2247,13 @@ namespace MudBlazor
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
-            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
-                await SetEditingItemAsync(item);
+            if (EditTrigger == DataGridEditTrigger.OnRowClick)
+            {
+                if (EditMode == DataGridEditMode.Cell)
+                    await BeginCellEditAsync(item);
+                else
+                    await SetEditingItemAsync(item);
+            }
 
             await SetSelectedItemAsync(item);
         }
@@ -2374,10 +2468,35 @@ namespace MudBlazor
             _editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
+
+            // In cell edit mode changes are written directly to the source item, so there is no working copy to clone and no edit form to open; only StartedEditingItem is raised.
+            if (EditMode == DataGridEditMode.Cell)
+            {
+                _editingItem = default;
+                StartedEditingItemEvent?.Invoke();
+                await StartedEditingItem.InvokeAsync(item);
+                return;
+            }
+
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             _isEditFormOpen = true;
+        }
+
+        /// <summary>
+        /// Raises <see cref="StartedEditingItem"/> when cell editing begins for an item, without re-raising it for subsequent cell changes on the same item.
+        /// </summary>
+        /// <param name="item">The item whose cell is being edited.</param>
+        internal async Task BeginCellEditAsync(T item)
+        {
+            // Use the grid's Comparer (same identity used for selection) so a custom comparer can distinguish otherwise-equal rows, e.g. records.
+            // The first edit always starts since nothing is being edited yet.
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+            if (_editingSourceItem is not null && comparer.Equals(_editingSourceItem, item))
+                return;
+
+            await SetEditingItemAsync(item);
         }
 
         /// <summary>
@@ -2413,6 +2532,12 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            OpenFilters(FilterDefinitions.FirstOrDefault()?.Id);
+        }
+
+        internal void OpenFilters(Guid? filterDefinitionIdToFocus)
+        {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2420,6 +2545,10 @@ namespace MudBlazor
         private void OnFiltersPanelClosed() => CleanupIncompleteFilters();
 
         internal void CleanupIncompleteFilters() => FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
+        internal void SetFiltersMenuPosition(double top, double left)
+        {
+            _filtersMenuPosition = (top, left);
+        }
 
         private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
             FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not
@@ -2455,8 +2584,7 @@ namespace MudBlazor
         {
             if (args != null)
             {
-                _openPosition.Top = args.PageY;
-                _openPosition.Left = args.PageX;
+                _columnsPanelPosition = (args.PageY, args.PageX);
             }
             _columnsPanelVisible = true;
             StateHasChanged();
