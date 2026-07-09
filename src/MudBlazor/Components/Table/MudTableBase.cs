@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
         public Dictionary<string, object?> TableAttributes { get; set; } = [];
-        
+
         private protected Dictionary<string, object?> GetTableAttributes()
         {
 #pragma warning disable CS0618 // AriaLabel is obsolete but must stay functional until removed
