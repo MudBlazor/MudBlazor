@@ -449,7 +449,7 @@ namespace MudBlazor
         /// <summary>
         /// When overridden, obtains focus for this input, optionally preventing the browser from scrolling it into view.
         /// </summary>
-        /// <param name="preventScroll">When <c>true</c>, it can be used so that the browser does not scroll the newly focused element into view.</param>
+        /// <param name="preventScroll">When <c>true</c>, the browser does not scroll the newly focused element into view.</param>
         /// <returns>A <see cref="ValueTask" /> object.</returns>
         internal virtual ValueTask FocusAsync(bool preventScroll) => FocusAsync();
 
