@@ -7308,14 +7308,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridAriaLabel_RendersOnTable()
+        public async Task DataGridTableAttributes_RendersAriaLabel()
         {
             var comp = Context.Render<DataGridCellTemplateTest>();
             var tableEl = comp.Find("table");
             tableEl.HasAttribute("aria-label").Should().BeFalse();
 
             var table = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
-            await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
 
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");

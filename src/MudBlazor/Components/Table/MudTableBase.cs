@@ -53,7 +53,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
+        [Obsolete("Set via TableAttributes")]
         public string? AriaLabel { get; set; }
+
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
 
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
