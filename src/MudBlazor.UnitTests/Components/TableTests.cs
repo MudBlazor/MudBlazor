@@ -3241,10 +3241,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableRowClickTest>();
             var tableEl = comp.Find("table");
             tableEl.HasAttribute("aria-label").Should().BeFalse();
-            
+
             var table = comp.FindComponent<MudTable<int>>();
             await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
-            
+
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
         }
