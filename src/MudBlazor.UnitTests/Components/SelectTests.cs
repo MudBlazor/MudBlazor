@@ -2346,7 +2346,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AutoFocus_ShouldFocusWithoutScrolling()
         {
-            Context.AddKeyInterceptorService();
             Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(p => p.AutoFocus, true));
 
@@ -2358,7 +2357,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FocusAsync_ShouldFocusWithScrolling()
         {
-            Context.AddKeyInterceptorService();
             var comp = Context.Render<MudSelect<string>>();
 
             await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());

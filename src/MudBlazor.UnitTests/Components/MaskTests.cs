@@ -1180,7 +1180,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void AutoFocus_ShouldFocusWithoutScrolling()
         {
-            Context.AddKeyInterceptorService();
             Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Mask, new PatternMask("0000"))
                 .Add(p => p.AutoFocus, true));
@@ -1193,7 +1192,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FocusAsync_ShouldFocusWithScrolling()
         {
-            Context.AddKeyInterceptorService();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Mask, new PatternMask("0000")));
 
