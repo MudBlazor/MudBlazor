@@ -1,4 +1,4 @@
-﻿<MudNavMenu ExpandSingleGroup="@ExpandSingle">
+﻿<MudNavMenu MultiExpansion="@MultiExpansion">
     <MudNavGroup Title="Group1">
         <MudNavLink Href="/a">A</MudNavLink>
     </MudNavGroup>
@@ -9,5 +9,5 @@
 
 @code{
     [Parameter]
-    public bool ExpandSingle { get; set; } = true;
+    public bool MultiExpansion { get; set; } = false;
 }

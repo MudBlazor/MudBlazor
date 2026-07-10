@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             // Expand first
             await buttons[0].ClickAsync();
             comp.Markup.Should().Contain("mud-expanded");
-            // Expand second. Should collapse first because ExpandSingleGroup==true by default in component
+            // Expand second. Should collapse first because MultiExpansion==false by default in component
             await buttons[1].ClickAsync();
             int expandedCount = comp.FindAll(".mud-expanded").Count;
             expandedCount.Should().Be(1);
@@ -49,14 +49,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NonExclusive_AllowsMultipleOpen()
         {
-            var comp = Context.Render<NavMenuExclusive>(ps => ps.Add(p => p.ExpandSingle, false));
+            var comp = Context.Render<NavMenuExclusive>(ps => ps.Add(p => p.MultiExpansion, true));
 
             var buttons = comp.FindAll(".mud-nav-group>button");
             buttons.Count.Should().BeGreaterThanOrEqualTo(2);
 
             // Expand first
             await buttons[0].ClickAsync();
-            // Expand second. Should not collapse first because ExpandSingleGroup==false
+            // Expand second. Should not collapse first because MultiExpansion==true
             await buttons[1].ClickAsync();
             int expandedCount = comp.FindAll(".mud-expanded").Count;
             expandedCount.Should().Be(2);

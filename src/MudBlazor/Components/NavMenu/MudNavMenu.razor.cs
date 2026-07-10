@@ -23,10 +23,10 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>. Expanding a group collapses the others; nested groups are unaffected.
         /// Only applies when a group is expanded by the user; setting <see cref="MudNavGroup.Expanded"/> programmatically bypasses this.
-        /// </remarks
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public bool ExpandSingleGroup { get; set; }
+        public bool MultiExpansion { get; set; }
 
         internal void RegisterGroup(MudNavGroup group)
         {
@@ -43,7 +43,7 @@ namespace MudBlazor
 
         internal async Task NotifyGroupExpandedAsync(MudNavGroup expandedGroup)
         {
-            if (!ExpandSingleGroup)
+            if (MultiExpansion)
             {
                 return;
             }
