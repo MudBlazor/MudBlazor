@@ -1492,14 +1492,16 @@ namespace MudBlazor.UnitTests.Components
         public void Static_StartMonth_IsShownOnFirstRender()
         {
             var startMonth = new DateTime(2025, 12, 3);
+            var culture = CultureInfo.GetCultureInfo("en-US");
 
             var comp = Context.Render<MudDateRangePicker>(ps => ps
                 .Add(p => p.PickerVariant, PickerVariant.Static)
                 .Add(p => p.StartMonth, startMonth)
                 .Add(p => p.DisplayMonths, 1)
+                .Add(p => p.Culture, culture)
             );
 
-            var expectedMonthName = new DateTime(2025, 12, 1).ToString(CultureInfo.CurrentCulture.DateTimeFormat.YearMonthPattern, CultureInfo.CurrentCulture);
+            var expectedMonthName = new DateTime(2025, 12, 1).ToString(culture.DateTimeFormat.YearMonthPattern, culture);
             comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
         }
 

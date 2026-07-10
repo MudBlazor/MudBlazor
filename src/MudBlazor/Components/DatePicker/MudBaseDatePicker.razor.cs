@@ -803,7 +803,7 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-            
+
             if (firstRender && CurrentView == OpenTo.Year)
             {
                 ScrollToYearAsync().CatchAndLog();
