@@ -20,16 +20,8 @@ public partial class MudMatrixItem : MudComponentBase
             .Build();
     protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("grid-column", ColumnPosition is not null
-                ? ColumnSpanBackward
-                    ? $"span {ColumnSpan} / {ColumnPosition}"
-                    : $"{ColumnPosition} / span {ColumnSpan}"
-                : $"span {ColumnSpan}")
-            .AddStyle("grid-row", RowPosition is not null
-                ? RowSpanBackward
-                    ? $"span {RowSpan} / {RowPosition}"
-                    : $"{RowPosition} / span {RowSpan}"
-                : $"span {RowSpan}")
+            .AddStyle("grid-column", GetTrackPlacement(ColumnPosition, ColumnSpan, ColumnSpanBackward))
+            .AddStyle("grid-row", GetTrackPlacement(RowPosition, RowSpan, RowSpanBackward))
             .AddStyle(Style)
             .Build();
 
@@ -116,4 +108,14 @@ public partial class MudMatrixItem : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.MatrixItem.Behavior)]
     public RenderFragment? ChildContent { get; set; }
+
+    private static string GetTrackPlacement(int? position, int span, bool spanBackward)
+    {
+        if (position is null)
+        {
+            return $"span {span}";
+        }
+
+        return spanBackward ? $"span {span} / {position}" : $"{position} / span {span}";
+    }
 }
