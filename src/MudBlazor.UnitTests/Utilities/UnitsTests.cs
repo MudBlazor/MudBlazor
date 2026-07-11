@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(25, 50, false)]
         public void Units_Equality_ReturnsCorrectResult(double a, double b, bool expected)
         {
-            (Units.Px(a) == Units.Px(b)).Should().Be(expected);
+            Units.Px(a).Equals(Units.Px(b)).Should().Be(expected);
         }
     }
 }
