@@ -145,6 +145,73 @@ namespace MudBlazor.UnitTests.Components
             matrixStyle.GetAttribute("style").Should().Contain($"grid-auto-flow:{expectedFlow}");
         }
 
+        public record ExplicitTestCase(ExplicitMatrix ExplicitMatrix, string ExpectedValue);
+
+        private static IEnumerable<ExplicitTestCase> ExplicitCases()
+        {
+            yield return new ExplicitTestCase(ExplicitMatrix.Pattern(Units.Px(50)), "50px");
+            yield return new ExplicitTestCase(ExplicitMatrix.Pattern(Units.Px(50), Units.Rem(10)), "50px 10rem");
+            yield return new ExplicitTestCase(ExplicitMatrix.Pattern(3, Units.Px(50)), "repeat(3, 50px)");
+            yield return new ExplicitTestCase(ExplicitMatrix.Fit(Units.Px(50)), "repeat(auto-fit, 50px)");
+            yield return new ExplicitTestCase(ExplicitMatrix.Fill(Units.Px(50)), "repeat(auto-fill, 50px)");
+        }
+
+        [Test]
+        public void Matrix_CheckExplicitColumnsStyle()
+        {
+            foreach (var testCase in ExplicitCases())
+            {
+                var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.ExplicitColumns, testCase.ExplicitMatrix));
+
+                var style = matrix.Find(".mud-matrix").GetAttribute("style");
+                style.Should().Contain($"grid-template-columns:{testCase.ExpectedValue}");
+            }
+        }
+
+        [Test]
+        public void Matrix_CheckExplicitRowsStyle()
+        {
+            foreach (var testCase in ExplicitCases())
+            {
+                var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.ExplicitRows, testCase.ExplicitMatrix));
+
+                var style = matrix.Find(".mud-matrix").GetAttribute("style");
+                style.Should().Contain($"grid-template-rows:{testCase.ExpectedValue}");
+            }
+        }
+
+        public record ImplicitTestCase(ImplicitMatrix ImplicitMatrix, string ExpectedValue);
+
+        private static IEnumerable<ImplicitTestCase> ImplicitCases()
+        {
+            yield return new ImplicitTestCase(ImplicitMatrix.Pattern(Units.Px(50)), "50px");
+            yield return new ImplicitTestCase(ImplicitMatrix.Pattern(Units.Px(50), Units.Rem(10)), "50px 10rem");
+        }
+
+        [Test]
+        public void Matrix_CheckImplicitColumnsStyle()
+        {
+            foreach (var testCase in ImplicitCases())
+            {
+                var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.ImplicitColumns, testCase.ImplicitMatrix));
+
+                var style = matrix.Find(".mud-matrix").GetAttribute("style");
+                style.Should().Contain($"grid-auto-columns:{testCase.ExpectedValue}");
+            }
+        }
+
+        [Test]
+        public void Matrix_CheckImplicitRowsStyle()
+        {
+            foreach (var testCase in ImplicitCases())
+            {
+                var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.ImplicitRows, testCase.ImplicitMatrix));
+
+                var style = matrix.Find(".mud-matrix").GetAttribute("style");
+                style.Should().Contain($"grid-auto-rows:{testCase.ExpectedValue}");
+            }
+        }
+
         [TestCase(1, "1px")]
         [TestCase(10, "10px")]
         [TestCase(25, "25px")]
