@@ -4,8 +4,8 @@
 
 
 using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 using MudBlazor.Utilities;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
