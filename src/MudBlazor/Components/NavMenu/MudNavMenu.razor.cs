@@ -26,7 +26,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public bool MultiExpansion { get; set; }
+        public bool MultiExpansion { get; set; } = true;
 
         internal void RegisterGroup(MudNavGroup group)
         {
