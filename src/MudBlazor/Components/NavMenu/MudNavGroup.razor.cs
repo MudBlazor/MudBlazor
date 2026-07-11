@@ -213,7 +213,7 @@ namespace MudBlazor
         /// <summary>
         /// Collapse this group programmatically.
         /// </summary>
-        public async Task CollapseAsync()
+        internal async Task CollapseAsync()
         {
             if (!_expandedState.Value)
             {
