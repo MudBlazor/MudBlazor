@@ -19,28 +19,30 @@ public abstract class CssStringBuilder : IEquatable<CssStringBuilder>
 {
     protected virtual string DefaultValue() => "";
 
-    protected string _value;
-
-    protected CssStringBuilder() => _value = DefaultValue();
+    protected string Value
+    {
+        get => field ??= DefaultValue();
+        init;
+    }
 
     /// <summary>
     /// <c>Returns true</c> when the CSS representation of the Units are the same.
     /// </summary>
-    public bool Equals(CssStringBuilder? other) => string.Equals(other?._value, _value);
+    public bool Equals(CssStringBuilder? other) => string.Equals(other?.Value, Value);
     /// <summary>
     /// <c>Returns true</c> when the CSS representation of the Units are the same.
     /// </summary>
-    public override bool Equals(object? obj) => obj is CssStringBuilder other && string.Equals(_value, other._value);
+    public override bool Equals(object? obj) => obj is CssStringBuilder other && string.Equals(Value, other.Value);
 
     /// <summary>
     /// Returns hash code of the CSS representation.
     /// </summary>
-    public override int GetHashCode() => _value.GetHashCode();
+    public override int GetHashCode() => Value.GetHashCode();
 
     /// <summary>
     /// Returns CSS representation.
     /// </summary>
-    public override string ToString() => _value;
+    public override string ToString() => Value;
 
 
 }
