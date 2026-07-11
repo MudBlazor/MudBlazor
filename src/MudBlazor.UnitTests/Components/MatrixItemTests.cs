@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(10)]
         [TestCase(25)]
         [TestCase(50)]
-        public void MatrixItem_CheckColumnSpanStyle(int columnSpan)
+        public void MatrixItem_ColumnSpan_ReturnsCorrectStyle(int columnSpan)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x.Add(c => c.ColumnSpan, columnSpan));
 
@@ -69,7 +69,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(10)]
         [TestCase(25)]
         [TestCase(50)]
-        public void MatrixItem_CheckRowSpanStyle(int rowSpan)
+        public void MatrixItem_RowSpan_ReturnsCorrectStyle(int rowSpan)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x.Add(c => c.RowSpan, rowSpan));
 
@@ -82,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(1, 3)]
         [TestCase(3, 1)]
         [TestCase(10, 5)]
-        public void MatrixItem_CheckColumnPositionStyle(int columnSpan, int columnPosition)
+        public void MatrixItem_ColumnPosition_ReturnsCorrectStyle(int columnSpan, int columnPosition)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x
                 .Add(c => c.ColumnSpan, columnSpan)
@@ -97,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(1, 3)]
         [TestCase(3, 1)]
         [TestCase(10, 5)]
-        public void MatrixItem_CheckColumnPositionBackwardStyle(int columnSpan, int columnPosition)
+        public void MatrixItem_ColumnPosition_ReturnsCorrectStyle_Backward(int columnSpan, int columnPosition)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x
                 .Add(c => c.ColumnSpan, columnSpan)
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(1, 3)]
         [TestCase(3, 1)]
         [TestCase(10, 5)]
-        public void MatrixItem_CheckRowPositionStyle(int rowSpan, int rowPosition)
+        public void MatrixItem_RowPosition_ReturnsCorrectStyle(int rowSpan, int rowPosition)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x
                 .Add(c => c.RowSpan, rowSpan)
@@ -128,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(1, 3)]
         [TestCase(3, 1)]
         [TestCase(10, 5)]
-        public void MatrixItem_CheckRowPositionBackwardStyle(int rowSpan, int rowPosition)
+        public void MatrixItem_RowPosition_ReturnsCorrectStyle_Backward(int rowSpan, int rowPosition)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x
                 .Add(c => c.RowSpan, rowSpan)
@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(-1)]
         [TestCase(-3)]
         [TestCase(-10)]
-        public void MatrixItem_CheckNegativeColumnPositionStyle(int columnPosition)
+        public void MatrixItem_ColumnPosition_ReturnsCorrectStyle_Negative(int columnPosition)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x.Add(c => c.ColumnPosition, columnPosition));
 
@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(-1)]
         [TestCase(-3)]
         [TestCase(-10)]
-        public void MatrixItem_CheckNegativeRowPositionStyle(int rowPosition)
+        public void MatrixItem_RowPosition_ReturnsCorrectStyle_Negative(int rowPosition)
         {
             var matrixItem = Context.Render<MudMatrixItem>(x => x.Add(c => c.RowPosition, rowPosition));
 

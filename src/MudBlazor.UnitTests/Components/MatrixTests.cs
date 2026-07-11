@@ -65,7 +65,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(18)]
         [TestCase(19)]
         [TestCase(20)]
-        public void Matrix_CheckColumnGapClass(int gap)
+        public void Matrix_ColumnGap_ReturnCorrectClass(int gap)
         {
             var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.ColumnGap, gap));
 
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(18)]
         [TestCase(19)]
         [TestCase(20)]
-        public void Matrix_CheckRowGapClass(int gap)
+        public void Matrix_RowGap_ReturnsCorrectClass(int gap)
         {
             var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.RowGap, gap));
 
@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(MatrixJustify.SpaceBetween, "space-between")]
         [TestCase(MatrixJustify.SpaceAround, "space-around")]
         [TestCase(MatrixJustify.SpaceEvenly, "space-evenly")]
-        public void Matrix_CheckJustifyColumnsClass(MatrixJustify justify, string expectedClass)
+        public void Matrix_JustifyColumns_ReturnsCorrectClass(MatrixJustify justify, string expectedClass)
         {
             var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.JustifyColumns, justify));
 
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(MatrixJustify.SpaceBetween, "space-between")]
         [TestCase(MatrixJustify.SpaceAround, "space-around")]
         [TestCase(MatrixJustify.SpaceEvenly, "space-evenly")]
-        public void Matrix_CheckJustifyRowsClass(MatrixJustify justify, string expectedClass)
+        public void Matrix_JustifyRows_ReturnsCorrectClass(MatrixJustify justify, string expectedClass)
         {
             var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.JustifyRows, justify));
 
@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(false, "row")]
         [TestCase(true, "column")]
-        public void Matrix_CheckHorizontalFlowStyle(bool horizontalFlow, string expectedFlow)
+        public void Matrix_HorizontalFlow_ReturnsCorrectStyle(bool horizontalFlow, string expectedFlow)
         {
             var matrix = Context.Render<MudMatrix>(x => x.Add(c => c.HorizontalFlow, horizontalFlow));
 
@@ -157,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Matrix_CheckExplicitColumnsStyle()
+        public void Matrix_ExplicitColumns_ReturnsCorrectStyle()
         {
             foreach (var testCase in ExplicitCases())
             {
@@ -169,7 +169,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Matrix_CheckExplicitRowsStyle()
+        public void Matrix_ExplicitRows_ReturnsCorrectStyle()
         {
             foreach (var testCase in ExplicitCases())
             {
@@ -189,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Matrix_CheckImplicitColumnsStyle()
+        public void Matrix_ImplicitColumns_ReturnsCorrectStyle()
         {
             foreach (var testCase in ImplicitCases())
             {
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Matrix_CheckImplicitRowsStyle()
+        public void Matrix_ImplicitRows_ReturnsCorrectStyle()
         {
             foreach (var testCase in ImplicitCases())
             {
