@@ -39,8 +39,14 @@ public static class Units
     /// </summary>
     public static InflexibleTrackUnit Auto() => new Auto();
 
+    /// <summary>
+    /// Sizes to the smallest possible size that doesn't cause overflow.
+    /// </summary>
     public static InflexibleTrackUnit MinContent() => new MinContent();
 
+    /// <summary>
+    /// Sizes to the size the content would take up with no wrapping at all.
+    /// </summary>
     public static InflexibleTrackUnit MaxContent() => new MaxContent();
 
     /// <summary>
@@ -83,10 +89,6 @@ public static class Units
 /// </summary>
 public abstract class TrackUnit : CssStringBuilder { }
 
-/// <summary>
-/// A flex fraction. Valid as a track size and as <c>minmax()</c>'s max argument,
-/// but NOT valid as <c>minmax()</c>'s min argument or inside calc()/min()/max()
-/// </summary>
 internal sealed class Fr : TrackUnit
 {
     public Fr(double value = 1) => Value = $"{value}fr";
@@ -116,9 +118,15 @@ internal sealed class MaxContent : InflexibleTrackUnit
 
 /// <summary>
 /// A CSS &lt;calc-value&gt; length, percentage, or nested min()/max()/calc().
-/// Valid inside calc(), min(), max(), and the +, -, *, / operators.
-/// Excludes fr, auto, min-content, max-content (see <see cref="InflexibleTrackUnit"/>).
 /// </summary>
+/// <remarks>
+/// <para>
+/// Valid inside calc(), min(), max(), and the +, -, *, / operators. 
+/// </para>
+/// <para>
+/// Excludes fr, auto, min-content, max-content (see <see cref="InflexibleTrackUnit"/>).
+/// </para>
+/// </remarks>
 public abstract class CalcUnit : InflexibleTrackUnit, IAutoRepeatable
 {
     /// <summary>
@@ -170,27 +178,27 @@ internal sealed class CalcProduct : CalcUnit
     public CalcProduct(CalcUnit a, ProductOperator op, double b) => Value = $"calc({a} {op.ToStringFast(true)} {b})";
 }
 
-public sealed class Px : CalcUnit
+internal sealed class Px : CalcUnit
 {
     public Px(double value) => Value = $"{value}px";
 }
 
-public sealed class Rem : CalcUnit
+internal sealed class Rem : CalcUnit
 {
     public Rem(double value) => Value = $"{value}rem";
 }
 
-public sealed class Pct : CalcUnit
+internal sealed class Pct : CalcUnit
 {
     public Pct(double value) => Value = $"{value}%";
 }
 
-public sealed class Min : CalcUnit
+internal sealed class Min : CalcUnit
 {
     public Min(CalcUnit a, CalcUnit b) => Value = $"min({a}, {b})";
 }
 
-public sealed class Max : CalcUnit
+internal sealed class Max : CalcUnit
 {
     public Max(CalcUnit a, CalcUnit b) => Value = $"max({a}, {b})";
 }
