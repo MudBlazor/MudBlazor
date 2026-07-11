@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
     public class MatrixTests : BunitTest
     {
         [Test]
-        public void Units_ReturnsCorrectCss()
+        public void Units_ReturnsCorrectString()
         {
             Units.Fr(10).ToString().Should().Be("10fr");
             Units.Fr().ToString().Should().Be("1fr");
@@ -38,6 +38,23 @@ namespace MudBlazor.UnitTests.Components
             (Units.Px(12) / 3).ToString().Should().Be("calc(12px / 3)");
             (Units.Px(50) == Units.Pct(12)).Should().Be(false);
             (Units.Px(50) == Units.Px(50)).Should().Be(true);
+        }
+
+        [Test]
+        public void ExplicitMatrix_ReturnsCorrectString()
+        {
+            ExplicitMatrix.Pattern(Units.Fr()).ToString().Should().Be("1fr");
+            ExplicitMatrix.Pattern(Units.Px(50), Units.Rem(10), Units.Pct(10)).ToString().Should().Be("50px 10rem 10%");
+            ExplicitMatrix.Pattern(3, Units.Px(50), Units.Rem(10), Units.Pct(10)).ToString().Should().Be("repeat(3, 50px 10rem 10%)");
+            ExplicitMatrix.Fit(Units.Px(50)).ToString().Should().Be("repeat(auto-fit, 50px)");
+            ExplicitMatrix.Fill(Units.MinMax(Units.Px(50), Units.MinContent())).ToString().Should().Be("repeat(auto-fill, minmax(50px, min-content))");
+        }
+
+        [Test]
+        public void ImplicitMatrix_ReturnsCorrectString()
+        {
+            ImplicitMatrix.Pattern(Units.Fr()).ToString().Should().Be("1fr");
+            ImplicitMatrix.Pattern(Units.Px(50), Units.Rem(10), Units.Pct(10)).ToString().Should().Be("50px 10rem 10%");
         }
     }
 }
