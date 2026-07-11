@@ -108,6 +108,6 @@
 
     bool _showMinMaxExample;
 
-    TrackUnit _minMaxExampleUnit = Units.MinMax(Units.Px(_pixels), Units.Fr());
-    TrackUnit _justifyExampleUnit = Units.Px(_pixels);
+    IAutoRepeatable _minMaxExampleUnit = Units.MinMax(Units.Px(_pixels), Units.Fr());
+    IAutoRepeatable _justifyExampleUnit = Units.Px(_pixels);
 }
