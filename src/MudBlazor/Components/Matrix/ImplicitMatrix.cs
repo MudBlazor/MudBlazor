@@ -17,7 +17,7 @@ public class ImplicitMatrix
     /// Defines the track sizes to be repeated.
     /// </summary>
     /// <param name="items">The size of each track in order.</param>
-    public static ImplicitMatrix Pattern(params Units[] items)
+    public static ImplicitMatrix Pattern(params TrackUnit[] items)
     {
         return new()
         {

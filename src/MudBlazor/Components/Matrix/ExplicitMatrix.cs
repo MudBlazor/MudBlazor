@@ -17,7 +17,7 @@ public class ExplicitMatrix
     /// Defines the sizing pattern for columns or rows in the matrix.
     /// </summary>
     /// <param name="items">The size of each column or row in order.</param>
-    public static ExplicitMatrix Pattern(params Units[] items)
+    public static ExplicitMatrix Pattern(params TrackUnit[] items)
     {
         return new()
         {
@@ -30,7 +30,7 @@ public class ExplicitMatrix
     /// </summary>
     /// <param name="count">The number of times to repeat the columns or row sizes.</param>
     /// <param name="items">The size of each columns or row in order to repeat.</param>
-    public static ExplicitMatrix Pattern(int count, params Units[] items)
+    public static ExplicitMatrix Pattern(int count, params TrackUnit[] items)
     {
         return new()
         {
@@ -43,7 +43,7 @@ public class ExplicitMatrix
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="Fit(Units)"/>, if there arent enough items to fill the column or row, there will be empty space left.
+    /// Unlike <see cref="Fit(TrackUnit)"/>, if there arent enough items to fill the column or row, there will be empty space left.
     /// </para>
     /// <para>
     /// Maps to CSS <c>repeat(auto-fill, size)</c>.
@@ -53,7 +53,7 @@ public class ExplicitMatrix
     /// </para>
     /// </remarks>
     /// <param name="size">The fixed size of each <see cref="MudMatrixItem"/> to repeat.</param>
-    public static ExplicitMatrix Fill(Units size)
+    public static ExplicitMatrix Fill(TrackUnit size)
     {
         return new()
         {
@@ -66,7 +66,7 @@ public class ExplicitMatrix
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="Fill(Units)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
+    /// Unlike <see cref="Fill(TrackUnit)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
     /// </para>
     /// <para>
     /// Maps to CSS <c>repeat(auto-fit, size)</c>.
@@ -76,7 +76,7 @@ public class ExplicitMatrix
     /// </para>
     /// </remarks>
     /// <param name="size">The fixed size of <see cref="MudMatrixItem"/> to repeat.</param>
-    public static ExplicitMatrix Fit(Units size)
+    public static ExplicitMatrix Fit(TrackUnit size)
     {
         return new()
         {

@@ -23,7 +23,7 @@
 
     <FirstPanel>
         <MudStack Class="mud-height-full">
-            <MudMatrix ExplicitColumns="ExplicitMatrix.Fit(_showMinMaxExample ? _minMaxExampleUnits : _justifyExampleUnits)"
+            <MudMatrix ExplicitColumns="ExplicitMatrix.Fit(_showMinMaxExample ? _minMaxExampleUnit : _justifyExampleUnit)"
                        ImplicitRows="ImplicitMatrix.Pattern(Units.Px(_pixels))"
                        JustifyColumns="@(_showMinMaxExample ? MatrixJustify.Start : MatrixJustify.End)"
                        Style="height: 50%; overflow: auto;">
@@ -39,7 +39,7 @@
                 }
             </MudMatrix>
 
-            <MudMatrix ExplicitColumns="ExplicitMatrix.Fill(_showMinMaxExample ? _minMaxExampleUnits : _justifyExampleUnits)"
+            <MudMatrix ExplicitColumns="ExplicitMatrix.Fill(_showMinMaxExample ? _minMaxExampleUnit : _justifyExampleUnit)"
                        ImplicitRows="ImplicitMatrix.Pattern(Units.Px(_pixels))"
                        JustifyColumns="@(_showMinMaxExample ? MatrixJustify.Start : MatrixJustify.End)"
                        Style="height: 50%; overflow: auto;">
@@ -108,6 +108,6 @@
 
     bool _showMinMaxExample;
 
-    Units _minMaxExampleUnits = Units.MinMax(Units.Px(_pixels), Units.Fr());
-    Units _justifyExampleUnits = Units.Px(_pixels);
+    TrackUnit _minMaxExampleUnit = Units.MinMax(Units.Px(_pixels), Units.Fr());
+    TrackUnit _justifyExampleUnit = Units.Px(_pixels);
 }
