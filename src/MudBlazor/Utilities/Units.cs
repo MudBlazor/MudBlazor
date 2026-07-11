@@ -89,7 +89,7 @@ public abstract class TrackUnit : CssStringBuilder { }
 /// </summary>
 internal sealed class Fr : TrackUnit
 {
-    public Fr(double value = 1) => Value = $"{value}fr";
+    public Fr(double value = 1) => _value = $"{value}fr";
 }
 
 /// <summary>
@@ -99,17 +99,17 @@ public abstract class InflexibleTrackUnit : TrackUnit { }
 
 internal sealed class Auto : InflexibleTrackUnit
 {
-    public Auto() => Value = "auto";
+    public Auto() => _value = "auto";
 }
 
 internal sealed class MinContent : InflexibleTrackUnit
 {
-    public MinContent() => Value = "min-content";
+    public MinContent() => _value = "min-content";
 }
 
 internal sealed class MaxContent : InflexibleTrackUnit
 {
-    public MaxContent() => Value = "max-content";
+    public MaxContent() => _value = "max-content";
 }
 
 
@@ -152,7 +152,7 @@ internal enum SumOperator
 }
 internal sealed class CalcSum : CalcUnit
 {
-    public CalcSum(CalcUnit a, SumOperator op, CalcUnit b) => Value = $"calc({a} {op.ToStringFast(true)} {b})";
+    public CalcSum(CalcUnit a, SumOperator op, CalcUnit b) => _value = $"calc({a} {op.ToStringFast(true)} {b})";
 
 }
 
@@ -167,32 +167,32 @@ internal enum ProductOperator
 }
 internal sealed class CalcProduct : CalcUnit
 {
-    public CalcProduct(CalcUnit a, ProductOperator op, double b) => Value = $"calc({a} {op.ToStringFast(true)} {b})";
+    public CalcProduct(CalcUnit a, ProductOperator op, double b) => _value = $"calc({a} {op.ToStringFast(true)} {b})";
 }
 
 public sealed class Px : CalcUnit
 {
-    public Px(double value) => Value = $"{value}px";
+    public Px(double value) => _value = $"{value}px";
 }
 
 public sealed class Rem : CalcUnit
 {
-    public Rem(double value) => Value = $"{value}rem";
+    public Rem(double value) => _value = $"{value}rem";
 }
 
 public sealed class Pct : CalcUnit
 {
-    public Pct(double value) => Value = $"{value}%";
+    public Pct(double value) => _value = $"{value}%";
 }
 
 public sealed class Min : CalcUnit
 {
-    public Min(CalcUnit a, CalcUnit b) => Value = $"min({a}, {b})";
+    public Min(CalcUnit a, CalcUnit b) => _value = $"min({a}, {b})";
 }
 
 public sealed class Max : CalcUnit
 {
-    public Max(CalcUnit a, CalcUnit b) => Value = $"max({a}, {b})";
+    public Max(CalcUnit a, CalcUnit b) => _value = $"max({a}, {b})";
 }
 
 /// <summary>
@@ -202,6 +202,6 @@ public sealed class Max : CalcUnit
 public interface IAutoRepeatable { }
 internal sealed class MinMax : TrackUnit, IAutoRepeatable
 {
-    public MinMax(InflexibleTrackUnit min, TrackUnit max) => Value = $"minmax({min}, {max})";
+    public MinMax(InflexibleTrackUnit min, TrackUnit max) => _value = $"minmax({min}, {max})";
 }
 

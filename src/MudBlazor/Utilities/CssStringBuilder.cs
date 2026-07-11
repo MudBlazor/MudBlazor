@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,32 +18,28 @@ public abstract class CssStringBuilder : IEquatable<CssStringBuilder>
 {
     protected virtual string DefaultValue() => "";
 
-    protected string Value
-    {
-        get => field ??= DefaultValue();
-        init;
-    }
+    protected string _value;
 
-    protected CssStringBuilder() => Value = DefaultValue();
+    protected CssStringBuilder() => _value = DefaultValue();
 
     /// <summary>
     /// <c>Returns true</c> when the CSS representation of the Units are the same.
     /// </summary>
-    public bool Equals(CssStringBuilder? other) => other is not null && Value == other.Value;
+    public bool Equals(CssStringBuilder? other) => other is not null && _value == other._value;
 
     /// <summary>
     /// <c>Returns true</c> when the CSS representation of the Units are the same.
     /// </summary>
-    public override bool Equals(object? obj) => obj is CssStringBuilder other && Value == other.Value;
+    public override bool Equals(object? obj) => obj is CssStringBuilder other && _value == other._value;
 
     /// <summary>
     /// Returns hash code of the CSS representation.
     /// </summary>
-    public override int GetHashCode() => Value.GetHashCode();
+    public override int GetHashCode() => _value.GetHashCode();
 
     /// <summary>
     /// Returns CSS representation.
     /// </summary>
-    public override string ToString() => Value;
+    public override string ToString() => _value;
 
 }

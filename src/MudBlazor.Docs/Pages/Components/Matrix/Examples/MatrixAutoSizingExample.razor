@@ -34,10 +34,18 @@
 
                 <MudList T="string" ReadOnly="true">
                     <MudListItem Icon="@Icons.Material.Outlined.LooksOne" IconColor="Color.Tertiary">
-                        <MudText Typo="Typo.body2"><CodeInline>MudGrid</CodeInline> is simpler and great for most layouts like... ?.</MudText>
+                        <MudText Typo="Typo.body2">
+                            <CodeInline>MudGrid</CodeInline> is simpler and great for layouts that just need to wrap responsively,
+                            like most forms, card lists, and dashboards sized with <CodeInline>xs</CodeInline>, <CodeInline>sm</CodeInline>, etc.
+                        </MudText>
                     </MudListItem>
                     <MudListItem Icon="@Icons.Material.Outlined.LooksTwo" IconColor="Color.Tertiary">
-                        <MudText Typo="Typo.body2">Reach for <CodeInline>MudMatrix</CodeInline> when you want more control over the size and behavior of the items</MudText>
+                        <MudText Typo="Typo.body2">
+                            Reach for <CodeInline>MudMatrix</CodeInline> when items need to align to an actual structure:
+                            explicit rows and columns, items spanning multiple cells, placement at specific coordinates, or
+                            responsive column counts via <CodeInline>ExplicitMatrix.Fit</CodeInline> and 
+                            <CodeInline>ExplicitMatrix.Fill</CodeInline>
+                        </MudText>
                     </MudListItem>
                     <MudListItem Icon="@Icons.Material.Outlined.Looks3" IconColor="Color.Tertiary">
                         <MudText Typo="Typo.body2"><CodeInline>MudMatrix</CodeInline> wields great power, but with great power comes great responsibility.</MudText>

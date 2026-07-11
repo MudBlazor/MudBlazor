@@ -24,7 +24,7 @@ public class ExplicitMatrix : CssStringBuilder
     {
         return new()
         {
-            Value = string.Join(" ", items.Select(i => i.ToString()))
+            _value = string.Join(" ", items.Select(i => i.ToString()))
         };
     }
 
@@ -37,7 +37,7 @@ public class ExplicitMatrix : CssStringBuilder
     {
         return new()
         {
-            Value = $"repeat({count}, {string.Join(" ", items.Select(i => i.ToString()))})"
+            _value = $"repeat({count}, {string.Join(" ", items.Select(i => i.ToString()))})"
         };
     }
 
@@ -60,7 +60,7 @@ public class ExplicitMatrix : CssStringBuilder
     {
         return new()
         {
-            Value = $"repeat(auto-fill, {size})"
+            _value = $"repeat(auto-fill, {size})"
         };
     }
 
@@ -83,7 +83,7 @@ public class ExplicitMatrix : CssStringBuilder
     {
         return new()
         {
-            Value = $"repeat(auto-fit, {size})"
+            _value = $"repeat(auto-fit, {size})"
         };
     }
 
@@ -92,7 +92,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// </summary>
     public override string ToString()
     {
-        return Value;
+        return _value;
     }
 }
 
