@@ -24,7 +24,7 @@ public class ImplicitMatrix : CssStringBuilder
     {
         return new()
         {
-            _value = string.Join(" ", items.Select(i => i.ToString()))
+            Value = string.Join(" ", items.Select(i => i.ToString()))
         };
     }
 }
