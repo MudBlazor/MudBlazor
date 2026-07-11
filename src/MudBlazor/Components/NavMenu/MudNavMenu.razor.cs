@@ -18,10 +18,10 @@ namespace MudBlazor
         private readonly List<MudNavGroup> _groups = [];
 
         /// <summary>
-        /// When <c>true</c>, only a single top-level <see cref="MudNavGroup"/> can be expanded at a time.
+        /// When <c>true</c>, multiple top-level <see cref="MudNavGroup"/> can be expanded at a time.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. Expanding a group collapses the others; nested groups are unaffected.
+        /// Defaults to <c>true</c>. When set to <c>false</c>, expanding one group collapses the other top-level groups; nested groups are unaffected.
         /// Only applies when a group is expanded by the user; setting <see cref="MudNavGroup.Expanded"/> programmatically bypasses this.
         /// </remarks>
         [Parameter]
