@@ -2,6 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel;
+using MudBlazor.Utilities;
+
 namespace MudBlazor;
 
 /// <summary>
@@ -9,9 +12,9 @@ namespace MudBlazor;
 /// </summary>
 /// <seealso cref="MudMatrix"/>
 /// <seealso cref="Units"/>
-public class ExplicitMatrix
+public class ExplicitMatrix : CssStringBuilder
 {
-    private string _value = "none";
+    protected override string DefaultValue() => "none";
 
     /// <summary>
     /// Defines the sizing pattern for columns or rows in the matrix.
@@ -43,17 +46,17 @@ public class ExplicitMatrix
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="Fit(TrackUnit)"/>, if there arent enough items to fill the column or row, there will be empty space left.
+    /// Unlike <see cref="Fit(IAutoRepeatable)"/>, if there arent enough items to fill the column or row, there will be empty space left.
     /// </para>
     /// <para>
     /// Maps to CSS <c>repeat(auto-fill, size)</c>.
     /// </para>
     /// <para>
-    /// <c>Fr is not a valid parameter!</c> It must be a unit of fixed size.
+    /// <c>Fr is not a valid parameter</c>.
     /// </para>
     /// </remarks>
     /// <param name="size">The fixed size of each <see cref="MudMatrixItem"/> to repeat.</param>
-    public static ExplicitMatrix Fill(TrackUnit size)
+    public static ExplicitMatrix Fill(IAutoRepeatable size)
     {
         return new()
         {
@@ -66,17 +69,17 @@ public class ExplicitMatrix
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="Fill(TrackUnit)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
+    /// Unlike <see cref="Fill(IAutoRepeatable)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
     /// </para>
     /// <para>
     /// Maps to CSS <c>repeat(auto-fit, size)</c>.
     /// </para>
     /// <para>
-    /// <c>Fr is not a valid parameter!!</c> It must be a unit of fixed size
+    /// <c>Fr is not a valid parameter</c>.
     /// </para>
     /// </remarks>
     /// <param name="size">The fixed size of <see cref="MudMatrixItem"/> to repeat.</param>
-    public static ExplicitMatrix Fit(TrackUnit size)
+    public static ExplicitMatrix Fit(IAutoRepeatable size)
     {
         return new()
         {

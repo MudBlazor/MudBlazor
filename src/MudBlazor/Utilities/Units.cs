@@ -5,6 +5,7 @@
 
 using System.ComponentModel;
 using NetEscapades.EnumGenerators;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -36,18 +37,35 @@ public static class Units
     /// <summary>
     /// Sizes automatically based on the content of the element.
     /// </summary>
-    public static FixedTrackUnit Auto() => new Auto();
+    public static InflexibleTrackUnit Auto() => new Auto();
 
-    public static FixedTrackUnit MinContent() => new MinContent();
+    public static InflexibleTrackUnit MinContent() => new MinContent();
 
-    public static FixedTrackUnit MaxContent() => new MaxContent();
+    public static InflexibleTrackUnit MaxContent() => new MaxContent();
 
     /// <summary>
     /// Clamps a size between a minimum and maximum value.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <c>NOT</c> guaranteed to be valid inside <see cref="ExplicitMatrix.Fill(IAutoRepeatable)"/> or <see cref="ExplicitMatrix.Fill(IAutoRepeatable)"/>.
+    /// </para>
+    /// </remarks>
     /// <param name="min">The minimum size.</param>
     /// <param name="max">The maximum size.</param>
-    public static TrackUnit MinMax(FixedTrackUnit min, TrackUnit max) => new MinMax(min, max);
+    public static TrackUnit MinMax(InflexibleTrackUnit min, TrackUnit max) => new MinMax(min, max);
+
+    /// <summary>
+    /// Clamps a size between a minimum and maximum value.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Valid inside <see cref="ExplicitMatrix.Fill(IAutoRepeatable)"/> or <see cref="ExplicitMatrix.Fill(IAutoRepeatable)"/>.
+    /// </para>
+    /// </remarks>
+    /// <param name="min">The minimum size.</param>
+    /// <param name="max">The maximum size.</param>
+    public static IAutoRepeatable MinMax(CalcUnit min, TrackUnit max) => new MinMax(min, max);
 
     /// <summary>
     /// Uses the smaller size between the two sizes.
@@ -61,39 +79,9 @@ public static class Units
 }
 
 /// <summary>
-/// Base type for anything that evaluates to a CSS size/track value.
-/// </summary>
-public abstract class CssUnitBuilder
-{
-    protected string _value = "";
-
-    public override string ToString() => _value;
-
-    /// <summary>
-    /// <c>Returns true</c> when the CSS representation of the Units are the same.
-    /// </summary>
-    public static bool operator ==(CssUnitBuilder a, CssUnitBuilder b) => a._value == b._value;
-
-    /// <summary>
-    /// <c>Returns true</c> when the CSS representation of the Units are different.
-    /// </summary>
-    public static bool operator !=(CssUnitBuilder a, CssUnitBuilder b) => !(a == b);
-
-    /// <summary>
-    /// <c>Returns true</c> when the CSS representation of the Units are the same.
-    /// </summary>
-    public override bool Equals(object? obj) => obj is CssUnitBuilder other && _value == other._value;
-
-    /// <summary>
-    /// Returns hash code of the CSS representation.
-    /// </summary>
-    public override int GetHashCode() => _value.GetHashCode();
-}
-
-/// <summary>
 /// Anything valid as a grid track size, or as the <c>max</c> argument of <c>minmax()</c>.
 /// </summary>
-public abstract class TrackUnit : CssUnitBuilder { }
+public abstract class TrackUnit : CssStringBuilder { }
 
 /// <summary>
 /// A flex fraction. Valid as a track size and as <c>minmax()</c>'s max argument,
@@ -107,71 +95,79 @@ internal sealed class Fr : TrackUnit
 /// <summary>
 /// Anything valid as either argument of <c>minmax()</c> (i.e. everything except <see cref="Fr"/>).
 /// </summary>
-public abstract class FixedTrackUnit : TrackUnit { }
+public abstract class InflexibleTrackUnit : TrackUnit { }
 
-internal sealed class Auto : FixedTrackUnit
+internal sealed class Auto : InflexibleTrackUnit
 {
     public Auto() => _value = "auto";
 }
 
-internal sealed class MinContent : FixedTrackUnit
+internal sealed class MinContent : InflexibleTrackUnit
 {
     public MinContent() => _value = "min-content";
 }
 
-internal sealed class MaxContent : FixedTrackUnit
+internal sealed class MaxContent : InflexibleTrackUnit
 {
     public MaxContent() => _value = "max-content";
 }
 
+
+
+/// <summary>
+/// A CSS &lt;calc-value&gt; length, percentage, or nested min()/max()/calc().
+/// Valid inside calc(), min(), max(), and the +, -, *, / operators.
+/// Excludes fr, auto, min-content, max-content (see <see cref="InflexibleTrackUnit"/>).
+/// </summary>
+public abstract class CalcUnit : InflexibleTrackUnit, IAutoRepeatable
+{
+    /// <summary>
+    /// Adds two units together using CSS <c>calc()</c>.
+    /// </summary>
+    public static CalcUnit operator +(CalcUnit a, CalcUnit b) => new CalcSum(a, SumOperator.Add, b);
+
+    /// <summary>
+    /// Subtracts two units using CSS <c>calc()</c>.
+    /// </summary>
+    public static CalcUnit operator -(CalcUnit a, CalcUnit b) => new CalcSum(a, SumOperator.Subtract, b);
+
+    /// <summary>
+    /// Multiplies unit using CSS <c>calc()</c>.
+    /// </summary>
+    public static CalcUnit operator *(CalcUnit a, double b) => new CalcProduct(a, ProductOperator.Multiply, b);
+
+    /// <summary>
+    /// Divides unit using CSS <c>calc()</c>.
+    /// </summary>
+    public static CalcUnit operator /(CalcUnit a, double b) => new CalcProduct(a, ProductOperator.Divide, b);
+}
+
 [EnumExtensions]
-internal enum Operator
+internal enum SumOperator
 {
     [Description("+")]
     Add,
     [Description("-")]
     Subtract,
+}
+internal sealed class CalcSum : CalcUnit
+{
+    public CalcSum(CalcUnit a, SumOperator op, CalcUnit b) => _value = $"calc({a} {op.ToStringFast(true)} {b})";
+
+}
+
+[EnumExtensions]
+internal enum ProductOperator
+{
+
     [Description("*")]
     Multiply,
     [Description("/")]
     Divide
 }
-
-/// <summary>
-/// Anything valid inside <c>calc()</c>, <c>min()</c>, or <c>max()</c>,
-/// percentages, and nested min()/max() expressions.
-/// </summary>
-/// <remarks>
-/// excludes <see cref="Fr"/>
-/// and <see cref="Auto"/>, which the math functions' grammar doesn't accept.
-/// </remarks>
-public abstract class CalcUnit : FixedTrackUnit
+internal sealed class CalcProduct : CalcUnit
 {
-    /// <summary>
-    /// Adds two units together using CSS <c>calc()</c>.
-    /// </summary>
-    public static CalcUnit operator +(CalcUnit a, CalcUnit b) => new Calc(a, Operator.Add, b);
-
-    /// <summary>
-    /// Subtracts two units using CSS <c>calc()</c>.
-    /// </summary>
-    public static CalcUnit operator -(CalcUnit a, CalcUnit b) => new Calc(a, Operator.Subtract, b);
-
-    /// <summary>
-    /// Multiplies unit using CSS <c>calc()</c>.
-    /// </summary>
-    public static CalcUnit operator *(CalcUnit a, double b) => new Calc(a, Operator.Multiply, b);
-
-    /// <summary>
-    /// Divides unit using CSS <c>calc()</c>.
-    /// </summary>
-    public static CalcUnit operator /(CalcUnit a, double b) => new Calc(a, Operator.Divide, b);
-}
-
-internal sealed class Calc : CalcUnit
-{
-    public Calc(CalcUnit a, Operator op, CalcUnit b) => _value = $"calc({a} {op.ToStringFast(true)} {b})";
-    public Calc(CalcUnit a, Operator op, double b) => _value = $"calc({a} {op.ToStringFast(true)} {b})";
+    public CalcProduct(CalcUnit a, ProductOperator op, double b) => _value = $"calc({a} {op.ToStringFast(true)} {b})";
 }
 
 public sealed class Px : CalcUnit
@@ -199,8 +195,13 @@ public sealed class Max : CalcUnit
     public Max(CalcUnit a, CalcUnit b) => _value = $"max({a}, {b})";
 }
 
-internal sealed class MinMax : TrackUnit
+/// <summary>
+/// Valid for repeat(auto-fill/auto-fit) needs a definite length
+/// somewhere. Excludes fr and bare auto/min-content/max-content.
+/// </summary>
+public interface IAutoRepeatable { }
+internal sealed class MinMax : TrackUnit, IAutoRepeatable
 {
-    public MinMax(FixedTrackUnit min, TrackUnit max) => _value = $"minmax({min}, {max})";
+    public MinMax(InflexibleTrackUnit min, TrackUnit max) => _value = $"minmax({min}, {max})";
 }
 

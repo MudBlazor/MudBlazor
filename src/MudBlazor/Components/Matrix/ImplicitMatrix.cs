@@ -2,6 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection.Metadata.Ecma335;
+using MudBlazor.Utilities;
+
 namespace MudBlazor;
 
 /// <summary>
@@ -9,9 +12,9 @@ namespace MudBlazor;
 /// </summary>
 /// <seealso cref="MudMatrix"/>
 /// <seealso cref="Units"/>
-public class ImplicitMatrix
+public class ImplicitMatrix : CssStringBuilder
 {
-    private string _value = "auto";
+    protected override string DefaultValue() => "auto";
 
     /// <summary>
     /// Defines the track sizes to be repeated.
@@ -23,14 +26,6 @@ public class ImplicitMatrix
         {
             _value = string.Join(" ", items.Select(i => i.ToString()))
         };
-    }
-
-    /// <summary>
-    /// Returns CSS representation.
-    /// </summary>
-    public override string ToString()
-    {
-        return _value;
     }
 }
 
