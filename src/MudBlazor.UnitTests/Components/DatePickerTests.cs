@@ -1115,6 +1115,24 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(initialDate);
         }
 
+        [Test]
+        public async Task LiteralText_WithBoundDate_DoesNotLoopOnSelection()
+        {
+            // #13439: a literal Text ("Broken") alongside a bound Date froze the page. The unparseable Text
+            // was re-parsed to null on every render and pushed back through DateChanged, fighting the bound
+            // Date and spinning an infinite render loop. Picking a date must fire DateChanged a bounded number
+            // of times and leave the picked value in place.
+            var comp = Context.Render<DatePickerTextLoopTest>();
+            var picker = comp.Instance.Picker;
+
+            await comp.SelectDateAsync("15");
+
+            comp.Instance.LoopGuardTripped.Should().BeFalse("a literal Text must not spin an infinite render loop");
+            comp.Instance.DateChangedCount.Should().BeLessThan(5);
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Day.Should().Be(15);
+        }
+
         // In the editable path a month/year click advances the view (Year->Month, Month->Date); the ReadOnly
         // guard must suppress that, so the originally-shown container stays put. Asserting the view (not Date,
         // which a month/year click never commits anyway) is what actually proves the guard.

@@ -486,6 +486,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task LiteralText_WithBoundTime_DoesNotLoopOnSelection()
+        {
+            // #13439: a literal Text ("Broken") alongside a bound Time froze the page. The unparseable Text
+            // was re-parsed to null on every render and pushed back through TimeChanged, fighting the bound
+            // Time and spinning an infinite render loop. Picking a time must fire TimeChanged a bounded number
+            // of times and leave the picked value in place.
+            var comp = Context.Render<TimePickerTextLoopTest>();
+            var picker = comp.Instance.Picker;
+
+            // Pick an hour as the clock JS would; on a static picker this commits the time.
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(10, false));
+
+            comp.Instance.LoopGuardTripped.Should().BeFalse("a literal Text must not spin an infinite render loop");
+            comp.Instance.TimeChangedCount.Should().BeLessThan(5);
+            picker.Time.Should().Be(new TimeSpan(10, 0, 0));
+        }
+
+        [Test]
         [TestCase(7, 0)]   // rounds down to 0
         [TestCase(8, 15)]  // rounds up to 15
         [TestCase(22, 15)] // rounds down to 15
