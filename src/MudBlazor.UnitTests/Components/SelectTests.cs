@@ -1096,6 +1096,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// #11796: in multi-selection the Validation function runs after SelectedValues commits, so it observes the new selection - once per click.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Validation_RunsAfterSelectedValuesCommit()
+        {
+            var comp = Context.Render<SelectMultiSelectionValidationOrderTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(3));
+            comp.Instance.ObservedCounts.Clear();
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1 },
+                "validation runs once per selection and sees the committed binding (#11796)");
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2 });
+
+            // deselect the first option again
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1 });
+
+            // the Clearable X button must also validate against the committed (now empty) binding
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1, 0 });
+        }
+
+        /// <summary>
         /// Selected option should be hilighted when drop-down opens
         /// </summary>
         [Test]
@@ -2259,6 +2287,36 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-haspopup").Should().Be("dialog");
             input.GetAttribute("aria-label").Should().Be("Custom label");
             input.GetAttribute("aria-activedescendant").Should().Be("custom-option");
+        }
+
+        [Test]
+        public async Task Select_UserAttributes_ForwardedToSelectedValuePresenter()
+        {
+            // A value is preselected and its item renders child content, so the hidden input
+            // is swapped for the focusable presenter div (#13086).
+            var comp = Context.Render<SelectOnFocusTest>();
+            IElement Presenter() => comp.Find("div.mud-select-input[tabindex='0']");
+
+            // Arbitrary consumer attributes reach the presenter, not just role/aria.
+            Presenter().GetAttribute("data-testid").Should().Be("vehicle-select");
+
+            // The consumer @onfocus splat fires when the presenter receives focus.
+            comp.Find("#focus-count").TextContent.Should().Be("0");
+            await Presenter().TriggerEventAsync("onfocus", new FocusEventArgs());
+            await comp.WaitForAssertionAsync(() => comp.Find("#focus-count").TextContent.Should().Be("1"));
+        }
+
+        [Test]
+        public void Select_PresenterAttributes_DoNotDuplicateIdOrFocusDisabled()
+        {
+            var comp = Context.Render<SelectPresenterAttributeTest>();
+
+            // The consumer id stays on the hidden input only; forwarding it to the presenter too would duplicate the DOM id.
+            comp.FindAll("[id='select-with-id']").Count.Should().Be(1);
+            comp.FindAll("div.mud-select-input[id='select-with-id']").Should().BeEmpty();
+
+            // A forwarded tabindex must not make the disabled presenter focusable.
+            comp.Find("div.mud-select-input[data-scenario='disabled']").HasAttribute("tabindex").Should().BeFalse();
         }
 
         [Test]

@@ -175,6 +175,78 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
 
+        /// <summary>
+        /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using
+        /// a button click counter on every tab and a callback that is fired only when OnAfterRenderAsync of the tab panel
+        /// happens the first time (which outputs a message at the bottom).
+        /// </summary>
+        [Test]
+        public async Task KeepTabsAliveWithLazyLoadPanels()
+        {
+            var comp = Context.Render<TabsKeepAliveTest>(parameters => parameters.Add(p => p.LazyLoadPanels, true));
+            // only one panel should be evident in the markup
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(1);
+            // first panel should be active
+            comp.Find("div.mud-tabs-panels > div").ClassList.Should().Contain("mud-tab-panel-active");
+            // only the first panel should be rendered first
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br/></p>");
+            // click first button and check button click counters
+            comp.FindAll("button").Count.Should().Be(1);
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
+            await comp.FindAll("button")[0].ClickAsync();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+
+            // switch to the second tab
+            await comp.FindAll("div.mud-tab")[1].ClickAsync();
+            // first and second panel should be evident in the markup
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(2);
+            // only the second panel should be active
+            comp.FindAll("div.mud-tabs-panels > div")[0].ClassList.Should().NotContain("mud-tab-panel-active");
+            comp.FindAll("div.mud-tabs-panels > div")[1].ClassList.Should().Contain("mud-tab-panel-active");
+            // first and second panel were rendered once with firstRender==true
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
+            // first panel text should not have changed
+            comp.FindAll("button").Count.Should().Be(2);
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            // click the second button twice and check click counters
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=0");
+            await comp.FindAll("button")[1].ClickAsync();
+            await comp.FindAll("button")[1].ClickAsync();
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
+
+            // switch to the third tab
+            await comp.FindAll("div.mud-tab")[2].ClickAsync();
+            // all three panels should be evident in the markup
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(3);
+            // only the third panel should be active
+            comp.FindAll("div.mud-tabs-panels > div")[0].ClassList.Should().NotContain("mud-tab-panel-active");
+            comp.FindAll("div.mud-tabs-panels > div")[1].ClassList.Should().NotContain("mud-tab-panel-active");
+            comp.FindAll("div.mud-tabs-panels > div")[2].ClassList.Should().Contain("mud-tab-panel-active");
+            // all three panels were rendered once with firstRender==true
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // first and second button texts should not have changed
+            comp.FindAll("button").Count.Should().Be(3);
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
+            comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
+
+            // switch back to the first tab:
+            await comp.FindAll("div.mud-tab")[0].ClickAsync();
+            // all three panels should be evident in the markup
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(3);
+            // only the first panel should be active
+            comp.FindAll("div.mud-tabs-panels > div")[0].ClassList.Should().Contain("mud-tab-panel-active");
+            comp.FindAll("div.mud-tabs-panels > div")[1].ClassList.Should().NotContain("mud-tab-panel-active");
+            comp.FindAll("div.mud-tabs-panels > div")[2].ClassList.Should().NotContain("mud-tab-panel-active");
+            // all three panels were rendered once with firstRender==true
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // all three button texts should not have changed
+            comp.FindAll("button").Count.Should().Be(3);
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
+            comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
+        }
+
         [Test]
         public async Task TabHeaderClassPropagated()
         {

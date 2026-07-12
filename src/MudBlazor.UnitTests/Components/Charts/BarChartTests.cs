@@ -443,5 +443,63 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(2, because: "both data points render as bars");
         }
+
+        [Test]
+        public void BarChart_ShowValues_ShouldRenderValueLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new BarChartOptions { ShowValues = true }));
+
+            var labels = comp.FindAll("text.mud-chart-value-label");
+            labels.Should().HaveCount(4, because: "each bar renders its own value label");
+            labels.Select(l => l.TextContent).Should().ContainInOrder("10", "20", "15", "25");
+        }
+
+        [Test]
+        public void BarChart_ShowValues_Default_ShouldNotRenderValueLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("text.mud-chart-value-label").Should().BeEmpty(because: "ShowValues defaults to false");
+        }
+
+        [Test]
+        public void BarChart_ShowValues_YAxisFormat_ShouldFormatValueLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 1000, 2000 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new BarChartOptions { ShowValues = true, YAxisFormat = "N0", YAxisTicks = 1000 }));
+
+            var labels = comp.FindAll("text.mud-chart-value-label");
+            labels.Should().HaveCount(2);
+            labels.Select(l => l.TextContent).Should().ContainInOrder(1000.ToString("N0"), 2000.ToString("N0"));
+        }
     }
 }

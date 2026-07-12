@@ -820,33 +820,28 @@ namespace MudBlazor
             AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
-            if (HighlightedDate is not null)
+            if (HighlightedDate is null)
             {
-                return;
+                var culture = GetCulture();
+                var calendar = culture.Calendar;
+                var today = TimeProvider.GetLocalNow().Date;
+
+                var year = FixYear ?? calendar.GetYear(today);
+                var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
+                var day = FixDay ?? 1;
+
+                if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
+                {
+                    HighlightedDate = date;
+                }
             }
 
-            var culture = GetCulture();
-            var calendar = culture.Calendar;
-            var today = TimeProvider.GetLocalNow().Date;
-
-            var year = FixYear ?? calendar.GetYear(today);
-            var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
-            var day = FixDay ?? 1;
-
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
-            {
-                HighlightedDate = date;
-            }
+            _picker_month ??= GetCalendarStartOfMonth();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-
-            if (firstRender)
-            {
-                _picker_month ??= GetCalendarStartOfMonth();
-            }
 
             if (firstRender && CurrentView == OpenTo.Year)
             {

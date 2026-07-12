@@ -1477,5 +1477,37 @@ namespace MudBlazor.UnitTests.Components
 
             secondDispose.Should().NotThrow();
         }
+
+        [Test]
+        public async Task OnClick_InvokedBeforeMenuCloses()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/6349
+            var popoverOpenDuringClick = false;
+
+            // Render the provider separately so it hosts the menu's popover content.
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.Label, "Menu")
+                .Add(p => p.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudMenuItem>(0);
+                    builder.AddAttribute(1, nameof(MudMenuItem.Label), "Item");
+                    builder.AddAttribute(2, nameof(MudMenuItem.OnClick), EventCallback.Factory.Create<MouseEventArgs>(this, async () =>
+                    {
+                        // Yield so a wrong ordering would dispose the menu mid-await.
+                        await Task.Yield();
+                        popoverOpenDuringClick = provider.FindAll("div.mud-popover-open").Count > 0;
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            await comp.Find("button.mud-button-root").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-menu-item").Count.Should().Be(1));
+
+            await provider.Find("div.mud-menu-item").ClickAsync();
+
+            popoverOpenDuringClick.Should().BeTrue();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
     }
 }

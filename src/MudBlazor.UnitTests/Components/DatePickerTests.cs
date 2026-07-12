@@ -1115,6 +1115,24 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(initialDate);
         }
 
+        [Test]
+        public async Task LiteralText_WithBoundDate_DoesNotLoopOnSelection()
+        {
+            // #13439: a literal Text ("Broken") alongside a bound Date froze the page. The unparseable Text
+            // was re-parsed to null on every render and pushed back through DateChanged, fighting the bound
+            // Date and spinning an infinite render loop. Picking a date must fire DateChanged a bounded number
+            // of times and leave the picked value in place.
+            var comp = Context.Render<DatePickerTextLoopTest>();
+            var picker = comp.Instance.Picker;
+
+            await comp.SelectDateAsync("15");
+
+            comp.Instance.LoopGuardTripped.Should().BeFalse("a literal Text must not spin an infinite render loop");
+            comp.Instance.DateChangedCount.Should().BeLessThan(5);
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Day.Should().Be(15);
+        }
+
         // In the editable path a month/year click advances the view (Year->Month, Month->Date); the ReadOnly
         // guard must suppress that, so the originally-shown container stays put. Asserting the view (not Date,
         // which a month/year click never commits anyway) is what actually proves the guard.
@@ -2148,6 +2166,22 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ClearIcon, Icons.Custom.Brands.MudBlazor));
 
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
+        }
+
+        [Test]
+        public void Static_StartMonth_IsShownOnFirstRender()
+        {
+            var startMonth = new DateTime(2025, 12, 3);
+            var culture = CultureInfo.GetCultureInfo("en-US");
+
+            var comp = Context.Render<MudDatePicker>(ps => ps
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, startMonth)
+                .Add(p => p.Culture, culture)
+            );
+
+            var expectedMonthName = new DateTime(2025, 12, 1).ToString(culture.DateTimeFormat.YearMonthPattern, culture);
+            comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
         }
 
         private async Task<IRenderedComponent<SimpleMudDatePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudDatePickerTest>>? parameterBuilder = null)

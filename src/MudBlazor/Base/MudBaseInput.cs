@@ -751,6 +751,15 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        /// <inheritdoc />
+        public override Task ResetValidationAsync()
+        {
+            // Clear _validated so the next blur re-runs validation.
+            // Otherwise OnBlurredAsync short-circuits on the stale flag and a required error never reappears (#11503).
+            _validated = false;
+            return base.ResetValidationAsync();
+        }
+
         protected string? GetHelperId()
         {
             if (HelperId is not null)
@@ -793,17 +802,18 @@ namespace MudBlazor
 
         protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
+            // Mark touched before the equality short-circuit: on Blazor Server the suppressed ValueChanged echo can set the text first, so a genuine interaction that arrives with the text already in sync would otherwise skip the Touched write and leave a required field untouched on its first change (#13389).
+            if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
+            {
+                Touched = true;
+            }
+
             if (ReadText == text)
             {
                 return;
             }
 
             _validated = false;
-
-            if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
-            {
-                Touched = true;
-            }
 
             await _textState.SetValueAsync(text);
             if (updateValue)

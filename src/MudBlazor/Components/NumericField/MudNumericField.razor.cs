@@ -390,44 +390,10 @@ namespace MudBlazor
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
-
             _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
         }
-
-        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
-        {
-            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
-                return;
-            if (obj.DeltaY < 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Increment();
-                else
-                    await Decrement();
-            }
-            else if (obj.DeltaY > 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Decrement();
-                else
-                    await Increment();
-            }
-        }
-
-        /// <summary>
-        /// Reverses the mouse wheel direction.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  
-        /// When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool InvertMouseWheel { get; set; } = false;
 
         /// <summary>
         /// The minimum allowed value.

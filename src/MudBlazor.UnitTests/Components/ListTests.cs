@@ -361,6 +361,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ListItem_WithNestedList_InvokesOnClick_AndExpands()
+        {
+            var clicks = 0;
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Parent")
+                    .Add(x => x.Value, "parent")
+                    .Add(x => x.OnClick, () => clicks++)
+                    .Add(x => x.NestedList, nested =>
+                    {
+                        nested.OpenComponent<MudListItem<string>>(0);
+                        nested.AddAttribute(1, nameof(MudListItem<string>.Text), "Child");
+                        nested.AddAttribute(2, nameof(MudListItem<string>.Value), "child");
+                        nested.CloseComponent();
+                    })));
+
+            var parent = comp.FindComponents<MudListItem<string>>().First(x => x.Instance.Text == "Parent");
+            parent.Find("div.mud-list-item").GetAttribute("aria-expanded").Should().Be("false");
+
+            await parent.Find("div.mud-list-item").ClickAsync();
+
+            clicks.Should().Be(1); // OnClick fires even though there is a NestedList
+            parent.Find("div.mud-list-item").GetAttribute("aria-expanded").Should().Be("true"); // and the nested list still expands
+        }
+
+        [Test]
         public async Task Disabled_List_DisablesEveryItem_AndSuppressesSelection()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
