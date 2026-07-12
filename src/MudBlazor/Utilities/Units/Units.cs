@@ -24,7 +24,7 @@ public static class Units
     public static LengthPercentage Px(double value) => new Px(value);
 
     /// <summary>
-    /// A fixed size in rem units.
+    /// A fixed size relative to the font size of the root element.
     /// </summary>
     /// <param name="value">The size in rem units.</param>
     public static LengthPercentage Rem(double value) => new Rem(value);

@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Reflection.Metadata.Ecma335;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -17,9 +16,9 @@ public class ImplicitMatrix : CssStringBuilder
     protected override string DefaultValue() => "auto";
 
     /// <summary>
-    /// Defines the track sizes to be repeated.
+    /// Defines the track breadths to be repeated.
     /// </summary>
-    /// <param name="items">The size of each track in order.</param>
+    /// <param name="items">The size of each breadth in order.</param>
     public static ImplicitMatrix Pattern(params TrackBreadth[] items)
     {
         return new()

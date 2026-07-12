@@ -31,8 +31,8 @@ public class ExplicitMatrix : CssStringBuilder
     /// <summary>
     /// Defines the sizing pattern for columns or rows in the matrix.
     /// </summary>
-    /// <param name="count">The number of times to repeat the columns or row sizes.</param>
-    /// <param name="items">The size of each columns or row in order to repeat.</param>
+    /// <param name="count">The number of times to repeat the <see cref="TrackBreadth"/> sizes.</param>
+    /// <param name="items">The size of each breadth in order to repeat.</param>
     public static ExplicitMatrix Pattern(int count, params TrackBreadth[] items)
     {
         return new()
@@ -85,14 +85,6 @@ public class ExplicitMatrix : CssStringBuilder
         {
             Value = $"repeat(auto-fit, {size})"
         };
-    }
-
-    /// <summary>
-    /// Returns CSS representation.
-    /// </summary>
-    public override string ToString()
-    {
-        return Value;
     }
 }
 

@@ -33,6 +33,14 @@
     }
 </MudMatrix>
 
+@if (_itemCount > _columnCount * _rowCount)
+{
+    <MudAlert Severity="Severity.Info">
+        The Matrix may look like it broke, but it did not. <CodeInline>ImplicitMatrix</CodeInline> was unspecified
+        (see below).
+    </MudAlert>
+}
+
     @code {
     int _columnCount = 3;
     int _rowCount = 3;
