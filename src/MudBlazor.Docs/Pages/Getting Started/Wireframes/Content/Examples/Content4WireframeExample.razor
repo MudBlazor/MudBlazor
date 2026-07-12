@@ -3,7 +3,7 @@
 @page "/getting-started/wireframes/content4"
 
 <MudMatrix ExplicitColumns="ExplicitMatrix.Fit(Units.Px(400))"
-           ImplicitRows="ImplicitMatrix.Pattern(Units.Px(600))"
+           ImplicitRows="ImplicitMatrix.Pattern(Units.Px(550))"
            JustifyColumns="MatrixJustify.Center">
        
     @for (int i = 0; i < _productCount; i++)
@@ -14,7 +14,7 @@
         <MudMatrixItem>
             <MudCard Class="d-flex flex-column mud-height-full">
                 <MudCardMedia Image="@(product.Image)" Height="450"  />
-                <MudCardContent Class="d-flex flex-column align-content-end">
+                <MudCardContent Class="d-flex flex-column">
                     <MudText Typo="Typo.h5">@product.Title</MudText>
                     <MudText Typo="Typo.body2">$@product.Price</MudText>
                 </MudCardContent>
