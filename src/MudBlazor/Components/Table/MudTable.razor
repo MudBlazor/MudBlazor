@@ -37,7 +37,7 @@
                 </div>
             }
             <div id="@_tableId" class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
-                <table class="@TableClassname" @attributes="GetTableAttributes()">
+                <table @attributes="GetTableAttributes()" class="@TableClassname">
                     @if (ColGroup != null)
                     {
                         <colgroup>
