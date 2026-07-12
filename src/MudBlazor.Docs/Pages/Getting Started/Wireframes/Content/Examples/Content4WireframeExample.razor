@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Wireframes
+@layout WireframeContentLayout1
+@page "/getting-started/wireframes/content4"
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Fit(Units.Px(400))"
+           ImplicitRows="ImplicitMatrix.Pattern(Units.Px(600))"
+           JustifyColumns="MatrixJustify.Center">
+       
+    @for (int i = 0; i < _productCount; i++)
+    {
+        int index = i;
+        Product product = _products[index % _products.Length];
+
+        <MudMatrixItem>
+            <MudCard Class="d-flex flex-column mud-height-full">
+                <MudCardMedia Image="@(product.Image)" Height="450"  />
+                <MudCardContent Class="d-flex flex-column align-content-end">
+                    <MudText Typo="Typo.h5">@product.Title</MudText>
+                    <MudText Typo="Typo.body2">$@product.Price</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudMatrixItem>
+    }
+
+</MudMatrix>
+
+    @code {
+    const int _productCount = 53;
+
+    private record Product(string Image, string Title, double Price);
+
+    Product[] _products = [
+        new("images/hoodie.jpg", "Hoodie", 59.99),
+        new("images/tshirt.jpg", "T-Shirt", 35.99),
+        new("images/shorts.jpg", "Shorts", 39.99),
+        new("images/joggers.jpg", "Joggers", 55.99)
+    ];
+}
