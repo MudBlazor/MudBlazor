@@ -20,7 +20,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// Defines the sizing pattern for columns or rows in the matrix.
     /// </summary>
     /// <param name="items">The size of each column or row in order.</param>
-    public static ExplicitMatrix Pattern(params TrackUnit[] items)
+    public static ExplicitMatrix Pattern(params TrackBreadth[] items)
     {
         return new()
         {
@@ -33,7 +33,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// </summary>
     /// <param name="count">The number of times to repeat the columns or row sizes.</param>
     /// <param name="items">The size of each columns or row in order to repeat.</param>
-    public static ExplicitMatrix Pattern(int count, params TrackUnit[] items)
+    public static ExplicitMatrix Pattern(int count, params TrackBreadth[] items)
     {
         return new()
         {
@@ -46,7 +46,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="Fit(IAutoRepeatable)"/>, if there arent enough items to fill the column or row, there will be empty space left.
+    /// Unlike <see cref="Fit(FixedSize)"/>, if there arent enough items to fill the column or row, there will be empty space left.
     /// </para>
     /// <para>
     /// Maps to CSS <c>repeat(auto-fill, size)</c>.
@@ -56,7 +56,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// </para>
     /// </remarks>
     /// <param name="size">The fixed size of each <see cref="MudMatrixItem"/> to repeat.</param>
-    public static ExplicitMatrix Fill(IAutoRepeatable size)
+    public static ExplicitMatrix Fill(FixedSize size)
     {
         return new()
         {
@@ -69,7 +69,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Unlike <see cref="Fill(IAutoRepeatable)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
+    /// Unlike <see cref="Fill(FixedSize)"/>, if there arent enough items to fill the row or column, the remaining ones will stretch to fill the empty space.
     /// </para>
     /// <para>
     /// Maps to CSS <c>repeat(auto-fit, size)</c>.
@@ -79,7 +79,7 @@ public class ExplicitMatrix : CssStringBuilder
     /// </para>
     /// </remarks>
     /// <param name="size">The fixed size of <see cref="MudMatrixItem"/> to repeat.</param>
-    public static ExplicitMatrix Fit(IAutoRepeatable size)
+    public static ExplicitMatrix Fit(FixedSize size)
     {
         return new()
         {

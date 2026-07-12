@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+@using MudBlazor.Utilities
+
 <MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(2, Units.Auto())" 
            ColumnGap="3"           
            RowGap="3" 
@@ -108,6 +110,6 @@
 
     bool _showMinMaxExample;
 
-    IAutoRepeatable _minMaxExampleUnit = Units.MinMax(Units.Px(_pixels), Units.Fr());
-    IAutoRepeatable _justifyExampleUnit = Units.Px(_pixels);
+    FixedSize _minMaxExampleUnit = Units.MinMax(Units.Px(_pixels), Units.Fr());
+    FixedSize _justifyExampleUnit = Units.Px(_pixels);
 }

@@ -55,6 +55,51 @@ namespace MudBlazor.UnitTests.Utilities
             Units.Pct(value).ToString().Should().Be(expected);
         }
 
+        [TestCase(1, "1em")]
+        [TestCase(10, "10em")]
+        [TestCase(25, "25em")]
+        [TestCase(50, "50em")]
+        public void Units_Em_ReturnsCorrectString(double value, string expected)
+        {
+            Units.Em(value).ToString().Should().Be(expected);
+        }
+
+        [TestCase(1, "1vw")]
+        [TestCase(10, "10vw")]
+        [TestCase(25, "25vw")]
+        [TestCase(50, "50vw")]
+        public void Units_Vw_ReturnsCorrectString(double value, string expected)
+        {
+            Units.Vw(value).ToString().Should().Be(expected);
+        }
+
+        [TestCase(1, "1vh")]
+        [TestCase(10, "10vh")]
+        [TestCase(25, "25vh")]
+        [TestCase(50, "50vh")]
+        public void Units_Vh_ReturnsCorrectString(double value, string expected)
+        {
+            Units.Vh(value).ToString().Should().Be(expected);
+        }
+
+        [TestCase(1, "1vmin")]
+        [TestCase(10, "10vmin")]
+        [TestCase(25, "25vmin")]
+        [TestCase(50, "50vmin")]
+        public void Units_VMin_ReturnsCorrectString(double value, string expected)
+        {
+            Units.VMin(value).ToString().Should().Be(expected);
+        }
+
+        [TestCase(1, "1vmax")]
+        [TestCase(10, "10vmax")]
+        [TestCase(25, "25vmax")]
+        [TestCase(50, "50vmax")]
+        public void Units_VMax_ReturnsCorrectString(double value, string expected)
+        {
+            Units.VMax(value).ToString().Should().Be(expected);
+        }
+
         [Test]
         public void Units_Auto_ReturnsCorrectString()
         {

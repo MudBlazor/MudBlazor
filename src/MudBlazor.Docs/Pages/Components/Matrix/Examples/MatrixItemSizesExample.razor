@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Utilities
 
 <MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Px(100), Units.Fr())">
 
@@ -71,8 +72,8 @@
 </MudMatrix>
 
 @code {
-    TrackUnit[] _columnDimensions = null!;
-    TrackUnit[] _rowDimensions = null!;
+    TrackBreadth[] _columnDimensions = null!;
+    TrackBreadth[] _rowDimensions = null!;
 
     int[] _columnSizes = [1, 175, 10, 1, 25];
     int[] _rowSizes = [2, 100, 8, 1, 15];
