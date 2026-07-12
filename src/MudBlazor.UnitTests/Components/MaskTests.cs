@@ -1176,5 +1176,27 @@ namespace MudBlazor.UnitTests.Components
             // The second keystroke must survive the parent Value echo triggered by the first forwarded callback.
             mask.ReadText.Should().Be("(1)2-_)");
         }
+
+        /// <summary>
+        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/11564.
+        /// The user supplied Class should style the mask input, but must not be
+        /// copied onto the adornment (the icon at the end of the input).
+        /// </summary>
+        [Test]
+        public void Class_IsNotAppliedToAdornment()
+        {
+            const string customClass = "__custom_mask_class__";
+
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Class, customClass)
+                .Add(p => p.Adornment, Adornment.End)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Search));
+
+            // The class is still applied to the input itself.
+            comp.Find("div.mud-input").ClassList.Should().Contain(customClass);
+
+            // But not to the adornment that holds the icon.
+            comp.Find("div.mud-input-adornment-end").ClassList.Should().NotContain(customClass);
+        }
     }
 }

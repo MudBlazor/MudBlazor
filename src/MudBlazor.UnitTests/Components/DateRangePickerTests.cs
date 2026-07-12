@@ -1488,6 +1488,26 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().BeNull();
         }
 
+        /// <summary>
+        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/11564.
+        /// The user supplied <see cref="MudComponentBase.Class"/> should style the picker's
+        /// input, but must not be copied onto the adornment (the calendar icon).
+        /// </summary>
+        [Test]
+        public void Class_IsNotAppliedToAdornment()
+        {
+            const string customClass = "__custom_picker_class__";
+
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Class, customClass));
+
+            // The class is still applied to the input itself.
+            comp.Find("div.mud-input").ClassList.Should().Contain(customClass);
+
+            // But not to the adornment that holds the calendar icon.
+            comp.Find("div.mud-input-adornment-end").ClassList.Should().NotContain(customClass);
+        }
+
         [Test]
         public void Static_StartMonth_IsShownOnFirstRender()
         {
