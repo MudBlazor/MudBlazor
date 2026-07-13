@@ -59,14 +59,12 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
         var options = Options.Create(new LocalizationOptions());
         var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
 
-        // MudBlazor ships no satellite assemblies, so look up the built-in English strings under the invariant
-        // culture to avoid probing for a non-existent MudBlazor.resources satellite under non-English UI cultures (#13461).
+        // MudBlazor ships no satellite assemblies, so look up the built-in English strings under the invariant culture to avoid probing for a non-existent MudBlazor.resources satellite under non-English UI cultures (#13461).
         return new InvariantLanguageResourceLocalizer(factory.Create(typeof(LanguageResource)));
     }
 
     /// <summary>
-    /// Resolves the built-in English resources under the invariant culture. Only <see cref="CultureInfo.CurrentUICulture"/>
-    /// is pinned, so <see cref="CultureInfo.CurrentCulture"/> still formats arguments in the user's culture.
+    /// Resolves the built-in English resources under the invariant culture. Only <see cref="CultureInfo.CurrentUICulture"/> is pinned, so <see cref="CultureInfo.CurrentCulture"/> still formats arguments in the user's culture.
     /// </summary>
     private sealed class InvariantLanguageResourceLocalizer(IStringLocalizer inner) : IStringLocalizer
     {

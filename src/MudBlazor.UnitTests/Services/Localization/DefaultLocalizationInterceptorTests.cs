@@ -191,12 +191,9 @@ public class DefaultLocalizationInterceptorTests
     [SetUICulture("sv-SE")]
     public void DefaultEnglishLookup_NonEnglishUICulture_DoesNotProbeSatelliteAssembly()
     {
-        // Regression test for #13461. Reading the built-in English resources under a non-English UI culture
-        // must not make the ResourceManager probe for a (non-existent) MudBlazor.resources satellite assembly.
-        // On the Blazor WebAssembly runtime each probe throws a first-chance FileNotFoundException; on the
-        // runtime used by the test host the same probe surfaces as an AssemblyResolve request.
-        // A value-only assertion is not enough: the English fallback resolves correctly either way, so the
-        // test asserts that the probe never happens.
+        // Regression test for #13461. Reading the built-in English resources under a non-English UI culture must not make the ResourceManager probe for a (non-existent) MudBlazor.resources satellite assembly.
+        // On the Blazor WebAssembly runtime each probe throws a first-chance FileNotFoundException; on the runtime used by the test host the same probe surfaces as an AssemblyResolve request.
+        // A value-only assertion is not enough: the English fallback resolves correctly either way, so the test asserts that the probe never happens.
 
         // Arrange
         var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
