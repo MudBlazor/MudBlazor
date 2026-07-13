@@ -75,10 +75,12 @@
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Filled.Check"
                                    Color="Color.Success"
+                                   AriaLabel="Save changes"
                                    OnClick="@context.Actions.CommitEditingItemAsync" />
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Filled.Close"
                                    Color="Color.Error"
+                                   AriaLabel="Cancel editing"
                                    OnClick="@context.Actions.CancelEditingItemAsync" />
                 }
                 else
@@ -86,10 +88,12 @@
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Outlined.Edit"
                                    Disabled="@_isEditing"
+                                   AriaLabel="Edit row"
                                    OnClick="@context.Actions.StartEditingItemAsync" />
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Outlined.Delete"
                                    Disabled="@_isEditing"
+                                   AriaLabel="Delete row"
                                    OnClick="@(() => DeleteItem(context.Item))" />
                 }
             </CellTemplate>
