@@ -72,9 +72,9 @@
     color: var(--mud-palette-text-secondary);
     padding: 0;
     font-size: var(--mud-typography-subtitle1-size);
-    font-weight: 400;
+    font-weight: var(--mud-typography-subtitle1-weight);
     line-height: 1.15rem;
-    letter-spacing: 0.00938em;
+    letter-spacing: var(--mud-typography-subtitle1-letterspacing);
     z-index: 0;
     pointer-events: none;
 
