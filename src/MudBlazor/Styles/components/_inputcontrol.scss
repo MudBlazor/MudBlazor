@@ -71,10 +71,13 @@
   & > .mud-input-control-input-container > .mud-input-label-inputcontrol {
     color: var(--mud-palette-text-secondary);
     padding: 0;
+    font-family: var(--mud-typography-subtitle1-family);
     font-size: var(--mud-typography-subtitle1-size);
     font-weight: var(--mud-typography-subtitle1-weight);
+    // line-height intentionally kept compact for the floating label (see .mud-input-label-outlined override); MD2's .mdc-floating-label likewise hardcodes 1.15rem.
     line-height: 1.15rem;
     letter-spacing: var(--mud-typography-subtitle1-letterspacing);
+    text-transform: var(--mud-typography-subtitle1-text-transform);
     z-index: 0;
     pointer-events: none;
 
