@@ -7634,6 +7634,34 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-dialog").Count.Should().Be(0, because: "Inline edit mode should not open a dialog");
         }
 
+        [Test]
+        public async Task DataGridInlineEdit_CommitInlineEditAsync_NotEditing_NoOp()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Not currently editing any row, so committing should be a no-op
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeFalse();
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CommitInlineEditAsync());
+
+            comp.Instance.CommittedItemChangesCalled.Should().BeFalse();
+            comp.Instance.CommittedItemChangedCalled.Should().BeFalse();
+        }
+
+        [Test]
+        public void DataGridInlineEdit_CellContext_ItemOnlyConstructor()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+            var item = comp.Instance.Items[0];
+
+            var context = new CellContext<DataGridInlineEditTest.Model>(dataGrid.Instance, item);
+
+            context.Item.Should().BeSameAs(item);
+            context.IsEditing.Should().BeFalse();
+        }
+
         #endregion
     }
 }

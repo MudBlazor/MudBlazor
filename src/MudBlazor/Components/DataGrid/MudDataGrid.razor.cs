@@ -2290,13 +2290,7 @@ namespace MudBlazor
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task CommitInlineEditAsync()
         {
-            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingItem, default) || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
-                return;
-
-            var editingItem = _editingItem;
-            var editingSourceItem = _editingSourceItem;
-
-            if (editingItem is null || editingSourceItem is null)
+            if (EditMode != DataGridEditMode.Inline || _editingItem is not { } editingItem || _editingSourceItem is not { } editingSourceItem)
                 return;
 
             // Allow consumer to validate/persist
