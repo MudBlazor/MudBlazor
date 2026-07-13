@@ -2737,6 +2737,26 @@ namespace MudBlazor.UnitTests.Components
             await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(35));
         }
 
+        // Issue #13462
+        // A one-way RowsPerPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page size the user picked via the pager.
+        [Test]
+        public async Task RowsPerPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableRowsPerPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            table.RowsPerPage.Should().Be(100);
+
+            // Simulate the user changing the page size through the pager.
+            await testComponent.InvokeAsync(() => table.SetRowsPerPage(25));
+            table.RowsPerPage.Should().Be(25);
+
+            // A parent re-render re-applies the unchanged RowsPerPage="100" parameter; the pager choice must survive.
+            await buttonComponent.Find("button").ClickAsync();
+            table.RowsPerPage.Should().Be(25);
+        }
+
         /// <summary>
         /// Tests whether record type table items are kept track of when edited
         /// </summary>

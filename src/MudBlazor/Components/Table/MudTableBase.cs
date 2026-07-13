@@ -13,6 +13,7 @@ namespace MudBlazor
     {
         private int _currentPage = 0;
         internal int? _rowsPerPage;
+        private int? _rowsPerPageParameterValue;
         internal object? _editingItem = null;
         internal bool Editing => _editingItem != null;
 
@@ -238,10 +239,14 @@ namespace MudBlazor
             get => _rowsPerPage ?? 10;
             set
             {
-                if (_rowsPerPage is null || _rowsPerPage != value)
+                // React only to real parameter changes; the pager mutates _rowsPerPage directly, so re-applying an unchanged value must not clobber it (#13462, #3033, #3244).
+                if (_rowsPerPageParameterValue == value)
                 {
-                    SetRowsPerPage(value);
+                    return;
                 }
+
+                _rowsPerPageParameterValue = value;
+                SetRowsPerPage(value);
             }
         }
 
