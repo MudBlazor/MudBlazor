@@ -205,6 +205,170 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MiniSmallScreen_UsesTemporaryVariantClassesAndOverlay()
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(1);
+            comp.Find("div.mud-layout").ClassName.Should().Contain("mud-drawer-close-temporary-left");
+            comp.Find("div.mud-layout").ClassName.Should().NotContain("mud-drawer-close-mini");
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-temporary").Count.Should().Be(1);
+            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MiniSmallScreen_NavigationClosesDrawer()
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            await comp.InvokeAsync(() => ((MudBlazor.Interfaces.INavigationEventReceiver)comp.Instance.Drawer).OnNavigation());
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-temporary").Count.Should().Be(1);
+            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(0);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(Breakpoint.None)]
+        [TestCase(Breakpoint.Always)]
+        public async Task MiniSentinelBreakpoint_StaysMiniOnLargeScreen(Breakpoint breakpoint)
+        {
+            // Breakpoint.None and Breakpoint.Always are sentinels, not real widths, so a mini drawer using them must
+            // keep its mini behavior on every screen size instead of degrading to a temporary overlay drawer.
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini)
+                .Add(x => x.Breakpoint, breakpoint));
+
+            comp.FindAll("aside.mud-drawer-mini").Count.Should().Be(1);
+            comp.FindAll("aside.mud-drawer-temporary").Count.Should().Be(0);
+            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(0);
+
+            // Toggling forces the drawer to re-render after the viewport breakpoint has been resolved; a sentinel
+            // breakpoint must never flip a mini drawer into temporary mode.
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+
+            comp.FindAll("aside.mud-drawer-mini").Count.Should().Be(1);
+            comp.FindAll("aside.mud-drawer-temporary").Count.Should().Be(0);
+        }
+
+        [Test]
+        [TestCase(Breakpoint.Lg)]
+        [TestCase(Breakpoint.Xl)]
+        public async Task MiniLargeScreen_StaysMiniRailWithoutOverlay(Breakpoint viewport)
+        {
+            // Above its breakpoint a mini drawer stays a docked rail with no overlay and keeps the content offset.
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(viewport));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+
+            comp.FindAll("aside.mud-drawer-mini").Count.Should().Be(1);
+            comp.Find("div.mud-layout").ClassName.Should().Contain("mini-md-left");
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+
+            // Opening a desktop mini drawer keeps it a mini rail and never shows an overlay.
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-mini").Count.Should().Be(1);
+            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(0);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task MiniLargeScreen_OpenMiniOnHover_OpensAndCloses()
+        {
+            // On a large screen the mini drawer is still a real mini drawer, so hover-to-expand keeps working.
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini)
+                .Add(x => x.OpenMiniOnHover, true));
+
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            await comp.Find("aside.mud-drawer").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            await comp.Find("aside.mud-drawer").TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task MiniSmallScreen_OpenMiniOnHover_DoesNotOpen()
+        {
+            // Below the breakpoint the drawer behaves like Temporary, so hover must not open it.
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini)
+                .Add(x => x.OpenMiniOnHover, true));
+
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            await comp.Find("aside.mud-drawer").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Mini_ResizeAcrossBreakpoint_SwitchesVariantClasses()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance)!;
+
+            // Large screen: mini rail with the mini content offset. (The open/close prefix depends on auto-open
+            // timing, so assert on the variant token only.)
+            comp.FindAll("aside.mud-drawer-mini").Count.Should().Be(1);
+            comp.Find("div.mud-layout").ClassName.Should().Contain("mini-md-left");
+            comp.Find("div.mud-layout").ClassName.Should().NotContain("temporary");
+
+            // Resize below the breakpoint: the drawer becomes temporary and the mini offset is dropped.
+            await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 0, Width = 0 }, Breakpoint.Xs, subscription.JavaScriptListenerId));
+
+            comp.FindAll("aside.mud-drawer-temporary").Count.Should().Be(1);
+            comp.FindAll("aside.mud-drawer-mini").Count.Should().Be(0);
+            comp.Find("div.mud-layout").ClassName.Should().Contain("temporary-left");
+            comp.Find("div.mud-layout").ClassName.Should().NotContain("mini");
+
+            // Resize back above the breakpoint: the drawer returns to the mini rail.
+            await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
+
+            comp.FindAll("aside.mud-drawer-mini").Count.Should().Be(1);
+            comp.FindAll("aside.mud-drawer-temporary").Count.Should().Be(0);
+            comp.Find("div.mud-layout").ClassName.Should().Contain("mini-md-left");
+            comp.Find("div.mud-layout").ClassName.Should().NotContain("temporary");
+        }
+
+        [Test]
+        public async Task MiniLargeScreen_NavigationDoesNotCloseDesktopRail()
+        {
+            // The "And-up" aliases normalize to a real breakpoint; navigating on a desktop mini rail must not close it.
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini)
+                .Add(x => x.Breakpoint, Breakpoint.MdAndUp));
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-mini").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            await comp.InvokeAsync(() => ((MudBlazor.Interfaces.INavigationEventReceiver)comp.Instance.Drawer).OnNavigation());
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-mini").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+        }
+
+        [Test]
         public async Task ResponsiveClosed_Open_CheckOpened_Close_CheckClosedAsync()
         {
             _ = AddBrowserViewportService();
