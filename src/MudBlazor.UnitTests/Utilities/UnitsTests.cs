@@ -15,9 +15,9 @@ namespace MudBlazor.UnitTests.Utilities
     [TestFixture]
     public class UnitsTests : BunitTest
     {
-        public record PrimitiveUnitTestCases(Func<double, ICssUnit> Factory, string Suffix);
+        public record PrimitiveUnitTestCase(Func<double, ICssUnit> Factory, string Suffix);
 
-        private static IEnumerable<PrimitiveUnitTestCases> PrimitiveTestCases()
+        private static IEnumerable<PrimitiveUnitTestCase> PrimitiveTestCases()
         {
             yield return new(Units.Px, "px");
             yield return new(Units.Rem, "rem");
@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase(10)]
         [TestCase(25)]
         [TestCase(50)]
-        public void Units_Values_ReturnCorrectString(double value)
+        public void Units_Primitives_ReturnCorrectString(double value)
         {
             foreach (var testCase in PrimitiveTestCases())
             {
@@ -78,13 +78,36 @@ namespace MudBlazor.UnitTests.Utilities
             Units.MaxContent().ToString().Should().Be("max-content");
         }
 
-        [TestCase(1, "minmax(1px, 1fr)")]
-        [TestCase(10, "minmax(10px, 1fr)")]
-        [TestCase(25, "minmax(25px, 1fr)")]
-        [TestCase(50, "minmax(50px, 1fr)")]
-        public void Units_MinMax_ReturnsCorrectString(double min, string expected)
+        private record MinMaxTestCase(Func<double, string> Result, Func<double, string> Expected);
+
+        private static IEnumerable<MinMaxTestCase> MinMaxTestCases()
         {
-            Units.MinMax(Units.Px(min), Units.Fr()).ToString().Should().Be(expected);
+            // tests MinMaxFixedMin
+            yield return new(
+                dbl => Units.Min(Units.Px(dbl)).Max(Units.Fr()).ToString(),
+                dbl => $"minmax({dbl}px, 1fr)");
+
+            // tests MinMaxFixedMax
+            yield return new(
+                dbl => Units.Min(Units.MinContent()).Max(Units.Px(dbl)).ToString(),
+                dbl => $"minmax(min-content, {dbl}px)");
+
+            // tests MinMax
+            yield return new(
+                dbl => Units.Min(Units.MinContent()).Max(Units.Fr(dbl)).ToString(),
+                dbl => $"minmax(min-content, {dbl}fr)");
+        }
+
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(25)]
+        [TestCase(50)]
+        public void Units_MinMax_ReturnsCorrectString(double value)
+        {
+            foreach (var testCase in MinMaxTestCases())
+            {
+                testCase.Result(value).Should().Be(testCase.Expected(value));
+            }
         }
 
         [TestCase(1, "min(1px, 1rem)")]

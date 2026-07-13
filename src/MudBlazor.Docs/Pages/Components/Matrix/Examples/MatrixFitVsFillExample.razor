@@ -92,7 +92,7 @@
     <MudMatrixItem>
         <MudAlert Severity="Severity.Info">
             The 'MinMax Example' replaces the column units with
-            <CodeInline>Units.MinMax(Units.Px(100), Units.Fr())</CodeInline> on both grids.
+            <CodeInline>Units.Min(Units.Px(100)).Max(Units.Fr())</CodeInline> on both grids.
             With <CodeInline>Fit</CodeInline>, the <CodeInline>1fr</CodeInline> is split only
             among the visible tracks, so they grow to fill the space. With
             <CodeInline>Fill</CodeInline>, the ghost tracks are also part of the fraction
@@ -110,6 +110,6 @@
 
     bool _showMinMaxExample;
 
-    IFixedSize _minMaxExampleUnit = Units.MinMax(Units.Px(_pixels), Units.Fr());
+    IFixedSize _minMaxExampleUnit = Units.Min(Units.Px(_pixels)).Max(Units.Fr());
     IFixedSize _justifyExampleUnit = Units.Px(_pixels);
 }

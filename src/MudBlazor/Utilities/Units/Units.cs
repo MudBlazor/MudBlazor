@@ -193,31 +193,36 @@ public static class Units
     public static IInflexibleBreadth MaxContent() => new MaxContent();
 
     /// <summary>
-    /// Clamps a size between a minimum and maximum value.
-    /// </summary>
-    /// <remarks>
-    /// <c>NOT</c> valid as a parameter to <see cref="ExplicitMatrix.Fit(IFixedSize)"/>
-    /// and <see cref="ExplicitMatrix.Fill(IFixedSize)"/>.
-    /// </remarks>
-    /// <param name="min">The minimum size.</param>
-    /// <param name="max">The maximum size.</param>
-    public static ITrackBreadth MinMax(IInflexibleBreadth min, ITrackBreadth max) => new MinMax(min, max);
-
-    /// <summary>
-    /// Clamps a size between a minimum and maximum value.
-    /// </summary>
-    /// <remarks>
-    /// Valid as a parameter to <see cref="ExplicitMatrix.Fit(IFixedSize)"/>
-    /// and <see cref="ExplicitMatrix.Fill(IFixedSize)"/>.
-    /// </remarks>
-    /// <param name="min">The minimum size.</param>
-    /// <param name="max">The maximum size.</param>
-    public static IFixedSize MinMax(LengthPercentage min, ITrackBreadth max) => new MinMaxFixed(min, max);
-
-    /// <summary>
     /// Uses the smaller size between the two sizes.
     /// </summary>
     public static LengthPercentage Min(LengthPercentage a, LengthPercentage b) => new Min(a, b);
+
+    /// <summary>
+    /// Minimum value for a minmax unit. 
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Minmax clamps a size between a minimum and maximum value. 
+    /// </para>
+    /// <para>
+    /// see <see cref="FixedMinBuilder.Max(ITrackBreadth)"/> to finish the unit.
+    /// </para>
+    /// </remarks>
+    /// <param name="min">Minimum value for a minmax unit.</param>
+    public static FixedMinBuilder Min(LengthPercentage min) => new(min);
+
+    /// <summary>
+    /// Minimum value for a minmax unit. 
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Minmax clamps a size between a minimum and maximum value. 
+    /// </para>
+    /// <para>
+    /// see <see cref="InflexibleMinBuilder.Max(ITrackBreadth)"/> to finish the unit.
+    /// </para>
+    /// </remarks>
+    public static InflexibleMinBuilder Min(IInflexibleBreadth min) => new(min);
 
     /// <summary>
     /// Uses the larger size between two sizes.
