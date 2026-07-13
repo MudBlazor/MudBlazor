@@ -4285,19 +4285,19 @@ namespace MudBlazor.UnitTests.Components
             if (withExistingFilter)
             {
                 var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
-                var departmentColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Name");
+                var nameColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Name");
 
                 await comp.InvokeAsync(async () =>
                 {
                     await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnFilterMenuTest.Model>
                     {
-                        Column = departmentColumn,
+                        Column = nameColumn,
                         Operator = FilterOperator.String.Equal,
                         Value = "Sam"
                     });
                 });
             }
-            
+
             var buttons = comp.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon");
             await buttons[0].ClickAsync();
 
