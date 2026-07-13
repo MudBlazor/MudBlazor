@@ -1,0 +1,37 @@
+@using MudBlazor.Utilities
+
+<div data-testid="broken">
+    <MudColorPicker PickerVariant="PickerVariant.Static" @bind-Value="_broken" />
+</div>
+
+<div data-testid="alpha">
+    <MudColorPicker PickerVariant="PickerVariant.Static" @bind-Value="_alpha" />
+</div>
+
+<div data-testid="lightness">
+    <MudColorPicker PickerVariant="PickerVariant.Static" @bind-Value="_lightness" />
+</div>
+
+<div data-testid="pseudo">
+    <MudColorPicker PickerVariant="PickerVariant.Static" @bind-Value="_pseudo" />
+</div>
+
+<div data-testid="async">
+    <MudColorPicker PickerVariant="PickerVariant.Static" @bind-Value="_async" />
+</div>
+
+@code {
+    private const string __description__ = "Regression coverage for https://github.com/MudBlazor/MudBlazor/issues/13037 after the null-value startup path introduced by https://github.com/MudBlazor/MudBlazor/pull/12567 became reachable.";
+    private MudColor _broken = "#00000088";
+    private MudColor _alpha = "#00000188";
+    private MudColor _lightness = "#ff0000ff";
+    private MudColor _pseudo = "#ff000088";
+    private MudColor _async = "#ff000088";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _pseudo = new MudColor("#0f0f");
+        await Task.Yield();
+        _async = new MudColor("#00ff");
+    }
+}

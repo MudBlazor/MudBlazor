@@ -1051,7 +1051,7 @@ namespace MudBlazor.UnitTests.Utilities
             var actualUint = (uint)mudColor;
 
             actualUint.Should().Be(expectedUint);
-            mudColor.UInt32.Should().Be(mudColor.UInt32);
+            mudColor.UInt32.Should().Be(expectedUint);
         }
 
         [Test]
@@ -1151,6 +1151,27 @@ namespace MudBlazor.UnitTests.Utilities
             // Assert
             result1.Should().Be("#47586301");
             result2.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void GenerateGradientPalette_ZeroOrNegativeColorCount_Throws([Values(0, -1)] int numberOfColors)
+        {
+            var start = new MudColor("#FF0000");
+            var end = new MudColor("#0000FF");
+
+            var act = () => MudColor.GenerateGradientPalette(start, end, numberOfColors).ToList();
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        public void GenerateTintShadePalette_NegativeStep_Throws()
+        {
+            var negativeTint = () => MudColor.GenerateTintShadePalette("#808080", 5, tintStep: -0.1, shadeStep: 0.1).ToList();
+            var negativeShade = () => MudColor.GenerateTintShadePalette("#808080", 5, tintStep: 0.1, shadeStep: -0.1).ToList();
+
+            negativeTint.Should().Throw<ArgumentOutOfRangeException>();
+            negativeShade.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         private static readonly object[] _multiGradientTestCases =

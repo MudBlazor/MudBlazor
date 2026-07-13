@@ -274,10 +274,52 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
+            // Backspace is not a standard radio interaction and no longer clears the selection.
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
             //Can't tabbed around the radios in test.
+        }
+
+        [Test]
+        public async Task RadioGroup_ResetAsync_ResetsToDefault()
+        {
+            // #11369: ResetAsync must reset the group to default(T) consistently, and re-selection must still work.
+
+            // Non-nullable bool: default is false, so resetting selects the "false" radio.
+            var boolGroup = Context.Render<MudRadioGroup<bool>>(self => self
+                .Add(x => x.Value, true)
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, false)));
+
+            await boolGroup.InvokeAsync(() => boolGroup.Instance.ResetAsync());
+            boolGroup.Instance.Value.Should().BeFalse();
+            boolGroup.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Re-selecting right after a reset still updates the value (the #11369 symptom).
+            await boolGroup.FindAll("input.mud-radio-input")[0].ClickAsync(new MouseEventArgs());
+            boolGroup.Instance.Value.Should().BeTrue();
+
+            // Nullable with a matching null option: resets to null and selects that option.
+            var nullableWithNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, (bool?)null)));
+
+            await nullableWithNull.InvokeAsync(() => nullableWithNull.Instance.ResetAsync());
+            nullableWithNull.Instance.Value.Should().BeNull();
+            nullableWithNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Nullable without a null option: resets to null and clears the selection entirely.
+            var nullableNoNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false)));
+
+            await nullableNoNull.InvokeAsync(() => nullableNoNull.Instance.ResetAsync());
+            nullableNoNull.Instance.Value.Should().BeNull();
+            nullableNoNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(0);
         }
 
         [Test]
@@ -453,6 +495,31 @@ namespace MudBlazor.UnitTests.Components
             create(readOnly = true, disabled = false).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = false, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        [Test]
+        public void RadioColor_ReadOnly_ShouldKeepColor()
+        {
+            // #9524: a read-only radio keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.ReadOnly, true)
+                .Add(x => x.Value, 1)
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 1)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error))
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 2)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error)));
+
+            var icons = comp.FindAll("span.mud-button-root");
+            // first radio is checked -> Color; second is unchecked -> UncheckedColor
+            icons[0].ClassList.Should().Contain("mud-success-text");
+            icons[0].ClassList.Should().NotContain("hover:mud-success-hover");
+            icons[1].ClassList.Should().Contain("mud-error-text");
+            icons[1].ClassList.Should().NotContain("hover:mud-error-hover");
         }
 
         [Test]

@@ -154,13 +154,15 @@ public static class FilterExpressionGenerator
 
         if (fieldType.IsEnum)
         {
-            if (filter.Value is null)
+            if (filter.Value is null && filter.Operator != FilterOperator.Enum.Empty && filter.Operator != FilterOperator.Enum.NotEmpty)
                 return x => true;
 
             return filter.Operator switch
             {
                 FilterOperator.Enum.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
                 FilterOperator.Enum.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
+                FilterOperator.Enum.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
+                FilterOperator.Enum.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
                 _ => x => true
             };
         }

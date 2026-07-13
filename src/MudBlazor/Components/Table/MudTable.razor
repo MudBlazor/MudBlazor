@@ -17,6 +17,12 @@
                     @ToolBarContent
                 </MudToolBar>
             }
+            @if (PagerContent != null && (PagerPosition == PagerPosition.Top || PagerPosition == PagerPosition.TopAndBottom))
+            {
+                <div class="mud-table-pagination mud-table-pagination-top">
+                    @PagerContent
+                </div>
+            }
             @if (Context.SortLabels.Any())
             {
                 <div Class="mud-table-smalldevices-sortselect">
@@ -31,7 +37,7 @@
                 </div>
             }
             <div id="@_tableId" class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
-                <table class="@TableClassname" aria-label="@AriaLabel">
+                <table @attributes="GetTableAttributes()" class="@TableClassname">
                     @if (ColGroup != null)
                     {
                         <colgroup>
@@ -190,7 +196,7 @@
                     }
                 </table>
             </div>
-            @if (PagerContent != null)
+            @if (PagerContent != null && (PagerPosition == PagerPosition.Bottom || PagerPosition == PagerPosition.TopAndBottom))
             {
                 <div class="mud-table-pagination">
                     @PagerContent

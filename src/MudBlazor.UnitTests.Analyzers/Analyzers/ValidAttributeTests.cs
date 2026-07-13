@@ -1,6 +1,4 @@
-﻿using AwesomeAssertions;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using MudBlazor.Analyzers.TestComponents;
 using MudBlazor.UnitTests.Analyzers.Internal;
@@ -15,10 +13,6 @@ extern alias MudBlazorAnalyzer;
 //[Ignore("Until a solution for matching SDK/roslyn package reference is found see https://github.com/dotnet/roslyn/issues/77979")]
 public class ValidAttributeTests : BunitTest
 {
-    private static ProjectCompilation Workspace { get; set; } = null!;
-
-    private static DiagnosticAnalyzer Analyzer { get; } = new MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer();
-
     private static IEnumerable<Diagnostic> LowerCaseAttributesDiagnostics { get; set; } = null!;
 
     private static IEnumerable<Diagnostic> DefaultAttributesListDiagnostics { get; set; } = null!;
@@ -121,21 +115,14 @@ public class ValidAttributeTests : BunitTest
     [OneTimeSetUp]
     public static async Task OneTimeSetup()
     {
-        Workspace = await ProjectCompilation.CreateAsync(Util.ProjectPath());
-        Workspace.Should().NotBeNull("Workspace null");
+        var source = CreateGeneratedSource();
 
-        LowerCaseAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase, Workspace.AdditionalTexts));
-        DefaultAttributesListDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, Workspace.AdditionalTexts));
-        CustomAttributesListDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, Workspace.AdditionalTexts, "customattribute,customAttribute2"));
-        DataAndAriaAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria, Workspace.AdditionalTexts));
-        NoAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None, Workspace.AdditionalTexts));
-        AnyAttributesDiagnostics = await Workspace.GetDiagnosticsAsync([Analyzer], TestAnalyzerOptions.Create(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any, Workspace.AdditionalTexts));
-    }
-
-    [OneTimeTearDown]
-    public static void Cleanup()
-    {
-        Workspace.Dispose();
+        LowerCaseAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(source, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase);
+        DefaultAttributesListDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(source, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes);
+        CustomAttributesListDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(source, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.HTMLAttributes, "customattribute,customAttribute2");
+        DataAndAriaAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(source, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria);
+        NoAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(source, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
+        AnyAttributesDiagnostics = await AnalyzerCompilationFactory.GetDiagnosticsAsync(source, MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any);
     }
 
     [Test]
@@ -287,5 +274,111 @@ public class ValidAttributeTests : BunitTest
 
         ExpectedDiagnostic.Compare(diagnostics, expectedDiagnostics);
     }
+
+    private static string CreateGeneratedSource() =>
+        """
+        using System;
+        using Microsoft.AspNetCore.Components;
+        using Microsoft.AspNetCore.Components.Rendering;
+        using MudBlazor;
+
+        namespace MudBlazor.Analyzers.TestComponents;
+
+        public class InheritedMudChip<T> : MudChip<T>
+        {
+            [Parameter]
+            public string? AvatarClass { get; set; }
+        }
+
+        public class AttributeTest : ComponentBase
+        {
+            private readonly string _bindValue = "y";
+
+            protected override void BuildRenderTree(RenderTreeBuilder builder)
+            {
+                builder.OpenComponent<MudAutocomplete<string>>(0);
+                builder.AddAttribute(1, "Value", _bindValue);
+                builder.AddAttribute(2, "OffsetX", "5");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudFab>(3);
+                builder.AddAttribute(4, "icon", "dd");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudSlider<int>>(5);
+                builder.AddAttribute(6, "Text", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<InheritedMudChip<string>>(7);
+                builder.AddAttribute(8, "Text", "Href set");
+                builder.AddAttribute(9, "AvatarClass", _bindValue);
+                builder.AddAttribute(10, "Avatar", string.Empty);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudAvatar>(11);
+                builder.AddAttribute(12, "Image", "avatar.png");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudProgressLinear>(13);
+                builder.AddAttribute(14, "Minimum", 0);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudToggleGroup<string>>(15);
+                builder.AddAttribute(16, "Dense", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudChip<string>>(17);
+                builder.AddAttribute(18, "@bind", _bindValue);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudChip<string>>(19);
+                builder.AddAttribute(20, "@bind:after", nameof(After));
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudProgressCircular>(21);
+                builder.AddAttribute(22, "lowerCase", true);
+                builder.AddAttribute(23, "UpperCase", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudRadio<string>>(24);
+                builder.AddAttribute(25, "data-animation", "a");
+                builder.AddAttribute(26, "aria-disabled", "false");
+                builder.AddAttribute(27, "role", "test");
+                builder.AddAttribute(28, "unknownAttribute", "false");
+                builder.AddAttribute(29, "hidden", true);
+                builder.AddAttribute(30, "Inert", true);
+                builder.AddAttribute(31, "customattribute", true);
+                builder.AddAttribute(32, "customAttribute2", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudCheckBox<string>>(33);
+                builder.AddAttribute(34, "RequiredError", _bindValue);
+                builder.AddComponentParameter(35, "RequiredErrorChanged", _bindValue);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudChip<string>>(36);
+                builder.AddAttribute(37, "Text", "Href set");
+                builder.AddAttribute(38, "AvatarClass", _bindValue);
+                builder.CloseComponent();
+
+                TypeInference.CreateMudChip_0(builder, 39, _bindValue, After);
+            }
+
+            private void After()
+            {
+            }
+        }
+
+        public static class TypeInference
+        {
+            public static void CreateMudChip_0(RenderTreeBuilder builder, int sequence, string value, Action after)
+            {
+                builder.OpenComponent<MudChip<string>>(sequence);
+                builder.AddAttribute(sequence + 1, "Value", value);
+                builder.AddAttribute(sequence + 2, "ValueChanged", after);
+                builder.CloseComponent();
+            }
+        }
+        """;
 }
 #nullable restore

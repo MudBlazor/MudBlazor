@@ -67,4 +67,17 @@ public class RangeUtilityTests
         s4.Should().Be("7");
         e4.Should().BeEmpty();
     }
+
+    [TestCase("[]")]      // no semicolon
+    [TestCase("[")]       // first and last char are the same '['
+    [TestCase("]")]
+    [TestCase("[1;2")]    // missing closing bracket
+    [TestCase("1;2]")]    // missing opening bracket
+    public void Split_MalformedBrackets_ReturnsFalseAndEmptyParts(string value)
+    {
+        RangeUtility.Split(value, out var s, out var e).Should().BeFalse();
+        s.Should().BeEmpty();
+        e.Should().BeEmpty();
+    }
+
 }

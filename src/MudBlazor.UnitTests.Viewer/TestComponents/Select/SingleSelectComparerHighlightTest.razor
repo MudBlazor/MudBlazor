@@ -1,0 +1,32 @@
+<MudPopoverProvider />
+
+<MudSelect T="Coffee" Label="Coffee"
+           Value="_value"
+           Comparer="Comparer"
+           ToStringFunc="@(x => x?.Name)">
+    <MudSelectItem Value="@(new Coffee("cap", "Cappuccino"))" />
+    <MudSelectItem Value="@(new Coffee("lat", "Cafe Latte"))" />
+    <MudSelectItem Value="@(new Coffee("esp", "Espresso"))" />
+    <MudSelectItem Value="@(new Coffee("ire", "Irish Coffee"))" />
+</MudSelect>
+
+@code {
+    private static CoffeeComparer Comparer { get; } = new();
+
+    // A different instance than the matching item, but key-equal ("lat").
+    // Default/reference equality cannot match this against the rendered item; only the comparer can.
+    private readonly Coffee _value = new("lat", "Latte from server");
+
+    private class Coffee(string key, string name)
+    {
+        public string Key { get; } = key;
+        public string Name { get; } = name;
+    }
+
+    private class CoffeeComparer : IEqualityComparer<Coffee?>
+    {
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
+
+        public int GetHashCode(Coffee? x) => HashCode.Combine(x?.Key);
+    }
+}

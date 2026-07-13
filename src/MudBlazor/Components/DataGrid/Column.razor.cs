@@ -384,7 +384,7 @@ namespace MudBlazor
         /// The culture used to parse, filter, and display values in this column.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.
+        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.  When neither value is set, formatting uses the current culture.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
@@ -524,6 +524,8 @@ namespace MudBlazor
             new CssBuilder("mud-table-cell")
                 .AddClass("footer-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
+                .AddClass("sticky-left", StickyLeft)
+                .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
                 .Build();
 
@@ -647,9 +649,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
             _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
                 .WithParameter(() => GroupExpanded)
+                .WithEventCallback(() => GroupExpandedChanged)
                 .WithChangeHandler(OnGroupExpandedChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
+                .WithEventCallback(() => GroupByOrderChanged)
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 

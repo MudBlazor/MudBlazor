@@ -410,10 +410,10 @@
                     DataGrid will call this async function whenever the user navigates the pager or changes sorting by clicking on the sort header icons.
                     In this example, we also show how to force the datagrid to update when the search textfield blurs, so that the datagrid reloads server-filtered data.
                     <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
-                        The parameter <CodeInline>ServerData</CodeInline> is incompatible with the parameters <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>. If <CodeInline>ServerData</CodeInline> is mixed with <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>, a <CodeInline>InvalidOperationException</CodeInline> is throw at runtime.
+                        The parameter <CodeInline>ServerData</CodeInline> is incompatible with the parameters <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>. If <CodeInline>ServerData</CodeInline> is mixed with <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>, an <CodeInline>InvalidOperationException</CodeInline> is thrown at runtime.
                     </MudAlert>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        The example show a solution to replace <CodeInline>QuickFilter</CodeInline> when <CodeInline>ServerData</CodeInline> is used.
+                        The example shows a solution to replace <CodeInline>QuickFilter</CodeInline> when <CodeInline>ServerData</CodeInline> is used.
                     </MudAlert>
                 </Description>
             </SectionHeader>
@@ -467,9 +467,10 @@
         <DocsPageSection>
             <SectionHeader Title="CultureInfo">
                 <Description>
-                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and editing/filter columns data.
-                    Each <CodeInline>&lt;Column></CodeInline> can define his own culture,
-                    to allow to specify its format individually.
+                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and edit/filter column data.
+                    When it is not set, cell values use the current culture through .NET's default formatting behavior.
+                    Set it to <CodeInline>CultureInfo.InvariantCulture</CodeInline> when invariant numeric or date formatting is required.
+                    Each <CodeInline>&lt;Column></CodeInline> can define its own culture to specify its format individually.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnCultureExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -528,6 +529,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridValidatorExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridValidatorExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    Set <CodeInline>aria-label</CodeInline> or <CodeInline>aria-labelledby</CodeInline> in the
+                    <CodeInline>TableAttributes</CodeInline> parameter to provide an accessible name for the HTML
+                    <CodeInline>&lt;table&gt;</CodeInline> element. This helps screen readers announce the purpose of the table.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridAriaLabelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAriaLabelExample />
             </SectionContent>
         </DocsPageSection>
 

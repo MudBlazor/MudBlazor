@@ -3,15 +3,22 @@
 @typeparam T
 
 <MudElement HtmlTag="@HtmlTag"
+            id="@ElementId"
             Class="@Classname"
             Style="@Style"
-            tabindex="0"
+            tabindex="@GetTabIndex()"
+            role="@GetRole()"
+            aria-selected="@GetAriaSelected()"
+            aria-expanded="@GetAriaExpanded()"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
+            @onfocus="OnFocusAsync"
+            @onkeydown="HandleKeyDownAsync"
             href="@Href"
             target="@Target"
             PreventDefault="@GetPreventDefault()"
-            ClickPropagation="@GetClickPropagation()">
+            ClickPropagation="@GetClickPropagation()"
+            @bind-Ref="_elementReference">
 
     @if (AvatarContent is not null)
     {
@@ -34,6 +41,7 @@
         <MudCheckBox T="bool?"
                      TriState
                      ReadOnly="@ReadOnly"
+                     KeyboardEnabled="false"
                      Class="mud-list-item-checkbox my-n2 ms-n2"
                      Disabled="@GetDisabled()"
                      CheckedIcon="@GetCheckedIcon()"
@@ -42,7 +50,9 @@
                      Color="@GetCheckBoxColor()"
                      UncheckedColor="@GetCheckBoxColor()"
                      @bind-Value:get="GetCheckBoxState()"
-                     @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
+                     @bind-Value:set="@(x => OnCheckboxChangedAsync())"
+                     tabindex="-1"
+                     aria-hidden="true" />
     }
 
     <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">

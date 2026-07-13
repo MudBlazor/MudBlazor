@@ -20,9 +20,10 @@
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        @attributes="UserAttributes"
-                       @ondrop="OnDragResetAsync"
-                       @ondragleave="OnDragResetAsync"
-                       @ondragend="OnDragResetAsync"
+                       @ondragenter="OnDragEnterAsync"
+                       @ondrop="OnDropAsync"
+                       @ondragleave="OnDragLeaveAsync"
+                       @ondragend="OnDragEndAsync"
                        id="@GetInputId(localIndex)"
                        required="@Required"
                        aria-required="@Required.ToString().ToLowerInvariant()" />
