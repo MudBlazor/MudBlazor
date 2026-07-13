@@ -216,11 +216,7 @@ namespace MudBlazor
             get => _rowsPerPage ?? 10;
             set
             {
-                // React only when the parameter value itself changes between renders.
-                // The pager (and SetRowsPerPage callers) mutate _rowsPerPage directly, so comparing
-                // against _rowsPerPage would let a re-applied but unchanged parameter clobber that
-                // choice on any parent re-render (#13462). Tracking the last parameter value still
-                // honors genuine parameter changes made from code after the first render (#3033, #3244).
+                // React only to real parameter changes; the pager mutates _rowsPerPage directly, so re-applying an unchanged value must not clobber it (#13462, #3033, #3244).
                 if (_rowsPerPageParameterValue == value)
                 {
                     return;
