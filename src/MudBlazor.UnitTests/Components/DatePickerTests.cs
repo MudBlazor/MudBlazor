@@ -2006,6 +2006,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePicker_ShowAdjacentMonthDays_ShowsAdjacentDays()
+        {
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var component = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.Date, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+
+            var adjacentDays = component.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.ClassList.Contains("mud-adjacent-month"))
+                .ToList();
+
+            adjacentDays.Should().NotBeEmpty();
+            adjacentDays.Should().OnlyContain(x => !x.ClassList.Contains("mud-hidden"));
+        }
+
+        [Test]
+        public async Task DatePicker_ShowAdjacentMonthDays_AllowsSelectingAdjacentDays()
+        {
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var component = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.Date, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+            var picker = component.Instance;
+
+            var previousMonth = new DateTime(displayedMonth.Year, displayedMonth.Month, 1).AddMonths(-1);
+            var adjacentDayButton = component.FindAll("button.mud-picker-calendar-day")
+                .First(x => x.ClassList.Contains("mud-adjacent-month"));
+            var adjacentDay = int.Parse(adjacentDayButton.TrimmedText());
+            var expectedDate = new DateTime(previousMonth.Year, previousMonth.Month, adjacentDay);
+
+            await adjacentDayButton.ClickAsync();
+
+            picker.Date.Should().Be(expectedDate);
+            picker.PickerMonth.Should().Be(new DateTime(expectedDate.Year, expectedDate.Month, 1));
+        }
+
+        [Test]
         public async Task DatePicker_NavigationButtons_ShouldNotThrowExceptionAtMaxDate()
         {
             // Test that clicking next month arrow at December 9999 doesn't throw exception

@@ -173,6 +173,16 @@ namespace MudBlazor
         public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
+        /// Shows the days from the previous and next month when they appear in the current calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowAdjacentMonthDays { get; set; }
+
+        /// <summary>
         /// The format of the selected date in the title.
         /// </summary>
         /// <remarks>
@@ -467,6 +477,42 @@ namespace MudBlazor
             return date < MinDate ||
                    date > MaxDate ||
                    IsDateDisabledFunc(date);
+        }
+
+        protected bool IsAdjacentMonthDay(int month, DateTime day)
+        {
+            return day < GetMonthStart(month) || day > GetMonthEnd(month);
+        }
+
+        /// <summary>
+        /// Determines whether a day from an adjacent month should be hidden in the calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Adjacent-month days are always hidden when <see cref="ShowAdjacentMonthDays"/> is disabled.
+        /// When it is enabled in a multi-month layout (e.g. <see cref="MudDateRangePicker"/>), boundary days that belong to a month already rendered in a neighboring panel are hidden so the same date is not displayed twice across panels.
+        /// </remarks>
+        /// <param name="month">The panel offset from the first displayed month.</param>
+        /// <param name="day">The day being rendered.</param>
+        protected bool IsHiddenAdjacentMonthDay(int month, DateTime day)
+        {
+            if (!IsAdjacentMonthDay(month, day))
+            {
+                return false;
+            }
+
+            if (!ShowAdjacentMonthDays)
+            {
+                return true;
+            }
+
+            // Previous-month day: hide it when the previous month is shown in the panel to the left.
+            if (day < GetMonthStart(month))
+            {
+                return month > 0;
+            }
+
+            // Next-month day: hide it when the next month is shown in the panel to the right.
+            return month < DisplayMonths - 1;
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);
