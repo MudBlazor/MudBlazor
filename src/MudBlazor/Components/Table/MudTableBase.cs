@@ -13,6 +13,7 @@ namespace MudBlazor
     {
         private int _currentPage = 0;
         internal int? _rowsPerPage;
+        private int? _rowsPerPageParameterValue;
         internal object? _editingItem = null;
         internal bool Editing => _editingItem != null;
 
@@ -215,10 +216,18 @@ namespace MudBlazor
             get => _rowsPerPage ?? 10;
             set
             {
-                if (_rowsPerPage is null || _rowsPerPage != value)
+                // React only when the parameter value itself changes between renders.
+                // The pager (and SetRowsPerPage callers) mutate _rowsPerPage directly, so comparing
+                // against _rowsPerPage would let a re-applied but unchanged parameter clobber that
+                // choice on any parent re-render (#13462). Tracking the last parameter value still
+                // honors genuine parameter changes made from code after the first render (#3033, #3244).
+                if (_rowsPerPageParameterValue == value)
                 {
-                    SetRowsPerPage(value);
+                    return;
                 }
+
+                _rowsPerPageParameterValue = value;
+                SetRowsPerPage(value);
             }
         }
 
