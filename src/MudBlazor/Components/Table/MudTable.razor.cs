@@ -586,6 +586,17 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Whether the built-in loading progress bar should be rendered.
+        /// </summary>
+        /// <remarks>
+        /// Per the <c>Loading</c> contract, custom loading content (<see cref="LoadingContent"/> or
+        /// <see cref="LoadingContentBody"/>) replaces the progress bar when it is actually displayed, i.e. when the
+        /// current page has no items to show. When the page still has items (e.g. a refresh), the progress bar is used.
+        /// </remarks>
+        private bool ShowLoadingProgress =>
+            Loading && (CurrentPageItems.Any() || (LoadingContent is null && LoadingContentBody is null));
+
         protected IEnumerable<T> CurrentPageItems
         {
             get

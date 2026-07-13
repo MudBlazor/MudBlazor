@@ -289,10 +289,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No records");
 
-            // It should be equal to 3 = header row + loading progress row + loading text
+            // With LoadingContent set and no records, the custom content replaces the progress bar (issue #11514):
+            // 2 rows = header row + loading text
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
 
             // Remove filter
             await searchString.ChangeAsync("");
@@ -321,10 +322,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 3 = empty row string + header row + loading row
+            // With LoadingContent set and no records, the custom content replaces the progress bar (issue #11514):
+            // 2 rows = header row + loading content row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -353,12 +356,37 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 6 = 4 loading rows + header row + loading row
+            // With LoadingContentBody set and no records, the custom content replaces the progress bar (issue #11514):
+            // 5 rows = 4 loading rows + header row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(6);
+            comp.FindAll("tr").Count.Should().Be(5);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
 
             // It should be equal to 20 = 4 rows * 5 columns
             comp.FindAll(".mud-skeleton").Count.Should().Be(20);
+        }
+
+        /// <summary>
+        /// Regression test for #11514: when Loading is true and LoadingContent is set, the custom content
+        /// replaces the built-in progress bar rather than showing both. The progress bar is still used when
+        /// the current page has items (e.g. a background refresh), where the custom content is not rendered.
+        /// </summary>
+        [Test]
+        public async Task LoadingContentReplacesProgressBar()
+        {
+            var comp = Context.Render<TableLoadingTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // Items present + loading => progress bar is shown, custom content is not.
+            await switchElement.ChangeAsync(true);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(1);
+            comp.Markup.Should().NotContain("Loading...");
+
+            // No items + loading => custom content is shown, progress bar is not (the actual bug).
+            await searchString.ChangeAsync("ZZZ");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
+            comp.FindAll("tr").Select(tr => tr.TextContent).Should().Contain("Loading...");
         }
 
         /// <summary>
