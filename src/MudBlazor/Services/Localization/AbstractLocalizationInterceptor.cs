@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MudBlazor.Resources;
@@ -56,6 +59,43 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
         var options = Options.Create(new LocalizationOptions());
         var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
 
-        return factory.Create(typeof(LanguageResource));
+        // The built-in resources only contain the neutral (English) strings; MudBlazor ships no satellite assemblies.
+        // Reading them under a non-English UI culture makes the ResourceManager probe for a non-existent
+        // MudBlazor.resources satellite, which throws a first-chance FileNotFoundException on every fresh lookup.
+        // That is mostly invisible at runtime but crippling under the Blazor WebAssembly debugger (see #13461).
+        // Pinning the lookup to the invariant culture returns the embedded neutral resource with no satellite probing.
+        return new InvariantLanguageResourceLocalizer(factory.Create(typeof(LanguageResource)));
+    }
+
+    /// <summary>
+    /// Wraps the built-in English <see cref="IStringLocalizer"/> so lookups resolve under the invariant culture,
+    /// avoiding satellite-assembly probing under non-English UI cultures. Only <see cref="CultureInfo.CurrentUICulture"/>
+    /// is pinned, so <see cref="CultureInfo.CurrentCulture"/> still formats arguments in the user's culture.
+    /// </summary>
+    private sealed class InvariantLanguageResourceLocalizer(IStringLocalizer inner) : IStringLocalizer
+    {
+        public LocalizedString this[string name]
+            => ReadInvariant(() => inner[name]);
+
+        public LocalizedString this[string name, params object[] arguments]
+            => ReadInvariant(() => inner[name, arguments]);
+
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => ReadInvariant(() => inner.GetAllStrings(includeParentCultures).ToList());
+
+        private static T ReadInvariant<T>(Func<T> read)
+        {
+            // Synchronous swap/restore with no await in between, so the culture never leaks to another flow.
+            var previous = CultureInfo.CurrentUICulture;
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+            try
+            {
+                return read();
+            }
+            finally
+            {
+                CultureInfo.CurrentUICulture = previous;
+            }
+        }
     }
 }
