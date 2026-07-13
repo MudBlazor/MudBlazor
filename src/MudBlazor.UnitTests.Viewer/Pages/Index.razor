@@ -87,7 +87,10 @@
                         @* Keyed by the selected type so switching components starts a fresh, non-errored boundary. *@
                         <ErrorBoundary @key="_selectedType">
                             <ChildContent>
-                                @TestComponent()
+                                @* Positive readiness marker so tooling can wait on a mounted, non-errored component. *@
+                                <div class="test-viewer-ready" data-viewer-state="ready">
+                                    @TestComponent()
+                                </div>
                             </ChildContent>
                             <ErrorContent Context="exception">
                                 <div class="test-viewer-error" data-viewer-state="error">
@@ -203,6 +206,10 @@
     .test-viewer-surface {
         flex: 1;
         overflow: auto;
+    }
+
+    .test-viewer-ready {
+        display: contents;
     }
 
     .test-viewer-title-row {

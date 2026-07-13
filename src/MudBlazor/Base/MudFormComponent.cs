@@ -363,12 +363,6 @@ namespace MudBlazor
 
         protected virtual async Task ValidateValue()
         {
-            // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
-            if (EditContext is not null)
-            {
-                return;
-            }
-
             var changed = false;
             var errors = new List<string>();
             try
@@ -446,15 +440,30 @@ namespace MudBlazor
                 // If Value has changed while we were validating it, ignore results and exit
                 if (!changed)
                 {
-                    // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                    // if Error and ErrorText are set by the user, setting them here will have no effect.
-                    // if Error, create an error id that can be used by aria-describedby on input control
-                    ValidationErrors = errors;
-                    await ErrorState.SetValueAsync(errors.Count > 0);
-                    await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
-                    await UpdateErrorIdStateAsync(HasErrors);
-                    Form?.Update(this);
-                    StateHasChanged();
+                    if (EditContext is not null)
+                    {
+                        // Surface the assessment through the message store instead of writing ErrorState directly. OnValidationStateChanged then applies the merged messages (#13381).
+                        StageEditContextValidationMessages(errors);
+                    }
+                    else
+                    {
+                        // Error/ErrorText are consumer-managed unless this component has its own validation source; publishing an empty assessment here would wipe a consumer-set error on every validate pass (#12732, #11244, #4593).
+                        // _hasInternalError keeps us writing long enough to clear an error this component previously published (e.g. a resolved conversion error) even after its source goes away.
+                        // _validationAttrsFor is non-null but empty when the For-targeted property carries no ValidationAttribute, so require an actual attribute rather than just a non-null For.
+                        var hasValidationSource = Validation is not null || Required || _validationAttrsFor?.Any() == true || ConversionError;
+                        if (hasValidationSource || _hasInternalError)
+                        {
+                            _hasInternalError = errors.Count > 0;
+                            ValidationErrors = errors;
+                            await ErrorState.SetValueAsync(errors.Count > 0);
+                            await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
+                        }
+
+                        // Refresh the aria-describedby error id and the form/render regardless, so a consumer-managed error stays wired up.
+                        await UpdateErrorIdStateAsync(HasErrors);
+                        Form?.Update(this);
+                        StateHasChanged();
+                    }
                 }
             }
         }
@@ -466,8 +475,17 @@ namespace MudBlazor
                 return !IsNullOrWhiteSpace(valueString);
             }
 
+            // A collection value (e.g. a multi-file MudFileUpload bound to an empty list) only counts as a value when it holds at least one element.
+            if (value is System.Collections.IEnumerable enumerable)
+            {
+                return enumerable.Cast<object?>().Any();
+            }
+
             return value is not null;
         }
+
+        /// <inheritdoc />
+        bool IFormComponent.HasValue() => HasValue(ReadValue);
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T? value, List<string> errors)
@@ -701,6 +719,10 @@ namespace MudBlazor
             await ErrorTextState.SetValueAsync(null);
             await UpdateErrorIdStateAsync(false);
             ResetConverterErrors();
+            _lastInternalErrors = [];
+            _hasInternalError = false;
+            RetractStagedEditContextMessages();
+
             await InvokeAsync(StateHasChanged);
         }
 
@@ -724,7 +746,72 @@ namespace MudBlazor
         {
             if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
             {
+                // A genuine value change hands the field to the external validators. If they stay silent for it, restore our own assessment so it isn't lost.
+                ClearStagedEditContextMessages();
                 EditContext?.NotifyFieldChanged(_fieldIdentifier);
+                StageEditContextValidationMessages(_lastInternalErrors);
+            }
+        }
+
+        /// <summary>
+        /// Surfaces this component's own errors to the EditContext without dirtying the form.
+        /// </summary>
+        private void StageEditContextValidationMessages(List<string> errors)
+        {
+            // Without an EditContext or a field identity (no For) there is nothing to stage against.
+            var editContext = EditContext;
+            if (editContext is null || _editContextValidationMessages is null || _fieldIdentifier.Equals(default))
+            {
+                return;
+            }
+
+            var changed = _hasStagedEditContextMessages;
+            ClearStagedEditContextMessages();
+            _lastInternalErrors = errors;
+
+            // While an external validator holds messages for this field it is authoritative; staging ours alongside would duplicate them in a ValidationSummary.
+            if (errors.Count > 0 && !editContext.GetValidationMessages(_fieldIdentifier).Any())
+            {
+                foreach (var error in errors)
+                {
+                    _editContextValidationMessages.Add(_fieldIdentifier, error);
+                }
+
+                _hasStagedEditContextMessages = true;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                editContext.NotifyValidationStateChanged();
+            }
+        }
+
+        private void ClearStagedEditContextMessages()
+        {
+            if (_editContextValidationMessages is not null && !_fieldIdentifier.Equals(default))
+            {
+                _editContextValidationMessages.Clear(_fieldIdentifier);
+            }
+
+            _hasStagedEditContextMessages = false;
+        }
+
+        private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
+        {
+            // Submit re-runs the external validators over every field; ours must not duplicate theirs.
+            RetractStagedEditContextMessages();
+        }
+
+        /// <summary>
+        /// Clears any staged messages and refreshes the display so a retracted error can't linger.
+        /// </summary>
+        private void RetractStagedEditContextMessages()
+        {
+            if (_hasStagedEditContextMessages)
+            {
+                ClearStagedEditContextMessages();
+                EditContext?.NotifyValidationStateChanged();
             }
         }
 
@@ -753,7 +840,7 @@ namespace MudBlazor
         {
             try
             {
-                if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
+                if (EditContext is not null && !_fieldIdentifier.Equals(default))
                 {
                     var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                     var hasError = errorMessages.Length > 0;
@@ -798,6 +885,20 @@ namespace MudBlazor
         /// </summary>
         private EditContext? _currentEditContext;
 
+        /// <summary>
+        /// Surfaces this component's own validation assessment to a cascaded EditContext (#13381).
+        /// </summary>
+        private ValidationMessageStore? _editContextValidationMessages;
+
+        private bool _hasStagedEditContextMessages;
+
+        private bool _hasInternalError;
+
+        /// <summary>
+        /// The most recent internal assessment, kept so <see cref="EditFormValidate"/> can restore it when the external validators produce nothing for the field.
+        /// </summary>
+        private List<string> _lastInternalErrors = [];
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -805,8 +906,9 @@ namespace MudBlazor
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
-                // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
-                if (EditContext is null)
+                // For is a fresh expression instance on every render for an inline lambda, so only do the reflection and rebinding work when the field it points at actually changed.
+                var fieldIdentifier = FieldIdentifier.Create(For);
+                if (!_fieldIdentifier.Equals(fieldIdentifier))
                 {
                     // Extract validation attributes
                     // Sourced from https://stackoverflow.com/a/43076222/4839162
@@ -819,9 +921,18 @@ namespace MudBlazor
                     var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
 #pragma warning restore IL2075
                     _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+
+                    // Drop anything staged for the previous field and reconcile the display so its error can't linger on the newly bound field.
+                    var wasStaged = _hasStagedEditContextMessages;
+                    ClearStagedEditContextMessages();
+                    _lastInternalErrors = [];
+                    _fieldIdentifier = fieldIdentifier;
+                    if (wasStaged)
+                    {
+                        EditContext?.NotifyValidationStateChanged();
+                    }
                 }
 
-                _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
             }
 
@@ -829,7 +940,15 @@ namespace MudBlazor
             {
                 DetachValidationStateChangedListener();
                 EditContext.OnValidationStateChanged += OnValidationStateChanged;
+                EditContext.OnValidationRequested += OnValidationRequested;
+                _editContextValidationMessages = new ValidationMessageStore(EditContext);
                 _currentEditContext = EditContext;
+            }
+            else if (EditContext is null && _currentEditContext is not null)
+            {
+                // The cascaded EditContext was removed; detach so staged state can't outlive it.
+                DetachValidationStateChangedListener();
+                _currentEditContext = null;
             }
         }
 
@@ -838,6 +957,16 @@ namespace MudBlazor
             if (_currentEditContext is not null)
             {
                 _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
+                _currentEditContext.OnValidationRequested -= OnValidationRequested;
+                var hadStagedMessages = _hasStagedEditContextMessages;
+                _editContextValidationMessages?.Clear();
+                _editContextValidationMessages = null;
+                _hasStagedEditContextMessages = false;
+                if (hadStagedMessages)
+                {
+                    // We just removed our staged messages from the context (on dispose or an EditContext swap); refresh subscribers like a ValidationSummary so a cleared error can't linger.
+                    _currentEditContext.NotifyValidationStateChanged();
+                }
             }
         }
 

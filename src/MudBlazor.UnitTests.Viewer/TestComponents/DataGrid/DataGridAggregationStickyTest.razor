@@ -1,0 +1,22 @@
+﻿<MudDataGrid Items="@_items" HorizontalScrollbar="true" Bordered="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" AggregateDefinition="@(new AggregateDefinition<Model>())" StickyLeft="true">
+            <AggregateTemplate>
+                @context.Count()
+            </AggregateTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" AggregateDefinition="@(new AggregateDefinition<Model>{ Type = AggregateType.Avg })" />
+        <PropertyColumn Property="x => x.Salary" AggregateDefinition="@(new AggregateDefinition<Model>{ Type = AggregateType.Sum })" StickyRight="true" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int Age, decimal Salary);
+
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Sam", 56, 50000M),
+        new("Alicia", 54, 75000M),
+        new("Ira", 27, 102000M)
+    };
+}

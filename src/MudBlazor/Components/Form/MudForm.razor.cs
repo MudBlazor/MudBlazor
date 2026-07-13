@@ -196,7 +196,7 @@ namespace MudBlazor
         public bool? OverrideFieldValidation { get; set; }
 
         /// <summary>
-        /// The validation errors for inputs within this form.
+        /// The validation errors for inputs within this form and any child forms.
         /// </summary>
         /// <remarks>
         /// When this property changes, <see cref="ErrorsChanged"/> occurs.
@@ -205,7 +205,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Form.ValidationResult)]
         public string[] Errors
         {
-            get => _errors.ToArray();
+            get => _errors.Concat(ChildForms.SelectMany(childForm => childForm.Errors)).ToArray();
             set { /* readonly */ }
         }
 
@@ -240,12 +240,7 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
-            // form can only be valid if:
-            // - none have an error
-            // - all required fields have been touched (and thus validated)
-            var noErrors = _formControls.All(x => x.HasErrors == false);
-            var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
-            var valid = noErrors && requiredAllTouched;
+            var valid = EvaluateIsValid();
 
             var oldTouched = _touched;
             _touched = _formControls.Any(x => x.Touched);
@@ -269,6 +264,15 @@ namespace MudBlazor
             }
         }
 
+        private bool EvaluateIsValid()
+        {
+            // The form is valid when no control has an error and every required control holds a value.
+            // A required field is satisfied by having a value, not by being touched.
+            var noErrors = _formControls.All(x => x.HasErrors == false);
+            var requiredAllHaveValue = _formControls.Where(x => x.Required).All(x => x.HasValue());
+            return noErrors && requiredAllHaveValue;
+        }
+
         protected override bool ShouldRender()
         {
             return !SuppressRenderingOnValidation || _shouldRender;
@@ -278,7 +282,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = EvaluateIsValid();
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid, and it conflicts with our state.
@@ -317,7 +321,17 @@ namespace MudBlazor
         /// </remarks>
         public async Task ValidateAsync()
         {
-            await Task.WhenAll(_formControls.Select(x => x.ValidateAsync()));
+            // Snapshot the controls so a field registering or unregistering mid-validation can't throw, and the set is enumerated only once.
+            var controls = _formControls.ToArray();
+
+            // Re-apply the form-level default Validation before validating.
+            // A child that binds Validation to an expression evaluating to null (e.g. a conditional) has the copy made at registration overwritten to null on every parent render, so without this the form's Validation would only run on the first validation (#12842).
+            foreach (var control in controls)
+            {
+                SetDefaultControlValidation(control);
+            }
+
+            await Task.WhenAll(controls.Select(x => x.ValidateAsync()));
 
             if (ChildForms.Count > 0)
             {

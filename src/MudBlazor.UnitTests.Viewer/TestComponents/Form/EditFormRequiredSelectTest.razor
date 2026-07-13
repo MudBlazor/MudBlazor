@@ -1,0 +1,30 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+<MudPopoverProvider />
+
+<EditForm EditContext="EditContext" OnValidSubmit="@(() => ValidSubmits++)" OnInvalidSubmit="@(() => InvalidSubmits++)">
+    <DataAnnotationsValidator />
+    <MudSelect T="int?" @bind-Value="_model.Sel" Required="true" RequiredError="required" For="@(() => _model.Sel)">
+        <MudSelectItem T="int?" Value="1">1</MudSelectItem>
+        <MudSelectItem T="int?" Value="2">2</MudSelectItem>
+    </MudSelect>
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    public static string __description__ = "#12406: a Required MudSelect under an EditForm/DataAnnotationsValidator.";
+
+    public EditContext EditContext { get; private set; } = null!;
+    public int ValidSubmits { get; private set; }
+    public int InvalidSubmits { get; private set; }
+
+    private readonly Model _model = new();
+
+    protected override void OnInitialized() => EditContext = new EditContext(_model);
+
+    public class Model
+    {
+        [Required(ErrorMessage = "required")]
+        public int? Sel { get; set; }
+    }
+}

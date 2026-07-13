@@ -521,19 +521,23 @@ window.mudpopoverHelper = {
                     }
                 }
 
+                // Anchor-aware floor for the edge clamp below: clamp no further than the anchor's own edge, so a dropdown near the viewport edge stays aligned with its box (#11894).
+                const minLeft = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.left));
+                const minTop = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.top));
+
                 // ensure the left is inside bounds
-                if (left + offsetX < window.mudpopoverHelper.overflowPadding && // it's starting left of the screen
+                if (left + offsetX < minLeft && // it's starting left of the anchor or gutter
                     Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
-                    left = window.mudpopoverHelper.overflowPadding;
+                    left = minLeft;
                     // set offsetX to 0 to avoid double offset
                     offsetX = 0;
                 }
 
                 // ensure the top is inside bounds
-                if (top + offsetY < window.mudpopoverHelper.overflowPadding && // it's starting above the screen
-                    boundingRect.top >= 0 && // the popoverNode is still on screen
+                if (top + offsetY < minTop && // it's starting above the anchor or gutter
+                    boundingRect.top >= 0 && // the anchor hasn't scrolled above the viewport top
                     Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
-                    top = window.mudpopoverHelper.overflowPadding;
+                    top = minTop;
                     // set offsetY to 0 to avoid double offset
                     offsetY = 0;
                 }

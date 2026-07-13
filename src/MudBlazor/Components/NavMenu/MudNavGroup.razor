@@ -4,10 +4,6 @@
 
 @inject InternalMudLocalizer Localizer
 
-@{
-#pragma warning disable CS0618 // Type or member is obsolete
-}
-
 <nav @attributes="UserAttributes"
      class="@Classname"
      disabled="@_navigationContext.Disabled"
@@ -33,7 +29,7 @@
                 @Title
             }
         </div>
-        @if (!HideExpandIcon && !string.IsNullOrEmpty(ExpandIcon))
+        @if (!HideExpandIcon)
         {
             <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }

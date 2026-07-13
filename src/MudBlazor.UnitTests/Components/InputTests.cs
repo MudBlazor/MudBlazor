@@ -59,4 +59,21 @@ public class InputTests : BunitTest
         inputs[0].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(startAriaLabel);
         inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be(endAriaLabel);
     }
+
+    [TestCase(true)]
+    [TestCase(false)]
+    public void FullWidthShouldSetClass(bool fullWidth)
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(p => p.FullWidth, fullWidth));
+
+        if (fullWidth)
+        {
+            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-full-width");
+        }
+        else
+        {
+            comp.Find("div.mud-input").ClassList.Should().NotContain("mud-input-full-width");
+        }
+    }
 }

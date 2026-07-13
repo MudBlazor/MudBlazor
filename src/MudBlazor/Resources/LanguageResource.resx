@@ -130,7 +130,7 @@
     <value>Cancel</value>
   </data>
   <data name="MudDataGrid_Loading" xml:space="preserve">
-    <value>Loading...</value>
+    <value>Loading…</value>
   </data>
   <data name="MudDataGrid_Save" xml:space="preserve">
     <value>Save</value>
@@ -367,7 +367,7 @@
     <value>Contents</value>
   </data>
   <data name="MudTable_Loading" xml:space="preserve">
-    <value>Loading...</value>
+    <value>Loading…</value>
   </data>
   <data name="MudTable_ExpandGroup" xml:space="preserve">
     <value>Expand group</value>

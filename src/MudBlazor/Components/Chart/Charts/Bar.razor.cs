@@ -20,6 +20,7 @@ namespace MudBlazor.Charts
         public override RenderFragment? OverlayContent { get; set; }
 
         private readonly List<SvgPath> _bars = [];
+        private readonly List<SvgText> _valueLabels = [];
         private SvgPath? _hoveredBar;
 
         private double _barGroupWidth;
@@ -28,6 +29,8 @@ namespace MudBlazor.Charts
 
         private const double MinBarWidth = 6;
         private const double BarWidthFactor = 0.25;
+        private const double ValueLabelOffset = 5;
+        private const double ValueLabelFontSize = 12;
 
         protected override void OnInitialized()
         {
@@ -165,6 +168,7 @@ namespace MudBlazor.Charts
         private void GenerateBars(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace, int numVerticalLines)
         {
             _bars.Clear();
+            _valueLabels.Clear();
 
             var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines);
 
@@ -194,6 +198,21 @@ namespace MudBlazor.Charts
                         LabelY = dataValue <= T.Zero ? gridValueY : gridValue
                     };
                     _bars.Add(bar);
+
+                    if (ChartOptions!.ShowValues && series.Visible)
+                    {
+                        // Positive values render above the bar, negative values below it.
+                        var labelY = dataValue < T.Zero
+                            ? gridValue + ValueLabelOffset + ValueLabelFontSize
+                            : gridValue - ValueLabelOffset;
+
+                        _valueLabels.Add(new SvgText
+                        {
+                            X = gridValueX,
+                            Y = labelY,
+                            Value = BuildYAxisValueString(dataValue),
+                        });
+                    }
                 }
             }
         }

@@ -1597,6 +1597,29 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// A row whose editor uses an asynchronous validation function must not commit while invalid, and must commit once valid.
+        /// The commit path awaits <see cref="TableRowValidator.ValidateAsync"/> instead of reading the synchronous <c>IsValid</c>, which reported async validators as valid.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEdit_AsyncValidation_GatesCommit()
+        {
+            var comp = Context.Render<TableInlineEditAsyncValidationTest>();
+
+            await comp.Find("button[aria-label=\"Edit row\"]").ClickAsync();
+
+            // The initial value fails the async rule, so committing is rejected and the row stays in edit mode.
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(0);
+            comp.FindAll("input").Should().NotBeEmpty();
+
+            // A value that passes the async rule commits and leaves edit mode.
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "B" });
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(1);
+            comp.FindAll("input").Should().BeEmpty();
+        }
+
         [Theory]
         [TestCase(TableApplyButtonPosition.StartAndEnd)]
         [TestCase(TableApplyButtonPosition.Start)]
@@ -2373,6 +2396,40 @@ namespace MudBlazor.UnitTests.Components
                 groups.Single(g => g.Items.Key.ToString() == "G2").Expanded.Should().BeFalse();
                 groups.Single(g => g.Items.Key.ToString() == "G3").Expanded.Should().BeFalse();
             }
+        }
+
+        [Test]
+        public async Task TableGrouping_NestedGroupCheckboxesUpdateWhenParentExpandsAfterSelection()
+        {
+            // Regression for https://github.com/MudBlazor/MudBlazor/issues/9474
+            var comp = Context.Render<TableGroupingNestedTest>();
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingNestedTest.Item>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
+            var table = tableComponent.Instance;
+
+            IRenderedComponent<MudTableGroupRow<TableGroupingNestedTest.Item>> FindGroup(string key)
+            {
+                return comp.FindComponents<MudTableGroupRow<TableGroupingNestedTest.Item>>()
+                    .Single(group => group.Instance.Items?.Key.ToString() == key);
+            }
+
+            // Control: expanding an unselected parent creates unchecked child groups.
+            var unselectedParent = FindGroup("G2");
+            await unselectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N1").Checked.Should().BeFalse();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N2").Checked.Should().BeFalse();
+
+            // Select a different parent while its child groups have not been rendered.
+            table.Context.GroupRows.Should().NotContain(group => group.Items != null && group.Items.Key.ToString().StartsWith("G1 >"));
+            var selectedParent = FindGroup("G1");
+            await selectedParent.FindComponent<MudCheckBox<bool?>>().Find("input").ChangeAsync(true);
+            table.SelectedItems.Should().HaveCount(3);
+            table.SelectedItems.Should().OnlyContain(item => item.Group == "G1");
+
+            // Expanding the selected parent must immediately initialize its child checkboxes.
+            await selectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N1").Checked.Should().BeTrue();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N2").Checked.Should().BeTrue();
         }
 
         /// <summary>
@@ -3164,6 +3221,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete("Remove when MudTableBase.AriaLabel is removed")]
         public async Task TableAriaLabel_RendersOnTable()
         {
             var comp = Context.Render<TableRowClickTest>();
@@ -3172,6 +3230,20 @@ namespace MudBlazor.UnitTests.Components
 
             var table = comp.FindComponent<MudTable<int>>();
             await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
+
+        [Test]
+        public async Task TableAttributes_RendersAriaLabel()
+        {
+            var comp = Context.Render<TableRowClickTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudTable<int>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
 
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
