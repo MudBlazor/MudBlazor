@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+@namespace MudBlazor.UnitTests.TestComponents.DataGrid
 
 <MudDataGrid @ref="_dataGrid" T="Model" Items="@_items" ReadOnly="false"
              EditMode="@DataGridEditMode.Inline"
@@ -33,9 +33,9 @@
 
 @code {
     private MudDataGrid<Model> _dataGrid = default!;
-    
+
     public List<Model> Items => _items;
-    
+
     private readonly List<Model> _items = new()
     {
         new Model { Name = "John", Age = 45 },
@@ -47,7 +47,7 @@
     private Task<DataGridEditFormAction> OnCommittedItemChanges(Model item)
     {
         CommitAttempts++;
-        
+
         // Validation: Name must not be empty and Age must be positive
         if (string.IsNullOrWhiteSpace(item.Name) || item.Age < 0)
         {

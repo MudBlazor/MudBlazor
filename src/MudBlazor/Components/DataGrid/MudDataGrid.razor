@@ -372,10 +372,10 @@
                  // - Either in Cell edit mode OR this row is being inline edited
                  // - Must have an EditTemplate OR be a supported type (string/number)
                  // If we have only a CellTemplate (like action buttons), always use CellTemplate
-                 var hasEditableContent = column.EditTemplate is not null || 
-                                          column.PropertyType == typeof(string) || 
+                 var hasEditableContent = column.EditTemplate is not null ||
+                                          column.PropertyType == typeof(string) ||
                                           column.isNumber;
-                 var showEditMode = column.Editable && !ReadOnly && 
+                 var showEditMode = column.Editable && !ReadOnly &&
                                     (EditMode == DataGridEditMode.Cell || isInlineEditing) &&
                                     hasEditableContent;
              }

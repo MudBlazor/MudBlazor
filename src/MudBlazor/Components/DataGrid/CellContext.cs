@@ -35,12 +35,12 @@ namespace MudBlazor
         /// <summary>
         /// Indicates if the cell is currently selected.
         /// </summary>
-        public bool Selected => _selection.Contains(Item);
+        public bool Selected => _selection.Contains(_sourceItem);
 
         /// <summary>
         /// Indicates if the cell is currently in an open hierarchy.
         /// </summary>
-        public bool Open => OpenHierarchies.Contains(Item);
+        public bool Open => OpenHierarchies.Contains(_sourceItem);
 
         /// <summary>
         /// Indicates if the row containing this cell is currently being edited in inline mode.
@@ -51,6 +51,16 @@ namespace MudBlazor
         /// in a <c>CellTemplate</c>.
         /// </remarks>
         public bool IsEditing => _dataGrid.IsEditingItem(_sourceItem);
+
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="dataGrid">The data grid which owns this context.</param>
+        /// <param name="item">The item displayed in the cell.</param>
+        public CellContext(MudDataGrid<T> dataGrid, T item)
+            : this(dataGrid, item, item)
+        {
+        }
 
         /// <summary>
         /// Creates a new instance.
@@ -104,7 +114,7 @@ namespace MudBlazor
             /// <see cref="DataGridEditMode.Inline"/>. It validates, persists changes to the source item,
             /// and exits edit mode.
             /// </remarks>
-            public required Func<Task> CommitEditingItemAsync { get; init; }
+            public Func<Task> CommitEditingItemAsync { get; init; } = () => Task.CompletedTask;
 
             /// <summary>
             /// The function which toggles hierarchy visibility.

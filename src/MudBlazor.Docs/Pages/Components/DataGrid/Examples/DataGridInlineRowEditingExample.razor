@@ -1,18 +1,18 @@
-﻿@using System.Net.Http.Json
+@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid @ref="_dataGrid" 
-             T="Element" 
-             Items="@_elements" 
+<MudDataGrid @ref="_dataGrid"
+             T="Element"
+             Items="@_elements"
              ReadOnly="false"
              EditMode="DataGridEditMode.Inline"
              EditTrigger="DataGridEditTrigger.Manual"
              StartedEditingItem="@StartedEditingItem"
              CanceledEditingItem="@CanceledEditingItem"
              CommittedItemChanges="@CommittedItemChanges"
-             Bordered="true" 
+             Bordered="true"
              Dense="true"
              Hover="true">
     <ToolBarContent>
@@ -22,32 +22,32 @@
     <Columns>
         @* Non-editable column - always shows plain text *@
         <PropertyColumn Property="x => x.Number" Title="Nr" Editable="false" />
-        
+
         @* Editable columns using EditTemplate to show inputs only when row is being edited *@
         <PropertyColumn Property="x => x.Sign" Title="Sign">
             <EditTemplate>
-                <MudTextField @bind-Value="context.Item.Sign" 
-                              Margin="Margin.Dense" 
+                <MudTextField @bind-Value="context.Item.Sign"
+                              Margin="Margin.Dense"
                               Variant="Variant.Text"
                               Required="true"
                               Immediate="true" />
             </EditTemplate>
         </PropertyColumn>
-        
+
         <PropertyColumn Property="x => x.Name" Title="Name">
             <EditTemplate>
-                <MudTextField @bind-Value="context.Item.Name" 
-                              Margin="Margin.Dense" 
+                <MudTextField @bind-Value="context.Item.Name"
+                              Margin="Margin.Dense"
                               Variant="Variant.Text"
                               Required="true"
                               Immediate="true" />
             </EditTemplate>
         </PropertyColumn>
-        
+
         <PropertyColumn Property="x => x.Position" Title="Position">
             <EditTemplate>
-                <MudSelect @bind-Value="context.Item.Position" 
-                           Margin="Margin.Dense" 
+                <MudSelect @bind-Value="context.Item.Position"
+                           Margin="Margin.Dense"
                            Variant="Variant.Text"
                            Dense="true">
                     <MudSelectItem Value="0">zero</MudSelectItem>
@@ -57,38 +57,38 @@
                 </MudSelect>
             </EditTemplate>
         </PropertyColumn>
-        
+
         <PropertyColumn Property="x => x.Molar" Title="Molar Mass" Format="F2">
             <EditTemplate>
-                <MudNumericField @bind-Value="context.Item.Molar" 
-                                 Margin="Margin.Dense" 
+                <MudNumericField @bind-Value="context.Item.Molar"
+                                 Margin="Margin.Dense"
                                  Variant="Variant.Text"
                                  Immediate="true" />
             </EditTemplate>
         </PropertyColumn>
-        
+
         @* Actions column - shows Edit button or Save/Cancel buttons based on edit state *@
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 @if (context.IsEditing)
                 {
-                    <MudIconButton Size="Size.Small" 
-                                   Icon="@Icons.Material.Filled.Check" 
+                    <MudIconButton Size="Size.Small"
+                                   Icon="@Icons.Material.Filled.Check"
                                    Color="Color.Success"
                                    OnClick="@context.Actions.CommitEditingItemAsync" />
-                    <MudIconButton Size="Size.Small" 
-                                   Icon="@Icons.Material.Filled.Close" 
+                    <MudIconButton Size="Size.Small"
+                                   Icon="@Icons.Material.Filled.Close"
                                    Color="Color.Error"
                                    OnClick="@context.Actions.CancelEditingItemAsync" />
                 }
                 else
                 {
-                    <MudIconButton Size="Size.Small" 
-                                   Icon="@Icons.Material.Outlined.Edit" 
+                    <MudIconButton Size="Size.Small"
+                                   Icon="@Icons.Material.Outlined.Edit"
                                    Disabled="@_isEditing"
                                    OnClick="@context.Actions.StartEditingItemAsync" />
-                    <MudIconButton Size="Size.Small" 
-                                   Icon="@Icons.Material.Outlined.Delete" 
+                    <MudIconButton Size="Size.Small"
+                                   Icon="@Icons.Material.Outlined.Delete"
                                    Disabled="@_isEditing"
                                    OnClick="@(() => DeleteItem(context.Item))" />
                 }
