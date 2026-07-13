@@ -1,4 +1,4 @@
-@using System.Net.Http.Json
+﻿@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
@@ -75,12 +75,12 @@
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Filled.Check"
                                    Color="Color.Success"
-                                   AriaLabel="Save changes"
+                                   aria-label="Save changes"
                                    OnClick="@context.Actions.CommitEditingItemAsync" />
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Filled.Close"
                                    Color="Color.Error"
-                                   AriaLabel="Cancel editing"
+                                   aria-label="Cancel editing"
                                    OnClick="@context.Actions.CancelEditingItemAsync" />
                 }
                 else
@@ -88,12 +88,12 @@
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Outlined.Edit"
                                    Disabled="@_isEditing"
-                                   AriaLabel="Edit row"
+                                   aria-label="Edit row"
                                    OnClick="@context.Actions.StartEditingItemAsync" />
                     <MudIconButton Size="Size.Small"
                                    Icon="@Icons.Material.Outlined.Delete"
                                    Disabled="@_isEditing"
-                                   AriaLabel="Delete row"
+                                   aria-label="Delete row"
                                    OnClick="@(() => DeleteItem(context.Item))" />
                 }
             </CellTemplate>
