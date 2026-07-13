@@ -2870,6 +2870,30 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
+        // A one-way CurrentPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page the user navigated to via the pager (same class as #13462).
+        // A genuine parameter change from code must still navigate.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableCurrentPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttons = testComponent.FindComponents<MudButton>();
+            table.CurrentPage.Should().Be(0);
+
+            // Simulate the user navigating with the pager (the one-way parameter is not written back).
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            table.CurrentPage.Should().Be(3);
+
+            // A parent re-render re-applies the unchanged CurrentPage parameter; the pager choice must survive.
+            await buttons[0].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine parameter change from code must still navigate.
+            await buttons[1].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(5);
+        }
+
         /// <summary>
         /// Table initialized to display the third page
         /// </summary>
