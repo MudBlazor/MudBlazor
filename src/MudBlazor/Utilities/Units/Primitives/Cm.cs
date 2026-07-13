@@ -4,8 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-/// <summary>
-/// Anything valid as a grid track size, or as the <c>max</c> argument of <c>minmax()</c>.
-/// </summary>
-public abstract class TrackBreadth : CssStringBuilder { }
-
+internal sealed class Cm : LengthPercentage
+{
+    public Cm(double value) => Value = $"{value}cm";
+}

@@ -15,7 +15,7 @@ public static class Units
     /// Takes up a fraction of the available space.
     /// </summary>
     /// <param name="value">The number of fractions to take up.</param>
-    public static TrackBreadth Fr(double value = 1) => new Fr(value);
+    public static ITrackBreadth Fr(double value = 1) => new Fr(value);
 
     /// <summary>
     /// A fixed size in pixels.
@@ -70,33 +70,149 @@ public static class Units
     public static LengthPercentage VMax(double value) => new VMax(value);
 
     /// <summary>
+    /// A fixed size relative to the used cap height of the element's font.
+    /// </summary>
+    /// <param name="value">The size in cap units.</param>
+    public static LengthPercentage Cap(double value) => new Cap(value);
+
+    /// <summary>
+    /// A fixed size relative to the used cap height of the root element's font.
+    /// </summary>
+    /// <param name="value">The size in rcap units.</param>
+    public static LengthPercentage Rcap(double value) => new Rcap(value);
+
+    /// <summary>
+    /// A fixed size relative to the advance measure of the "0" glyph of the element's font.
+    /// </summary>
+    /// <param name="value">The size in ch units.</param>
+    public static LengthPercentage Ch(double value) => new Ch(value);
+
+    /// <summary>
+    /// A fixed size relative to the advance measure of the "0" glyph of the root element's font.
+    /// </summary>
+    /// <param name="value">The size in rch units.</param>
+    public static LengthPercentage Rch(double value) => new Rch(value);
+
+    /// <summary>
+    /// A fixed size relative to the average advance measure of a full-width glyph of the element's font.
+    /// </summary>
+    /// <param name="value">The size in ic units.</param>
+    public static LengthPercentage Ic(double value) => new Ic(value);
+
+    /// <summary>
+    /// A fixed size relative to the average advance measure of a full-width glyph of the root element's font.
+    /// </summary>
+    /// <param name="value">The size in ric units.</param>
+    public static LengthPercentage Ric(double value) => new Ric(value);
+
+    /// <summary>
+    /// A fixed size in inches.
+    /// </summary>
+    /// <param name="value">The size in inches.</param>
+    public static LengthPercentage In(double value) => new In(value);
+
+    /// <summary>
+    /// A fixed size relative to the x-height of the element's font.
+    /// </summary>
+    /// <param name="value">The size in ex units.</param>
+    public static LengthPercentage Ex(double value) => new Ex(value);
+
+    /// <summary>
+    /// A fixed size relative to the x-height of the root element's font.
+    /// </summary>
+    /// <param name="value">The size in rex units.</param>
+    public static LengthPercentage Rex(double value) => new Rex(value);
+
+    /// <summary>
+    /// A fixed size in centimeters.
+    /// </summary>
+    /// <param name="value">The size in centimeters.</param>
+    public static LengthPercentage Cm(double value) => new Cm(value);
+
+    /// <summary>
+    /// A fixed size in quarter-millimeters.
+    /// </summary>
+    /// <param name="value">The size in q units.</param>
+    public static LengthPercentage Q(double value) => new Q(value);
+
+    /// <summary>
+    /// A fixed size relative to 1% of the viewport's size in the inline axis.
+    /// </summary>
+    /// <param name="value">The size in vi units.</param>
+    public static LengthPercentage Vi(double value) => new Vi(value);
+
+    /// <summary>
+    /// A fixed size relative to 1% of the viewport's size in the block axis.
+    /// </summary>
+    /// <param name="value">The size in vb units.</param>
+    public static LengthPercentage Vb(double value) => new Vb(value);
+
+    /// <summary>
+    /// A fixed size in points.
+    /// </summary>
+    /// <param name="value">The size in points.</param>
+    public static LengthPercentage Pt(double value) => new Pt(value);
+
+    /// <summary>
+    /// A fixed size in picas.
+    /// </summary>
+    /// <param name="value">The size in picas.</param>
+    public static LengthPercentage Pc(double value) => new Pc(value);
+
+    /// <summary>
+    /// A fixed size in millimeters.
+    /// </summary>
+    /// <param name="value">The size in millimeters.</param>
+    public static LengthPercentage Mm(double value) => new Mm(value);
+
+    /// <summary>
+    /// A fixed size relative to the computed line height of the element.
+    /// </summary>
+    /// <param name="value">The size in lh units.</param>
+    public static LengthPercentage Lh(double value) => new Lh(value);
+
+    /// <summary>
+    /// A fixed size relative to the computed line height of the root element.
+    /// </summary>
+    /// <param name="value">The size in rlh units.</param>
+    public static LengthPercentage Rlh(double value) => new Rlh(value);
+
+    /// <summary>
     /// Sizes automatically based on the content of the element.
     /// </summary>
-    public static InflexibleBreadth Auto() => new Auto();
+    public static IInflexibleBreadth Auto() => new Auto();
 
     /// <summary>
     /// Sizes to the smallest possible size that doesn't cause overflow.
     /// </summary>
-    public static InflexibleBreadth MinContent() => new MinContent();
+    public static IInflexibleBreadth MinContent() => new MinContent();
 
     /// <summary>
     /// Sizes to the size the content would take up with no wrapping at all.
     /// </summary>
-    public static InflexibleBreadth MaxContent() => new MaxContent();
+    public static IInflexibleBreadth MaxContent() => new MaxContent();
 
     /// <summary>
     /// Clamps a size between a minimum and maximum value.
     /// </summary>
+    /// <remarks>
+    /// <c>NOT</c> valid as a parameter to <see cref="ExplicitMatrix.Fit(IFixedSize)"/>
+    /// and <see cref="ExplicitMatrix.Fill(IFixedSize)"/>.
+    /// </remarks>
     /// <param name="min">The minimum size.</param>
     /// <param name="max">The maximum size.</param>
-    public static TrackBreadth MinMax(InflexibleBreadth min, TrackBreadth max) => new MinMax(min, max);
+    public static ITrackBreadth MinMax(IInflexibleBreadth min, ITrackBreadth max) => new MinMax(min, max);
 
     /// <summary>
     /// Clamps a size between a minimum and maximum value.
     /// </summary>
+    /// <remarks>
+    /// Valid as a parameter to <see cref="ExplicitMatrix.Fit(IFixedSize)"/>
+    /// and <see cref="ExplicitMatrix.Fill(IFixedSize)"/>.
+    /// </remarks>
     /// <param name="min">The minimum size.</param>
     /// <param name="max">The maximum size.</param>
-    public static FixedSize MinMax(LengthPercentage min, TrackBreadth max) => new FixedMinMax(min, max);
+    public static IFixedSize MinMax(LengthPercentage min, ITrackBreadth max) => new MinMaxFixed(min, max);
 
     /// <summary>
     /// Uses the smaller size between the two sizes.

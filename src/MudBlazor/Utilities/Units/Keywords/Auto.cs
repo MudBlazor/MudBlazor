@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class Auto : InflexibleBreadth
+internal sealed class Auto : CssStringBuilder, IInflexibleBreadth
 {
     public Auto() => Value = "auto";
 }

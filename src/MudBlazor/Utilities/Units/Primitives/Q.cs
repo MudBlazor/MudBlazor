@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class MaxContent : CssStringBuilder, IInflexibleBreadth
+internal sealed class Q : LengthPercentage
 {
-    public MaxContent() => Value = "max-content";
+    public Q(double value) => Value = $"{value}q";
 }

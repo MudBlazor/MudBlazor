@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class MinContent : InflexibleBreadth
+internal sealed class MinContent : CssStringBuilder, IInflexibleBreadth
 {
     public MinContent() => Value = "min-content";
 }

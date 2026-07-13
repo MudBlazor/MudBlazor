@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-/// <summary>
-/// Anything valid as either argument of <c>minmax()</c> (i.e. everything except <see cref="Fr"/>).
-/// </summary>
-public abstract class InflexibleBreadth : TrackBreadth { }
+internal sealed class Pt : LengthPercentage
+{
+    public Pt(double value) => Value = $"{value}pt";
+}

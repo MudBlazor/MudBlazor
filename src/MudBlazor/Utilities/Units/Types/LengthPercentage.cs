@@ -9,10 +9,10 @@ namespace MudBlazor.Utilities;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Excludes fr, auto, min-content, max-content (see <see cref="InflexibleBreadth"/>).
+/// Excludes fr, auto, min-content, max-content (see <see cref="IInflexibleBreadth"/>).
 /// </para>
 /// </remarks>
-public abstract class LengthPercentage : InflexibleBreadth, FixedSize
+public abstract class LengthPercentage : CssStringBuilder, IInflexibleBreadth, IFixedSize, ICssUnit
 {
     /// <summary>
     /// Adds two units together using CSS <c>calc()</c>.

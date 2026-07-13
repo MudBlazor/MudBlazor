@@ -4,8 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-/// <summary>
-/// Valid for repeat(auto-fill/auto-fit) needs a definite length
-/// somewhere. Excludes fr and bare auto/min-content/max-content.
-/// </summary>
-public interface FixedSize { }
+internal sealed class Vi : LengthPercentage
+{
+    public Vi(double value) => Value = $"{value}vi";
+}

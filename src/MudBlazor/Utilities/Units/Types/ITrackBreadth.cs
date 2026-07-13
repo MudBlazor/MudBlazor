@@ -4,7 +4,8 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class MaxContent : CssStringBuilder, IInflexibleBreadth
-{
-    public MaxContent() => Value = "max-content";
-}
+/// <summary>
+/// Anything valid as a grid track size, or as the <c>max</c> argument of <c>minmax()</c>.
+/// </summary>
+public interface ITrackBreadth : ICssUnit { }
+

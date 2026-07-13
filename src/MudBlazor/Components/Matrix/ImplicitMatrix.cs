@@ -19,7 +19,7 @@ public class ImplicitMatrix : CssStringBuilder
     /// Defines the track breadths to be repeated.
     /// </summary>
     /// <param name="items">The size of each breadth in order.</param>
-    public static ImplicitMatrix Pattern(params TrackBreadth[] items)
+    public static ImplicitMatrix Pattern(params ITrackBreadth[] items)
     {
         return new()
         {

@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class Fr : TrackBreadth
+internal sealed class Pc : LengthPercentage
 {
-    public Fr(double value = 1) => Value = $"{value}fr";
+    public Pc(double value) => Value = $"{value}pc";
 }

@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class MinMax : TrackBreadth
+internal sealed class MinMax : CssStringBuilder, ITrackBreadth
 {
-    public MinMax(InflexibleBreadth min, TrackBreadth max) => Value = $"minmax({min}, {max})";
+    public MinMax(IInflexibleBreadth min, ITrackBreadth max) => Value = $"minmax({min}, {max})";
 }

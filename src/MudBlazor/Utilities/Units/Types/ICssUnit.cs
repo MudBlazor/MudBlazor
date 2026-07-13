@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class FixedMinMax : TrackBreadth, FixedSize
-{
-    public FixedMinMax(LengthPercentage min, TrackBreadth max) => Value = $"minmax({min}, {max})";
-}
+/// <summary>
+/// Base interface for any CSS unit of distance.
+/// </summary>
+public interface ICssUnit { }

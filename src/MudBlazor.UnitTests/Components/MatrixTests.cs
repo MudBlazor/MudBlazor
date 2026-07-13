@@ -145,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
             matrixStyle.GetAttribute("style").Should().Contain($"grid-auto-flow:{expectedFlow}");
         }
 
-        public record ExplicitTestCase(ExplicitMatrix ExplicitMatrix, string ExpectedValue);
+        private record ExplicitTestCase(ExplicitMatrix ExplicitMatrix, string ExpectedValue);
 
         private static IEnumerable<ExplicitTestCase> ExplicitCases()
         {
@@ -180,7 +180,7 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
-        public record ImplicitTestCase(ImplicitMatrix ImplicitMatrix, string ExpectedValue);
+        private record ImplicitTestCase(ImplicitMatrix ImplicitMatrix, string ExpectedValue);
 
         private static IEnumerable<ImplicitTestCase> ImplicitCases()
         {

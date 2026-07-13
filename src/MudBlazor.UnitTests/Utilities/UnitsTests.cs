@@ -6,98 +6,58 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using AwesomeAssertions;
+using MudBlazor.Utilities;
 using NUnit.Framework;
+using NUnit.VisualStudio.TestAdapter.NUnitEngine;
 
 namespace MudBlazor.UnitTests.Utilities
 {
     [TestFixture]
     public class UnitsTests : BunitTest
     {
-        [TestCase(1, "1fr")]
-        [TestCase(10, "10fr")]
-        [TestCase(25, "25fr")]
-        [TestCase(50, "50fr")]
-        public void Units_Fr_ReturnsCorrectString(double value, string expected)
+        public record PrimitiveUnitTestCases(Func<double, ICssUnit> Factory, string Suffix);
+
+        private static IEnumerable<PrimitiveUnitTestCases> PrimitiveTestCases()
         {
-            Units.Fr(value).ToString().Should().Be(expected);
+            yield return new(Units.Px, "px");
+            yield return new(Units.Rem, "rem");
+            yield return new(Units.Pct, "%");
+            yield return new(Units.Em, "em");
+            yield return new(Units.Vw, "vw");
+            yield return new(Units.Vh, "vh");
+            yield return new(Units.VMin, "vmin");
+            yield return new(Units.VMax, "vmax");
+            yield return new(Units.Cap, "cap");
+            yield return new(Units.Rcap, "rcap");
+            yield return new(Units.Ch, "ch");
+            yield return new(Units.Rch, "rch");
+            yield return new(Units.Ic, "ic");
+            yield return new(Units.Ric, "ric");
+            yield return new(Units.In, "in");
+            yield return new(Units.Ex, "ex");
+            yield return new(Units.Rex, "rex");
+            yield return new(Units.Cm, "cm");
+            yield return new(Units.Q, "q");
+            yield return new(Units.Vi, "vi");
+            yield return new(Units.Vb, "vb");
+            yield return new(Units.Pt, "pt");
+            yield return new(Units.Pc, "pc");
+            yield return new(Units.Mm, "mm");
+            yield return new(Units.Lh, "lh");
+            yield return new(Units.Rlh, "rlh");
+            yield return new(Units.Fr, "fr");
         }
 
-        [Test]
-        public void Units_Fr_DefaultsToOne()
+        [TestCase(1)]
+        [TestCase(10)]
+        [TestCase(25)]
+        [TestCase(50)]
+        public void Units_Values_ReturnCorrectString(double value)
         {
-            Units.Fr().ToString().Should().Be("1fr");
-        }
-
-        [TestCase(1, "1px")]
-        [TestCase(10, "10px")]
-        [TestCase(25, "25px")]
-        [TestCase(50, "50px")]
-        public void Units_Px_ReturnsCorrectString(double value, string expected)
-        {
-            Units.Px(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1rem")]
-        [TestCase(10, "10rem")]
-        [TestCase(25, "25rem")]
-        [TestCase(50, "50rem")]
-        public void Units_Rem_ReturnsCorrectString(double value, string expected)
-        {
-            Units.Rem(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1%")]
-        [TestCase(10, "10%")]
-        [TestCase(25, "25%")]
-        [TestCase(50, "50%")]
-        public void Units_Pct_ReturnsCorrectString(double value, string expected)
-        {
-            Units.Pct(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1em")]
-        [TestCase(10, "10em")]
-        [TestCase(25, "25em")]
-        [TestCase(50, "50em")]
-        public void Units_Em_ReturnsCorrectString(double value, string expected)
-        {
-            Units.Em(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1vw")]
-        [TestCase(10, "10vw")]
-        [TestCase(25, "25vw")]
-        [TestCase(50, "50vw")]
-        public void Units_Vw_ReturnsCorrectString(double value, string expected)
-        {
-            Units.Vw(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1vh")]
-        [TestCase(10, "10vh")]
-        [TestCase(25, "25vh")]
-        [TestCase(50, "50vh")]
-        public void Units_Vh_ReturnsCorrectString(double value, string expected)
-        {
-            Units.Vh(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1vmin")]
-        [TestCase(10, "10vmin")]
-        [TestCase(25, "25vmin")]
-        [TestCase(50, "50vmin")]
-        public void Units_VMin_ReturnsCorrectString(double value, string expected)
-        {
-            Units.VMin(value).ToString().Should().Be(expected);
-        }
-
-        [TestCase(1, "1vmax")]
-        [TestCase(10, "10vmax")]
-        [TestCase(25, "25vmax")]
-        [TestCase(50, "50vmax")]
-        public void Units_VMax_ReturnsCorrectString(double value, string expected)
-        {
-            Units.VMax(value).ToString().Should().Be(expected);
+            foreach (var testCase in PrimitiveTestCases())
+            {
+                testCase.Factory(value).ToString().Should().Be($"{value}{testCase.Suffix}");
+            }
         }
 
         [Test]

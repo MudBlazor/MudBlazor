@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Utilities;
 
-internal sealed class MaxContent : CssStringBuilder, IInflexibleBreadth
+internal sealed class MinMaxFixed : CssStringBuilder, ITrackBreadth, IFixedSize
 {
-    public MaxContent() => Value = "max-content";
+    public MinMaxFixed(LengthPercentage min, ITrackBreadth max) => Value = $"minmax({min}, {max})";
 }
