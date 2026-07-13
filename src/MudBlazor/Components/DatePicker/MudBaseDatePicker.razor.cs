@@ -489,21 +489,28 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Adjacent-month days are always hidden when <see cref="ShowAdjacentMonthDays"/> is disabled.
-        /// When it is enabled in a multi-month layout (e.g. <see cref="MudDateRangePicker"/>), boundary
-        /// days that belong to a month already rendered in a neighboring panel are hidden so the same
-        /// date is not displayed twice across panels.
+        /// When it is enabled in a multi-month layout (e.g. <see cref="MudDateRangePicker"/>), boundary days that belong to a month already rendered in a neighboring panel are hidden so the same date is not displayed twice across panels.
         /// </remarks>
         /// <param name="month">The panel offset from the first displayed month.</param>
         /// <param name="day">The day being rendered.</param>
         protected bool IsHiddenAdjacentMonthDay(int month, DateTime day)
         {
             if (!IsAdjacentMonthDay(month, day))
+            {
                 return false;
+            }
+
             if (!ShowAdjacentMonthDays)
+            {
                 return true;
+            }
+
             // Previous-month day: hide it when the previous month is shown in the panel to the left.
             if (day < GetMonthStart(month))
+            {
                 return month > 0;
+            }
+
             // Next-month day: hide it when the next month is shown in the panel to the right.
             return month < DisplayMonths - 1;
         }

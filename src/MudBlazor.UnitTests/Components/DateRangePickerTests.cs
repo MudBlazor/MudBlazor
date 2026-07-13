@@ -1535,13 +1535,11 @@ namespace MudBlazor.UnitTests.Components
             var secondPrimaryStart = secondPanel.FindIndex(b => !IsAdjacent(b));
             var secondPrimaryEnd = secondPanel.FindLastIndex(b => !IsAdjacent(b));
 
-            // First panel: previous-month days (outer edge) stay visible, next-month days
-            // (also rendered as real days in the second panel) are hidden.
+            // First panel: previous-month days (outer edge) stay visible, next-month days (also rendered as real days in the second panel) are hidden.
             firstPanel.Take(firstPrimaryStart).Should().OnlyContain(b => !b.ClassList.Contains("mud-hidden"));
             firstPanel.Skip(firstPrimaryEnd + 1).Should().NotBeEmpty().And.OnlyContain(b => b.ClassList.Contains("mud-hidden"));
 
-            // Second panel: next-month days (outer edge) stay visible, previous-month days
-            // (also rendered as real days in the first panel) are hidden.
+            // Second panel: next-month days (outer edge) stay visible, previous-month days (also rendered as real days in the first panel) are hidden.
             secondPanel.Take(secondPrimaryStart).Should().NotBeEmpty().And.OnlyContain(b => b.ClassList.Contains("mud-hidden"));
             secondPanel.Skip(secondPrimaryEnd + 1).Should().OnlyContain(b => !b.ClassList.Contains("mud-hidden"));
         }
