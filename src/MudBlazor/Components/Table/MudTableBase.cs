@@ -12,6 +12,7 @@ namespace MudBlazor
     public abstract class MudTableBase : MudComponentBase
     {
         private int _currentPage = 0;
+        private int? _currentPageParameterValue;
         internal int? _rowsPerPage;
         private int? _rowsPerPageParameterValue;
         internal object? _editingItem = null;
@@ -269,18 +270,14 @@ namespace MudBlazor
             get => _currentPage;
             set
             {
-                if (_currentPage == value)
+                // React only to genuine parameter changes: internal nav mutates the page via SetCurrentPage, so a re-applied but unchanged CurrentPage must not clobber it on a parent re-render (#13462).
+                if (_currentPageParameterValue == value)
                 {
                     return;
                 }
 
-                _currentPage = value;
-                InvokeAsync(StateHasChanged);
-                CurrentPageChanged.InvokeAsync(_currentPage);
-                if (HasRendered)
-                {
-                    InvokeServerLoadFunc();
-                }
+                _currentPageParameterValue = value;
+                SetCurrentPage(value);
             }
         }
 
@@ -682,16 +679,16 @@ namespace MudBlazor
             switch (page)
             {
                 case Page.First:
-                    CurrentPage = 0;
+                    SetCurrentPage(0);
                     break;
                 case Page.Last:
-                    CurrentPage = Math.Max(0, NumPages - 1);
+                    SetCurrentPage(Math.Max(0, NumPages - 1));
                     break;
                 case Page.Next:
-                    CurrentPage = Math.Min(NumPages - 1, CurrentPage + 1);
+                    SetCurrentPage(Math.Min(NumPages - 1, CurrentPage + 1));
                     break;
                 case Page.Previous:
-                    CurrentPage = Math.Max(0, CurrentPage - 1);
+                    SetCurrentPage(Math.Max(0, CurrentPage - 1));
                     break;
             }
         }
@@ -701,7 +698,24 @@ namespace MudBlazor
         /// <param name="pageIndex">The index of the page to navigate to.</param>
         public void NavigateTo(int pageIndex)
         {
-            CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
+            SetCurrentPage(Math.Min(Math.Max(0, pageIndex), NumPages - 1));
+        }
+
+        // Applies an internal page change (pager/NavigateTo/clamp/reset); must not update _currentPageParameterValue or it would be mistaken for a parameter change (#13462).
+        internal void SetCurrentPage(int page)
+        {
+            if (_currentPage == page)
+            {
+                return;
+            }
+
+            _currentPage = page;
+            InvokeAsync(StateHasChanged);
+            CurrentPageChanged.InvokeAsync(_currentPage);
+            if (HasRendered)
+            {
+                InvokeServerLoadFunc();
+            }
         }
 
         /// <summary>

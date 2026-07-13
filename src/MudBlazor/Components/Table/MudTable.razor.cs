@@ -605,7 +605,7 @@ namespace MudBlazor
                     {
                         lastPageNo -= 1;
                     }
-                    CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
+                    SetCurrentPage(lastPageNo < CurrentPage ? lastPageNo : CurrentPage);
                 }
 
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
@@ -798,7 +798,7 @@ namespace MudBlazor
 
             if (CurrentPage * RowsPerPage > _serverData.TotalItems)
             {
-                CurrentPage = 0;
+                SetCurrentPage(0);
             }
 
             Loading = false;

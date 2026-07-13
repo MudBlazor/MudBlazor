@@ -2890,6 +2890,95 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
+        // A one-way CurrentPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page the user navigated to via the pager (same class as #13462).
+        // A genuine parameter change from code must still navigate.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableCurrentPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttons = testComponent.FindComponents<MudButton>();
+            table.CurrentPage.Should().Be(0);
+
+            // Simulate the user navigating with the pager (the one-way parameter is not written back).
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            table.CurrentPage.Should().Be(3);
+
+            // A parent re-render re-applies the unchanged CurrentPage parameter; the pager choice must survive.
+            await buttons[0].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine parameter change from code must still navigate.
+            await buttons[1].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(5);
+        }
+
+        // With ServerData, re-applying an unchanged one-way CurrentPage on a parent re-render must not
+        // trigger a redundant server load (#13462); a genuine code-driven change still loads the new page.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotTriggerRedundantServerLoad()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            // Wait for the initial server load to render the first page.
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+            table.CurrentPage.Should().Be(0);
+            var loadsAfterInit = component.LoadCount;
+
+            // Internal navigation triggers exactly one load for the requested page.
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(3);
+                component.LastRequestedPage.Should().Be(3);
+                component.LoadCount.Should().Be(loadsAfterInit + 1);
+            });
+
+            // A parent re-render re-applies the unchanged CurrentPage: the page must stay selected.
+            await testComponent.Find("#rerender").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine code-driven change navigates with exactly one more load; the re-render added none
+            // (otherwise this total would be loadsAfterInit + 3).
+            await testComponent.Find("#setcode").ClickAsync();
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(5);
+                component.LastRequestedPage.Should().Be(5);
+                component.LoadCount.Should().Be(loadsAfterInit + 2);
+            });
+        }
+
+        // The ServerData reset path: when a load reveals the current page no longer exists, the table
+        // resets to page 0 through SetCurrentPage (MudTable.InvokeServerLoadFunc).
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenCurrentPageOverflows()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+
+            await testComponent.InvokeAsync(() => table.NavigateTo(5));
+            await testComponent.WaitForAssertionAsync(() => table.CurrentPage.Should().Be(5));
+
+            // Data shrinks so page 5 no longer exists; the next load must snap back to page 0.
+            await testComponent.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return table.ReloadServerData();
+            });
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+            });
+        }
+
         /// <summary>
         /// Table initialized to display the third page
         /// </summary>
