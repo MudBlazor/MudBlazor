@@ -59,17 +59,13 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
         var options = Options.Create(new LocalizationOptions());
         var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
 
-        // The built-in resources only contain the neutral (English) strings; MudBlazor ships no satellite assemblies.
-        // Reading them under a non-English UI culture makes the ResourceManager probe for a non-existent
-        // MudBlazor.resources satellite, which throws a first-chance FileNotFoundException on every fresh lookup.
-        // That is mostly invisible at runtime but crippling under the Blazor WebAssembly debugger (see #13461).
-        // Pinning the lookup to the invariant culture returns the embedded neutral resource with no satellite probing.
+        // MudBlazor ships no satellite assemblies, so look up the built-in English strings under the invariant
+        // culture to avoid probing for a non-existent MudBlazor.resources satellite under non-English UI cultures (#13461).
         return new InvariantLanguageResourceLocalizer(factory.Create(typeof(LanguageResource)));
     }
 
     /// <summary>
-    /// Wraps the built-in English <see cref="IStringLocalizer"/> so lookups resolve under the invariant culture,
-    /// avoiding satellite-assembly probing under non-English UI cultures. Only <see cref="CultureInfo.CurrentUICulture"/>
+    /// Resolves the built-in English resources under the invariant culture. Only <see cref="CultureInfo.CurrentUICulture"/>
     /// is pinned, so <see cref="CultureInfo.CurrentCulture"/> still formats arguments in the user's culture.
     /// </summary>
     private sealed class InvariantLanguageResourceLocalizer(IStringLocalizer inner) : IStringLocalizer
