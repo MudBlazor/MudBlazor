@@ -58,7 +58,7 @@ namespace MudBlazor
         /// The text to display.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10. Provide the display text as child content and set <see cref="Value"/> for the selectable value; <see cref="Value"/> alone is not displayed. Note that <see cref="SecondaryText"/> only renders together with Text; include secondary content in the child content instead. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// Deprecated and removed in v10. Provide the display text as child content and set <see cref="Value"/> for the selectable value; <see cref="Value"/> alone is not displayed. See https://github.com/MudBlazor/MudBlazor/issues/12556.
         /// </remarks>
         [Obsolete("Text is being removed in v10; provide the display text as child content and set Value for the selectable value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
@@ -69,7 +69,7 @@ namespace MudBlazor
         /// The secondary text displayed.
         /// </summary>
         /// <remarks>
-        /// This text is displayed under <see cref="Text"/>, in a smaller size.
+        /// This text is displayed under the item's primary content, in a smaller size.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -83,7 +83,7 @@ namespace MudBlazor
         public T? Value { get; set; }
 
         /// <summary>
-        /// The custom <see cref="MudAvatar" /> to display to the left of <see cref="Text"/>.
+        /// The custom <see cref="MudAvatar" /> to display to the left of the item's content.
         /// </summary>
         /// <remarks>
         /// When a value is set, <see cref="Icon"/> is ignored.

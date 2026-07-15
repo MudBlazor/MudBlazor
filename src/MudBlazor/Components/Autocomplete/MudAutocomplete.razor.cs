@@ -274,7 +274,7 @@ namespace MudBlazor
         /// Occurs when the <see cref="DebounceInterval"/> has elapsed.
         /// </summary>
         /// <remarks>
-        /// The current value of <see cref="MudBaseInput{T}.Text"/> is included in this event.
+        /// The input's current text is included in this event.
         /// </remarks>
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }

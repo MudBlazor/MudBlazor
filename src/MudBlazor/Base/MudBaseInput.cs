@@ -409,7 +409,7 @@ namespace MudBlazor
         /// The value for this input.
         /// </summary>
         /// <remarks>
-        /// This property represents the strongly typed value for the input.  It is typically the result of parsing raw input via the <see cref="Text"/> property.
+        /// This property represents the strongly typed value for the input.  It is typically the result of parsing the raw text entered into the input.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -443,7 +443,7 @@ namespace MudBlazor
         /// Occurs when the value has changed internally.
         /// </summary>
         /// <remarks>
-        /// This method is called when the <see cref="Text"/> property needs to be refreshed from current <see cref="Value" />.
+        /// This method is called when the displayed text needs to be refreshed from the current <see cref="Value" />.
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -617,7 +617,7 @@ namespace MudBlazor
         /// Occurs when the value has changed internally.
         /// </summary>
         /// <remarks>
-        /// This method is called when the <see cref="Value"/> property needs to be refreshed from current <see cref="Text" />.
+        /// This method is called when the <see cref="Value"/> property needs to be refreshed from the current displayed text.
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
@@ -686,7 +686,7 @@ namespace MudBlazor
         /// <summary>
         /// Causes this input to be rerendered.
         /// </summary>
-        /// <param name="forceTextUpdate">When <c>true</c>, the <see cref="Text"/> property will be updated before rendering.</param>
+        /// <param name="forceTextUpdate">When <c>true</c>, the displayed text will be refreshed from the current <see cref="Value"/> before rendering.</param>
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;

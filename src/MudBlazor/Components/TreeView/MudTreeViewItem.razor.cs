@@ -105,7 +105,7 @@ namespace MudBlazor
         public Typo TextTypo { get; set; } = Typo.body1;
 
         /// <summary>
-        /// The CSS classes applied to the <see cref="Text"/> parameter.
+        /// The CSS classes applied to the item's text label.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple values must be separated by spaces.
@@ -208,7 +208,7 @@ namespace MudBlazor
         /// The custom content for the text, end text, and end icon.
         /// </summary>
         /// <remarks>
-        /// When set, the <see cref="Text"/>, <see cref="EndText"/>, and <see cref="EndIcon"/> properties are ignored.
+        /// When set, the item's text, <see cref="EndText"/>, and <see cref="EndIcon"/> are ignored.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]

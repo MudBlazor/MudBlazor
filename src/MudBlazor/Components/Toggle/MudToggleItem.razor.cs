@@ -97,7 +97,7 @@ namespace MudBlazor
         /// The custom content shown for this item.
         /// </summary>
         /// <remarks>
-        /// The provided <c>boolean</c> parameter is <c>true</c> when this item is selected. When set, <see cref="Text"/> will not be displayed.
+        /// The provided <c>boolean</c> parameter is <c>true</c> when this item is selected. When set, the item's text will not be displayed.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]

@@ -248,22 +248,24 @@ namespace MudBlazor.UnitTests.Components
         public void ListItem_Inset_AddsInsetClassToTextWrapper()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Indented").Add(x => x.Inset, true)));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Indented").Add(x => x.Inset, true).AddChildContent("Indented")));
 
             comp.Find("div.mud-list-item-text").ClassList.Should().Contain("mud-list-item-text-inset");
         }
 
         [Test]
-        public void ListItem_ChildContent_OverridesTextAndSecondaryText()
+        public void ListItem_ChildContent_OverridesText_ButSecondaryTextStillRenders()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .AddChildContent<MudListItem<string>>(item => item
                     .Add(x => x.Text, "ignored-text")
-                    .Add(x => x.SecondaryText, "ignored-secondary")
+                    .Add(x => x.SecondaryText, "kept-secondary")
                     .AddChildContent("<span class=\"custom-content\">Custom</span>")));
 
             comp.Find("span.custom-content").TextContent.Should().Be("Custom");
-            comp.Markup.Should().NotContain("ignored");
+            comp.Markup.Should().NotContain("ignored-text"); // Child content replaces the primary Text.
+            // SecondaryText renders independently of Text so it keeps working once Text is removed in v10 (#12556).
+            comp.Find(".mud-list-item-secondary-text").TextContent.Should().Contain("kept-secondary");
         }
 
         [Test]
@@ -273,7 +275,8 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudListItem<string>>(item => item
                     .Add(x => x.Value, "Profile")
                     .Add(x => x.Icon, Icons.Material.Filled.Inbox)
-                    .Add(x => x.AvatarContent, "<span class=\"avatar-marker\">AV</span>")));
+                    .Add(x => x.AvatarContent, "<span class=\"avatar-marker\">AV</span>")
+                    .AddChildContent("Profile")));
 
             comp.Find("div.mud-list-item-avatar").TextContent.Should().Contain("AV");
             comp.FindAll("div.mud-list-item-icon").Should().BeEmpty(); // Icon is ignored when AvatarContent is set
@@ -305,9 +308,11 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudListItem<string>>(item => item
                     .Add(x => x.Value, "Docs")
                     .Add(x => x.Href, "/docs")
-                    .Add(x => x.Target, "_blank"))
+                    .Add(x => x.Target, "_blank")
+                    .AddChildContent("Docs"))
                 .AddChildContent<MudListItem<string>>(item => item
-                    .Add(x => x.Value, "Plain")));
+                    .Add(x => x.Value, "Plain")
+                    .AddChildContent("Plain")));
 
             var anchor = comp.Find("a.mud-list-item");
             anchor.GetAttribute("href").Should().Be("/docs");
@@ -329,7 +334,8 @@ namespace MudBlazor.UnitTests.Components
                     .Add(x => x.Value, "Go")
                     .Add(x => x.Href, "/list-target")
                     .Add(x => x.ForceLoad, forceLoad)
-                    .Add(x => x.Target, target)));
+                    .Add(x => x.Target, target)
+                    .AddChildContent("Go")));
             var before = nav.Uri;
 
             await comp.Find("a.mud-list-item").ClickAsync();
@@ -353,7 +359,8 @@ namespace MudBlazor.UnitTests.Components
                     .Add(x => x.Value, "item")
                     .Add(x => x.Href, "/should-not-follow")
                     .Add(x => x.OnClickPreventDefault, true)
-                    .Add(x => x.OnClick, () => clicks++)));
+                    .Add(x => x.OnClick, () => clicks++)
+                    .AddChildContent("Item")));
 
             comp.FindAll("a.mud-list-item").Should().BeEmpty(); // forced to a div despite the Href
             await comp.Find("div.mud-list-item").ClickAsync();
@@ -370,10 +377,12 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudListItem<string>>(item => item
                     .Add(x => x.Value, "parent")
                     .Add(x => x.OnClick, () => clicks++)
+                    .AddChildContent("Parent")
                     .Add(x => x.NestedList, nested =>
                     {
                         nested.OpenComponent<MudListItem<string>>(0);
                         nested.AddAttribute(1, nameof(MudListItem<string>.Value), "child");
+                        nested.AddAttribute(2, nameof(MudListItem<string>.ChildContent), (RenderFragment)(b => b.AddContent(0, "Child")));
                         nested.CloseComponent();
                     })));
 
@@ -391,8 +400,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .Add(x => x.Disabled, true)
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A").AddChildContent("A"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B").AddChildContent("B")));
 
             comp.FindAll("div.mud-list-item").Should().OnlyContain(item =>
                 item.ClassList.Contains("mud-list-item-disabled") && item.GetAttribute("tabindex") == "-1");
@@ -405,9 +414,9 @@ namespace MudBlazor.UnitTests.Components
         public async Task Disabled_Item_IsNotClickable_ButSiblingsRemainSelectable()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B").Add(x => x.Disabled, true))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "C")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A").AddChildContent("A"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B").AddChildContent("B").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "C").AddChildContent("C")));
             var item = (string text) => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Value == text);
 
             var disabled = item("B").Find("div.mud-list-item");
@@ -429,8 +438,8 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.CheckBoxColor, Color.Secondary)
                 .Add(x => x.CheckedIcon, Icons.Material.Filled.Star)
                 .Add(x => x.UncheckedIcon, Icons.Material.Filled.StarBorder)
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A").AddChildContent("A"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B").AddChildContent("B")));
 
             comp.FindComponents<MudCheckBox<bool?>>().Should().AllSatisfy(checkbox =>
             {
@@ -446,8 +455,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .Add(x => x.SelectedValue, "apple")
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "APPLE"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Banana")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "APPLE").AddChildContent("APPLE"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Banana").AddChildContent("Banana")));
 
             // case-sensitive default: "apple" matches nothing
             comp.FindAll("div.mud-selected-item").Should().BeEmpty();
@@ -467,8 +476,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudList<string>>(builder => builder
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
                 .Add(x => x.SelectedValues, ["apple"])
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "APPLE"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Banana")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "APPLE").AddChildContent("APPLE"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Banana").AddChildContent("Banana")));
 
             bool? CheckBox(string value) => comp.FindComponents<MudListItem<string>>()
                 .Single(x => x.Instance.Value == value).FindComponent<MudCheckBox<bool?>>().Instance.ReadValue;
@@ -505,7 +514,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A").AddChildContent("A")));
 
             var list = comp.Find("div.mud-list");
             list.GetAttribute("role").Should().Be("listbox");
@@ -516,8 +525,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task SingleSelection_AriaSelected_ReflectsTheSelectedItem()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "A").AddChildContent("A"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "B").AddChildContent("B")));
 
             comp.FindAll("div.mud-list-item").Should().OnlyContain(item => item.GetAttribute("aria-selected") == "false");
 
@@ -660,7 +669,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task Keyboard_EnterOnAnchorItem_LeavesNavigationToTheBrowser()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Link").Add(x => x.Href, "/somewhere")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Link").Add(x => x.Href, "/somewhere").AddChildContent("Link")));
 
             comp.Find("a.mud-list-item").GetAttribute("aria-selected").Should().Be("false");
 
@@ -753,11 +762,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudList<string>>(builder => builder
                 .AddChildContent<MudListItem<string>>(item => item
                     .Add(x => x.Value, "Custom attrs")
+                    .AddChildContent("Custom attrs")
                     .AddUnmatched("id", "custom-id")
                     .AddUnmatched("tabindex", "-1")
                     .AddUnmatched("data-test", "custom-marker"))
                 .AddChildContent<MudListItem<string>>(item => item
-                    .Add(x => x.Value, "Default item"))
+                    .Add(x => x.Value, "Default item")
+                    .AddChildContent("Default item"))
             );
 
             var customIdItem = comp.Find("div.mud-list-item[data-test='custom-marker']");

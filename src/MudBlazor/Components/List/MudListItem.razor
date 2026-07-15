@@ -68,13 +68,14 @@
             else
             {
                 @Text
-                @if (!string.IsNullOrEmpty(SecondaryText))
-                {
-                    <br />
-                    <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">
-                        @SecondaryText
-                    </MudText>
-                }
+            }
+            @* SecondaryText renders alongside child content or Text so it keeps working once Text is removed in v10 (#12556). *@
+            @if (!string.IsNullOrEmpty(SecondaryText))
+            {
+                <br />
+                <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">
+                    @SecondaryText
+                </MudText>
             }
         </MudText>
     </div>
