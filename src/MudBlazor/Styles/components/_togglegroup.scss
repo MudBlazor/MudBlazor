@@ -56,8 +56,7 @@
     }
   }
 
-  // Absorb the group border into the item padding so the overall height matches
-  // MudButton, which pairs its 1px outlined border with 5px/3px/7px padding.
+  // Absorb the group border into the item padding so the overall height matches MudButton, which pairs its 1px outlined border with 5px/3px/7px padding.
   .mud-toggle-item {
     padding: 5px;
 
