@@ -328,7 +328,7 @@ Use `@attribute [ViewerHidden]` for helper or sub-components that are not meanin
 
 ### Diagnosing accessibility issues
 
-Screen readers render the browser's accessibility tree, so diagnose and verify against the tree, not against NVDA/JAWS narration. A screen reader is never required. The spec to verify against is the matching W3C ARIA Authoring Practices Guide pattern (https://www.w3.org/WAI/ARIA/apg/patterns/) — its role, name, state, and keyboard-interaction tables are the acceptance checklist.
+Screen readers render the browser's accessibility tree, so diagnose and verify against the tree. A screen reader is not required. The spec to verify against is the matching W3C ARIA Authoring Practices Guide pattern (https://www.w3.org/WAI/ARIA/apg/patterns/) — its role, name, state, and keyboard-interaction tables are the acceptance checklist.
 
 Diagnosis loop:
 1. Host the component in the Viewer using the reproduction loop above (`chrome=none`).
@@ -336,11 +336,6 @@ Diagnosis loop:
 3. Interact as a keyboard user would (open the popup, arrow through options, select, close) and re-snapshot after each step. Dynamic states are where most bugs live: `aria-expanded` must flip, `aria-activedescendant` must track the visual highlight, `aria-selected` must follow selection. A highlight implemented only as a CSS class is invisible to assistive tech.
 4. Optionally inject axe-core into the Viewer page for a WCAG rule scan (missing names, role conflicts, contrast). It supplements but does not replace the APG checklist.
 5. Diff the snapshots against the APG pattern; each mismatch is a concrete defect.
-
-Fixing:
-- Reference implementation for popup-input patterns: `MudSelect` (`src/MudBlazor/Components/Select/MudSelect.razor.cs`, combobox/listbox wiring from #13077).
-- Prefer `aria-activedescendant` on the input over moving DOM focus into popovers; reuse the component's existing stable element ids and highlight-index state.
-- Generated-attribute override behavior follows the Accessibility and behavior rules under Component Authoring Rules.
 
 Verify with bUnit assertions on roles and `aria-*` attributes before and after interaction (reference: `SelectTests.cs`), then re-snapshot the accessibility tree in the Viewer to confirm the pattern checklist passes.
 
