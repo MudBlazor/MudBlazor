@@ -253,6 +253,7 @@ public class ServiceCollectionExtensionsTests
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
