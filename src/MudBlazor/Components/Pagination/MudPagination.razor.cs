@@ -75,7 +75,7 @@ namespace MudBlazor
         /// The number of pages shown before and after the ellipsis.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. <br />
+        /// Defaults to <c>2</c>. <br />
         /// A value of <c>0</c> would hide the page numbers at the edge: <c>&lt; ... 4 5 6 ... &gt;</c> <br />
         /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
         /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c>
@@ -88,7 +88,7 @@ namespace MudBlazor
         /// The number of pages shown between the ellipsis.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. <br />
+        /// Defaults to <c>3</c>. <br />
         /// A value of <c>1</c> would show one-page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
         /// A value of <c>3</c> would show three-page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
         /// </remarks>
