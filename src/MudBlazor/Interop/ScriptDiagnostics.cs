@@ -18,6 +18,7 @@ internal static class ScriptDiagnostics
         "MudBlazor's JavaScript could not be found, so components that rely on it won't work. " +
         "Reference the MudBlazor script in your host page (App.razor or index.html) after the Blazor script: " +
         "<script src=\"_content/MudBlazor/MudBlazor.min.js\"></script>. " +
+        "If it is already referenced, confirm the script returns 200 in the browser's Network tab and hard-refresh to clear a stale cached page. " +
         "See https://mudblazor.com/getting-started/installation";
 
     internal static void LogMissingScriptOnce(ILogger logger)
