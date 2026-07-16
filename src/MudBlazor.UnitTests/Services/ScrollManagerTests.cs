@@ -121,11 +121,18 @@ public class ScrollManagerTests
         _runtimeMock.VerifyAll();
     }
 
-    [Test]
-    public async Task LockScrollAsync_SwallowsDisconnect()
+    private static readonly Exception[] BenignInteropExceptions =
+    [
+        new JSDisconnectedException("disconnected"),
+        new TaskCanceledException(),
+        new ObjectDisposedException("circuit"),
+    ];
+
+    [TestCaseSource(nameof(BenignInteropExceptions))]
+    public async Task LockScrollAsync_SwallowsBenignInteropError(Exception exception)
     {
-        // MudOverlay awaits this from its lifecycle methods, so a disconnect mid-render must not surface as an unhandled exception.
-        SetupThrowingInvocation("mudScrollManager.lockScroll", new JSDisconnectedException("disconnected"));
+        // MudOverlay awaits this from its lifecycle methods, so a disconnect or teardown mid-render must not surface as an unhandled exception.
+        SetupThrowingInvocation("mudScrollManager.lockScroll", exception);
 
         var act = async () => await _service.LockScrollAsync("#dialog", "locked");
 

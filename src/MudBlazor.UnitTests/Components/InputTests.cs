@@ -109,4 +109,29 @@ public class InputTests : BunitTest
         errors.Should().ContainSingle();
         errors[0].Message.Should().Be(ScriptDiagnostics.MissingScriptMessage);
     }
+
+    private static readonly Exception[] BenignBlurInteropExceptions =
+    [
+        new JSDisconnectedException("disconnected"),
+        new TaskCanceledException(),
+        new ObjectDisposedException("circuit"),
+    ];
+
+    [TestCaseSource(nameof(BenignBlurInteropExceptions))]
+    public void BlurInterop_BenignErrors_DoNotCrashOrLog(Exception exception)
+    {
+        // Disconnects and teardown races during the first-render blur attach are expected noise; they must neither crash nor log guidance.
+        Context.JSInterop
+            .SetupVoid("mudElementRef.addOnBlurEvent", _ => true)
+            .SetException(exception);
+
+        var provider = new MockLoggerProvider();
+        var logger = (MockLogger)provider.CreateLogger(GetType().FullName!);
+        Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider));
+
+        var render = () => Context.Render<MudInput<string>>();
+
+        render.Should().NotThrow();
+        logger.GetEntries().Where(e => e.Level == LogLevel.Error).Should().BeEmpty();
+    }
 }
