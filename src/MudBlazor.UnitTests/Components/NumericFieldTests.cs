@@ -235,10 +235,7 @@ namespace MudBlazor.UnitTests.Components
             numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
-        /// <summary>
-        /// Incrementing a double with a fractional Step must not introduce IEEE 754 precision errors.
-        /// Regression test for #6762: 0 + 0.1 * 3 used to display "0.30000000000000004".
-        /// </summary>
+        // Regression test for #6762: 0 + 0.1 * 3 used to display "0.30000000000000004".
         [Test]
         public async Task NumericField_Double_FractionalStep_ShouldNotIntroducePrecisionError()
         {
@@ -262,6 +259,39 @@ namespace MudBlazor.UnitTests.Components
 
             numericField.ReadValue.Should().Be(0.0);
             comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        // Regression test for #6762: same as the double case but for float.
+        [Test]
+        public async Task NumericField_Float_FractionalStep_ShouldNotIntroducePrecisionError()
+        {
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0f)
+                .Add(x => x.Step, 0.1f));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(0.3f);
+            comp.Find("input").GetAttribute("value").Should().Be("0.3");
+        }
+
+        // Values beyond decimal range must fall back to double arithmetic instead of overflowing.
+        [Test]
+        public async Task NumericField_Double_BeyondDecimalRange_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 1e300)
+                .Add(x => x.Step, 1e300));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(2e300);
         }
 
         /// <summary>
