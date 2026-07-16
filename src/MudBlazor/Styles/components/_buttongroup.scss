@@ -39,76 +39,6 @@
     }
   }
 
-  &.mud-button-group-text-size-small .mud-button-root {
-    padding: 4px 5px;
-    font-size: 0.8125rem;
-
-    &.mud-icon-button .mud-icon-root {
-      font-size: 1.422rem;
-    }
-  }
-
-  &.mud-button-group-text-size-large .mud-button-root {
-    padding: 8px 11px;
-    font-size: 0.9375rem;
-
-    &.mud-icon-button .mud-icon-root {
-      font-size: 1.641rem;
-    }
-  }
-
-  &.mud-button-group-outlined-size-small .mud-button-root {
-    padding: 3px 9px;
-    font-size: 0.8125rem;
-
-    &.mud-icon-button {
-      padding: 3px 9px;
-
-      .mud-icon-root {
-        font-size: 1.422rem;
-      }
-    }
-  }
-
-  &.mud-button-group-outlined-size-large .mud-button-root {
-    padding: 7px 21px;
-    font-size: 0.9375rem;
-
-    &.mud-icon-button {
-      padding: 7px 15px;
-
-      .mud-icon-root {
-        font-size: 1.641rem;
-      }
-    }
-  }
-
-  &.mud-button-group-filled-size-small .mud-button-root {
-    padding: 4px 10px;
-    font-size: 0.8125rem;
-
-    &.mud-icon-button {
-      padding: 4px 10px;
-
-      .mud-icon-root {
-        font-size: 1.422rem;
-      }
-    }
-  }
-
-  &.mud-button-group-filled-size-large .mud-button-root {
-    padding: 8px 22px;
-    font-size: 0.9375rem;
-
-    &.mud-icon-button {
-      padding: 8px 16px;
-
-      .mud-icon-root {
-        font-size: 1.641rem;
-      }
-    }
-  }
-
   .mud-button-root.mud-icon-button {
     padding-right: 12px;
     padding-left: 12px;
@@ -357,6 +287,80 @@
             border-top: 1px solid var(--mud-palette-#{$color}-lighten);
           }
         }
+      }
+    }
+  }
+}
+
+// Size-specific paddings must come after the variant blocks above.
+// They share specificity with the override-styles base paddings, so source order decides.
+.mud-button-group-root {
+  &.mud-button-group-text-size-small .mud-button-root {
+    padding: 4px 5px;
+    font-size: 0.8125rem;
+
+    &.mud-icon-button .mud-icon-root {
+      font-size: 1.422rem;
+    }
+  }
+
+  &.mud-button-group-text-size-large .mud-button-root {
+    padding: 8px 11px;
+    font-size: 0.9375rem;
+
+    &.mud-icon-button .mud-icon-root {
+      font-size: 1.641rem;
+    }
+  }
+
+  &.mud-button-group-outlined-size-small .mud-button-root {
+    padding: 3px 9px;
+    font-size: 0.8125rem;
+
+    &.mud-icon-button {
+      padding: 3px 9px;
+
+      .mud-icon-root {
+        font-size: 1.422rem;
+      }
+    }
+  }
+
+  &.mud-button-group-outlined-size-large .mud-button-root {
+    padding: 7px 21px;
+    font-size: 0.9375rem;
+
+    &.mud-icon-button {
+      padding: 7px 15px;
+
+      .mud-icon-root {
+        font-size: 1.641rem;
+      }
+    }
+  }
+
+  &.mud-button-group-filled-size-small .mud-button-root {
+    padding: 4px 10px;
+    font-size: 0.8125rem;
+
+    &.mud-icon-button {
+      padding: 4px 10px;
+
+      .mud-icon-root {
+        font-size: 1.422rem;
+      }
+    }
+  }
+
+  &.mud-button-group-filled-size-large .mud-button-root {
+    padding: 8px 22px;
+    font-size: 0.9375rem;
+
+    &.mud-icon-button {
+      padding: 8px 16px;
+
+      .mud-icon-root {
+        font-size: 1.641rem;
       }
     }
   }
