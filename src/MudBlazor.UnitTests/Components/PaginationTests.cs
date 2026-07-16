@@ -266,25 +266,24 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="middleCount">The number of items between the ellipsis.</param>
         /// <param name="boundaryCount">The number of items at the start and end of the pagination.</param>
         /// <param name="expectedValues">The expected content of the items.</param>
-        [TestCase(6, 11, 3, 2, new[] { "1", "2", "...", "5", "6", "7", "...", "10", "11" })]
-        [TestCase(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(11, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(11, 22, 1, 1, new[] { "1", "...", "11", "...", "22" })]
-        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "...", "22" })]
-        [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22" })]
-        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
-        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
-        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
-        [TestCase(8, 30, 11, 0, new[] { "...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "..." })]
-        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "..." })]
-        [TestCase(30, 30, 11, 0, new[] { "...", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
-        // Regression cases for https://github.com/MudBlazor/MudBlazor/pull/13424#issuecomment (OFark):
-        // with BoundaryCount=0 and MiddleCount=11, Selected=6 must show exactly 11 pages (1-11, 5 before/5 after),
-        // not 12 as previously; Selected=7 is the first page for which the window can be fully centered on both sides.
-        [TestCase(6, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "..." })]
-        [TestCase(7, 30, 11, 0, new[] { "...", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "..." })]
+        [TestCase(6, 11, 3, 2, new[] { "1", "2", "…", "5", "6", "7", "…", "10", "11" })]
+        [TestCase(7, 11, 3, 2, new[] { "1", "2", "…", "6", "7", "8", "9", "10", "11" })]
+        [TestCase(11, 11, 3, 2, new[] { "1", "2", "…", "6", "7", "8", "9", "10", "11" })]
+        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "…", "10", "11" })]
+        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "…", "10", "11" })]
+        [TestCase(11, 22, 1, 1, new[] { "1", "…", "11", "…", "22" })]
+        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "…", "22" })]
+        [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "…", "6", "7", "8", "9", "10", "…", "20", "21", "22" })]
+        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "…", "20", "21", "22" })]
+        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "…", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "…", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(8, 30, 11, 0, new[] { "…", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "…" })]
+        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "…" })]
+        [TestCase(30, 30, 11, 0, new[] { "…", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        // With BoundaryCount=0 the window must contain exactly MiddleCount pages.
+        // Selected=6 shows pages 1-11; Selected=7 is the first page whose window is centered on both sides.
+        [TestCase(6, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "…" })]
+        [TestCase(7, 30, 11, 0, new[] { "…", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "…" })]
         [Test]
         public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
@@ -327,7 +326,7 @@ namespace MudBlazor.UnitTests.Components
 
             var items = comp.FindAll(".mud-pagination-item");
             items.Select(x => x.TextContent).Should()
-                .Equal("...", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "...");
+                .Equal("…", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "…");
         }
 
         /// <summary>

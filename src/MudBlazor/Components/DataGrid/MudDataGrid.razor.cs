@@ -405,6 +405,12 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
 
         /// <summary>
         /// Allows columns to be reordered via the columns panel.

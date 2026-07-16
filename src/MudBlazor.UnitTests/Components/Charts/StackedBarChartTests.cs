@@ -1163,5 +1163,90 @@ namespace MudBlazor.UnitTests.Charts
 
             compShown.FindAll("path.mud-chart-bar").Count.Should().Be(4);
         }
+
+        [Test]
+        public void StackedBarChart_ShowValues_ShouldRenderTotalLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowValues = true }));
+
+            var labels = comp.FindAll("text.mud-chart-value-label");
+            labels.Should().HaveCount(2, because: "one total label renders above each stacked bar");
+            labels.Select(l => l.TextContent).Should().ContainInOrder("25", "45");
+        }
+
+        [Test]
+        public void StackedBarChart_ShowValues_Default_ShouldNotRenderTotalLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("text.mud-chart-value-label").Should().BeEmpty(because: "ShowValues defaults to false");
+        }
+
+        [Test]
+        public async Task StackedBarChart_ShowValues_HiddenSeries_ShouldExcludeFromTotals()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowValues = true }));
+
+            comp.FindAll("text.mud-chart-value-label").Select(l => l.TextContent).Should().ContainInOrder("25", "45");
+
+            // Hide the second series; totals must recalculate from the visible series only.
+            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+            await seriesCheckboxes[1].ChangeAsync(false);
+
+            comp.FindAll("text.mud-chart-value-label").Select(l => l.TextContent).Should().ContainInOrder("10", "20");
+        }
+
+        [Test]
+        public void StackedBarChart_ShowValues_NegativeTotals_ShouldRenderBelowBars()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { -10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { -15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowValues = true, YAxisTicks = 10 }));
+
+            var labels = comp.FindAll("text.mud-chart-value-label");
+            labels.Should().HaveCount(2);
+            labels.Select(l => l.TextContent).Should().ContainInOrder("-25", "45");
+        }
     }
 }
