@@ -1,7 +1,9 @@
 ﻿using AwesomeAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
+using MudBlazor.Interop;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Services;
@@ -10,13 +12,15 @@ namespace MudBlazor.UnitTests.Services;
 public class ScrollManagerTests
 {
     private Mock<IJSRuntime> _runtimeMock;
+    private Mock<ILogger<ScrollManager>> _loggerMock;
     private ScrollManager _service;
 
     [SetUp]
     public void SetUp()
     {
         _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-        _service = new ScrollManager(_runtimeMock.Object);
+        _loggerMock = new Mock<ILogger<ScrollManager>>();
+        _service = new ScrollManager(_runtimeMock.Object, _loggerMock.Object);
     }
 
     [Test]
@@ -118,14 +122,34 @@ public class ScrollManagerTests
     }
 
     [Test]
-    public async Task LockScrollAsync_PropagatesJsRuntimeError()
+    public async Task LockScrollAsync_SwallowsDisconnect()
     {
-        // lockScroll must surface failures; only the unlock/dispose paths swallow them.
+        // MudOverlay awaits this from its lifecycle methods, so a disconnect mid-render must not surface as an unhandled exception.
         SetupThrowingInvocation("mudScrollManager.lockScroll", new JSDisconnectedException("disconnected"));
 
         var act = async () => await _service.LockScrollAsync("#dialog", "locked");
 
-        await act.Should().ThrowAsync<JSDisconnectedException>();
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    [NonParallelizable] // ScriptDiagnostics.MissingScriptLogged is process-wide; keep other fixtures from racing the reset.
+    public async Task LockScrollAsync_MissingScript_LogsGuidanceOnceAndDoesNotThrow()
+    {
+        // https://github.com/MudBlazor/MudBlazor/issues/13477
+        // Every dialog and overlay locks scroll from a lifecycle method; when the MudBlazor script
+        // isn't referenced this must log actionable guidance once instead of killing the circuit.
+        SetupThrowingInvocation("mudScrollManager.lockScroll", new JSException("Could not find 'mudScrollManager.lockScroll' ('mudScrollManager' was undefined)."));
+        ScriptDiagnostics.MissingScriptLogged = false;
+
+        var act = async () =>
+        {
+            await _service.LockScrollAsync("#dialog", "locked");
+            await _service.LockScrollAsync("#dialog", "locked");
+        };
+
+        await act.Should().NotThrowAsync();
+        _loggerMock.VerifyLogging(ScriptDiagnostics.MissingScriptMessage, LogLevel.Error, Times.Once());
     }
 
     [Test]

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -413,7 +414,25 @@ namespace MudBlazor
             if (firstRender && !_disposed)
             {
                 // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
-                await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
+                // Tolerate a missing or late-loading MudBlazor script: log actionable guidance once instead of tearing down the circuit (#13477).
+                try
+                {
+                    await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
+                }
+                catch (JSException)
+                {
+                    // mudElementRef is undefined, so the MudBlazor script isn't loaded on the page.
+                    ScriptDiagnostics.LogMissingScriptOnce(Logger);
+                }
+                catch (JSDisconnectedException)
+                {
+                }
+                catch (TaskCanceledException)
+                {
+                }
+                catch (ObjectDisposedException)
+                {
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);

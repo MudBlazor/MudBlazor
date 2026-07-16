@@ -1,5 +1,11 @@
-﻿using AwesomeAssertions;
+﻿using System.Linq;
+using AwesomeAssertions;
 using Bunit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
+using MudBlazor.Interop;
+using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -71,5 +77,36 @@ public class InputTests : BunitTest
         {
             comp.Find("div.mud-input").ClassList.Should().NotContain("mud-input-full-width");
         }
+    }
+
+    [Test]
+    [NonParallelizable] // ScriptDiagnostics.MissingScriptLogged is process-wide; keep other fixtures from racing the reset.
+    public void MissingMudBlazorScript_LogsGuidanceOnceAndDoesNotCrash()
+    {
+        // https://github.com/MudBlazor/MudBlazor/issues/13477
+        // When the MudBlazor script isn't referenced, window.mudElementRef is undefined and the
+        // first-render blur-attach interop throws. That must not tear down the circuit; instead
+        // we log actionable guidance once, no matter how many inputs are on the page.
+        Context.JSInterop
+            .SetupVoid("mudElementRef.addOnBlurEvent", _ => true)
+            .SetException(new JSException("Could not find 'mudElementRef.addOnBlurEvent' ('mudElementRef' was undefined)."));
+
+        var provider = new MockLoggerProvider();
+        var logger = (MockLogger)provider.CreateLogger(GetType().FullName!);
+        Context.Services.AddLogging(x => x.ClearProviders().AddProvider(provider));
+
+        ScriptDiagnostics.MissingScriptLogged = false;
+
+        var render = () =>
+        {
+            Context.Render<MudInput<string>>();
+            Context.Render<MudInput<int>>();
+        };
+
+        render.Should().NotThrow();
+
+        var errors = logger.GetEntries().Where(e => e.Level == LogLevel.Error).ToList();
+        errors.Should().ContainSingle();
+        errors[0].Message.Should().Be(ScriptDiagnostics.MissingScriptMessage);
     }
 }
