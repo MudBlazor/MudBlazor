@@ -262,21 +262,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         // Regression test for #6762: same as the double case but for float.
+        // Steps deep enough (0.01 x 16) to expose float noise: converting via the widened double renders
+        // "0.16000001" here, so the decimal conversion must come from the float's own 7-digit value.
         [Test]
         public async Task NumericField_Float_FractionalStep_ShouldNotIntroducePrecisionError()
         {
             var comp = Context.Render<MudNumericField<float>>(parameters => parameters
                 .Add(x => x.Culture, CultureInfo.InvariantCulture)
                 .Add(x => x.Value, 0f)
-                .Add(x => x.Step, 0.1f));
+                .Add(x => x.Step, 0.01f));
             var numericField = comp.Instance;
 
-            await comp.InvokeAsync(() => numericField.Increment());
-            await comp.InvokeAsync(() => numericField.Increment());
-            await comp.InvokeAsync(() => numericField.Increment());
+            for (var i = 0; i < 16; i++)
+                await comp.InvokeAsync(() => numericField.Increment());
 
-            numericField.ReadValue.Should().Be(0.3f);
-            comp.Find("input").GetAttribute("value").Should().Be("0.3");
+            numericField.ReadValue.Should().Be(0.16f);
+            comp.Find("input").GetAttribute("value").Should().Be("0.16");
         }
 
         // Values beyond decimal range must fall back to double arithmetic instead of overflowing.

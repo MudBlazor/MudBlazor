@@ -303,19 +303,20 @@ namespace MudBlazor
             // decimal has a narrower range, so fall back to double arithmetic when a value is out of decimal range.
             if (typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
             {
-                var current = Num.From(ReadValue);
-                var step = Num.From(Step) * factor;
-                if (TryToDecimal(current, out var currentDecimal) && TryToDecimal(step, out var stepDecimal))
-                    return Num.To<T>((double)(currentDecimal + stepDecimal));
-                return Num.To<T>(current + step);
+                if (TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
+                    return Num.To<T>((double)(currentDecimal + (stepDecimal * (decimal)factor)));
+                return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
             }
             return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
 
-            static bool TryToDecimal(double? value, out decimal result)
+            static bool TryToDecimal(T? value, out decimal result)
             {
-                if (value is { } v && v >= (double)decimal.MinValue && v <= (double)decimal.MaxValue)
+                var number = Num.From(value);
+                if (number is { } d && d >= (double)decimal.MinValue && d <= (double)decimal.MaxValue)
                 {
-                    result = (decimal)v;
+                    // Convert from the value's own type: a float widened to double first would re-expose the
+                    // binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    result = value is float f ? (decimal)f : (decimal)d;
                     return true;
                 }
                 result = default;
