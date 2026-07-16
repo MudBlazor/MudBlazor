@@ -300,12 +300,11 @@ namespace MudBlazor
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
             // double/float do their arithmetic in decimal to avoid IEEE 754 precision errors (e.g. 0.1 + 0.2 -> 0.30000000000000004).
-            // decimal has a narrower range, so fall back to double arithmetic when a value is out of decimal range.
-            if (typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+            // decimal has a narrower range, so values out of decimal range fall through to the double arithmetic below.
+            if ((typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+                && TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
             {
-                if (TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
-                    return Num.To<T>((double)(currentDecimal + (stepDecimal * (decimal)factor)));
-                return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
+                return Num.To<T>((double)(currentDecimal + (stepDecimal * (decimal)factor)));
             }
             return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
 
