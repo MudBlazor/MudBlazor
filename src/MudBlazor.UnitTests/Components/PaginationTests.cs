@@ -231,7 +231,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(9, 3, 2)]
         [TestCase(5, 1, 1)]
         [TestCase(5, -1, 1)]
-        [TestCase(5, 1, -1)]
         [Test]
         public async Task PaginationCountWithoutEllipsis(int count, int middleCount, int boundaryCount)
         {
@@ -243,7 +242,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             pagination.GetState(x => x.MiddleCount).Should().Be(Math.Max(1, middleCount));
-            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(1, boundaryCount));
+            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(0, boundaryCount));
 
             for (var i = 1; i <= count; i++)
             {
@@ -276,6 +275,10 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "…", "20", "21", "22" })]
         [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "…", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
         [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "…", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        // BoundaryCount == 0 hides the edge page numbers, showing only ellipsis at the boundaries. See #13181.
+        [TestCase(1, 11, 3, 0, new[] { "1", "2", "3", "4", "…" })]
+        [TestCase(6, 11, 3, 0, new[] { "…", "5", "6", "7", "…" })]
+        [TestCase(11, 11, 3, 0, new[] { "…", "8", "9", "10", "11" })]
         [Test]
         public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
