@@ -1,7 +1,9 @@
-﻿@namespace MudBlazor
+﻿
+
+
+@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
-@using MudBlazor.Utilities
 @using MudBlazor.Extensions
 @using MudBlazor.Resources
 @inject InternalMudLocalizer Localizer
@@ -359,12 +361,17 @@
          </text>;
 
 
-    internal RenderFragment Cell(Column<T> column, T item) =>
+    internal RenderFragment Cell(Column<T> column, T item, int rowIndex, int colIndex) =>
         @<text>
              @{
                  var cell = new Cell<T>(this, column, item);
              }
-             <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
+             <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle"
+                 @onclick="@((args) => OnCellClickedAsync(args, item, rowIndex, colIndex, column))"
+                 @onclick:stopPropagation="@CellClick.HasDelegate"
+                 @oncontextmenu="@((args) => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))"
+                 @oncontextmenu:stopPropagation="@CellContextMenuClick.HasDelegate"
+                 @oncontextmenu:preventDefault="@CellContextMenuClick.HasDelegate">
                  @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
                  {
                      if (column.EditTemplate is not null)

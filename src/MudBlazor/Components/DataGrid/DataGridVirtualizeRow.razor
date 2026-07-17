@@ -62,12 +62,12 @@
             @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
             <CascadingValue Value="@DataGrid.Validator" IsFixed="true">
-                @foreach (var column in DataGrid.RenderedColumns)
+                @{
+                    var visibleColumns = DataGrid.RenderedColumns.Where(c => !c.HiddenState.Value).ToList();
+                }
+                @foreach (var (column, colIdx) in visibleColumns.Select((c, i) => (c, i)))
                 {
-                    if (!column.HiddenState.Value)
-                    {
-                        @DataGrid.Cell(column, itemBag.Item)
-                    }
+                    @DataGrid.Cell(column, itemBag.Item, itemBag.Index, colIdx)
                 }
             </CascadingValue>
         </tr>

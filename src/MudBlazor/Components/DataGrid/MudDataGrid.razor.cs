@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2026
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -10,7 +10,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -332,6 +331,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a cell has been clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<DataGridCellClickEventArgs<T>> CellClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a cell has been right-clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<DataGridCellClickEventArgs<T>> CellContextMenuClick { get; set; }
 
         /// <summary>
         /// Occurs when edit mode begins for an item.
@@ -2247,6 +2260,16 @@ namespace MudBlazor
         internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+        }
+
+        internal Task OnCellClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
+        {
+            return CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
+        }
+
+        internal Task OnCellContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
+        {
+            return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
 
         /// <summary>

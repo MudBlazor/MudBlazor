@@ -819,7 +819,7 @@ namespace MudBlazor
 
         protected internal virtual string? ContentFormat { get; }
 
-        protected internal abstract object? CellContent(T item);
+        public abstract object? CellContent(T item);
 
         protected internal abstract object? PropertyFunc(T item);
 
