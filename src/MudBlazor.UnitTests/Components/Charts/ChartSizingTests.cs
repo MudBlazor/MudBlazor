@@ -226,4 +226,72 @@ public class ChartSizingTests : BunitTest
 
         comp.FindAll("div[style*='height:400px']").Should().BeEmpty();
     }
+
+    [Test]
+    public async Task MudRadialChartBase_OnElementSizeChanged_RespectsMatchBoundsAndTimestamp()
+    {
+        var initialSize = new ElementSize { Width = 300, Height = 300, Timestamp = 10 };
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true).SetResult(initialSize);
+
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "100%")
+            .Add(p => p.Height, "100%"));
+
+        var radialChartBase = comp.Instance;
+
+        // A newer, larger size triggers the MatchBoundsToSize branch (min dimension wins):
+        // min(240, 180) = 180 -> viewBox 0 0 180 180.
+        await comp.InvokeAsync(() => radialChartBase.OnElementSizeChanged(new ElementSize { Width = 240, Height = 180, Timestamp = 20 }));
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Instance._paths.Should().NotBeEmpty();
+            comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 180 180");
+        });
+
+        // A stale (older) timestamp is ignored: the early return keeps the existing viewBox.
+        await comp.InvokeAsync(() => radialChartBase.OnElementSizeChanged(new ElementSize { Width = 50, Height = 50, Timestamp = 1 }));
+        comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 180 180");
+    }
+
+    [Test]
+    public async Task MudRadialChartBase_OnElementSizeChanged_NotMatchBounds_DoesNotChangeBounds()
+    {
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, false)
+            .Add(p => p.Width, "300px")
+            .Add(p => p.Height, "300px"));
+
+        var viewBoxBefore = comp.Find("svg").GetAttribute("viewBox");
+
+        // MatchBoundsToSize is false -> early return after recording the size; bounds unchanged.
+        await comp.InvokeAsync(() => comp.Instance.OnElementSizeChanged(new ElementSize { Width = 123, Height = 456, Timestamp = 99 }));
+
+        comp.Find("svg").GetAttribute("viewBox").Should().Be(viewBoxBefore);
+    }
+
+    [TestCase("200px", "160px", 80)]
+    [TestCase("100%", "100%", 140)]
+    public async Task MudRadialChartBase_SetBounds_ParsesPixelsAndFallsBackToDefault(string width, string height, int expectedRadius)
+    {
+        // When _elementSize is null (no JS interop), RebuildChart -> SetBounds parses px Width/Height.
+        // Non-px values cannot be parsed, so the 280x280 defaults remain (Radius 140).
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, width)
+            .Add(p => p.Height, height));
+
+        List<SvgPath> paths = null!;
+        await comp.InvokeAsync(() =>
+        {
+            comp.Instance.RebuildChart();
+            paths = new List<SvgPath>(comp.Instance._paths);
+        });
+
+        paths.Should().HaveCount(3);
+        paths.Should().OnlyContain(p => p.Data.Contains($"A {expectedRadius} {expectedRadius}"));
+    }
 }

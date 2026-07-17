@@ -5,6 +5,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MudBlazor
 {
@@ -54,6 +56,23 @@ namespace MudBlazor
                     builder.AddAttribute(2, ChildContent, renderFragment);
                     builder.CloseComponent();
                 };
+        }
+
+        internal const string MissingProviderMessage =
+            "Missing <MudDialogProvider /> in the active render scope, so dialogs cannot be displayed. " +
+            "Add <MudDialogProvider /> within the same interactive render mode as the components that open dialogs: in your layout for global interactivity, or on each page for per-page interactivity. " +
+            "See https://mudblazor.com/getting-started/installation#manual-install-add-components";
+
+        private readonly ILogger<DialogService> _logger;
+        private bool _missingProviderLogged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
+        /// <param name="logger">The logger used to surface configuration problems such as a missing provider.</param>
+        public DialogService(ILogger<DialogService>? logger = null)
+        {
+            _logger = logger ?? NullLogger<DialogService>.Instance;
         }
 
         /// <inheritdoc />
@@ -252,6 +271,13 @@ namespace MudBlazor
             if (dialogInstanceAddedAsync is not null)
             {
                 await dialogInstanceAddedAsync(dialogReference);
+            }
+            else if (!_missingProviderLogged)
+            {
+                // No MudDialogProvider is subscribed, so this dialog will never render (ShowAsync then blocks until its render timeout).
+                // Log once with actionable guidance instead of failing silently.
+                _missingProviderLogged = true;
+                _logger.LogError(MissingProviderMessage);
             }
 
             return dialogReference;

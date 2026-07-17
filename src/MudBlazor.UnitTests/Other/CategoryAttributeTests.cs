@@ -59,8 +59,6 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudPageContentNavigation),
                 typeof(MudSnackbarElement),
                 typeof(MudBlazor.Charts.Legend<>),
-
-                typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
             };
 
             var isTestOK = true;
@@ -86,6 +84,38 @@ namespace MudBlazor.UnitTests.Other
 
             // If this fails some component properties don't have categories.
             isTestOK.Should().BeTrue();
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        public void Constructor_NullOrEmptyName_Throws(string name)
+        {
+            var construct = () => new CategoryAttribute(name);
+
+            construct.Should().Throw<ArgumentException>().WithMessage("The category name cannot be null nor empty.");
+        }
+
+        [Test]
+        public void Constructor_UnknownName_Throws()
+        {
+            // A typo or a category that isn't registered in the order table must be rejected.
+            var construct = () => new CategoryAttribute("Behaviour");
+
+            construct.Should().Throw<ArgumentException>().WithMessage("*isn't in the categoryOrder field*");
+        }
+
+        [Test]
+        public void Order_GeneralCategories_AscendingByImportance()
+        {
+            // Documentation ordering contract: Data before Behavior before Appearance before Common.
+            var data = new CategoryAttribute(CategoryTypes.General.Data).Order;
+            var behavior = new CategoryAttribute(CategoryTypes.General.Behavior).Order;
+            var appearance = new CategoryAttribute(CategoryTypes.General.Appearance).Order;
+            var common = new CategoryAttribute(CategoryTypes.ComponentBase.Common).Order;
+
+            data.Should().BeLessThan(behavior);
+            behavior.Should().BeLessThan(appearance);
+            appearance.Should().BeLessThan(common);
         }
 
         // Returns the class that declares the specified method.

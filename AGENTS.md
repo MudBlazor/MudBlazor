@@ -75,7 +75,7 @@
 ### Choose the smallest valid verification loop
 - For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
 - For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test --project ... -- --filter ...` run against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
-- For component `.cs` or `.razor` changes that only need compile validation: build `src/MudBlazor/MudBlazor.csproj` with `/p:SkipBunCompile=true`.
+- For component `.cs` or `.razor` changes that only need compile validation: build one framework with `dotnet build src/MudBlazor/MudBlazor.csproj -f net10.0 /p:SkipBunCompile=true`. The library multi-targets net8.0/net9.0/net10.0; `-f` compiles just one for a faster check (CI covers the rest).
 - For `TScripts` or `Styles`: run a normal scoped project build.
 - For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
 - For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
@@ -237,6 +237,7 @@ private Task ToggleAsync()
 - When generating HTML or ARIA attributes in component code, prefer fallback values so caller-provided attributes can override them whenever feasible; do not hard-force generated attributes unless the behavior truly requires it.
 - Ensure keyboard navigation works for interactive components.
 - Provide accessible names for interactive controls through a label, `aria-label`, or `aria-labelledby`.
+- To diagnose or verify screen-reader behavior, follow Diagnosing accessibility issues under Testing Rules; a screen reader is not required.
 - Components with logic require bUnit tests and a docs page at `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`.
 
 ## Docs Pages and Examples
@@ -298,7 +299,8 @@ private Task ToggleAsync()
 
 ### Test locations and naming
 - Test components belong in `src/MudBlazor.UnitTests.Viewer/TestComponents/<ComponentName>/`.
-- Viewer test component file names should start with the component prefix, use correct component casing, and end with `Test`, optionally followed by an indexer such as `MenuTest1`.
+- Viewer components are discovered by location: any component under `TestComponents/` (a `TestComponents.*` namespace) is loaded and addressable at `/viewer/<path>`, where `<path>` is its folder path relative to `TestComponents` plus the type name (e.g. `Menu/MenuTest1`). The historical "name must contain `Test`" requirement no longer applies, though `Test`-suffixed scenario names remain the convention.
+- Add `@attribute [ViewerHidden]` to a helper or sub-component (e.g. dialog content shown via the dialog service) to keep it routable but out of the sidebar listing.
 - Keep viewer test component file names at 40 characters or fewer. Prefer concise scenario names over long descriptive file names.
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
@@ -308,6 +310,34 @@ private Task ToggleAsync()
 - When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
 - Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
 - Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
+
+### Reproducing visual issues with the Viewer
+
+Use `src/MudBlazor.UnitTests.Viewer` to reproduce and verify visual, layout, focus, overlay, popover, drag/drop, responsive, RTL, dark-mode, or browser-interaction behavior that bUnit alone cannot confidently verify. Prefer a focused viewer component over the docs app unless the issue depends on docs-only composition.
+
+Reproduction loop:
+1. Add a focused component under `TestComponents/<Component>/`, or under `TestComponents/Scratch/` for a throwaway repro (that folder is gitignored, so scratch components are never committed).
+2. Build the viewer with `dotnet build src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj /p:SkipBunCompile=true`. Components are discovered by reflection at startup, so a newly added file is not visible until the app is rebuilt and reloaded; `dotnet watch` does not reliably pick up added files or routes.
+3. Run it with `dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj` and open `/viewer/<path>`, where `<path>` is the folder relative to `TestComponents` plus the type name (e.g. `/viewer/Menu/MenuEdgeCasesTest`).
+4. Set visual state through the query string: `theme=light|dark`, `dir=ltr|rtl`, `chrome=full|none`. `chrome=none` hides the viewer UI (drawer and header) while keeping theme, RTL, and the popover/dialog/snackbar providers intact, which is useful for clean screenshots.
+5. Wait for `data-viewer-state="ready"` on the `.test-viewer-surface` before reading it (`error`/`not-found` mean the component threw or the route was unmatched; the landing page has no marker). On first load the WASM runtime boots for a few seconds before any state appears, so poll with a timeout. The surface also carries `data-viewer-theme`/`-dir`/`-chrome` reflecting the query state.
+6. Capture the route, query parameters, viewport, and steps as before/after evidence.
+7. Delete the component (and rebuild) when done; a scratch component is removed with a single file delete.
+
+Use `@attribute [ViewerHidden]` for helper or sub-components that are not meaningful to open on their own; they stay routable but are kept out of the sidebar listing.
+
+### Diagnosing accessibility issues
+
+Screen readers render the browser's accessibility tree, so diagnose and verify against the tree. A screen reader is not required. The spec to verify against is the matching W3C ARIA Authoring Practices Guide pattern (https://www.w3.org/WAI/ARIA/apg/patterns/) — its role, name, state, and keyboard-interaction tables are the acceptance checklist.
+
+Diagnosis loop:
+1. Host the component in the Viewer using the reproduction loop above (`chrome=none`).
+2. Snapshot the accessibility tree (browser tooling accessibility snapshot, or CDP `Accessibility.getFullAXTree`) and check static structure: roles, accessible names, and `aria-*` states present.
+3. Interact as a keyboard user would (open the popup, arrow through options, select, close) and re-snapshot after each step. Dynamic states are where most bugs live: `aria-expanded` must flip, `aria-activedescendant` must track the visual highlight, `aria-selected` must follow selection. A highlight implemented only as a CSS class is invisible to assistive tech.
+4. Optionally inject axe-core into the Viewer page for a WCAG rule scan (missing names, role conflicts, contrast). It supplements but does not replace the APG checklist.
+5. Diff the snapshots against the APG pattern; each mismatch is a concrete defect.
+
+Verify with bUnit assertions on roles and `aria-*` attributes before and after interaction (reference: `SelectTests.cs`), then re-snapshot the accessibility tree in the Viewer to confirm the pattern checklist passes.
 
 ## Code Style and Analyzer Rules
 

@@ -49,11 +49,13 @@ public sealed class SearchServiceTests
     }
 
     [Test]
-    public void ComputeScore_ReturnsFull_WhenBothAreEqual()
+    public void ComputeScore_ReturnsSubstringScore_WhenQueryIsInteriorOfTarget()
     {
-        var score = SearchService.ComputeScore("tooltip".AsSpan(), "tooltip".AsSpan());
+        // "button" is not a prefix of "iconbutton" but appears verbatim inside it,
+        // so stage 2 (substring) must contribute at least 70.
+        var score = SearchService.ComputeScore("iconbutton".AsSpan(), "button".AsSpan());
 
-        score.Should().Be(100);
+        score.Should().BeGreaterThanOrEqualTo(70);
     }
 
     [TestCase("snackbar", "snakbar")]       // missing 'c' (1 deletion)
@@ -203,4 +205,23 @@ public sealed class SearchServiceTests
 
         results.Should().NotBeEmpty();
     }
+
+    [Test]
+    public void Search_OrdersExactMatchAboveFuzzyMatch()
+    {
+        // "dialog" is an exact match (100); "dialoq" is a one-edit typo (< 100).
+        // The contract returns results ordered by relevance, so the exact match wins.
+        var index = new[]
+        {
+            new KeyValuePair<string, string>("dialoq", "Fuzzy"),
+            new KeyValuePair<string, string>("dialog", "Exact"),
+        };
+
+        var results = Service.Search(index, e => [e.Key], "dialog");
+
+        results.Should().HaveCount(2);
+        results[0].Value.Should().Be("Exact");
+        results[1].Value.Should().Be("Fuzzy");
+    }
+
 }

@@ -6,6 +6,7 @@
 			   AmPm="AmPm"
 			   TimeEditMode="TimeEditMode"
 			   MinuteSelectionStep="MinuteSelectionStep"
+			   ClosingDelay="ClosingDelay"
 			   InputId="@InputId" />
 
 @code {
@@ -25,6 +26,10 @@
 
 	[Parameter]
     public int MinuteSelectionStep { get; set; } = 1;
+
+	// Mirrors MudTimePicker.ClosingDelay; tests set 0 to remove the post-commit close timer.
+	[Parameter]
+    public int ClosingDelay { get; set; } = 200;
 
 	[Parameter]
 	public string? InputId { get; set; }

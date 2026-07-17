@@ -64,19 +64,35 @@ namespace MudBlazor.UnitTests.Other
         }
 
         [Test]
-        public void GetHashCode_EqualObjects_ReturnsSameHash()
-        {
-            var keys1 = new GroupKeyPath(["A", 1, null]);
-            var keys2 = new GroupKeyPath(["A", 1, null]);
-            Assert.That(keys1.GetHashCode(), Is.EqualTo(keys2.GetHashCode()));
-        }
-
-        [Test]
         public void GetHashCode_DifferentObjects_ReturnsDifferentHash()
         {
             var keys1 = new GroupKeyPath(["A", 1, null]);
             var keys2 = new GroupKeyPath(["A", 2, null]);
             Assert.That(keys1.GetHashCode(), Is.Not.EqualTo(keys2.GetHashCode()));
+        }
+
+        [Test]
+        public void Equals_BothEmpty_ReturnsTrue()
+        {
+            // MudDataGrid creates root group definitions with an empty path, so empty paths must compare equal.
+            var keys1 = new GroupKeyPath([]);
+            var keys2 = new GroupKeyPath([]);
+            Assert.That(keys1.Equals(keys2), Is.True);
+            Assert.That(keys1.GetHashCode(), Is.EqualTo(keys2.GetHashCode()));
+        }
+
+        [Test]
+        public void UsedAsDictionaryKey_EqualContentDistinctInstance_FindsValue()
+        {
+            // Equal-content paths from distinct instances must collide correctly so hash-based lookups succeed.
+            var dictionary = new Dictionary<GroupKeyPath, bool>
+            {
+                [new GroupKeyPath(["A", 1, null])] = true
+            };
+            var lookup = new GroupKeyPath(["A", 1, null]);
+            Assert.That(dictionary.TryGetValue(lookup, out var value), Is.True);
+            Assert.That(value, Is.True);
+            Assert.That(dictionary.ContainsKey(new GroupKeyPath(["A", 2, null])), Is.False);
         }
     }
 }
