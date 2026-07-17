@@ -13,6 +13,7 @@ namespace MudBlazor
             new CssBuilder("mud-input-control")
                 .AddClass("mud-input-required", when: () => Required)
                 .AddClass($"mud-input-control-margin-{Margin.ToStringFast(true)}", when: () => Margin != Margin.None)
+                .AddClass("mud-input-control-width-auto", !FullWidth)
                 .AddClass("mud-input-control-full-width", FullWidth)
                 .AddClass("mud-input-error", Error)
                 .AddClass($"mud-input-{Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(Label))

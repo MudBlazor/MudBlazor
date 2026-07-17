@@ -37,6 +37,18 @@ namespace MudBlazor.UnitTests.Components
             label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void InputControlWidthClassFollowsFullWidth(bool fullWidth)
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.FullWidth, fullWidth));
+
+            var inputControl = comp.Find(".mud-input-control");
+            inputControl.ClassList.Should().Contain(fullWidth ? "mud-input-control-full-width" : "mud-input-control-width-auto");
+            inputControl.ClassList.Should().NotContain(fullWidth ? "mud-input-control-width-auto" : "mud-input-control-full-width");
+        }
+
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
