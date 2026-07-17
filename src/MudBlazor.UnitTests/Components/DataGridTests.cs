@@ -1293,6 +1293,8 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SortChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.FilterChanged.HasDelegate.Should().Be(true);
@@ -1367,6 +1369,129 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.InvokeAsync(dataGrid.Instance.ClearFiltersAsync);
             comp.Instance.FilterChangedCallCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Verifies CellClick and CellContextMenuClick fire with correct args: Item, RowIndex, ColumnIndex, Column,
+        /// CellContent, and MouseEventArgs.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellEventCallbacks()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Confirm delegates are wired.
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Nothing fired yet.
+            comp.Instance.CellClicked.Should().Be(false);
+            comp.Instance.CellContextMenuClicked.Should().Be(false);
+            comp.Instance.LastCellClickArgs.Should().BeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Should().BeNull();
+
+            // Fire CellClick by clicking the first <td>.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().Be(true);
+            var clickArgs = comp.Instance.LastCellClickArgs;
+            clickArgs.Should().NotBeNull();
+            clickArgs.Item.Should().NotBeNull();
+            clickArgs.Item.Name.Should().Be("A");
+            clickArgs.RowIndex.Should().Be(0);
+            clickArgs.ColumnIndex.Should().Be(0);
+            clickArgs.Column.Should().NotBeNull();
+            clickArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            clickArgs.Column.CellContent(clickArgs.Item).Should().Be("A");
+            clickArgs.MouseEventArgs.Should().NotBeNull();
+
+            // Fire CellContextMenuClick by right-clicking the first <td>.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().Be(true);
+            var contextArgs = comp.Instance.LastCellContextMenuClickArgs;
+            contextArgs.Should().NotBeNull();
+            contextArgs.Item.Should().NotBeNull();
+            contextArgs.Item.Name.Should().Be("A");
+            contextArgs.RowIndex.Should().Be(0);
+            contextArgs.ColumnIndex.Should().Be(0);
+            contextArgs.Column.Should().NotBeNull();
+            contextArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            contextArgs.Column.CellContent(contextArgs.Item).Should().Be("A");
+            contextArgs.MouseEventArgs.Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// When CellClick has a delegate, clicking a td fires CellClick and stopPropagation prevents
+        /// RowClick from also firing.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_StopsRowClickPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick is wired — clicking a td must NOT bubble to RowClick.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue();
+            comp.Instance.LastCellClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.Column.CellContent(comp.Instance.LastCellClickArgs.Item).Should().Be("A");
+            comp.Instance.RowClicked.Should().BeFalse("CellClick.HasDelegate stops propagation to the tr @onclick");
+        }
+
+        /// <summary>
+        /// When CellClick has NO delegate, clicking a td bubbles through to RowClick normally.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithoutDelegate_BubblesToRowClick()
+        {
+            // DataGridCellClickBubbleTest wires RowClick but NOT CellClick.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            await comp.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.RowClicked.Should().BeTrue("without a CellClick delegate the click bubbles to the tr @onclick");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
+        /// stopPropagation prevents RowContextMenuClick from also firing.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithDelegate_StopsRowContextMenuPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellContextMenuClick is wired — right-clicking a td must NOT bubble to RowContextMenuClick.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().BeTrue();
+            comp.Instance.LastCellContextMenuClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellContextMenuClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.Column.CellContent(comp.Instance.LastCellContextMenuClickArgs.Item).Should().Be("A");
+            comp.Instance.RowContextMenuClicked.Should().BeFalse("CellContextMenuClick.HasDelegate stops propagation to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has NO delegate, right-clicking a td bubbles through to RowContextMenuClick.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithoutDelegate_BubblesToRowContextMenuClick()
+        {
+            // DataGridCellClickBubbleTest wires RowContextMenuClick but NOT CellContextMenuClick.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            comp.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
         }
 
         [Test]
