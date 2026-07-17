@@ -3,6 +3,8 @@
 <MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
              RowClick="@OnRowClick"
              RowContextMenuClick="@OnRowContextMenuClick"
+             CellClick="@OnCellClick"
+             CellContextMenuClick="@OnCellContextMenuClick"
              SortChanged="@OnSortChanged"
              SelectedItemChanged="@OnSelectedItemChanged"
              SelectedItemsChanged="@OnSelectedItemsChanged"
@@ -28,6 +30,10 @@
 
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
+    public bool CellClicked { get; set; }
+    public bool CellContextMenuClicked { get; set; }
+    public DataGridCellClickEventArgs<Item>? LastCellClickArgs { get; set; }
+    public DataGridCellClickEventArgs<Item>? LastCellContextMenuClickArgs { get; set; }
     public bool SortChanged { get; set; }
     public bool SelectedItemChanged { get; set; }
     public bool SelectedItemsChanged { get; set; }
@@ -45,6 +51,18 @@
     private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
     {
         RowContextMenuClicked = true;
+    }
+
+    private void OnCellClick(DataGridCellClickEventArgs<Item> args)
+    {
+        CellClicked = true;
+        LastCellClickArgs = args;
+    }
+
+    private void OnCellContextMenuClick(DataGridCellClickEventArgs<Item> args)
+    {
+        CellContextMenuClicked = true;
+        LastCellContextMenuClickArgs = args;
     }
 
     private void OnSortChanged(Dictionary<string, SortDefinition<Item>> sorts)

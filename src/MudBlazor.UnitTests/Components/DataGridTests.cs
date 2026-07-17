@@ -1369,6 +1369,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCellEventCallbacks()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Confirm CellClick and CellContextMenuClick delegates are wired up.
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Make sure callbacks have not been fired yet.
+            comp.Instance.CellClicked.Should().Be(false);
+            comp.Instance.CellContextMenuClicked.Should().Be(false);
+            comp.Instance.LastCellClickArgs.Should().BeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Should().BeNull();
+
+            // Fire CellClick by clicking the first <td>.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().Be(true);
+            var clickArgs = comp.Instance.LastCellClickArgs;
+            clickArgs.Should().NotBeNull();
+            clickArgs!.Item.Should().NotBeNull();
+            clickArgs.Item.Name.Should().Be("A");
+            clickArgs.RowIndex.Should().Be(0);
+            clickArgs.ColumnIndex.Should().Be(0);
+            clickArgs.Column.Should().NotBeNull();
+            clickArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            clickArgs.Column.CellContent(clickArgs.Item).Should().Be("A");
+            clickArgs.MouseEventArgs.Should().NotBeNull();
+
+            // Fire CellContextMenuClick by right-clicking the first <td>.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().Be(true);
+            var contextArgs = comp.Instance.LastCellContextMenuClickArgs;
+            contextArgs.Should().NotBeNull();
+            contextArgs!.Item.Should().NotBeNull();
+            contextArgs.Item.Name.Should().Be("A");
+            contextArgs.RowIndex.Should().Be(0);
+            contextArgs.ColumnIndex.Should().Be(0);
+            contextArgs.Column.Should().NotBeNull();
+            contextArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            contextArgs.Column.CellContent(contextArgs.Item).Should().Be("A");
+            contextArgs.MouseEventArgs.Should().NotBeNull();
+        }
+
+        [Test]
         public async Task DataGridFilterChangedColumnFilterRowApplyAndClear()
         {
             var comp = Context.Render<DataGridFilterChangedCallbacksTest>();
