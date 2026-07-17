@@ -1,4 +1,4 @@
-﻿
+
 
 
 @namespace MudBlazor
@@ -367,9 +367,9 @@
                  var cell = new Cell<T>(this, column, item);
              }
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle"
-                 @onclick="@((args) => OnCellClickedAsync(args, item, rowIndex, colIndex, column))"
+                 @onclick="@(CellClick.HasDelegate ? EventCallback.Factory.Create<MouseEventArgs>(this, (args) => OnCellClickedAsync(args, item, rowIndex, colIndex, column)) : EventCallback<MouseEventArgs>.Empty)"
                  @onclick:stopPropagation="@CellClick.HasDelegate"
-                 @oncontextmenu="@((args) => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))"
+                 @oncontextmenu="@(CellContextMenuClick.HasDelegate ? EventCallback.Factory.Create<MouseEventArgs>(this, (args) => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column)) : EventCallback<MouseEventArgs>.Empty)"
                  @oncontextmenu:stopPropagation="@CellContextMenuClick.HasDelegate"
                  @oncontextmenu:preventDefault="@CellContextMenuClick.HasDelegate">
                  @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)

@@ -1415,6 +1415,80 @@ namespace MudBlazor.UnitTests.Components
             contextArgs.MouseEventArgs.Should().NotBeNull();
         }
 
+        /// <summary>
+        /// When CellClick has a delegate, clicking a td fires CellClick and stopPropagation
+        /// prevents RowClick from also firing.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_StopsRowClickPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick is wired in the test component — clicking a td must NOT bubble to RowClick.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue();
+            comp.Instance.LastCellClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.Column.Should().NotBeNull();
+            comp.Instance.LastCellClickArgs.Column.CellContent(comp.Instance.LastCellClickArgs.Item).Should().Be("A");
+            comp.Instance.RowClicked.Should().BeFalse("CellClick.HasDelegate stops propagation to the tr @onclick");
+        }
+
+        /// <summary>
+        /// When CellClick has NO delegate, clicking a td bubbles through to RowClick normally.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithoutDelegate_BubblesToRowClick()
+        {
+            // DataGridCellClickBubbleTest has RowClick but no CellClick — click must bubble.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            await comp.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.RowClicked.Should().BeTrue("without a CellClick delegate the click bubbles to the tr @onclick");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick
+        /// and stopPropagation prevents RowContextMenuClick from also firing.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithDelegate_StopsRowContextMenuPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellContextMenuClick is wired in the test component — right-clicking a td must NOT bubble.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().BeTrue();
+            comp.Instance.LastCellContextMenuClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellContextMenuClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.Column.Should().NotBeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Column.CellContent(comp.Instance.LastCellContextMenuClickArgs.Item).Should().Be("A");
+            comp.Instance.RowContextMenuClicked.Should().BeFalse("CellContextMenuClick.HasDelegate stops propagation to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has NO delegate, right-clicking a td bubbles through to RowContextMenuClick.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithoutDelegate_BubblesToRowContextMenuClick()
+        {
+            // DataGridCellClickBubbleTest has RowContextMenuClick but no CellContextMenuClick — right-click must bubble.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            comp.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
+        }
+
         [Test]
         public async Task DataGridFilterChangedColumnFilterRowApplyAndClear()
         {
