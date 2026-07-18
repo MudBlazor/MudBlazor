@@ -92,12 +92,17 @@ namespace MudBlazor.UnitTests.Components
             // The label root still carries the mud-switch class.
             comp.Find(".s1 label.mud-switch").Should().NotBeNull();
 
-            // The inner label-text span must NOT reuse mud-switch (consistent with MudCheckBox/MudRadio);
-            // otherwise consumer CSS targeting .mud-switch would unintentionally style the label text too.
-            comp.Find(".s1 label.mud-switch span.mud-typography").ClassList.Should().NotContain("mud-switch");
+            // The inner label-text span must not reuse the control-root label classes.
+            // mud-switch and its content-placement modifier belong on the <label> only, matching MudCheckBox/MudRadio.
+            // Reusing them leaks consumer .mud-switch CSS onto the label text and gives the span an unintended inline-flex layout.
+            var labelSpan = comp.Find(".s1 label.mud-switch span.mud-typography").ClassList;
+            labelSpan.Should().NotContain("mud-switch");
+            labelSpan.Should().NotContain("mud-input-content-placement-end");
 
             // The ChildContent variant behaves the same.
-            comp.Find(".s3 label.mud-switch span.mud-typography").ClassList.Should().NotContain("mud-switch");
+            var childSpan = comp.Find(".s3 label.mud-switch span.mud-typography").ClassList;
+            childSpan.Should().NotContain("mud-switch");
+            childSpan.Should().NotContain("mud-input-content-placement-end");
         }
 
         [Test]
