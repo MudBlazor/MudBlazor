@@ -280,8 +280,6 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(8, 30, 11, 0, new[] { "…", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "…" })]
         [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "…" })]
         [TestCase(30, 30, 11, 0, new[] { "…", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
-        // With BoundaryCount=0 the window must contain exactly MiddleCount pages.
-        // Selected=6 shows pages 1-11; Selected=7 is the first page whose window is centered on both sides.
         [TestCase(6, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "…" })]
         [TestCase(7, 30, 11, 0, new[] { "…", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "…" })]
         [Test]
@@ -309,9 +307,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests that a <see cref="MudPagination.BoundaryCount"/> of zero set via the initial parameters
-        /// hides the boundary pages instead of being clamped to one.
-        /// Verifies https://github.com/MudBlazor/MudBlazor/issues/13181
+        /// #13181: a <see cref="MudPagination.BoundaryCount"/> of zero set via the initial parameters hides the boundary pages instead of being clamped to one.
         /// </summary>
         [Test]
         public void PaginationBoundaryCountZeroInitialParameter()
