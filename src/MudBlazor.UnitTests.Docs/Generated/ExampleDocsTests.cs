@@ -36,6 +36,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();
             _ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             _ctx.Services.AddScoped<IPointerEventsNoneService, MockPointerEventsNoneService>();
+            _ctx.Services.AddScoped<IOverlayService, OverlayService>();
             _ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             _ctx.Services.AddTransient<InternalMudLocalizer>();
             _ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
