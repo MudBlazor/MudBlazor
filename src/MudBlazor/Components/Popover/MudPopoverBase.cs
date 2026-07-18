@@ -10,12 +10,16 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A base class for implementing Popover components.
+/// Base class for popover components such as <see cref="MudPopover"/>, handling creation and lifecycle through the <see cref="IPopoverService"/>.
 /// </summary>
 /// <remarks>
 /// This class provides a base implementation for a Popover component. It implements the <see cref="IPopover"/> interface
 /// and utilizes the <see cref="IPopoverService"/> to handle the creation, updating, and destruction of the popover.
 /// </remarks>
+/// <seealso cref="IPopover" />
+/// <seealso cref="IPopoverService" />
+/// <seealso cref="MudPopover" />
+/// <seealso cref="MudPopoverProvider" />
 public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposable
 {
     private bool _afterFirstRender;

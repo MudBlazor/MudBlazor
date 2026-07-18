@@ -8,12 +8,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace MudBlazor.State;
 
 /// <summary>
-/// Represents a non-generic snapshot of a parameter's name, current value, and last value.
+/// Non-generic snapshot of a parameter's name together with its current and previous values.
 /// </summary>
 /// <remarks>
 /// This struct is used to pass parameter state information to shared change handlers
 /// that need to coordinate changes across multiple parameters.
 /// </remarks>
+/// <seealso cref="ParameterState{T}" />
 [DebuggerDisplay("{ToString(),nq}")]
 public readonly struct ParameterStateValue
 {

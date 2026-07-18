@@ -5,8 +5,11 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the default options for a chart.
+/// Default option values shared by all chart types, including legend visibility, tooltips, and the color palette.
 /// </summary>
+/// <seealso cref="DefaultAxisChartOptions" />
+/// <seealso cref="DefaultRadialChartOptions" />
+/// <seealso cref="IChartOptions" />
 public abstract class DefaultChartOptions : IChartOptions
 {
     /// <summary>

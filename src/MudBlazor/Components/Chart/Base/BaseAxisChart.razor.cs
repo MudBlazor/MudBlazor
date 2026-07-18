@@ -11,10 +11,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base component for charts with axes.
+/// Renders the SVG axes, grid lines, series paths, and tooltips shared by axis-based chart types.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TChartOptions">The type of chart options.</typeparam>
+/// <seealso cref="BaseRadialChart{T, TChartOptions}" />
+/// <seealso cref="IAxisChartOptions" />
+/// <seealso cref="MudChart{T}" />
 public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TChartOptions : IAxisChartOptions, new()

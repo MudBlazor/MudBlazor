@@ -1,8 +1,9 @@
 ﻿namespace MudBlazor.Interop;
 
 /// <summary>
-/// Represents the size of an element.
+/// Width and height of an HTML element, with a timestamp used to discard out-of-order resize events in Blazor Server.
 /// </summary>
+/// <seealso cref="BoundingClientRect" />
 public class ElementSize
 {
     /// <summary>

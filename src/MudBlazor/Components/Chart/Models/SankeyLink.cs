@@ -5,8 +5,11 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a link in a Sankey diagram, defining the source and target edges.
+/// A link in a <see cref="Sankey{T}" /> diagram, naming the source and target <see cref="SankeyNode" /> it connects.
 /// </summary>
 /// <param name="Source">The source <see cref="SankeyNode"/>.</param>
 /// <param name="Target">The target <see cref="SankeyNode"/>.</param>
+/// <seealso cref="Sankey{T}" />
+/// <seealso cref="SankeyEdge{T}" />
+/// <seealso cref="SankeyNode" />
 public record struct SankeyLink(string Source, string Target);

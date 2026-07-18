@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting date, time, and color values.
+    /// Base class for MudBlazor pickers such as <see cref="MudDatePicker"/>, <see cref="MudTimePicker"/>, and <see cref="MudColorPicker"/>.
     /// </summary>
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />

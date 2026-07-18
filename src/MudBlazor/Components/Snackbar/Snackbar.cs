@@ -7,8 +7,11 @@ using MudBlazor.Components.Snackbar;
 namespace MudBlazor
 {
     /// <summary>
-    /// The service used to display snackbar messages.
+    /// A single snackbar notification shown to the user, holding its message text, <see cref="Severity"/>, and show/hide transition lifecycle.
     /// </summary>
+    /// <seealso cref="ISnackbar" />
+    /// <seealso cref="MudSnackbarProvider" />
+    /// <seealso cref="SnackbarService" />
     public class Snackbar : IDisposable
     {
         private bool _paused = false;

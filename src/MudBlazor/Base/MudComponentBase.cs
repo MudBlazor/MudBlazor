@@ -10,8 +10,9 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing MudBlazor components.
+    /// Base class for every MudBlazor component, supplying the shared <c>Class</c>, <c>Style</c>, <c>Tag</c>, and <c>UserAttributes</c> parameters.
     /// </summary>
+    /// <seealso cref="ComponentBaseWithState" />
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
         private ILogger? _logger;

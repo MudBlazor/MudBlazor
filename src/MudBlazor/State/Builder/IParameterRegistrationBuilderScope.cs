@@ -5,8 +5,9 @@
 namespace MudBlazor.State.Builder;
 
 /// <summary>
-/// Represents a scope for registering parameters.
+/// Disposable scope for registering MudBlazor component parameters through a <see cref="RegisterParameterBuilder{T}"/>.
 /// </summary>
+/// <seealso cref="RegisterParameterBuilder{T}" />
 public interface IParameterRegistrationBuilderScope : IDisposable
 {
     /// <summary>

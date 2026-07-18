@@ -5,8 +5,9 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Interface for spying on scroll events and managing scroll behavior for specified elements.
+/// Tracks which page section is centered in the viewport while scrolling, powering navigation highlighting such as a table of contents.
 /// </summary>
+/// <seealso cref="IScrollListener" />
 public interface IScrollSpy : IAsyncDisposable
 {
     /// <summary>

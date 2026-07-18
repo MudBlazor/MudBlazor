@@ -1,10 +1,9 @@
 ﻿namespace MudBlazor;
 
 /// <summary>
-/// Provides a comparer for <see cref="IReadOnlyCollection{T}"/> values using a <see cref="IEqualityComparer{T}"/>.
-/// Equality is set-based: two collections are equal if they contain the same distinct elements,
-/// regardless of order or the number of duplicates. Null is only equal to null.
-/// 
+/// Set-based equality comparer for <see cref="IReadOnlyCollection{T}"/> values that ignores element order and duplicates.
+/// Two collections are equal when they contain the same distinct elements.
+/// Null is only equal to null.
 /// <para>Note:</para>
 /// <list type="bullet">
 ///   <item>The order of elements does not affect equality or hash code.</item>
@@ -12,6 +11,8 @@
 ///   <item>Null and empty collections are treated as distinct values.</item>
 /// </list>
 /// </summary>
+/// <typeparam name="T">The type of the elements in the collection.</typeparam>
+/// <seealso cref="DoubleEpsilonEqualityComparer" />
 public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
 {
     private readonly IEqualityComparer<T> _comparer;

@@ -5,8 +5,11 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a radial chart.
+/// Radial chart options such as data aggregation and fill opacity for pie, donut, radar, and rose charts.
 /// </summary>
+/// <seealso cref="DefaultRadialChartOptions" />
+/// <seealso cref="IAxisChartOptions" />
+/// <seealso cref="IChartOptions" />
 public interface IRadialChartOptions : IChartOptions
 {
     /// <summary>

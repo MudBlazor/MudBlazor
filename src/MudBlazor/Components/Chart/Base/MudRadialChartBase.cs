@@ -14,10 +14,14 @@ using MudBlazor.Utilities.Debounce;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base class for radial charts.
+/// Base class for radial charts such as <see cref="Pie{T}"/>, <see cref="Donut{T}"/>, <see cref="Radar{T}"/>, and <see cref="Rose{T}"/>.
+/// Aggregates and normalizes series data into circular segments and legends.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>
+/// <seealso cref="IRadialChartOptions" />
+/// <seealso cref="MudAxisLineChartBase{T, TOptions}" />
+/// <seealso cref="MudChartBase{T, TOptions}" />
 public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions>, IDisposable
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IRadialChartOptions

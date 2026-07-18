@@ -5,8 +5,9 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Represents an observer for popover updates.
+/// Receives notifications when popovers are created, updated, or destroyed in the <see cref="IPopoverService"/>.
 /// </summary>
+/// <seealso cref="IPopoverService" />
 public interface IPopoverObserver
 {
     /// <summary>

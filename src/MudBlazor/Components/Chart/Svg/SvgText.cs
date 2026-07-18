@@ -3,8 +3,10 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a piece of text as an SVG path.
+    /// A text label rendered as an SVG element in a chart, positioned by X and Y coordinates.
     /// </summary>
+    /// <seealso cref="SvgCircle" />
+    /// <seealso cref="SvgPath" />
     [DebuggerDisplay("X={X}, Y={Y}, Value={Value}")]
     public sealed class SvgText
     {

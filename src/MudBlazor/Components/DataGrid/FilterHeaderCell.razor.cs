@@ -15,10 +15,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
+    /// The filter row cell shown for a <see cref="MudDataGrid{T}"/> column when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
     /// </summary>
     /// <typeparam name="T">The type of value managed by the <see cref="MudDataGrid{T}"/></typeparam>
-    /// <seealso cref="MudDataGrid{T}"/>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="HeaderCell{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
     public partial class FilterHeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>

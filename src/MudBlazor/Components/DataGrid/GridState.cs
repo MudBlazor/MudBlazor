@@ -10,9 +10,12 @@ using System.Threading;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the current paging, sorting, and filtering for a <see cref="MudDataGrid{T}"/>.
+    /// Paging, sorting, and filtering state that a <see cref="MudDataGrid{T}"/> passes to its <c>ServerData</c> callback for server-side data loading.
     /// </summary>
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
+    /// <seealso cref="GridData{T}" />
+    /// <seealso cref="GridStateVirtualize{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
     public class GridState<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         /// <summary>

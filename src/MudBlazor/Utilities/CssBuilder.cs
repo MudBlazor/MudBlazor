@@ -7,8 +7,9 @@ using System.Text;
 namespace MudBlazor.Utilities
 {
     /// <summary>
-    /// Represents a builder for creating CSS classes used in a component.
+    /// Builds a space-separated CSS class string with conditionally added classes for a component's markup.
     /// </summary>
+    /// <seealso cref="StyleBuilder" />
     public readonly struct CssBuilder
     {
         private readonly StringBuilder _stringBuilder;

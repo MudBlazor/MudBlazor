@@ -1,8 +1,9 @@
 ﻿namespace MudBlazor
 {
     /// <summary>
-    /// Represents the layout properties for a user interface.
+    /// Layout dimensions for MudBlazor components, including the default border radius, drawer widths, and app bar height.
     /// </summary>
+    /// <seealso cref="MudTheme" />
     public class LayoutProperties
     {
         /// <summary>

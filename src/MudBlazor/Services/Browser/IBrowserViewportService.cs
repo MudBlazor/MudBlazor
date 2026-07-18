@@ -7,8 +7,9 @@ using MudBlazor.Services;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a service that serves to listen to browser window size changes and breakpoints.
+/// Reports browser window resize events and responsive <see cref="Breakpoint"/> changes to subscribed observers, and answers media-query and breakpoint checks.
 /// </summary>
+/// <seealso cref="IBrowserViewportObserver" />
 public interface IBrowserViewportService : IAsyncDisposable
 {
     /// <summary>

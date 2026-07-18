@@ -18,9 +18,15 @@ using MudBlazor.Utilities.Clone;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a sortable, filterable data grid with multiselection, pagination, editing, grouping, aggregation, and server-side <see cref="IQueryable{T}"/> support.
+    /// Displays rows of data in a sortable, filterable grid with multiselection, pagination, inline editing, grouping, and aggregation.
     /// </summary>
+    /// <remarks>
+    /// Supports server-side sorting, filtering, and paging of large datasets, including through an <see cref="IQueryable{T}"/> source.
+    /// </remarks>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {

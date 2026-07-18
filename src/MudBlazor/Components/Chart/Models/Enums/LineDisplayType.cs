@@ -1,8 +1,10 @@
 ﻿namespace MudBlazor;
 
 /// <summary>
-/// Specifies the type of graphical representation for a line or area.
+/// Specifies whether a series is drawn as a plain line or as a line with the area beneath it filled.
 /// </summary>
+/// <seealso cref="MudBlazor.Charts.Line{T}" />
+/// <seealso cref="MudChart{T}" />
 public enum LineDisplayType
 {
     /// <summary>

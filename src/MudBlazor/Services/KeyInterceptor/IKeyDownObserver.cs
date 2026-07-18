@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Components.Web;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents an observer that observes and responds to key down events.
+/// Receives key-down events dispatched by the <see cref="IKeyInterceptorService"/>.
 /// </summary>
+/// <seealso cref="IKeyInterceptorObserver" />
+/// <seealso cref="IKeyInterceptorService" />
+/// <seealso cref="IKeyUpObserver" />
 public interface IKeyDownObserver
 {
     /// <summary>

@@ -3,8 +3,9 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a circular shape drawn as an SVG path.
+    /// Circle shape rendered as SVG, used to draw points and markers in a chart.
     /// </summary>
+    /// <seealso cref="SvgPath" />
     [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
     public sealed class SvgCircle : SvgPath
     {

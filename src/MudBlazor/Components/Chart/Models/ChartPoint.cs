@@ -8,9 +8,10 @@ using MudBlazor.Charts;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents the data point in a chart series, with optional X value and required Y value.
+/// A data point in a chart series, holding an optional X value and a required Y value.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The numeric type of the Y value.</typeparam>
+/// <seealso cref="ChartSeries{T}" />
 public class ChartPoint<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     /// <summary>

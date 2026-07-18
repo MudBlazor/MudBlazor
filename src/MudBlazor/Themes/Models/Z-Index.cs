@@ -1,8 +1,9 @@
 ﻿namespace MudBlazor
 {
     /// <summary>
-    /// Represents the Z-index values for different components.
+    /// Z-index stacking values that control the layering order of overlay components such as the drawer, popover, app bar, dialog, snackbar, and tooltip.
     /// </summary>
+    /// <seealso cref="MudTheme" />
     public class ZIndex
     {
         /// <summary>

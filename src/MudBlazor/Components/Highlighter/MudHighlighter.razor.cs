@@ -12,7 +12,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A component which highlights words or phrases within text.
+/// Highlights occurrences of one or more search terms within a block of text, wrapping each match in a <c>mark</c> element.
 /// </summary>
 public partial class MudHighlighter : MudComponentBase
 {

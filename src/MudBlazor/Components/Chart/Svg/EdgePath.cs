@@ -5,7 +5,7 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Represents the path of a link (edge) between two nodes in a Sankey chart.
+/// The SVG path connecting a source node to a target node in a Sankey chart.
 /// </summary>
 /// <remarks>
 /// An <see cref="EdgePath"/> defines the SVG path data and associated metadata
@@ -14,6 +14,9 @@ namespace MudBlazor;
 /// or straight path defined by <see cref="SvgPath.Data"/>, and geometric properties
 /// such as the center point of the edge for positioning labels or tooltips.
 /// </remarks>
+/// <seealso cref="NodeRect" />
+/// <seealso cref="MudBlazor.Charts.Sankey{T}" />
+/// <seealso cref="SvgPath" />
 public sealed class EdgePath : SvgPath
 {
     /// <summary>
@@ -42,8 +45,7 @@ public sealed class EdgePath : SvgPath
 }
 
 /// <summary>
-/// Represents a rectangular node in a Sankey chart, including its position,
-/// dimensions, color.
+/// The bounding rectangle of a node in a Sankey chart, holding its position, size, color, and label.
 /// </summary>
 /// <remarks>
 /// A <see cref="NodeRect"/> defines the bounding box of a node (or block)
@@ -72,6 +74,8 @@ public sealed class EdgePath : SvgPath
 /// <param name="Color">
 /// The fill color used to visually represent the node in the chart.
 /// </param>
+/// <seealso cref="EdgePath" />
+/// <seealso cref="MudBlazor.Charts.Sankey{T}" />
 public sealed record NodeRect(int Hash, string Name, double X, double Y, double Width, double Height, string Color)
 {
     /// <summary>

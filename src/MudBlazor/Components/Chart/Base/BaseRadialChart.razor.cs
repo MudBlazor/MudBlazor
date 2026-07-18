@@ -11,10 +11,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base component for radial charts.
+/// Renders the SVG segments, labels, and tooltips shared by radial chart types such as pie, donut, radar, and rose.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TChartOptions">The type of chart options.</typeparam>
+/// <seealso cref="BaseAxisChart{T, TChartOptions}" />
+/// <seealso cref="IRadialChartOptions" />
+/// <seealso cref="MudRadialChartBase{T, TOptions}" />
 public partial class BaseRadialChart<T, TChartOptions> : MudComponentBase
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TChartOptions : IRadialChartOptions, new()

@@ -5,8 +5,9 @@
 namespace MudBlazor.Services;
 
 /// <summary>
-/// Specifies the type of keyboard event.
+/// Specifies whether a keyboard event is a key-down or key-up event.
 /// </summary>
+/// <seealso cref="IKeyInterceptorService" />
 public enum KeyEventKind
 {
     /// <summary>

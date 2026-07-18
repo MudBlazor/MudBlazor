@@ -10,9 +10,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a cell displayed at the bottom of a column.
+    /// The footer cell displayed at the bottom of a <see cref="MudDataGrid{T}"/> column, typically showing totals or aggregate values.
     /// </summary>
     /// <typeparam name="T">The kind of data managed by this footer.</typeparam>
+    /// <seealso cref="HeaderCell{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
     public partial class FooterCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>

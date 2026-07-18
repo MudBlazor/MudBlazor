@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a node in a Sankey diagram, including its name, column position, and optional color.
+/// A node in a <see cref="Sankey{T}" /> diagram, defined by its name, column position, and optional color.
 /// </summary>
 /// <remarks>
 /// A Sankey diagram node is a visual element that represents a specific entity or category in
@@ -18,6 +18,9 @@ namespace MudBlazor.Charts;
 /// <param name="Name">The name of this node.</param>
 /// <param name="Column">The column in which to display this node.</param>
 /// <param name="Color">The color of this node. Picks colors from <see cref="IChartOptions.ChartPalette"/> if set to <c>null</c>.</param>
+/// <seealso cref="Sankey{T}" />
+/// <seealso cref="SankeyEdge{T}" />
+/// <seealso cref="SankeyLink" />
 public record SankeyNode(string Name, int Column, MudColor? Color = null)
 {
     public MudColor? Color { get; set; } = Color;

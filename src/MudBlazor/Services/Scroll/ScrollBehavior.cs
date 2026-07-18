@@ -8,8 +8,9 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies the scroll behavior for scrolling operations.
+/// Specifies whether a scroll animates smoothly or jumps immediately, matching the CSS <c>scroll-behavior</c> property.
 /// </summary>
+/// <seealso cref="IScrollManager" />
 [EnumExtensions]
 public enum ScrollBehavior
 {

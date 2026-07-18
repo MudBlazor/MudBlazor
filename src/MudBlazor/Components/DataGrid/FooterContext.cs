@@ -12,9 +12,11 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// Represents the current state of a footer in a <see cref="MudDataGrid{T}"/>.
+    /// Footer state and actions passed to a <see cref="MudDataGrid{T}"/> footer template, exposing the displayed items and select-all command.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
+    /// <seealso cref="HeaderContext{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
     public class FooterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
@@ -82,8 +84,10 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Represents the actions which can be performed on the footer of <see cref="MudDataGrid{T}"/> columns.
+        /// Select-all delegate for a <see cref="MudDataGrid{T}"/> footer, exposed through <see cref="FooterContext{T}"/>.
         /// </summary>
+        /// <seealso cref="FooterContext{T}" />
+        /// <seealso cref="MudDataGrid{T}" />
         public class FooterActions
         {
             /// <summary>

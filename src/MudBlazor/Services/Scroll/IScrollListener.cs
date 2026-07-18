@@ -5,8 +5,9 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Interface for a scroll listener that listens to scroll events on a specified element.
+/// Reports scroll-position changes for a target element at a throttled interval.
 /// </summary>
+/// <seealso cref="IScrollSpy" />
 public interface IScrollListener : IAsyncDisposable
 {
     /// <summary>

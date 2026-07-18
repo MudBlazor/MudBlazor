@@ -9,8 +9,10 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// Represents a service which generates C# functions from text-based filter operations.
+/// Builds LINQ filter expressions from <see cref="MudDataGrid{T}"/> filter definitions and operators for in-memory or <see cref="IQueryable{T}"/> querying.
 /// </summary>
+/// <seealso cref="FilterDefinition{T}" />
+/// <seealso cref="MudDataGrid{T}" />
 public static class FilterExpressionGenerator
 {
     /// <summary>

@@ -4,8 +4,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents an item for the <see cref="MudFabMenu"/>.
+/// A floating action button shown as one of the selectable options within a <see cref="MudFabMenu"/>.
 /// </summary>
+/// <seealso cref="MudFab" />
+/// <seealso cref="MudFabMenu" />
 public partial class MudFabMenuItem : MudFab
 {
     private new string Classname => new CssBuilder(base.Classname)

@@ -4,12 +4,13 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a read-only, ordered collection of group key values forming a unique path through nested group levels.
-    /// Used to identify the exact group or subgroup location in multi-level group scenarios.
+    /// Ordered set of group key values that uniquely identifies a group or subgroup across the nested grouping levels of a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <remarks>
     /// Two <see cref="GroupKeyPath"/> instances are equal if they contain the same elements in the same order.
     /// </remarks>
+    /// <seealso cref="GroupDefinition{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
     public class GroupKeyPath(IList<object?> list) : ReadOnlyCollection<object?>(list)
     {
         public override bool Equals(object? obj)

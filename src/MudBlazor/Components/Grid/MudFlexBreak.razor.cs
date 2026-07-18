@@ -8,8 +8,10 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A component for breaking a flex display using CSS styles.
+/// Forces a line break in a flexbox layout so the items that follow wrap onto a new line.
 /// </summary>
+/// <seealso cref="MudGrid" />
+/// <seealso cref="MudStack" />
 public partial class MudFlexBreak : MudComponentBase
 {
     /// <summary>

@@ -5,9 +5,11 @@
 namespace MudBlazor.Utilities
 {
     /// <summary>
-    /// Represents the information related to a <see cref="MudDataGrid{T}.HierarchyVisibilityToggled"/> event.
+    /// Event data for the <see cref="MudDataGrid{T}.HierarchyVisibilityToggled"/> event, carrying the toggled row item and whether it was expanded or collapsed.
     /// </summary>
     /// <typeparam name="T">The item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
+    /// <seealso cref="HierarchyColumn{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
     public class DataGridHierarchyVisibilityToggledEventArgs<T>
     {
         /// <summary>

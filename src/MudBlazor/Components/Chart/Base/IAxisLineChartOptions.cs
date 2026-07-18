@@ -5,8 +5,11 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a line chart that has axes.
+/// Line and area chart options such as stroke width, data markers, interpolation, and per-series display overrides.
 /// </summary>
+/// <seealso cref="DefaultAxisLineChartOptions" />
+/// <seealso cref="IAxisChartOptions" />
+/// <seealso cref="LineChartOptions" />
 public interface IAxisLineChartOptions : IAxisChartOptions
 {
     /// <summary>

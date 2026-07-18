@@ -4,8 +4,11 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies the alignment of each item's dot relative to its text in a <see cref="MudTimeline"/>.
+/// Specifies whether each item's dot aligns to the start, center, or end of its text in a <see cref="MudTimeline"/>.
 /// </summary>
+/// <seealso cref="MudTimeline" />
+/// <seealso cref="MudTimelineItem" />
+/// <seealso cref="TimelineOrientation" />
 [EnumExtensions]
 public enum TimelineAlign
 {

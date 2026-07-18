@@ -5,9 +5,10 @@
 namespace MudBlazor.State;
 
 /// <summary>
-/// Represents an interface for handling parameter change.
+/// Handles a MudBlazor parameter's value change, receiving the old and new values through <see cref="ParameterChangedEventArgs{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
+/// <seealso cref="ParameterChangedEventArgs{T}" />
 public interface IParameterChangedHandler<T>
 {
     /// <summary>

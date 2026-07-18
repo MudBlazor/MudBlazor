@@ -5,8 +5,11 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Represents an observer that observes and responds to key up and down events.
+/// Receives both key-down and key-up events from the <see cref="IKeyInterceptorService"/> for a specific HTML element.
 /// </summary>
+/// <seealso cref="IKeyDownObserver" />
+/// <seealso cref="IKeyInterceptorService" />
+/// <seealso cref="IKeyUpObserver" />
 public interface IKeyInterceptorObserver : IKeyDownObserver, IKeyUpObserver
 {
     /// <summary>
