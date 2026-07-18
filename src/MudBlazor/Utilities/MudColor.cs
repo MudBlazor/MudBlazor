@@ -37,6 +37,9 @@ namespace MudBlazor.Utilities
         ColorElements
     }
 
+    /// <summary>
+    /// Which color values are compared when testing two <see cref="MudColor"/> values for equality.
+    /// </summary>
     public enum MudColorComparison
     {
         Rgba = 0,

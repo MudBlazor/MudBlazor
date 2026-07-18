@@ -6,6 +6,9 @@ using System.Numerics;
 
 namespace MudBlazor;
 
+/// <summary>
+/// A data set plotted on a <see cref="MudChart{T}"/>, viewed independently of its value type.
+/// </summary>
 public interface IChartSeries
 {
     string Name { get; }

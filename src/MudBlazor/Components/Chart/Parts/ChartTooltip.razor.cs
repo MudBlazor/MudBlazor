@@ -5,6 +5,9 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Renders the floating tooltip shown when hovering data points in MudBlazor's charts.
+/// </summary>
 public partial class ChartTooltip : ComponentBase
 {
     private sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
@@ -190,6 +193,9 @@ public partial class ChartTooltip : ComponentBase
     }
 }
 
+/// <summary>
+/// The horizontal anchor position of a chart tooltip relative to its data point.
+/// </summary>
 public enum ChartTooltipAnchorPositionX
 {
     Start,
