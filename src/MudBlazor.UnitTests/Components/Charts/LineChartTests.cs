@@ -489,5 +489,91 @@ namespace MudBlazor.UnitTests.Charts
             var paths = comp.FindAll("path.mud-chart-line");
             paths.Count.Should().Be(0);
         }
+
+        [Test]
+        public void LineChartInterpolatedNullDataPointsCreateGaps()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, 20, null, 40, 50 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.NaturalSpline
+                }));
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+
+            var moveToCount = d!.Split('M').Length - 1;
+            moveToCount.Should().Be(2, because: "a null point splits the interpolated line into two segments");
+        }
+
+        [Test]
+        public void LineChartInterpolatedConnectNullPointsBridgesGaps()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, 20, null, 40, 50 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.NaturalSpline,
+                    ConnectNullPoints = true
+                }));
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+
+            var moveToCount = d!.Split('M').Length - 1;
+            moveToCount.Should().Be(1, because: "ConnectNullPoints joins the interpolated segments into one line");
+        }
+
+        [Test]
+        public void LineChartInterpolatedIsolatedPointsRenderAsMoves()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, null, 30, null, 50 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.NaturalSpline
+                }));
+
+            var path = comp.Find("path.mud-chart-line");
+            var d = path.GetAttribute("d");
+
+            // Each non-null point is isolated by nulls, so no segment can be interpolated into line commands.
+            (d!.Split('M').Length - 1).Should().Be(3, because: "each isolated point starts its own subpath");
+            d.Should().NotContain("L", because: "single-point segments produce move commands only");
+        }
     }
 }
