@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
     <Nullable>enable</Nullable>
+    <!-- Ships the combined ICU data (icudt.dat). Required: the culture demos runtime-switch to both CJK
+         (zh-CN/zh-Hans) and non-CJK/non-EFIGS (fa-IR, pt-BR) locales. Do NOT set this false to "save size":
+         a single ICU shard breaks those demos, and shipping both shards (CJK + no_CJK) is larger than the
+         combined file. See DatePickerInternationalizationExample / TurkeyTestExample / SelectUsageExample. -->
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
