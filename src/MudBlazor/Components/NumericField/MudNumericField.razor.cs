@@ -313,8 +313,7 @@ namespace MudBlazor
                 var number = Num.From(value);
                 if (number is { } d && d >= (double)decimal.MinValue && d <= (double)decimal.MaxValue)
                 {
-                    // Convert from the value's own type: a float widened to double first would re-expose the
-                    // binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
                     result = value is float f ? (decimal)f : (decimal)d;
                     return true;
                 }
