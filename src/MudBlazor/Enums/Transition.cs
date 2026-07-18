@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor
 {
     /// <summary>
-    /// Specifies the animation used when a carousel changes slides, such as none, fade, slide, or a custom transition.
+    /// The type of animation used when content transitions.
     /// </summary>
     [EnumExtensions]
     public enum Transition

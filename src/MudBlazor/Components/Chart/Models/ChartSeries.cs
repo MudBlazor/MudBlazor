@@ -7,7 +7,7 @@ using System.Numerics;
 namespace MudBlazor;
 
 /// <summary>
-/// Exposes the legend name and visibility of a data set plotted on a <see cref="MudChart{T}"/>, independent of the series value type.
+/// A data set plotted on a <see cref="MudChart{T}"/>, viewed independently of its value type.
 /// </summary>
 public interface IChartSeries
 {

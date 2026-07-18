@@ -5,7 +5,7 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Controls a dialog that is currently open, letting its content read the title and options and close, cancel, or update the dialog while it is displayed.
+/// Controls a dialog that is currently open, from within its content.
 /// </summary>
 public interface IMudDialogInstance
 {

@@ -8,9 +8,6 @@ using System.Threading.Tasks;
 namespace MudBlazor
 {
 #pragma warning disable CS1998
-    /// <summary>
-    /// Extension methods for <see cref="Task"/> and <see cref="ValueTask"/> that run fire-and-forget operations and forward exceptions to the global handler.
-    /// </summary>
     public static class TaskExtensions
     {
         /// <summary>

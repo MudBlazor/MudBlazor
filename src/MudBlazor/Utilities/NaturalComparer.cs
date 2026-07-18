@@ -7,7 +7,7 @@ using System.Globalization;
 namespace MudBlazor.Utilities
 {
     /// <summary>
-    /// Compares objects using natural sort order, so strings with embedded numbers order the way a person expects, such as <c>item2</c> before <c>item10</c>.
+    /// Compares objects using natural sort order, so strings with embedded numbers sort the way a person expects.
     /// </summary>
     public class NaturalComparer : IComparer<object?>
     {

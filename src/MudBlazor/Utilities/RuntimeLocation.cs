@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace MudBlazor.Utilities
 {
     /// <summary>
-    /// Reports whether the app is running client-side in WebAssembly or server-side, based on the current runtime description.
+    /// Reports whether the app is running client-side in WebAssembly or server-side.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class RuntimeLocation

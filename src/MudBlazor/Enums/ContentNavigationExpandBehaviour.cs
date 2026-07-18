@@ -1,7 +1,7 @@
 ﻿namespace MudBlazor
 {
     /// <summary>
-    /// Specifies when a <see cref="MudPageContentNavigation"/> expands the links nested under a section: always, or only while that section is active.
+    /// Controls when a page content navigation expands the links nested under a section.
     /// </summary>
     public enum ContentNavigationExpandBehaviour
     {

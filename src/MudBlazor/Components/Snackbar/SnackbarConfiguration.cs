@@ -4,7 +4,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Global options for the <see cref="ISnackbar"/> service, controlling how many snackbars appear at once, their position, stacking order, and whether duplicates are prevented.
+    /// Global options for the <see cref="ISnackbar"/> service.
     /// </summary>
     public class SnackbarConfiguration : CommonSnackbarOptions
     {

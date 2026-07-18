@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor
 {
     /// <summary>
-    /// Indicates the severity level of an alert, snackbar, or message box, such as normal, info, success, warning, or error.
+    /// The severity level of a status or message.
     /// </summary>
     [EnumExtensions]
     public enum Severity

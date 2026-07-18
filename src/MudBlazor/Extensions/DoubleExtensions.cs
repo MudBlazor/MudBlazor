@@ -6,9 +6,6 @@ using System.Globalization;
 
 namespace MudBlazor.Extensions
 {
-    /// <summary>
-    /// Extension methods for <see cref="double"/> values that format them using the invariant culture.
-    /// </summary>
     public static class DoubleExtensions
     {
         public static string ToInvariantString(this double input) => input.ToString(CultureInfo.InvariantCulture);

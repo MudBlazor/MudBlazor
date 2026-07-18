@@ -3,7 +3,7 @@
 namespace MudBlazor.Interfaces
 {
     /// <summary>
-    /// Coordinates a group of form fields, tracking overall validity and error messages and running validation across every registered control.
+    /// Coordinates a group of form fields and runs validation across them.
     /// </summary>
     public interface IForm
     {

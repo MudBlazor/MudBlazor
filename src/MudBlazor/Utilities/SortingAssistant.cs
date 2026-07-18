@@ -7,9 +7,6 @@ using System.Reflection;
 
 namespace MudBlazor.Utilities;
 
-/// <summary>
-/// Extension methods that reorder a collection after a drag-and-drop, updating each item's order property from a <see cref="MudItemDropInfo{T}"/>.
-/// </summary>
 public static class SortingAssistant
 {
     public static void UpdateOrder<T>(this IEnumerable<T> items, MudItemDropInfo<T> dropInfo, Expression<Func<T, int>> valueUpdater, int zoneOffset = 0)

@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor
 {
     /// <summary>
-    /// Specifies the maximum width of a container or dialog using responsive breakpoints from extra small to extra-extra large, or <c>False</c> to remove the limit.
+    /// A maximum width based on a responsive breakpoint.
     /// </summary>
     [EnumExtensions]
     public enum MaxWidth

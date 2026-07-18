@@ -9,7 +9,7 @@ using static MudBlazor.BoolConverter;
 namespace MudBlazor;
 
 /// <summary>
-/// Converts a value of type <typeparamref name="T"/> to and from a nullable <c>bool</c>, backing MudBlazor's boolean inputs such as <see cref="MudCheckBox{T}"/> and <see cref="MudSwitch{T}"/>.
+/// Converts a value of type T to and from a nullable bool.
 /// </summary>
 /// <typeparam name="T">The value type converted to and from a nullable boolean.</typeparam>
 public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>

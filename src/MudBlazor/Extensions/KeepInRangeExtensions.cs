@@ -2,9 +2,6 @@
 
 namespace MudBlazor.Extensions
 {
-    /// <summary>
-    /// Extension methods that clamp numeric values to stay within a minimum and maximum range.
-    /// </summary>
     public static class KeepInRangeExtensions
     {
         public static double EnsureRange(this double input, double max) => EnsureRange(input, 0.0, max);

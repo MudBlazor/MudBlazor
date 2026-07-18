@@ -4,9 +4,6 @@
 
 namespace MudBlazor;
 
-/// <summary>
-/// Extension methods that determine whether a table's edit and apply buttons appear at the start or end of a row.
-/// </summary>
 public static class TableButtonPositionExtensions
 {
     public static bool Editable(this TableContext? context, bool ignoreEditable) =>

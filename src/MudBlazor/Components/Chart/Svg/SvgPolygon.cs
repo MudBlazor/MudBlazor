@@ -5,7 +5,7 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Closed SVG polygon path together with the coordinates of its individual data points, used to draw radar chart series.
+/// A closed SVG polygon path used to draw radar chart series.
 /// </summary>
 public sealed class SvgPolygon : SvgPath
 {

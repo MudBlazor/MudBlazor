@@ -5,7 +5,7 @@
 namespace MudBlazor.Interfaces
 {
     /// <summary>
-    /// Connects an input to a <see cref="MudForm"/>, exposing its required, touched, and error state so the form can validate and reset it.
+    /// Connects an input to a <see cref="MudForm"/> so the form can validate and reset it.
     /// </summary>
     public interface IFormComponent
     {

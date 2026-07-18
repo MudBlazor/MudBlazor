@@ -6,9 +6,6 @@ using MudBlazor.Interop;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// Extension methods for <see cref="ElementReference"/> that control focus, text selection, blur, and bounding-rectangle queries through JavaScript interop.
-    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {

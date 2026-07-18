@@ -19,7 +19,7 @@ internal static class PropertyPath
     }
 
     /// <summary>
-    /// Carries the ordered chain of members that make up a property path extracted from a lambda expression, exposing the full dotted path and the last member name.
+    /// Carries the ordered chain of members that make up a property path extracted from a lambda expression.
     /// </summary>
     public sealed class PropertyHolder
     {

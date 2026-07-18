@@ -3,7 +3,7 @@
 namespace MudBlazor.Interfaces
 {
     /// <summary>
-    /// Handles activation of a component by a click-like event, receiving the object that triggered it and the associated <see cref="MouseEventArgs"/>.
+    /// Handles activation of a component by a click-like event.
     /// </summary>
     public interface IActivatable
     {

@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor
 {
     /// <summary>
-    /// Specifies the horizontal alignment of text or inline content, such as inherit, left, center, right, justify, start, or end.
+    /// The horizontal alignment of text or inline content.
     /// </summary>
     [EnumExtensions]
     public enum Align

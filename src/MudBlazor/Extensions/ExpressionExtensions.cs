@@ -8,9 +8,6 @@ using System.Linq.Expressions;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// Extension methods for <see cref="Expression{TDelegate}"/> that read the member path or display label from a lambda expression.
-    /// </summary>
     public static class ExpressionExtensions
     {
         public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)

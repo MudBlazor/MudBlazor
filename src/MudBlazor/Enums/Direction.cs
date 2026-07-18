@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor
 {
     /// <summary>
-    /// Specifies a direction such as top, bottom, left, or right, used to orient or position components like drawers, menus, and swipe areas.
+    /// A direction used to orient or position an element.
     /// </summary>
     [EnumExtensions]
     public enum Direction
