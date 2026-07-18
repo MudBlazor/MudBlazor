@@ -95,6 +95,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The title-less ShowAsync overloads forward options and parameters like their titled counterparts.
+        /// </summary>
+        [Test]
+        public async Task ShowAsync_TitlelessOverloads_ForwardOptionsAndParameters()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var options = new DialogOptions { FullWidth = true };
+
+            // ShowAsync<T>(DialogOptions) applies the options with no title.
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(options));
+            dialogReference.Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.FindAll(".mud-dialog-width-full").Should().NotBeEmpty();
+            await comp.InvokeAsync(() => comp.Instance.DismissAll());
+
+            // ShowAsync<T>(DialogParameters, DialogOptions) applies both with no title.
+            var parameters = new DialogParameters<DialogWithParameters> { { x => x.TestValue, "test" } };
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithParameters>(parameters, options));
+            dialogReference.Should().NotBe(null);
+            comp.FindComponent<MudInput<string>>().Instance.ReadText.Should().Be("test");
+            comp.FindAll(".mud-dialog-width-full").Should().NotBeEmpty();
+        }
+
+        /// <summary>
         /// Opening and closing dialogs via navigation.
         /// </summary>
         [Test]
