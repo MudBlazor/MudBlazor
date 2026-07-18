@@ -411,6 +411,7 @@ namespace MudBlazor.Services
         private static IServiceCollection AddCommonServices(this IServiceCollection service)
         {
             service.TryAddSingleton(TimeProvider.System);
+            service.TryAddScoped<IOverlayService, OverlayService>();
 
             return service;
         }

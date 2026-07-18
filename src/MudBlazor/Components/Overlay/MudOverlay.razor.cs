@@ -18,6 +18,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private int _lockCount;
     private bool _previousAbsolute;
     private bool _previousLockScroll;
+    private IDisposable? _overlayRegistration;
     private readonly ParameterState<bool> _visibleState;
     private readonly string _elementId = Identifier.Create("overlay");
 
@@ -51,6 +52,12 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     [Inject]
     private IPointerEventsNoneService PointerEventsNoneService { get; set; } = null!;
+
+    /// <summary>
+    /// Tracks this overlay while it is dismissible so host code can close it (e.g. a hardware Back button).
+    /// </summary>
+    [Inject]
+    private IOverlayService OverlayService { get; set; } = null!;
 
     /// <summary>
     /// Child content of the component.
@@ -236,6 +243,8 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
 
     protected override async Task OnParametersSetAsync()
     {
+        UpdateOverlayRegistration();
+
         if (IsJSRuntimeAvailable && (_previousLockScroll != LockScroll || _previousAbsolute != Absolute))
         {
             // handle lock scroll change when user changes LockScroll parameter
@@ -276,6 +285,23 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
 
     // change lockscroll value when user toggles visible state
     private Task HandleVisibleChanged(ParameterChangedEventArgs<bool> args) => HandleLockScrollChange();
+
+    // Registers this overlay as dismissible while it is visible with auto-close enabled, so host code
+    // (e.g. an Android hardware Back handler) can close it via IOverlayService. The registration reuses
+    // CloseOverlayAsync, the same path taken by an outside click, so the owning component closes correctly.
+    private void UpdateOverlayRegistration()
+    {
+        var dismissible = _visibleState.Value && AutoClose;
+        if (dismissible && _overlayRegistration is null)
+        {
+            _overlayRegistration = OverlayService.RegisterOverlay(CloseOverlayAsync);
+        }
+        else if (!dismissible && _overlayRegistration is not null)
+        {
+            _overlayRegistration.Dispose();
+            _overlayRegistration = null;
+        }
+    }
 
     protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
     {
@@ -355,6 +381,9 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
+        _overlayRegistration?.Dispose();
+        _overlayRegistration = null;
+
         if (!IsJSRuntimeAvailable)
         {
             return;
