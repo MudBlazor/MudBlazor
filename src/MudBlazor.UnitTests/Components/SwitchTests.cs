@@ -85,6 +85,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Switch_LabelText_DoesNotReuseSwitchClass()
+        {
+            var comp = Context.Render<SwitchAriaLabelTest>();
+
+            // The label root still carries the mud-switch class.
+            comp.Find(".s1 label.mud-switch").Should().NotBeNull();
+
+            // The inner label-text span must NOT reuse mud-switch (consistent with MudCheckBox/MudRadio);
+            // otherwise consumer CSS targeting .mud-switch would unintentionally style the label text too.
+            comp.Find(".s1 label.mud-switch span.mud-typography").ClassList.Should().NotContain("mud-switch");
+
+            // The ChildContent variant behaves the same.
+            comp.Find(".s3 label.mud-switch span.mud-typography").ClassList.Should().NotContain("mud-switch");
+        }
+
+        [Test]
         [TestCase(Color.Default, Color.Primary)]
         [TestCase(Color.Primary, Color.Secondary)]
         [TestCase(Color.Secondary, Color.Info)]
