@@ -26,8 +26,7 @@ namespace MudBlazor.Docs.Shared
             var section = NavMan.GetSection();
             var componentLink = NavMan.GetComponentLink();
 
-            // Refresh() is called from DocsLayout.OnAfterRender on every render. The menu only depends on the
-            // active section (which group is expanded), so skip re-rendering its ~250 links when nothing changed.
+            // The menu only depends on the active section (which group is expanded), so skip re-rendering when nothing changed.
             if (section == _section && componentLink == _componentLink)
             {
                 return;
