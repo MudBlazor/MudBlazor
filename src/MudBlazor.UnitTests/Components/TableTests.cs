@@ -289,7 +289,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No records");
 
-            // With LoadingContent set and no records, the custom content replaces the progress bar (issue #11514):
+            // LoadingContent replaces the progress bar when there are no records (#11514):
             // 2 rows = header row + loading text
             await switchElement.ChangeAsync(true);
             comp.FindAll("tr").Count.Should().Be(2);
@@ -322,7 +322,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // With LoadingContent set and no records, the custom content replaces the progress bar (issue #11514):
+            // LoadingContent replaces the progress bar when there are no records (#11514):
             // 2 rows = header row + loading content row
             await switchElement.ChangeAsync(true);
             comp.FindAll("tr").Count.Should().Be(2);
@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // With LoadingContentBody set and no records, the custom content replaces the progress bar (issue #11514):
+            // LoadingContentBody replaces the progress bar when there are no records (#11514):
             // 5 rows = 4 loading rows + header row
             await switchElement.ChangeAsync(true);
             comp.FindAll("tr").Count.Should().Be(5);
