@@ -22,6 +22,16 @@ public class ReferenceCultureComparerTests
     }
 
     [Test]
+    public void Equals_NullAndNonNull_AreNotEqual()
+    {
+        var comparer = ReferenceCultureComparer.Default;
+        var culture = new CultureInfo("en-US");
+
+        comparer.Equals(null, culture).Should().BeFalse();
+        comparer.Equals(culture, null).Should().BeFalse();
+    }
+
+    [Test]
     public void GetHashCode_UsesReferenceBasedHashCode()
     {
         var comparer = ReferenceCultureComparer.Default;

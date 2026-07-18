@@ -23,6 +23,9 @@ internal static class StackedBarStrategyFactory
     };
 }
 
+/// <summary>
+/// Layout measurements passed to a stacked-bar positioning strategy to compute the horizontal placement of each bar column.
+/// </summary>
 public class StackedBarContext
 {
     public int MaxColumns { get; init; }

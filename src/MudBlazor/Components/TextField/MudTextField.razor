@@ -36,7 +36,7 @@
                               Variant="@Variant"
                               Typo="@Typo"
                               Value="@ReadText"
-                              ValueChanged="(s) => SetTextAndUpdateValueAsync(s)"
+                              ValueChanged="@OnInnerValueChangedAsync"
                               Placeholder="@Placeholder"
                               Disabled=@GetDisabledState()
                               Underline="@Underline"
@@ -101,6 +101,8 @@
                              HelperText="@HelperText"
                              Immediate="@Immediate"
                              Margin="@Margin" OnBlur="@OnBlurredAsync"
+                             OnKeyDown="@InvokeKeyDownAsync"
+                             OnKeyUp="@InvokeKeyUpAsync"
                              Clearable="@ShowClearButton()"
                              ClearIcon="@ClearIcon"
                              OnClearButtonClick="@OnClearButtonClick"

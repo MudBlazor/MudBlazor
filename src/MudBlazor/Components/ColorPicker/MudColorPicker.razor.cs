@@ -13,8 +13,12 @@ using MudBlazor.Utilities.Throttle;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a sophisticated and customizable pop-up for choosing a color.
+    /// Picks a color from a spectrum, palette, or predefined grid, with RGB, HSL, and hexadecimal inputs and optional alpha transparency.
     /// </summary>
+    /// <seealso cref="MudColor" />
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudPicker{T}" />
+    /// <seealso cref="MudTimePicker" />
     public partial class MudColorPicker : MudPicker<MudColor>
     {
         private const double MaxY = 250;
@@ -94,7 +98,7 @@ namespace MudBlazor
         {
             // TODO: Revisit this when the state of input components / validation improves, for now mimic old behavior
             var forceUpdate = _valueState.IsInitialized && HasRendered;
-            return SetColorAsync(args.Value, forceUpdate);
+            return SuppressInteractionEffectsWhileAsync(() => SetColorAsync(args.Value, forceUpdate));
         }
 
         private async Task OnAlphaChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
@@ -416,8 +420,13 @@ namespace MudBlazor
             var colorChanged = rgbChanged || hslChanged;
             var shouldUpdateBinding = rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged);
 
-            //if color is cleared, keep _baseColor so that the picker uses the last value
-            if (newColor is not null && colorChanged)
+            //if color is cleared, keep _baseColor so that the picker uses the last value.
+            //An external Value binding change after first render arrives with the parameter state
+            //already synced (colorChanged is false), yet the spectrum/selector still need to re-sync.
+            //A value echoed back from our own selector interaction equals _lastColor, so excluding it
+            //avoids snapping the selector off the user's drag position. (#13037)
+            var externalValueChange = forceUpdate && newColor is not null && !newColor.Equals(_lastColor);
+            if (newColor is not null && (colorChanged || externalValueChange))
             {
                 _lastColor = newColor;
                 if (!_skipFeedback)
@@ -431,11 +440,17 @@ namespace MudBlazor
 
             if (shouldUpdateBinding || forceUpdate)
             {
-                Touched = true;
+                if (!_suppressInteractionEffects)
+                {
+                    Touched = true;
+                }
                 await SetTextAsync(GetColorTextValue(newColor), false);
                 await _valueState.SetValueAsync(newColor);
                 await BeginValidateAsync();
-                FieldChanged(newColor);
+                if (!_suppressInteractionEffects)
+                {
+                    FieldChanged(newColor);
+                }
             }
             else if (colorChanged)
             {

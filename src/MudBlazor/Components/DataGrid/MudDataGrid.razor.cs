@@ -18,9 +18,15 @@ using MudBlazor.Utilities.Clone;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a sortable, filterable data grid with multiselection, pagination, editing, grouping, aggregation, and server-side <see cref="IQueryable{T}"/> support.
+    /// Displays rows of data in a sortable, filterable grid with multiselection, pagination, inline editing, grouping, and aggregation.
     /// </summary>
+    /// <remarks>
+    /// Supports server-side sorting, filtering, and paging of large datasets, including through an <see cref="IQueryable{T}"/> source.
+    /// </remarks>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
@@ -405,6 +411,12 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
 
         /// <summary>
         /// Allows columns to be reordered via the columns panel.
@@ -2244,8 +2256,13 @@ namespace MudBlazor
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
-            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
-                await SetEditingItemAsync(item);
+            if (EditTrigger == DataGridEditTrigger.OnRowClick)
+            {
+                if (EditMode == DataGridEditMode.Cell)
+                    await BeginCellEditAsync(item);
+                else
+                    await SetEditingItemAsync(item);
+            }
 
             await SetSelectedItemAsync(item);
         }
@@ -2460,10 +2477,35 @@ namespace MudBlazor
             _editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
+
+            // In cell edit mode changes are written directly to the source item, so there is no working copy to clone and no edit form to open; only StartedEditingItem is raised.
+            if (EditMode == DataGridEditMode.Cell)
+            {
+                _editingItem = default;
+                StartedEditingItemEvent?.Invoke();
+                await StartedEditingItem.InvokeAsync(item);
+                return;
+            }
+
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             _isEditFormOpen = true;
+        }
+
+        /// <summary>
+        /// Raises <see cref="StartedEditingItem"/> when cell editing begins for an item, without re-raising it for subsequent cell changes on the same item.
+        /// </summary>
+        /// <param name="item">The item whose cell is being edited.</param>
+        internal async Task BeginCellEditAsync(T item)
+        {
+            // Use the grid's Comparer (same identity used for selection) so a custom comparer can distinguish otherwise-equal rows, e.g. records.
+            // The first edit always starts since nothing is being edited yet.
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+            if (_editingSourceItem is not null && comparer.Equals(_editingSourceItem, item))
+                return;
+
+            await SetEditingItemAsync(item);
         }
 
         /// <summary>

@@ -7,13 +7,13 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A component which can be expanded to show more content or collapsed to show only its header.
+    /// Accordion-style collapsible panel within a <see cref="MudExpansionPanels"/> group that expands to reveal content or collapses to show only its header.
     /// </summary>
     /// <remarks>
     /// This component is always inside a <see cref="MudExpansionPanels"/> component.
     /// </remarks>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudCollapse"/>
+    /// <seealso cref="MudCollapse" />
+    /// <seealso cref="MudExpansionPanels" />
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;

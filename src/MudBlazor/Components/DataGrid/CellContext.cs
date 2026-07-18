@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the current state of a cell in a <see cref="MudDataGrid{T}"/>.
+    /// Cell state and actions passed to a <see cref="MudDataGrid{T}"/> cell template, exposing the row item, selection state, and editing commands.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in the cell.</typeparam>
     public class CellContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>

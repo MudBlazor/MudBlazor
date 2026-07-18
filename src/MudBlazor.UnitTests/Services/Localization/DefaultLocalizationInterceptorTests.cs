@@ -186,6 +186,47 @@ public class DefaultLocalizationInterceptorTests
         result.Value.Should().Be(expectedValue, "The value should be the template string with the provided parameter.");
     }
 
+    [Test]
+    [NonParallelizable]
+    [SetUICulture("sv-SE")]
+    public void DefaultEnglishLookup_NonEnglishUICulture_DoesNotProbeSatelliteAssembly()
+    {
+        // Regression test for #13461. Reading the built-in English resources under a non-English UI culture must not make the ResourceManager probe for a (non-existent) MudBlazor.resources satellite assembly.
+        // On the Blazor WebAssembly runtime each probe throws a first-chance FileNotFoundException; on the runtime used by the test host the same probe surfaces as an AssemblyResolve request.
+        // A value-only assertion is not enough: the English fallback resolves correctly either way, so the test asserts that the probe never happens.
+
+        // Arrange
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
+        var satelliteProbes = 0;
+        ResolveEventHandler handler = (_, args) =>
+        {
+            if (args.Name.StartsWith("MudBlazor.resources", StringComparison.OrdinalIgnoreCase))
+            {
+                Interlocked.Increment(ref satelliteProbes);
+            }
+
+            return null;
+        };
+        AppDomain.CurrentDomain.AssemblyResolve += handler;
+
+        // Act
+        LocalizedString result;
+        try
+        {
+            result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
+        }
+        finally
+        {
+            AppDomain.CurrentDomain.AssemblyResolve -= handler;
+        }
+
+        // Assert
+        satelliteProbes.Should().Be(0, "the invariant-culture lookup must not probe for a culture-specific satellite assembly");
+        result.ResourceNotFound.Should().BeFalse();
+        result.Value.Should().Be("Clear", "the built-in English fallback is still returned under a non-English UI culture");
+    }
+
     private static string GetResourceString(string key, params object[] parameters)
     {
         var resourceString = LanguageResource.GetResourceString(key) ?? string.Empty;

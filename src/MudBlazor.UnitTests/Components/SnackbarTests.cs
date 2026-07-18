@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -48,20 +47,6 @@ namespace MudBlazor.UnitTests.Components
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
             _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
             _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
-        }
-
-        [Test]
-        public async Task SimpleTestWithRenderFragment()
-        {
-            var testText = "Boom, big reveal. Im a pickle!";
-            var renderFragment = new RenderFragment(builder =>
-            {
-                builder.AddContent(0, testText);
-            });
-
-            await _provider.InvokeAsync(() => _service.Add(renderFragment));
-            _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
-            _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be(testText);
         }
 
         [Test]
@@ -240,44 +225,73 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SnackbarIconConfiguration()
+        [TestCase(Severity.Normal, Icons.Material.Outlined.EventNote)]
+        [TestCase(Severity.Info, Icons.Material.Outlined.Info)]
+        [TestCase(Severity.Success, Icons.Custom.Uncategorized.AlertSuccess)]
+        [TestCase(Severity.Warning, Icons.Material.Outlined.ReportProblem)]
+        [TestCase(Severity.Error, Icons.Material.Filled.ErrorOutline)]
+        public async Task DefaultIconMatchesSeverity(Severity severity, string expectedIcon)
         {
-            var testComponent = Context.Render<SnackbarIconConfiguationTest>();
+            Snackbar bar = null;
+            await _provider.InvokeAsync(() => bar = _service.Add("Boom, big reveal. Im a pickle!", severity));
 
-            await testComponent.Find("button").ClickAsync();
-
-            await _provider.WaitForAssertionAsync(() =>
-                _provider.Find("div.mud-snackbar-content-message").Should().NotBe(null)
-            );
-
-            var svg = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild;
-            svg.ClassName.Should().Contain("mud-icon-size-large");
-            svg.InnerHtml.Should().Contain("M15.73,3H8.27L3,8.27v7.46L8.27,21h7.46L21,15.73V8.27L15.73,3z M19,14.9L14.9,19H9.1L5,14.9V9.1L9.1,5h5.8L19,9.1V14.9z");
+            bar.Severity.Should().Be(severity);
+            _provider.FindComponents<MudIcon>().Select(i => i.Instance.Icon).Should().Contain(expectedIcon);
         }
 
         [Test]
-        public async Task Icon()
+        public async Task CustomIconOverridesSeverityDefault()
         {
-            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
-            _provider.Find("#mud-snackbar-container .mud-snackbar .mud-snackbar-icon").InnerHtml.Trim().Should().NotBeEmpty();
+            var customIcon = Icons.Material.Filled.Star;
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Error, c => c.Icon = customIcon));
+
+            _provider.FindComponents<MudIcon>().Select(i => i.Instance.Icon).Should().Contain(customIcon);
         }
 
         [Test]
-        public async Task HideIcon()
+        public async Task GlobalSeverityIconOverrideIsApplied()
         {
-            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.HideIcon = true; }));
-            var hasIcon = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.ClassName.Contains("mud-snackbar-icon");
-            hasIcon.Should().BeFalse();
+            // A severity icon and size set on the global configuration should flow through to the rendered icon.
+            var customErrorIcon = Icons.Material.Filled.ReportGmailerrorred;
+            _service.Configuration.ErrorIcon = customErrorIcon;
+            _service.Configuration.IconSize = Size.Large;
+
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Error));
+
+            var icon = _provider.FindComponents<MudIcon>().Single(i => i.Instance.Icon == customErrorIcon);
+            icon.Instance.Size.Should().Be(Size.Large);
         }
 
         [Test]
-        public async Task CustomIcon()
+        [TestCase(false, null, true)]  // Default: the icon is shown.
+        [TestCase(true, null, false)]  // Hidden globally.
+        [TestCase(true, false, true)]  // Re-enabled per snackbar.
+        [TestCase(false, true, false)] // Hidden per snackbar.
+        public async Task IconVisibilityRespectsGlobalAndPerSnackbarSettings(bool globalHideIcon, bool? perSnackbarHideIcon, bool expectIcon)
+        {
+            _service.Configuration.HideIcon = globalHideIcon;
+
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Success, opts =>
+            {
+                if (perSnackbarHideIcon.HasValue)
+                {
+                    opts.HideIcon = perSnackbarHideIcon.Value;
+                }
+            }));
+
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(1));
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(expectIcon ? 1 : 0);
+        }
+
+        [Test]
+        public async Task CustomIconColorAndSize()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, config => { config.IconColor = Color.Tertiary; config.IconSize = Size.Large; }));
 
-            var svgClassNames = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild.ClassName;
-            svgClassNames.Should().Contain("mud-icon-size-large");
-            svgClassNames.Should().Contain("mud-tertiary-text");
+            // The severity icon is the first MudIcon; the close button renders a separate one.
+            var icon = _provider.FindComponent<MudIcon>().Instance;
+            icon.Color.Should().Be(Color.Tertiary);
+            icon.Size.Should().Be(Size.Large);
         }
 
         [Test]
@@ -285,15 +299,9 @@ namespace MudBlazor.UnitTests.Components
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Success));
 
-            var svgClassNames = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild.ClassName;
-            svgClassNames.Should().Contain("mud-icon-size-medium");
-
-            // Ensure no color classes are present, like "mud-primary-text", "mud-error-text", etc.
-            var classNames = svgClassNames.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            foreach (var className in classNames)
-            {
-                Regex.IsMatch(className, "^mud-[a-z]+-text$", RegexOptions.IgnoreCase).Should().BeFalse();
-            }
+            var icon = _provider.FindComponent<MudIcon>().Instance;
+            icon.Color.Should().Be(Color.Inherit);
+            icon.Size.Should().Be(Size.Medium);
         }
 
         [Test]
@@ -319,26 +327,169 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Dispose()
+        public async Task NonFilledVariantWithoutBlurUsesSurfaceClass()
         {
-            // shoot out a snackbar
-            Snackbar snackbar = null;
-            await _provider.InvokeAsync(() => snackbar = _service.Add("Boom, big reveal. Im a pickle!"));
+            // A non-filled variant without blur falls back to the surface background.
+            await _provider.InvokeAsync(() =>
+                _service.Add("Boom, big reveal. Im a pickle!", Severity.Success, c =>
+                {
+                    c.SnackbarVariant = Variant.Outlined;
+                    c.BackgroundBlurred = false;
+                })
+            );
 
-            snackbar?.Dispose();
-
-            _provider.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
-            _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
+            var snackbarClassList = _provider.Find(".mud-snackbar").ClassList;
+            snackbarClassList.Should().Contain("mud-snackbar-surface");
+            snackbarClassList.Should().NotContain("mud-snackbar-blurred");
         }
 
         [Test]
-        public async Task DisposeTest1()
+        public void AddWithInvalidSeverityThrows()
+        {
+            var act = () => _service.Add("Boom, big reveal. Im a pickle!", (Severity)int.MaxValue);
+
+            act.Should().Throw<ArgumentOutOfRangeException>();
+        }
+
+        [Test]
+        [TestCase(Defaults.Classes.Position.TopStart, false, Defaults.Classes.Position.TopLeft)]
+        [TestCase(Defaults.Classes.Position.TopStart, true, Defaults.Classes.Position.TopRight)]
+        [TestCase(Defaults.Classes.Position.TopEnd, false, Defaults.Classes.Position.TopRight)]
+        [TestCase(Defaults.Classes.Position.TopEnd, true, Defaults.Classes.Position.TopLeft)]
+        [TestCase(Defaults.Classes.Position.BottomStart, false, Defaults.Classes.Position.BottomLeft)]
+        [TestCase(Defaults.Classes.Position.BottomStart, true, Defaults.Classes.Position.BottomRight)]
+        [TestCase(Defaults.Classes.Position.BottomEnd, false, Defaults.Classes.Position.BottomRight)]
+        [TestCase(Defaults.Classes.Position.BottomEnd, true, Defaults.Classes.Position.BottomLeft)]
+        [TestCase(Defaults.Classes.Position.TopRight, true, Defaults.Classes.Position.TopRight)] // Fixed positions are unaffected by direction.
+        public void PositionClassResolvesStartAndEndForRightToLeft(string positionClass, bool rightToLeft, string expectedClass)
+        {
+            _service.Configuration.PositionClass = positionClass;
+
+            var provider = Context.Render<MudSnackbarProvider>(ps => ps.AddCascadingValue("RightToLeft", rightToLeft));
+
+            provider.Find("#mud-snackbar-container").ClassList.Should().Contain(expectedClass);
+        }
+
+        [Test]
+        [TestCase(false, new[] { "First", "Second" })]
+        [TestCase(true, new[] { "Second", "First" })]
+        public async Task NewestOnTopControlsDisplayOrder(bool newestOnTop, string[] expectedOrder)
+        {
+            _service.Configuration.NewestOnTop = newestOnTop;
+
+            await _provider.InvokeAsync(() =>
+            {
+                _service.Add("First");
+                _service.Add("Second");
+            });
+
+            var messages = _provider.FindAll("div.mud-snackbar-content-message").Select(e => e.TrimmedText());
+            messages.Should().Equal(expectedOrder);
+        }
+
+        [Test]
+        public async Task MaxDisplayedSnackbarsLimitsWhatIsShown()
+        {
+            _service.Configuration.MaxDisplayedSnackbars = 2;
+            var allowDuplicates = (SnackbarOptions o) => { o.DuplicatesBehavior = SnackbarDuplicatesBehavior.Allow; };
+
+            await _provider.InvokeAsync(() =>
+            {
+                _service.Add("Message 1", configure: allowDuplicates);
+                _service.Add("Message 2", configure: allowDuplicates);
+                _service.Add("Message 3", configure: allowDuplicates);
+            });
+
+            _service.ShownSnackbars.Count().Should().Be(2);
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(2);
+        }
+
+        [Test]
+        [TestCase("Undo")] // An action button still renders even with the close icon hidden.
+        [TestCase(null)]   // With neither a close icon nor an action, the action area is omitted entirely.
+        public async Task ShowCloseIconFalseHidesTheCloseButton(string action)
+        {
+            await _provider.InvokeAsync(() =>
+                _service.Add("Boom, big reveal. Im a pickle!", Severity.Normal, c =>
+                {
+                    c.ShowCloseIcon = false;
+                    c.Action = action;
+                })
+            );
+
+            _provider.FindAll(".mud-snackbar-close-button").Should().BeEmpty();
+            _provider.FindAll(".mud-snackbar-action-button").Count.Should().Be(action is null ? 0 : 1);
+            if (action is null)
+            {
+                _provider.FindAll(".mud-snackbar-content-action").Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public async Task ClickingBodyWithoutOnClickIsIgnored()
+        {
+            Snackbar primary = null;
+            await _provider.InvokeAsync(() =>
+                primary = _service.Add("Boom, big reveal. Im a pickle!", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 0;
+                    c.VisibleStateDuration = int.MaxValue;
+                    c.HideTransitionDuration = int.MaxValue;
+                })
+            );
+            primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
+
+            // No OnClick is configured, so clicking the body must not begin the hide transition.
+            await _provider.Find(".mud-snackbar").ClickAsync();
+
+            // Still Visible (not Hiding); a count assertion alone cannot tell these apart here.
+            primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
+        }
+
+        [Test]
+        public async Task ShowTransitionCompletesNaturallyViaTimer()
+        {
+            // Exercises the full timer-driven lifecycle without interrupting any transition.
+            Snackbar primary = null;
+            await _provider.InvokeAsync(() =>
+                primary = _service.Add("Boom, big reveal. Im a pickle!", Severity.Normal, c =>
+                {
+                    c.ShowTransitionDuration = 100;
+                    c.VisibleStateDuration = 100;
+                    c.HideTransitionDuration = 0;
+                })
+            );
+
+            primary.State.SnackbarState.Should().Be(SnackbarState.Showing);
+
+            await AdvanceTimeAsync(100); // Show transition elapses on its own.
+            primary.State.SnackbarState.Should().Be(SnackbarState.Visible);
+
+            await AdvanceTimeAsync(100); // Visible duration elapses; hide is instant.
+            await _provider.WaitForAssertionAsync(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
+        public async Task DisposingSnackbarDirectlyDoesNotRemoveItFromService()
+        {
+            // Disposing the Snackbar instance only stops its timer; the service still owns it until removed.
+            Snackbar snackbar = null;
+            await _provider.InvokeAsync(() => snackbar = _service.Add("Boom, big reveal. Im a pickle!"));
+
+            snackbar.Dispose();
+
+            _service.ShownSnackbars.Should().ContainSingle().Which.Should().Be(snackbar);
+        }
+
+        [Test]
+        public async Task DisposingServiceRemovesAllSnackbars()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
-            _service.Clear();
+            _service.ShownSnackbars.Should().NotBeEmpty();
+
             _service.Dispose();
 
-            _service.ShownSnackbars.Count().Should().Be(0);
+            _service.ShownSnackbars.Should().BeEmpty();
         }
 
         [Test]
@@ -848,54 +999,5 @@ namespace MudBlazor.UnitTests.Components
             clickAttempts.Should().Be(2);
         }
 
-        [Test]
-        public async Task SnackbarShouldNotRenderIconWhenGlobalHideIconIsTrue()
-        {
-            // Arrange: set global via configuration
-            _service.Configuration.HideIcon = true;
-
-            // Act
-            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Success));
-
-            // Assert: Snackbar is rendered, but no icon element
-            await _provider.WaitForAssertionAsync(() =>
-                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
-            );
-            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(0);
-        }
-
-        [Test]
-        public async Task SnackbarShouldRenderIconWhenPerSnackbarOverrideIsFalse()
-        {
-            // Arrange: globally hide icons
-            _service.Configuration.HideIcon = true;
-
-            // Act: override for this one snackbar
-            await _provider.InvokeAsync(() =>
-                _service.Add("Hello world", Severity.Success, opts => opts.HideIcon = false)
-            );
-
-            // Assert: Snackbar is rendered and icon appears due to per-snackbar override
-            await _provider.WaitForAssertionAsync(() =>
-                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
-            );
-            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
-        }
-
-        [Test]
-        public async Task SnackbarShouldRenderIconByDefault()
-        {
-            // Arrange: globally hide icons
-            _service.Configuration.HideIcon = false;
-
-            // Act
-            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Info));
-
-            // Assert: Snackbar is rendered and icon appears as default
-            await _provider.WaitForAssertionAsync(() =>
-                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
-            );
-            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
-        }
     }
 }

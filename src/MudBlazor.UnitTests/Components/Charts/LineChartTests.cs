@@ -295,5 +295,100 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
         }
+
+        private static List<ChartSeries<double>> PositiveSeries() => new()
+        {
+            new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 40, 25, 60, 35, 80 } }
+        };
+
+        private static readonly string[] _sixLabels = { "A", "B", "C", "D", "E", "F" };
+
+        [Test]
+        public void LineChart_AreaDisplayType_RendersAreaPath()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, PositiveSeries())
+                .Add(p => p.ChartLabels, _sixLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    LineDisplayType = LineDisplayType.Area
+                }));
+
+            comp.FindComponent<Line<double>>().Should().NotBeNull();
+
+            // The area path is filled with the series color and closes with "Z".
+            var areaPaths = comp.FindAll("path.mud-chart-line[fill='#2979FF']");
+            areaPaths.Count.Should().Be(1, "the Area display type renders exactly one filled area path");
+            areaPaths[0].GetAttribute("d").Should().EndWith(" Z", "the area path is a closed shape");
+            areaPaths[0].GetAttribute("fill-opacity").Should().Be("0.4");
+        }
+
+        [TestCase(true, 6)]
+        [TestCase(false, 0)]
+        public void LineChart_ShowToolTips_GatesDataPointCircles(bool showToolTips, int expectedCircles)
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, PositiveSeries())
+                .Add(p => p.ChartLabels, _sixLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowToolTips = showToolTips,
+                    ShowDataMarkers = false
+                }));
+
+            // The line path always renders; only the hoverable data-point circles are gated by ShowToolTips.
+            comp.FindAll("path.mud-chart-line").Count.Should().BeGreaterThan(0);
+            comp.FindAll("circle.mud-chart-point").Count.Should().Be(expectedCircles);
+        }
+
+        [Test]
+        public async Task OverlayLine_HoverDataPoint_TogglesHoveredPath()
+        {
+            var stacked = new List<ChartSeries<double>>
+            {
+                new() { Name = "Stack 1", Data = new double[] { 100, 120, 90, 140, 110, 130 } }
+            };
+            var overlay = new List<ChartSeries<double>>
+            {
+                new() { Name = "Overlay", Data = new double[] { 50, 60, 40, 70, 55, 65 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, stacked)
+                .Add(p => p.ChartLabels, _sixLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ChartPalette = _baseChartPalette })
+                .AddChildContent<Line<double>>(cp => cp
+                    .Add(l => l.ChartSeries, overlay)
+                    .Add(l => l.ChartOptions, new LineChartOptions
+                    {
+                        ChartPalette = new[] { "#000000" },
+                        ShowToolTips = true
+                    })));
+
+            var line = comp.FindComponent<Line<double>>().Instance;
+            line.IsOverlayChart.Should().BeTrue("the nested Line is the overlay chart");
+
+            // A no-op parameter set re-runs the outer chart's RebuildChart -> RenderOverlay, settling the overlay.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.CanHideSeries, false));
+
+            var circles = comp.FindAll("circle.mud-chart-point");
+            circles.Count.Should().BeGreaterThan(0, "the overlay line renders data point circles");
+
+            // Initially nothing is hovered.
+            comp.FindAll("path.mud-chart-serie-hovered").Count.Should().Be(0);
+
+            // Hovering the first data point marks the overlay line as hovered.
+            await circles[0].MouseOverAsync(new());
+            comp.FindAll("path.mud-chart-serie-hovered").Count.Should().Be(1, "hovering marks the overlay line as hovered");
+
+            // Mousing out clears the hovered state.
+            await comp.FindAll("circle.mud-chart-point")[0].MouseOutAsync(new());
+            comp.FindAll("path.mud-chart-serie-hovered").Count.Should().Be(0, "mousing out clears the hovered state");
+        }
     }
 }

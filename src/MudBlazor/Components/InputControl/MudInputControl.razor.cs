@@ -5,7 +5,7 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A base class for designing input components.
+    /// Wraps a form input with its label, helper text, and validation message.
     /// </summary>
     public partial class MudInputControl : MudComponentBase
     {

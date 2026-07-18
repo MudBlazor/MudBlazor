@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a floating action button.
+    /// Floating action buttons (FABs) trigger the primary action on a page and float above content in a circular or extended shape.
     /// </summary>
     /// <remarks>
     /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
@@ -12,6 +12,7 @@ namespace MudBlazor
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
     /// <seealso cref="MudButton" />
+    /// <seealso cref="MudFabMenu" />
     /// <seealso cref="MudIconButton" />
     /// <seealso cref="MudToggleIconButton" />
     public partial class MudFab : MudBaseButton

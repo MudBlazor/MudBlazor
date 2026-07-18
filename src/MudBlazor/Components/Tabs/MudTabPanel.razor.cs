@@ -15,12 +15,7 @@ namespace MudBlazor;
 public partial class MudTabPanel : MudComponentBase
 {
     private bool _disposed;
-
-    protected string Stylename =>
-        new StyleBuilder()
-            .AddStyle("display", Parent?.ActivePanel == this ? "contents" : "none", Parent?.KeepPanelsAlive == true)
-            .AddStyle(Style)
-            .Build();
+    private bool _alreadyRendered;
 
     internal string Classname =>
         new CssBuilder("mud-tab-panel")
@@ -30,6 +25,7 @@ public partial class MudTabPanel : MudComponentBase
 
     internal string PanelClassname =>
         new CssBuilder("mud-tab-panel")
+            .AddClass("mud-tab-panel-active", Parent?.ActivePanel == this)
             .AddClass("mud-tab-panel-hidden", !Visible)
             .AddClass(PanelClass)
             .Build();

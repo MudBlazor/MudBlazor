@@ -5,7 +5,7 @@ using MudBlazor.Utilities.Debounce;
 namespace MudBlazor
 {
     /// <summary>
-    /// A base class for designing input components which update after a delay.
+    /// Base class for MudBlazor inputs that wait for typing to pause before updating their value, such as <see cref="MudTextField{T}"/> and <see cref="MudNumericField{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>

@@ -7,6 +7,7 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
@@ -604,5 +605,45 @@ public class ServiceCollectionExtensionsTests
         actualSnackBarOptions.SuccessIcon.Should().Be(expectedOptions.SnackbarConfiguration.SuccessIcon);
         actualSnackBarOptions.WarningIcon.Should().Be(expectedOptions.SnackbarConfiguration.WarningIcon);
         actualSnackBarOptions.ErrorIcon.Should().Be(expectedOptions.SnackbarConfiguration.ErrorIcon);
+    }
+
+    [Test]
+    public void AddMudBlazorDialog_WhenServiceAlreadyRegistered_ShouldNotOverwrite()
+    {
+        // Arrange: registration uses TryAddScoped so a pre-registered service must survive.
+        var existing = new StubDialogService();
+        var services = new ServiceCollection();
+        services.AddSingleton<IDialogService>(existing);
+
+        // Act
+        services.AddMudBlazorDialog();
+        var serviceProvider = services.BuildServiceProvider();
+        var dialogService = serviceProvider.GetService<IDialogService>();
+
+        // Assert
+        dialogService.Should().BeSameAs(existing);
+    }
+
+    [Test]
+    public void AddLocalizationInterceptor_ShouldReplaceDefaultInterceptor()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddMudLocalization();
+
+        // Act
+        services.AddLocalizationInterceptor<StubLocalizationInterceptor>();
+
+        // Assert: Replace keeps a single registration but swaps the implementation.
+        var descriptors = services.Where(x => x.ServiceType == typeof(ILocalizationInterceptor)).ToList();
+        descriptors.Should().ContainSingle();
+        descriptors[0].ImplementationType.Should().Be<StubLocalizationInterceptor>();
+    }
+
+    private sealed class StubDialogService : DialogService;
+
+    private sealed class StubLocalizationInterceptor : ILocalizationInterceptor
+    {
+        public LocalizedString Handle(string key, params object[] arguments) => new(key, key, resourceNotFound: true);
     }
 }

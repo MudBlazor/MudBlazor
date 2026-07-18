@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a cell displayed at the top of a <see cref="MudDataGrid{T}"/> column.
+    /// The header cell displayed at the top of a <see cref="MudDataGrid{T}"/> column, showing the title along with sorting, filtering, and resizing controls.
     /// </summary>
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     /// <seealso cref="MudDataGrid{T}"/>
@@ -554,6 +554,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
+                DataGrid.HideColumnsPanel();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -576,6 +577,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
+                DataGrid.HideColumnsPanel();
                 DataGrid.DropContainerHasChanged();
             }
         }

@@ -9,11 +9,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
+/// Adds an expand or collapse button to each <see cref="MudDataGrid{T}"/> row, revealing nested detail content when expanded.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
-/// <seealso cref="Column{T}"/>
-/// <seealso cref="MudDataGrid{T}"/>
+/// <seealso cref="Column{T}" />
+/// <seealso cref="MudDataGrid{T}" />
+/// <seealso cref="PropertyColumn{T, TProperty}" />
+/// <seealso cref="SelectColumn{T}" />
+/// <seealso cref="TemplateColumn{T}" />
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     /// <summary>
