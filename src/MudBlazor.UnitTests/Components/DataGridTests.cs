@@ -771,7 +771,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridVirtualizeServerDataLoadingWithCancel()
         {
-            var comp = Context.Render<DataGridVirtualizeServerDataLoadingWithCancelTest>();
+            var comp = Context.Render<DataGridVirtualizeCancelTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
 
             // Make a cancellation token we can monitor
@@ -1239,8 +1239,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridFormValidationErrorsPreventUpdate()
         {
-            var comp = Context.Render<DataGridFormValidationErrorsPreventUpdateTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormValidationErrorsPreventUpdateTest.Model>>();
+            var comp = Context.Render<DataGridFormValidationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFormValidationTest.Model>>();
 
             // open form dialog
             await dataGrid.Find("tbody tr button").ClickAsync();
@@ -1345,6 +1345,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedItemChanged.Should().Be(true);
             comp.Instance.FilterChanged.Should().Be(false);
             comp.Instance.CommittedItemChanges.Should().Be(true);
+            comp.Instance.StartedEditingItem.Should().Be(true);
             comp.Instance.CanceledEditingItem.Should().Be(false);
 
             // TODO: Triggering of the CancelEditingItem callback appears to require the Form edit mode
@@ -1366,6 +1367,186 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.InvokeAsync(dataGrid.Instance.ClearFiltersAsync);
             comp.Instance.FilterChangedCallCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridStartedEditingItemOccursOnRowClickInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            comp.Instance.StartedEditingItem.Should().Be(false);
+
+            var item = dataGrid.Instance.CurrentPageItems.First();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.OnRowClickedAsync(new MouseEventArgs(), item, 0));
+
+            comp.Instance.StartedEditingItem.Should().Be(true);
+            // Cell edit mode has no working copy and does not open the edit form.
+            dataGrid.Instance._editingItem.Should().BeNull();
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridStartedEditingItemRaisedOncePerItemInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            var startedCount = 0;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick)
+                .Add(x => x.StartedEditingItem, EventCallback.Factory.Create<DataGridEventCallbacksTest.Item>(this, _ => startedCount++)));
+
+            var inputs = dataGrid.FindAll(".mud-table-body tr td input");
+
+            // First edit on the first row starts editing once.
+            await inputs[0].ChangeAsync("first edit");
+            startedCount.Should().Be(1);
+
+            // A second edit on the same row must not re-raise StartedEditingItem.
+            await dataGrid.FindAll(".mud-table-body tr td input")[0].ChangeAsync("second edit");
+            startedCount.Should().Be(1);
+
+            // Editing a different row starts editing again.
+            await dataGrid.FindAll(".mud-table-body tr td input")[1].ChangeAsync("other row");
+            startedCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DataGridSetEditingItemInCellModeDoesNotOpenEditForm()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell));
+
+            var item = dataGrid.Instance.CurrentPageItems.First();
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetEditingItemAsync(item));
+
+            comp.Instance.StartedEditingItem.Should().Be(true);
+            dataGrid.Instance._editingItem.Should().BeNull();
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridStartedEditingItemFiresInCellModeForNonCloneableItem()
+        {
+            var comp = Context.Render<DataGridEditComplexPropertyExpressionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEditComplexPropertyExpressionTest.Item>>();
+
+            var started = 0;
+            DataGridEditComplexPropertyExpressionTest.Item startedItem = null;
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.StartedEditingItem, EventCallback.Factory.Create<DataGridEditComplexPropertyExpressionTest.Item>(this, item => { started++; startedItem = item; })));
+
+            // The item type cannot be round-tripped by the default clone strategy.
+            // Cell editing must not attempt to clone it (which would throw), but must still raise StartedEditingItem with the live source item.
+            await dataGrid.FindAll(".mud-table-body tr td input")[0].ChangeAsync("Test 1");
+
+            started.Should().Be(1);
+            startedItem.Should().BeSameAs(comp.Instance.Items[0]);
+            comp.Instance.Items[0].Name.Should().Be("Test 1");
+        }
+
+        [Test]
+        public async Task DataGridStartedEditingItemHonorsCustomComparerInCellEditMode()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            var startedCount = 0;
+            // A comparer that treats every row as the same identity.
+            var allEqual = EqualityComparer<DataGridEventCallbacksTest.Item>.Create((_, _) => true, _ => 0);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.Comparer, allEqual)
+                .Add(x => x.StartedEditingItem, EventCallback.Factory.Create<DataGridEventCallbacksTest.Item>(this, _ => startedCount++)));
+
+            // The start dedup must follow the grid's Comparer, not hard-coded item equality.
+            await dataGrid.FindAll(".mud-table-body tr td input")[0].ChangeAsync("first");
+            await dataGrid.FindAll(".mud-table-body tr td input")[1].ChangeAsync("second");
+
+            // Both rows share identity under the comparer, so editing is started only once.
+            startedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DataGridFilterChangedColumnFilterRowApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            var filterInput = dataGrid.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await dataGrid.Find(".column-filter-menu button").ClickAsync();
+            var operators = popoverProvider.FindComponents<MudMenuItem>();
+            await operators[1].Find(".mud-menu-item").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+
+            await dataGrid.Find(".filter-button.clear").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(3);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridFilterChangedColumnFilterMenuApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>(parameters => parameters
+                .Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            var filterInput = comp.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            await comp.Find(".apply-filter-button").ClickAsync();
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".clear-filter-button").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task DataGridFilterChangedSimpleApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>(parameters => parameters
+                .Add(x => x.FilterMode, DataGridFilterMode.Simple));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+
+            // Open the Simple filter panel with a blank filter on the first column.
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // Setting a value fires FilterChanged (previously only clearing did).
+            var filterInput = comp.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            // Changing the operator fires FilterChanged.
+            var operatorSelect = comp.FindComponents<MudSelect<string>>().Single();
+            await comp.InvokeAsync(async () => await operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.String.NotContains));
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+
+            // Clearing the filter fires FilterChanged.
+            await comp.Find(".remove-filter-button").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(3);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
         }
 
         [Test]
@@ -1439,10 +1620,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridServerSideSortable()
         {
-            // Disable simulated load on server side:
-            TestComponents.DataGrid.DataGridServerSideSortableTest.DisableServerTimeoutForTests = true;
-
-            var comp = Context.Render<DataGridServerSideSortableTest>();
+            var comp = Context.Render<DataGridServerSideSortableTest>(parameters =>
+                parameters.Add(x => x.ServerDelay, TimeSpan.Zero));
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerSideSortableTest.Item>>();
 
             var cells = dataGrid.FindAll("td");
@@ -2074,6 +2253,40 @@ namespace MudBlazor.UnitTests.Components
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.Empty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.Empty
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.NotEmpty
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.NotEmpty
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
 
             #endregion
 
@@ -2906,6 +3119,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_OpenFilters_FromHeaderFilterButton_SetsAutoFocusOnMatchingFilter()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var nameColumn = dataGrid.Instance.GetColumnByPropertyName("Name");
+            var ageColumn = dataGrid.Instance.GetColumnByPropertyName("Age");
+
+            await comp.InvokeAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFiltersTest.Model>
+                {
+                    Id = Guid.NewGuid(),
+                    Column = nameColumn,
+                    Operator = FilterOperator.String.Contains,
+                    Value = "Sam"
+                });
+                dataGrid.Instance.FilterDefinitions.Add(new FilterDefinition<DataGridFiltersTest.Model>
+                {
+                    Id = Guid.NewGuid(),
+                    Column = ageColumn,
+                    Operator = FilterOperator.Number.GreaterThan,
+                    Value = 30
+                });
+            });
+
+            var ageHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()
+                .First(x => x.Instance.Column?.PropertyName == "Age");
+
+            await comp.InvokeAsync(() => ageHeaderCell.Instance.OpenFilters(new MouseEventArgs
+            {
+                PageX = 100,
+                PageY = 200
+            }));
+
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(2);
+
+            var filterFieldSelects = comp.FindComponents<MudSelect<Column<DataGridFiltersTest.Model>>>()
+                .Where(x => x.Instance.Class == "filter-field")
+                .ToArray();
+
+            filterFieldSelects.Should().HaveCount(2);
+            filterFieldSelects.Count(x => x.Instance.AutoFocus).Should().Be(1);
+            filterFieldSelects[0].Instance.AutoFocus.Should().BeFalse();
+            filterFieldSelects[1].Instance.AutoFocus.Should().BeTrue();
+        }
+
+        [Test]
         public async Task DataGridCloseFilters()
         {
             var comp = Context.Render<DataGridFiltersTest>();
@@ -3084,26 +3345,26 @@ namespace MudBlazor.UnitTests.Components
             // test internal filter class for string data type.
             var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, stringFilterDefinition, null);
             stringFilterDefinition.Column.dataType.Should().Be(typeof(string));
-            await comp.InvokeAsync(() => internalFilter.StringValueChanged("J"));
+            await comp.InvokeAsync(() => internalFilter.StringValueChangedAsync("J"));
             stringFilterDefinition.Value.Should().Be("J");
 
             // test internal filter class for number data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, intFilterDefinition, null);
             intFilterDefinition.Column.dataType.Should().Be(typeof(int?));
-            await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
+            await comp.InvokeAsync(() => internalFilter.NumberValueChangedAsync(35));
             intFilterDefinition.Value.Should().Be(35);
 
             // test internal filter class for enum data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, enumFilterDefinition, null);
             enumFilterDefinition.Column.dataType.Should().Be(typeof(Severity?));
-            await comp.InvokeAsync(() => internalFilter.EnumValueChanged(Severity.Warning));
+            await comp.InvokeAsync(() => internalFilter.EnumValueChangedAsync(Severity.Warning));
             enumFilterDefinition.Value.Should().Be(Severity.Warning);
             enumFilterDefinition.FieldType.IsEnum.Should().Be(true);
 
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, boolFilterDefinition, null);
             boolFilterDefinition.Column.dataType.Should().Be(typeof(bool?));
-            await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
+            await comp.InvokeAsync(() => internalFilter.BoolValueChangedAsync(false));
             boolFilterDefinition.Value.Should().Be(false);
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(boolFilterDefinitionWithNull)); // Test adding Bool filter with null value
@@ -3114,16 +3375,16 @@ namespace MudBlazor.UnitTests.Components
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
             dateTimeFilterDefinition.Column.dataType.Should().Be(typeof(DateTime?));
 
-            await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
+            await comp.InvokeAsync(() => internalFilter.DateValueChangedAsync(date));
             dateTimeFilterDefinition.Value.Should().Be(date.Date);
 
-            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
+            await comp.InvokeAsync(() => internalFilter.TimeValueChangedAsync(date.TimeOfDay));
             dateTimeFilterDefinition.Value.Should().Be(date);
 
-            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(null));
+            await comp.InvokeAsync(() => internalFilter.TimeValueChangedAsync(null));
             dateTimeFilterDefinition.Value.Should().Be(date.Date);
 
-            await comp.InvokeAsync(() => internalFilter.DateValueChanged(null));
+            await comp.InvokeAsync(() => internalFilter.DateValueChangedAsync(null));
             dateTimeFilterDefinition.Value.Should().BeNull();
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinitionWithNull)); // Test adding DateTime filter with null value
@@ -3134,10 +3395,10 @@ namespace MudBlazor.UnitTests.Components
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);
             dateOnlyFilterDefinition.Column.dataType.Should().Be(typeof(DateOnly?));
 
-            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyDateTimeInput));
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChangedAsync(dateOnlyDateTimeInput));
             dateOnlyFilterDefinition.Value.Should().Be(DateOnly.FromDateTime(dateOnlyDateTimeInput));
 
-            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(null));
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChangedAsync(null));
             dateOnlyFilterDefinition.Value.Should().BeNull();
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateOnlyFilterDefinitionWithNull)); // Test Adding DateOnly filter with null value
@@ -3147,7 +3408,7 @@ namespace MudBlazor.UnitTests.Components
             var guid = Guid.NewGuid();
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, guidFilterDefinition, null);
             guidFilterDefinition.Column.dataType.Should().Be(typeof(Guid?));
-            await comp.InvokeAsync(() => internalFilter.GuidValueChanged(guid));
+            await comp.InvokeAsync(() => internalFilter.GuidValueChangedAsync(guid));
             guidFilterDefinition.Value.Should().Be(guid);
         }
 
@@ -3174,7 +3435,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridFilterFieldChanged()
+        public async Task DataGridFilterFieldChanged()
         {
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
@@ -3187,7 +3448,7 @@ namespace MudBlazor.UnitTests.Components
             var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
             var newBoolColumn = dataGrid.Instance.GetColumnByPropertyName("Hired");
 
-            filter.FieldChanged(newBoolColumn!);
+            await comp.InvokeAsync(() => filter.FieldChangedAsync(newBoolColumn!));
 
             filterDefinition.Column.Should().Be(newBoolColumn);
             filterDefinition.Operator.Should().Be(FilterOperator.Boolean.Is);
@@ -3904,6 +4165,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridColumnPopupFilteringEnterAppliesFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            await comp.Find(".filter-button").ClickAsync();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await input.Find("input").InputAsync("Sam");
+            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+                dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringEscapeClearsFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
+            await comp.Find(".filter-button").ClickAsync();
+            var input = comp.FindComponent<MudTextField<string>>();
+            await input.Find("input").InputAsync("Sam");
+            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().BeEmpty();
+                dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            });
+        }
+
+        [Test]
         public void DataGridColumnShowFilterIcons()
         {
             var comp = Context.Render<DataGridColumnShowFilterIconsTest>();
@@ -4007,6 +4303,49 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridColumnFilterMenu_OpeningFilter_ClosesColumnsPanel(bool withExistingFilter)
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            if (withExistingFilter)
+            {
+                var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+                var nameColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Name");
+
+                await comp.InvokeAsync(async () =>
+                {
+                    await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnFilterMenuTest.Model>
+                    {
+                        Column = nameColumn,
+                        Operator = FilterOperator.String.Equal,
+                        Value = "Sam"
+                    });
+                });
+            }
+
+            var buttons = comp.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon");
+            await buttons[0].ClickAsync();
+
+            var menuItem = comp.Find(".mud-menu-item");
+            await menuItem.ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".mud-popover.mud-data-grid-columns-panel").Count.Should().Be(1);
+            });
+
+            var filterButtons = comp.FindAll(".mud-data-grid-columns-panel .filter-button");
+            await filterButtons[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".mud-popover.mud-data-grid-columns-panel").Count.Should().Be(0);
+                comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
+            });
+        }
+
 
         [Test]
         public async Task DataGridCustomPropertyFilterTemplate()
@@ -4457,6 +4796,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridAggregateFooterSticky()
+        {
+            var comp = Context.Render<DataGridAggregationStickyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationStickyTest.Model>>();
+
+            var allFooter = dataGrid.FindAll("tfoot td");
+            allFooter.First().ClassList.Should().Contain("sticky-left");
+            allFooter.Last().ClassList.Should().Contain("sticky-right");
+        }
+
+        [Test]
         public void DataGridStickyColumnsResizer()
         {
             var comp = Context.Render<DataGridStickyColumnsResizerTest>();
@@ -4761,6 +5111,28 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
             dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(2.2);
+        }
+
+        [Test]
+        public async Task DataGridNumericColumnFilter_CanTypeDecimalCharByChar()
+        {
+            // Regression test for #13250: typing a decimal value such as "1.008" one character at a time
+            // into a numeric column filter (which renders a MudNumericField with Immediate=true and the
+            // column Culture bound) must produce 1.008. Previously the field reformatted on every
+            // keystroke, so the "." and the leading "0" were stripped and the filter became 1008.
+            var comp = Context.Render<DataGridCultureEditableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCultureEditableTest.Model>>();
+
+            // Amount column (index 2) uses InvariantCulture, so "." is the decimal separator.
+            IElement AmountFilter() => dataGrid.FindAll("th.filter-header-cell input")[2];
+            foreach (var ch in "1.008")
+            {
+                var current = AmountFilter().GetAttribute("value") ?? string.Empty;
+                await AmountFilter().InputAsync(current + ch);
+            }
+
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            dataGrid.Instance.FilterDefinitions[0].Value.Should().Be(1.008);
         }
 
         [Test]
@@ -5623,7 +5995,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TestCurrentPageParameterTwoWayBinding()
         {
-            var comp = Context.Render<DataGridCurrentPageParameterTwoWayBindingTest>();
+            var comp = Context.Render<DataGridCurrentPageBindTest>();
             var dataGridComponent = comp.FindComponent<MudDataGrid<int>>();
             var dataGrid = dataGridComponent.Instance;
 
@@ -6195,11 +6567,19 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridRowDetailInitiallyExpandedServerMultiple()
         {
-            var comp = Context.Render<DataGridHierarchyInitiallyExpandedServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
+            var comp = Context.Render<DataGridServerHierarchyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerHierarchyTest.Model>>();
 
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
-            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.Loading.Should().BeFalse();
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "Ira");
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "Anders");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Ira");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "Anders");
+                comp.Markup.Should().Contain("uid = Ira|27|Success|");
+                comp.Markup.Should().Contain("uid = Anders|24|Error|");
+            });
 
             comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
             comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
@@ -6227,7 +6607,14 @@ namespace MudBlazor.UnitTests.Components
                 await nextButton.ClickAsync();
             });
 
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.Loading.Should().BeFalse();
+                dataGrid.Instance.CurrentPage.Should().Be(1);
+                dataGrid.Instance.ServerItems.Should().Contain(x => x.Name == "ScarletKuro");
+                dataGrid.Instance._openHierarchies.Should().Contain(x => x.Name == "ScarletKuro");
+                comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|");
+            });
 
             comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
             comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
@@ -6511,13 +6898,38 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        [Test]
+        public async Task DataGridFilterTemplateUsesContextFilterIcon()
+        {
+            var comp = Context.Render<DataGridFilterIconsTest>(parameters =>
+                parameters.Add(x => x.FilterMode, DataGridFilterMode.ColumnFilterRow));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
+
+            MudIconButton CustomFilterButton() =>
+                comp.FindComponents<MudIconButton>()
+                    .First(x => x.Markup.Contains("custom-filter-template-button"))
+                    .Instance;
+
+            CustomFilterButton().Icon.Should().Be("test_grid_filter_empty_icon");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFilterIconsTest.Model>
+            {
+                Column = dataGrid.Instance.RenderedColumns.First(),
+                Operator = FilterOperator.String.Contains,
+                Value = "Sam"
+            }));
+
+            await comp.WaitForAssertionAsync(() =>
+                CustomFilterButton().Icon.Should().Be("test_grid_filter_filled_icon"));
+        }
+
         #region Selection Cleanup Tests (ObservableCollection)
 
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
         {
-            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             await comp.WaitForAssertionAsync(() =>
@@ -6543,8 +6955,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenMultipleItemsRemoved()
         {
-            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
@@ -6573,8 +6985,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldClearWhenCollectionCleared()
         {
-            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
@@ -6590,8 +7002,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItem_ShouldUpdateWhenItemRemoved()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             var firstItem = testComponent.Items.First();
@@ -6612,8 +7024,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldNotAffectNonSelectedItems()
         {
-            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             var firstItem = testComponent.Items.First();
@@ -6646,8 +7058,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItem_ShouldNotReferenceRemovedItem_WhenMultipleItemsSelectedAndOneRemoved()
         {
-            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             var firstItem = testComponent.Items.First();
@@ -6683,8 +7095,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_SelectedItems_ShouldKeepRemainingSelectionsWhenOneRemoved()
         {
-            var comp = Context.Render<DataGridSelectionCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridSelectionCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             // Select 3 items (not using SelectAll)
@@ -6792,8 +7204,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_OpenHierarchies_ShouldClearWhenExpandedItemRemovedFromObservableCollection()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             // Ira should be initially expanded
@@ -6812,8 +7224,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_OpenHierarchies_ShouldClearWhenManuallyExpandedItemRemovedFromObservableCollection()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             var samItem = testComponent.Items.First(x => x.Name == "Sam");
@@ -6834,8 +7246,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_OpenHierarchies_ShouldClearWhenObservableCollectionCleared()
         {
-            var comp = Context.Render<DataGridHierarchyCleanupObservableCollectionTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupObservableCollectionTest.Model>>();
+            var comp = Context.Render<DataGridHierarchyCleanupTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyCleanupTest.Model>>();
             var testComponent = comp.Instance;
 
             // Ira should be initially expanded
@@ -6927,8 +7339,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridFilterDefinitionsPreloadColumnFilterRowTest()
         {
-            var comp = Context.Render<DataGridFilterDefinitionsPreloadColumnFilterRowTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterDefinitionsPreloadColumnFilterRowTest.Model>>();
+            var comp = Context.Render<DataGridPreloadFilterRowTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPreloadFilterRowTest.Model>>();
 
             // Wait for the filter to be applied after OnAfterRenderAsync
             await comp.WaitForAssertionAsync(() =>
@@ -6965,6 +7377,19 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(0, "Filter should be removable");
         }
 
+        [Test]
+        public async Task DataGridTableAttributes_RendersAriaLabel()
+        {
+            var comp = Context.Render<DataGridCellTemplateTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
         #endregion
     }
 }

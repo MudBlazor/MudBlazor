@@ -44,10 +44,10 @@
                           IconSize="@IconSize"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          Clearable="@(Clearable && !GetReadOnlyState() && HasClearableValue())"
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes"
+                          @attributes="GetInputUserAttributes()"
                           OnBlur="@OnBlurAsync"
                           ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
@@ -114,6 +114,7 @@
                             RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
+                                 @attributes="GetListUserAttributes()"
                                  Class="@ListClass"
                                  Dense="@Dense"
                                  @bind-SelectedValue="_activeItemId">

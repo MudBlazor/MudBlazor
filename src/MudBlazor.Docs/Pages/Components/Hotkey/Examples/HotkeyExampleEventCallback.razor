@@ -27,8 +27,10 @@
     private JsKey _selectedKey = JsKey.KeyB;
     private IReadOnlyCollection<JsKeyModifier> _selectedKeyModifiers = [JsKeyModifier.ControlLeft];
 
-    private void OnHotKey()
+    private void OnHotKey(HotkeyEventArgs args)
     {
-        SnackbarService.Add("Hotkey pressed", Severity.Success);
+        var modifiers = string.Join(" + ", args.KeyModifiers);
+        var combination = string.IsNullOrEmpty(modifiers) ? $"{args.Key}" : $"{modifiers} + {args.Key}";
+        SnackbarService.Add($"Hotkey pressed: {combination}", Severity.Success);
     }
 }

@@ -117,4 +117,14 @@ public class BoundingClientRectTests
         rect.IsEqualTo(null).Should().BeFalse();
         ((BoundingClientRect)null).IsEqualTo(rect).Should().BeFalse();
     }
+
+    [Test]
+    public void BoundingClientRectIsEqualTo_ShouldHonorCustomTolerance()
+    {
+        var rect1 = new BoundingClientRect { Top = 10, Left = 20, Width = 100, Height = 200 };
+        var rect2 = new BoundingClientRect { Top = 11, Left = 20, Width = 100, Height = 200 };
+
+        rect1.IsEqualTo(rect2, tolerance: 2).Should().BeTrue();
+        rect1.IsEqualTo(rect2, tolerance: 0.5).Should().BeFalse();
+    }
 }

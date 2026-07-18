@@ -62,7 +62,7 @@ namespace MudBlazor
             await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
-        internal void FieldChanged(Column<T> column)
+        internal Task FieldChangedAsync(Column<T> column)
         {
             _filterDefinition.Column = column;
             var operators = column.GetFilterOperators(FieldType.Identify(column.PropertyType));
@@ -73,37 +73,44 @@ namespace MudBlazor
             {
                 filterDefinition.FilterFunction = null;
             }
+            return ApplyChangesAsync();
         }
 
-        internal void StringValueChanged(string value)
+        internal Task OperatorChangedAsync(string? value)
+        {
+            _filterDefinition.Operator = value;
+            return ApplyChangesAsync();
+        }
+
+        internal Task StringValueChangedAsync(string value)
         {
             _valueString = value;
             _filterDefinition.Value = _valueString;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void NumberValueChanged(double? value)
+        internal Task NumberValueChangedAsync(double? value)
         {
             _valueNumber = value;
             _filterDefinition.Value = _valueNumber;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void EnumValueChanged(Enum value)
+        internal Task EnumValueChangedAsync(Enum value)
         {
             _valueEnum = value;
             _filterDefinition.Value = _valueEnum;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void BoolValueChanged(bool? value)
+        internal Task BoolValueChangedAsync(bool? value)
         {
             _valueBool = value;
             _filterDefinition.Value = _valueBool;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void DateValueChanged(DateTime? value)
+        internal Task DateValueChangedAsync(DateTime? value)
         {
             _valueDateTimeForPicker = value;
 
@@ -122,10 +129,10 @@ namespace MudBlazor
             else
                 _filterDefinition.Value = null;
 
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void TimeValueChanged(TimeSpan? value)
+        internal Task TimeValueChangedAsync(TimeSpan? value)
         {
             _valueTime = value;
 
@@ -142,10 +149,10 @@ namespace MudBlazor
                 _filterDefinition.Value = date;
             }
 
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void DateOnlyValueChanged(DateTime? value)
+        internal Task DateOnlyValueChangedAsync(DateTime? value)
         {
             _valueDateOnlyForPicker = value;
 
@@ -156,14 +163,24 @@ namespace MudBlazor
             else
                 _filterDefinition.Value = null;
 
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void GuidValueChanged(Guid? value)
+        internal Task GuidValueChangedAsync(Guid? value)
         {
             _valueGuid = value;
             _filterDefinition.Value = _valueGuid;
+            return ApplyChangesAsync();
+        }
+
+        // Regroups the data after a filter edit and, in Simple mode, raises FilterChanged.
+        // Simple mode applies filters live, so it notifies here; the row and menu modes notify from their own apply paths instead.
+        private Task ApplyChangesAsync()
+        {
             _dataGrid.GroupItems();
+            return _dataGrid.FilterMode == DataGridFilterMode.Simple
+                ? _dataGrid.NotifyFilterChangedAsync()
+                : Task.CompletedTask;
         }
     }
 }

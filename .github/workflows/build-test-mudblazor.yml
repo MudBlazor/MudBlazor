@@ -19,16 +19,16 @@ jobs:
   format-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Cache NuGet packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
           path: ${{ env.NUGET_PACKAGES }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
 
       - name: Restore dependencies
         working-directory: src
@@ -61,15 +61,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project-path:
-          [
-            "src/MudBlazor.UnitTests",
-            "src/MudBlazor.UnitTests.Docs",
-            "src/MudBlazor.UnitTests.Analyzers",
-          ]
+        include:
+          - project-path: src/MudBlazor.UnitTests
+            project-name: MudBlazor.UnitTests
+            generate-coverage: true
+          - project-path: src/MudBlazor.UnitTests.Docs
+            project-name: MudBlazor.UnitTests.Docs
+            generate-coverage: true
+          - project-path: src/MudBlazor.UnitTests.Analyzers
+            project-name: MudBlazor.UnitTests.Analyzers
+            generate-coverage: false
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
@@ -77,42 +81,45 @@ jobs:
           project-path: ${{ matrix.project-path }}
 
       - name: Test ${{ matrix.project-path }}
-        run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
-
-      - name: Extract project name
-        id: project
         run: |
-          path="${{ matrix.project-path }}"
-          echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
+          coverage_args=()
+          if [ "${{ matrix.generate-coverage }}" = "true" ]; then
+            coverage_args=(
+              --coverlet
+              --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute"
+              --coverlet-exclude-by-attribute "CompilerGeneratedAttribute"
+              --coverlet-exclude-by-file "**/*.g.cs"
+              --coverlet-include "[MudBlazor]*"
+              --coverlet-skip-auto-props
+            )
+          fi
 
-      - name: Upload coverage report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-report-${{ steps.project.outputs.name }}
-          path: |
-            ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
-            ${{ matrix.project-path }}/junit.xml
-
-  upload-codecov:
-    needs: build-test
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Download coverage report
-        uses: actions/download-artifact@v8
+          dotnet test \
+          --project ${{ matrix.project-path }} \
+          -c Release \
+          --no-build \
+          --hangdump \
+          --hangdump-timeout 60s \
+          "${coverage_args[@]}" \
+          --report-spekt-junit \
+          --report-spekt-junit-filename junit.xml \
+          --results-directory ${{ matrix.project-path }}/TestResults
 
       - name: Publish coverage
-        uses: codecov/codecov-action@v6
+        if: ${{ !cancelled() && matrix.generate-coverage }}
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+          flags: ${{ matrix.project-name }}
 
       - name: Publish test results
-        uses: codecov/codecov-action@v6
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ matrix.project-path }}/TestResults/junit.xml
+          flags: ${{ matrix.project-name }}
           report_type: test_results
 
   build-only:
@@ -124,7 +131,7 @@ jobs:
         project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build

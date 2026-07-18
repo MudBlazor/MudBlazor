@@ -173,6 +173,16 @@ namespace MudBlazor
         public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
+        /// Shows the days from the previous and next month when they appear in the current calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowAdjacentMonthDays { get; set; }
+
+        /// <summary>
         /// The format of the selected date in the title.
         /// </summary>
         /// <remarks>
@@ -306,7 +316,7 @@ namespace MudBlazor
                 return calendar.MinSupportedDateTime;
             }
 
-            var baseDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
+            var baseDate = _picker_month ?? TimeProvider.GetLocalNow().Date.StartOfMonth(culture);
 
             var year = FixYear ?? calendar.GetYear(baseDate);
             var startMonth = FixMonth ?? calendar.GetMonth(baseDate);
@@ -333,7 +343,7 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(culture);
+            var monthStartDate = _picker_month ?? TimeProvider.GetLocalNow().Date.StartOfMonth(culture);
             return calendar.AddMonths(monthStartDate, month).EndOfMonth(culture);
         }
 
@@ -467,6 +477,42 @@ namespace MudBlazor
             return date < MinDate ||
                    date > MaxDate ||
                    IsDateDisabledFunc(date);
+        }
+
+        protected bool IsAdjacentMonthDay(int month, DateTime day)
+        {
+            return day < GetMonthStart(month) || day > GetMonthEnd(month);
+        }
+
+        /// <summary>
+        /// Determines whether a day from an adjacent month should be hidden in the calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Adjacent-month days are always hidden when <see cref="ShowAdjacentMonthDays"/> is disabled.
+        /// When it is enabled in a multi-month layout (e.g. <see cref="MudDateRangePicker"/>), boundary days that belong to a month already rendered in a neighboring panel are hidden so the same date is not displayed twice across panels.
+        /// </remarks>
+        /// <param name="month">The panel offset from the first displayed month.</param>
+        /// <param name="day">The day being rendered.</param>
+        protected bool IsHiddenAdjacentMonthDay(int month, DateTime day)
+        {
+            if (!IsAdjacentMonthDay(month, day))
+            {
+                return false;
+            }
+
+            if (!ShowAdjacentMonthDays)
+            {
+                return true;
+            }
+
+            // Previous-month day: hide it when the previous month is shown in the panel to the left.
+            if (day < GetMonthStart(month))
+            {
+                return month > 0;
+            }
+
+            // Next-month day: hide it when the next month is shown in the panel to the right.
+            return month < DisplayMonths - 1;
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);
@@ -675,7 +721,7 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (MinDate.HasValue)
                 return calendar.GetYear(MinDate.Value);
-            return calendar.GetYear(DateTime.Today) - 100;
+            return calendar.GetYear(TimeProvider.GetLocalNow().Date) - 100;
         }
 
         protected int GetMaxYear()
@@ -684,7 +730,7 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (MaxDate.HasValue)
                 return calendar.GetYear(MaxDate.Value);
-            return calendar.GetYear(DateTime.Today) + 100;
+            return calendar.GetYear(TimeProvider.GetLocalNow().Date) + 100;
         }
 
         private string? GetYearClasses(int year)
@@ -781,33 +827,28 @@ namespace MudBlazor
             AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
-            if (HighlightedDate is not null)
+            if (HighlightedDate is null)
             {
-                return;
+                var culture = GetCulture();
+                var calendar = culture.Calendar;
+                var today = TimeProvider.GetLocalNow().Date;
+
+                var year = FixYear ?? calendar.GetYear(today);
+                var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
+                var day = FixDay ?? 1;
+
+                if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
+                {
+                    HighlightedDate = date;
+                }
             }
 
-            var culture = GetCulture();
-            var calendar = culture.Calendar;
-            var today = TimeProvider.GetLocalNow().Date;
-
-            var year = FixYear ?? calendar.GetYear(today);
-            var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
-            var day = FixDay ?? 1;
-
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
-            {
-                HighlightedDate = date;
-            }
+            _picker_month ??= GetCalendarStartOfMonth();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-
-            if (firstRender)
-            {
-                _picker_month ??= GetCalendarStartOfMonth();
-            }
 
             if (firstRender && CurrentView == OpenTo.Year)
             {

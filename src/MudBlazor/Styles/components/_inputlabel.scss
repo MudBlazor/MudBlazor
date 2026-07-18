@@ -53,7 +53,9 @@
 }
 
 label.mud-input-label.mud-input-label-inputcontrol {
-  .mud-shrink ~ & {
+  // Browser autofill applies :-webkit-autofill without firing an input event, so mud-shrink is never set and the label would overlap the prefilled value. Treat the autofilled state as shrunk directly in CSS (#9050).
+  .mud-shrink ~ &,
+  .mud-input:has(:-webkit-autofill) ~ & {
     color: var(--mud-palette-text-primary);
   }
 
@@ -62,9 +64,11 @@ label.mud-input-label.mud-input-label-inputcontrol {
   }
 
   .mud-shrink ~ &,
-  .mud-input:focus-within ~ & {
+  .mud-input:focus-within ~ &,
+  .mud-input:has(:-webkit-autofill) ~ & {
     transform: translate(0, 1.5px) scale(0.75);
     transform-origin: top left;
+    max-width: calc(100% / 0.75);
 
     &.mud-input-label-filled {
       transform: translate(12px, 10px) scale(0.75);
@@ -116,7 +120,7 @@ label.mud-input-label.mud-input-label-inputcontrol {
     }
   }
 
-  .mud-shrink, .mud-input:focus-within {
+  .mud-shrink, .mud-input:focus-within, .mud-input:has(:-webkit-autofill) {
     ~ label.mud-input-label.mud-input-label-inputcontrol {
       transform-origin: top right;
 

@@ -26,19 +26,6 @@ public class IdentifierTests
     }
 
     [Test]
-    public void Create_WithoutPrefix_ShouldReturnIdentifierWithRandomPrefix()
-    {
-        // Act
-        var result = Identifier.Create();
-
-        // Assert
-        result.Length.Should().Be(9);
-        // First character should be a letter (a-z)
-        var firstChar = result[0];
-        (firstChar is >= 'a' and <= 'z').Should().BeTrue("first character should be a lowercase letter");
-    }
-
-    [Test]
     public void Create_WithoutPrefix_ShouldGenerateUniqueIdentifiers()
     {
         // Arrange
@@ -99,5 +86,26 @@ public class IdentifierTests
         // Assert
         result.Should().StartWith(LongPrefix);
         result.Length.Should().Be(LongPrefix.Length + 8);
+    }
+
+    [Test]
+    public void Create_WithNullPrefix_ShouldThrowArgumentNullException()
+    {
+        // Act
+        var act = () => Identifier.Create(null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>().WithParameterName("prefix");
+    }
+
+    [Test]
+    public void Create_WithoutPrefix_ShouldAlwaysStartWithLetterAndUseAllowedChars()
+    {
+        // Act & Assert - first char is always a letter (a-z); the rest are [a-z0-9]
+        for (var i = 0; i < 200; i++)
+        {
+            var result = Identifier.Create();
+            result.Should().MatchRegex("^[a-z][a-z0-9]{8}$");
+        }
     }
 }

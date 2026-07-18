@@ -112,6 +112,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(Color.Success, Color.Error)]
+        [TestCase(Color.Info, Color.Warning)]
+        public void SwitchColor_ReadOnly_ShouldKeepColor(Color color, Color uncheckedColor)
+        {
+            // #9524: a read-only switch keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var offComp = Context.Render<MudSwitch<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(c => c.UncheckedColor, uncheckedColor)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, false));
+            var offBase = offComp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
+            offBase.ClassList.Should().Contain($"mud-{uncheckedColor.ToStringFast(true)}-text");
+            offBase.ClassList.Should().NotContain($"hover:mud-{uncheckedColor.ToStringFast(true)}-hover");
+
+            var onComp = Context.Render<MudSwitch<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(c => c.UncheckedColor, uncheckedColor)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, true));
+            var onBase = onComp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
+            onBase.ClassList.Should().Contain($"mud-{color.ToStringFast(true)}-text");
+            onBase.ClassList.Should().NotContain($"hover:mud-{color.ToStringFast(true)}-hover");
+        }
+
+        [Test]
         public void SwitchDisabled()
         {
             var comp = Context.Render<SwitchWithLabelTest>();

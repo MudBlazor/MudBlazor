@@ -59,7 +59,6 @@ namespace MudBlazor
                 .AddClass($"mud-input-adornment-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
-                .AddClass(Class)
                 .Build();
 
         protected string ClearButtonClassname =>
@@ -237,8 +236,25 @@ namespace MudBlazor
             }
             finally
             {
-                // call user callback
-                await OnKeyDown.InvokeAsync(e);
+                // when MudMask is hosted by a MudTextField, the callback re-renders the parent, which echoes the just-committed value back as our Value parameter.
+                // Without the guard that resync re-applies the masked text via SetText and resets the caret to the end, dropping the next character the user types (#9829).
+                await RaiseKeyCallbackAsync(OnKeyDown, e);
+            }
+        }
+
+        protected internal Task OnKeyUpAsync(KeyboardEventArgs e) => RaiseKeyCallbackAsync(OnKeyUp, e);
+
+        private async Task RaiseKeyCallbackAsync(EventCallback<KeyboardEventArgs> callback, KeyboardEventArgs e)
+        {
+            var wasUpdating = _updating;
+            _updating = true;
+            try
+            {
+                await callback.InvokeAsync(e);
+            }
+            finally
+            {
+                _updating = wasUpdating;
             }
         }
 

@@ -98,6 +98,34 @@ namespace MudBlazor
         public EventCallback<InputFileChangeEventArgs> OnFilesChanged { get; set; }
 
         /// <summary>
+        /// Occurs when a drag operation enters this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDragEnter { get; set; }
+
+        /// <summary>
+        /// Occurs when files are dropped onto this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDrop { get; set; }
+
+        /// <summary>
+        /// Occurs when a drag operation leaves this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDragLeave { get; set; }
+
+        /// <summary>
+        /// Occurs when a drag operation ends for this component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<DragEventArgs> OnDragEnd { get; set; }
+
+        /// <summary>
         /// Appends new files to the existing selection.
         /// </summary>
         /// <remarks>
@@ -262,6 +290,24 @@ namespace MudBlazor
             await _draggingState.SetValueAsync(false);
         }
 
+        private async Task OnDropAsync(DragEventArgs args)
+        {
+            await OnDragResetAsync();
+            await OnDrop.InvokeAsync(args);
+        }
+
+        private async Task OnDragLeaveAsync(DragEventArgs args)
+        {
+            await OnDragResetAsync();
+            await OnDragLeave.InvokeAsync(args);
+        }
+
+        private async Task OnDragEndAsync(DragEventArgs args)
+        {
+            await OnDragResetAsync();
+            await OnDragEnd.InvokeAsync(args);
+        }
+
         private Task OnDragAreaClickAsync()
         {
             if (GetDisabledState())
@@ -272,14 +318,15 @@ namespace MudBlazor
             return OpenFilePickerAsync();
         }
 
-        private Task OnDragEnterAsync()
+        private async Task OnDragEnterAsync(DragEventArgs args)
         {
             if (GetDisabledState())
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return _draggingState.SetValueAsync(true);
+            await _draggingState.SetValueAsync(true);
+            await OnDragEnter.InvokeAsync(args);
         }
 
         private Task OnFileChipCloseAsync(string filename)

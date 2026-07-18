@@ -49,6 +49,7 @@ namespace MudBlazor
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private (double Top, double Left) _filtersMenuPosition = (0, 0);
         private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
@@ -404,6 +405,12 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
 
         /// <summary>
         /// Allows columns to be reordered via the columns panel.
@@ -1139,7 +1146,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
@@ -1849,6 +1857,42 @@ namespace MudBlazor
             return context;
         }
 
+        internal bool HasFilter(Column<T>? column)
+        {
+            if (column is null)
+            {
+                return false;
+            }
+
+            return FilterDefinitions.Any(x =>
+                (ReferenceEquals(x.Column, column) || (column.PropertyName is not null && x.Column?.PropertyName == column.PropertyName)) &&
+                IsFilterApplied(x));
+        }
+
+        private static bool IsFilterApplied(IFilterDefinition<T> filterDefinition)
+        {
+            return (filterDefinition is FilterDefinition<T> dataGridFilterDefinition && dataGridFilterDefinition.FilterFunction is not null) ||
+                   filterDefinition.Value is not null ||
+                   filterDefinition.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
+                       FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
+                       FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
+        }
+
+        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
+        {
+            if (column is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return args.Key switch
+            {
+                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
+                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
+                _ => Task.CompletedTask
+            };
+        }
+
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -1933,6 +1977,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2000,7 +2045,7 @@ namespace MudBlazor
             await NotifyFilterChangedAsync();
         }
 
-        private Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
+        internal Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
@@ -2199,8 +2244,13 @@ namespace MudBlazor
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
 
-            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
-                await SetEditingItemAsync(item);
+            if (EditTrigger == DataGridEditTrigger.OnRowClick)
+            {
+                if (EditMode == DataGridEditMode.Cell)
+                    await BeginCellEditAsync(item);
+                else
+                    await SetEditingItemAsync(item);
+            }
 
             await SetSelectedItemAsync(item);
         }
@@ -2415,10 +2465,35 @@ namespace MudBlazor
             _editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
+
+            // In cell edit mode changes are written directly to the source item, so there is no working copy to clone and no edit form to open; only StartedEditingItem is raised.
+            if (EditMode == DataGridEditMode.Cell)
+            {
+                _editingItem = default;
+                StartedEditingItemEvent?.Invoke();
+                await StartedEditingItem.InvokeAsync(item);
+                return;
+            }
+
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
             _isEditFormOpen = true;
+        }
+
+        /// <summary>
+        /// Raises <see cref="StartedEditingItem"/> when cell editing begins for an item, without re-raising it for subsequent cell changes on the same item.
+        /// </summary>
+        /// <param name="item">The item whose cell is being edited.</param>
+        internal async Task BeginCellEditAsync(T item)
+        {
+            // Use the grid's Comparer (same identity used for selection) so a custom comparer can distinguish otherwise-equal rows, e.g. records.
+            // The first edit always starts since nothing is being edited yet.
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+            if (_editingSourceItem is not null && comparer.Equals(_editingSourceItem, item))
+                return;
+
+            await SetEditingItemAsync(item);
         }
 
         /// <summary>
@@ -2454,6 +2529,12 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            OpenFilters(FilterDefinitions.FirstOrDefault()?.Id);
+        }
+
+        internal void OpenFilters(Guid? filterDefinitionIdToFocus)
+        {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus;
             _filtersMenuVisible = true;
             StateHasChanged();
         }

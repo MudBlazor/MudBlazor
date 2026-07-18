@@ -723,7 +723,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableMultiSelection_IgnoreCheckbox_RowClick()
         {
-            var comp = Context.Render<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var comp = Context.Render<TableMultiSelectIgnoreRowTest>();
             var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
@@ -737,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableMultiSelection_MultiGrouping_DefaultCheckboxStates()
         {
-            var comp = Context.Render<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var comp = Context.Render<TableMultiGroupCheckboxTest>();
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.
@@ -1597,6 +1597,29 @@ namespace MudBlazor.UnitTests.Components
             validator.ControlCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// A row whose editor uses an asynchronous validation function must not commit while invalid, and must commit once valid.
+        /// The commit path awaits <see cref="TableRowValidator.ValidateAsync"/> instead of reading the synchronous <c>IsValid</c>, which reported async validators as valid.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEdit_AsyncValidation_GatesCommit()
+        {
+            var comp = Context.Render<TableInlineEditAsyncValidationTest>();
+
+            await comp.Find("button[aria-label=\"Edit row\"]").ClickAsync();
+
+            // The initial value fails the async rule, so committing is rejected and the row stays in edit mode.
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(0);
+            comp.FindAll("input").Should().NotBeEmpty();
+
+            // A value that passes the async rule commits and leaves edit mode.
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "B" });
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(1);
+            comp.FindAll("input").Should().BeEmpty();
+        }
+
         [Theory]
         [TestCase(TableApplyButtonPosition.StartAndEnd)]
         [TestCase(TableApplyButtonPosition.Start)]
@@ -2375,6 +2398,40 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        public async Task TableGrouping_NestedGroupCheckboxesUpdateWhenParentExpandsAfterSelection()
+        {
+            // Regression for https://github.com/MudBlazor/MudBlazor/issues/9474
+            var comp = Context.Render<TableGroupingNestedTest>();
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingNestedTest.Item>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
+            var table = tableComponent.Instance;
+
+            IRenderedComponent<MudTableGroupRow<TableGroupingNestedTest.Item>> FindGroup(string key)
+            {
+                return comp.FindComponents<MudTableGroupRow<TableGroupingNestedTest.Item>>()
+                    .Single(group => group.Instance.Items?.Key.ToString() == key);
+            }
+
+            // Control: expanding an unselected parent creates unchecked child groups.
+            var unselectedParent = FindGroup("G2");
+            await unselectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N1").Checked.Should().BeFalse();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N2").Checked.Should().BeFalse();
+
+            // Select a different parent while its child groups have not been rendered.
+            table.Context.GroupRows.Should().NotContain(group => group.Items != null && group.Items.Key.ToString().StartsWith("G1 >"));
+            var selectedParent = FindGroup("G1");
+            await selectedParent.FindComponent<MudCheckBox<bool?>>().Find("input").ChangeAsync(true);
+            table.SelectedItems.Should().HaveCount(3);
+            table.SelectedItems.Should().OnlyContain(item => item.Group == "G1");
+
+            // Expanding the selected parent must immediately initialize its child checkboxes.
+            await selectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N1").Checked.Should().BeTrue();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N2").Checked.Should().BeTrue();
+        }
+
         /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
@@ -2680,6 +2737,26 @@ namespace MudBlazor.UnitTests.Components
             await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(35));
         }
 
+        // Issue #13462
+        // A one-way RowsPerPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page size the user picked via the pager.
+        [Test]
+        public async Task RowsPerPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableRowsPerPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            table.RowsPerPage.Should().Be(100);
+
+            // Simulate the user changing the page size through the pager.
+            await testComponent.InvokeAsync(() => table.SetRowsPerPage(25));
+            table.RowsPerPage.Should().Be(25);
+
+            // A parent re-render re-applies the unchanged RowsPerPage="100" parameter; the pager choice must survive.
+            await buttonComponent.Find("button").ClickAsync();
+            table.RowsPerPage.Should().Be(25);
+        }
+
         /// <summary>
         /// Tests whether record type table items are kept track of when edited
         /// </summary>
@@ -2813,6 +2890,95 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
+        // A one-way CurrentPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page the user navigated to via the pager (same class as #13462).
+        // A genuine parameter change from code must still navigate.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableCurrentPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttons = testComponent.FindComponents<MudButton>();
+            table.CurrentPage.Should().Be(0);
+
+            // Simulate the user navigating with the pager (the one-way parameter is not written back).
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            table.CurrentPage.Should().Be(3);
+
+            // A parent re-render re-applies the unchanged CurrentPage parameter; the pager choice must survive.
+            await buttons[0].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine parameter change from code must still navigate.
+            await buttons[1].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(5);
+        }
+
+        // With ServerData, re-applying an unchanged one-way CurrentPage on a parent re-render must not
+        // trigger a redundant server load (#13462); a genuine code-driven change still loads the new page.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotTriggerRedundantServerLoad()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            // Wait for the initial server load to render the first page.
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+            table.CurrentPage.Should().Be(0);
+            var loadsAfterInit = component.LoadCount;
+
+            // Internal navigation triggers exactly one load for the requested page.
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(3);
+                component.LastRequestedPage.Should().Be(3);
+                component.LoadCount.Should().Be(loadsAfterInit + 1);
+            });
+
+            // A parent re-render re-applies the unchanged CurrentPage: the page must stay selected.
+            await testComponent.Find("#rerender").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine code-driven change navigates with exactly one more load; the re-render added none
+            // (otherwise this total would be loadsAfterInit + 3).
+            await testComponent.Find("#setcode").ClickAsync();
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(5);
+                component.LastRequestedPage.Should().Be(5);
+                component.LoadCount.Should().Be(loadsAfterInit + 2);
+            });
+        }
+
+        // The ServerData reset path: when a load reveals the current page no longer exists, the table
+        // resets to page 0 through SetCurrentPage (MudTable.InvokeServerLoadFunc).
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenCurrentPageOverflows()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+
+            await testComponent.InvokeAsync(() => table.NavigateTo(5));
+            await testComponent.WaitForAssertionAsync(() => table.CurrentPage.Should().Be(5));
+
+            // Data shrinks so page 5 no longer exists; the next load must snap back to page 0.
+            await testComponent.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return table.ReloadServerData();
+            });
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+            });
+        }
+
         /// <summary>
         /// Table initialized to display the third page
         /// </summary>
@@ -2852,6 +3018,24 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Should().Contain("mud-table-sort-label-icon");
             icon.ClassList.Contains("mud-direction-asc").Should().Be(direction == SortDirection.Ascending);
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthAddsFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.FullWidth, true)
+            );
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthFalseDoesNotAddFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
         }
 
         private Mock<IScrollManager> _mockScrollManager = null!;
@@ -3146,6 +3330,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete("Remove when MudTableBase.AriaLabel is removed")]
         public async Task TableAriaLabel_RendersOnTable()
         {
             var comp = Context.Render<TableRowClickTest>();
@@ -3154,6 +3339,20 @@ namespace MudBlazor.UnitTests.Components
 
             var table = comp.FindComponent<MudTable<int>>();
             await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
+
+        [Test]
+        public async Task TableAttributes_RendersAriaLabel()
+        {
+            var comp = Context.Render<TableRowClickTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudTable<int>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
 
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
@@ -3217,6 +3416,60 @@ namespace MudBlazor.UnitTests.Components
 
             row.ClassList.Should().NotContain("mud-table-row-clickable");
             row.ClassList.Should().Contain("mud-table-row-disabled");
+        }
+
+        [Test]
+        public void Pager_RendersAboveTable_WhenPagerPositionIsTop()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Top)
+            );
+
+            var html = comp.Markup;
+            var toolbarIndex = html.IndexOf("test-toolbar");
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            toolbarIndex.Should().NotBe(-1);
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            toolbarIndex.Should().BeLessThan(pagerIndex);
+            pagerIndex.Should().BeLessThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().Contain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void Pager_RendersBelowTable_WhenPagerPositionIsBottom()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Bottom)
+            );
+
+            var html = comp.Markup;
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            pagerIndex.Should().BeGreaterThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().NotContain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void TablePagerPosition_TopAndBottom_RendersTwoPagers()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.TopAndBottom)
+            );
+
+            var pagers = comp.FindAll(".mud-table-pagination");
+
+            pagers.Count.Should().Be(2);
+
+            pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
+            pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
         }
     }
 }

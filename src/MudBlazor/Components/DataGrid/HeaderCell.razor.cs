@@ -217,16 +217,7 @@ namespace MudBlazor
         {
             get
             {
-                if (DataGrid == null)
-                    return false;
-
-                return DataGrid.FilterDefinitions.Any(x =>
-                    x.Column?.PropertyName == Column?.PropertyName &&
-                    ((x is FilterDefinition<T> filterDefinition && filterDefinition.FilterFunction is not null) ||
-                     x.Value is not null ||
-                     x.Operator is FilterOperator.String.Empty or FilterOperator.String.NotEmpty or
-                         FilterOperator.Number.Empty or FilterOperator.Number.NotEmpty or
-                         FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty));
+                return DataGrid?.HasFilter(Column) ?? false;
             }
         }
 
@@ -544,19 +535,26 @@ namespace MudBlazor
         {
             Debug.Assert(DataGrid is not null);
             var filterDefinition = Column?.FilterContext.FilterDefinition;
+
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
             {
-                if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
+                var filterDefinitionToFocus = DataGrid.FilterDefinitions
+                    .FirstOrDefault(x => x.Title == filterDefinition.Title);
+
+                if (filterDefinitionToFocus is null)
                 {
-                    DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                    filterDefinitionToFocus = filterDefinition.Clone();
+                    DataGrid.FilterDefinitions.Add(filterDefinitionToFocus);
                 }
+
                 DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
-                DataGrid.OpenFilters();
+                DataGrid.OpenFilters(filterDefinitionToFocus.Id);
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
+                DataGrid.HideColumnsPanel();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -564,15 +562,22 @@ namespace MudBlazor
         internal void OpenFilters(MouseEventArgs args)
         {
             Debug.Assert(DataGrid is not null);
+
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
             {
+                var filterDefinitionToFocus = DataGrid.FilterDefinitions
+                    .FirstOrDefault(x =>
+                        ReferenceEquals(x.Column, Column) ||
+                        (Column?.PropertyName is not null && x.Column?.PropertyName == Column.PropertyName));
+
                 DataGrid.SetFiltersMenuPosition(args.PageY, args.PageX);
-                DataGrid.OpenFilters();
+                DataGrid.OpenFilters(filterDefinitionToFocus?.Id);
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
+                DataGrid.HideColumnsPanel();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -593,6 +598,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -612,6 +618,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -629,6 +636,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }
@@ -668,6 +676,7 @@ namespace MudBlazor
             {
                 ((IMudStateHasChanged)DataGrid).StateHasChanged();
             }
+            await DataGrid.NotifyFilterChangedAsync();
             _filtersMenuVisible = false;
             DataGrid.DropContainerHasChanged();
         }

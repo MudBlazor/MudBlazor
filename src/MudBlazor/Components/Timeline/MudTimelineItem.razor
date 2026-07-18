@@ -21,6 +21,10 @@
                     {
                         @ItemDot
                     }
+                    else if (!string.IsNullOrEmpty(Icon))
+                    {
+                        <MudIcon Icon="@Icon" Class="mud-timeline-item-dot-icon" />
+                    }
                 </div>
             </div>
         }

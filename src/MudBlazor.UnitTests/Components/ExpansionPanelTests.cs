@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
-            var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
+            var comp = Context.Render<ExpansionPanelMultiUnsetTest>();
 
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
