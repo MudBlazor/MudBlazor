@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a slide displayed within a <see cref="MudCarousel{TData}"/>.
+    /// A single slide within a <see cref="MudCarousel{TData}"/>, holding the content shown while it is the selected item.
     /// </summary>
     /// <seealso cref="MudCarousel{TData}" />
     public partial class MudCarouselItem : MudComponentBase, IDisposable

@@ -13,9 +13,9 @@ public interface IChartSeries
 }
 
 /// <summary>
-/// Represents a series of data to be plotted on a chart.
+/// A named data set plotted on a <see cref="MudChart{T}" />, carrying the values, legend label, and visibility for one line, bar, or pie series.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">The numeric type of the series values.</typeparam>
 public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public ChartSeries() { }

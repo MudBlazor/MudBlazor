@@ -45,7 +45,7 @@ namespace MudBlazor.Utilities
     }
 
     /// <summary>
-    /// Represents a color with methods to manipulate color values.
+    /// Color value with RGB, HSL, hex, and alpha components, plus methods to convert, adjust, parse, and compare colors.
     /// </summary>
     [Serializable]
     public partial class MudColor : ISerializable, IEquatable<MudColor>, IParsable<MudColor>, IFormattable

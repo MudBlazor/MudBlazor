@@ -5,7 +5,8 @@
 namespace MudBlazor;
 
 /// <summary>
-/// A base class for designing input masks for the <see cref="MudMask"/>, <see cref="MudTextField{T}"/>, and <see cref="MudPicker{T}"/> components.
+/// Base class for input masks applied by the <see cref="MudMask"/>, <see cref="MudTextField{T}"/>, and <see cref="MudPicker{T}"/> components.
+/// Concrete masks include <see cref="PatternMask"/>, <see cref="RegexMask"/>, <see cref="BlockMask"/>, <see cref="DateMask"/>, and <see cref="MultiMask"/>.
 /// </summary>
 public abstract class BaseMask : IMask
 {
