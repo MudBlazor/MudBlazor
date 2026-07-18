@@ -7,7 +7,6 @@ namespace MudBlazor;
 /// <summary>
 /// Equality comparer for <see cref="double"/> values that treats numbers within an epsilon tolerance as equal.
 /// </summary>
-/// <seealso cref="CollectionComparer{T}" />
 [DebuggerDisplay("Epsilon = {_epsilon}")]
 public class DoubleEpsilonEqualityComparer : IEqualityComparer<double>
 {

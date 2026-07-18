@@ -14,7 +14,6 @@ namespace MudBlazor.State;
 /// This struct is used to pass parameter state information to shared change handlers
 /// that need to coordinate changes across multiple parameters.
 /// </remarks>
-/// <seealso cref="ParameterState{T}" />
 [DebuggerDisplay("{ToString(),nq}")]
 public readonly struct ParameterStateValue
 {

@@ -9,8 +9,6 @@ namespace MudBlazor
     /// <remarks>
     /// Two <see cref="GroupKeyPath"/> instances are equal if they contain the same elements in the same order.
     /// </remarks>
-    /// <seealso cref="GroupDefinition{T}" />
-    /// <seealso cref="MudDataGrid{T}" />
     public class GroupKeyPath(IList<object?> list) : ReadOnlyCollection<object?>(list)
     {
         public override bool Equals(object? obj)

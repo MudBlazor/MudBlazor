@@ -11,9 +11,6 @@ namespace MudBlazor
     /// A single column filter for a <see cref="MudDataGrid{T}"/>, pairing a column, operator, and value to generate the predicate that filters rows.
     /// </summary>
     /// <typeparam name="T">The type of object being filtered.</typeparam>
-    /// <seealso cref="FilterContext{T}" />
-    /// <seealso cref="IFilterDefinition{T}" />
-    /// <seealso cref="MudDataGrid{T}" />
     public class FilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : IFilterDefinition<T>
     {
         private int _cachedExpressionHashCode;

@@ -10,7 +10,6 @@ namespace MudBlazor
     /// This attribute is similar to <see cref="System.ComponentModel.CategoryAttribute"/>. <br/>
     /// The name of the category can be specified by using a constant defined in the <see cref="CategoryTypes"/> class.
     /// </remarks>
-    /// <seealso cref="CategoryTypes" />
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class CategoryAttribute : Attribute
     {

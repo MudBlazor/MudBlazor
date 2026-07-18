@@ -9,7 +9,6 @@ namespace MudBlazor;
 /// <summary>
 /// Receives notifications when the browser window size or <see cref="Breakpoint"/> changes after subscribing to the <see cref="IBrowserViewportService"/>.
 /// </summary>
-/// <seealso cref="IBrowserViewportService" />
 public interface IBrowserViewportObserver
 {
     /// <summary>

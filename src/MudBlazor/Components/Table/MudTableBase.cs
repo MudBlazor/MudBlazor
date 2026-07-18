@@ -9,9 +9,6 @@ namespace MudBlazor
     /// <summary>
     /// Base class for <see cref="MudTable{T}"/> holding the type-independent table members such as paging, layout, and editing options.
     /// </summary>
-    /// <seealso cref="MudDataGrid{T}" />
-    /// <seealso cref="MudTable{T}" />
-    /// <seealso cref="MudTablePager" />
     public abstract class MudTableBase : MudComponentBase
     {
         private int _currentPage = 0;

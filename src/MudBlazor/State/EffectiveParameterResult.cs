@@ -16,7 +16,6 @@ namespace MudBlazor.State;
 /// This type is used to determine which of two parameters should take precedence when both are available,
 /// such as when a component has both a typed parameter and a string parameter that represent the same value.
 /// </remarks>
-/// <seealso cref="ParameterState{T}" />
 [DebuggerDisplay("{GetDebuggerDisplay(),nq}")]
 public readonly record struct EffectiveParameterResult<T1, T2>
 {

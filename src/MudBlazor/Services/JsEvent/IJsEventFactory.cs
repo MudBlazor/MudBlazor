@@ -7,7 +7,6 @@ namespace MudBlazor.Services;
 /// <summary>
 /// Creates <see cref="IJsEvent"/> instances that subscribe to an element's DOM events such as paste, text selection, and caret position changes.
 /// </summary>
-/// <seealso cref="IJsEvent" />
 public interface IJsEventFactory
 {
     /// <summary>

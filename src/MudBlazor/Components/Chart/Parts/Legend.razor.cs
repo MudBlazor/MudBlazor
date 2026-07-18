@@ -7,8 +7,6 @@ namespace MudBlazor.Charts
     /// Legend that lists text labels identifying each data series shown in a <see cref="MudChart{T}" />.
     /// </summary>
     /// <typeparam name="T">The numeric type of the charted values.</typeparam>
-    /// <seealso cref="MudChart{T}" />
-    /// <seealso cref="SvgLegend" />
     public partial class Legend<T> : MudChartBase<T, IChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         /// <summary>

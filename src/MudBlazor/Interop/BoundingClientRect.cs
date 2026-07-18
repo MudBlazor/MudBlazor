@@ -3,7 +3,6 @@
 /// <summary>
 /// Position and size of an HTML element relative to the viewport, mirroring the browser's <c>getBoundingClientRect()</c> along with scroll offsets and out-of-viewport checks.
 /// </summary>
-/// <seealso cref="ElementSize" />
 public class BoundingClientRect
 {
     /// <summary>

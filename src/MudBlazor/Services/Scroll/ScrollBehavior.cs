@@ -10,7 +10,6 @@ namespace MudBlazor;
 /// <summary>
 /// Specifies whether a scroll animates smoothly or jumps immediately, matching the CSS <c>scroll-behavior</c> property.
 /// </summary>
-/// <seealso cref="IScrollManager" />
 [EnumExtensions]
 public enum ScrollBehavior
 {

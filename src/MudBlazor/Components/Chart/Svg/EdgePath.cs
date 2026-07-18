@@ -14,9 +14,6 @@ namespace MudBlazor;
 /// or straight path defined by <see cref="SvgPath.Data"/>, and geometric properties
 /// such as the center point of the edge for positioning labels or tooltips.
 /// </remarks>
-/// <seealso cref="NodeRect" />
-/// <seealso cref="MudBlazor.Charts.Sankey{T}" />
-/// <seealso cref="SvgPath" />
 public sealed class EdgePath : SvgPath
 {
     /// <summary>
@@ -74,8 +71,6 @@ public sealed class EdgePath : SvgPath
 /// <param name="Color">
 /// The fill color used to visually represent the node in the chart.
 /// </param>
-/// <seealso cref="EdgePath" />
-/// <seealso cref="MudBlazor.Charts.Sankey{T}" />
 public sealed record NodeRect(int Hash, string Name, double X, double Y, double Width, double Height, string Color)
 {
     /// <summary>

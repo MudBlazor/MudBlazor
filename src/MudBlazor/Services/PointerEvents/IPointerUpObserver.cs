@@ -8,8 +8,6 @@ namespace MudBlazor;
 /// <summary>
 /// Receives pointer-up events for an element tracked by the <see cref="IPointerEventsNoneService"/>.
 /// </summary>
-/// <seealso cref="IPointerDownObserver" />
-/// <seealso cref="IPointerEventsNoneObserver" />
 public interface IPointerUpObserver
 {
     /// <summary>

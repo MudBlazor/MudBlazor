@@ -9,10 +9,6 @@ namespace MudBlazor
     /// Base class for MudBlazor form input components such as <see cref="MudTextField{T}"/>, <see cref="MudNumericField{T}"/>, and <see cref="MudSelect{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
-    /// <seealso cref="MudFormComponent{T, U}" />
-    /// <seealso cref="MudNumericField{T}" />
-    /// <seealso cref="MudSelect{T}" />
-    /// <seealso cref="MudTextField{T}" />
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;

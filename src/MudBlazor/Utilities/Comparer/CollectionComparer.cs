@@ -12,7 +12,6 @@
 /// </list>
 /// </summary>
 /// <typeparam name="T">The type of the elements in the collection.</typeparam>
-/// <seealso cref="DoubleEpsilonEqualityComparer" />
 public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
 {
     private readonly IEqualityComparer<T> _comparer;

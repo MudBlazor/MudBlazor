@@ -9,7 +9,6 @@ namespace MudBlazor;
 /// <remarks>
 /// Adornments can be placed at the start or end of a field, or not displayed at all.
 /// </remarks>
-/// <seealso cref="MudTextField{T}" />
 [EnumExtensions]
 public enum Adornment
 {

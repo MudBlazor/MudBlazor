@@ -11,9 +11,6 @@ namespace MudBlazor
     /// Base class for form inputs backed by a boolean value, such as <see cref="MudCheckBox{T}"/>, <see cref="MudSwitch{T}"/>, and <see cref="MudRadio{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
-    /// <seealso cref="MudCheckBox{T}" />
-    /// <seealso cref="MudRadio{T}" />
-    /// <seealso cref="MudSwitch{T}" />
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
         private readonly ParameterState<T?> _valueState;

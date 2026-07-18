@@ -12,8 +12,6 @@ namespace MudBlazor
     /// <summary>
     /// Validates the input fields of a <see cref="MudDataGrid{T}"/> row during inline or form editing.
     /// </summary>
-    /// <seealso cref="MudDataGrid{T}" />
-    /// <seealso cref="MudForm" />
     public class DataGridRowValidator : IForm
     {
         /// <summary>

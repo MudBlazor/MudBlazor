@@ -7,10 +7,6 @@ namespace MudBlazor.Charts;
 /// <summary>
 /// Default option values for axis-based charts, including Y-axis ticks, number formats, grid lines, and axis titles.
 /// </summary>
-/// <seealso cref="DefaultAxisLineChartOptions" />
-/// <seealso cref="DefaultBarChartOptions" />
-/// <seealso cref="DefaultChartOptions" />
-/// <seealso cref="IAxisChartOptions" />
 public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartOptions
 {
     private int _yAxisTicks = 20;

@@ -16,8 +16,6 @@ namespace MudBlazor
     /// Provide a width and height for custom content so the heat map can resize it dynamically.
     /// </remarks>
     /// <typeparam name="T">The numeric type of the cell value.</typeparam>
-    /// <seealso cref="HeatMap{T}" />
-    /// <seealso cref="HeatMapCell{T}" />
     public partial class MudHeatMapCell<T> : MudComponentBase where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         [CascadingParameter]

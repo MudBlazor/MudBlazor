@@ -6,8 +6,6 @@ namespace MudBlazor
     /// <summary>
     /// Pixel width thresholds for the responsive breakpoints (xs, sm, md, lg, xl, and xxl) used to adapt layouts to screen size.
     /// </summary>
-    /// <seealso cref="Breakpoint" />
-    /// <seealso cref="MudHidden" />
     [ExcludeFromCodeCoverage]
     public class Breakpoints
     {

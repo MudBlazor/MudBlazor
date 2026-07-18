@@ -9,9 +9,6 @@ namespace MudBlazor
     /// <summary>
     /// Base class for MudBlazor date pickers such as <see cref="MudDatePicker"/> and <see cref="MudDateRangePicker"/>.
     /// </summary>
-    /// <seealso cref="MudDatePicker" />
-    /// <seealso cref="MudDateRangePicker" />
-    /// <seealso cref="MudPicker{T}" />
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
         private readonly string _mudPickerCalendarContentElementId;

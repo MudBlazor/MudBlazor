@@ -7,9 +7,6 @@ namespace MudBlazor;
 /// <summary>
 /// Light-mode color palette that keeps MudBlazor's default theme colors from <see cref="Palette"/>.
 /// </summary>
-/// <seealso cref="MudTheme" />
-/// <seealso cref="Palette" />
-/// <seealso cref="PaletteDark" />
 public class PaletteLight : Palette
 {
     // everything is inherited from Palette so people will know about it.

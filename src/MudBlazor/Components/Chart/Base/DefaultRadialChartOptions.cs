@@ -7,10 +7,6 @@ namespace MudBlazor.Charts;
 /// <summary>
 /// Default radial chart options such as data aggregation, fill opacity, and percentage display.
 /// </summary>
-/// <seealso cref="DefaultChartOptions" />
-/// <seealso cref="DonutChartOptions" />
-/// <seealso cref="IRadialChartOptions" />
-/// <seealso cref="PieChartOptions" />
 public abstract class DefaultRadialChartOptions : DefaultChartOptions, IRadialChartOptions
 {
     /// <summary>

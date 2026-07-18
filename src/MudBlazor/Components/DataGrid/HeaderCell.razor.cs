@@ -15,9 +15,7 @@ namespace MudBlazor
     /// The header cell displayed at the top of a <see cref="MudDataGrid{T}"/> column, showing the title along with sorting, filtering, and resizing controls.
     /// </summary>
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
-    /// <seealso cref="FilterHeaderCell{T}" />
-    /// <seealso cref="FooterCell{T}" />
-    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="MudDataGrid{T}"/>
     public partial class HeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private bool _selected;

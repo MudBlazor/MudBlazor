@@ -23,9 +23,6 @@ public record struct AxisGridData<T>(int LowestHorizontalLine, int HorizontalLin
 /// Axis chart abstraction extending <see cref="IMudChart{T}"/> with shared grid data and support for overlaying one chart on another.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
-/// <seealso cref="BaseAxisChart{T, TChartOptions}" />
-/// <seealso cref="IMudChart{T}" />
-/// <seealso cref="MudAxisChartBase{T, TOptions}" />
 public interface IMudAxisChart<T> : IMudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     /// <summary>

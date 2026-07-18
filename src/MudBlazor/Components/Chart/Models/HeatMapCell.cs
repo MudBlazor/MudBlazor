@@ -12,8 +12,6 @@ namespace MudBlazor.Charts
     /// A single cell in a <see cref="HeatMap{T}" /> chart, carrying its row, column, value, and optional color or custom content.
     /// </summary>
     /// <typeparam name="T">The numeric type of the cell value.</typeparam>
-    /// <seealso cref="HeatMap{T}" />
-    /// <seealso cref="MudHeatMapCell{T}" />
     public class HeatMapCell<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         /// <summary>

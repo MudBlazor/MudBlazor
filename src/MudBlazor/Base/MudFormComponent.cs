@@ -23,9 +23,6 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The complex type managed by this input.</typeparam>
     /// <typeparam name="U">The value type managed by this input.</typeparam>
-    /// <seealso cref="MudBaseInput{T}" />
-    /// <seealso cref="MudBooleanInput{T}" />
-    /// <seealso cref="MudComponentBase" />
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
         private IConverter<T?, U?>? _defaultConverter;

@@ -123,8 +123,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings applied to text without a specific <see cref="Typo"/> style.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class DefaultTypography : BaseTypography
     {
         /// <summary>
@@ -143,8 +141,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.h1"/> headings.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class H1Typography : BaseTypography
     {
         /// <summary>
@@ -162,8 +158,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.h2"/> headings.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class H2Typography : BaseTypography
     {
         /// <summary>
@@ -181,8 +175,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.h3"/> headings.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class H3Typography : BaseTypography
     {
         /// <summary>
@@ -200,8 +192,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.h4"/> headings.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class H4Typography : BaseTypography
     {
         /// <summary>
@@ -219,8 +209,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.h5"/> headings.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class H5Typography : BaseTypography
     {
         /// <summary>
@@ -238,8 +226,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.h6"/> headings.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class H6Typography : BaseTypography
     {
         /// <summary>
@@ -257,8 +243,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.subtitle1"/> text.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class Subtitle1Typography : BaseTypography
     {
         /// <summary>
@@ -276,8 +260,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.subtitle2"/> text.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class Subtitle2Typography : BaseTypography
     {
         /// <summary>
@@ -295,8 +277,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.body1"/> body text.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class Body1Typography : BaseTypography
     {
         /// <summary>
@@ -314,8 +294,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.body2"/> body text.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class Body2Typography : BaseTypography
     {
         /// <summary>
@@ -333,8 +311,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.button"/> text, rendered in uppercase.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class ButtonTypography : BaseTypography
     {
         /// <summary>
@@ -353,8 +329,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.caption"/> text.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class CaptionTypography : BaseTypography
     {
         /// <summary>
@@ -372,8 +346,6 @@ namespace MudBlazor
     /// <summary>
     /// Default font settings for <see cref="Typo.overline"/> text.
     /// </summary>
-    /// <seealso cref="BaseTypography" />
-    /// <seealso cref="Typography" />
     public class OverlineTypography : BaseTypography
     {
         /// <summary>
@@ -391,8 +363,6 @@ namespace MudBlazor
     /// <summary>
     /// Base class for MudBlazor typography presets, defining the font family, weight, size, line height, letter spacing, and text transform for a <see cref="Typo"/> style.
     /// </summary>
-    /// <seealso cref="DefaultTypography" />
-    /// <seealso cref="Typography" />
     [JsonDerivedType(typeof(DefaultTypography), nameof(DefaultTypography))]
     [JsonDerivedType(typeof(H1Typography), nameof(H1Typography))]
     [JsonDerivedType(typeof(H2Typography), nameof(H2Typography))]

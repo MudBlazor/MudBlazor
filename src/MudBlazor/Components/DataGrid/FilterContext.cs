@@ -13,8 +13,7 @@ namespace MudBlazor
     /// Filter state and actions passed to a <see cref="MudDataGrid{T}"/> column filter template, exposing the filter definition and apply, clear, and close commands.
     /// </summary>
     /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
-    /// <seealso cref="FilterDefinition{T}" />
-    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="MudDataGrid{T}"/>
     public class FilterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
@@ -85,8 +84,6 @@ namespace MudBlazor
         /// <summary>
         /// Apply, clear, and close delegates for a <see cref="MudDataGrid{T}"/> column filter, exposed through <see cref="FilterContext{T}"/>.
         /// </summary>
-        /// <seealso cref="FilterContext{T}" />
-        /// <seealso cref="MudDataGrid{T}" />
         public class FilterActions
         {
             /// <summary>

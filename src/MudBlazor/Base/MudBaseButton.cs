@@ -8,9 +8,6 @@ namespace MudBlazor
     /// <summary>
     /// Base class for clickable button components such as <see cref="MudButton"/>, <see cref="MudFab"/>, and <see cref="MudIconButton"/>.
     /// </summary>
-    /// <seealso cref="MudButton" />
-    /// <seealso cref="MudFab" />
-    /// <seealso cref="MudIconButton" />
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>

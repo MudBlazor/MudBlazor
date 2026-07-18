@@ -16,8 +16,6 @@ public interface IChartSeries
 /// A named data set plotted on a <see cref="MudChart{T}" />, carrying the values, legend label, and visibility for one line, bar, or pie series.
 /// </summary>
 /// <typeparam name="T">The numeric type of the series values.</typeparam>
-/// <seealso cref="ChartPoint{T}" />
-/// <seealso cref="MudChart{T}" />
 public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public ChartSeries() { }

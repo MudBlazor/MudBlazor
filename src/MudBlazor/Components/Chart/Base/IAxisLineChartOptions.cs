@@ -7,9 +7,6 @@ namespace MudBlazor.Charts;
 /// <summary>
 /// Line and area chart options such as stroke width, data markers, interpolation, and per-series display overrides.
 /// </summary>
-/// <seealso cref="DefaultAxisLineChartOptions" />
-/// <seealso cref="IAxisChartOptions" />
-/// <seealso cref="LineChartOptions" />
 public interface IAxisLineChartOptions : IAxisChartOptions
 {
     /// <summary>

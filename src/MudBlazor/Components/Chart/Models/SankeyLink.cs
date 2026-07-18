@@ -9,7 +9,4 @@ namespace MudBlazor.Charts;
 /// </summary>
 /// <param name="Source">The source <see cref="SankeyNode"/>.</param>
 /// <param name="Target">The target <see cref="SankeyNode"/>.</param>
-/// <seealso cref="Sankey{T}" />
-/// <seealso cref="SankeyEdge{T}" />
-/// <seealso cref="SankeyNode" />
 public record struct SankeyLink(string Source, string Target);

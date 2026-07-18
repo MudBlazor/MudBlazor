@@ -9,8 +9,6 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="TChildComponent">The <see cref="MudComponentBase"/> managed within this component.</typeparam>
     /// <typeparam name="TData">The type of item managed by this component.</typeparam>
-    /// <seealso cref="MudBaseItemsControl{T}" />
-    /// <seealso cref="MudCarousel{T}" />
     public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
         where TChildComponent : MudComponentBase
     {

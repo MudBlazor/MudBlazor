@@ -6,11 +6,6 @@
     /// <remarks>
     /// Applied to a page through a <see cref="MudThemeProvider"/>.
     /// </remarks>
-    /// <seealso cref="LayoutProperties" />
-    /// <seealso cref="Palette" />
-    /// <seealso cref="Shadow" />
-    /// <seealso cref="Typography" />
-    /// <seealso cref="ZIndex" />
     public class MudTheme
     {
         /// <summary>

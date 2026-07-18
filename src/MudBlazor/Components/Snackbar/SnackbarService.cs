@@ -14,9 +14,6 @@ namespace MudBlazor
     /// <summary>
     /// Queues and displays <see cref="Snackbar"/> toast notifications, serving as the default <see cref="ISnackbar"/> implementation rendered by the <see cref="MudSnackbarProvider"/>.
     /// </summary>
-    /// <seealso cref="ISnackbar" />
-    /// <seealso cref="MudSnackbarProvider" />
-    /// <seealso cref="Snackbar" />
     public class SnackbarService : ISnackbar
     {
         private readonly List<Snackbar> _snackBarList;

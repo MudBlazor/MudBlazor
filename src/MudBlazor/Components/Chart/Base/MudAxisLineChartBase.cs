@@ -17,9 +17,6 @@ namespace MudBlazor.Charts;
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>
-/// <seealso cref="IAxisLineChartOptions" />
-/// <seealso cref="MudAxisChartBase{T, TOptions}" />
-/// <seealso cref="MudRadialChartBase{T, TOptions}" />
 public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TOptions>
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IAxisLineChartOptions

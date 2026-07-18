@@ -7,7 +7,6 @@ namespace MudBlazor;
 /// <summary>
 /// A petal shape along an <see cref="SvgPath" />, used to render segments of a Rose chart.
 /// </summary>
-/// <seealso cref="MudBlazor.Charts.Rose{T}" />
 public sealed class SvgPetal : SvgPath
 {
     /// <summary>

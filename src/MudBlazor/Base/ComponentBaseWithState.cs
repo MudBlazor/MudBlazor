@@ -11,7 +11,6 @@ namespace MudBlazor;
 /// <summary>
 /// Base class for Blazor components that track parameter changes and manage state through MudBlazor's parameter framework, such as <see cref="MudComponentBase"/>.
 /// </summary>
-/// <seealso cref="MudComponentBase" />
 public class ComponentBaseWithState : ComponentBase
 {
     internal readonly ParameterContainer ParameterContainer = new() { AutoVerify = false };

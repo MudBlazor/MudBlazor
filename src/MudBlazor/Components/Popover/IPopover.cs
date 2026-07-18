@@ -9,10 +9,6 @@ namespace MudBlazor;
 /// <summary>
 /// A popover surface that displays floating content anchored over the page, implemented by <see cref="MudPopoverBase"/> and managed by the <see cref="IPopoverService"/>.
 /// </summary>
-/// <seealso cref="IPopoverService" />
-/// <seealso cref="MudPopover" />
-/// <seealso cref="MudPopoverBase" />
-/// <seealso cref="MudPopoverProvider" />
 public interface IPopover
 {
     /// <summary>

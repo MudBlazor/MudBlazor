@@ -3,7 +3,6 @@
     /// <summary>
     /// Box-shadow values for each elevation level, controlling the depth appearance of MudBlazor surfaces.
     /// </summary>
-    /// <seealso cref="MudTheme" />
     public class Shadow
     {
         /// <summary>

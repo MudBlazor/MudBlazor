@@ -47,7 +47,6 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Color value with RGB, HSL, hex, and alpha components, plus methods to convert, adjust, parse, and compare colors.
     /// </summary>
-    /// <seealso cref="MudColorPicker" />
     [Serializable]
     public partial class MudColor : ISerializable, IEquatable<MudColor>, IParsable<MudColor>, IFormattable
     {

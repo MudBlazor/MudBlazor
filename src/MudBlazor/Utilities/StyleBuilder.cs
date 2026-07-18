@@ -9,7 +9,6 @@ namespace MudBlazor.Utilities
     /// <summary>
     /// Builds an inline CSS style string with conditionally added declarations for a component's markup.
     /// </summary>
-    /// <seealso cref="CssBuilder" />
     public readonly struct StyleBuilder
     {
         private readonly StringBuilder _stringBuilder;

@@ -6,8 +6,6 @@ namespace MudBlazor
     /// <summary>
     /// A single legend entry describing one chart series, with its label, value, and visibility toggle.
     /// </summary>
-    /// <seealso cref="MudBlazor.Charts.Legend{T}" />
-    /// <seealso cref="MudChart{T}" />
     [DebuggerDisplay("{Index} = {Labels}")]
     public class SvgLegend
     {

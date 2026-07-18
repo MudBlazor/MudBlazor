@@ -7,9 +7,6 @@ namespace MudBlazor;
 /// <summary>
 /// Indicates whether a popover holder is being created, removed, or updated in the <see cref="IPopoverService"/>.
 /// </summary>
-/// <seealso cref="IMudPopoverHolder" />
-/// <seealso cref="IPopoverObserver" />
-/// <seealso cref="IPopoverService" />
 public enum PopoverHolderOperation
 {
     /// <summary>

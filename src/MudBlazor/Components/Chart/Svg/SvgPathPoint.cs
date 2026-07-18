@@ -7,8 +7,6 @@ namespace MudBlazor;
 /// <summary>
 /// A point along an <see cref="SvgPath" />, tracking its position within the path.
 /// </summary>
-/// <seealso cref="SvgCircle" />
-/// <seealso cref="SvgPetal" />
 public sealed class SvgPathPoint : SvgPath
 {
     /// <summary>

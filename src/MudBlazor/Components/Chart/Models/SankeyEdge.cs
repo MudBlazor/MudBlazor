@@ -18,7 +18,4 @@ namespace MudBlazor.Charts;
 /// <param name="Source">The name of the source <see cref="SankeyNode"/>.</param>
 /// <param name="Target">The name of the target <see cref="SankeyNode"/>.</param>
 /// <param name="Weight">The weight (size) of this edge</param>
-/// <seealso cref="Sankey{T}" />
-/// <seealso cref="SankeyLink" />
-/// <seealso cref="SankeyNode" />
 public record SankeyEdge<T>(string Source, string Target, T Weight) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable;

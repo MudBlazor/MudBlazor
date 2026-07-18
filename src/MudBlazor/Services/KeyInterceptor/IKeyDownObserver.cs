@@ -9,9 +9,6 @@ namespace MudBlazor;
 /// <summary>
 /// Receives key-down events dispatched by the <see cref="IKeyInterceptorService"/>.
 /// </summary>
-/// <seealso cref="IKeyInterceptorObserver" />
-/// <seealso cref="IKeyInterceptorService" />
-/// <seealso cref="IKeyUpObserver" />
 public interface IKeyDownObserver
 {
     /// <summary>

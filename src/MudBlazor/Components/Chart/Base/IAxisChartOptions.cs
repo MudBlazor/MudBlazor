@@ -7,10 +7,6 @@ namespace MudBlazor.Charts;
 /// <summary>
 /// Axis chart options such as Y-axis ticks, number formats, grid lines, and axis titles for charts with X and Y axes.
 /// </summary>
-/// <seealso cref="DefaultAxisChartOptions" />
-/// <seealso cref="IAxisLineChartOptions" />
-/// <seealso cref="IChartOptions" />
-/// <seealso cref="IRadialChartOptions" />
 public interface IAxisChartOptions : IChartOptions
 {
     /// <summary>

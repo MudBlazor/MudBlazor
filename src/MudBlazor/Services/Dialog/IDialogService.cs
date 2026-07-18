@@ -15,8 +15,6 @@ namespace MudBlazor
     /// <remarks>
     /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
     /// </remarks>
-    /// <seealso cref="MudDialog" />
-    /// <seealso cref="MudDialogProvider" />
     public interface IDialogService
     {
 

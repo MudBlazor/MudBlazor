@@ -8,9 +8,6 @@ namespace MudBlazor
     /// Base class for MudBlazor inputs that wait for typing to pause before updating their value, such as <see cref="MudTextField{T}"/> and <see cref="MudNumericField{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
-    /// <seealso cref="MudBaseInput{T}" />
-    /// <seealso cref="MudNumericField{T}" />
-    /// <seealso cref="MudTextField{T}" />
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
         private DebounceDispatcher? _debouncer;

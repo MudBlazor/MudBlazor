@@ -6,7 +6,6 @@ namespace MudBlazor.Services
     /// <summary>
     /// Watches HTML elements for size changes with the browser's ResizeObserver and reports their bounding rectangles to subscribers.
     /// </summary>
-    /// <seealso cref="IBrowserViewportService" />
     public interface IResizeObserver : IAsyncDisposable
     {
         /// <summary>

@@ -9,12 +9,12 @@ namespace MudBlazor.Charts
     /// Donut chart that renders each value as a proportional segment of a ring with a hollow center.
     /// </summary>
     /// <typeparam name="T">The numeric type of the values being charted.</typeparam>
-    /// <seealso cref="Bar{T}" />
-    /// <seealso cref="Line{T}" />
-    /// <seealso cref="MudChart{T}" />
-    /// <seealso cref="Pie{T}" />
-    /// <seealso cref="StackedBar{T}" />
-    /// <seealso cref="TimeSeries{T}" />
+    /// <seealso cref="Bar{T}"/>
+    /// <seealso cref="Donut{T}"/>
+    /// <seealso cref="Pie{T}"/>
+    /// <seealso cref="Line{T}"/>
+    /// <seealso cref="StackedBar{T}"/>
+    /// <seealso cref="TimeSeries{T}"/>
     public partial class Donut<T> : MudRadialChartBase<T, DonutChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         protected override void OnInitialized()

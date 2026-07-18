@@ -11,8 +11,6 @@ namespace MudBlazor.Utilities.Clone;
 /// Please ensure that it implements deep copy logic for all nested objects, not just shallow copies.
 /// </remarks>
 /// <typeparam name="T">The type of the object to be deep-copied.</typeparam>
-/// <seealso cref="CloneableCloneStrategy{T}" />
-/// <seealso cref="SystemTextJsonDeepCloneStrategy{T}" />
 public interface ICloneStrategy<T>
 {
     /// <summary>

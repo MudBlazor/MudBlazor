@@ -7,9 +7,6 @@ namespace MudBlazor
     /// <summary>
     /// Wraps a form input with its label, helper text, and validation message.
     /// </summary>
-    /// <seealso cref="MudField" />
-    /// <seealso cref="MudInput{T}" />
-    /// <seealso cref="MudTextField{T}" />
     public partial class MudInputControl : MudComponentBase
     {
         protected string Classname =>

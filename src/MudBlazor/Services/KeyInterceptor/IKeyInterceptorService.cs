@@ -10,7 +10,6 @@ namespace MudBlazor;
 /// <summary>
 /// Intercepts keyboard events for specified HTML elements and dispatches them to subscribed observers, with per-key options to prevent the browser's default behavior.
 /// </summary>
-/// <seealso cref="IKeyInterceptorObserver" />
 public interface IKeyInterceptorService : IAsyncDisposable
 {
     /// <summary>

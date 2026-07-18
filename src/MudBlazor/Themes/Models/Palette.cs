@@ -10,9 +10,6 @@ namespace MudBlazor
     /// <summary>
     /// Base class for a MudBlazor color palette, defining the primary, secondary, surface, text, and status colors shared by <see cref="PaletteLight"/> and <see cref="PaletteDark"/>.
     /// </summary>
-    /// <seealso cref="MudTheme" />
-    /// <seealso cref="PaletteDark" />
-    /// <seealso cref="PaletteLight" />
     [JsonDerivedType(typeof(PaletteLight), typeDiscriminator: nameof(PaletteLight))]
     [JsonDerivedType(typeof(PaletteDark), typeDiscriminator: nameof(PaletteDark))]
     public abstract class Palette

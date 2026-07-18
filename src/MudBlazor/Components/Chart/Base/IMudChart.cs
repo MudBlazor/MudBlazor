@@ -10,9 +10,6 @@ namespace MudBlazor.Charts;
 /// Core chart abstraction exposing the data series, legend palette, and chart type, with a method to rebuild the chart on demand.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
-/// <seealso cref="IMudAxisChart{T}" />
-/// <seealso cref="MudChart{T}" />
-/// <seealso cref="MudChartBase{T, TOptions}" />
 public interface IMudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     /// <summary>

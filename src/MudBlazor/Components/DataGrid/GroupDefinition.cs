@@ -11,8 +11,6 @@ namespace MudBlazor;
 /// One level of row grouping in a <see cref="MudDataGrid{T}"/>, holding the grouped items, key path, expansion state, and any nested subgroup.
 /// </summary>
 /// <typeparam name="T">The type of item being grouped.</typeparam>
-/// <seealso cref="GroupKeyPath" />
-/// <seealso cref="MudDataGrid{T}" />
 public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
     private GroupDefinition<T>? _innerGroup;

@@ -16,8 +16,6 @@ namespace MudBlazor.Utilities.Clone;
 /// Use different strategy or use System Text Json with <see href="https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation?pivots=dotnet-7-0">source generator</see> and pass <see cref="JsonSerializerContext"/> of your object.
 /// </remarks>
 /// <typeparam name="T">The type of the object to be deep-copied.</typeparam>
-/// <seealso cref="CloneableCloneStrategy{T}" />
-/// <seealso cref="ICloneStrategy{T}" />
 public sealed class SystemTextJsonDeepCloneStrategy<T> : ICloneStrategy<T>
 {
     /// <inheritdoc />

@@ -11,8 +11,6 @@ namespace MudBlazor
     /// Header state and actions passed to a <see cref="MudDataGrid{T}"/> header template, exposing the displayed items and select-all command.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
-    /// <seealso cref="FooterContext{T}" />
-    /// <seealso cref="MudDataGrid{T}" />
     public class HeaderContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
@@ -83,8 +81,6 @@ namespace MudBlazor
         /// <summary>
         /// Select-all delegate for a <see cref="MudDataGrid{T}"/> header, exposed through <see cref="HeaderContext{T}"/>.
         /// </summary>
-        /// <seealso cref="HeaderContext{T}" />
-        /// <seealso cref="MudDataGrid{T}" />
         public class HeaderActions
         {
             /// <summary>

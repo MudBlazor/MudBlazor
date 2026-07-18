@@ -6,9 +6,6 @@ namespace MudBlazor;
 /// <summary>
 /// Specifies whether items in a <see cref="MudTimeline"/> are arranged vertically or horizontally.
 /// </summary>
-/// <seealso cref="MudTimeline" />
-/// <seealso cref="MudTimelineItem" />
-/// <seealso cref="TimelineAlign" />
 [EnumExtensions]
 public enum TimelineOrientation
 {
