@@ -4,6 +4,9 @@
 
 namespace MudBlazor.Utilities;
 
+/// <summary>
+/// Joins and splits the canonical <c>[start;end]</c> range string used by MudBlazor's range inputs such as the date range picker.
+/// </summary>
 public static class RangeUtility
 {
     /// <summary>

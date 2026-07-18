@@ -3,6 +3,9 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Specifies the HTML input type of a text field, such as text, password, email, number, search, telephone, url, color, date, or time.
+    /// </summary>
     [EnumExtensions]
     public enum InputType
     {

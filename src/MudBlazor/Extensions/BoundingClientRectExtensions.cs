@@ -6,6 +6,9 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Extensions;
 
+/// <summary>
+/// Extension methods for <see cref="BoundingClientRect"/> that compare two rectangles for equality within a tolerance.
+/// </summary>
 public static class BoundingClientRectExtensions
 {
     public static bool IsEqualTo(this BoundingClientRect? sourceRect, BoundingClientRect? targetRect, double tolerance = 0.00001)

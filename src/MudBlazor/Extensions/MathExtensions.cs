@@ -2,6 +2,9 @@
 
 namespace MudBlazor.Extensions
 {
+    /// <summary>
+    /// Extension and helper methods for numeric calculations, such as mapping a value between ranges and summing a list of numbers.
+    /// </summary>
     public static class MathExtensions
     {
         public static double Map(double sourceMin, double sourceMax, double targetMin, double targetMax, double value) =>

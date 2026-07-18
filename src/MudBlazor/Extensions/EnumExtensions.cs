@@ -1,5 +1,8 @@
 ﻿namespace MudBlazor.Extensions
 {
+    /// <summary>
+    /// Extension and helper methods for enumeration types, including safely reading the values of nullable enums.
+    /// </summary>
     public static class EnumExtensions
     {
         /// <summary>

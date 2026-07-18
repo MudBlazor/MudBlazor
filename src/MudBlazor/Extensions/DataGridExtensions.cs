@@ -6,6 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Extension methods for sorting sequences by grid sort definitions and locating columns in a <see cref="MudDataGrid{T}"/>.
+    /// </summary>
     public static class DataGridExtensions
     {
         public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridState<T> state)

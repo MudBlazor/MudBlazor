@@ -2,6 +2,9 @@
 
 namespace MudBlazor;
 
+/// <summary>
+/// Configuration options for a Sankey chart, controlling node width, spacing, edge opacity, labels, and hover highlighting.
+/// </summary>
 public class SankeyChartOptions : DefaultChartOptions
 {
     /// <summary>

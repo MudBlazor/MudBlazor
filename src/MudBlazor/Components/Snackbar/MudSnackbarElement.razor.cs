@@ -6,6 +6,9 @@ using MudBlazor.Components.Snackbar;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Renders a single snackbar notification within a <see cref="MudSnackbarProvider"/>, including its icon, message, optional action button, and close button.
+    /// </summary>
     public partial class MudSnackbarElement : MudComponentBase, IDisposable
     {
         private RenderFragment? _css;

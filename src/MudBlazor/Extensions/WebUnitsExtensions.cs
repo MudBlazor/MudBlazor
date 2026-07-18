@@ -6,6 +6,9 @@ using System.Globalization;
 
 namespace MudBlazor.Utilities
 {
+    /// <summary>
+    /// Extension methods that format numeric values as CSS pixel (<c>px</c>) and percentage (<c>%</c>) strings.
+    /// </summary>
     public static class WebUnitsExtensions
     {
         public static string ToPx(this int val) => $"{val}px";

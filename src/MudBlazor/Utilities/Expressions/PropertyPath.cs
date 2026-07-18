@@ -18,6 +18,9 @@ internal static class PropertyPath
         return visitor.PropertyHolder;
     }
 
+    /// <summary>
+    /// Carries the ordered chain of members that make up a property path extracted from a lambda expression, exposing the full dotted path and the last member name.
+    /// </summary>
     public sealed class PropertyHolder
     {
         private readonly List<MemberInfo> _members;
@@ -48,6 +51,9 @@ internal static class PropertyPath
         public override string ToString() => GetPath();
     }
 
+    /// <summary>
+    /// Walks a lambda expression tree and records each member access into a <c>PropertyHolder</c> to build a property path.
+    /// </summary>
     public sealed class PropertyVisitor : ExpressionVisitor
     {
         public PropertyHolder PropertyHolder { get; }

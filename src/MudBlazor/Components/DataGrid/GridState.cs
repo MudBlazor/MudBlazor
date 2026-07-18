@@ -36,6 +36,10 @@ namespace MudBlazor
         public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
     }
 
+    /// <summary>
+    /// Sorting, filtering, and range parameters that a <see cref="MudDataGrid{T}"/> passes to its <c>VirtualizeServerData</c> callback when loading virtualized rows from the server.
+    /// </summary>
+    /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     public class GridStateVirtualize<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         /// <summary>

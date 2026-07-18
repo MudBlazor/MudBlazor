@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MudBlazor.Services
 {
+    /// <summary>
+    /// Extension methods for <see cref="IServiceCollection"/> that register MudBlazor's services with the dependency injection container.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {

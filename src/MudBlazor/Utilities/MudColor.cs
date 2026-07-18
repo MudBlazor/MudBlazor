@@ -37,6 +37,9 @@ namespace MudBlazor.Utilities
         ColorElements
     }
 
+    /// <summary>
+    /// Specifies which components <see cref="MudColor"/> compares for equality: the RGBA channels, the HSL values, or both.
+    /// </summary>
     public enum MudColorComparison
     {
         Rgba = 0,

@@ -4,9 +4,18 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Components.Highlighter;
 
+/// <summary>
+/// Indicates whether a fragment of split text is plain text, matched highlighted text, or embedded HTML markup.
+/// </summary>
 public enum FragmentType { Text, HighlightedText, Markup }
+/// <summary>
+/// One segment of text produced when <see cref="MudHighlighter"/> splits a string, tagged by a <see cref="FragmentType"/> as plain text, a highlighted match, or raw markup.
+/// </summary>
 public record FragmentInfo(string Content, FragmentType Type);
 
+/// <summary>
+/// Splits text into fragments for <see cref="MudHighlighter"/>, marking which parts match the search terms so they can be highlighted apart from the surrounding text and markup.
+/// </summary>
 public static partial class Splitter
 {
     private static readonly TimeSpan _regexTimeout = TimeSpan.FromSeconds(5);

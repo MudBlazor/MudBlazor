@@ -3,6 +3,9 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Specifies where an element is positioned relative to its container, such as top, bottom, left, right, or center.
+    /// </summary>
     [EnumExtensions]
     public enum Position
     {

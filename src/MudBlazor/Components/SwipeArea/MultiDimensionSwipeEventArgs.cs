@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Details of a swipe gesture raised by <see cref="MudSwipeArea"/>, carrying the pointer state along with the direction and distance of the swipe on both the x- and y-axes.
+/// </summary>
 public class MultiDimensionSwipeEventArgs
 {
     /// <summary>

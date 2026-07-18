@@ -5,6 +5,9 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Renders the floating tooltip shown when hovering data points in MudBlazor's SVG charts, drawing a titled box with an optional pointer triangle.
+/// </summary>
 public partial class ChartTooltip : ComponentBase
 {
     private sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
@@ -190,6 +193,9 @@ public partial class ChartTooltip : ComponentBase
     }
 }
 
+/// <summary>
+/// Indicates where a chart tooltip is anchored horizontally relative to its data point, aligning it to the start, center, or end.
+/// </summary>
 public enum ChartTooltipAnchorPositionX
 {
     Start,
