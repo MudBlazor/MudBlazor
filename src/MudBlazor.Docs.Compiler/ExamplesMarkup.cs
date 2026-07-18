@@ -33,17 +33,16 @@ namespace MudBlazor.Docs.Compiler
                     }
                     if (!entry.Name.Contains(Paths.ExampleDiscriminator))
                         continue;
-                    var markupPath = entry.FullName.Replace("Examples", "Code").Replace(".razor", "Code.html");
+                    // Emit the highlighted markup as a static asset under wwwroot (served on demand),
+                    // rather than next to the example where it used to be embedded in the assembly.
+                    var componentName = Path.GetFileNameWithoutExtension(entry.Name);
+                    var markupPath = Path.Join(Paths.CodeOutputDirPath, componentName + ".html");
                     if (entry.LastWriteTime < lastCheckedTime && File.Exists(markupPath))
                     {
                         continue;
                     }
 
-                    var markupDir = Path.GetDirectoryName(markupPath) ?? string.Empty;
-                    if (!Directory.Exists(markupDir))
-                    {
-                        Directory.CreateDirectory(markupDir);
-                    }
+                    Directory.CreateDirectory(Paths.CodeOutputDirPath);
 
                     var src = StripComponentSource(entry.FullName);
                     var blocks = src.Split("@code");

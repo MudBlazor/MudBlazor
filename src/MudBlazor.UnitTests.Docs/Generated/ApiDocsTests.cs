@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Api;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
+using MudBlazor.UnitTests.Docs.Mocks;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 
@@ -45,7 +46,10 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx.Services.AddTransient<InternalMudLocalizer>();
             _ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             _ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
-            _ctx.Services.AddScoped(sp => new HttpClient());
+            _ctx.Services.AddScoped<ISnippetsService, SnippetsService>();
+            _ctx.Services.AddScoped<ICodeHtmlService, CodeHtmlService>();
+            _ctx.Services.AddScoped(sp =>
+                new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
         }
 
         // This shows how to test a docs page with incremental rendering.

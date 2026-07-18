@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using RichardSzalay.MockHttp;
 
 namespace MudBlazor.UnitTests.Docs.Mocks;
@@ -14,6 +15,8 @@ public class MockDocsMessageHandler : MockHttpMessageHandler
         // DialogScrollableExample
         this.When("https://raw.githubusercontent.com/MudBlazor/MudBlazor/master/LICENSE")
             .Respond("text/plain", "Dummy License");
+        // On-demand example sources/markup (SnippetsService, CodeHtmlService) aren't present in tests.
+        this.Fallback.Respond(HttpStatusCode.NotFound);
     }
 
     private const string SampleElementsJson = @"

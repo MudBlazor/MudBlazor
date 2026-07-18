@@ -40,6 +40,8 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<NugetApiClient>();
             services.AddSingleton<GitHubApiClient>();
             services.AddSingleton<IApiLinkService, ApiLinkService>();
+            services.AddScoped<ISnippetsService, SnippetsService>();
+            services.AddScoped<ICodeHtmlService, CodeHtmlService>();
             services.AddSingleton<IMenuService, MenuService>();
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
             services.AddBlazoredLocalStorage();

@@ -16,6 +16,8 @@ public partial class SectionContent
     [Inject] protected IJsApiService JsApiService { get; set; }
     [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
     [Inject] protected ISnackbar SnackbarService { get; set; }
+    [Inject] protected ISnippetsService SnippetsService { get; set; }
+    [Inject] protected ICodeHtmlService CodeHtmlService { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
@@ -62,8 +64,10 @@ public partial class SectionContent
 
     private bool _hasCode;
     private string _activeCode;
+    // The highlighted markup is fetched on demand (see CodeHtmlService) instead of being embedded in the assembly.
+    private MarkupString _activeCodeHtml;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (Codes != null)
         {
@@ -75,6 +79,8 @@ public partial class SectionContent
             _hasCode = true;
             _activeCode = Code;
         }
+
+        await LoadActiveCodeHtmlAsync();
     }
 
     public void OnShowCode()
@@ -82,9 +88,46 @@ public partial class SectionContent
         ShowCode = !ShowCode;
     }
 
-    public void SetActiveCode(string value)
+    public async Task SetActiveCode(string value)
     {
         _activeCode = value;
+        await LoadActiveCodeHtmlAsync();
+    }
+
+    private async Task LoadActiveCodeHtmlAsync()
+    {
+        if (!_hasCode || string.IsNullOrEmpty(_activeCode))
+        {
+            _activeCodeHtml = default;
+            return;
+        }
+
+        var html = await CodeHtmlService.GetHtmlAsync(_activeCode);
+        if (string.IsNullOrEmpty(html))
+        {
+            _activeCodeHtml = default;
+            return;
+        }
+
+        // Ensure the code uses spaces for indentation regardless of the formatting within the source code.
+        html = html.Replace("\t", "    ");
+
+        if (!string.IsNullOrEmpty(HighLight))
+        {
+            if (HighLight.Contains(','))
+            {
+                foreach (var value in HighLight.Split(","))
+                {
+                    html = Regex.Replace(html, $"{value}(?=\\s|\")", "<mark>$&</mark>");
+                }
+            }
+            else
+            {
+                html = Regex.Replace(html, $"{HighLight}(?=\\s|\")", "<mark>$&</mark>");
+            }
+        }
+
+        _activeCodeHtml = new MarkupString(html);
     }
 
     private string GetActiveCode(string value)
@@ -96,50 +139,11 @@ public partial class SectionContent
 
     private async Task CopyTextToClipboard()
     {
-        var code = Snippets.GetCode(Code);
+        var code = await SnippetsService.GetSourceAsync(Code);
         code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
         SnackbarService.Add("Copied to clipboard");
     }
-
-    private RenderFragment CodeComponent(string code) => builder =>
-    {
-        try
-        {
-            var key = typeof(SectionContent).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{code}Code.html"));
-            using (var stream = typeof(SectionContent).Assembly.GetManifestResourceStream(key))
-            using (var reader = new StreamReader(stream))
-            {
-                var read = reader.ReadToEnd();
-
-                // Ensure the code uses spaces for indentation regardless of the formatting within the source code.
-                read = read.Replace("\t", "    ");
-
-                if (!string.IsNullOrEmpty(HighLight))
-                {
-                    if (HighLight.Contains(','))
-                    {
-                        var highlights = HighLight.Split(",");
-
-                        foreach (var value in highlights)
-                        {
-                            read = Regex.Replace(read, $"{value}(?=\\s|\")", $"<mark>$&</mark>");
-                        }
-                    }
-                    else
-                    {
-                        read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", $"<mark>$&</mark>");
-                    }
-                }
-
-                builder.AddMarkupContent(0, read);
-            }
-        }
-        catch (Exception)
-        {
-            // todo: log this
-        }
-    };
 
     protected virtual async Task RunOnTryMudBlazorAsync()
     {
@@ -159,7 +163,7 @@ public partial class SectionContent
         }
 
         // We use a separator that won't be in code so we can send 2 files later
-        var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(firstFile);
+        var codeFiles = "__Main.razor" + (char)31 + await SnippetsService.GetSourceAsync(firstFile);
 
         // Add dialogs for dialog examples
         if (firstFile.StartsWith("Dialog"))
@@ -168,7 +172,7 @@ public partial class SectionContent
             var dialogCodeName = regex.Match(codeFiles).Groups["dialogname"].Value;
             if (dialogCodeName != string.Empty)
             {
-                var dialogCodeFile = dialogCodeName + ".razor" + (char)31 + Snippets.GetCode(dialogCodeName);
+                var dialogCodeFile = dialogCodeName + ".razor" + (char)31 + await SnippetsService.GetSourceAsync(dialogCodeName);
                 codeFiles = codeFiles + (char)31 + dialogCodeFile;
             }
         }
@@ -178,13 +182,13 @@ public partial class SectionContent
         {
             if (ElementRegularExpression().IsMatch(codeFiles))
             {
-                var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
+                var elementCodeFile = "Element.cs" + (char)31 + await SnippetsService.GetSourceAsync("Element");
                 codeFiles = codeFiles + (char)31 + elementCodeFile;
             }
 
             if (ServerRegularExpression().IsMatch(codeFiles))
             {
-                var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
+                var serverCodeFile = "Server.cs" + (char)31 + await SnippetsService.GetSourceAsync("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
             }
         }

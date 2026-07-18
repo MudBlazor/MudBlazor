@@ -30,6 +30,14 @@ public static class Paths
 
     public static string SnippetsFilePath => Path.Join(DocsStringSnippetsDirPath, SnippetsFile);
 
+    // Raw example sources are emitted as individual static files under wwwroot (served on demand),
+    // instead of being embedded in the assembly as string constants.
+    public static string SnippetsOutputDirPath => Path.Join(DocsDirPath, "wwwroot", "snippets");
+
+    // Syntax-highlighted example markup is emitted as individual static files under wwwroot (served on demand),
+    // instead of being embedded in the assembly as resources.
+    public static string CodeOutputDirPath => Path.Join(DocsDirPath, "wwwroot", "code");
+
     public static string NewFilesToBuildPath => Path.Join(DocsDirPath, NewFilesToBuild);
 
     public static string ApiDocumentationPath => Path.Join(DocsDirPath, "Models", "Generated");

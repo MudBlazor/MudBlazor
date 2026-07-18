@@ -12,7 +12,8 @@ public class CodeSnippetUrlTests
     [Test]
     public void CompressedUrlRoundtripTest()
     {
-        var snippet = Snippets.GetCode("TableServerSidePaginateExample");
+        // Any representative source works here; this test only exercises the compress/encode roundtrip.
+        var snippet = Snippets.Element;
         string urlEncodedBase64CompressedCode;
         string base64CompressedCode;
         string snippet1;

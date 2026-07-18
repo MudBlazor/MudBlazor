@@ -387,6 +387,9 @@ FodyWeavers.xsd
 
 MudBlazor.xml
 **/*.generated.cs
+# Example sources and highlighted markup emitted by the Docs compiler and served as static assets.
+src/MudBlazor.Docs/wwwroot/snippets/
+src/MudBlazor.Docs/wwwroot/code/
 src/MudBlazor.UnitTests/Generated/_AllApiPages.cs
 src/MudBlazor.UnitTests/Generated/_AllComponents.cs
 src/MudBlazor.Docs/NewFilesToBuild.txt

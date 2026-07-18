@@ -42,6 +42,8 @@ namespace MudBlazor.UnitTests.Docs.Generated
             _ctx.Services.AddTransient<IScrollListener, ScrollListener>();
             _ctx.Services.AddTransient<IResizeObserver, ResizeObserver>();
             _ctx.Services.AddOptions();
+            _ctx.Services.AddScoped<ISnippetsService, SnippetsService>();
+            _ctx.Services.AddScoped<ICodeHtmlService, CodeHtmlService>();
             _ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
         }
