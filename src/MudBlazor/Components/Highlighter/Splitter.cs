@@ -4,9 +4,18 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Components.Highlighter;
 
+/// <summary>
+/// The kind of text fragment produced when splitting text for highlighting.
+/// </summary>
 public enum FragmentType { Text, HighlightedText, Markup }
+/// <summary>
+/// One segment of text produced when <see cref="MudHighlighter"/> splits a string, tagged by its <see cref="FragmentType"/>.
+/// </summary>
 public record FragmentInfo(string Content, FragmentType Type);
 
+/// <summary>
+/// Splits text into fragments for <see cref="MudHighlighter"/>, marking which parts match the search terms.
+/// </summary>
 public static partial class Splitter
 {
     private static readonly TimeSpan _regexTimeout = TimeSpan.FromSeconds(5);

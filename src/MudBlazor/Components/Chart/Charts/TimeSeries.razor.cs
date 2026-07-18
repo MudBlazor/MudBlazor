@@ -390,6 +390,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 }
 
 /// <summary>
-/// Represents a data point in a time series chart, containing a DateTime and a value.
+/// A single data point in a <see cref="TimeSeries{T}" /> chart, pairing a <see cref="DateTime" /> timestamp with a numeric value.
 /// </summary>
+/// <typeparam name="TNumber">The numeric type of the value at each timestamp.</typeparam>
 public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>, IFormattable;

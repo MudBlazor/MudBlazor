@@ -19,7 +19,7 @@ using static System.String;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing form input components.
+    /// Base class for form components that support validation, error messages, and value conversion, such as <see cref="MudBaseInput{T}"/> and <see cref="MudBooleanInput{T}"/>.
     /// </summary>
     /// <typeparam name="T">The complex type managed by this input.</typeparam>
     /// <typeparam name="U">The value type managed by this input.</typeparam>

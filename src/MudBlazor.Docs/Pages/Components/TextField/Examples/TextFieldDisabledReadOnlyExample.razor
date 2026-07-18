@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="_disabled" Label="Disabled" Variant="Variant.Outlined" Disabled="true" />
+<MudTextField @bind-Value="_readOnly" Label="Read-only" Variant="Variant.Outlined" ReadOnly="true" />
+
+@code {
+    private string _disabled = "Disabled value";
+    private string _readOnly = "Can't change me";
+}

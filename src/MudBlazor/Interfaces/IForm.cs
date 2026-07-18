@@ -2,6 +2,9 @@
 
 namespace MudBlazor.Interfaces
 {
+    /// <summary>
+    /// Coordinates a group of form fields and runs validation across them.
+    /// </summary>
     public interface IForm
     {
         public bool IsValid { get; }

@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="_dense" Label="Dense" Variant="Variant.Outlined" Margin="Margin.Dense" />
+<MudTextField Value='"The quick brown fox"' Label="Typo.h6" Variant="Variant.Outlined" Typo="Typo.h6" T="string" />
+<MudTextField @bind-Value="_shrink" Label="Shrink label" Variant="Variant.Outlined" ShrinkLabel="true" />
+
+@code {
+    private string _dense;
+    private string _shrink;
+}

@@ -10,8 +10,13 @@ using MudBlazor.Charts;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a graphic display of data values in a line, bar, stacked bar, pie, heat map, or donut shape.
+/// Charts plot numeric data as line, bar, stacked bar, pie, donut, radar, rose, heat map, time series, scatter, or Sankey graphics.
+/// Choose the graphic with the <see cref="ChartType"/> parameter.
 /// </summary>
+/// <typeparam name="T">The numeric type of the data values, such as <c>double</c> or <c>int</c>.</typeparam>
+/// <seealso cref="ChartOptions" />
+/// <seealso cref="ChartSeries{T}" />
+/// <seealso cref="ChartType" />
 public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     [Inject]

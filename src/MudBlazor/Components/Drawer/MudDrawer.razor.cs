@@ -7,10 +7,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a navigation panel docked to the side of the page.
+    /// Navigation drawers, or sidebars, dock to the side of the page to hold navigation links, menus, or other content.
     /// </summary>
-    /// <seealso cref="MudDrawerContainer"/>
-    /// <seealso cref="MudDrawerHeader"/>
+    /// <remarks>
+    /// Supports temporary, persistent, mini, and responsive variants that adapt to the screen size.
+    /// </remarks>
+    /// <seealso cref="MudAppBar" />
+    /// <seealso cref="MudDrawerContainer" />
+    /// <seealso cref="MudDrawerHeader" />
     public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IAsyncDisposable
     {
         private double _height;

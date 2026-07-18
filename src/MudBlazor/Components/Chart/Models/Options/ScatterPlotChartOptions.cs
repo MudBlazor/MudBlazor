@@ -61,6 +61,9 @@ public class ScatterPlotChartOptions : DefaultAxisLineChartOptions, IAxisLineCha
     };
 }
 
+/// <summary>
+/// Per-series display override for a scatter plot that selects whether a series renders as individual points or as a connected line.
+/// </summary>
 public record ScatterSeriesDisplayOverride : SeriesDisplayOverride
 {
     /// <summary>

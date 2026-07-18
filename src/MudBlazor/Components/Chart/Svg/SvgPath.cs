@@ -3,7 +3,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an arbitrary SVG path.
+    /// Base class for chart shapes rendered as SVG paths, such as <see cref="SvgCircle" />, <see cref="SvgPetal" />, and <see cref="SvgPathPoint" />.
     /// </summary>
     public class SvgPath : IEquatable<SvgPath>
     {
