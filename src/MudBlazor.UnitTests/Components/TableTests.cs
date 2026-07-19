@@ -367,9 +367,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Regression test for #11514: when Loading is true and LoadingContent is set, the custom content
-        /// replaces the built-in progress bar rather than showing both. The progress bar is still used when
-        /// the current page has items (e.g. a background refresh), where the custom content is not rendered.
+        /// Regression test for #11514: when Loading is true and LoadingContent is set, the custom content replaces the built-in progress bar rather than showing both.
+        /// The progress bar is still used when the current page has items (e.g. a background refresh), where the custom content is not rendered.
         /// </summary>
         [Test]
         public async Task LoadingContentReplacesProgressBar()
