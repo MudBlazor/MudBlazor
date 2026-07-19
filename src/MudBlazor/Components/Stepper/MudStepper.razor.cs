@@ -47,6 +47,11 @@ public partial class MudStepper : MudComponentBase
             .AddClass(NavClass)
             .Build();
 
+    protected string ActionsClassname =>
+        new CssBuilder("mud-stepper-actions")
+            .AddClass(ActionsClass)
+            .Build();
+
     internal string GetStepButtonId(MudStep step) => $"stepper-{_componentId}-tab-{step.FieldId}";
 
     internal string GetStepPanelId(MudStep step) => $"stepper-{_componentId}-tabpanel-{step.FieldId}";
@@ -219,6 +224,16 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public string? NavClass { get; set; }
+
+    /// <summary>
+    /// The CSS classes applied to the action bar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public string? ActionsClass { get; set; }
 
     /// <summary>
     /// Allows users to move between steps arbitrarily.
