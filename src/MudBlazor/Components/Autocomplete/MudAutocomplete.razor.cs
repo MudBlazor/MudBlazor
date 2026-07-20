@@ -72,26 +72,13 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// The item currently highlighted in the drop-down, driving the internal list's selection styling.
+        /// The element id of the currently highlighted drop-down item, or <c>null</c> when nothing is highlightable.
         /// </summary>
         /// <remarks>
-        /// Returned to the internal <see cref="MudList{T}"/> as its selected value so it highlights the same item this component tracks with <see cref="_selectedListItemIndex"/>.
-        /// Without it the list would fall back to <c>default(T)</c>, which for value types (such as an enum with a <c>0</c> member) wrongly highlights the default-valued item in addition to the real selection (#13358).
+        /// Drives the internal <see cref="MudList{T}"/>, which is keyed by element id (a reference type) rather than <c>T</c>, so it highlights the same item this component tracks with <see cref="_selectedListItemIndex"/>.
+        /// A nullable id lets "no highlighted row" be genuinely <c>null</c>; a <c>T</c> selected value cannot, because for value types <c>default(T)</c> is itself a valid item (such as an enum with a <c>0</c> member) that the list would wrongly highlight (#13358).
         /// </remarks>
-        private T? HighlightedItem
-        {
-            get
-            {
-                if (_items is not null && _selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                {
-                    return _items[_selectedListItemIndex];
-                }
-                else
-                {
-                    return default;
-                }
-            }
-        }
+        private string? HighlightedItemId => _selectedListItemIndex >= 0 ? GetListItemId(_selectedListItemIndex) : null;
 
         /// <summary>
         /// Input's classnames, separated by space.

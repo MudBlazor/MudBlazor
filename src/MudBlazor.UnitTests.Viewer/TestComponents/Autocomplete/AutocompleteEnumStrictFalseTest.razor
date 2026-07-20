@@ -5,6 +5,9 @@
 @code {
     public TestEnum Value { get; set; } = TestEnum.First;
 
+    // Mutable so a test can drop the selected item and refresh, mimicking server-side data changing.
+    public List<TestEnum> Source { get; set; } = Enum.GetValues<TestEnum>().ToList();
+
     public enum TestEnum
     {
         First = 0,
@@ -16,7 +19,7 @@
 
     public Task<IEnumerable<TestEnum>> SearchAsync(string? text, CancellationToken token)
     {
-        var all = Enum.GetValues<TestEnum>().AsEnumerable();
+        var all = Source.AsEnumerable();
 
         if (!string.IsNullOrWhiteSpace(text))
         {

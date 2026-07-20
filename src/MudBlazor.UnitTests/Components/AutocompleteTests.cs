@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             await ButtonClicker(); // open popover
             var pop = await comp.WaitForElementAsync("div.mud-popover"); // doesn't return until popover exists
             await comp.WaitForAssertionAsync(() => pop.ClassList.Should().Contain("mud-popover-open")); // wait for popover to open
-            var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
+            var items = comp.FindComponents<MudListItem<string>>();
             items.Count.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
             await ButtonClicker(); // close popover
             await comp.WaitForAssertionAsync(() => pop.ClassList.Should().NotContain("mud-popover-open"));
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
             // set search
             await autocompleteComponent.Find("input").InputAsync("he");
             await comp.WaitForAssertionAsync(() => pop.ClassList.Should().Contain("mud-popover-open"));
-            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
+            var filteredItems = comp.FindComponents<MudListItem<string>>();
             filteredItems.Count.Should().Be(4, "The popover should contain 4 items.");
         }
 
@@ -1813,7 +1813,7 @@ namespace MudBlazor.UnitTests.Components
             //California should appear as index 5 and be selected
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
-            var items = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
+            var items = comp.FindComponents<MudListItem<string>>().ToArray();
             items.Length.Should().Be(10);
             var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
             items.ToList().IndexOf(item).Should().Be(5);
@@ -1830,7 +1830,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
-            var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
+            var items2 = comp.FindComponents<MudListItem<string>>().ToArray();
             items2.Length.Should().Be(10);
             // Select Virginia
             var item2 = items2.FirstOrDefault(x => x.Markup.Contains(virginiaString));
@@ -1869,6 +1869,39 @@ namespace MudBlazor.UnitTests.Components
                 var selectedItems = comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}");
                 selectedItems.Count.Should().Be(1);
                 selectedItems[0].TextContent.Should().Contain("Third");
+            });
+        }
+
+        // https://github.com/MudBlazor/MudBlazor/issues/13358
+        // When the selected value drops out of refreshed results, no row should be highlighted.
+        // In particular the default-valued (First = 0) item must not be highlighted as a fallback.
+        [Test]
+        public async Task AutocompleteStrictFalse_ValueType_SelectedItemRemovedOnRefresh_HighlightsNothing()
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var comp = Context.Render<AutocompleteEnumStrictFalseTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumStrictFalseTest.TestEnum>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Search for and select "Third" (value 2), which is not the default (First = 0).
+            await autocompleteComponent.Find("input").InputAsync("Third");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.Value.Should().Be(AutocompleteEnumStrictFalseTest.TestEnum.Third));
+
+            // Drop the selected item from the source so the refreshed results no longer contain it, while First (0) remains.
+            comp.Instance.Source.Remove(AutocompleteEnumStrictFalseTest.TestEnum.Third);
+
+            // Reopen; the selected value is gone (index -1), so nothing should be highlighted.
+            await comp.InvokeAsync(autocomplete.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(listItemQuerySelector).Count.Should().Be(4); // First, Second, Fourth, Fifth
+                comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}").Count.Should().Be(0);
             });
         }
 
