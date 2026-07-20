@@ -1842,8 +1842,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         // https://github.com/MudBlazor/MudBlazor/issues/13358
-        // With Strict="false" and a value type whose default is a valid item (e.g. an enum with a 0 member),
-        // only the actually-selected item should be highlighted, not also the default-valued item.
+        // With Strict="false" and a value type whose default is a valid item (e.g. an enum with a 0 member), only the actually-selected item should be highlighted, not also the default-valued item.
         [Test]
         public async Task AutocompleteStrictFalse_ValueType_HighlightsOnlySelectedItem()
         {
