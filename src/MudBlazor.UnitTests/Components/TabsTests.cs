@@ -257,6 +257,36 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-tabs-tabbar").ClassList.Should().Contain(new[] { "testA", "testB" });
         }
 
+        [Test]
+        public void PanelWithWrapperElement_KeepsClassContract()
+        {
+            // #13506: an element (MudForm, div, ...) between MudTabs and MudTabPanel must not break panel show/hide.
+            // The CSS `.mud-tabs-panels .mud-tab-panel:not(.mud-tab)` relies on this markup contract:
+            // panel content divs carry `mud-tab-panel` (never `mud-tab`), while tab-bar buttons carry both.
+            var comp = Context.Render<TabsPanelWrapperTest>();
+
+            // The wrapper is a direct child of the panels container and the panels render inside it.
+            var wrapper = comp.Find("div.mud-tabs-panels > .panel-wrapper");
+            wrapper.QuerySelectorAll("[role=tabpanel]").Length.Should().BeGreaterThan(0);
+
+            foreach (var panel in comp.FindAll("[role=tabpanel]"))
+            {
+                panel.ClassList.Should().Contain("mud-tab-panel");
+                panel.ClassList.Should().NotContain("mud-tab");
+            }
+
+            foreach (var tab in comp.FindAll("[role=tab]"))
+            {
+                tab.ClassList.Should().Contain("mud-tab");
+                tab.ClassList.Should().Contain("mud-tab-panel");
+            }
+
+            // Active state uses `mud-tab-active` on the bar button and `mud-tab-panel-active` on the content div.
+            comp.FindAll("[role=tab].mud-tab-active").Count.Should().BeGreaterThan(0);
+            comp.FindAll("[role=tab].mud-tab-panel-active").Count.Should().Be(0);
+            comp.FindAll("[role=tabpanel].mud-tab-panel-active").Count.Should().BeGreaterThan(0);
+        }
+
         [TestCase(128, 99, "99+")]
         [TestCase(128, 999, "128")]
         public void TabPanelBadgeMaxControlsIntegerBadgeData(int badgeData, int badgeMax, string expectedBadgeText)

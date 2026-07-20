@@ -1,0 +1,15 @@
+﻿<MudTabs KeepPanelsAlive="true">
+    <div class="panel-wrapper">
+        <MudTabPanel Text="Tab 1">
+            <MudTabs>
+                <MudTabPanel Text="Inner 1">Inner 1 content</MudTabPanel>
+                <MudTabPanel Text="Inner 2">Inner 2 content</MudTabPanel>
+            </MudTabs>
+        </MudTabPanel>
+        <MudTabPanel Text="Tab 2">Tab 2 content</MudTabPanel>
+    </div>
+</MudTabs>
+
+@code {
+    public static string __description__ = "panels wrapped in an element between MudTabs and MudTabPanel should still hide/show correctly (#13506)";
+}
