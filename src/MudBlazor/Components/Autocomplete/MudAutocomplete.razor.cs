@@ -75,15 +75,24 @@ namespace MudBlazor
         /// The item currently highlighted in the drop-down, driving the internal list's selection styling.
         /// </summary>
         /// <remarks>
-        /// Returned to the internal <see cref="MudList{T}"/> as its selected value so it highlights the same item this
-        /// component tracks with <see cref="_selectedListItemIndex"/>. Without it the list would fall back to
-        /// <c>default(T)</c>, which for value types (such as an enum with a <c>0</c> member) wrongly highlights the
-        /// default-valued item in addition to the real selection (#13358).
+        /// Returned to the internal <see cref="MudList{T}"/> as its selected value so it highlights the same item this component tracks with <see cref="_selectedListItemIndex"/>.
+        /// Without it the list would fall back to <c>default(T)</c>, which for value types (such as an enum with a <c>0</c> member) wrongly highlights the default-valued item in addition to the real selection (#13358).
         /// </remarks>
-        private T? HighlightedItem =>
-            _items is not null && _selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length
-                ? _items[_selectedListItemIndex]
-                : default;
+        private T? HighlightedItem
+        {
+            get
+            {
+                if (_items is not null && _selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
+                {
+                    return _items[_selectedListItemIndex];
+                }
+                else
+                {
+                    return default;
+                }
+            }
+        }
+
 
         /// <summary>
         /// Input's classnames, separated by space.
