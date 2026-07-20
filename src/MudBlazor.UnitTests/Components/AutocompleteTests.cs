@@ -1841,6 +1841,38 @@ namespace MudBlazor.UnitTests.Components
             items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(1);
         }
 
+        // https://github.com/MudBlazor/MudBlazor/issues/13358
+        // With Strict="false" and a value type whose default is a valid item (e.g. an enum with a 0 member),
+        // only the actually-selected item should be highlighted, not also the default-valued item.
+        [Test]
+        public async Task AutocompleteStrictFalse_ValueType_HighlightsOnlySelectedItem()
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var comp = Context.Render<AutocompleteEnumStrictFalseTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumStrictFalseTest.TestEnum>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Search for and select "Third" (value 2), which is not the default (First = 0).
+            await autocompleteComponent.Find("input").InputAsync("Third");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.Value.Should().Be(AutocompleteEnumStrictFalseTest.TestEnum.Third));
+
+            // Reopen the menu; searchingWhileSelected returns all items with "Third" centered and selected.
+            await comp.InvokeAsync(autocomplete.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Only "Third" should be highlighted. The default (First = 0) item must not also be highlighted.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var selectedItems = comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}");
+                selectedItems.Count.Should().Be(1);
+                selectedItems[0].TextContent.Should().Contain("Third");
+            });
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Throw_When_SearchFunc_Is_Null()
         {

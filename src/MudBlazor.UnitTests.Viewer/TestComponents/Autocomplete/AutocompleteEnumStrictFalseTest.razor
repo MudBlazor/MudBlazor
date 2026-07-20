@@ -1,0 +1,28 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete T="TestEnum" SearchFunc="@SearchAsync" @bind-Value="@Value" Strict="false" DebounceInterval="0" />
+
+@code {
+    public TestEnum Value { get; set; } = TestEnum.First;
+
+    public enum TestEnum
+    {
+        First = 0,
+        Second = 1,
+        Third = 2,
+        Fourth = 3,
+        Fifth = 4,
+    }
+
+    public Task<IEnumerable<TestEnum>> SearchAsync(string? text, CancellationToken token)
+    {
+        var all = Enum.GetValues<TestEnum>().AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            all = all.Where(x => x.ToString().Contains(text, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        return Task.FromResult(all);
+    }
+}
