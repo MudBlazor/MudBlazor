@@ -48,7 +48,7 @@ Reproductions:
 - Apply or remove labels from this section based on the label's description. All other repository labels require specific policy rule authorization (not from the label description alone).
 - Do not add or remove labels previously set by you or a maintainer unless both conditions are true: (a) new context has been added (e.g., new reproduction, logs, confirmations), and (b) a specific rule in this policy authorizes the change.
 
-Primary labels (apply best fit):
+Primary labels (always assign the single best fit to any open thread that lacks one, regardless of author):
 `bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `invalid`
 - When changing an existing primary label, always post a comment citing the trigger
 
