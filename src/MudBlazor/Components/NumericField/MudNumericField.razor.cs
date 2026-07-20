@@ -300,25 +300,43 @@ namespace MudBlazor
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
             // double/float do their arithmetic in decimal to avoid IEEE 754 precision errors (e.g. 0.1 + 0.2 -> 0.30000000000000004).
-            // decimal has a narrower range, so values out of decimal range fall through to the double arithmetic below.
+            // Values that don't convert to decimal losslessly (out of range, more significant digits than the conversion keeps, or below decimal's epsilon) fall through to the double arithmetic below.
             if ((typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
                 && TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
             {
-                return Num.To<T>((double)(currentDecimal + (stepDecimal * (decimal)factor)));
+                try
+                {
+                    return Num.To<T>((double)(currentDecimal + (stepDecimal * (decimal)factor)));
+                }
+                catch (OverflowException)
+                {
+                    // The sum exceeds decimal's range even though both operands fit; fall through to the double arithmetic below.
+                }
             }
             return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
 
             static bool TryToDecimal(T? value, out decimal result)
             {
-                var number = Num.From(value);
-                if (number is { } d && d >= (double)decimal.MinValue && d <= (double)decimal.MaxValue)
+                result = default;
+                if (Num.From(value) is not { } d || d < (double)decimal.MinValue || d > (double)decimal.MaxValue)
+                    return false;
+                try
                 {
                     // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
-                    result = value is float f ? (decimal)f : (decimal)d;
-                    return true;
+                    if (value is float f)
+                    {
+                        result = (decimal)f;
+                        // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
+                        return (float)result == f;
+                    }
+                    result = (decimal)d;
+                    return (double)result == d;
                 }
-                result = default;
-                return false;
+                catch (OverflowException)
+                {
+                    // The doubles nearest decimal.MinValue/MaxValue pass the range check but round outside decimal's range.
+                    return false;
+                }
             }
         }
 
