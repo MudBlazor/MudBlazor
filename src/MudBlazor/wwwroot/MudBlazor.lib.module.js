@@ -25,7 +25,7 @@ function loadMudScript() {
     return new Promise((resolve) => {
         const script = document.createElement('script');
         script.src = scriptUrl;
-        script.setAttribute('data-mudblazor', '');
+        script.dataset.mudblazor = '';
         // Never block Blazor startup: resolve on error too. A failed load is handled by MudBlazor's own graceful-degradation (interop calls no-op instead of crashing).
         script.onload = () => resolve();
         script.onerror = () => {
