@@ -2,226 +2,197 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Resources;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudPicker<TimeSpan?>, IAsyncDisposable
+    /// <summary>
+    /// Selects a time of day from a clock shown in a drop-down, dialog, or inline.
+    /// </summary>
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudDateRangePicker" />
+    public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
-        private const string Format24Hours = "HH:mm";
-        private const string Format12Hours = "hh:mm tt";
-
-        public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
-        {
-            Converter.GetFunc = OnGet;
-            Converter.SetFunc = OnSet;
-            ((DefaultConverter<TimeSpan?>)Converter).Format = Format24Hours;
-            AdornmentIcon = Icons.Material.Filled.AccessTime;
-            AdornmentAriaLabel = "Open Time Picker";
-        }
-
-        private string OnSet(TimeSpan? timespan)
-        {
-            if (timespan == null)
-            {
-                return string.Empty;
-            }
-
-            var time = DateTime.Today.Add(timespan.Value);
-
-            return time.ToString(((DefaultConverter<TimeSpan?>)Converter).Format, Culture);
-        }
-
-        private TimeSpan? OnGet(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                return null;
-            }
-
-            if (DateTime.TryParseExact(value, ((DefaultConverter<TimeSpan?>)Converter).Format, Culture, DateTimeStyles.None, out var time))
-            {
-                return time.TimeOfDay;
-            }
-
-            var m = AmPmRegularExpression().Match(value);
-            if (m.Success)
-            {
-                if (DateTime.TryParseExact(value, Format12Hours, CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
-                {
-                    return time.TimeOfDay;
-                }
-            }
-            else
-            {
-                if (DateTime.TryParseExact(value, Format24Hours, CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
-                {
-                    return time.TimeOfDay;
-                }
-            }
-
-            HandleParsingError();
-            return null;
-        }
-
-        private void HandleParsingError()
-        {
-            const string ParsingErrorMessage = "Not a valid time span";
-            Converter.GetError = true;
-            Converter.GetErrorMessage = ParsingErrorMessage;
-            Converter.OnError?.Invoke(ParsingErrorMessage);
-        }
-
-        private bool _amPm = false;
         private OpenTo _currentView;
-        private string _timeFormat = string.Empty;
+        private string? _clockElementReferenceId;
+        private readonly SetTime _timeSet = new();
+        private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
+
+        [DynamicDependency(nameof(OnStickClick))]
+        [DynamicDependency(nameof(SelectTimeFromStick))]
+        public MudTimePicker()
+        {
+            AdornmentIcon = Icons.Material.Filled.AccessTime;
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<bool>(nameof(AmPm))
+                .WithParameter(() => AmPm)
+                .WithChangeHandler(FormatChangedAsync);
+            registerScope.RegisterParameter<string?>(nameof(TimeFormat))
+                .WithParameter(() => TimeFormat)
+                .WithChangeHandler(FormatChangedAsync);
+        }
 
         internal TimeSpan? TimeIntermediate { get; private set; }
 
         /// <summary>
-        /// First view to show in the MudDatePicker.
+        /// The initial view for this picker.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="OpenTo.Hours"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
-        /// Selects the edit mode. By default, you can edit hours and minutes.
+        /// Controls which values can be edited.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TimeEditMode.Normal"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
-        /// Sets the amount of time in milliseconds to wait before closing the picker.
+        /// The amount of time, in milliseconds, to wait before closing the picker.
         /// </summary>
         /// <remarks>
-        /// This helps the user see that the time was selected before the popover disappears.
+        /// Defaults to <c>200</c>. The delay gives users a moment to see the selected time before the popover disappears.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ClosingDelay { get; set; } = 200;
 
         /// <summary>
-        /// If true and PickerActions are defined, the hour and the minutes can be defined without any action.
+        /// Closes this picker when the value is set or cleared.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined, 
+        /// the hour and the minutes can be selected and the drop-down will close without having to 
+        /// click any of the action buttons.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool AutoClose { get; set; }
 
         /// <summary>
-        /// Sets the number interval for minutes.
+        /// The step interval when selecting minutes.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>. For example: a value of <c>15</c> would allow minutes <c>0</c>, <c>15</c>, 
+        /// <c>30</c>, and <c>45</c> be selected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int MinuteSelectionStep { get; set; } = 1;
 
         /// <summary>
-        /// If true, enables 12 hour selection clock.
+        /// Shows a 12-hour selection clock.
         /// </summary>
-        [Parameter]
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, hours 1-12 are displayed with an AM or PM marker.<br />
+        /// When <c>false</c>, hours 0-23 are displayed.<br />
+        /// </remarks>
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool AmPm
-        {
-            get => _amPm;
-            set
-            {
-                if (value == _amPm)
-                {
-                    return;
-                }
-
-                _amPm = value;
-
-                if (Converter is DefaultConverter<TimeSpan?> defaultConverter && string.IsNullOrWhiteSpace(_timeFormat))
-                {
-                    defaultConverter.Format = AmPm ? Format12Hours : Format24Hours;
-                }
-
-                Touched = true;
-                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
-            }
-        }
+        public bool AmPm { get; set; }
 
         /// <summary>
-        /// String format for selected time view.
+        /// The format applied to time values.
         /// </summary>
-        [Parameter]
+        /// <remarks>
+        /// Defaults to <c>hh:mm tt</c> when <see cref="AmPm"/> is <c>true</c>, otherwise <c>HH:mm</c>.<br />
+        /// Format strings are typically a combination of these characters:<br />
+        /// * <c>h</c> (lowercase) for hours in 12-hour time, <br />
+        /// * <c>H</c> (uppercase) for hours in 24-hour time, <br />
+        /// * <c>m</c> for minutes,<br />
+        /// * <c>tt</c> for AM/PM markers.<br />
+        /// For example: <c>h:mm tt</c> would display <c>6:32 PM</c>, and <c>HH:mm</c> would display <c>18:32</c>.
+        /// </remarks>
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string TimeFormat
-        {
-            get => _timeFormat;
-            set
-            {
-                if (_timeFormat == value)
-                {
-                    return;
-                }
-
-                _timeFormat = value;
-                if (Converter is DefaultConverter<TimeSpan?> defaultConverter)
-                {
-                    defaultConverter.Format = _timeFormat;
-                }
-
-                Touched = true;
-                SetTextAsync(Converter.Set(_value), false).CatchAndLog();
-            }
-        }
+        public string TimeFormat { get; set; } = string.Empty;
 
         /// <summary>
-        /// The currently selected time (two-way bindable). If <c>null</c>, nothing was selected.
+        /// The currently selected time.
         /// </summary>
+        /// <remarks>
+        /// When this value changes, <see cref="TimeChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public TimeSpan? Time
         {
             get => _value;
-            set => SetTimeAsync(value, true).CatchAndLog();
+            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
+            // awaits inside SetTimeAsync into a concurrent user clock pick on Blazor Server (PR #13328 review).
+            set => SetTimeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
         }
 
-        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
+        /// <summary>
+        /// Occurs when <see cref="Time"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<TimeSpan?> TimeChanged { get; set; }
+
+        /// <summary>
+        /// Sets the selected time value.
+        /// </summary>
+        /// <param name="time">The new value to set.</param>
+        /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
+        /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
+        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
             if (_value != time)
             {
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
                 {
-                    await SetTextAsync(Converter.Set(_value), false);
+                    await SetTextAsync(ConvertSet(_value), false);
                 }
 
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 
-        /// <summary>
-        /// Fired when the date changes.
-        /// </summary>
-        [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
-
-        protected override Task StringValueChangedAsync(string value)
+        /// <inheritdoc />
+        protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(Converter.Get(value), false);
+            return SetTimeAsync(ConvertGet(value), false);
         }
 
-        // The last line cannot be tested.
-        [ExcludeFromCodeCoverage]
+        /// <inheritdoc />
+        [ExcludeFromCodeCoverage] // The last line cannot be tested.
         protected override async Task OnPickerOpenedAsync()
         {
             await base.OnPickerOpenedAsync();
@@ -234,6 +205,7 @@ namespace MudBlazor
             };
         }
 
+        /// <inheritdoc />
         protected internal override Task SubmitAsync()
         {
             if (GetReadOnlyState())
@@ -241,11 +213,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            Time = TimeIntermediate;
-
-            return Task.CompletedTask;
+            // Commit via SetTimeAsync directly, NOT the Time setter: the setter is suppressed, but a submit
+            // is a user commit that must touch and fire FieldChanged (as MudDatePicker/MudDateRangePicker do).
+            return SetTimeAsync(TimeIntermediate, updateValue: true);
         }
 
+        /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
             TimeIntermediate = null;
@@ -257,6 +230,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Gets the hour portion of the selected time.
+        /// </summary>
+        /// <returns>A two-character string depending on whether <see cref="AmPm"/> is set, or <c>--</c> if no value is set.</returns>
         private string GetHourString()
         {
             if (TimeIntermediate == null)
@@ -268,6 +245,10 @@ namespace MudBlazor
             return $"{Math.Min(23, Math.Max(0, h)):D2}";
         }
 
+        /// <summary>
+        /// Gets the minute portion of the selected time.
+        /// </summary>
+        /// <returns>A two-digit string for minutes, or <c>--</c> if no value is set.</returns>
         private string GetMinuteString()
         {
             if (TimeIntermediate == null)
@@ -280,6 +261,8 @@ namespace MudBlazor
 
         private Task UpdateTimeAsync()
         {
+            if (GetReadOnlyState())
+                return Task.CompletedTask;
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -365,32 +348,22 @@ namespace MudBlazor
 
         private string GetClockPinColor()
         {
-            return $"mud-picker-time-clock-pin mud-{Color.ToDescriptionString()}";
+            return $"mud-picker-time-clock-pin mud-{Color.ToStringFast(true)}";
         }
 
         private string GetClockPointerColor()
         {
-            if (PointerMoving)
-            {
-                return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
-            }
-            else
-            {
-                return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
-            }
+            return PointerMoving
+                ? $"mud-picker-time-clock-pointer mud-{Color.ToStringFast(true)}"
+                : $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToStringFast(true)}";
         }
 
         private string GetClockPointerThumbColor()
         {
             var deg = GetDeg();
-            if (deg % 30 == 0)
-            {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}";
-            }
-            else
-            {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
-            }
+            return deg % 30 == 0
+                ? $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToStringFast(true)}"
+                : $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToStringFast(true)}-text";
         }
 
         private string GetNumberColor(int value)
@@ -410,12 +383,12 @@ namespace MudBlazor
 
                 if (h == value)
                 {
-                    return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                    return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
                 }
             }
             else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
             {
-                return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
             }
 
             return "mud-clock-number";
@@ -487,26 +460,17 @@ namespace MudBlazor
             return $"{height}%;";
         }
 
-        private readonly SetTime _timeSet = new();
-        private int _initialHour;
-        private int _initialMinute;
-        private DotNetObjectReference<MudTimePicker> _dotNetRef;
-        private string _clockElementReferenceId;
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            AdornmentAriaLabel ??= Localizer[LanguageResource.MudTimePicker_Open];
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
-            _initialHour = _timeSet.Hour;
-            _initialMinute = _timeSet.Minute;
-            _dotNetRef = DotNetObjectReference.Create(this);
         }
-
-        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
         protected ElementReference ClockElementReference { get; private set; }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
@@ -516,47 +480,26 @@ namespace MudBlazor
             {
                 _clockElementReferenceId = ClockElementReference.Id;
 
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetRef);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.initPointerEvents", ClockElementReference, _dotNetReferenceLazy.Value);
             }
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (IsJSRuntimeAvailable && ClockElementReference.Id != null)
-            {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
-            }
-
-            _dotNetRef?.Dispose();
-        }
-
-        private void UpdateTimeSetFromTime()
-        {
-            if (TimeIntermediate == null)
-            {
-                _timeSet.Hour = 0;
-                _timeSet.Minute = 0;
-                return;
-            }
-
-            _timeSet.Hour = TimeIntermediate.Value.Hours;
-            _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
         /// <summary>
-        /// <c>true</c> while the main pointer button is held down and moving.
+        /// Whether the pointer button is held down and moving.
         /// </summary>
         /// <remarks>
-        /// Disables clock animations.
+        /// When <c>true</c>, clock animations are disabled.
         /// </remarks>
         public bool PointerMoving { get; set; }
 
         /// <summary>
         /// Updates the position of the hands on the clock.
-        /// This method is called by the JavaScript events.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
         /// <param name="pointerMoving">Is the pointer being moved?</param>
+        /// <remarks>
+        /// This method is invoked via JavaScript.
+        /// </remarks>
         [JSInvokable]
         public async Task SelectTimeFromStick(int value, bool pointerMoving)
         {
@@ -587,9 +530,11 @@ namespace MudBlazor
 
         /// <summary>
         /// Performs the click action for the sticks.
-        /// This method is called by the JavaScript events.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
+        /// <remarks>
+        /// This method is invoked via JavaScript.
+        /// </remarks>
         [JSInvokable]
         public async Task OnStickClick(int value)
         {
@@ -617,6 +562,19 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void UpdateTimeSetFromTime()
+        {
+            if (TimeIntermediate is null)
+            {
+                _timeSet.Hour = 0;
+                _timeSet.Minute = 0;
+                return;
+            }
+
+            _timeSet.Hour = TimeIntermediate.Value.Hours;
+            _timeSet.Minute = TimeIntermediate.Value.Minutes;
+        }
+
         private int HourAmPm(int hour)
         {
             if (AmPm)
@@ -625,7 +583,8 @@ namespace MudBlazor
                 {
                     return 0;
                 }
-                else if (IsPm && hour < 12)
+
+                if (IsPm && hour < 12)
                 {
                     return hour + 12;
                 }
@@ -649,6 +608,8 @@ namespace MudBlazor
             return value;
         }
 
+        private DotNetObjectReference<MudTimePicker> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+
         protected async Task SubmitAndCloseAsync()
         {
             if (PickerActions == null || AutoClose)
@@ -657,31 +618,31 @@ namespace MudBlazor
 
                 if (PickerVariant != PickerVariant.Static)
                 {
-                    await Task.Delay(ClosingDelay);
+                    await Task.Delay(TimeSpan.FromMilliseconds(ClosingDelay), TimeProvider);
                     await CloseAsync(false);
                 }
             }
         }
 
-        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs obj)
+        protected internal override async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
             {
                 return;
             }
 
-            await base.OnHandleKeyDownAsync(obj);
+            await base.OnHandleKeyDownAsync(args);
 
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "ArrowRight":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute > 55)
                             {
@@ -705,11 +666,11 @@ namespace MudBlazor
                 case "ArrowLeft":
                     if (Open)
                     {
-                        if (obj.CtrlKey)
+                        if (args.CtrlKey)
                         {
                             await ChangeHourAsync(-1);
                         }
-                        else if (obj.ShiftKey)
+                        else if (args.ShiftKey)
                         {
                             if (_timeSet.Minute < 5)
                             {
@@ -735,11 +696,11 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.AltKey)
+                    else if (args.AltKey)
                     {
                         Open = false;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(5);
                     }
@@ -754,7 +715,7 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (obj.ShiftKey)
+                    else if (args.ShiftKey)
                     {
                         await ChangeHourAsync(-5);
                     }
@@ -777,7 +738,7 @@ namespace MudBlazor
                     {
                         await SubmitAsync();
                         await CloseAsync();
-                        _inputReference?.SetText(Text);
+                        _inputReference?.SetTextAsync(Text);
                     }
 
                     break;
@@ -792,7 +753,7 @@ namespace MudBlazor
                         {
                             await SubmitAsync();
                             await CloseAsync();
-                            _inputReference?.SetText(Text);
+                            _inputReference?.SetTextAsync(Text);
                         }
                     }
 
@@ -800,6 +761,26 @@ namespace MudBlazor
             }
 
             StateHasChanged();
+        }
+
+        protected override string GetFormat()
+        {
+            if (!string.IsNullOrEmpty(TimeFormat))
+            {
+                return TimeFormat;
+            }
+
+            return AmPm ? TimeSpanConverter.Format12Hours : TimeSpanConverter.Format24Hours;
+        }
+
+        /// <inheritdoc />
+        protected override IConverter<TimeSpan?, string?> GetDefaultConverter()
+        {
+            return new TimeSpanConverter
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
         }
 
         protected Task ChangeMinuteAsync(int minute)
@@ -833,14 +814,33 @@ namespace MudBlazor
             }
         }
 
-        private record SetTime
+        private Task FormatChangedAsync()
+        {
+            Touched = true;
+            return SetTextAsync(ConvertSet(_value), false);
+        }
+
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            await base.DisposeAsyncCore();
+
+            if (IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
+            }
+        }
+
+        private sealed record SetTime
         {
             public int Hour { get; set; }
 
             public int Minute { get; set; }
         }
-
-        [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-        private static partial Regex AmPmRegularExpression();
     }
 }

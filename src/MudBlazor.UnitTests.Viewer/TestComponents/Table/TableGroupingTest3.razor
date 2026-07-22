@@ -1,0 +1,40 @@
+﻿<MudTable @ref="TableInstance" T="Item" Items="Items" GroupBy="@_groupDefinition">
+    <GroupHeaderTemplate>
+        <MudTh>@context.Key</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTh>@context.Label</MudTh>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public MudTable<Item>? TableInstance { get; private set; }
+
+    public List<Item>? Items { get; set; } = [
+        new Item { Group = "One", Label = "A"  },
+        new Item { Group = "One", Label = "B"  },
+        new Item { Group = "One", Label = "C"  },
+        new Item { Group = "Two", Label = "D"  },
+        new Item { Group = "Two", Label = "E"  },
+        new Item { Group = "Two", Label = "F"  },
+        new Item { Group = "Three", Label = "G"  },
+        new Item { Group = "Three", Label = "H"  },
+        new Item { Group = "Three", Label = "I"  }
+    ];
+
+    private TableGroupDefinition<Item> _groupDefinition = new() {
+        Indentation = false,
+        Expandable = true,
+        IsInitiallyExpanded = false,
+        Selector = e => e.Group
+    };
+
+    public class Item
+    {
+        public required string Label { get; set; }
+
+        public required string Group { get; set; }
+
+        public override string ToString() => $"({Group}) {Label}";
+    }
+}

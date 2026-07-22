@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.SwipeArea;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -11,100 +10,82 @@ namespace MudBlazor.UnitTests.Components
     public class SwipeTest : BunitTest
     {
         [Test]
-        public async Task SwipeTest_1()
+        public async Task Swipe_1()
         {
-            var comp = Context.RenderComponent<SwipeAreaTest>();
+            var comp = Context.Render<SwipeAreaTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             await comp.InvokeAsync(() => swipe.Instance._yDown = 50);
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchEnd(new TouchEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchCancel(new TouchEventArgs()));
-            comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerCancelAsync(new PointerEventArgs()));
+            await comp.WaitForAssertionAsync(() => swipe.Instance._xDown.Should().Be(null));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchEnd(new TouchEventArgs()));
-            comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
-
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
+            await comp.WaitForAssertionAsync(() => swipe.Instance._xDown.Should().Be(null));
         }
 
         [Test]
-        public async Task SwipeTest_2()
+        public async Task Swipe_2()
         {
-            var comp = Context.RenderComponent<SwipeAreaOnSwipeEndTest>();
+            var comp = Context.Render<SwipeAreaOnSwipeEndTest>();
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             // Swipe below the sensitivity should not make change.
-            var initialTouchPoints = new TouchPoint[]
-            {
-                new TouchPoint() {ClientX = 0, ClientY = 0},
-            };
-            var touchPoints = new TouchPoint[]
-            {
-                new TouchPoint() {ClientX = 20, ClientY = 20},
-            };
 
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
 
-            comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
-            comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDelta.Should().Be(null));
 
-            initialTouchPoints = new TouchPoint[]
-            {
-                new TouchPoint() {ClientX = 0, ClientY = 0},
-            };
-            touchPoints = new TouchPoint[]
-            {
-                new TouchPoint() {ClientX = 150, ClientY = 200},
-                new TouchPoint() {ClientX = 100, ClientY = 50},
-            };
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchStart(new TouchEventArgs() { Touches = initialTouchPoints }));
-            await comp.InvokeAsync(() => swipe.Instance.OnTouchEnd(new TouchEventArgs() { ChangedTouches = touchPoints }));
-
-            comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
-            comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(-200));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SwipeDelta.Should().Be(-200));
         }
 
         [Test]
-        public void SwipeTest_PreventDefault_SetTrue()
+        public void Swipe_PreventDefault_SetTrue()
         {
-            var listenerIds = new int[] { 1, 2, 3 };
+            var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             comp.WaitForState(() => comp.Instance.PreventDefault);
             comp.Instance._listenerIds.Should().BeEquivalentTo(listenerIds);
 
             var invocation = handler.VerifyInvoke("mudElementRef.addDefaultPreventingHandlers");
             invocation.Arguments.Count.Should().Be(2);
-            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "touchstart", "touchend", "touchcancel" });
+            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave" });
         }
 
         [Test]
-        public void SwipeTest_PreventDefault_SetFalse()
+        public async Task Swipe_PreventDefault_SetFalse()
         {
-            var listenerIds = new int[] { 1, 2, 3 };
+            var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
 
-            var comp = Context.RenderComponent<MudSwipeArea>(ComponentParameter.CreateParameter("PreventDefault", true));
+            var comp = Context.Render<MudSwipeArea>(parameters => parameters.Add(p => p.PreventDefault, true));
 
             var handler = Context.JSInterop.SetupVoid(invocation => invocation.Identifier == "mudElementRef.removeDefaultPreventingHandlers")
                 .SetVoidResult();
 
-            comp.SetParam("PreventDefault", false);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.PreventDefault, false));
 
             comp.Instance.PreventDefault.Should().Be(false);
             comp.Instance._listenerIds.Should().BeNull();
 
             var invocation = handler.VerifyInvoke("mudElementRef.removeDefaultPreventingHandlers");
             invocation.Arguments.Count.Should().Be(3);
-            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "touchstart", "touchend", "touchcancel" });
+            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave" });
             invocation.Arguments[2].Should().BeEquivalentTo(listenerIds);
         }
     }

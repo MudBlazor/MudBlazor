@@ -6,9 +6,8 @@ using System;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a description of a <see cref="MudGrid"/> field.
+    /// Classifies the data type of a <see cref="MudDataGrid{T}"/> column — string, number, enum, date, boolean, or GUID — used to choose the filter operators available for that column.
     /// </summary>
     public class FieldType
     {
@@ -38,6 +37,11 @@ namespace MudBlazor
         public bool IsDateTime { get; init; }
 
         /// <summary>
+        /// Whether the <see cref="InnerType"/> represents a date only.
+        /// </summary>
+        public bool IsDateOnly { get; init; }
+
+        /// <summary>
         /// Whether the <see cref="InnerType"/> represents a true/false value.
         /// </summary>
         public bool IsBoolean { get; init; }
@@ -59,6 +63,7 @@ namespace MudBlazor
                 IsNumber = TypeIdentifier.IsNumber(type),
                 IsEnum = TypeIdentifier.IsEnum(type),
                 IsDateTime = TypeIdentifier.IsDateTime(type),
+                IsDateOnly = TypeIdentifier.IsDateOnly(type),
                 IsBoolean = TypeIdentifier.IsBoolean(type),
                 IsGuid = TypeIdentifier.IsGuid(type)
             };

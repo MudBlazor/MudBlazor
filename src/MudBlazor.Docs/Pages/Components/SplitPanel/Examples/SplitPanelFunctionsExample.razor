@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Class="mud-width-full mud-height-full" Justify="Justify.Center" AlignItems="AlignItems.Center" Style="height: 500px;">
+    <MudSplitPanel @ref="_splitPanel" Class="mud-width-full mud-height-full">
+        <FirstPanel>
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
+                <MudText Typo="Typo.h6">First Panel</MudText>
+            </MudStack>
+        </FirstPanel>
+        <SecondPanel>
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mud-width-full mud-height-full">
+                <MudText Typo="Typo.h6">Second Panel</MudText>
+            </MudStack>
+        </SecondPanel>
+    </MudSplitPanel>
+    <MudNumericField @bind-Value="_size" Label="Size [px]"/>
+    <MudStack Row="true">
+        <MudButton OnClick="@GetPositionAsync" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.Download">Get Pos.</MudButton>
+        <MudButton OnClick="@SetPositionAsync" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.Upload">Set Pos.</MudButton>
+        <MudButton OnClick="@ResetPositionAsync" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.Replay">Reset Pos.</MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    private MudSplitPanel _splitPanel;
+    private int _size;
+
+    private async Task GetPositionAsync()
+    {
+        _size = await _splitPanel.GetDividerPositionAsync();
+    }
+
+    private async Task SetPositionAsync()
+    {
+        await _splitPanel.SetDividerPositionAsync(_size);
+    }
+
+    private async Task ResetPositionAsync()
+    {
+        await _splitPanel.ResetDividerPositionAsync();
+    }
+}

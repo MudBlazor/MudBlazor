@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudTabs HeaderPosition="@TabHeaderPosition" TabPanelHeaderPosition="@TabPanelHeaderPosition">
+﻿<MudTabs HeaderPosition="@TabHeaderPosition" TabPanelHeaderPosition="@TabPanelHeaderPosition">
     <ChildContent>
         <MudTabPanel Text="First Tab" Tag="0">
             <MudText Typo="Typo.h1">  First Tab Content</MudText>
@@ -20,8 +19,9 @@
 </MudTabs>
 
 @code {
+    [Parameter]
+    public TabHeaderPosition TabHeaderPosition { get; set; } = TabHeaderPosition.After;
 
-    [Parameter] public TabHeaderPosition TabHeaderPosition { get; set; } = TabHeaderPosition.After;
-    [Parameter] public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
-
+    [Parameter]
+    public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 }

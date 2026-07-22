@@ -2,14 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
+/// <summary>
+/// Tracks the relationship between a JS resize listener and a .NET viewport observer.
+/// </summary>
+/// <remarks>
+/// This subscription object allows the service to share listeners across observers with identical options, reducing unnecessary JS hooks.
+/// </remarks>
 [DebuggerDisplay("{DebuggerToString(),nq}")]
 internal class BrowserViewportSubscription : IEquatable<BrowserViewportSubscription>
 {
@@ -51,8 +55,5 @@ internal class BrowserViewportSubscription : IEquatable<BrowserViewportSubscript
     public override int GetHashCode() => HashCode.Combine(JavaScriptListenerId, ObserverId);
 
     [ExcludeFromCodeCoverage]
-    private string DebuggerToString()
-    {
-        return $"JavaScript Listener Id = {JavaScriptListenerId}, Observer Id = {ObserverId}";
-    }
+    private string DebuggerToString() => $"JavaScript Listener Id = {JavaScriptListenerId}, Observer Id = {ObserverId}";
 }

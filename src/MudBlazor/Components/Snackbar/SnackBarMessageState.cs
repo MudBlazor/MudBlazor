@@ -1,8 +1,6 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System;
-using System.Diagnostics;
 using static System.String;
 
 namespace MudBlazor
@@ -13,13 +11,29 @@ namespace MudBlazor
         public bool UserHasInteracted { get; set; }
         public SnackbarOptions Options { get; }
         public SnackbarState SnackbarState { get; set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
+        private readonly TimeProvider _timeProvider;
+        private DateTimeOffset _transitionStartTime;
 
-        public SnackBarMessageState(SnackbarOptions options)
+        public SnackBarMessageState(SnackbarOptions options, TimeProvider timeProvider)
         {
             Options = options;
-            AnimationId = $"snackbar-{Guid.NewGuid()}";
+            _timeProvider = timeProvider;
+            AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
+        }
+
+        /// <summary>
+        /// Records the start time of the current transition.
+        /// </summary>
+        internal void StartTransition(DateTimeOffset now)
+        {
+            _transitionStartTime = now;
+        }
+
+        private long GetElapsedMilliseconds()
+        {
+            var now = _timeProvider.GetUtcNow();
+            return (long)(now - _transitionStartTime).TotalMilliseconds;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
 
@@ -28,17 +42,6 @@ namespace MudBlazor
 
         public bool HideIcon => Options.HideIcon;
         public string Icon => Options.Icon;
-        public Color IconColor => Options.IconColor;
-        public Size IconSize => Options.IconSize;
-
-        public string ProgressBarStyle
-        {
-            get
-            {
-                var duration = RemainingTransitionMilliseconds(Options.VisibleStateDuration);
-                return $"width:100;animation:{AnimationId} {duration}ms;";
-            }
-        }
 
         public string AnimationStyle
         {
@@ -69,7 +72,7 @@ namespace MudBlazor
         {
             get
             {
-                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
+                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToStringFast(true)}-{Options.Severity.ToStringFast(true)}";
 
                 if (Options.SnackbarVariant != Variant.Filled)
                 {
@@ -78,7 +81,7 @@ namespace MudBlazor
 
                 var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
 
-                if (Options.Onclick != null && !ShowActionButton)
+                if (Options.OnClick != null && !ShowActionButton)
                     result += " force-cursor";
 
                 return result;
@@ -103,7 +106,8 @@ namespace MudBlazor
 
         private int RemainingTransitionMilliseconds(int transitionDuration)
         {
-            var duration = transitionDuration - (int)Stopwatch.ElapsedMilliseconds;
+            var elapsed = GetElapsedMilliseconds();
+            var duration = transitionDuration - (int)elapsed;
 
             return duration >= 0 ? duration : 0;
         }

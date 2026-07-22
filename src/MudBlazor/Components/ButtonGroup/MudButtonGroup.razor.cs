@@ -3,17 +3,18 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a group of connected <see cref="MudButton"/> components.
+    /// Groups related <see cref="MudButton"/> components together visually.
     /// </summary>
+    /// <seealso cref="MudButton" />
+    /// <seealso cref="MudToggleGroup{T}"/>
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-group-root")
             .AddClass($"mud-button-group-override-styles", OverrideStyles)
-            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}")
-            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-            .AddClass($"mud-button-group-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-button-group-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-button-group-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
+            .AddClass($"mud-button-group-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}")
             .AddClass("mud-button-group-vertical", Vertical)
             .AddClass("mud-button-group-horizontal", !Vertical)
             .AddClass("mud-button-group-disable-elevation", !DropShadow)
@@ -22,6 +23,9 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        /// <summary>
+        /// Displays buttons right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -39,7 +43,7 @@ namespace MudBlazor
         /// The custom content within this group.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the group, but it is not required.
+        /// This property allows for custom content to displayed inside of the group, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Behavior)]
@@ -101,5 +105,22 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
         public bool FullWidth { get; set; }
+
+        private readonly List<MudButton> _renderedButtons = [];
+
+        internal void AddButton(MudButton button)
+        {
+            _renderedButtons.Add(button);
+        }
+
+        internal void RemoveButton(MudButton button)
+        {
+            _renderedButtons.Remove(button);
+        }
+
+        internal bool NoneButtonIsStreched()
+        {
+            return !_renderedButtons.Any(b => b.FullWidth);
+        }
     }
 }

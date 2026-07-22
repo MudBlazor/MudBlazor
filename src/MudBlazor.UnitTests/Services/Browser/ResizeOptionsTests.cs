@@ -2,8 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Services;
 using NUnit.Framework;
 
@@ -120,6 +119,20 @@ namespace MudBlazor.UnitTests.Services.Browser
         }
 
         [Test]
+        public void Equals_NotTheSame_ObjIsNotResizeOptions()
+        {
+            // Arrange
+            var resizeOptions = new ResizeOptions();
+            var obj = new object();
+
+            // Act
+            var result = resizeOptions.Equals(obj);
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Test]
         public void Equals_NotTheSame_DiffersInReportRate()
         {
             var option1 = new ResizeOptions();
@@ -191,7 +204,6 @@ namespace MudBlazor.UnitTests.Services.Browser
             option1.Should().NotBe(option2);
             option2.Should().NotBe(option1);
         }
-
 
         [Test]
         public void Equals_NotTheSame_BreakpointDefinitions_EmptyAndNull()
@@ -389,8 +401,14 @@ namespace MudBlazor.UnitTests.Services.Browser
         public void GetHashCode_WhenObjectsAreEqual_ReturnsSameHashCode()
         {
             // Arrange
-            var options1 = new ResizeOptions();
-            var options2 = new ResizeOptions();
+            var options1 = new ResizeOptions
+            {
+                BreakpointDefinitions = new Dictionary<Breakpoint, int> { { Breakpoint.Always, 12 } }
+            };
+            var options2 = new ResizeOptions
+            {
+                BreakpointDefinitions = new Dictionary<Breakpoint, int> { { Breakpoint.Always, 12 } }
+            };
 
             // Act
             var hashCode1 = options1.GetHashCode();

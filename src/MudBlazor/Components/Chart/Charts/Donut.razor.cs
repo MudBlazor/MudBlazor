@@ -1,67 +1,126 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
+﻿using System.Globalization;
+using System.Numerics;
+using System.Text;
+using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts
 {
     /// <summary>
-    /// Represents a chart which displays values as ring shape.
+    /// Donut chart that renders each value as a proportional segment of a ring with a hollow center.
     /// </summary>
-    partial class Donut : MudCategoryChartBase
+    /// <typeparam name="T">The numeric type of the values being charted.</typeparam>
+    /// <seealso cref="Bar{T}"/>
+    /// <seealso cref="Donut{T}"/>
+    /// <seealso cref="Pie{T}"/>
+    /// <seealso cref="Line{T}"/>
+    /// <seealso cref="StackedBar{T}"/>
+    /// <seealso cref="TimeSeries{T}"/>
+    public partial class Donut<T> : MudRadialChartBase<T, DonutChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        /// <summary>
-        /// The chart, if any, containing this component.
-        /// </summary>
-        [CascadingParameter]
-        public MudChart MudChartParent { get; set; }
-
-        private List<SvgCircle> _circles = new();
-        private List<SvgLegend> _legends = new();
-
-        protected string ParentWidth => MudChartParent?.Width;
-        protected string ParentHeight => MudChartParent?.Height;
-
-        /// <inheritdoc />
-        protected override void OnParametersSet()
+        protected override void OnInitialized()
         {
-            base.OnParametersSet();
+            ChartType = ChartType.Donut;
+            ChartOptions ??= new DonutChartOptions();
+            base.OnInitialized();
+        }
 
-            _circles.Clear();
+        public override void RebuildChart()
+        {
+            _paths.Clear();
             _legends.Clear();
-            const double counterClockwiseOffset = 25;
-            double totalPercent = 0;
 
-            var counter = 0;
-            foreach (var data in GetNormalizedData())
+            SetBounds();
+
+            var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
+            var normalizedData = GetNormalizedData();
+            var cumulativeRadians = -Math.PI / 2;
+            var donutRatio = ChartOptions.DonutRingRatio.EnsureRange(0.1, 1);
+            var chartLabels = GetChartLabels();
+
+            for (var i = 0; i < normalizedData.Length; i++)
             {
-                var percent = data * 100;
-                var reversePercent = 100 - percent;
-                var offset = 100 - totalPercent + counterClockwiseOffset;
-                totalPercent += percent;
+                if (normalizedData[i] == 0.0) continue;
 
-                var circle = new SvgCircle()
+                var data = normalizedData[i];
+                var actualValue = T.Max(T.Zero, chartData[i]);
+                var radians = 2 * Math.PI * data;
+                var coords = GetSegmentCoordinates(cumulativeRadians, radians);
+                cumulativeRadians += radians;
+
+                var geometry = new PathGeometry { Coords = coords, OuterRadius = Radius, InnerRadius = Radius * (1 - donutRatio), Data = data };
+
+                var pathData = BuildSvgPath(geometry);
+                var midAngle = cumulativeRadians - (radians / 2);
+                var (x, y) = GetLabelPosition(midAngle, Radius, donutRatio, data);
+
+                _paths.Add(new SvgPath
                 {
-                    Index = counter,
-                    CX = 21,
-                    CY = 21,
-                    Radius = 100 / (2 * Math.PI),
-                    StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
-                    StrokeDashOffset = offset
-                };
-                _circles.Add(circle);
-
-                var labels = counter < InputLabels.Length ? InputLabels[counter] : "";
-                var legend = new SvgLegend()
-                {
-                    Index = counter,
-                    Labels = labels,
-                    Data = data.ToString()
-                };
-                _legends.Add(legend);
-
-                counter += 1;
+                    Index = i,
+                    Data = pathData,
+                    LabelX = x,
+                    LabelY = y,
+                    LabelXValue = ChartOptions.ShowAsPercentage
+                        ? $"{Math.Round(data * 100, 1).ToInvariantString()}%"
+                        : actualValue.ToString(null, CultureInfo.InvariantCulture),
+                    LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
+                });
             }
+
+            BuildLegends(chartLabels);
+        }
+
+        private static SegmentCoordinates GetSegmentCoordinates(double startRadians, double segmentRadians)
+        {
+            var half = segmentRadians / 2;
+            return new SegmentCoordinates
+            {
+                StartX = Math.Cos(startRadians),
+                StartY = Math.Sin(startRadians),
+                MidX = Math.Cos(startRadians + half),
+                MidY = Math.Sin(startRadians + half),
+                EndX = Math.Cos(startRadians + segmentRadians),
+                EndY = Math.Sin(startRadians + segmentRadians)
+            };
+        }
+
+        private static string BuildSvgPath(PathGeometry g)
+        {
+            var sb = new StringBuilder();
+            var arcFlag = g.Data > 0.5 ? 1 : 0;
+
+            static double ToR(double value, double radius) => value * radius;
+
+            sb.Append($"M {ToS(ToR(g.Coords.StartX, g.OuterRadius))} {ToS(ToR(g.Coords.StartY, g.OuterRadius))} ");
+
+            if (g.Data >= 1.0)
+                sb.Append($"A {ToS(g.OuterRadius)} {ToS(g.OuterRadius)} 0 {arcFlag} 1 {ToS(ToR(g.Coords.MidX, g.OuterRadius))} {ToS(ToR(g.Coords.MidY, g.OuterRadius))} ");
+
+            sb.Append($"A {ToS(g.OuterRadius)} {ToS(g.OuterRadius)} 0 {arcFlag} 1 {ToS(ToR(g.Coords.EndX, g.OuterRadius))} {ToS(ToR(g.Coords.EndY, g.OuterRadius))} ");
+            sb.Append($"L {ToS(ToR(g.Coords.EndX, g.InnerRadius))} {ToS(ToR(g.Coords.EndY, g.InnerRadius))} ");
+
+            if (g.Data >= 1.0)
+                sb.Append($"A {ToS(g.InnerRadius)} {ToS(g.InnerRadius)} 0 {arcFlag} 0 {ToS(ToR(g.Coords.MidX, g.InnerRadius))} {ToS(ToR(g.Coords.MidY, g.InnerRadius))} ");
+
+            sb.Append($"A {ToS(g.InnerRadius)} {ToS(g.InnerRadius)} 0 {arcFlag} 0 {ToS(ToR(g.Coords.StartX, g.InnerRadius))} {ToS(ToR(g.Coords.StartY, g.InnerRadius))} Z");
+
+            return sb.ToString();
+        }
+
+        private static (double X, double Y) GetLabelPosition(double angle, double outerRadius, double donutRatio, double data)
+        {
+            if (donutRatio >= 1 && data >= 1.0)
+                return (0, 0);
+
+            var radius = outerRadius * (1 - (donutRatio / 2));
+            return (Math.Cos(angle) * radius, Math.Sin(angle) * radius);
+        }
+
+        private readonly struct PathGeometry
+        {
+            public SegmentCoordinates Coords { get; init; }
+            public double OuterRadius { get; init; }
+            public double InnerRadius { get; init; }
+            public double Data { get; init; }
         }
     }
 }

@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Represents the toolbar content of a <see cref="MudPicker{T}"/>.
+/// The toolbar content of a <see cref="MudPicker{T}"/>.
 /// </summary>
 /// <seealso cref="MudPicker{T}" />
 /// <seealso cref="MudPickerContent" />
@@ -12,7 +16,7 @@ public partial class MudPickerToolbar : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-picker-toolbar")
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+            .AddClass($"mud-theme-{Color.ToStringFast(true)}")
             .AddClass("mud-picker-toolbar-landscape",
                 Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
             .AddClass(Class)
@@ -54,5 +58,5 @@ public partial class MudPickerToolbar : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }

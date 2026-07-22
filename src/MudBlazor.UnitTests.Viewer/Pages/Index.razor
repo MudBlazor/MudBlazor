@@ -1,127 +1,656 @@
 ﻿@page "/"
+@page "/viewer/{*Path}"
 @using System.Reflection
-@using System.Threading
+@inject NavigationManager NavManager
+@inject ISearchService SearchService
+@implements IDisposable
+
+<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
 
 <MudLayout>
-    <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DocsDrawerToggle" />
-        <MudText Typo="Typo.h6">@selectedType?.Name</MudText>
-        <MudSpacer />
-        <MudAutocomplete @ref="autocomplete" T="Type" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search">
-            <ItemTemplate Context="result">
-                <MudText>@result.Name</MudText> <MudText Typo="Typo.body2">@getDescription(result)</MudText>
-            </ItemTemplate>
-        </MudAutocomplete>
-        <MudSpacer />
-    </MudAppBar>
-    <MudDrawer Open="@drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Sm">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">Test Components</MudText>
-        </MudDrawerHeader>
-        <MudNavMenu>
-            @foreach (var type in availableComponentTypes)
-            {
-                <MudNavLink OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
-            }
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent Class="mt-4">
+    <MudRTLProvider RightToLeft="_rightToLeft">
+        @* chrome=none hides the viewer UI (drawer + header) while keeping theme/RTL/popover/dialog/snackbar intact. *@
+        @if (!_chromeless)
+        {
+        <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Never" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
+            <div class="test-viewer-drawer-inner">
+                <div class="test-viewer-sidebar-header">
+                    <MudText Class="test-viewer-title">MudBlazor Test Viewer</MudText>
+                    <MudSpacer />
+                    <MudTooltip Text="@ThemeLabel">
+                        <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
+                    </MudTooltip>
+                    <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="ToggleRtl" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
+                    </MudTooltip>
+                </div>
 
-        <MudText Style="padding-left: 24px; margin-left: 24px;">
-            @getDescription(selectedType)
-        </MudText>
-        <MudPaper Elevation="5" Style="padding: 24px; margin: 24px;">
-            @if (@selectedType == null)
-            {
-                <span>Select a component</span>
-            }
-            else
-            {
-                @* Prevent double popovers! *@
-                <CascadingValue Name="UsePopoverProvider" Value="false"  IsFixed="true">
-                    @TestComponent()
-                </CascadingValue>
-            }
-        </MudPaper>
+                <div class="test-viewer-search">
+                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="150"
+                                  Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
+                </div>
 
-    </MudMainContent>
+                <div class="test-viewer-results">
+                    <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
+                        <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true"
+                                   Class="@GetEntryClass(entry)" OnClick="() => Select(entry.Type)">
+                            <div class="test-viewer-result-row">
+                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.RouteKey</MudText>
+                            </div>
+                        </MudButton>
+                    </MudVirtualize>
+
+                    @if (_remainingResultsCount > 0)
+                    {
+                        <div class="test-viewer-show-all">
+                            <MudLink Href="#" OnClick="ShowAllResults" Typo="Typo.caption">
+                                Show all results (@_remainingResultsCount more)
+                            </MudLink>
+                        </div>
+                    }
+                </div>
+            </div>
+        </MudDrawer>
+        }
+
+        <MudMainContent Class="test-viewer-main">
+            @if (!_chromeless)
+            {
+            <div class="test-viewer-header">
+                @if (_selectedType is not null)
+                {
+                    <div class="test-viewer-title-row">
+                        <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary test-viewer-path">@GetFilePathForDisplay(_selectedType)</MudText>
+                    </div>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@GetDescriptionForDisplay(_selectedType)</MudText>
+                }
+                else if (_notFoundComponent is not null)
+                {
+                    <MudText Typo="Typo.h6">Component not found</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Nothing is registered for that path or name.</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">No test selected</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
+                }
+            </div>
+            }
+
+            <div class="test-viewer-surface" data-viewer-theme="@(_isDarkMode ? "dark" : "light")" data-viewer-dir="@(_rightToLeft ? "rtl" : "ltr")" data-viewer-chrome="@(_chromeless ? "none" : "full")">
+                @if (_selectedType is not null)
+                {
+                    @* Prevent double popovers! *@
+                    <CascadingValue Name="UsePopoverProvider" Value="false" IsFixed="true">
+                        @* Keyed by the selected type so switching components starts a fresh, non-errored boundary. *@
+                        <ErrorBoundary @key="_selectedType">
+                            <ChildContent>
+                                @* Positive readiness marker so tooling can wait on a mounted, non-errored component. *@
+                                <div class="test-viewer-ready" data-viewer-state="ready">
+                                    @TestComponent()
+                                </div>
+                            </ChildContent>
+                            <ErrorContent Context="exception">
+                                <div class="test-viewer-error" data-viewer-state="error">
+                                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                                        @GetTitleForDisplay(_selectedType) threw @exception.GetType().Name
+                                    </MudAlert>
+                                    <pre class="test-viewer-error-detail">@exception.ToString()</pre>
+                                </div>
+                            </ErrorContent>
+                        </ErrorBoundary>
+                    </CascadingValue>
+                }
+                else if (_notFoundComponent is not null)
+                {
+                    <div class="test-viewer-notfound" data-viewer-state="not-found">
+                        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                            No test component matches <code>@_notFoundComponent</code>.
+                        </MudAlert>
+                        @{
+                            var suggestions = GetSuggestions(_notFoundComponent);
+                        }
+                        @if (suggestions.Count > 0)
+                        {
+                            <MudText Typo="Typo.body2" Class="mud-text-secondary">Did you mean:</MudText>
+                            <div class="test-viewer-notfound-suggestions">
+                                @foreach (var suggestion in suggestions)
+                                {
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" Class="test-viewer-entry"
+                                               OnClick="() => Select(suggestion.Type)">
+                                        @suggestion.RouteKey
+                                    </MudButton>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </MudMainContent>
+    </MudRTLProvider>
 </MudLayout>
 <style>
-    .docs-search-bar .mud-input{height:42px;}
-    .docs-search-bar.mud-input-control{background-color:rgba(255,255,255,.15);margin-bottom:5px;height:42px;border-radius:var(--mud-default-borderradius);}
-    .docs-search-bar.mud-input-control .mud-input-root,.docs-search-bar.mud-input-control .mud-icon-default{color:#fafafa;}
-    .docs-search-bar .mud-input.mud-input-outlined .mud-input-outlined-border{border:none;border-radius:var(--mud-default-borderradius);}
+    .test-viewer-drawer {
+        overflow: hidden;
+    }
+
+    .test-viewer-drawer-inner {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-top: 4px;
+    }
+
+    .test-viewer-sidebar-header {
+        padding: 0 16px 0 16px;
+        display: flex;
+        align-items: center;
+    }
+
+    .test-viewer-results {
+        flex: 1;
+        overflow: auto;
+        scrollbar-width: none;
+    }
+
+    .test-viewer-results::-webkit-scrollbar {
+        display: none;
+    }
+
+    .test-viewer-result-row {
+        width: 100%;
+        display: flex;
+        align-items: start;
+        text-align: start;
+    }
+
+    .test-viewer-entry-name {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .test-viewer-show-all {
+        padding: 10px 12px 6px 12px;
+    }
+
+    .test-viewer-entry {
+        justify-content: flex-start;
+        border-radius: var(--mud-default-borderradius);
+        text-transform: none;
+    }
+
+    .test-viewer-entry:hover {
+        background: var(--mud-palette-action-default-hover);
+    }
+
+    .test-viewer-entry.test-viewer-entry-selected {
+        background: var(--mud-palette-primary-hover);
+        color: var(--mud-palette-primary);
+    }
+
+    .test-viewer-main {
+        padding: 0 16px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        height: 100vh;
+    }
+
+    .test-viewer-header {
+        padding: 16px 4px 0 4px;
+    }
+
+    .test-viewer-surface {
+        flex: 1;
+        overflow: auto;
+    }
+
+    .test-viewer-ready {
+        display: contents;
+    }
+
+    .test-viewer-title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+    }
+
+    .test-viewer-path {
+        font-family: monospace;
+        opacity: 0.6;
+    }
+
+    .test-viewer-error,
+    .test-viewer-notfound {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 900px;
+    }
+
+    .test-viewer-error-detail {
+        margin: 0;
+        padding: 12px;
+        border-radius: var(--mud-default-borderradius);
+        background: var(--mud-palette-background-grey);
+        color: var(--mud-palette-text-primary);
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.8rem;
+    }
+
+    .test-viewer-notfound-suggestions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 </style>
 
 @code {
-    bool drawerOpen = true;
-    Type selectedType = null;
-    Type[] availableComponentTypes = new Type[0];
-    MudAutocomplete<Type> autocomplete;
 
-    void DocsDrawerToggle()
+    // Backs the "/viewer/{*Path}" catch-all route. Parsed from the URI in ParseUrl rather than read directly.
+    [Parameter]
+    public string? Path { get; set; }
+
+    private bool _rightToLeft;
+    private Type? _selectedType;
+    private string? _notFoundComponent;
+    private bool _drawerOpen = true;
+    private string _searchText = string.Empty;
+    private TestEntry[] _entries = [];
+    private TestEntry[] _filteredEntries = [];
+    private Type[] _availableComponentTypes = [];
+    private Dictionary<Type, TestEntry> _entryByType = [];
+    private Dictionary<string, Type> _typeByRouteKey = new(StringComparer.OrdinalIgnoreCase);
+    private int _remainingResultsCount;
+    private bool _showAllResults;
+    private CancellationTokenSource? _searchCts;
+    private bool _isDarkMode;
+    private bool _chromeless;
+    private readonly MudTheme _customTheme = new()
     {
-        drawerOpen = !drawerOpen;
+        LayoutProperties = new LayoutProperties
+        {
+            DrawerWidthLeft = "300px",
+            DrawerWidthRight = "300px"
+        }
+    };
+
+    private void ToggleTheme()
+    {
+        _isDarkMode = !_isDarkMode;
+        UpdateUrl(replace: true);
+    }
+
+    private void ToggleRtl()
+    {
+        _rightToLeft = !_rightToLeft;
+        UpdateUrl(replace: true);
+    }
+
+    private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
+
+    private string ThemeLabel => _isDarkMode ? "Light mode" : "Dark mode";
+
+    private string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            value ??= string.Empty;
+
+            if (string.Equals(_searchText, value, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _searchText = value;
+            _showAllResults = false;
+            StartSearch();
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        availableComponentTypes = getTestComponentTypes().ToArray();
+
+        _availableComponentTypes = GetTestComponentTypes().ToArray();
+
+        // Everything discovered is routable...
+        _typeByRouteKey = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        foreach (var type in _availableComponentTypes)
+        {
+            // Route keys are unique by construction (one file per path); TryAdd guards against any future clash.
+            _typeByRouteKey.TryAdd(RouteKey(type), type);
+        }
+
+        // ...but [ViewerHidden] helpers are kept out of the sidebar listing.
+        _entries = _availableComponentTypes
+            .Where(type => !type.IsDefined(typeof(ViewerHiddenAttribute), inherit: false))
+            .Select(CreateEntry)
+            .OrderBy(x => x.Name)
+            .ToArray();
+
+        _entryByType = _entries.ToDictionary(x => x.Type, x => x);
+
+        StartSearch();
+
+        ParseUrl();
+        NavManager.LocationChanged += HandleLocationChanged;
     }
 
-    RenderFragment TestComponent() => builder =>
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        builder.OpenComponent(0, selectedType);
+        ParseUrl();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
+    }
+
+    private void ParseUrl()
+    {
+        var uri = new Uri(NavManager.Uri);
+
+        // Viewer/harness state lives in the query string; component identity is the path "/viewer/<route-key>".
+        _isDarkMode = string.Equals(GetQueryValue(uri.Query, "theme"), "dark", StringComparison.OrdinalIgnoreCase);
+        _rightToLeft = string.Equals(GetQueryValue(uri.Query, "dir"), "rtl", StringComparison.OrdinalIgnoreCase);
+        _chromeless = string.Equals(GetQueryValue(uri.Query, "chrome"), "none", StringComparison.OrdinalIgnoreCase);
+
+        var routeKey = ExtractRouteKey(uri.AbsolutePath);
+
+        if (string.IsNullOrEmpty(routeKey))
+        {
+            // Landing page ("/"): keep any existing selection, clear a stale not-found.
+            _notFoundComponent = null;
+            return;
+        }
+
+        if (_typeByRouteKey.TryGetValue(routeKey, out var resolved))
+        {
+            _selectedType = resolved;
+            _notFoundComponent = null;
+        }
+        else
+        {
+            // Addressed explicitly but nothing matches: show a distinct error, not the empty state.
+            _selectedType = null;
+            _notFoundComponent = routeKey;
+        }
+    }
+
+    private static string? ExtractRouteKey(string absolutePath)
+    {
+        const string prefix = "/viewer/";
+        if (!absolutePath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var key = absolutePath.Substring(prefix.Length).Trim('/');
+        return string.IsNullOrEmpty(key) ? null : Uri.UnescapeDataString(key);
+    }
+
+    private static string? GetQueryValue(string query, string key)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
+            return null;
+        }
+
+        if (query.StartsWith('?'))
+        {
+            query = query.Substring(1);
+        }
+
+        foreach (var param in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = param.Split('=', 2);
+            if (parts.Length == 2 && string.Equals(parts[0], key, StringComparison.OrdinalIgnoreCase))
+            {
+                return Uri.UnescapeDataString(parts[1]);
+            }
+        }
+
+        return null;
+    }
+
+    private void Select(Type componentType)
+    {
+        if (componentType is null)
+        {
+            return;
+        }
+
+        _selectedType = componentType;
+        _notFoundComponent = null;
+        // Selecting a component pushes history; current visual params (theme/dir/chrome) are preserved.
+        UpdateUrl(replace: false);
+    }
+
+    // Canonical identity in the path ("/viewer/<route-key>"); viewer/harness state stays in the query.
+    private string BuildViewerUrl()
+    {
+        var key = _selectedType is not null ? RouteKey(_selectedType) : _notFoundComponent;
+        var path = string.IsNullOrEmpty(key) ? "/" : $"/viewer/{EscapeRouteKey(key)}";
+
+        var parameters = new List<string>();
+
+        if (_isDarkMode)
+        {
+            parameters.Add("theme=dark");
+        }
+
+        if (_rightToLeft)
+        {
+            parameters.Add("dir=rtl");
+        }
+
+        if (_chromeless)
+        {
+            parameters.Add("chrome=none");
+        }
+
+        return parameters.Count == 0 ? path : $"{path}?{string.Join('&', parameters)}";
+    }
+
+    // Route key relative to TestComponents, e.g. "Menu/MenuTest1" (unique per file).
+    private static string RouteKey(Type type)
+    {
+        var ns = type.Namespace ?? string.Empty;
+        const string marker = "TestComponents.";
+        var index = ns.IndexOf(marker, StringComparison.Ordinal);
+        var folder = index >= 0 ? ns[(index + marker.Length)..].Replace('.', '/') : string.Empty;
+        return string.IsNullOrEmpty(folder) ? type.Name : $"{folder}/{type.Name}";
+    }
+
+    // Escape each segment (so a generic-arity backtick survives the round trip) while keeping the slashes.
+    private static string EscapeRouteKey(string key)
+        => string.Join('/', key.Split('/').Select(Uri.EscapeDataString));
+
+    private void UpdateUrl(bool replace)
+    {
+        // Toggles use replace:true so dark/RTL clicks do not spam browser history.
+        NavManager.NavigateTo(BuildViewerUrl(), forceLoad: false, replace: replace);
+    }
+
+    private RenderFragment TestComponent() => builder =>
+    {
+        if (_selectedType is null)
+        {
+            return;
+        }
+
+        builder.OpenComponent(0, _selectedType);
         builder.CloseComponent();
     };
 
-    IEnumerable<Type> getTestComponentTypes()
+    private static IEnumerable<Type> GetTestComponentTypes()
     {
-        foreach (var type in typeof(Program).Assembly.GetTypes().OrderBy(x => x.Name))
+        // Discover by location: anything under a TestComponents namespace. A few legacy components
+        // override @namespace away from their folder, so also keep the historical "name contains Test".
+        var types = typeof(Program).Assembly.GetTypes()
+            .Where(type => type.Namespace?.Contains("TestComponents", StringComparison.Ordinal) == true
+                           || type.Name.Contains("Test"))
+            .Where(type => !type.Name.StartsWith("<"))
+            .Where(type => type.GetInterfaces().Contains(typeof(IComponent)))
+            .OrderBy(type => type.Name);
+
+        foreach (var type in types)
         {
-            if (!type.Name.Contains("Test"))
-                continue;
-            if (type.Name.StartsWith("<"))
-                continue;
-            if (!type.GetInterfaces().Contains(typeof(IComponent)))
-                continue;
             yield return type;
         }
-        //foreach (var type in typeof(MudBlazor.Docs.Components.DocsPage).Assembly.GetTypes())
-        //{
-        //    if (!type.Name.EndsWith("Example"))
-        //        continue;
-        //    if (type.Name.StartsWith("<"))
-        //        continue;
-        //    yield return type;
-        //}
     }
 
-    private string getDescription(Type type)
+
+    private TestEntry CreateEntry(Type type)
     {
-        if (type == null)
-            return "";
+        var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
+        var description = GetDescriptionOrNull(type);
+        var filePath = GetFilePath(type);
+        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath, RouteKey(type));
+    }
+
+    private static string GetFilePath(Type type)
+    {
+        var ns = type.Namespace ?? string.Empty;
+        var match = "MudBlazor.UnitTests.";
+        var path = ns.StartsWith(match) ? ns.Substring(match.Length).Replace('.', '/') : ns.Replace('.', '/');
+        return $"{path}/{type.Name}.razor";
+    }
+
+    private static string GetDisplayName(string typeName)
+    {
+        return typeName.EndsWith("Test", StringComparison.Ordinal)
+            ? typeName.Substring(0, typeName.Length - 4)
+            : typeName;
+    }
+
+    private static string? GetDescriptionOrNull(Type type)
+    {
         var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
-        if (field == null || field.FieldType != typeof(string))
-            return "This test component does not have a description. Field \"public static string __description__\" not found in this component.";
-        return (string)field.GetValue(null);
+        if (field is null || field.FieldType != typeof(string))
+        {
+            return null;
+        }
+
+        return (string?)field.GetValue(null);
     }
 
-    private Task<IEnumerable<Type>> Search(string text, CancellationToken token)
+    private string GetDescriptionForDisplay(Type type)
     {
-        if (string.IsNullOrWhiteSpace(text))
-            return Task.FromResult<IEnumerable<Type>>(new Type[0]);
+        if (_entryByType.TryGetValue(type, out var entry) && !string.IsNullOrWhiteSpace(entry.Description))
+        {
+            return entry.Description;
+        }
 
-        return Task.FromResult<IEnumerable<Type>>(
-            availableComponentTypes.Where(type => type.Name.Contains(text, StringComparison.OrdinalIgnoreCase))
-        );
+        return "No description provided (add public static string __description__).";
     }
 
-    private async void OnSearchResult(Type entry)
+    private string GetFilePathForDisplay(Type type)
     {
-        selectedType = entry;
-        await Task.Delay(1000);
-        await autocomplete.ClearAsync();
+        if (_entryByType.TryGetValue(type, out var entry))
+        {
+            return entry.FilePath;
+        }
+
+        return string.Empty;
     }
+
+    private string GetTitleForDisplay(Type type)
+    {
+        if (_entryByType.TryGetValue(type, out var entry))
+        {
+            return entry.DisplayName;
+        }
+
+        return GetDisplayName(type.Name);
+    }
+
+    private IReadOnlyList<TestEntry> GetSuggestions(string requested)
+    {
+        if (_entries.Length == 0 || string.IsNullOrWhiteSpace(requested))
+        {
+            return [];
+        }
+
+        return SearchService
+            .Search(_entries, e => new[] { e.Name, e.RouteKey }, requested)
+            .Take(5)
+            .ToList();
+    }
+
+    private void StartSearch()
+    {
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
+        _searchCts = new CancellationTokenSource();
+        _ = RecomputeFilteredEntriesAsync(_searchCts.Token);
+    }
+
+    private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
+    {
+        try
+        {
+            _remainingResultsCount = 0;
+
+            if (_entries.Length == 0)
+            {
+                _filteredEntries = [];
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            token.ThrowIfCancellationRequested();
+
+            var query = _searchText.Trim();
+
+            if (query.Length == 0)
+            {
+                _filteredEntries = _entries;
+                await InvokeAsync(StateHasChanged);
+                return;
+            }
+
+            await Task.Yield();
+            token.ThrowIfCancellationRequested();
+
+            const int defaultLimit = 20;
+            var results = SearchService.Search(_entries, e => new[] { e.Name, e.RouteKey }, query);
+            _filteredEntries = _showAllResults ? [.. results] : [.. results.Take(defaultLimit)];
+            _remainingResultsCount = _showAllResults ? 0 : Math.Max(0, results.Count - _filteredEntries.Length);
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore; newer search already started.
+        }
+    }
+
+    private void ShowAllResults(MouseEventArgs args)
+    {
+        _showAllResults = true;
+        StartSearch();
+    }
+
+    private string GetEntryClass(TestEntry entry)
+    {
+        if (_selectedType == entry.Type)
+        {
+            return "test-viewer-entry test-viewer-entry-selected";
+        }
+
+        return "test-viewer-entry";
+    }
+
+    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath, string RouteKey);
 }

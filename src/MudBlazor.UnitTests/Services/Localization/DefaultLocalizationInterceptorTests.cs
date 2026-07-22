@@ -1,11 +1,8 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using FluentAssertions;
+﻿using System.Globalization;
+using AwesomeAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using MudBlazor.Docs.Extensions;
 using MudBlazor.Resources;
 using NUnit.Framework;
 
@@ -22,16 +19,16 @@ public class DefaultLocalizationInterceptorTests
         // Because we didn't provide custom MudLocalizer, so it will fall back.
 
         // Arrange
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null)
         {
             IgnoreDefaultEnglish = true
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
         var resourceManager = LanguageResource.ResourceManager;
         var resourceSet = resourceManager
             .GetResourceSet(CultureInfo.InvariantCulture, true, true)
             .ToEnumerable()
-            .ToDictionary(x => x.Key.ToString()!, x => x.Value?.ToString(), StringComparer.Ordinal);
+            .ToDictionary(x => (string)x.Key, x => x.Value?.ToString(), StringComparer.Ordinal);
 
         // Act & Result
         foreach (var resource in resourceSet)
@@ -51,15 +48,15 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        mudLocalizer.Setup(mock => mock["MudDataGrid_IsEmpty"]).Returns(new LocalizedString("MudDataGrid_IsEmpty", "XXX", resourceNotFound: false));
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = false
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
-        var result = internalMudLocalizer["MudDataGrid_IsEmpty"];
+        var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
 
         // Assert
         result.Value.Should().Be(LanguageResource.ResourceManager.GetString(LanguageResource.MudDataGrid_IsEmpty), "We default to english despite MudLocalizer, the value should be the one from the LanguageResource.");
@@ -73,15 +70,15 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        mudLocalizer.Setup(mock => mock["MudDataGrid_IsEmpty"]).Returns(new LocalizedString("MudDataGrid_IsEmpty", "XXX", resourceNotFound: false));
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = false
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
-        var result = internalMudLocalizer["MudDataGrid_IsEmpty"];
+        var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
 
         // Assert
         result.Value.Should().Be("XXX", "The UICulture is not English therefore the value is the one from the Mock.");
@@ -99,11 +96,11 @@ public class DefaultLocalizationInterceptorTests
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
         mudLocalizer.Setup(mock => mock["TemplateString"]).Returns(new LocalizedString("TemplateString", "Bonjour {0}!", resourceNotFound: false));
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
         var result = internalMudLocalizer["TemplateString", "le monde"];
@@ -124,11 +121,11 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
 
@@ -151,11 +148,11 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
         var result = internalMudLocalizer[LanguageResource.MudColorPicker_ModeSwitch];
@@ -187,6 +184,47 @@ public class DefaultLocalizationInterceptorTests
         // Assert
         var expectedValue = GetResourceString(LanguageResource.MudBaseDatePicker_PrevMonth, "2024");
         result.Value.Should().Be(expectedValue, "The value should be the template string with the provided parameter.");
+    }
+
+    [Test]
+    [NonParallelizable]
+    [SetUICulture("sv-SE")]
+    public void DefaultEnglishLookup_NonEnglishUICulture_DoesNotProbeSatelliteAssembly()
+    {
+        // Regression test for #13461. Reading the built-in English resources under a non-English UI culture must not make the ResourceManager probe for a (non-existent) MudBlazor.resources satellite assembly.
+        // On the Blazor WebAssembly runtime each probe throws a first-chance FileNotFoundException; on the runtime used by the test host the same probe surfaces as an AssemblyResolve request.
+        // A value-only assertion is not enough: the English fallback resolves correctly either way, so the test asserts that the probe never happens.
+
+        // Arrange
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
+        var satelliteProbes = 0;
+        ResolveEventHandler handler = (_, args) =>
+        {
+            if (args.Name.StartsWith("MudBlazor.resources", StringComparison.OrdinalIgnoreCase))
+            {
+                Interlocked.Increment(ref satelliteProbes);
+            }
+
+            return null;
+        };
+        AppDomain.CurrentDomain.AssemblyResolve += handler;
+
+        // Act
+        LocalizedString result;
+        try
+        {
+            result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
+        }
+        finally
+        {
+            AppDomain.CurrentDomain.AssemblyResolve -= handler;
+        }
+
+        // Assert
+        satelliteProbes.Should().Be(0, "the invariant-culture lookup must not probe for a culture-specific satellite assembly");
+        result.ResourceNotFound.Should().BeFalse();
+        result.Value.Should().Be("Clear", "the built-in English fallback is still returned under a non-English UI culture");
     }
 
     private static string GetResourceString(string key, params object[] parameters)

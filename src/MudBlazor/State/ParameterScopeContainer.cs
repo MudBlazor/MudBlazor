@@ -2,21 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-#if NET8_0_OR_GREATER
 using System.Collections.Frozen;
-#endif
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.State.Comparer;
+using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;
 
-#nullable enable
 /// <summary>
 /// Represents a collection of registered parameters.
 /// This class is part of MudBlazor's ParameterState framework.
@@ -27,12 +20,10 @@ namespace MudBlazor.State;
 internal class ParameterScopeContainer : IParameterScopeContainer
 {
     private readonly IParameterStatesReader _parameterStatesReader;
-
-#if NET8_0_OR_GREATER
     private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _parameters;
-#else
-    private readonly Lazy<Dictionary<string, IParameterComponentLifeCycle>> _parameters;
-#endif
+
+    // Cache handler count for fast path optimization
+    private int _handlerCount = -1;  // -1 means not computed yet
 
     /// <inheritdoc/>
     public bool IsLocked { get; private set; }
@@ -70,34 +61,21 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     public ParameterScopeContainer(IParameterStatesReader parameterStatesReader)
     {
         _parameterStatesReader = parameterStatesReader;
-#if NET8_0_OR_GREATER
         _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
-#else
-        _parameters = new Lazy<Dictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
-#endif
     }
 
-#if NET8_0_OR_GREATER
     private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
     {
         IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
-        var dictionary = parameters.ToFrozenDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
+        var dictionary = parameters.ToFrozenDictionary(
+            parameter => parameter.Metadata.ParameterName,
+            parameter => parameter,
+            StringComparer.Ordinal);  // Parameter names are case-sensitive; use Ordinal for best performance
         _parameterStatesReader.Complete();
 
         return dictionary;
     }
-#else
-    private Dictionary<string, IParameterComponentLifeCycle> ParametersFactory()
-    {
-        IsLocked = true;
-        var parameters = _parameterStatesReader.ReadParameters();
-        var dictionary = parameters.ToDictionary(parameter => parameter.Metadata.ParameterName, parameter => parameter);
-        _parameterStatesReader.Complete();
-
-        return dictionary;
-    }
-#endif
 
     /// <summary>
     /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
@@ -135,30 +113,71 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// </summary>
     /// <param name="baseSetParametersAsync">A func to call the base class' <see cref="ComponentBase.SetParametersAsync"/>.</param>
     /// <param name="parameters">The ParameterView coming from Blazor's <see cref="ComponentBase.SetParametersAsync"/>.</param>
-    public async Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    public Task SetParametersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
     {
-#if NET8_0_OR_GREATER
-        var parametersHandlerShouldFire = _parameters.Value.Values
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .ToFrozenSet(ParameterHandlerUniquenessComparer.Default);
-#else
-        var parametersHandlerShouldFire = _parameters.Value.Values
-            .Where(parameter => parameter.HasHandler && parameter.HasParameterChanged(parameters))
-            .ToHashSet(ParameterHandlerUniquenessComparer.Default);
-#endif
-
-        await baseSetParametersAsync(parameters);
-
-        foreach (var parameterHandlerShouldFire in parametersHandlerShouldFire)
+        // Fast path: if no parameters have change handlers, skip handler detection entirely
+        if (GetHandlerCount() == 0)
         {
-            await parameterHandlerShouldFire.ParameterChangeHandleAsync();
+            return baseSetParametersAsync(parameters);
         }
+
+        // IMPORTANT: Do not inline the async implementation here.
+        // Avoid async state machine allocation on the common path by returning the Task directly.
+        // The async state machine is only used when parameter change handlers must be invoked.
+        return SetParametersWithHandlersAsync(baseSetParametersAsync, parameters);
     }
 
     /// <inheritdoc/>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
         return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
+    }
+
+    private async Task SetParametersWithHandlersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
+    {
+        var handlerCollection = CollectChangedHandlers(parameters);
+
+        await baseSetParametersAsync(parameters).ConfigureAwait(false);
+        await ParameterChangeHandlerUtility.InvokeHandlersAsync(handlerCollection).ConfigureAwait(false);
+    }
+
+    private ParameterChangeHandlerUtility.HandlerCollection? CollectChangedHandlers(ParameterView parameters)
+    {
+        List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
+        List<ParameterStateValue>? parameterStateValues = null;
+
+        foreach (var parameter in _parameters.Value.Values)
+        {
+            if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
+            {
+                parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
+                parameterStateValues ??= new List<ParameterStateValue>();
+                ParameterChangeHandlerUtility.AddSnapshotIfUnique(parametersHandlerShouldFire, parameter.CreateInvocationSnapshot(), parameterStateValues);
+            }
+        }
+
+        return ParameterChangeHandlerUtility.CreateHandlerCollection(parametersHandlerShouldFire, parameterStateValues, parameters);
+    }
+
+    /// <summary>
+    /// Gets the total count of parameters with change handlers.
+    /// This is computed once and cached for the fast path optimization.
+    /// </summary>
+    private int GetHandlerCount()
+    {
+        if (_handlerCount == -1)
+        {
+            _handlerCount = 0;
+            foreach (var parameter in this)
+            {
+                if (parameter.HasHandler)
+                {
+                    _handlerCount++;
+                }
+            }
+        }
+
+        return _handlerCount;
     }
 
     /// <inheritdoc/>
@@ -179,7 +198,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// <summary>
     /// Represents an enumerable reader for parameter states.
     /// </summary>
-    private class ParameterScopeContainerReadonlyEnumerable : IParameterStatesReader
+    private sealed class ParameterScopeContainerReadonlyEnumerable : IParameterStatesReader
     {
         private readonly IEnumerable<IParameterComponentLifeCycle> _parameters;
 

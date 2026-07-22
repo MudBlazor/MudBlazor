@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@using System.Linq.Expressions
+﻿@using System.Linq.Expressions
 
 <MudDataGrid @ref="_gridRef" Items="_items">
     <Columns>
@@ -11,12 +10,11 @@
 </MudDataGrid>
 
 @code {
-    public record Model(string Name, int? Age, Severity? Status);
-    public record ColumnInfo(Expression<Func<Model, object>> Property, string Title);
+    private MudDataGrid<Model> _gridRef = null!;
+    private readonly List<ColumnInfo> _columnInfos = [];
+    private readonly IEnumerable<Model> _items = new List<Model>();
 
-    private IEnumerable<Model> _items = new List<Model>();
-    private List<ColumnInfo> _columnInfos = [];
-    private MudDataGrid<Model> _gridRef;
+    public int GridRenderedColumnsCount => _gridRef.RenderedColumns.Count;
 
     public void AddColumns()
     {
@@ -29,8 +27,11 @@
     public void RemoveColumn()
     {
         var columnToRemove = _columnInfos.FirstOrDefault(x => x.Title == "Name");
-        _columnInfos.Remove(columnToRemove);
-        InvokeAsync(StateHasChanged);
+        if (columnToRemove is not null)
+        {
+            _columnInfos.Remove(columnToRemove);
+            InvokeAsync(StateHasChanged);
+        }
     }
 
     public void RemoveAllColumns()
@@ -39,5 +40,7 @@
         InvokeAsync(StateHasChanged);
     }
 
-    public int GridRenderedColumnsCount => _gridRef.RenderedColumns.Count;
+    public record Model(string Name, int? Age, Severity? Status);
+
+    public record ColumnInfo(Expression<Func<Model, object?>> Property, string Title);
 }

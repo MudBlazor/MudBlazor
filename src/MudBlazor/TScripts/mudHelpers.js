@@ -2,6 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+/**
+ * Cross-cutting DOM helpers shared by interop modules and chart sizing flows.
+ * Exposes small global utilities consumed by other TScripts and component interop calls.
+ */
+
+/**
+ * Returns tabbable descendants used by focus-management helpers.
+ */
 window.getTabbableElements = (element) => {
     return element.querySelectorAll(
         "a[href]:not([tabindex='-1'])," +
@@ -17,8 +25,12 @@ window.getTabbableElements = (element) => {
     );
 };
 
-//from: https://github.com/RemiBou/BrowserInterop
-window.serializeParameter = (data, spec) => {
+/**
+ * Serializes complex browser objects into interop-safe plain data.
+ */
+// Legacy serializer kept on `window` for JS interop payload normalization in browser-only call paths.
+// Source inspiration: https://github.com/RemiBou/BrowserInterop
+function serializeParameter(data, spec) {
     if (typeof data == "undefined" ||
         data === null) {
         return null;
@@ -29,12 +41,12 @@ window.serializeParameter = (data, spec) => {
         return data;
     }
 
-    let res = (Array.isArray(data)) ? [] : {};
+    const res = (Array.isArray(data)) ? [] : {};
     if (!spec) {
         spec = "*";
     }
 
-    for (let i in data) {
+    for (const i in data) {
         let currentMember = data[i];
 
         if (typeof currentMember === 'function' || currentMember === null) {
@@ -42,13 +54,13 @@ window.serializeParameter = (data, spec) => {
         }
 
         let currentMemberSpec;
-        if (spec != "*") {
+        if (spec === "*") {
+            currentMemberSpec = "*";
+        } else {
             currentMemberSpec = Array.isArray(data) ? spec : spec[i];
             if (!currentMemberSpec) {
                 continue;
             }
-        } else {
-            currentMemberSpec = "*"
         }
 
         if (typeof currentMember === 'object') {
@@ -57,24 +69,20 @@ window.serializeParameter = (data, spec) => {
                 for (let j = 0; j < currentMember.length; j++) {
                     const arrayItem = currentMember[j];
                     if (typeof arrayItem === 'object') {
-                        res[i].push(this.serializeParameter(arrayItem, currentMemberSpec));
+                        res[i].push(serializeParameter(arrayItem, currentMemberSpec));
                     } else {
                         res[i].push(arrayItem);
                     }
                 }
-            } else {
+            } else if (currentMember.length === 0) {
                 //the browser provides some member (like plugins) as hash with index as key, if length == 0 we shall not convert it
-                if (currentMember.length === 0) {
-                    res[i] = [];
-                } else {
-                    res[i] = this.serializeParameter(currentMember, currentMemberSpec);
-                }
+                res[i] = [];
+            } else {
+                res[i] = serializeParameter(currentMember, currentMemberSpec);
             }
-
-
         } else {
             // string, number or boolean
-            if (currentMember === Infinity) { //inifity is not serialized by JSON.stringify
+            if (currentMember === Infinity) { //infinity is not serialized by JSON.stringify
                 currentMember = "Infinity";
             }
             if (currentMember !== null) { //needed because the default json serializer in jsinterop serialize null values
@@ -84,4 +92,148 @@ window.serializeParameter = (data, spec) => {
     }
 
     return res;
+}
+
+window.serializeParameter = serializeParameter;
+
+/**
+ * Returns the SVG bounding box in a plain object for .NET interop.
+ */
+window.mudGetSvgBBox = (svgElement) => {
+    if (svgElement == null) return null;
+
+    const bbox = svgElement.getBBox();
+    return {
+        x: bbox.x,
+        y: bbox.y,
+        width: bbox.width,
+        height: bbox.height
+    };
+};
+
+/**
+ * Returns whether or not the element has a parent with a defined height,
+ * either via explicit height or constrained layout context.
+ */
+window.hasDefinedParentHeight = (element) => {
+    const parent = element?.parentElement;
+
+    if (!parent) return false;
+
+    const style = window.getComputedStyle(parent);
+
+    // Explicit height via inline or computed (not auto)
+    const hasExplicitHeight =
+        parent.style.height && parent.style.height !== 'auto';
+
+    // Check for flex/grid constraints
+    const isFlexOrGrid =
+        style.display.includes('flex') ||
+        style.display.includes('grid');
+
+    // Check if height is constrained via layout context
+    const hasConstrainedHeight =
+        style.height !== 'auto' &&
+        style.maxHeight !== 'none';
+
+    return hasExplicitHeight || (hasConstrainedHeight && isFlexOrGrid);
+};
+
+/**
+ * Observes element size changes and forwards throttled updates to a .NET callback.
+ * Automatically stops observing when the element is removed from the DOM.
+ */
+window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElementSizeChanged', debounceMillis = 200) => {
+    if (!element) return;
+
+    let lastNotifiedTime = 0;
+    let scheduledCall = null;
+
+    // Throttled notification function.
+    const throttledNotify = (width, height) => {
+        const timestamp = Date.now();
+        const timeSinceLast = timestamp - lastNotifiedTime;
+        if (timeSinceLast >= debounceMillis) {
+            // Enough time has passed, notify immediately.
+            lastNotifiedTime = timestamp;
+            try {
+                dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
+            }
+            catch (error) {
+                if (typeof window.logger === "function") {
+                    window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                }
+            }
+        } else {
+            // Otherwise, schedule a notification after the remaining delay.
+            if (scheduledCall !== null) {
+                clearTimeout(scheduledCall);
+            }
+            scheduledCall = setTimeout(() => {
+                lastNotifiedTime = Date.now();
+                scheduledCall = null;
+                try {
+                    dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
+                }
+                catch (error) {
+                    if (typeof window.logger === "function") {
+                        window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                    }
+                }
+            }, debounceMillis - timeSinceLast);
+        }
+    };
+
+    // Create the ResizeObserver to notify on size changes.
+    const resizeObserver = new ResizeObserver(entries => {
+        if (element.isConnected === false) { return; } // Element is no longer in the DOM.
+
+        // Use the last entry's contentRect (or element's client dimensions).
+        let width = element.clientWidth;
+        let height = element.clientHeight;
+        for (const entry of entries) {
+            width = entry.contentRect.width;
+            height = entry.contentRect.height;
+        }
+
+        // Convert the values to integers using Math.floor.
+        width = Math.floor(width);
+        height = Math.floor(height);
+
+        throttledNotify(width, height);
+    });
+    resizeObserver.observe(element);
+
+    // If the element has a parent, set up a MutationObserver to detect its removal.
+    let mutationObserver = null;
+    const parent = element.parentNode;
+    if (parent) {
+        mutationObserver = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                for (const removedNode of mutation.removedNodes) {
+                    if (removedNode === element) {
+                        cleanup();
+                    }
+                }
+            }
+        });
+        mutationObserver.observe(parent, { childList: true });
+    }
+
+    // Cleanup function disconnects both observers and clears any scheduled notifications.
+    function cleanup() {
+        resizeObserver.disconnect();
+        if (mutationObserver) {
+            mutationObserver.disconnect();
+        }
+        if (scheduledCall !== null) {
+            clearTimeout(scheduledCall);
+        }
+    }
+
+    // Return the current size of the element.
+    return {
+        width: element.clientWidth,
+        height: element.clientHeight
+    };
 };

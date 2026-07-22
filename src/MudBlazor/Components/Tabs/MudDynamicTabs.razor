@@ -1,12 +1,17 @@
 ﻿@namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Rendering
 @using Microsoft.AspNetCore.Components.CompilerServices
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 @inherits MudTabs
 
 @Render
 
-@code {
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
 
+@code {
     /// <inheritdoc />
     protected override void OnInitialized()
     {
@@ -29,7 +34,9 @@
                         <MudIconButton Icon="@CloseTabIcon"
                                        Class="@CloseIconClass"
                                        Style="@CloseIconStyle"
-                                       OnClick="() => CloseTab.InvokeAsync(context)"/>
+                                       OnClick="() => CloseTab.InvokeAsync(context)"
+                                       @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"
+                                       aria-label="@Localizer[LanguageResource.MudTabs_CloseTab]"/>
                     </MudTooltip>
                 }
                 else
@@ -37,7 +44,9 @@
                     <MudIconButton Icon="@CloseTabIcon"
                                    Class="@CloseIconClass"
                                    Style="@CloseIconStyle"
-                                   OnClick="() => CloseTab.InvokeAsync(context)"/>
+                                   OnClick="() => CloseTab.InvokeAsync(context)"
+                                   @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"
+                                   aria-label="@Localizer[LanguageResource.MudTabs_CloseTab]" />
                 }
             }
         </MudRender>;
@@ -47,12 +56,21 @@
             @if (!string.IsNullOrEmpty(AddIconToolTip))
             {
                 <MudTooltip Text="@AddIconToolTip">
-                    <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
+                    <MudIconButton Icon="@AddTabIcon" 
+                        Class="@AddIconClass" 
+                        Style="@AddIconStyle" 
+                        OnClick="@AddTab" 
+                        aria-label="@Localizer[LanguageResource.MudTabs_AddTab]" />
                 </MudTooltip>
             }
             else
             {
-                <MudIconButton Icon="@AddTabIcon" Class="@AddIconClass" Style="@AddIconStyle" OnClick="@AddTab"/>
+                <MudIconButton 
+                    Icon="@AddTabIcon" 
+                    Class="@AddIconClass" 
+                    Style="@AddIconStyle" 
+                    OnClick="@AddTab" 
+                    aria-label="@Localizer[LanguageResource.MudTabs_AddTab]" />
             }
         </MudRender>;
 }

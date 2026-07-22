@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿@using MudBlazor.Utilities
 
 <MudDialogProvider />
 
@@ -9,24 +9,17 @@
 </MudDataGrid>
 
 @code {
-    public MudBlazor.Utilities.FormFieldChangedEventArgs FormFieldChangedEventArgs { get; private set; }
-
-    private IEnumerable<Item>
-    _items = new List<Item>()
+    private readonly IEnumerable<Item> _items = new List<Item>
     {
         new Item("A"),
         new Item("B"),
         new Item("C")
     };
 
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
 
-    public class Item
+    public class Item(string name)
     {
-        public string Name { get; set; }
-
-        public Item(string name)
-        {
-            Name = name;
-        }
+        public string Name { get; set; } = name;
     }
 }

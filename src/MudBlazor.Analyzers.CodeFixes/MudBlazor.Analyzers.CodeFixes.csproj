@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- Workspaces transitively pins Microsoft.CodeAnalysis.CSharp to the same band as the analyzer
+         (MudBlazorRoslynShippedVersion in src/Directory.Build.props); both DLLs ship together in
+         analyzers/dotnet/cs and must stay on the same Roslyn band. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(MudBlazorRoslynShippedVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+  </ItemGroup>
+</Project>

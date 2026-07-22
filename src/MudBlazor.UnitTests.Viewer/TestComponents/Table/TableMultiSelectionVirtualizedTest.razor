@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable MultiSelection="true"
-          Items="Items" Height="350px"
+﻿<MudTable MultiSelection="true"
+          Items="_items" Height="350px"
           Breakpoint="Breakpoint.Sm"
           Virtualize>
     <HeaderContent>
@@ -21,23 +19,14 @@
 </MudTable>
 
 @code {
-    public class TestItem
-    {
-        public string Column1 { get; set; }
-        public string Column2 { get; set; }
-        public string Column3 { get; set; }
-        public string Column4 { get; set; }
-        public string Column5 { get; set; }
-    }
-
-    public List<TestItem> Items;
+    private List<TestItem>? _items;
 
     protected override void OnInitialized()
     {
-        Items = new List<TestItem>();
+        _items = [];
         for (int i = 0; i < 2000; i++)
         {
-            Items.Add(new TestItem
+            _items.Add(new TestItem
             {
                 Column1 = $"Value_{i}",
                 Column2 = $"Value_{i}",
@@ -46,5 +35,14 @@
                 Column5 = $"Value_{i}",
             });
         }
+    }
+
+    public class TestItem
+    {
+        public required string Column1 { get; set; }
+        public required string Column2 { get; set; }
+        public required string Column3 { get; set; }
+        public required string Column4 { get; set; }
+        public required string Column5 { get; set; }
     }
 }

@@ -1,24 +1,26 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a floating action button.
+    /// Floating action buttons (FABs) trigger the primary action on a page and float above content in a circular or extended shape.
     /// </summary>
     /// <remarks>
-    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
-    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
-    public partial class MudFab : MudBaseButton, IHandleEvent
+    /// <seealso cref="MudButton" />
+    /// <seealso cref="MudFabMenu" />
+    /// <seealso cref="MudIconButton" />
+    /// <seealso cref="MudToggleIconButton" />
+    public partial class MudFab : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-fab")
             .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
-            .AddClass($"mud-fab-{Color.ToDescriptionString()}")
-            .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
+            .AddClass($"mud-fab-{Color.ToStringFast(true)}")
+            .AddClass($"mud-fab-size-{Size.ToStringFast(true)}")
             .AddClass($"mud-ripple", Ripple && !GetDisabledState())
             .AddClass($"mud-fab-disable-elevation", !DropShadow)
             .AddClass(Class)
@@ -42,7 +44,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Large;
+        public virtual Size Size { get; set; } = Size.Large;
 
         /// <summary>
         /// The icon shown before any text.
@@ -93,13 +95,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? Label { get; set; }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudFab"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

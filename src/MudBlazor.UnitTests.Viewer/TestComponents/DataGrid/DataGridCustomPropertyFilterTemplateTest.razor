@@ -1,0 +1,27 @@
+﻿<MudPopoverProvider />
+
+<MudDataGrid Items="@_items" Filterable FilterMode="DataGridFilterMode.ColumnFilterMenu">
+    <Columns>
+        <PropertyColumn Property="x => x.Name">
+            <FilterTemplate>
+                <DataGridStringContainsFilter FilterContext="context" />
+            </FilterTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" Filterable="false" />
+        <PropertyColumn Property="x => x.Status" Filterable="false" />
+        <PropertyColumn Property="x => x.Hired" Filterable="false" />
+        <PropertyColumn Property="x => x.HiredOn" Filterable="false" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Sam", 56, Severity.Normal, false, null), 
+        new("Alicia", 54, Severity.Info, null, null), 
+        new("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new("John", 32, Severity.Warning, false, null)
+    };
+}

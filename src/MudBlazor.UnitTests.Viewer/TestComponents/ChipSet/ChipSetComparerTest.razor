@@ -1,8 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudGrid>
+﻿<MudGrid>
     <MudItem xs="12">
-        <MudChipSet T="Coffee" SelectionMode="SelectionMode.MultiSelection" CheckMark SelectedValues="@Selected" SelectedValuesChanged="SelectedChanged" Comparer="@Comparer">
+        <MudChipSet T="Coffee" SelectionMode="SelectionMode.MultiSelection" CheckMark SelectedValues="@Selected" SelectedValuesChanged="SelectedChanged" Comparer="@_comparer">
             <MudChip T="Coffee" Text="Cappuccino" Value="@(new Coffee("cap","Cappuccino"))" />
             <MudChip T="Coffee" Text="Cafe Latte" Value="@(new Coffee("lat","Cafe Latte"))" />
             <MudChip T="Coffee" Text="Espresso" Value="@(new Coffee("esp","Espresso"))" />
@@ -20,30 +18,33 @@
 
 @code {
     public static string __description__ = "The comparer should be used to compare coffee objects in chipset";
-    private CoffeeComparer Comparer { get; } = new();
+    
+    private readonly CoffeeComparer _comparer = new();
+    private IReadOnlyCollection<Coffee> Selected { get; set; } = Array.Empty<Coffee>();
 
-    IReadOnlyCollection<Coffee> Selected { get; set; } = Array.Empty<Coffee>();
-
-    void SelectedChanged(IEnumerable<Coffee> newSelected)
+    private void SelectedChanged(IEnumerable<Coffee> newSelected)
     {
         Selected = newSelected.ToHashSet();
     }
 
-    void SetSelection()
+    private void SetSelection()
     {
-        Selected = new[] { new Coffee("lat", "Cafe Latte!"), new Coffee("esp", "Espresso!") };
+        Selected = 
+        [
+            new Coffee("lat", "Cafe Latte!"),
+            new Coffee("esp", "Espresso!")
+        ];
     }
 
-    class Coffee
+    private class Coffee(string key, string name)
     {
-        public string Key { get; set; }
-        public string Name { get; set; }
-        public Coffee(string key, string name) { Key = key; Name = name; }
+        public string Key { get; } = key;
+        public string Name { get; } = name;
     }
 
-    class CoffeeComparer : IEqualityComparer<Coffee>
+    private class CoffeeComparer : IEqualityComparer<Coffee>
     {
-        public bool Equals(Coffee a, Coffee b) => a?.Key == b?.Key;
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
         public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
     }
 }

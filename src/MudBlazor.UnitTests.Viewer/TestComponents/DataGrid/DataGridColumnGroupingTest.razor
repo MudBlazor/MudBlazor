@@ -1,38 +1,86 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider />
+﻿<MudPopoverProvider />
 <MudDataGrid T="Model" ShowMenuIcon="true" Items="@_items" Groupable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Name" Title="Name" Grouping="true" HeaderClass="name" />
-        <PropertyColumn Property="x => x.Age" Title="Age" Grouping="@IsAgeGrouped" HeaderClass="age" />
+        <PropertyColumn Property="x => x.Name" Title="Name" @bind-Grouping="@IsNameGrouped" HeaderClass="name" />
+        <PropertyColumn Property="x => x.Age" Title="Age" @bind-Grouping="@IsAgeGrouped" HeaderClass="age" />
         <PropertyColumn Property="x => x.Gender" Title="Gender" @bind-Grouping="@IsGenderGrouped" HeaderClass="gender"/>
+        <PropertyColumn Property="x => x.Profession" Title="Profession" @bind-Grouping="@IsProfessionGrouped" GroupBy="_groupByProfession" HeaderClass="profession" />
     </Columns>
 </MudDataGrid>
 
-<MudButton Class="GroupByGender" @onclick="GroupByGender">Group By Gender</MudButton>
-<MudButton Class="GroupByAge" @onclick="GroupByAge">Group By Age</MudButton>
+<MudButton Class="@($"GroupByName {(IsNameGrouped ? "test-grouped" : "")}")" @onclick="GroupByName">Group By Name</MudButton>
+<MudButton Class="@($"GroupByGender {(IsGenderGrouped ? "test-grouped" : "")}")" @onclick="GroupByGender">Group By Gender</MudButton>
+<MudButton Class="@($"GroupByAge {(IsAgeGrouped ? "test-grouped" : "")}")" @onclick="GroupByAge">Group By Age</MudButton>
+<MudButton Class="@($"GroupByProfession {(IsProfessionGrouped ? "test-grouped" : "")}")" @onclick="GroupByProfession">Group By Profession</MudButton>
+<MudButton Class="UnGroupAll" @onclick="UnGroupAll">UnGroup All</MudButton>
+
+<style>
+    .test-grouped {
+        border: 1px dotted red;
+    }
+</style>
+
 @code {
 
-    public bool IsGenderGrouped { get; set; }
-    public bool IsAgeGrouped { get; set; }
+    private readonly Func<Model, object> _groupByProfession = x => string.IsNullOrEmpty(x.Profession)
+        ? "(None)" // Customize group name for null values otherwise would be empty group name
+        : x.Profession;
 
-    public List<Model> _items = new List<Model>()
+    public bool IsNameGrouped { get; private set; } = true;
+
+    public bool IsGenderGrouped { get; private set; }
+
+    public bool IsAgeGrouped { get; private set; }
+
+    public bool IsProfessionGrouped { get; private set; }
+
+    private readonly List<Model> _items =
+    [
+        new("John", 45, "Male", "Cook"),
+        new("Johanna", 23, "Female", null),
+        new("Steve", 32, "Male", null),
+        new("Alice", 32, "Female", "Cook")
+    ];
+
+    private void GroupByName(MouseEventArgs args)
     {
-        new Model("John", 45, "Male"), 
-        new Model("Johanna", 23, "Female"), 
-        new Model("Steve", 32, "Male"),
-        new Model("Alice", 32, "Female")
-    };
+        IsNameGrouped = true;
+        IsProfessionGrouped = false;
+        IsAgeGrouped = false;
+        IsGenderGrouped = false;
+    }
 
-    public record Model(string Name, int Age, string Gender);
-
-    void GroupByGender(MouseEventArgs args)
+    private void GroupByGender(MouseEventArgs args)
     {
+        IsNameGrouped = false;
+        IsProfessionGrouped = false;
+        IsAgeGrouped = false;
         IsGenderGrouped = true;
     }
 
-    void GroupByAge(MouseEventArgs args)
+    private void GroupByAge(MouseEventArgs args)
     {
+        IsNameGrouped = false;
+        IsProfessionGrouped = false;
         IsAgeGrouped = true;
+        IsGenderGrouped = false;
     }
+
+    private void GroupByProfession(MouseEventArgs args)
+    {
+        IsNameGrouped = false;
+        IsProfessionGrouped = true;
+        IsAgeGrouped = false;
+        IsGenderGrouped = false;
+    }
+
+    private void UnGroupAll(MouseEventArgs args)
+    {
+        IsNameGrouped = false;
+        IsProfessionGrouped = false;
+        IsAgeGrouped = false;
+        IsGenderGrouped = false;
+    }
+
+    public record Model(string Name, int Age, string Gender, string? Profession);
 }

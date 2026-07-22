@@ -1,9 +1,7 @@
 ﻿@page "/components/timeline"
-@page "/components/MudTimeline"
-@page "/components/MudTimelineItem"
 
 <DocsPage>
-    <DocsPageHeader Title="Timeline" SubTitle="The timeline displays items in chronological order." />
+    <DocsPageHeader Title="Timeline" Component="@nameof(MudTimeline)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -25,8 +23,17 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Dot style">
-                <Description>The style of each <CodeInline>TimelineItem</CodeInline> dot can be set individually using the <CodeInline>DotStyle</CodeInline> attribute.</Description>
+            <SectionHeader Title="Dot Icon">
+                <Description>Set the <CodeInline>Icon</CodeInline> property on a <CodeInline>TimelineItem</CodeInline> to display an icon inside its dot. For full control, use the <CodeInline>ItemDot</CodeInline> render fragment instead, which takes precedence over <CodeInline>Icon</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimelineDotIconExample)" Block="true" FullWidth="true">
+                <TimelineDotIconExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dot class">
+                <Description>The style of each <CodeInline>TimelineItem</CodeInline> dot can be set individually using the <CodeInline>DotClass</CodeInline> attribute with CSS classes.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TimelineDotsStyleExample)" ShowCode="false"  Block="true" FullWidth="true">
                 <TimelineDotsStyleExample />
@@ -69,14 +76,14 @@
             </SectionContent>
         </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Timeline Align">
-                <Description>You can set from which direction the dots should start from by changing the <CodeInline>TimelineAlign</CodeInline> on the <CodeInline>Timeline</CodeInline> component itself.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TimelineAlignExample)" ShowCode="false" Block="true">
-                <TimelineAlignExample />
-            </SectionContent>
-        </DocsPageSection>
+      <DocsPageSection>
+        <SectionHeader Title="Timeline Align">
+          <Description>You can set from which direction the dots should start from by changing the <CodeInline>TimelineAlign</CodeInline> on the <CodeInline>Timeline</CodeInline> component itself.</Description>
+        </SectionHeader>
+        <SectionContent Code="@nameof(TimelineAlignExample)" ShowCode="false" Block="true">
+          <TimelineAlignExample />
+        </SectionContent>
+      </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

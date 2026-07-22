@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable T="int" Items="items" MultiSelection="true" SelectedItemsChanged="SelectedItemsChanged">
+﻿<MudTable T="int" Items="_items" MultiSelection="true" SelectedItemsChanged="SelectedItemsChanged">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -8,17 +6,16 @@
         <MudTd>@context</MudTd>
         </RowTemplate>
 </MudTable>
-<MudText id="counter">@counter</MudText>
+<MudText id="counter">@_counter</MudText>
 
 @code {
     public static string __description__ = "Selecting the 'Select All' checkbox should trigger the 'SelectedItemsChanged' event only once";
 
-    private int counter = 0;
-
-    private int[] items = new int[] { 0, 1 };
+    private int _counter = 0;
+    private readonly int[] _items = [0, 1];
 
     private void SelectedItemsChanged(HashSet<int> selectedItems)
     {
-        counter++;
+        _counter++;
     }
 }

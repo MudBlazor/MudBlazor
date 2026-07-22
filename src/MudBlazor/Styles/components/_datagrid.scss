@@ -21,8 +21,6 @@
 
   .mud-table-cell {
     &.edit-mode-cell {
-      //padding: 0 !important;
-
       .mud-input-control {
         margin: 0 !important;
       }
@@ -50,22 +48,25 @@
       padding-inline-end: 24px;
     }
 
-    &.sticky-left {
-      left: 0px;
+    &.sticky-left,
+    &.sticky-right {
       position: sticky;
       background-color: var(--mud-palette-background-gray);
       z-index: 1;
+    }
+
+    &.sticky-left {
+      left: 0px;
     }
 
     &.sticky-right {
       right: 0px;
-      position: sticky;
-      background-color: var(--mud-palette-background-gray);
-      z-index: 1;
     }
 
-    .mud-input-text {
-      margin-top: 0 !important;
+    &:not(.mud-table-child-content) {
+      .mud-input-text {
+        margin-top: 0 !important;
+      }
     }
 
     .column-header {
@@ -101,7 +102,6 @@
       .sort-direction-icon {
         font-size: 18px;
         margin-left: 4px;
-        margin-left: 4px;
         margin-inline-start: 4px;
         margin-inline-end: unset;
         user-select: none;
@@ -124,9 +124,7 @@
       }
 
       .column-options .mud-menu .mud-icon-button-label {
-        /*font-size: 18px;*/
         user-select: none;
-        /*margin-right: 4px;*/
         transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         opacity: 0;
       }
@@ -139,6 +137,7 @@
       width: 8px;
       cursor: col-resize;
       user-select: none;
+
       .mud-application-layout-rtl & {
         right: auto;
         left: 0;
@@ -154,7 +153,46 @@
     .mud-resizing {
       border-right: 2px solid var(--mud-palette-primary);
     }
+
+    &.mud-datagrid-group {
+      background-color: var(--mud-palette-background-gray);
+    }
+
+    @for $i from 2 through 5 {
+      &.mud-row-group-indented-#{$i} {
+        padding-left: #{$i * 48 - 48}px !important;
+      }
+    }
   }
+}
+
+@mixin datagrid-loading-display-smalldevices($breakpoint) {
+  .mud-data-grid.mud-#{$breakpoint}table.mud-table-sticky-header {
+    .mud-table-root .mud-table-head .mud-table-loading {
+      // The mobile layout hides header rows, so the loader should stick to the top.
+      top: 0;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  @include datagrid-loading-display-smalldevices("xs-");
+}
+
+@media (max-width: $breakpoint-md) {
+  @include datagrid-loading-display-smalldevices("sm-");
+}
+
+@media (max-width: $breakpoint-lg) {
+  @include datagrid-loading-display-smalldevices("md-");
+}
+
+@media (max-width: $breakpoint-xl) {
+  @include datagrid-loading-display-smalldevices("lg-");
+}
+
+@media (max-width: $breakpoint-xxl) {
+  @include datagrid-loading-display-smalldevices("xl-");
 }
 
 .mud-data-grid-columns-panel {
@@ -174,7 +212,6 @@
 
   .sort-direction-icon {
     font-size: 18px;
-    margin-left: 4px;
     margin-left: 4px;
     margin-inline-start: 4px;
     margin-inline-end: unset;

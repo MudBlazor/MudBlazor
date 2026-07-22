@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Docs.Extensions;
@@ -16,19 +14,46 @@ namespace MudBlazor.Docs.Components;
 /// <summary>
 /// A link to an API type, property, method, event, or field.
 /// </summary>
-public class ApiTypeLink : ComponentBase
+public sealed class ApiTypeLink : ComponentBase
 {
+    private DocumentedType? _type;
+    private string? _typeName;
+
     /// <summary>
     /// The type to link.
     /// </summary>
     [Parameter]
-    public DocumentedType? Type { get; set; }
+    public DocumentedType? Type
+    {
+        get => _type;
+        set
+        {
+            if (_type != value)
+            {
+                _type = value;
+                _typeName = _type?.Name;
+                StateHasChanged();
+            }
+        }
+    }
 
     /// <summary>
     /// The name of the type to link.
     /// </summary>
     [Parameter]
-    public string? TypeName { get; set; }
+    public string? TypeName
+    {
+        get => _typeName;
+        set
+        {
+            if (_typeName != value)
+            {
+                _typeName = value;
+                _type = ApiDocumentation.GetType(_typeName);
+                StateHasChanged();
+            }
+        }
+    }
 
     /// <summary>
     /// The name of the type to display.
@@ -42,15 +67,11 @@ public class ApiTypeLink : ComponentBase
     [Parameter]
     public bool ShowTooltip { get; set; } = true;
 
-    protected override void OnParametersSet()
-    {
-        if (Type == null || (TypeName != null && Type.Name.Equals(TypeName, StringComparison.OrdinalIgnoreCase)))
-        {
-            Type = ApiDocumentation.GetType(TypeName);
-        }
-    }
-
-    protected override bool ShouldRender() => !string.IsNullOrEmpty(TypeName) || Type != null;
+    /// <summary>
+    /// The size of the text.
+    /// </summary>
+    [Parameter]
+    public Typo Typo { get; set; } = Typo.caption;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -66,29 +87,66 @@ public class ApiTypeLink : ComponentBase
             switch (TypeName)
             {
                 case "System.Boolean":
+                    builder.AddCode(0, "bool");
+                    break;
                 case "System.Boolean[]":
+                    builder.AddCode(0, "bool[]");
+                    break;
                 case "System.Int32":
+                    builder.AddCode(0, "int");
+                    break;
                 case "System.Int32[]":
+                    builder.AddCode(0, "int[]");
+                    break;
                 case "System.Int64":
+                    builder.AddCode(0, "long");
+                    break;
                 case "System.Int64[]":
+                    builder.AddCode(0, "long[]");
+                    break;
                 case "System.String":
+                    builder.AddCode(0, "string");
+                    break;
                 case "System.String[]":
+                    builder.AddCode(0, "string[]");
+                    break;
                 case "System.Double":
+                    builder.AddCode(0, "double");
+                    break;
                 case "System.Double[]":
+                    builder.AddCode(0, "double[]");
+                    break;
                 case "System.Single":
+                    builder.AddCode(0, "float");
+                    break;
                 case "System.Single[]":
+                    builder.AddCode(0, "float[]");
+                    break;
                 case "System.Object":
+                    builder.AddCode(0, "object");
+                    break;
+                case "System.Object[]":
+                    builder.AddCode(0, "object[]");
+                    break;
                 case "System.Void":
-                    builder.AddCode(0, TypeFriendlyName);
+                    builder.AddCode(0, "void");
                     break;
                 default:
                     // Is this a linkable type?
                     if (!TypeName.Contains("[["))
                     {
-                        builder.AddMudLink(0, $"https://learn.microsoft.com/en-us/dotnet/api/{TypeName}", TypeFriendlyName, "docs-link docs-code docs-code-primary", "_external");
+                        builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                        {
+                            linkBuilder.AddContent(linkSequence++, TypeFriendlyName);
+                            linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
+                            {
+                                tooltipBuilder.AddMudIcon(tooltipSequence++, "MudBlazor.Icons.Material.Filled.Link", Color.Default, Size.Small);
+                            });
+                        });
                     }
                     else
                     {
+                        // Fall back to the friendly name
                         builder.AddCode(0, TypeFriendlyName);
                     }
                     break;

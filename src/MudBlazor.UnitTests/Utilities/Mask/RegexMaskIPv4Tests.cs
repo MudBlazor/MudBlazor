@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
@@ -63,6 +63,27 @@ public class RegexMaskIPv4Tests
         mask.Insert("255255255255\n");
         mask.ToString().Should().Be("255.255.255.255|");
         mask.Text.IndexOf('\n').Should().Be(-1);
+    }
+
+    [Test]
+    public void IPv4_OctetOutOfRange_RollsOverToNextOctet()
+    {
+        // An octet may not exceed 255: the offending digit is pushed past the delimiter into the next octet.
+        var mask = RegexMask.IPv4();
+        mask.Insert("256");
+        mask.ToString().Should().Be("25.6|");
+        mask.Clear();
+        // A 3-digit octet starting with 9 caps at two digits (regex allows max 199 for a leading-0/1 octet).
+        mask.Insert("9999");
+        mask.ToString().Should().Be("99.99|");
+        mask.Clear();
+        // A complete max octet (255) followed by another digit starts the next octet.
+        mask.Insert("2552");
+        mask.ToString().Should().Be("255.2|");
+        mask.Clear();
+        // Exactly 255 is accepted verbatim as a single octet.
+        mask.Insert("255");
+        mask.ToString().Should().Be("255|");
     }
 
     [Test]

@@ -2,18 +2,16 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
-using System.Collections.Generic;
+using System.Text;
 
 namespace MudBlazor.Utilities
 {
-#nullable enable
     /// <summary>
-    /// Represents a builder for creating CSS classes used in a component.
+    /// Builds a space-separated CSS class string with conditionally added classes for a component's markup.
     /// </summary>
-    public struct CssBuilder
+    public readonly struct CssBuilder
     {
-        private string? _stringBuffer;
+        private readonly StringBuilder _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of CssBuilder with the specified initial value.
@@ -35,6 +33,18 @@ namespace MudBlazor.Utilities
         public static CssBuilder Empty() => new();
 
         /// <summary>
+        /// Creates an empty instance of CssBuilder.
+        /// </summary>
+        /// <remarks>
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
+        /// </remarks>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
+        public CssBuilder()
+        {
+            _stringBuilder = StringBuilderCache.Acquire();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the CssBuilder class with the specified initial value.
         /// </summary>
         /// <remarks>
@@ -42,7 +52,13 @@ namespace MudBlazor.Utilities
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder(string? value) => _stringBuffer = value;
+        public CssBuilder(string? value) : this()
+        {
+            if (value is not null)
+            {
+                _stringBuilder.Append(value);
+            }
+        }
 
         /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next class or value added to the builder.
@@ -51,7 +67,10 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddValue(string? value)
         {
-            _stringBuffer += value;
+            if (value is not null)
+            {
+                _stringBuilder.Append(value);
+            }
             return this;
         }
 
@@ -60,7 +79,12 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">The CSS class to add.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder AddClass(string? value) => AddValue(" " + value);
+        public CssBuilder AddClass(string? value)
+        {
+            AddValue(" ");
+            AddValue(value);
+            return this;
+        }
 
         /// <summary>
         /// Adds a conditional CSS class to the builder with a space separator.
@@ -126,22 +150,24 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClassFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
-            return additionalAttributes is null
-                ? this
-                : additionalAttributes.TryGetValue("class", out var result)
-                    ? AddClass(result.ToString())
-                    : this;
+            if (additionalAttributes is null)
+            {
+                return this;
+            }
+
+            if (additionalAttributes.TryGetValue("class", out var result))
+            {
+                return AddClass(result.ToString());
+            }
+
+            return this;
         }
 
         /// <summary>
         /// Finalizes the completed CSS classes as a string.
         /// </summary>
         /// <returns>The string representation of the CSS classes.</returns>
-        public string Build()
-        {
-            // String buffer finalization code
-            return _stringBuffer is not null ? _stringBuffer.Trim() : string.Empty;
-        }
+        public string Build() => StringBuilderCache.GetStringAndRelease(_stringBuilder).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />

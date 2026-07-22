@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
@@ -42,8 +43,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Nav Menu", typeof(MudNavMenu), typeof(MudNavLink), typeof(MudNavGroup))
             .AddItem("Tabs", typeof(MudTabs), typeof(MudTabPanel), typeof(MudDynamicTabs))
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
-            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogInstance), typeof(MudDialogProvider))
-            .AddItem("Snackbar", typeof(MudSnackbarProvider))
+            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogContainer), typeof(MudDialogProvider))
+            .AddItem("Snackbar", typeof(SnackbarService), typeof(MudSnackbarProvider), typeof(MudSnackbarElement))
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
@@ -55,8 +56,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTable<T>), typeof(MudTablePager))
-            .AddItem("Data Grid", typeof(MudDataGrid<T>))
+            .AddItem("Table", typeof(MudTable<T>), typeof(MudTableBase), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>), typeof(TemplateColumn<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
@@ -76,6 +77,10 @@ namespace MudBlazor.Docs.Services
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
+            .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
+            .AddItem("Split Panel", typeof(MudSplitPanel))
+            .AddItem("Exit Prompt", typeof(MudExitPrompt))
+            .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
 
@@ -110,18 +115,25 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Icon Button", typeof(MudIconButton))
                 .AddItem("Toggle Icon Button", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
+                .AddItem("Button FAB Menu", typeof(MudFabMenu))
             )
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
-                .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line))
-                .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar))
-                .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries))
+                .AddItem("Donut Chart", typeof(Donut<T>), typeof(DonutChartOptions), typeof(Legend<T>))
+                .AddItem("Line Chart", typeof(Line<T>), typeof(LineChartOptions), typeof(Legend<T>))
+                .AddItem("Pie Chart", typeof(Pie<T>), typeof(PieChartOptions), typeof(Legend<T>))
+                .AddItem("Bar Chart", typeof(Bar<T>), typeof(BarChartOptions), typeof(Legend<T>))
+                .AddItem("Heat Map Chart", typeof(HeatMap<T>), typeof(HeatMapChartOptions), typeof(Legend<T>))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar<T>), typeof(StackedBarChartOptions), typeof(Legend<T>))
+                .AddItem("Time Series Chart", typeof(TimeSeries<T>), typeof(TimeSeriesChartOptions), typeof(Legend<T>))
+                .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
+                .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
+                .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
+                .AddItem("Scatter Plot Chart", typeof(ScatterPlot<T>), typeof(ScatterPlotChartOptions), typeof(Legend<T>))
+                .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
+
             // this must be last!
             .GetComponentsSortedByName();
 
@@ -129,65 +141,68 @@ namespace MudBlazor.Docs.Services
         /// Features menu links
         /// </summary>
         public IEnumerable<DocsLink> Features => _features ??= new List<DocsLink>
-            {
-                new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
-                new DocsLink {Title = "Colors", Href = "features/colors"},
-                new DocsLink {Title = "Elevation", Href = "features/elevation"},
-                new DocsLink {Title = "Converters", Href = "features/converters"},
-                new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
-                new DocsLink {Title = "Masking", Href = "features/masking"},
-                new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
-                new DocsLink {Title = "Localization", Href = "features/localization"},
-                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
-            }.OrderBy(x => x.Title);
+        {
+            new DocsLink { Title = "Breakpoints", Href = "features/breakpoints" },
+            new DocsLink { Title = "Colors", Href = "features/colors" },
+            new DocsLink { Title = "Elevation", Href = "features/elevation" },
+            new DocsLink { Title = "Converters", Href = "features/converters" },
+            new DocsLink { Title = "Icon Reference", Href = "features/icons" }, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
+            new DocsLink { Title = "Parameter State", Href = "features/parameterstate" },
+            new DocsLink { Title = "Masking", Href = "features/masking" },
+            new DocsLink { Title = "RTL Languages", Href = "features/rtl-languages" },
+            new DocsLink { Title = "Localization", Href = "features/localization" },
+            new DocsLink { Title = "Analyzers", Href = "features/analyzers" },
+            new DocsLink { Title = "Services", Href = "features/services" },
+        }.OrderBy(x => x.Title);
 
         /// <summary>
         /// Customization menu links
         /// </summary>
         public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>
         {
-            new DocsLink {Title="Default theme", Href="customization/default-theme"},
-            new DocsLink {Title = "Overview", Href = "customization/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/palette"},
-            new DocsLink {Title = "Typography", Href = "customization/typography"},
-            new DocsLink {Title = "z-index", Href = "customization/z-index"},
-            new DocsLink {Title = "Pseudo CSS", Href = "customization/pseudocss"},
-        }.OrderBy(x => x.Title);
+            new DocsLink { Title = "Default theme", Href = "customization/default-theme" },
+            new DocsLink { Title = "Overview", Href = "customization/overview" },
+            new DocsLink { Title = "Palette", Href = "customization/palette" },
+            new DocsLink { Title = "Typography", Href = "customization/typography" },
+            new DocsLink { Title = "z-index", Href = "customization/z-index" },
+            new DocsLink { Title = "Pseudo CSS", Href = "customization/pseudocss" },
+            new DocsLink { Title = "Globals", Href = "customization/globals", Order = 100 },
+        }.OrderBy(link => link.Order).ThenBy(x => x.Title);
 
         /// <summary>
         /// CSS Utilities menu links
         /// </summary>
         public IEnumerable<DocsLink> Utilities => _utilities ??= new List<DocsLink>
         {
-            new DocsLink {Group = "Layout", Title = "Display", Href = "utilities/display"},
-            new DocsLink {Group = "Layout", Title = "Z-Index", Href = "utilities/z-index"},
-            new DocsLink {Group = "Layout", Title = "Overflow", Href = "utilities/overflow"},
-            new DocsLink {Group = "Layout", Title = "Visibility", Href = "utilities/visibility"},
-            new DocsLink {Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit"},
-            new DocsLink {Group = "Layout", Title = "Object Position", Href = "utilities/object-position"},
-            new DocsLink {Group = "Layout", Title = "Position", Href = "utilities/position"},
+            new DocsLink { Group = "Layout", Title = "Display", Href = "utilities/display" },
+            new DocsLink { Group = "Layout", Title = "Z-Index", Href = "utilities/z-index" },
+            new DocsLink { Group = "Layout", Title = "Overflow", Href = "utilities/overflow" },
+            new DocsLink { Group = "Layout", Title = "Visibility", Href = "utilities/visibility" },
+            new DocsLink { Group = "Layout", Title = "Object Fit", Href = "utilities/object-fit" },
+            new DocsLink { Group = "Layout", Title = "Object Position", Href = "utilities/object-position" },
+            new DocsLink { Group = "Layout", Title = "Position", Href = "utilities/position" },
 
-            new DocsLink {Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap"},
-            new DocsLink {Group = "Flexbox", Title = "Flex", Href = "utilities/flex"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow"},
-            new DocsLink {Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink"},
-            new DocsLink {Group = "Flexbox", Title = "Order", Href = "utilities/order"},
-            new DocsLink {Group = "Flexbox", Title = "Gap", Href = "utilities/gap"},
-            new DocsLink {Group = "Flexbox", Title = "Justify Content", Href = "utilities/justify-content"},
-            new DocsLink {Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content"},
-            new DocsLink {Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items"},
-            new DocsLink {Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self"},
+            new DocsLink { Group = "Flexbox", Title = "Enable Flexbox", Href = "utilities/enable-flex" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Direction", Href = "utilities/flex-direction" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Wrap", Href = "utilities/flex-wrap" },
+            new DocsLink { Group = "Flexbox", Title = "Flex", Href = "utilities/flex" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Grow", Href = "utilities/flex-grow" },
+            new DocsLink { Group = "Flexbox", Title = "Flex Shrink", Href = "utilities/flex-shrink" },
+            new DocsLink { Group = "Flexbox", Title = "Order", Href = "utilities/order" },
+            new DocsLink { Group = "Flexbox", Title = "Gap", Href = "utilities/gap" },
+            new DocsLink { Group = "Flexbox", Title = "Justify Content", Href = "utilities/justify-content" },
+            new DocsLink { Group = "Flexbox", Title = "Align Content", Href = "utilities/align-content" },
+            new DocsLink { Group = "Flexbox", Title = "Align Items", Href = "utilities/align-items" },
+            new DocsLink { Group = "Flexbox", Title = "Align Self", Href = "utilities/align-self" },
 
-            new DocsLink {Group = "Spacing", Title = "Spacing", Href = "utilities/spacing"},
+            new DocsLink { Group = "Spacing", Title = "Spacing", Href = "utilities/spacing" },
 
-            new DocsLink {Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius"},
-            new DocsLink {Group = "Borders", Title = "Border Style", Href = "utilities/border-style"},
-            new DocsLink {Group = "Borders", Title = "Border Width", Href = "utilities/border-width"},
+            new DocsLink { Group = "Borders", Title = "Border Radius", Href = "utilities/border-radius" },
+            new DocsLink { Group = "Borders", Title = "Border Style", Href = "utilities/border-style" },
+            new DocsLink { Group = "Borders", Title = "Border Width", Href = "utilities/border-width" },
 
-            new DocsLink {Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor"},
-            new DocsLink {Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events"},
+            new DocsLink { Group = "Interactivity", Title = "Cursor", Href = "utilities/cursor" },
+            new DocsLink { Group = "Interactivity", Title = "Pointer Events", Href = "utilities/pointer-events" },
         };
 
         public IEnumerable<MudComponent> Components => _docsComponents;
@@ -241,6 +256,32 @@ namespace MudBlazor.Docs.Services
                 : _parents.GetValueOrDefault(type);
         }
 
+        /// <inheritdoc />
+        public string? GetComponentName(string typeName)
+        {
+            var cleanName = typeName.Replace("`1", "<T>").Replace("`2", "<T, U>");
+            foreach (var component in _docsComponents)
+            {
+                if (component.ComponentName != null && component.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return component.Name;
+                }
+
+                if (component.GroupComponents != null)
+                {
+                    foreach (var groupComponent in component.GroupComponents)
+                    {
+                        if (groupComponent.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return groupComponent.Name;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// This autogenerates the Menu for the API
         /// </summary>
@@ -272,6 +313,72 @@ namespace MudBlazor.Docs.Services
 
                 return _docsComponentsApi;
             }
+        }
+
+        /// <summary>
+        /// Gets the sub-menu, if any, matching the specified type.
+        /// </summary>
+        /// <param name="parent">The parent to start searching from.</param>
+        /// <param name="type">The type to find.</param>
+        /// <returns>The menu whose link, child type, or group component matches the type.</returns>
+        public MudComponent? GetExample(DocumentedType type)
+        {
+            // Go through each menu...
+            foreach (var menu in Components)
+            {
+                // Is there a menu for this type?  If so, return it.
+                var component = GetExample(menu, type);
+                if (component != null)
+                {
+                    return component;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the sub-menu, if any, matching the specified type.
+        /// </summary>
+        /// <param name="parent">The parent to start searching from.</param>
+        /// <param name="type">The type to find.</param>
+        /// <returns>The menu whose link, child type, or group component matches the type.</returns>
+        public static MudComponent? GetExample(MudComponent parent, DocumentedType type)
+        {
+            // Does the name match the menu link?
+            if (parent.ComponentName == type.NameFriendly.Replace("<TData>", "<T>"))
+            {
+                return parent;
+            }
+
+            // Are there child types to search?
+            if (parent.ChildTypes != null)
+            {
+                foreach (var childType in parent.ChildTypes)
+                {
+                    // Does the child type's name match?
+                    if (childType.Name == type.Name)
+                    {
+                        return parent;
+                    }
+                }
+            }
+
+            // Are there sub-menus to search?
+            if (parent.IsNavGroup && parent.GroupComponents != null)
+            {
+                foreach (var subMenu in parent.GroupComponents)
+                {
+                    // Search one level deeper
+                    var component = GetExample(subMenu, type);
+                    if (component != null)
+                    {
+                        return component;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

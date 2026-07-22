@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-#nullable enable
-    internal class Filter<T>
+    internal class Filter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly IFilterDefinition<T> _filterDefinition;
@@ -19,7 +19,8 @@ namespace MudBlazor
         internal double? _valueNumber;
         internal Enum? _valueEnum;
         internal bool? _valueBool;
-        internal DateTime? _valueDate;
+        internal DateTime? _valueDateOnlyForPicker;
+        internal DateTime? _valueDateTimeForPicker;
         internal TimeSpan? _valueTime;
         internal Guid? _valueGuid;
 
@@ -45,8 +46,12 @@ namespace MudBlazor
             else if (fieldType.IsDateTime)
             {
                 var dateTime = Convert.ToDateTime(_filterDefinition.Value);
-                _valueDate = _filterDefinition.Value == null ? null : dateTime;
+                _valueDateTimeForPicker = _filterDefinition.Value == null ? null : dateTime;
                 _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
+            }
+            else if (fieldType.IsDateOnly)
+            {
+                _valueDateOnlyForPicker = ((DateOnly?)_filterDefinition.Value)?.ToDateTime(TimeOnly.MinValue);
             }
             else if (fieldType.IsGuid)
                 _valueGuid = _filterDefinition.Value as Guid?;
@@ -57,46 +62,57 @@ namespace MudBlazor
             await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
-        internal void FieldChanged(Column<T> column)
+        internal Task FieldChangedAsync(Column<T> column)
         {
             _filterDefinition.Column = column;
-            var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
+            var operators = column.GetFilterOperators(FieldType.Identify(column.PropertyType));
             _filterDefinition.Operator = operators.FirstOrDefault();
             _filterDefinition.Title = column.Title;
             _filterDefinition.Value = null;
+            if (_filterDefinition is FilterDefinition<T> filterDefinition)
+            {
+                filterDefinition.FilterFunction = null;
+            }
+            return ApplyChangesAsync();
         }
 
-        internal void StringValueChanged(string value)
+        internal Task OperatorChangedAsync(string? value)
+        {
+            _filterDefinition.Operator = value;
+            return ApplyChangesAsync();
+        }
+
+        internal Task StringValueChangedAsync(string value)
         {
             _valueString = value;
             _filterDefinition.Value = _valueString;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void NumberValueChanged(double? value)
+        internal Task NumberValueChangedAsync(double? value)
         {
             _valueNumber = value;
             _filterDefinition.Value = _valueNumber;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void EnumValueChanged(Enum value)
+        internal Task EnumValueChangedAsync(Enum value)
         {
             _valueEnum = value;
             _filterDefinition.Value = _valueEnum;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void BoolValueChanged(bool? value)
+        internal Task BoolValueChangedAsync(bool? value)
         {
             _valueBool = value;
             _filterDefinition.Value = _valueBool;
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void DateValueChanged(DateTime? value)
+        internal Task DateValueChangedAsync(DateTime? value)
         {
-            _valueDate = value;
+            _valueDateTimeForPicker = value;
 
             if (value is not null)
             {
@@ -113,16 +129,16 @@ namespace MudBlazor
             else
                 _filterDefinition.Value = null;
 
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void TimeValueChanged(TimeSpan? value)
+        internal Task TimeValueChangedAsync(TimeSpan? value)
         {
             _valueTime = value;
 
-            if (_valueDate is not null)
+            if (_valueDateTimeForPicker is not null)
             {
-                var date = _valueDate.Value.Date;
+                var date = _valueDateTimeForPicker.Value.Date;
 
                 // get the time component and add it to the date.
                 if (_valueTime is not null)
@@ -133,14 +149,38 @@ namespace MudBlazor
                 _filterDefinition.Value = date;
             }
 
-            _dataGrid.GroupItems();
+            return ApplyChangesAsync();
         }
 
-        internal void GuidValueChanged(Guid? value)
+        internal Task DateOnlyValueChangedAsync(DateTime? value)
+        {
+            _valueDateOnlyForPicker = value;
+
+            if (value is not null)
+            {
+                _filterDefinition.Value = DateOnly.FromDateTime(value.Value);
+            }
+            else
+                _filterDefinition.Value = null;
+
+            return ApplyChangesAsync();
+        }
+
+        internal Task GuidValueChangedAsync(Guid? value)
         {
             _valueGuid = value;
             _filterDefinition.Value = _valueGuid;
+            return ApplyChangesAsync();
+        }
+
+        // Regroups the data after a filter edit and, in Simple mode, raises FilterChanged.
+        // Simple mode applies filters live, so it notifies here; the row and menu modes notify from their own apply paths instead.
+        private Task ApplyChangesAsync()
+        {
             _dataGrid.GroupItems();
+            return _dataGrid.FilterMode == DataGridFilterMode.Simple
+                ? _dataGrid.NotifyFilterChangedAsync()
+                : Task.CompletedTask;
         }
     }
 }

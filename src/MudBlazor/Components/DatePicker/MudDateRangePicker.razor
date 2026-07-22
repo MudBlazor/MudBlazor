@@ -1,13 +1,15 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseDatePicker
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
 
 @Render
 
 @code{
 
     protected override RenderFragment InputContent=>
-        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@Error"
-                          ErrorText="@ErrorText" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
+        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
+                          ErrorText="@ErrorTextState.Value" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
                           @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
                <InputContent>
                    <MudRangeInput @ref="_rangeInput"
@@ -27,15 +29,20 @@
                                   OnAdornmentClick="ToggleStateAsync"
                                   Required="@Required"
                                   RequiredError="@RequiredError"
-                                  Error="@Error"
-                                  ErrorText="@ErrorText"
+                                  Error="@ErrorState.Value"
+                                  ErrorText="@ErrorTextState.Value"
                                   Margin="@Margin"
                                   AdornmentAriaLabel="@AdornmentAriaLabel"
                                   PlaceholderStart="@PlaceholderStart"
                                   PlaceholderEnd="@PlaceholderEnd"
+                                  StartInputAriaLabel="@(Localizer[LanguageResource.MudDateRangePicker_Start])"
+                                  EndInputAriaLabel="@(Localizer[LanguageResource.MudDateRangePicker_End])"
                                   SeparatorIcon="@SeparatorIcon"
-                                  Clearable="Clearable"
-                                  Underline="@Underline" />
+                                  Clearable="@(Clearable && !GetReadOnlyState())"
+                                  ClearIcon="@ClearIcon"
+                                  Underline="@Underline"
+                                  ShrinkLabel="@ShrinkLabel"
+                                  InputId="@InputId" />
                </InputContent>
            </MudInputControl>;
 

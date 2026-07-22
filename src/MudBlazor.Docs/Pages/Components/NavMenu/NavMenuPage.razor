@@ -1,10 +1,7 @@
 ﻿@page "/components/navmenu"
-@page "/components/MudNavGroup"
-@page "/components/MudNavLink"
-@page "/components/MudNavMenu"
 
 <DocsPage>
-    <DocsPageHeader Title="Navigation Menu" />
+    <DocsPageHeader Title="Navigation Menu" Component="@nameof(MudNavMenu)" />
     <DocsPageContent>
         
         <DocsPageSection>
@@ -91,6 +88,15 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Customizing the Group Title">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuGroupTitleExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuGroupTitleExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
             <SectionHeader Title="OnClick">
                 <Description>
                     The <CodeInline>OnClick</CodeInline> handler provides a way to invoke an action instead of (or in conjunction with) <CodeInline>Href</CodeInline> navigation.
@@ -98,6 +104,18 @@
             </SectionHeader>
             <SectionContent Code="@nameof(NavMenuOnClickExample)" DarkenBackground="true" ShowCode="true">
                 <NavMenuOnClickExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="MultiExpansion">
+                <Description>
+                    The <CodeInline>MultiExpansion</CodeInline> property controls whether only one navigation group can be expanded at a time.
+                    Only top-level <CodeInline>MudNavGroup</CodeInline> components participate in this behavior.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuMultiExpansionExample)" DarkenBackground="true" ShowCode="true">
+                <NavMenuMultiExpansionExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -1,4 +1,4 @@
-﻿.visible {
+.visible {
   visibility: visible;
 }
 
@@ -8,4 +8,16 @@
 
 [hidden] {
   display: none !important;
+}
+
+.mud-sr-only {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
 }

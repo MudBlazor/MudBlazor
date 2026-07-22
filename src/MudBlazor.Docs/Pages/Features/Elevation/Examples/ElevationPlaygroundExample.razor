@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="8" Class="d-flex justify-center align-center" Style="height:500px;">
+        <MudPaper Style="@($"background-color:{ColorValue};")" Elevation="@Elevation" Outlined="@Outlined" Height="@($"{PaperHeight}px")" Width="@($"{PaperWidth}px")" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0">
+            <MudText Typo="Typo.h6">Options</MudText>
+            <MudText><b>Elevation:</b> @Elevation</MudText>
+            <MudSlider @bind-Value="Elevation" Max="25" Min="0" Color="Color.Primary" />
+            <MudText><b>Outlined:</b> @Outlined</MudText>
+            <MudSwitch @bind-Value="Outlined" Color="Color.Primary" />
+            <MudText><b>Color:</b> @ColorValue</MudText>
+            <MudColorPicker Class="mb-2" @bind-Text="ColorValue" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            <MudText><b>Width:</b> @($"{PaperWidth}px")</MudText>
+            <MudSlider @bind-Value="PaperWidth" Max="400" Min="0" Color="Color.Primary" />
+            <MudText><b>Height:</b> @($"{PaperHeight}px")</MudText>
+            <MudSlider @bind-Value="PaperHeight" Max="400" Min="0" Color="Color.Primary" />
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public int PaperHeight { get; set; } = 300;
+    public int PaperWidth { get; set; } = 300;
+    public int Elevation { get; set; } = 5;
+    public bool Outlined { get; set; } = false;
+    public string ColorValue { get; set; } = "#f9f9f9";
+}

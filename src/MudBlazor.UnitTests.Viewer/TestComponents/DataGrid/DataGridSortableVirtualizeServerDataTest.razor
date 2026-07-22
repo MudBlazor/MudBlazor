@@ -1,6 +1,3 @@
-@using System.Threading
-@namespace MudBlazor.UnitTests.TestComponents
-
 <MudDataGrid T="Item" VirtualizeServerData="ServerDataFunc" Virtualize="true" Sortable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
@@ -13,7 +10,7 @@
     public static string __description__ = @"Test in-browser-sorting of DataGrid. Hold <Ctrl> key when clicking header to extend to multi sort. Hold <Alt> key to unsort a sorted column.
 Note that the 'Misc' column is being sorted by length and not by the content itself.";
 
-    private IEnumerable<Item> _items = new List<Item>()
+    private readonly IEnumerable<Item> _items = new List<Item>
     {
         new Item("B", 42, "555"), 
         new Item("A", 73, "7"), 

@@ -1,0 +1,85 @@
+﻿<MudTable Items="@_elements" Hover="true" Breakpoint="Breakpoint.Sm"
+          Loading="@_isLoading" Filter="new Func<Element, bool>(FilterFunc)" Striped>
+    <ToolBarContent>
+        <MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search" Immediate="true"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>No matching records found</NoRecordsContent>
+    <LoadingContentBody>
+        @for (int r = 0; r < 4; r++) // 4 fake rows
+        {
+            <MudTr>
+                @for (int c = 0; c < 5; c++) // 5 columns as above
+                {
+                    <MudTd><MudSkeleton /></MudTd>
+                }
+            </MudTr>
+        }
+    </LoadingContentBody>
+</MudTable>
+
+<MudSwitch id="switch" @bind-Value="_isLoading">Show Loading</MudSwitch>
+
+ @code {
+    public static string __description__ = @"
+                                                   When loading is set to true, a progress bar should appear in the table header,
+                                                   which would not affect the striped table.
+                                                   Dynamically added columns should not affect number of cells in the loader row.
+                                           ";
+
+    private bool _isLoading = true;
+    private string? _searchString = "ABC";
+    private IEnumerable<Element> _elements = new List<Element>();
+
+    protected override void OnInitialized()
+    {
+        _elements = new List<Element>
+        {
+            new() { Molar = "A", Sign = "A", Name = "A", Number = "A", Position = "A"},
+            new() { Molar = "B", Sign = "B", Name = "B", Number = "B", Position = "B"},
+        };
+    }
+
+    private bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+        if (element.Number.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Sign.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Position.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Molar.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    public class Element
+    {
+        public required string Number { get; set; }
+
+        public required string Sign { get; set; }
+
+        public required string Name { get; set; }
+
+        public required string Position { get; set; }
+
+        public required string Molar { get; set; }
+    }
+}

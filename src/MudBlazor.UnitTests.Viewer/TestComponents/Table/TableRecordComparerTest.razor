@@ -1,8 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudText>Elements { @string.Join(", ", _selectedItems) }</MudText>
 
-<MudText>Elements { @string.Join(", ", selectedItems) }</MudText>
-
-<MudTable @ref="MudTableRef" Items="items" T="Element" @bind-SelectedItems="selectedItems" MultiSelection Comparer="Comparer">
+<MudTable Items="_items" T="Element" @bind-SelectedItems="_selectedItems" MultiSelection Comparer="_comparer">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Value)">#</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -19,33 +17,35 @@
 @code {
     public static string __description__ = "editing a record should not break multiselection";
 
-    private ElementComparer Comparer = new();
-    private HashSet<Element> selectedItems = new();
-    public MudTable<Element> MudTableRef { get; private set; }
-
-    IEnumerable<Element> items = new List<Element> 
+    private readonly ElementComparer _comparer = new();
+    private HashSet<Element> _selectedItems = [];
+    private readonly IEnumerable<Element> _items = new List<Element>
     { 
-        new Element { Value = "A", Id = "Id1" }, 
-        new Element { Value = "B", Id = "Id2" }, 
-        new Element { Value = "C", Id = "Id3" }, 
+        new() { Value = "A", Id = "Id1" }, 
+        new() { Value = "B", Id = "Id2" }, 
+        new() { Value = "C", Id = "Id3" }, 
     };
+
+    protected override void OnInitialized()
+    {
+        _selectedItems = new HashSet<Element>(comparer: _comparer);
+
+        base.OnInitialized();
+    }
 
     public record Element
     {
-        public string Id { get; set; }
-        public string Value { get; set; }
+        public required string Id { get; set; }
+
+        public required string Value { get; set; }
 
         public override string ToString() => Value;
     }
 
-    class ElementComparer : IEqualityComparer<Element>
+    private class ElementComparer : IEqualityComparer<Element?>
     {
-        public bool Equals(Element a, Element b) => a?.Id == b?.Id;
-        public int GetHashCode(Element x) => HashCode.Combine(x?.Id);
-    }
+        public bool Equals(Element? a, Element? b) => a?.Id == b?.Id;
 
-    protected override void OnInitialized()
-    {
-        selectedItems = new(comparer: Comparer);
+        public int GetHashCode(Element? x) => HashCode.Combine(x?.Id);
     }
 }

@@ -1,7 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudDataGrid @ref="grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
+<MudDataGrid @ref="_grid" Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -18,21 +17,21 @@
     </Columns>
 </MudDataGrid>
 
-    @code {
+@code {
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
 
-    MudDataGrid<Model> grid;
+    private MudDataGrid<Model> _grid = null!;
 
-    private IEnumerable<Model> _items = new List<Model>()
+    private readonly IEnumerable<Model> _items = new List<Model>
     {
-        new Model("Sam", 56, Severity.Normal, false, null), 
-        new Model("Alicia", 54, Severity.Info, null, null), 
-        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
-        new Model("John", 32, Severity.Warning, false, null)
+        new("Sam", 56, Severity.Normal, false, null), 
+        new("Alicia", 54, Severity.Info, null, null), 
+        new("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new("John", 32, Severity.Warning, false, null)
     };
 
     public bool FilterHired;
-    FilterDefinition<Model> _filterDefinition = new();
+    private FilterDefinition<Model> _filterDefinition = new();
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -40,7 +39,7 @@
         {
             _filterDefinition = new FilterDefinition<Model>
             {
-                Column = grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Hired"),
+                Column = _grid.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Hired"),
                 Operator = FilterOperator.Boolean.Is,
                 Value = true
             };

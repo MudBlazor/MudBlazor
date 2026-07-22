@@ -1,7 +1,5 @@
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid T="Fruit" @ref="dataGrid" Items="@Fruits" Filterable="true" Hideable="true" Groupable="true"
-    GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
+﻿<MudDataGrid T="Fruit" @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="@_groupable"
+GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
         <MudSpacer />
@@ -9,7 +7,7 @@
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
         <PropertyColumn Property="x => x.Count" />
-        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+        <PropertyColumn Property="x => x.Category" Title="Category" Groupable="true" Grouping="true" GroupBy="@_groupBy">
             <GroupTemplate>
                 <span style="font-weight:bold">Category: @context.Grouping.Key</span>
             </GroupTemplate>
@@ -21,55 +19,57 @@
     <MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
     <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
     <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
+    <MudButton Class="toggle-groupable" OnClick="@(() => _groupable = !_groupable)" Color="@Color.Primary">Toggle Groupable</MudButton>
 </div>
 
 @code {
-    MudDataGrid<Fruit> dataGrid;
-
-    public class Fruit
-    {
-        public string Name { get; set; }
-        public int Count { get; set; }
-        public string Category { get; set; }
-
-        public Fruit(string name, int count, string category)
-        {
-            Name = name;
-            Count = count;
-            Category = category;
-        }
-    }
-    public bool RowContextMenuClicked { get; set; }
-
-    List<Fruit> Fruits { get; set; } = new()
-    {
+    private bool _groupable;
+    private MudDataGrid<Fruit> _dataGrid = null!;
+    private readonly List<Fruit> _fruits =
+    [
         new Fruit("Apple", 2, "Pome"),
         new Fruit("Pear", 4, "Pome"),
         new Fruit("Orange", 4, "Citrus")
-    };
-    
-    Func<Fruit, object> _groupBy = x => 
+    ];
+    private readonly Func<Fruit, object> _groupBy = x => x.Category;
+
+    [Parameter]
+    public bool Groupable { get; set; } = true;
+
+    public bool RowContextMenuClicked { get; set; }
+
+    protected override void OnParametersSet()
     {
-        return x.Category;
-    };
+        base.OnParametersSet();
+        _groupable = Groupable;
+    }
 
     public void AddFruit()
     {
-        Fruits.Add(new Fruit("Banana", 5, "Musa"));
+        _fruits.Add(new Fruit("Banana", 5, "Musa"));
     }
 
-    public void ExpandAllGroups()
+    public Task ExpandAllGroups()
     {
-        dataGrid?.ExpandAllGroups();
+        return _dataGrid.ExpandAllGroupsAsync();
     }
 
-    public void CollapseAllGroups()
+    public Task CollapseAllGroups()
     {
-        dataGrid?.CollapseAllGroups();
+        return _dataGrid.CollapseAllGroupsAsync();
     }
 
     private void OnRowContextMenuClick(DataGridRowClickEventArgs<Fruit> args)
     {
         RowContextMenuClicked = true;
+    }
+
+    public class Fruit(string name, int count, string category)
+    {
+        public string Name { get; set; } = name;
+
+        public int Count { get; set; } = count;
+
+        public string Category { get; set; } = category;
     }
 }

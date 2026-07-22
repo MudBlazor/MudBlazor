@@ -8,7 +8,14 @@
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
+        <MudInputAdornment Class="@AdornmentClassname"
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.Start"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (InputType == InputType.Hidden && ChildContent != null)
@@ -20,43 +27,47 @@
 
     <input @ref="_elementReferenceStart"
            @attributes="UserAttributes"
+           id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-start")"
            type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextStart"
-           @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           @bind-value:event="@(Immediate ? "oninput" : "onchange")"
            placeholder="@PlaceholderStart"
-           disabled=@GetDisabledState()
+           disabled="@GetDisabledState()"
            readonly="@GetReadOnlyState()"
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
            @onkeyup="@InvokeKeyUpAsync"
-           inputmode="@InputMode.ToDescriptionString()"
+           inputmode="@InputMode.ToStringFast(true)"
            pattern="@Pattern"
            required="@Required"
-           aria-required="@Required.ToString().ToLowerInvariant()" />
+           aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-label="@(StartInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_Start])" />
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
     <input @ref="_elementReferenceEnd"
            @attributes="UserAttributes"
+           id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-end")"
            type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextEnd"
-           @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           inputmode="@InputMode.ToDescriptionString()"
+           @bind-value:event="@(Immediate ? "oninput" : "onchange")"
+           inputmode="@InputMode.ToStringFast(true)"
            pattern="@Pattern"
            placeholder="@PlaceholderEnd"
-           disabled=@GetDisabledState()
+           disabled="@GetDisabledState()"
            readonly="@GetReadOnlyState()"
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
            @onkeyup="@InvokeKeyUpAsync"
            required="@Required"
-           aria-required="@Required.ToString().ToLowerInvariant()" />
+           aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-label="@(EndInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_End])" />
 
     @if (IsClearable() && !GetDisabledState())
     {
-        <MudIconButton Class="@(Adornment is Adornment.Start ? "me-0" : "me-n4")" Style="z-index: 2"
+        <MudIconButton Class="@ClearButtonClassname" Style="z-index: 2"
                        Color="@Color.Default"
-                       Icon="@Icons.Material.Filled.Clear"
+                       Icon="@ClearIcon"
                        Size="@Size.Small"
                        OnClick="@ClearButtonClickHandlerAsync"
                        aria-label="@Localizer[LanguageResource.MudInput_Clear]"
@@ -65,11 +76,23 @@
 
     @if (Adornment == Adornment.End)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
+        <MudInputAdornment Class="@AdornmentClassname"
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.End"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
     {
-        <div class="mud-input-outlined-border"></div>
+        <fieldset class="mud-input-outlined-border">
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <legend>@Label</legend>
+            }
+        </fieldset>
     }
 </div>

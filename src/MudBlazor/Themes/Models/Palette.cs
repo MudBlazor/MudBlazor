@@ -2,14 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.Json.Serialization;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a palette of colors used throughout the application.
+    /// Base class for a MudBlazor color palette, defining the primary, secondary, surface, text, and status colors shared by <see cref="PaletteLight"/> and <see cref="PaletteDark"/>.
     /// </summary>
+    [JsonDerivedType(typeof(PaletteLight), typeDiscriminator: nameof(PaletteLight))]
+    [JsonDerivedType(typeof(PaletteDark), typeDiscriminator: nameof(PaletteDark))]
     public abstract class Palette
     {
         private MudColor? _primaryDarken;
@@ -225,6 +227,11 @@ namespace MudBlazor
         public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
+        /// The color for skeletons.
+        /// </summary>
+        public virtual MudColor Skeleton { get; set; } = new MudColor("rgba(0, 0, 0, 0.11)").ToString(MudColorOutputFormats.RGBA);
+
+        /// <summary>
         /// The darkened value of the primary color.<br/>
         /// This is calculated using <see cref="MudColor.ColorRgbDarken"/> if not set.
         /// </summary>
@@ -383,6 +390,11 @@ namespace MudBlazor
             get => (_darkLighten ??= Dark.ColorRgbLighten()).ToString(MudColorOutputFormats.RGB);
             set => _darkLighten = value;
         }
+
+        /// <summary>
+        /// The opacity value for most borders.
+        /// </summary>
+        public virtual double BorderOpacity { get; set; } = 1.0;
 
         /// <summary>
         /// The opacity value for hover effect.

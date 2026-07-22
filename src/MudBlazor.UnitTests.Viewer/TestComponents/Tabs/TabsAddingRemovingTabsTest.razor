@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudButton OnClick="AddTab">Add Tab</MudButton>
+﻿<MudButton OnClick="AddTab">Add Tab</MudButton>
 <MudButton OnClick="RemoveLast">Remove Last</MudButton>
 
 <MudTabs Elevation="1" @ref="Tabs">
@@ -19,7 +17,7 @@
     private List<string> _tabs = new List<string>();
     private int i = 0;
 
-    public MudTabs Tabs { get; set; }
+    public MudTabs Tabs { get; set; } = null!;
 
     private async Task AddTab()
     {

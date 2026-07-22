@@ -7,7 +7,6 @@ using System.Reflection;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides extension methods for sorting queryable data sources using sort definitions.
 /// </summary>
@@ -15,6 +14,7 @@ namespace MudBlazor;
 /// This class contains methods that extend <see cref="IQueryable{T}"/> with sorting capabilities based on a collection of
 /// <see cref="SortDefinition{T}"/> instances. These extensions allow for dynamic and customizable sorting of data.
 /// </remarks>
+[RequiresUnreferencedCode("The method references the OrderBy, OrderByDescending, ThenBy, and ThenByDescending methods of the Queryable class which are subject to trimming.")]
 public static class QuerySortExtensions
 {
     private static readonly MethodInfo _orderByMethod = typeof(Queryable).GetMethods()
@@ -53,7 +53,7 @@ public static class QuerySortExtensions
     /// <param name="expression">A function that constructs the body of the lambda expression for the given parameter expression and sort definition.</param>
     /// <typeparam name="T">The type of the elements of source</typeparam>
     /// <returns>An <see cref="IOrderedQueryable{T}"/> whose elements are sorted according to the sort definitions or the <paramref name="source"/> itself if the sort definitions are empty.</returns>
-    public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, IEnumerable<SortDefinition<T>> sortDefinitions, Func<ParameterExpression, SortDefinition<T>, Expression> expression)
+    public static IQueryable<T> OrderBy<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IQueryable<T> source, IEnumerable<SortDefinition<T>> sortDefinitions, Func<ParameterExpression, SortDefinition<T>, Expression> expression)
     {
         IOrderedQueryable<T>? query = null;
 

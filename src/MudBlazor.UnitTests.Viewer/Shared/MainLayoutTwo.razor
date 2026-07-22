@@ -1,0 +1,11 @@
+﻿@inherits LayoutComponentBase
+
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudThemeProvider Theme="@_customTheme" IsDarkMode="@false"  />
+
+@Body
+
+@code {
+    private readonly MudTheme _customTheme = new();
+}

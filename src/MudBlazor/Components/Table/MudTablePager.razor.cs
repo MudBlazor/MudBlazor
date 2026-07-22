@@ -7,12 +7,14 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
+    /// Pagination controls for a <see cref="MudTable{T}"/> that navigate between pages and change the number of rows shown per page.
     /// </summary>
-    public partial class MudTablePager : MudComponentBase
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
+    /// <seealso cref="MudTableBase" />
+    public partial class MudTablePager : MudComponentBase, IDisposable
     {
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
@@ -28,6 +30,9 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        /// <summary>
+        /// Displays pager controls right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -113,19 +118,19 @@ namespace MudBlazor
                 Debug.Assert(Table != null);
 
                 // fetch number of filtered items (once only)
-                var filteredItemsCount = Table?.GetFilteredItemsCount() ?? 0;
-                var firstItem = (filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table?.RowsPerPage) + 1) ?? 0;
-                var lastItem = Math.Min((Table?.CurrentPage + 1) * Table?.RowsPerPage ?? 0, filteredItemsCount);
+                var filteredItemsCount = Table.GetFilteredItemsCount();
+                var firstItem = filteredItemsCount == 0 ? 0 : (Table.CurrentPage * Table.RowsPerPage) + 1;
+                var lastItem = Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, filteredItemsCount);
 
-                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
+                if (string.IsNullOrEmpty(InfoFormat))
                 {
-                    return InfoFormat
-                        .Replace("{first_item}", $"{firstItem}")
-                        .Replace("{last_item}", $"{lastItem}")
-                        .Replace("{all_items}", $"{filteredItemsCount}");
+                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, $"{firstItem:N0}", $"{lastItem:N0}", $"{filteredItemsCount:N0}"];
                 }
 
-                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, filteredItemsCount];
+                return InfoFormat
+                    .Replace("{first_item}", $"{firstItem:N0}")
+                    .Replace("{last_item}", $"{lastItem:N0}")
+                    .Replace("{all_items}", $"{filteredItemsCount:N0}");
             }
         }
 
@@ -188,12 +193,11 @@ namespace MudBlazor
             if (Context != null)
             {
                 Context.HasPager = true;
-                Context.PagerStateHasChanged = StateHasChanged;
+                Context.PagerStateHasChanged += StateHasChanged;
                 var size = Table?._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
                 SetRowsPerPage(size);
             }
         }
-
 
         protected override void OnParametersSet()
         {
@@ -207,6 +211,32 @@ namespace MudBlazor
             if (string.IsNullOrEmpty(AllItemsText))
             {
                 AllItemsText = Localizer[LanguageResource.MudDataGridPager_AllItems];
+            }
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            if (Context != null)
+            {
+                Context.PagerStateHasChanged -= StateHasChanged;
             }
         }
     }

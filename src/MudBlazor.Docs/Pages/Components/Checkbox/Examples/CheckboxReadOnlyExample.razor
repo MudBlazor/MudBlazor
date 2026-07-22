@@ -13,7 +13,7 @@
     <MudSelectItem Value="@(true)">True</MudSelectItem>
 </MudSelect>
 
-<MudSwitch @bind-Value="ReadOnly" Label="@(ReadOnly ? "ReadOnly Mode" : "Edit Mode")"/>
+<MudSwitch @bind-Value="ReadOnly" Label="@(ReadOnly ? "ReadOnly Mode" : "Edit Mode")" Color="Color.Primary"/>
 
 @code {
     public bool Label_Checkbox1 { get; set; } = true;

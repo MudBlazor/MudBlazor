@@ -1,10 +1,12 @@
+<MudPopoverProvider />
 
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
-
-<MudMenu Label="Menu with Icons">
-    <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary"   Icon="@Icons.Material.Filled.Chair">Chair</MudMenuItem>
-    <MudMenuItem                                                   Icon="@Icons.Material.Filled.DoorFront">Door</MudMenuItem>
-    <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Window">Window</MudMenuItem>
+<MudMenu Label="Click to see icons" Dense="Dense">
+    <MudMenuItem Icon="@Icons.Material.Filled.Chair" Label="Chair" />
+    <MudMenuItem Icon="@Icons.Material.Filled.DoorFront" IconColor="Color.Secondary" Label="Door" />
+    <MudMenuItem Icon="@Icons.Material.Filled.Window" IconColor="Color.Tertiary" Label="Window" />
 </MudMenu>
+
+@code {
+    [Parameter]
+    public bool Dense { get; set; }
+}

@@ -1,0 +1,30 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" />
+            Dialog Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Text="Panel One">
+                <MudTextField T="string" Variant="Variant.Outlined" Label="Editable Field" Disabled="false" Class="mt-3" HelperText="This field is enabled" />
+                <MudTextField T="string" Variant="Variant.Outlined" Label="Disabled Field" Disabled="true" Class="mt-3" HelperText="This field is disabled" />
+                <MudTextField T="string" Variant="Variant.Outlined" Label="Disabled Field with Character Counter" Disabled="true" Class="mt-3" HelperText="Max 100 characters" MaxLength="100" Counter="100" />
+                <MudTextField T="string" Variant="Variant.Outlined" Label="Disabled Field with Auto-Grow" Disabled="true" Class="mt-3" HelperText="Expands with content" MaxLength="100" Counter="100" AutoGrow="true" />
+                <MudTextField T="string" Variant="Variant.Outlined" Label="Minimal Disabled Auto-Grow" Disabled="true" Class="mt-3" AutoGrow="true" />
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog.Cancel();
+}

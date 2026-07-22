@@ -11,9 +11,12 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor.Utilities
 {
+    /// <summary>
+    /// Carries the form field and its new value when a field managed by <see cref="MudForm"/> reports a change.
+    /// </summary>
     public class FormFieldChangedEventArgs
     {
-        public IFormComponent Field { get; set; }
-        public object NewValue { get; set; }
+        public IFormComponent? Field { get; set; }
+        public object? NewValue { get; set; }
     }
 }

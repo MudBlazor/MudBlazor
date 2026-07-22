@@ -2,20 +2,19 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
+
+    /// <summary>
+    /// A drawer used to navigate sections on a page.
+    /// </summary>
     public partial class MudPageContentNavigation : IAsyncDisposable, IMudStateHasChanged
     {
-        private List<MudPageContentSection> _sections = new();
+        private readonly List<MudPageContentSection> _sections = new();
         private IScrollSpy? _scrollSpy;
 
         [Inject]
@@ -77,7 +76,7 @@ namespace MudBlazor
         private void ScrollSpy_ScrollSectionSectionCentered(object? sender, ScrollSectionCenteredEventArgs e) =>
              SelectActiveSection(e.Id);
 
-        private void SelectActiveSection(string id)
+        private void SelectActiveSection(string? id)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -124,7 +123,7 @@ namespace MudBlazor
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a re-render of the component</param>
         public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new MudPageContentSection(sectionName, sectionId), forceUpdate);
 
-        private Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
+        private readonly Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
 
         /// <summary>
         /// Add a section to the content navigation

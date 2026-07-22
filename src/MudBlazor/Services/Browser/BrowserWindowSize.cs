@@ -1,11 +1,11 @@
-﻿using System;
+﻿namespace MudBlazor.Services;
 
-namespace MudBlazor.Services;
-
-#nullable enable
 /// <summary>
-/// Represents the size of a browser window.
+/// Simple size payload for browser viewport measurements.
 /// </summary>
+/// <remarks>
+/// Used by viewport services to carry width/height measurements from JS to .NET.
+/// </remarks>
 public class BrowserWindowSize : EventArgs
 {
     /// <summary>

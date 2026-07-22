@@ -2,9 +2,7 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
-using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -39,6 +37,27 @@ namespace UtilityTests
 
             // Assert
             cssBuilder.Should().Be("test-class");
+        }
+
+        [Test]
+        public void CssBuilder_And_StyleBuilder_Used_Together_Do_Not_Interfere()
+        {
+            // Arrange
+            var cssValue = "test-class";
+            var stylsProp = "color";
+            var styleValue = "red";
+
+            // Act
+            var cssBuilder = new CssBuilder();
+            var styleBuilder = new StyleBuilder();
+            cssBuilder.AddClass(cssValue);
+            styleBuilder.AddStyle(stylsProp, styleValue);
+            var css = cssBuilder.Build();
+            var style = styleBuilder.Build();
+
+            // Assert
+            style.Should().Be("color:red;");
+            css.Should().Be("test-class");
         }
 
         [Test]
@@ -92,7 +111,6 @@ namespace UtilityTests
                             .AddClass("item-five", when: HasFive)
                             .Build();
 
-
             // Assert
             classToRender.Should().Be("item-one item-three item-four");
         }
@@ -109,22 +127,6 @@ namespace UtilityTests
             cssBuilder.AddClass("class1", Condition1);
             cssBuilder.AddClass("class2", Condition2);
             cssBuilder.AddClass("class3", Condition1);
-
-            // Assert
-            cssBuilder.Build().Should().Be("class1 class3");
-        }
-
-        [Test]
-        public void AddClass_With_Value_And_Condition_Func_Adds_Class_Correctly()
-        {
-            // Arrange
-            const bool ConditionResult = true;
-
-            // Act
-            var cssBuilder = new CssBuilder()
-                .AddClass("class1", () => ConditionResult)
-                .AddClass("class2", () => !ConditionResult)
-                .AddClass("class3", () => ConditionResult);
 
             // Assert
             cssBuilder.Build().Should().Be("class1 class3");
@@ -317,5 +319,19 @@ namespace UtilityTests
             // Assert
             classToRender.Should().Be("item-one");
         }
+
+        [TestCase(true, "base extra")]
+        [TestCase(false, "base")]
+        [TestCase(null, "base")]
+        public void AddClass_With_Nullable_Bool_Condition(bool? when, string expected)
+        {
+            // when==true adds; both false and null skip.
+            var cssBuilder = new CssBuilder("base")
+                .AddClass("extra", when)
+                .Build();
+
+            cssBuilder.Should().Be(expected);
+        }
+
     }
 }

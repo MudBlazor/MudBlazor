@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 using MudBlazor.Docs.WasmHost.Prerender;
@@ -14,9 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddHttpContextAccessor();
-
 
 //adding client specific service for prerendering. This service are not used by the WASM app, but for prerending it. Thefore they are different
 builder.Services.AddScoped(sp =>
@@ -69,6 +68,9 @@ using (var scope = app.Services.CreateScope())
 
     var crawlerIdentifier = scope.ServiceProvider.GetRequiredService<ICrawlerIdentifier>();
     await crawlerIdentifier.Initialize();
+
+    // Warm up the documentation
+    ApiDocumentation.GetType("MudAlert");
 }
 
 app.Run();

@@ -12,11 +12,11 @@ using MudBlazor.Utilities.Expressions;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a function which calculates aggregate values such as counts, sums, averages, and custom functions.
+    /// Aggregate calculation such as count, sum, average, minimum, or maximum applied to a <see cref="MudDataGrid{T}"/> column footer or group summary.
     /// </summary>
     /// <typeparam name="T">The type of object to aggregate.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
     public class AggregateDefinition<T>
     {
         private readonly AggregateDefinitionExpressionCache _expressionCache = new();

@@ -2,19 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents the current state of a header in a <see cref="MudDataGrid{T}"/>.
+    /// Header state and actions passed to a <see cref="MudDataGrid{T}"/> header template, exposing the displayed items and select-all command.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
-    public class HeaderContext<T>
+    public class HeaderContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
 
@@ -35,6 +32,11 @@ namespace MudBlazor
         /// The behaviors which are allowed for this header.
         /// </summary>
         public HeaderActions Actions { get; }
+
+        /// <summary>
+        /// Indicates whether the data grid supports multiple selection.
+        /// </summary>
+        public bool IsMultiSelection => _dataGrid.MultiSelection;
 
         /// <summary>
         /// Indicates whether all items are currently selected.
@@ -77,7 +79,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Represents the behaviors allowed for a <see cref="MudDataGrid{T}"/> header.
+        /// Select-all delegate for a <see cref="MudDataGrid{T}"/> header, exposed through <see cref="HeaderContext{T}"/>.
         /// </summary>
         public class HeaderActions
         {

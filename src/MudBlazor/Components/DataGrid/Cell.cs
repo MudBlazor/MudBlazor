@@ -2,15 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using System.Threading.Tasks;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
-    internal class Cell<T>
+    internal class Cell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
@@ -30,34 +28,25 @@ namespace MudBlazor
             }
         }
 
-        internal string computedClass
-        {
-            get
-            {
-                return new CssBuilder(_column.CellClassFunc?.Invoke(_item))
-                    .AddClass(_column.CellClass)
-                    .AddClass("mud-table-cell")
-                    .AddClass("mud-table-cell-hide", _column.HideSmall)
-                    .AddClass("sticky-left", _column.StickyLeft)
-                    .AddClass("sticky-right", _column.StickyRight)
-                    .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.Editable)
-                    .Build();
-            }
-        }
-        internal string computedStyle
-        {
-            get
-            {
-                return new StyleBuilder()
-                    .AddStyle(_column.CellStyleFunc?.Invoke(_item))
-                    .AddStyle(_column.CellStyle)
-                    .Build();
-            }
-        }
+        internal string ComputedClass =>
+            new CssBuilder("mud-table-cell")
+                .AddClass("mud-table-cell-hide", _column.HideSmall)
+                .AddClass("sticky-left", _column.StickyLeft)
+                .AddClass("sticky-right", _column.StickyRight)
+                .AddClass($"edit-mode-cell", (_dataGrid.EditMode == DataGridEditMode.Cell || (_dataGrid.EditMode == DataGridEditMode.Inline && _dataGrid.IsEditingItem(_item))) && _column.Editable)
+                .AddClass(_column.CellClassFunc?.Invoke(_item))
+                .AddClass(_column.CellClass)
+                .Build();
+
+        internal string ComputedStyle =>
+            new StyleBuilder()
+                .AddStyle(_column.CellStyleFunc?.Invoke(_item))
+                .AddStyle(_column.CellStyle)
+                .Build();
 
         #endregion
 
-        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item)
+        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, T sourceItem)
         {
             _dataGrid = dataGrid;
             _column = column;
@@ -65,24 +54,30 @@ namespace MudBlazor
 
             OnStartedEditingItem();
 
-            // Create the CellContext
-            _cellContext = new CellContext<T>(_dataGrid, _item);
+            // Create the CellContext with both the effective item and source item
+            _cellContext = new CellContext<T>(_dataGrid, _item, sourceItem);
         }
 
-        public async Task StringValueChangedAsync(string value)
+        public async Task StringValueChangedAsync(string? value)
         {
+            // In cell edit mode, raise StartedEditingItem before the value is written so consumers can snapshot the pre-edit item, then commit the change immediately.
+            if (_dataGrid.EditMode == DataGridEditMode.Cell)
+                await _dataGrid.BeginCellEditAsync(_item);
+
             _column.SetProperty(_item, value);
 
-            // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
         }
 
         public async Task NumberValueChangedAsync(double? value)
         {
+            // In cell edit mode, raise StartedEditingItem before the value is written so consumers can snapshot the pre-edit item, then commit the change immediately.
+            if (_dataGrid.EditMode == DataGridEditMode.Cell)
+                await _dataGrid.BeginCellEditAsync(_item);
+
             _column.SetProperty(_item, value);
 
-            // If the edit mode is Cell, we update immediately.
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
         }

@@ -3,15 +3,22 @@
 @typeparam T
 
 <MudElement HtmlTag="@HtmlTag"
+            id="@ElementId"
             Class="@Classname"
             Style="@Style"
+            tabindex="@GetTabIndex()"
+            role="@GetRole()"
+            aria-selected="@GetAriaSelected()"
+            aria-expanded="@GetAriaExpanded()"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
+            @onfocus="OnFocusAsync"
+            @onkeydown="HandleKeyDownAsync"
             href="@Href"
-            tabindex="0"
             target="@Target"
             PreventDefault="@GetPreventDefault()"
-            ClickPropagation="@GetClickPropagation()">
+            ClickPropagation="@GetClickPropagation()"
+            @bind-Ref="_elementReference">
 
     @if (AvatarContent is not null)
     {
@@ -34,6 +41,7 @@
         <MudCheckBox T="bool?"
                      TriState
                      ReadOnly="@ReadOnly"
+                     KeyboardEnabled="false"
                      Class="mud-list-item-checkbox my-n2 ms-n2"
                      Disabled="@GetDisabled()"
                      CheckedIcon="@GetCheckedIcon()"
@@ -42,10 +50,12 @@
                      Color="@GetCheckBoxColor()"
                      UncheckedColor="@GetCheckBoxColor()"
                      @bind-Value:get="GetCheckBoxState()"
-                     @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
+                     @bind-Value:set="@(x => OnCheckboxChangedAsync())"
+                     tabindex="-1"
+                     aria-hidden="true" />
     }
 
-    <div class="mud-list-item-text @(Inset ? "mud-list-item-text-inset" : "")">
+    <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">
         <MudText Typo="@TextTypo">
             @if (ChildContent != null)
             {
@@ -79,14 +89,15 @@
 {
     <MudCollapse Expanded="@_expandedState.Value">
         <MudList T="T"
-                 Class="mud-nested-list"
-                 Comparer="@Comparer"
-                 SelectionMode="@SelectionMode"
-                 ReadOnly="@ReadOnly"
-                 Color="@(MudList?.Color ?? Color.Primary)"
-                 Padding="false"
-                 Disabled="@GetDisabled()"
-                 Dense="@GetDense()">
+                Class="mud-nested-list"
+                Comparer="@Comparer"
+                SelectionMode="@SelectionMode"
+                ReadOnly="@ReadOnly"
+                Color="@(MudList?.Color ?? Color.Primary)"
+                Padding="false"
+                Disabled="@GetDisabled()"
+                Dense="@GetDense()"
+                Gutters="@(MudList?.Gutters ?? true)">
             @NestedList
         </MudList>
     </MudCollapse>

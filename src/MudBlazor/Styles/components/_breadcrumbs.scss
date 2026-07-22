@@ -1,14 +1,15 @@
-﻿.mud-breadcrumbs {
+.mud-breadcrumbs {
   display: flex;
   flex-wrap: wrap;
   flex: 0 1 auto;
   align-items: center;
-  list-style-type: none;
+  list-style: none;
   margin: 0;
   padding: 16px 12px;
 }
 
 .mud-breadcrumb-separator {
+  display: inline-flex;
   padding: 0 12px;
 }
 

@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 @*TODO: Needs work*@
 <MudDataGrid Items="@_items" Filterable>
     <Columns>
@@ -12,11 +11,11 @@
 </MudDataGrid>
 
 @code {
-    private IEnumerable<IDictionary<string, object>> _items = new List<IDictionary<string, object>>
+    private readonly IEnumerable<IDictionary<string, object?>> _items = new List<IDictionary<string, object?>>
     {
-        new Dictionary<string, object> { { "Name", "Sam" }, { "Age", 56 }, { "Status", Severity.Normal }, { "Hired", false }, { "HiredOn", null } },
-        new Dictionary<string, object> { { "Name", "Alicia" }, { "Age", 54 }, { "Status", Severity.Info }, { "Hired", null }, { "HiredOn", null } },
-        new Dictionary<string, object> { { "Name", "Ira" }, { "Age", 27 }, { "Status", Severity.Success }, { "Hired", true }, { "HiredOn", new DateTime(2011, 1, 2) } },
-        new Dictionary<string, object> { { "Name", "John" }, { "Age", 32 }, { "Status", Severity.Warning }, { "Hired", false }, { "HiredOn", null } },
+        new Dictionary<string, object?> { { "Name", "Sam" }, { "Age", 56 }, { "Status", Severity.Normal }, { "Hired", false }, { "HiredOn", null } },
+        new Dictionary<string, object?> { { "Name", "Alicia" }, { "Age", 54 }, { "Status", Severity.Info }, { "Hired", null }, { "HiredOn", null } },
+        new Dictionary<string, object?> { { "Name", "Ira" }, { "Age", 27 }, { "Status", Severity.Success }, { "Hired", true }, { "HiredOn", new DateTime(2011, 1, 2) } },
+        new Dictionary<string, object?> { { "Name", "John" }, { "Age", 32 }, { "Status", Severity.Warning }, { "Hired", false }, { "HiredOn", null } },
     };
 }

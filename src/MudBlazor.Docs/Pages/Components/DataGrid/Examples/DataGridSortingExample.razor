@@ -11,11 +11,11 @@
         <PropertyColumn Property="x => x.Position" />
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
         <PropertyColumn Property="x => x.Group" Title="Category" />
-            <TemplateColumn Title="Custom" SortBy="@(x => $"{x.Sign} - {x.Name}")">
-                <CellTemplate>
-                    @context.Item.Sign - @context.Item.Name
-                </CellTemplate>
-            </TemplateColumn>
+        <TemplateColumn Title="Custom" SortBy="@(x => $"{x.Sign} - {x.Name}")">
+            <CellTemplate>
+                @context.Item.Sign - @context.Item.Name
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Element" />

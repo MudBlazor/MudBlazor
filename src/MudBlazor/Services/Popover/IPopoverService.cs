@@ -2,15 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents a service for managing popovers.
+/// Creates, updates, and destroys popovers rendered by the <see cref="MudPopoverProvider"/> and notifies subscribed <see cref="IPopoverObserver"/> instances of changes.
 /// </summary>
 public interface IPopoverService : IAsyncDisposable
 {

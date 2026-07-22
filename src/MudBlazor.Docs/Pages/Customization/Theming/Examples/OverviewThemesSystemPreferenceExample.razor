@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode"/>
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode"/>
 
 @code {
     private bool _isDarkMode;
@@ -10,7 +10,7 @@
     {
         if (firstRender)
         {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            _isDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
             StateHasChanged();
         }
     }

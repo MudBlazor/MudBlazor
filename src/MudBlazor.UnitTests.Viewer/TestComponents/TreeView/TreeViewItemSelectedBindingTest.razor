@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTreeView Class="tree1" T="string" SelectionMode="@SelectionMode" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues">
+﻿<MudTreeView Class="tree1" T="string" SelectionMode="@SelectionMode" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues">
     <MudTreeViewItem Class="item-1" Value='"item1"' @bind-Selected="Item1Selected">
         <MudTreeViewItem Class="item-1-1" Value='"item1.1"' @bind-Selected="Item11Selected" />
         <MudTreeViewItem Class="item-1-2" Value='"item1.2"' @bind-Selected="Item12Selected" />
@@ -32,10 +30,21 @@
 </p>
 
 @code {
-    [Parameter] public SelectionMode SelectionMode { get; set; }
-    [Parameter] public string SelectedValue { get; set; }
-    [Parameter] public IReadOnlyCollection<string> SelectedValues { get; set; }
-    [Parameter] public bool Item1Selected { get; set; }
-    [Parameter] public bool Item11Selected { get; set; }
-    [Parameter] public bool Item12Selected { get; set; }
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; }
+
+    [Parameter]
+    public string? SelectedValue { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<string>? SelectedValues { get; set; }
+
+    [Parameter]
+    public bool Item1Selected { get; set; }
+
+    [Parameter]
+    public bool Item11Selected { get; set; }
+
+    [Parameter]
+    public bool Item12Selected { get; set; }
 }

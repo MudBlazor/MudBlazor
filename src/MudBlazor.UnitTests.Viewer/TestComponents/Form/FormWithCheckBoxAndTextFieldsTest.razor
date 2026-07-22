@@ -1,21 +1,19 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<div style="max-width: 400px;">
+﻿<div style="max-width: 400px;">
     <MudCard>
         <MudCardContent>
             <MudForm>
 
-                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@CatName" Label="Cat Name"
+                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@_catName" Label="Cat Name"
                               Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
 
-                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@OwnerName" Label="Owner Name"
+                <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@_ownerName" Label="Owner Name"
                               Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
 
 
-                <MudTextField T="int" Variant="Variant.Outlined" @bind-Value="@CatWeight" Label="Weight"
+                <MudTextField T="int" Variant="Variant.Outlined" @bind-Value="@_catWeight" Label="Weight"
                               Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Info" />
 
-                <MudCheckBox @bind-Value="@Evil_CheckBox" Label="Evil"></MudCheckBox>
+                <MudCheckBox @bind-Value="@_evilCheckBox" Label="Evil"></MudCheckBox>
 
             </MudForm>
         </MudCardContent>
@@ -24,12 +22,12 @@
         </MudCardActions>
     </MudCard>
 </div>
-@code
-{
+@code {
+
     public static string __description__ = "Based on error report. Clicking the checkbox should not influence the other form fields.";
 
-    public string CatName { get; set; }
-    public string OwnerName { get; set; }
-    public int CatWeight { get; set; }
-    public bool Evil_CheckBox { get; set; } = true;
+    private string? _catName;
+    private string? _ownerName;
+    private int _catWeight;
+    private bool _evilCheckBox  = true;
 }

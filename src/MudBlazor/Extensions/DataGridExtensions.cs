@@ -2,18 +2,25 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
-#nullable enable
     public static class DataGridExtensions
     {
-        public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, GridState<T> state)
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridState<T> state)
             => OrderBySortDefinitions(source, state.SortDefinitions);
 
-        public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridStateVirtualize<T> state)
+            => OrderBySortDefinitions(source, state.SortDefinitions);
+
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
+            => OrderBySortDefinitionsInternal(source, sortDefinitions, sortDefinitions.Count);
+
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, IReadOnlyCollection<SortDefinition<T>> sortDefinitions)
+            => OrderBySortDefinitionsInternal(source, sortDefinitions, sortDefinitions.Count);
+
+        private static IEnumerable<T> OrderBySortDefinitionsInternal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(IEnumerable<T> source, IEnumerable<SortDefinition<T>> sortDefinitions, int sortDefinitionsCount)
         {
             //avoid multiple enumeration
             var sourceArray = source as T[] ?? source.ToArray();
@@ -23,7 +30,7 @@ namespace MudBlazor
                 return sourceArray;
             }
 
-            if (sortDefinitions.Count == 0)
+            if (sortDefinitionsCount == 0)
             {
                 return sourceArray;
             }
@@ -34,20 +41,20 @@ namespace MudBlazor
             {
                 if (orderedEnumerable is null)
                 {
-                    orderedEnumerable = sortDefinition.Descending ? sourceArray.OrderByDescending(sortDefinition.SortFunc)
-                        : sourceArray.OrderBy(sortDefinition.SortFunc);
+                    orderedEnumerable = sortDefinition.Descending ? sourceArray.OrderByDescending(sortDefinition.SortFunc, sortDefinition.Comparer)
+                        : sourceArray.OrderBy(sortDefinition.SortFunc, sortDefinition.Comparer);
                 }
                 else
                 {
-                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc)
-                        : orderedEnumerable.ThenBy(sortDefinition.SortFunc);
+                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc, sortDefinition.Comparer)
+                        : orderedEnumerable.ThenBy(sortDefinition.SortFunc, sortDefinition.Comparer);
                 }
             }
 
             return orderedEnumerable ?? source;
         }
 
-        public static Column<T>? GetColumnByPropertyName<T>(this MudDataGrid<T> dataGrid, string propertyName)
+        public static Column<T>? GetColumnByPropertyName<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this MudDataGrid<T> dataGrid, string propertyName)
         {
             return dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == propertyName);
         }

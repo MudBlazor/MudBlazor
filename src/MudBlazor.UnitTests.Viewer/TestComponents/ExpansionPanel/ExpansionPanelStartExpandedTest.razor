@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudExpansionPanels>
+﻿<MudExpansionPanels>
     <MudExpansionPanel @bind-Expanded="Panel1Expanded" Class="panel-one" Text="Panel One">
         Panel One Content
     </MudExpansionPanel>
@@ -12,11 +10,10 @@
     </MudExpansionPanel>
 </MudExpansionPanels>
 
-@code
-{
-    public bool Panel1Expanded { get; set; }
+@code {
+    public bool Panel1Expanded { get; private set; }
 
-    public bool Panel2Expanded { get; set; } = true;
+    public bool Panel2Expanded { get; private set; } = true;
 
-    public bool Panel3Expanded { get; set; }
+    public bool Panel3Expanded { get; private set; }
 }

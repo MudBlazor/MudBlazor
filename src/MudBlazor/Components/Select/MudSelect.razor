@@ -3,7 +3,7 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync">
+    <div class="@OuterClassname" id="@ElementId" @onfocusout="@OnFocusOutAsync" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -14,12 +14,12 @@
                          Class="@Classname"
                          Style="@Style"
                          Error="@HasErrors"
-                         ErrorId="@ErrorId"
+                         ErrorId="@ErrorIdState.Value"
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@(InputElementId ?? string.Empty)"
-                         @onclick="@ToggleMenu">
+                         ForId="@InputElementId"
+                         @onmousedown="@HandleMouseDown">
             <InputContent>
                 <MudInput @ref="_elementReference"
                           InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
@@ -29,13 +29,12 @@
                           Label="@Label"
                           Variant="@Variant"
                           Typo="@Typo"
-                          TextUpdateSuppression="false"
-                          Value="@(Strict && !IsValueInList ? null : Text)"
+                          Value="@(Strict && !IsValueInList ? null : ReadText)"
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
-                          Error="@Error"
-                          ErrorId="@ErrorId"
+                          Error="@HasErrors"
+                          ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
                           AdornmentText="@AdornmentText"
@@ -45,30 +44,82 @@
                           IconSize="@IconSize"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
-                          Clearable="@Clearable"
+                          Clearable="@(Clearable && !GetReadOnlyState() && HasClearableValue())"
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes"
+                          @attributes="GetInputUserAttributes()"
                           OnBlur="@OnBlurAsync"
-                          ShrinkLabel="@ShrinkLabel"
+                          ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">
-                    @if (CanRenderValue) {
+                    @if (CanRenderValue)
+                    {
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-                <MudPopover Open=@(_open)
+                @if (FitContent)
+                {
+                    <MudStack Class="@FillerClassname" Spacing="1" Row>
+                        @{
+                            var value = string.Empty;
+
+                            if (_longestItem is { Value: not null })
+                            {
+                                value = ConvertSet(_longestItem.Value) ?? string.Empty;
+                            }
+
+                            var useLabel = Label is not null && Placeholder is null && !ShrinkLabel 
+                                        && (Adornment != Adornment.Start || (AdornmentIcon is null && AdornmentText is null));
+
+                            var defaultValue = useLabel ? Label : Placeholder;
+                            var showDefault = defaultValue?.Length > value.Length;
+                            var hasChildContent = _longestItem?.ChildContent is not null;
+                            var hasStringValue = ToStringFunc is not null && !string.IsNullOrEmpty(value);
+
+                            var renderText = showDefault || !hasChildContent || MultiSelectionTextFunc is not null || hasStringValue;
+                        }
+
+                        @if (renderText)
+                        {
+                            var text = showDefault ? defaultValue! : value;
+
+                            <MudText Typo="@Typo">
+                                @(MultiSelectionTextFunc?.Invoke([text]) ?? text)
+                            </MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="@Typo">@_longestItem!.ChildContent</MudText>
+                        }
+
+                        @AdornmentText
+
+                        @if (AdornmentText is null)
+                        {
+                            <MudIcon Icon="@(AdornmentIcon ?? OpenIcon)" Size="IconSize"></MudIcon>
+                        }
+
+                        @if (Clearable)
+                        {
+                            <MudIcon Icon="@ClearIcon" Size="IconSize"></MudIcon>
+                        }
+                    </MudStack>
+                }
+                <MudPopover Open="@_openState.Value"
                             MaxHeight="@MaxHeight"
+                            Class="@PopoverClass"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Class="@PopoverClass"
-                            RelativeWidth="true">
+                            Fixed="@PopoverFixed"
+                            RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
+                                 @attributes="GetListUserAttributes()"
                                  Class="@ListClass"
                                  Dense="@Dense"
                                  @bind-SelectedValue="_activeItemId">
-                            @if (MultiSelection && SelectAll) {
+                            @if (MultiSelection && SelectAll)
+                            {
                                 <MudListItem Value="@("__SelectAll__")"
                                              Icon="@SelectAllCheckBoxIcon"
                                              Text="@SelectAllText"
@@ -91,7 +142,18 @@
             @ChildContent
         </CascadingValue>
     </CascadingValue>
-
 </CascadingValue>
-<!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<!-- 
+pointerdown instead of click needed to close the menu before OnLostFocus runs
+
+When Modal is false the overlay does not receive pointer events so we activate
+the auto close feature and call CloseMenu in OnClosed. The modeless auto close
+feature relies on pointerdown event resulting in the same order of events.
+-->
+<MudOverlay Visible="_openState.Value"
+            @onpointerdown="@(() => CloseMenu(false))"
+            data-modeless-ignore-element-id="@ElementId"
+            LockScroll="@LockScroll"
+            AutoClose="@(!GetModal())"
+            Modal="@GetModal()"
+            OnClosed="@(() => CloseMenu(false))"/>

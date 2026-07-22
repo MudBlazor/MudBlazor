@@ -1,4 +1,6 @@
-﻿<MudDialog>
+﻿@attribute [ViewerHidden]
+
+<MudDialog>
     <DialogContent>
         Dialog Content
         <MudTextField T="string" Immediate TextChanged="@OnTextChangedAsync" />
@@ -8,14 +10,13 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
     </DialogActions>
 </MudDialog>
 
-
 @code {
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public EventCallback<string> OnSearch { get; set; }

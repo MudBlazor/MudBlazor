@@ -1,0 +1,39 @@
+﻿@page "/components/sankeychart"
+@page "/components/chart-types/sankeychart"
+@page "/components/sankey"
+
+<DocsPage>
+    <DocsPageHeader Title="Sankey Chart" Component="@nameof(MudBlazor.Charts.Sankey<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    To get a Sankey Chart use <CodeInline>ChartType="ChartType.Sankey"</CodeInline> to render the configured <CodeInline>ChartSeries</CodeInline> as <CodeInline>Nodes</CodeInline> and <CodeInline>Edges</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SankeyExample1)">
+                <SankeyExample1 />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>The Sankey Chart can be further customised using <CodeInline>SankeyChartOptions</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SankeyExample2)">
+                <SankeyExample2 />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Events">
+                <Description>The only event the Sankey Chart currently provides is the selected index one for nodes.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SankeyExample3)">
+                <SankeyExample3 />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

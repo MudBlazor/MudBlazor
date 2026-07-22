@@ -3,7 +3,7 @@
 @inject ISnackbar Snackbar
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Show">
-    Open Action Snackbar
+    Open action snackbar
 </MudButton>
 
 @code {
@@ -14,7 +14,7 @@
         {
             config.Action = "Help";
             config.ActionColor = Color.Primary;
-            config.Onclick = snackbar =>
+            config.OnClick = snackbar =>
             {
                 Help();
                 return Task.CompletedTask;

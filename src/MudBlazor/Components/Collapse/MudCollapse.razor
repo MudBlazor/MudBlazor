@@ -1,10 +1,9 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-@using System.Globalization
 
-<div aria-expanded="@Expanded.ToString().ToLowerInvariant()" @onanimationend="EventUtil.AsNonRenderingEventHandler(AnimationEndAsync)"
+<div @ontransitionend="this.AsNonRenderingEventHandler(AnimationEndAsync)"
      @attributes="UserAttributes" class="@Classname" style="@Stylename">
-    <div @ref="_wrapper" class="mud-collapse-wrapper">
+    <div class="mud-collapse-wrapper">
         <div class="mud-collapse-wrapper-inner">
             @ChildContent
         </div>

@@ -6,9 +6,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a dark color palette.
+    /// Dark-mode color palette that overrides <see cref="Palette"/> defaults for MudBlazor's dark theme.
     /// </summary>
     public class PaletteDark : Palette
     {
@@ -92,5 +91,8 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public override MudColor DividerLight { get; set; } = "rgba(255,255,255, 0.06)";
+
+        /// <inheritdoc />
+        public override MudColor Skeleton { get; set; } = "rgba(255,255,255, 0.11)";
     }
 }

@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MudBlazor.State;
-
 
 namespace MudBlazor.UnitTests.State.Mocks;
 
@@ -16,7 +13,7 @@ internal class ParameterChangedHandlerMock<TArgs> : IParameterChangedHandler<TAr
 
     public IReadOnlyList<ParameterChangedEventArgs<TArgs>> Changes => _changes;
 
-    public Task HandleAsync(ParameterChangedEventArgs<TArgs> parameterChangedEventArgs)
+    public Task HandleAsync(ParameterChangedEventArgs<TArgs> parameterChangedEventArgs, ParameterChangedContext context)
     {
         _changes.Add(parameterChangedEventArgs);
 

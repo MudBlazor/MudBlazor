@@ -2,18 +2,16 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
-using System.Collections.Generic;
+using System.Text;
 
 namespace MudBlazor.Utilities
 {
-#nullable enable
     /// <summary>
-    /// Represents a builder for creating in-line styles used in a component.
+    /// Builds an inline CSS style string with conditionally added declarations for a component's markup.
     /// </summary>
-    public struct StyleBuilder
+    public readonly struct StyleBuilder
     {
-        private string? _stringBuffer;
+        private readonly StringBuilder _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of StyleBuilder with the specified property and value.
@@ -46,6 +44,18 @@ namespace MudBlazor.Utilities
         public static StyleBuilder Empty() => new();
 
         /// <summary>
+        /// Creates an empty instance of StyleBuilder.
+        /// </summary>
+        /// <remarks>
+        /// Call <see cref="Build"/>> to return the completed style as a string.
+        /// </remarks>
+        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
+        public StyleBuilder()
+        {
+            _stringBuilder = StringBuilderCache.Acquire();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the StyleBuilder class with the specified property and value.
         /// </summary>
         /// <remarks>
@@ -54,14 +64,19 @@ namespace MudBlazor.Utilities
         /// <param name="prop">The CSS property.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder(string prop, string value) => _stringBuffer = $"{prop}:{value};";
+        public StyleBuilder(string prop, string value) : this() =>
+            _stringBuilder
+                .Append(prop)
+                .Append(':')
+                .Append(value)
+                .Append(';');
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
         /// </summary>
         /// <param name="style">The style to add.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw($"{style};") : this;
+        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw(style).AddRaw(';') : this;
 
         /// <summary>
         /// Adds a conditional style to the builder with a space separator and closing semicolon.
@@ -86,7 +101,21 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         private StyleBuilder AddRaw(string? style)
         {
-            _stringBuffer += style;
+            if (style is not null)
+            {
+                _stringBuilder.Append(style);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a raw char to the builder to the builder.
+        /// </summary>
+        /// <param name="c">The character to add.</param>
+        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
+        private StyleBuilder AddRaw(char c)
+        {
+            _stringBuilder.Append(c);
             return this;
         }
 
@@ -96,7 +125,10 @@ namespace MudBlazor.Utilities
         /// <param name="prop">The CSS property.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string prop, string? value) => AddRaw($"{prop}:{value};");
+        public StyleBuilder AddStyle(string prop, string? value) => AddRaw(prop)
+                .AddRaw(':')
+                .AddRaw(value)
+                .AddRaw(';');
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
@@ -106,7 +138,6 @@ namespace MudBlazor.Utilities
         /// <param name="when">The condition in which the style is added.</param>
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         public StyleBuilder AddStyle(string prop, string? value, bool when) => when ? AddStyle(prop, value) : this;
-
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
@@ -181,22 +212,24 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         public StyleBuilder AddStyleFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
-            return additionalAttributes is null
-                ? this
-                : additionalAttributes.TryGetValue("style", out var result)
-                    ? AddRaw(result.ToString())
-                    : this;
+            if (additionalAttributes is null)
+            {
+                return this;
+            }
+
+            if (additionalAttributes.TryGetValue("style", out var result))
+            {
+                return AddRaw(result.ToString());
+            }
+
+            return this;
         }
 
         /// <summary>
         /// Finalizes the completed style as a string.
         /// </summary>
         /// <returns>The string representation of the style.</returns>
-        public string Build()
-        {
-            // String buffer finalization code
-            return _stringBuffer is not null ? _stringBuffer.Trim() : string.Empty;
-        }
+        public string Build() => StringBuilderCache.GetStringAndRelease(_stringBuilder).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />

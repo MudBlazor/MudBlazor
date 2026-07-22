@@ -1,22 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
     /// <summary>
-    /// A base class for designing table components.
+    /// Base class for <see cref="MudTable{T}"/> holding the type-independent table members such as paging, layout, and editing options.
     /// </summary>
     public abstract class MudTableBase : MudComponentBase
     {
         private int _currentPage = 0;
-        private bool _isFirstRendered = false;
+        private int? _currentPageParameterValue;
         internal int? _rowsPerPage;
+        private int? _rowsPerPageParameterValue;
         internal object? _editingItem = null;
         internal bool Editing => _editingItem != null;
 
@@ -42,11 +40,45 @@ namespace MudBlazor
 
         protected string HeadClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass)
+            .AddClass("mud-table-dense", Dense)
             .Build();
 
         protected string FootClassname => new CssBuilder("mud-table-foot")
             .AddClass(FooterClass)
             .Build();
+
+        /// <summary>
+        /// The aria-label for the HTML table element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to null. When set, renders as the table's <c>aria-label</c> attribute for accessibility.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        [Obsolete("Set via TableAttributes")]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
+
+        private protected Dictionary<string, object?> GetTableAttributes()
+        {
+#pragma warning disable CS0618 // AriaLabel is obsolete but must stay functional until removed
+            if (AriaLabel is null || TableAttributes.ContainsKey("aria-label"))
+            {
+                return TableAttributes;
+            }
+
+            return new Dictionary<string, object?>(TableAttributes)
+            {
+                ["aria-label"] = AriaLabel,
+            };
+#pragma warning restore CS0618
+        }
 
         /// <summary>
         /// Forces a row being edited to be saved or canceled before a new row can be selected.
@@ -104,6 +136,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// The CSS classes applied to all cells of the table.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? CellClass { get; set; }
 
         /// <summary>
         /// Highlights rows when hovering over them.
@@ -198,10 +240,14 @@ namespace MudBlazor
             get => _rowsPerPage ?? 10;
             set
             {
-                if (_rowsPerPage is null || _rowsPerPage != value)
+                // React only to real parameter changes; the pager mutates _rowsPerPage directly, so re-applying an unchanged value must not clobber it (#13462, #3033, #3244).
+                if (_rowsPerPageParameterValue == value)
                 {
-                    SetRowsPerPage(value);
+                    return;
                 }
+
+                _rowsPerPageParameterValue = value;
+                SetRowsPerPage(value);
             }
         }
 
@@ -224,19 +270,22 @@ namespace MudBlazor
             get => _currentPage;
             set
             {
-                if (_currentPage == value)
+                // React only to genuine parameter changes: internal nav mutates the page via SetCurrentPage, so a re-applied but unchanged CurrentPage must not clobber it on a parent re-render (#13462).
+                if (_currentPageParameterValue == value)
                 {
                     return;
                 }
 
-                _currentPage = value;
-                InvokeAsync(StateHasChanged);
-                if (_isFirstRendered)
-                {
-                    InvokeServerLoadFunc();
-                }
+                _currentPageParameterValue = value;
+                SetCurrentPage(value);
             }
         }
+
+        /// <summary>
+        /// Occurs when <see cref="CurrentPage"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> CurrentPageChanged { get; set; }
 
         /// <summary>
         /// Allows multiple rows to be selected with checkboxes.
@@ -279,7 +328,7 @@ namespace MudBlazor
         /// Displays a loading animation while <c>ServerData</c> executes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> is set.
+        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -289,7 +338,7 @@ namespace MudBlazor
         /// The color of the <see cref="MudProgressLinear"/> while <see cref="Loading"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> is set.
+        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -523,7 +572,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public RenderFragment<MudBlazorFix.EditButtonContext>? EditButtonContent { get; set; }
+        public RenderFragment<EditButtonContext>? EditButtonContent { get; set; }
 
         /// <summary>
         /// Occurs before inline editing begins for a row.
@@ -604,20 +653,22 @@ namespace MudBlazor
         public float ItemSize { get; set; } = 50f;
 
         /// <summary>
+        /// The position of the pager.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="PagerPosition.Bottom"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Pagination)]
+        public PagerPosition PagerPosition { get; set; } = PagerPosition.Bottom;
+
+        /// <summary>
         /// The current state of this table.
         /// </summary>
         /// <remarks>
         /// Typically used to interact with other components such as <see cref="MudTablePager"/>.
         /// </remarks>
         public abstract TableContext TableContext { get; }
-
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-                _isFirstRendered = true;
-
-            return base.OnAfterRenderAsync(firstRender);
-        }
 
         /// <summary>
         /// Changes the current page.
@@ -628,16 +679,16 @@ namespace MudBlazor
             switch (page)
             {
                 case Page.First:
-                    CurrentPage = 0;
+                    SetCurrentPage(0);
                     break;
                 case Page.Last:
-                    CurrentPage = Math.Max(0, NumPages - 1);
+                    SetCurrentPage(Math.Max(0, NumPages - 1));
                     break;
                 case Page.Next:
-                    CurrentPage = Math.Min(NumPages - 1, CurrentPage + 1);
+                    SetCurrentPage(Math.Min(NumPages - 1, CurrentPage + 1));
                     break;
                 case Page.Previous:
-                    CurrentPage = Math.Max(0, CurrentPage - 1);
+                    SetCurrentPage(Math.Max(0, CurrentPage - 1));
                     break;
             }
         }
@@ -647,7 +698,24 @@ namespace MudBlazor
         /// <param name="pageIndex">The index of the page to navigate to.</param>
         public void NavigateTo(int pageIndex)
         {
-            CurrentPage = Math.Min(Math.Max(0, pageIndex), NumPages - 1);
+            SetCurrentPage(Math.Min(Math.Max(0, pageIndex), NumPages - 1));
+        }
+
+        // Applies an internal page change (pager/NavigateTo/clamp/reset); must not update _currentPageParameterValue or it would be mistaken for a parameter change (#13462).
+        internal void SetCurrentPage(int page)
+        {
+            if (_currentPage == page)
+            {
+                return;
+            }
+
+            _currentPage = page;
+            InvokeAsync(StateHasChanged);
+            CurrentPageChanged.InvokeAsync(_currentPage);
+            if (HasRendered)
+            {
+                InvokeServerLoadFunc();
+            }
         }
 
         /// <summary>
@@ -661,14 +729,30 @@ namespace MudBlazor
                 return;
             }
 
+            var currentPageHasChanged = false;
+
+            // On intialization, don't reset CurrentPage
+            // https://github.com/MudBlazor/MudBlazor/issues/11727
+            if (_rowsPerPage.HasValue)
+            {
+                currentPageHasChanged = _currentPage != 0;
+                _currentPage = 0;
+            }
+
             _rowsPerPage = size;
-            _currentPage = 0;
-            StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
-            if (_isFirstRendered)
+
+            if (currentPageHasChanged)
+            {
+                CurrentPageChanged.InvokeAsync(_currentPage);
+            }
+
+            if (HasRendered)
             {
                 InvokeServerLoadFunc();
             }
+
+            StateHasChanged();
         }
 
         protected abstract int NumPages { get; }
@@ -755,3 +839,4 @@ namespace MudBlazor
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }
 }
+

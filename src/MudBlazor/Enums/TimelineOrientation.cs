@@ -1,12 +1,23 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Specifies whether items in a <see cref="MudTimeline"/> are arranged vertically or horizontally.
+/// </summary>
+[EnumExtensions]
+public enum TimelineOrientation
 {
-    public enum TimelineOrientation
-    {
-        [Description("vertical")]
-        Vertical,
-        [Description("horizontal")]
-        Horizontal
-    }
+    /// <summary>
+    /// Items are displayed vertically.
+    /// </summary>
+    [Description("vertical")]
+    Vertical,
+
+    /// <summary>
+    /// Items are displayed horizontally.
+    /// </summary>
+    [Description("horizontal")]
+    Horizontal
 }

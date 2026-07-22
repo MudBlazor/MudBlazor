@@ -6,7 +6,7 @@
         <PickerActions>
             <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
             <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
-            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">OK</MudButton>
         </PickerActions>
     </MudDateRangePicker>
     <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>

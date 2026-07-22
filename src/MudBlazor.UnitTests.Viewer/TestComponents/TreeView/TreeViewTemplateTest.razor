@@ -1,20 +1,37 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTreeView SelectionMode="SelectionMode.MultiSelection" Items="TreeItems" Style="width: 500px;">
+﻿<MudTreeView SelectionMode="SelectionMode.MultiSelection" Items="_treeItems" Style="width: 500px;">
     <ItemTemplate>
         <MudTreeViewItem @bind-Selected="@context.Selected" @bind-Expanded="@context.Expanded" Icon="@context.Icon"
-                         Text="@context.Text" EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" Items="@context.Children" />
+                         Text="@context.Text" EndText="@(((TreeItemData)context).Number?.ToString())" EndTextTypo="@Typo.caption" Items="@context.Children" />
     </ItemTemplate>
 </MudTreeView>
 
 @code {
-    private List<TreeItemData> TreeItems { get; set; } = new();
+    private readonly List<TreeItemData> _treeItems = [];
 
-    public class TreeItemData : TreeItemData<string>
+    protected override void OnInitialized()
+    {
+        _treeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
+        _treeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
+        _treeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
+        {
+            Children =
+            [
+                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
+            ]
+        });
+        _treeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
+
+        base.OnInitialized();
+    }
+
+    public sealed class TreeItemData : TreeItemData<string>
     {
         public int? Number { get; set; }
 
-        public List<TreeItemData> TreeItems { get; set; }
+        public List<TreeItemData> TreeItems { get; set; } = [];
 
         public TreeItemData(string title, string icon, int? number = null, bool canExpand = true) : base(title)
         {
@@ -22,21 +39,5 @@
             Number = number;
             Expandable = canExpand;
         }
-    }
-
-    protected override void OnInitialized()
-    {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
-        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label) {
-                Children = new()
-                {
-                    new TreeItemData("Social", Icons.Material.Filled.Group, 90),
-                    new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
-                    new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                    new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
-                }
-            });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
     }
 }

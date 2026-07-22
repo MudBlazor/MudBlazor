@@ -1,141 +1,175 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
-namespace MudBlazor.Services
+namespace MudBlazor.Services;
+
+/// <summary>
+/// Watches elements for size changes and keeps a local cache of their bounds for fast lookup.
+/// </summary>
+/// <remarks>
+/// This service bridges Blazor components to the browser ResizeObserver API through JS interop.
+/// Components use it to subscribe once and then query cached sizes during rendering without extra JS roundtrips.
+/// </remarks>
+internal sealed class ResizeObserver : IResizeObserver
 {
-    public class ResizeObserver : IResizeObserver, IAsyncDisposable
+    private bool _disposed;
+    private readonly IJSRuntime _jsRuntime;
+    private readonly Guid _id = Guid.NewGuid();
+    private readonly ResizeObserverOptions _options;
+    private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
+    private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
+    private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new(ElementReferenceComparer.Default);
+
+    /// <inheritdoc />
+    public event SizeChanged? OnResized;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResizeObserver"/> class.
+    /// </summary>
+    /// <param name="jsRuntime">The JavaScript runtime.</param>
+    /// <param name="options">The options to configure the resize observer.</param>
+    [DynamicDependency(nameof(OnSizeChanged))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BoundingClientRect))]
+    public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions>? options = null)
     {
-        private bool _isDisposed = false;
+        _dotNetRef = DotNetObjectReference.Create(this);
+        _jsRuntime = jsRuntime;
+        _options = options?.Value ?? new ResizeObserverOptions();
+    }
 
-        private readonly IJSRuntime _jsRuntime;
-        private readonly Guid _id = Guid.NewGuid();
-        private readonly ResizeObserverOptions _options;
-        private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
-        private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
-        private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
+    /// <inheritdoc />
+    public async Task<BoundingClientRect?> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
 
-
-        [DynamicDependency(nameof(OnSizeChanged))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(SizeChangeUpdateInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BoundingClientRect))]
-        public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null)
+    /// <inheritdoc />
+    public async Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
+    {
+        var filteredElements = elements.Where(x => x.Context is not null && !_cachedValues.ContainsKey(x)).ToList();
+        if (filteredElements.Count == 0)
         {
-            _dotNetRef = DotNetObjectReference.Create(this);
-            _jsRuntime = jsRuntime;
-            _options = options?.Value ?? new ResizeObserverOptions();
+            return Array.Empty<BoundingClientRect>();
         }
 
-        public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
+        var elementIds = new List<Guid>();
 
-        public async Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
+        foreach (var item in filteredElements)
         {
-            var filteredElements = elements.Where(x => x.Context != null && _cachedValues.ContainsKey(x) == false).ToList();
-            if (filteredElements.Any() == false)
-            {
-                return Array.Empty<BoundingClientRect>();
-            }
-
-            List<Guid> elementIds = new();
-
-            foreach (var item in filteredElements)
-            {
-                var id = Guid.NewGuid();
-                elementIds.Add(id);
-                _cachedValueIds.Add(id, item);
-            }
-
-            var result = await _jsRuntime.InvokeAsync<IEnumerable<BoundingClientRect>>("mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options) ?? Array.Empty<BoundingClientRect>();
-            var counter = 0;
-            foreach (var item in result)
-            {
-                _cachedValues.Add(filteredElements.ElementAt(counter), item);
-                counter++;
-            }
-
-            return result;
+            var id = Guid.NewGuid();
+            elementIds.Add(id);
+            _cachedValueIds.Add(id, item);
         }
 
-        public async Task Unobserve(ElementReference element)
+        var boundingRect = await _jsRuntime.InvokeAsyncWithErrorHandling<BoundingClientRect[]?>([], "mudResizeObserver.connect", _id, _dotNetRef, filteredElements, elementIds, _options);
+        var result = boundingRect.value ?? [];
+        var counter = 0;
+        foreach (var item in result)
         {
-            var elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
-            if (elementId == default) { return; }
-
-            //if the unobserve happens during a component teardown, the try-catch is a safe guard to prevent a "pseudo" exception
-            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.disconnect", _id, elementId); } catch (Exception) { }
-
-            _cachedValueIds.Remove(elementId);
-            _cachedValues.Remove(element);
+            _cachedValues.Add(filteredElements.ElementAt(counter), item);
+            counter++;
         }
 
-        public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
+        return result;
+    }
 
-        public record SizeChangeUpdateInfo(Guid Id, BoundingClientRect Size);
-
-        [JSInvokable]
-        public void OnSizeChanged(IEnumerable<SizeChangeUpdateInfo> changes)
+    /// <inheritdoc />
+    public async Task Unobserve(ElementReference element)
+    {
+        var elementId = _cachedValueIds.FirstOrDefault(x => x.Value.Id == element.Id).Key;
+        if (elementId == Guid.Empty)
         {
-            Dictionary<ElementReference, BoundingClientRect> parsedChanges = new();
-            foreach (var item in changes)
+            return;
+        }
+
+        await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeObserver.disconnect", _id, elementId);
+
+        _cachedValueIds.Remove(elementId);
+        _cachedValues.Remove(element);
+    }
+
+    /// <inheritdoc />
+    public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
+
+    /// <inheritdoc />
+    public BoundingClientRect? GetSizeInfo(ElementReference reference) => _cachedValues.GetValueOrDefault(reference);
+
+    /// <inheritdoc />
+    public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
+
+    /// <inheritdoc />
+    public double GetWidth(ElementReference reference) => GetSizeInfo(reference)?.Width ?? 0.0;
+
+    /// <summary>
+    /// Invoked by JavaScript when the size of an observed element changes.
+    /// </summary>
+    /// <param name="changes">The changes in size.</param>
+    [JSInvokable]
+    public void OnSizeChanged(IEnumerable<SizeChangeUpdateInfo> changes)
+    {
+        var parsedChanges = new Dictionary<ElementReference, BoundingClientRect>(ElementReferenceComparer.Default);
+        foreach (var item in changes)
+        {
+            if (_cachedValueIds.TryGetValue(item.Id, out var elementRef))
             {
-                if (_cachedValueIds.TryGetValue(item.Id, out var elementRef))
-                {
-                    _cachedValues[elementRef] = item.Size;
-                    parsedChanges.Add(elementRef, item.Size);
-                }
-            }
-
-            OnResized?.Invoke(parsedChanges);
-        }
-
-        public event SizeChanged OnResized;
-
-        public BoundingClientRect GetSizeInfo(ElementReference reference)
-        {
-            return _cachedValues.TryGetValue(reference, out var existing) ? existing : null;
-        }
-
-        public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
-        public double GetWidth(ElementReference reference) => GetSizeInfo(reference)?.Width ?? 0.0;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing && _isDisposed == false)
-            {
-                _isDisposed = true;
-                _dotNetRef.Dispose();
-                _cachedValueIds.Clear();
-                _cachedValues.Clear();
-
-                //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
-                try { _ = _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
+                _cachedValues[elementRef] = item.Size;
+                parsedChanges.Add(elementRef, item.Size);
             }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        OnResized?.Invoke(parsedChanges);
+    }
 
-        public async ValueTask DisposeAsync()
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposed)
         {
-            if (_isDisposed) { return; }
+            _disposed = true;
 
-            _isDisposed = true;
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeObserver.cancelListener", _id);
 
             _dotNetRef.Dispose();
             _cachedValueIds.Clear();
             _cachedValues.Clear();
-
-            //in a fire and forget manner, we just "trying" to cancel the listener. So, we are not interested in an potential error 
-            try { await _jsRuntime.InvokeVoidAsync($"mudResizeObserver.cancelListener", _id); } catch (Exception) { }
         }
+    }
+
+    /// <summary>
+    /// Payload sent from JavaScript to describe which element changed and its latest bounds.
+    /// </summary>
+    /// <remarks>
+    /// The interop layer batches multiple element updates so the observer can refresh its cache in one pass.
+    /// </remarks>
+    /// <param name="Id">The identifier of the element.</param>
+    /// <param name="Size">The new size of the element.</param>
+    public record SizeChangeUpdateInfo(Guid Id, BoundingClientRect Size);
+
+    /// <summary>
+    /// Compares <see cref="ElementReference"/> instances by their element id to speed dictionary lookups.
+    /// </summary>
+    /// <remarks>
+    /// This avoids the slower default implementation when using <see cref="ElementReference"/> as dictionary keys.
+    /// </remarks>
+    internal class ElementReferenceComparer : IEqualityComparer<ElementReference>
+    {
+        /// <inheritdoc />
+        public bool Equals(ElementReference x, ElementReference y) => x.Id == y.Id;
+
+        /// <inheritdoc />
+        public int GetHashCode(ElementReference obj)
+        {
+            // Do not modify this null workaround, as the Id can be null when ElementReference is initialized as default(ElementReference).
+            // Although the nullable annotation suggests otherwise, we use this unconventional object pattern instead of an if-else statement 
+            // to suppress the nullable annotation.
+            // https://github.com/dotnet/aspnetcore/issues/58523
+            return obj is { Id: null } ? 0 : obj.Id.GetHashCode();
+        }
+
+        /// <summary>
+        /// Gets the default instance of the comparer.
+        /// </summary>
+        public static ElementReferenceComparer Default { get; } = new();
     }
 }

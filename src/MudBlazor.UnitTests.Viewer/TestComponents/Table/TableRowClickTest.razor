@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable T="int" Items="items" OnRowClick="@(args => OnRowClicked(args))" CustomHeader="true" CustomFooter="true">
+﻿<MudTable T="int" Items="_items" OnRowClick="@(args => OnRowClicked(args))" CustomHeader="true" CustomFooter="true">
     <HeaderContent>
         <MudTHeadRow OnRowClick="OnHeaderClicked">
             <MudTh>#</MudTh>
@@ -17,27 +15,27 @@
 </MudTable>
 
 <p>
-    @(string.Join(",", clicked_items))
+    @(string.Join(",", _clickedItems))
 </p>
 
 @code {
     public static string __description__ = "The row click event should fire, regardless of the selection events.";
 
-    int[] items = new int[]{0,1,2};
-    List<int> clicked_items = new List<int>();
+    private readonly int[] _items = [0, 1, 2];
+    private readonly List<int> _clickedItems = [];
 
     private void OnHeaderClicked()
     {
-        clicked_items.Add(-1);
+        _clickedItems.Add(-1);
     }
+
     private void OnFooterClicked()
     {
-        clicked_items.Add(100);
+        _clickedItems.Add(100);
     }
 
     private void OnRowClicked(TableRowClickEventArgs<int> args )
     {
-        clicked_items.Add(args.Item);
+        _clickedItems.Add(args.Item);
     }
-
 }

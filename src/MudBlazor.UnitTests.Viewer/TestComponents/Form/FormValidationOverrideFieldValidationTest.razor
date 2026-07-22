@@ -1,34 +1,33 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudForm Model="@model" Validation=@("v")>
-    <MudTextField @bind-Value="model.Name" For=@(() => model.Name)/> @*Should set validation*@
-    <MudNumericField T="int" @bind-Value="model.Age" For="() => model.Age"/> @*Should override validation*@
+﻿<MudForm Model="@_model" Validation=@("v")>
+    <MudTextField @bind-Value="_model.Name" For=@(() => _model.Name)/> @*Should set validation*@
+    <MudNumericField T="int" @bind-Value="_model.Age" For="() => _model.Age"/> @*Should override validation*@
     
-    <MudForm Model="@model" Validation=@("v") OverrideFieldValidation="false">
-        <MudTextField @bind-Value="model.Name" For="() => model.Name"/> @*Should set validation*@
-        <MudNumericField @bind-Value="model.Age" For="() => model.Age"/> @*Should keep default validation*@
+    <MudForm Model="@_model" Validation=@("v") OverrideFieldValidation="false">
+        <MudTextField @bind-Value="_model.Name" For="() => _model.Name"/> @*Should set validation*@
+        <MudNumericField @bind-Value="_model.Age" For="() => _model.Age"/> @*Should keep default validation*@
     </MudForm>
     
-    <MudForm Model="@model" Validation=@("v") OverrideFieldValidation="true">
-        <MudTextField @bind-Value="model.Name" Validation=@("a") For="() => model.Name"/> @*Should override validation*@
-        <MudNumericField @bind-Value="model.Age" Validation=@("b") For="() => model.Age"/> @*Should override validation*@
+    <MudForm Model="@_model" Validation=@("v") OverrideFieldValidation="true">
+        <MudTextField @bind-Value="_model.Name" Validation=@("a") For="() => _model.Name"/> @*Should override validation*@
+        <MudNumericField @bind-Value="_model.Age" Validation=@("b") For="() => _model.Age"/> @*Should override validation*@
     </MudForm>
     
-    <MudForm Model="@model">
-        <MudTextField @bind-Value="model.Name" Validation=@("a") For="() => model.Name"/> @*Should keep validation*@
-        <MudNumericField @bind-Value="model.Age" Validation=@("b") For="() => model.Age"/> @*Should keep validation*@
+    <MudForm Model="@_model">
+        <MudTextField @bind-Value="_model.Name" Validation=@("a") For="() => _model.Name"/> @*Should keep validation*@
+        <MudNumericField @bind-Value="_model.Age" Validation=@("b") For="() => _model.Age"/> @*Should keep validation*@
     </MudForm>
 </MudForm>
 
-Name: @model.Name
-Age: @model.Age.ToString()
+Name: @_model.Name
+Age: @_model.Age.ToString()
 
 @code {
-    VM model = new();
+    private readonly VM _model = new();
 
-    class VM
+    private class VM
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
+
         public int Age { get; set; }
     }
 }

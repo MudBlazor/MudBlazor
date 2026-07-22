@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -156,5 +155,19 @@ public class ParameterViewExtensionsTests
         // Assert
         newValue.Should().Be(10);
         result.Should().BeTrue();
+    }
+
+    [Test]
+    public void HasParameterChanged_ParameterMissing_ReturnsFalse()
+    {
+        // Arrange
+        var parameterView = ParameterView.FromDictionary(new Dictionary<string, object?>());
+
+        // Act
+        var result = parameterView.HasParameterChanged("Missing", 20, out var newValue);
+
+        // Assert
+        result.Should().BeFalse();
+        newValue.Should().Be(default(int));
     }
 }

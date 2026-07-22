@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace MudBlazor.Docs.Models;
 
@@ -15,17 +12,17 @@ namespace MudBlazor.Docs.Models;
 /// Represents documentation for a type.
 /// </summary>
 [DebuggerDisplay("{Name}: Summary={Summary}")]
-public class DocumentedType : IComparable<DocumentedType>
+public sealed class DocumentedType
 {
     /// <summary>
     /// The Reflection name of this type.
     /// </summary>
-    public string Name { get; set; } = "";
+    public string Name { get; init; } = "";
 
     /// <summary>
     /// The user-facing name of this type.
     /// </summary>
-    public string NameFriendly { get; set; } = "";
+    public string NameFriendly { get; init; } = "";
 
     /// <summary>
     /// The relative URL to this type's documentation.
@@ -35,17 +32,17 @@ public class DocumentedType : IComparable<DocumentedType>
     /// <summary>
     /// The link to examples related to this type.
     /// </summary>
-    public string? ComponentUrl => "/components/" + Name;
+    public string ComponentUrl => "/components/" + Name;
 
     /// <summary>
     /// Whether this type is a Blazor component.
     /// </summary>
-    public bool IsComponent { get; set; }
+    public bool IsComponent { get; init; }
 
     /// <summary>
     /// The detailed description for this member, and any related information.
     /// </summary>
-    public string? Summary { get; set; }
+    public string Summary { get; init; } = "";
 
     /// <summary>
     /// The brief summary of this member as plain text.
@@ -55,17 +52,17 @@ public class DocumentedType : IComparable<DocumentedType>
     /// <summary>
     /// The brief summary of this member.
     /// </summary>
-    public string? Remarks { get; set; }
+    public string Remarks { get; init; } = "";
 
     /// <summary>
     /// The Reflection name of this type's base type.
     /// </summary>
-    public string? BaseTypeName { get; set; }
+    public string BaseTypeName { get; init; } = "";
 
     /// <summary>
-    /// The documentation for the base class.
+    /// The type this type inherits from.
     /// </summary>
-    public DocumentedType BaseType => ApiDocumentation.GetType(BaseTypeName);
+    public DocumentedType? BaseType => ApiDocumentation.GetType(BaseTypeName);
 
     /// <summary>
     /// The documented types inheriting from this class.
@@ -75,34 +72,30 @@ public class DocumentedType : IComparable<DocumentedType>
     /// <summary>
     /// The properties in this type (including inherited properties).
     /// </summary>
-    public Dictionary<string, DocumentedProperty> Properties { get; set; } = [];
+    public Dictionary<string, DocumentedProperty> Properties { get; init; } = [];
 
     /// <summary>
     /// The methods in this type (including inherited methods).
     /// </summary>
-    public Dictionary<string, DocumentedMethod> Methods { get; set; } = [];
+    public Dictionary<string, DocumentedMethod> Methods { get; init; } = [];
 
     /// <summary>
     /// The fields in this type (including inherited fields).
     /// </summary>
-    public Dictionary<string, DocumentedField> Fields { get; set; } = [];
+    public Dictionary<string, DocumentedField> Fields { get; init; } = [];
 
     /// <summary>
     /// The events in this type.
     /// </summary>
-    public Dictionary<string, DocumentedEvent> Events { get; set; } = [];
+    public Dictionary<string, DocumentedEvent> Events { get; init; } = [];
 
     /// <summary>
     /// The properties in this type (including inherited properties).
     /// </summary>
-    public Dictionary<string, DocumentedProperty> GlobalSettings { get; set; } = [];
+    public Dictionary<string, DocumentedProperty> GlobalSettings { get; init; } = [];
 
-    public int CompareTo(DocumentedType? other)
-    {
-        if (other == null)
-        {
-            return -1;
-        }
-        return Name.CompareTo(other.Name);
-    }
+    /// <summary>
+    /// The see-also links for this type.
+    /// </summary>
+    public List<DocumentedLink> Links { get; init; } = [];
 }

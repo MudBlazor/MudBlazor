@@ -2,15 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Time.Testing;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
@@ -25,12 +22,28 @@ namespace MudBlazor.UnitTests.Services.Popover;
 [TestFixture]
 public class PopoverServiceTests
 {
+    private static PopoverService CreateService(IJSRuntime jsRuntime, PopoverOptions? options = null, FakeTimeProvider? timeProvider = null)
+    {
+        timeProvider ??= new FakeTimeProvider();
+
+        return options is null
+            ? new PopoverService(NullLogger<PopoverService>.Instance, jsRuntime, timeProvider)
+            : new PopoverService(NullLogger<PopoverService>.Instance, jsRuntime, timeProvider, new OptionsWrapper<PopoverOptions>(options));
+    }
+
+    private static PopoverServiceMock CreateMockService(IJSRuntime jsRuntime, PopoverServiceMock.IPopoverTimerMock popoverTimer, FakeTimeProvider? timeProvider = null)
+    {
+        timeProvider ??= new FakeTimeProvider();
+
+        return new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntime, timeProvider, popoverTimer);
+    }
+
     [Test]
     public void ActivePopovers_ShouldBeEmpty_AtInitialization()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Assert
         service.ActivePopovers.Should().BeEmpty();
@@ -41,20 +54,20 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Assert
         service.IsInitialized.Should().BeFalse();
     }
 
     [Test]
-    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCreatePopoverAsync()
+    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCreatePopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = false };
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
+        var service = CreateService(jsRuntimeMock, options);
 
         // Assert
         service.IsInitialized.Should().BeFalse();
@@ -67,12 +80,12 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldConnectAutomaticallyAfterDestroyPopoverAsync()
+    public async Task IsInitialized_ShouldConnectAutomaticallyAfterDestroyPopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Assert
         service.IsInitialized.Should().BeFalse();
@@ -85,12 +98,12 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldConnectAutomaticallyAfterUpdatePopoverAsync()
+    public async Task IsInitialized_ShouldConnectAutomaticallyAfterUpdatePopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Assert
         service.IsInitialized.Should().BeFalse();
@@ -103,11 +116,11 @@ public class PopoverServiceTests
     }
 
     [Test]
-    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCountProvidersAsync()
+    public async Task IsInitialized_ShouldNotConnectAutomaticallyAfterCountProviders()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Assert
         service.IsInitialized.Should().BeFalse();
@@ -126,22 +139,41 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var loggerMock = new Mock<ILogger<PopoverService>>();
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = checkForPopoverProvider };
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
+        var service = new PopoverService(loggerMock.Object, jsRuntimeMock, new FakeTimeProvider(), new OptionsWrapper<PopoverOptions>(options));
 
         // Act
+        // No MudPopoverProvider is subscribed (ObserversCount == 0).
+        // This must never throw: throwing from the popover's OnInitializedAsync tears down the circuit mid-render and surfaces as a cryptic ObjectDisposedException on the other components (#11887).
+        // With the check on, it logs an error instead.
         var create = () => service.CreatePopoverAsync(popover);
 
         // Assert
-        if (checkForPopoverProvider)
-        {
-            await create.Should().ThrowAsync<InvalidOperationException>();
-        }
-        else
-        {
-            await create.Should().NotThrowAsync<InvalidOperationException>();
-        }
+        await create.Should().NotThrowAsync();
+        service.ActivePopovers.Should().ContainSingle(x => x.Id == popover.Id);
+        loggerMock.VerifyLogging(PopoverService.MissingProviderMessage, LogLevel.Error, Times.Exactly(checkForPopoverProvider ? 1 : 0));
+    }
+
+    [Test]
+    public async Task CreatePopoverAsync_LogsMissingProviderOnlyOnce()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var loggerMock = new Mock<ILogger<PopoverService>>();
+        var options = new PopoverOptions { CheckForPopoverProvider = true };
+        var service = new PopoverService(loggerMock.Object, jsRuntimeMock, new FakeTimeProvider(), new OptionsWrapper<PopoverOptions>(options));
+
+        // Act
+        // Several popovers are created without a provider (e.g. multiple pickers on a page).
+        // The actionable error must be logged only once so the log is not flooded with the same message.
+        await service.CreatePopoverAsync(new PopoverMock());
+        await service.CreatePopoverAsync(new PopoverMock());
+
+        // Assert
+        service.ActivePopovers.Should().HaveCount(2);
+        loggerMock.VerifyLogging(PopoverService.MissingProviderMessage, LogLevel.Error, Times.Once());
     }
 
     [Test]
@@ -149,7 +181,7 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Act
         var unsubscribe = () => service.Unsubscribe(null!);
@@ -163,7 +195,7 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Act
         var subscribe = () => service.Subscribe(null!);
@@ -177,7 +209,7 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Act
         var createPopover = () => service.CreatePopoverAsync(null!);
@@ -192,7 +224,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -207,11 +239,46 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task CreatePopoverAsync_ShouldUseInjectedTimeProviderForActivationDate()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var timeProvider = new FakeTimeProvider();
+        timeProvider.SetUtcNow(new DateTime(2024, 4, 5, 6, 7, 8, DateTimeKind.Utc));
+        var popover = new PopoverMock { Open = true };
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = CreateService(jsRuntimeMock, options, timeProvider);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+
+        // Assert
+        service.ActivePopovers.Single().ActivationDate.Should().Be(timeProvider.GetLocalNow().DateTime);
+    }
+
+    [Test]
+    public async Task CreatePopoverAsync_ShouldNotAddDuplicateWhenCalledTwiceWithSameId()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var popover = new PopoverMock();
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = CreateService(jsRuntimeMock, options);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+        await service.CreatePopoverAsync(popover);
+
+        // Assert
+        service.ActivePopovers.Should().ContainSingle().Which.Id.Should().Be(popover.Id);
+    }
+
+    [Test]
     public async Task UpdatePopoverAsync_ShouldThrowWheNullPopover()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Act
         var updatePopover = () => service.UpdatePopoverAsync(null!);
@@ -226,7 +293,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -244,7 +311,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -298,7 +365,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -339,7 +406,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -363,7 +430,7 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Act
         var destroyPopover = () => service.DestroyPopoverAsync(null!);
@@ -378,7 +445,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -396,7 +463,7 @@ public class PopoverServiceTests
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -421,7 +488,7 @@ public class PopoverServiceTests
         var popoverTwo = new PopoverMock();
         var popoverThree = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = false };
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
+        var service = CreateService(jsRuntimeMock, options);
 
         // Act
         await service.CreatePopoverAsync(popoverOne);
@@ -445,7 +512,7 @@ public class PopoverServiceTests
         var containerNotificationList = new List<PopoverHolderContainer>();
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observerMock = new Mock<IPopoverObserver>();
         service.Subscribe(observerMock.Object);
 
@@ -478,7 +545,7 @@ public class PopoverServiceTests
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = false };
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
+        var service = CreateService(jsRuntimeMock, options);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -505,7 +572,7 @@ public class PopoverServiceTests
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = false };
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock, new OptionsWrapper<PopoverOptions>(options));
+        var service = CreateService(jsRuntimeMock, options);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -526,14 +593,16 @@ public class PopoverServiceTests
     }
 
     [Test]
+    [CancelAfter(5000)]
     public async Task CreatePopoverAsync_UpdatePopoverAsync_DestroyPopoverAsync_ShouldInvokeJS()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var popover = new PopoverMock();
         var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalEvent = new ManualResetEventSlim(false);
-        var service = new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntimeMock.Object, popoverTimerMock.Object);
+        var batchCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timeProvider = new FakeTimeProvider();
+        var service = CreateMockService(jsRuntimeMock.Object, popoverTimerMock.Object, timeProvider);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -542,10 +611,10 @@ public class PopoverServiceTests
                 It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
+            .Callback(() => batchCompletion.TrySetResult());
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.initialize", It.IsAny<CancellationToken>(),
-                It.Is<object[]>(y => y.Length == 2)))
+                It.Is<object[]>(y => y.Length == 3)))
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
 
@@ -567,8 +636,8 @@ public class PopoverServiceTests
         popover.Open = true;
         await service.UpdatePopoverAsync(popover);
         await service.DestroyPopoverAsync(popover);
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        signalEvent.Wait(signalEventWaitTime);
+        timeProvider.Advance(service.PopoverOptions.QueueDelay);
+        await batchCompletion.Task;
 
         // Assert
         jsRuntimeMock.Verify();
@@ -576,56 +645,16 @@ public class PopoverServiceTests
     }
 
     [Test]
-    [Ignore(reason:
-        $"Not used anymore and replace by {nameof(DisposeAsync_ShouldClearActivePopovers)}," +
-        $"because the {nameof(PopoverService.DisposeAsync)} doesn't trigger a guaranteed {nameof(IBatchTimerHandler<MudPopoverHolder>.OnBatchTimerElapsedAsync)} to disconnect popover," +
-        $"since the {nameof(PopoverJsInterop.Dispose)} does it.")]
-    public async Task DisposeAsync_ShouldClearActivePopoversAndFireOnBatchTimerElapsedAsync()
-    {
-        // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalEvent = new ManualResetEventSlim(false);
-        var service = new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntimeMock, popoverTimerMock.Object);
-        var observer = new PopoverObserverMock();
-        service.Subscribe(observer);
-
-        popoverTimerMock
-            .Setup(h => h.OnBatchTimerElapsedAfterAsync(
-                It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
-                It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask)
-            .Callback(signalEvent.Set);
-
-        await service.CreatePopoverAsync(new PopoverMock());
-        await service.CreatePopoverAsync(new PopoverMock());
-
-        // Act
-        await service.DisposeAsync();
-        // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        var eventSignaled = signalEvent.Wait(signalEventWaitTime);
-
-        // Assert
-        eventSignaled.Should().BeTrue();
-        service.ActivePopovers.Should().BeEmpty();
-        popoverTimerMock.Verify(
-            h => h.OnBatchTimerElapsedAfterAsync(
-                It.Is<IReadOnlyCollection<MudPopoverHolder>>(items => items.Count == 2),
-                It.IsAny<CancellationToken>()),
-            Times.AtLeastOnce,
-            "The periodic handler method was not called.");
-    }
-
-    [Test]
-    public async Task DisposeAsync_ShouldCancelDetachRangeAsync()
+    [CancelAfter(5000)]
+    public async Task DisposeAsync_ShouldCancelDetachRange()
     {
         // Arrange
         var jsRuntimeMock = new Mock<IJSRuntime>();
         var popoverTimerMock = new Mock<PopoverServiceMock.IPopoverTimerMock>();
-        var signalBeforeEvent = new ManualResetEventSlim(false);
-        var signalAfterEvent = new ManualResetEventSlim(false);
-        var service = new PopoverServiceMock(NullLogger<PopoverService>.Instance, jsRuntimeMock.Object, popoverTimerMock.Object);
+        var beforeBatchCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var afterBatchCompletion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timeProvider = new FakeTimeProvider();
+        var service = CreateMockService(jsRuntimeMock.Object, popoverTimerMock.Object, timeProvider);
         var observer = new PopoverObserverMock();
         var popovers = new[] { new PopoverMock(), new PopoverMock(), new PopoverMock(), new PopoverMock() };
         service.Subscribe(observer);
@@ -637,16 +666,16 @@ public class PopoverServiceTests
             .Returns(async () =>
             {
                 // Call dispose immediately before the DetachRangeAsync about to fire.
+                beforeBatchCompletion.TrySetResult();
                 await service.DisposeAsync();
-            })
-            .Callback(signalBeforeEvent.Set);
+            });
 
         popoverTimerMock
             .Setup(h => h.OnBatchTimerElapsedAfterAsync(
                 It.IsAny<IReadOnlyCollection<MudPopoverHolder>>(),
                 It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
-            .Callback(signalAfterEvent.Set);
+            .Callback(() => afterBatchCompletion.TrySetResult());
 
         // Act
         foreach (var popover in popovers)
@@ -665,14 +694,11 @@ public class PopoverServiceTests
             await service.DestroyPopoverAsync(popover);
         }
 
-        // Wait for the event to be signaled, consider test failed if we didn't receive signal in period + 2 minutes
-        var signalEventWaitTime = service.PopoverOptions.QueueDelay.Add(TimeSpan.FromMinutes(2));
-        var eventBeforeSignaled = signalBeforeEvent.Wait(signalEventWaitTime);
-        var eventAfterSignaled = signalAfterEvent.Wait(signalEventWaitTime);
+        timeProvider.Advance(service.PopoverOptions.QueueDelay);
+        await beforeBatchCompletion.Task;
+        await afterBatchCompletion.Task;
 
         // Assert
-        eventBeforeSignaled.Should().BeTrue();
-        eventAfterSignaled.Should().BeTrue();
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
     }
 
@@ -681,7 +707,7 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observer = new PopoverObserverMock();
         service.Subscribe(observer);
 
@@ -701,7 +727,7 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var popover = new PopoverMock();
         service.Subscribe(new PopoverObserverMock());
         service.Subscribe(new PopoverObserverMock());
@@ -721,28 +747,60 @@ public class PopoverServiceTests
     }
 
     [Test]
+    public async Task DisposeAsync_WhenNeverInitialized_ShouldNotCallJsDispose()
+    {
+        // A scoped service is disposed by the DI scope at the end of a prerender request, before a
+        // circuit exists. With no JS initialization there is nothing to tear down, so DisposeAsync
+        // must not call JS - otherwise it throws a first-chance InvalidOperationException. See #12574.
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = CreateService(jsRuntimeMock.Object);
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        service.IsInitialized.Should().BeFalse();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
+
+    [Test]
+    public async Task DisposeAsync_WhenInitialized_ShouldCallJsDispose()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = CreateService(jsRuntimeMock.Object);
+        await service.UpdatePopoverAsync(new PopoverMock());
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        service.IsInitialized.Should().BeTrue();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
     public async Task DisposeAsync_ShouldNotAcceptObservers()
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
 
         // Act
         await service.DisposeAsync();
-        service.Subscribe(new PopoverObserverMock());
         service.Subscribe(new PopoverObserverMock());
 
         // Assert
         service.ObserversCount.Should().Be(0);
     }
-
     [Test]
     public async Task DisposeAsync_ShouldNotCreateOrUpdateWhenDisposed()
     {
         // Arrange
         var popoverOperations = new List<PopoverHolderOperation>();
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var popover = new PopoverMock();
         var observerMock = new Mock<IPopoverObserver>();
         service.Subscribe(observerMock.Object);
@@ -773,7 +831,7 @@ public class PopoverServiceTests
         var isCancellationRequested = false;
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
         var popover = new PopoverMock();
-        var service = new PopoverService(NullLogger<PopoverService>.Instance, jsRuntimeMock);
+        var service = CreateService(jsRuntimeMock);
         var observerMock = new Mock<IPopoverObserver>();
         service.Subscribe(observerMock.Object);
 

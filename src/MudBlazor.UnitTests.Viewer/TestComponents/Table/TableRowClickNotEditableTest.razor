@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
-<MudTable T="string" Items="items" @bind-SelectedItem="selectedItem" Filter="new Func<string, bool>(FilterFunc)">
+﻿<MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search"></MudTextField>
+<MudTable T="string" Items="_items" @bind-SelectedItem="_selectedItem" Filter="new Func<string, bool>(FilterFunc)">
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate> 
@@ -10,19 +8,16 @@
 @code {
     public static string __description__ = "The table should not be set to IsEditing when a row is clicked and IsEditable is not set.";
 
-    private string[] items = new string[] { "a", "b", "c" };
-
-    private string selectedItem { get; set; }
-
-    private string searchString { get; set; }
+    private string? _selectedItem;
+    private string? _searchString;
+    private readonly string[] _items = ["a", "b", "c"];
 
     private bool FilterFunc(string text)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
+        if (string.IsNullOrWhiteSpace(_searchString))
             return true;
-        if (text.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (text.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
-
 }

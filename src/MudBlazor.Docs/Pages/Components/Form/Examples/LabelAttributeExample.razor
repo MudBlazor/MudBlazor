@@ -2,16 +2,16 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudCard>
-    <MudForm>
-        <MudCardContent>
+    <MudCardContent>
+        <MudForm Spacing="2">
             <MudDatePicker For="@(() => model.Date)" />
             <MudDatePicker For="@(() => model.Date)" Label="Parameter Label" />
-            <MudSwitch For="@(() => model.Boolean)" />
-            <MudSwitch For="@(() => model.Boolean)" Label="Parameter Label" />
+            <MudSwitch For="@(() => model.Boolean)" Color="Color.Primary" />
+            <MudSwitch For="@(() => model.Boolean)" Label="Parameter Label" Color="Color.Primary" />
             <MudTextField For="@(() => model.String)" />
             <MudTextField For="@(() => model.String)" Label="Parameter Label" />
-        </MudCardContent>
-    </MudForm>
+        </MudForm>
+    </MudCardContent>
 </MudCard>
 
 @code {

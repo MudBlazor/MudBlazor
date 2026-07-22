@@ -2,14 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
 namespace MudBlazor.Interop;
 
-#nullable enable
 internal class PopoverJsInterop
 {
     private readonly IJSRuntime _jsRuntime;
@@ -19,9 +15,9 @@ internal class PopoverJsInterop
         _jsRuntime = jsRuntime;
     }
 
-    public ValueTask<bool> Initialize(string containerClass, int flipMargin, CancellationToken cancellationToken = default)
+    public ValueTask<bool> Initialize(string containerClass, int flipMargin, int overflowPadding, CancellationToken cancellationToken = default)
     {
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.initialize", cancellationToken, containerClass, flipMargin);
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.initialize", cancellationToken, containerClass, flipMargin, overflowPadding);
     }
 
     public ValueTask<bool> Connect(Guid id, CancellationToken cancellationToken = default)
@@ -39,7 +35,7 @@ internal class PopoverJsInterop
         return _jsRuntime.InvokeAsyncWithErrorHandling<int>("mudpopoverHelper.countProviders", cancellationToken);
     }
 
-    public ValueTask Dispose(CancellationToken cancellationToken = default)
+    public ValueTask DisposeAsync(CancellationToken cancellationToken = default)
     {
         return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudPopover.dispose", cancellationToken);
     }

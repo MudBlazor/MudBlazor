@@ -4,20 +4,20 @@
 
 <MudDataGrid Items="@_items" Groupable="true" Filterable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Name">
-            <FooterTemplate>
-                @{ int index = 1, count = @context.Items.Count(); }
-                People: 
-                @foreach (var person in @context.Items)
-                {
-                    <MudAvatar Color="@((Color)index)" Variant="Variant.Outlined" Size="Size.Small" Class="mr-1">@person.Name.First()</MudAvatar>@person.Name.Substring(1)
-                    if (index < count)
-                    {
-                        @(", ")
-                    }
-                    index++;
+        <PropertyColumn Property="x => x.Name" AggregateDefinition="@(new AggregateDefinition<Model>())">
+            <AggregateTemplate>
+                @{
+                    var names = context.Select(x => x.Name).ToArray();
+                    var index = 1;
                 }
-            </FooterTemplate>
+                @foreach (var name in names)
+                {
+                    <MudAvatar Color="@((Color)index++)" Variant="Variant.Outlined" Size="Size.Small" Class="ml-2 mr-1">
+                        @name.First()
+                    </MudAvatar>
+                    @name.Substring(1)
+                }
+            </AggregateTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Age" AggregateDefinition="_ageAggregation" />
         <PropertyColumn Property="x => x.Status"></PropertyColumn>

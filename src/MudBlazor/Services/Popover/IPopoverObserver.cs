@@ -2,15 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents an observer for popover updates.
+/// Receives notifications when popovers are created, updated, or destroyed in the <see cref="IPopoverService"/>.
 /// </summary>
 public interface IPopoverObserver
 {

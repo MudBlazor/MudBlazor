@@ -1,0 +1,43 @@
+﻿@page "/components/hotkey"
+
+<DocsPage>
+    <DocsPageHeader Title="Hotkey" Component="@nameof(MudHotkey)"/>
+    <DocsPageSection>
+        <SectionHeader Title="Usage">
+            <Description>
+                There are 2 general usages: Render child components and/or use the
+                <CodeInline>OnHotkeyPressed</CodeInline>
+                event.
+                <br/>
+                <MudAlert Severity="Severity.Info">If you want a global hotkey, add the
+                    <CodeInline>MudHotkey</CodeInline>
+                    to your
+                    <CodeInline>MainLayout.razor</CodeInline>
+                    .
+                </MudAlert>
+            </Description>
+        </SectionHeader>
+        <SectionSubGroups>
+            <DocsPageSection>
+                <SectionHeader Title="Child content"/>
+                <SectionContent Code="@nameof(HotkeyExampleChildContent)">
+                    <HotkeyExampleChildContent/>
+                </SectionContent>
+            </DocsPageSection>
+            <DocsPageSection>
+                <SectionHeader Title="Event callback">
+                    <Description>
+                        The handler receives a <CodeInline>HotkeyEventArgs</CodeInline> identifying the
+                        <CodeInline>Key</CodeInline> and <CodeInline>KeyModifiers</CodeInline> that triggered it,
+                        plus the <CodeInline>MudHotkey</CodeInline> that raised it via <CodeInline>Sender</CodeInline>,
+                        so several hotkeys can share a single handler. Handlers that don't need it can stay
+                        parameterless.
+                    </Description>
+                </SectionHeader>
+                <SectionContent Code="@nameof(HotkeyExampleEventCallback)">
+                    <HotkeyExampleEventCallback/>
+                </SectionContent>
+            </DocsPageSection>
+        </SectionSubGroups>
+    </DocsPageSection>
+</DocsPage>

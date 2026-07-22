@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@code {
+    private MudCollapse _collapseRef = null!;
+
+#pragma warning disable BL0005
+    private void Update()
+    {
+        //Parameter modifications such as this are ignored on components utilizing parameter state.
+        _collapseRef.Expanded = true; // ❌ Not recommended
+    }
+#pragma warning restore BL0005
+}

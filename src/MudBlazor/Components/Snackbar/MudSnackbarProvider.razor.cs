@@ -2,19 +2,25 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // Changes and improvements Copyright (c) The MudBlazor Team
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
+
 namespace MudBlazor
 {
+    /// <summary>
+    /// Displays snackbar notifications queued through the <see cref="ISnackbar"/> service, positioning and stacking them on the page.
+    /// </summary>
     public partial class MudSnackbarProvider : MudComponentBase, IDisposable
     {
-        [Inject] private ISnackbar Snackbars { get; set; }
+        [Inject]
+        private ISnackbar Snackbars { get; set; } = null!;
 
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+        /// <summary>
+        /// Displays snackbar positions right-to-left.
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         protected IEnumerable<Snackbar> Snackbar => Snackbars.Configuration.NewestOnTop
                 ? Snackbars.ShownSnackbars.Reverse()
@@ -22,8 +28,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder(Class)
-            .AddClass(GetPositionClass())
-        .Build();
+                .AddClass(GetPositionClass())
+                .Build();
 
         private string GetPositionClass()
         {
@@ -49,9 +55,18 @@ namespace MudBlazor
             InvokeAsync(StateHasChanged);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Snackbars.OnSnackbarsUpdated -= OnSnackbarsUpdated;
+            }
+        }
+
         public void Dispose()
         {
-            Snackbars.OnSnackbarsUpdated -= OnSnackbarsUpdated;
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

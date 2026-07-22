@@ -1,30 +1,32 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a set of slides which transition after a delay.
+    /// Carousels cycle through a set of slides or images, transitioning automatically or when the user swipes, clicks arrows, or selects a bullet.
     /// </summary>
     /// <typeparam name="TData">The kind of item to display.</typeparam>
+    /// <seealso cref="MudCarouselItem" />
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
-        private Timer? _timer;
-        private bool _autoCycle = true;
+        private ITimer? _timer;
+        private bool _disposing;
         private Color _currentColor = Color.Inherit;
-        private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
+        private readonly ParameterState<bool> _autoCycleState;
+        private readonly ParameterState<TimeSpan> _cycleTimeoutState;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         protected string Classname => new CssBuilder("mud-carousel")
-            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
+            .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToStringFast(true)}")
             .AddClass(Class)
             .Build();
 
         protected string NavigationButtonsClassName => new CssBuilder()
-            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToDescriptionString()}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+            .AddClass($"align-self-{ConvertPosition(ArrowsPosition).ToStringFast(true)}", !(NavigationButtonsClass ?? "").Contains("align-self-"))
             .AddClass("mud-carousel-elements-rtl", RightToLeft)
             .AddClass(NavigationButtonsClass)
             .Build();
@@ -33,6 +35,9 @@ namespace MudBlazor
             .AddClass(BulletsClass)
             .Build();
 
+        /// <summary>
+        /// Displays carousel controls right-to-left.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -77,6 +82,16 @@ namespace MudBlazor
         public Position BulletsPosition { get; set; } = Position.Bottom;
 
         /// <summary>
+        /// The color of arrows when <see cref="ShowArrows"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>null</c>, <see cref="Color.Inherit"/> is used.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Carousel.Appearance)]
+        public Color? ArrowsColor { get; set; }
+
+        /// <summary>
         /// The color of bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
@@ -92,25 +107,9 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
-        public bool AutoCycle
-        {
-            get => _autoCycle;
-            set
-            {
-                _autoCycle = value;
-
-                if (_autoCycle)
-                {
-                    InvokeAsync(async () => await ResetTimerAsync());
-                }
-                else
-                {
-                    InvokeAsync(async () => await StopTimerAsync());
-                }
-            }
-        }
+        public bool AutoCycle { get; set; } = true;
 
         /// <summary>
         /// The delay before displaying the next <see cref="MudCarouselItem"/> when <see cref="AutoCycle"/> is <c>true</c>.
@@ -118,25 +117,9 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="TimeSpan.Zero"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
-        public TimeSpan AutoCycleTime
-        {
-            get => _cycleTimeout;
-            set
-            {
-                _cycleTimeout = value;
-
-                if (_autoCycle)
-                {
-                    InvokeAsync(async () => await ResetTimerAsync());
-                }
-                else
-                {
-                    InvokeAsync(async () => await StopTimerAsync());
-                }
-            }
-        }
+        public TimeSpan AutoCycleTime { get; set; } = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// The custom CSS classes for the "Next" and "Previous" icons when <see cref="ShowArrows"/> is <c>true</c>.
@@ -226,6 +209,35 @@ namespace MudBlazor
         [Parameter]
         public bool EnableSwipeGesture { get; set; } = true;
 
+        public MudCarousel()
+        {
+            using var registerScope = CreateRegisterScope();
+            _autoCycleState = registerScope.RegisterParameter<bool>(nameof(AutoCycle))
+                .WithParameter(() => AutoCycle)
+                .WithChangeHandler(OnAutoCycleChangedAsync);
+
+            _cycleTimeoutState = registerScope.RegisterParameter<TimeSpan>(nameof(AutoCycleTime))
+                .WithParameter(() => AutoCycleTime)
+                .WithChangeHandler(OnAutoCycleTimeChangedAsync);
+
+        }
+
+        private async Task OnAutoCycleChangedAsync(ParameterChangedEventArgs<bool> args)
+        {
+            if (args.Value)
+                await ResetTimerAsync();
+            else
+                await StopTimerAsync();
+        }
+
+        private async Task OnAutoCycleTimeChangedAsync(ParameterChangedEventArgs<TimeSpan> args)
+        {
+            if (_autoCycleState.Value)
+                await ResetTimerAsync();
+            else
+                await StopTimerAsync();
+        }
+
         /// <summary>
         /// Occurs when the <c>SelectedIndex</c> has changed.
         /// </summary>
@@ -240,11 +252,11 @@ namespace MudBlazor
         public override void AddItem(MudCarouselItem item)
         {
             Items.Add(item);
+
             if (Items.Count - 1 == SelectedIndex)
-            {
                 _currentColor = item.Color;
-                StateHasChanged();
-            }
+
+            StateHasChanged();
         }
 
         private void TimerElapsed(object? stateInfo) => InvokeAsync(async () => await TimerTickAsync());
@@ -291,9 +303,9 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StartTimerAsync()
         {
-            if (AutoCycle)
+            if (_autoCycleState.Value && !_disposing)
             {
-                _timer?.Change(AutoCycleTime, TimeSpan.Zero);
+                _timer?.Change(_cycleTimeoutState.Value, TimeSpan.Zero);
             }
 
             return ValueTask.CompletedTask;
@@ -304,7 +316,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StopTimerAsync()
         {
-            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            _timer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
             return ValueTask.CompletedTask;
         }
@@ -333,31 +345,32 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                _timer = new Timer(TimerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
+                // Prevent timer creation after or while disposal, which would result in a memory leak.
+                if (_disposing) return;
+                _timer = TimeProvider.CreateTimer(TimerElapsed, null, _autoCycleState.Value ? _cycleTimeoutState.Value : Timeout.InfiniteTimeSpan, _cycleTimeoutState.Value);
             }
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
+        /// <inheritdoc />
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsync(true);
+            await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
 
-        protected virtual async ValueTask DisposeAsync(bool disposing)
+        protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (disposing)
-            {
-                await StopTimerAsync();
+            // Immediately sets disposing to true,
+            // so that timer creation on OnAfterRenderAsync does not happen after disposal.
+            _disposing = true;
 
-                var timer = _timer;
-                if (timer != null)
-                {
-                    _timer = null;
-                    await timer.DisposeAsync();
-                }
+            await StopTimerAsync();
+
+            var timer = _timer;
+            if (timer != null)
+            {
+                _timer = null;
+                await timer.DisposeAsync();
             }
         }
     }

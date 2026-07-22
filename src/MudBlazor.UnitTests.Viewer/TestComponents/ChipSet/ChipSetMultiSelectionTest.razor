@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudChipSet @bind-SelectedValue="_selectedValue" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection">
+﻿<MudChipSet @bind-SelectedValue="_selectedValue" @bind-SelectedValues="_selectedValues" SelectionMode="SelectionMode.MultiSelection">
     <MudChip Value="@("Milk")" />
     <MudChip Value="@("Eggs")" />
     <MudChip Value="@("Soap")" />
@@ -24,11 +22,11 @@
 
 @code
 {
-    [Parameter]
-    public string[] InitialValues { get; set; }
+    private string? _selectedValue;
+    private IReadOnlyCollection<string>? _selectedValues;
 
-    private string _selectedValue;
-    private IReadOnlyCollection<string> _selectedValues;
+    [Parameter]
+    public string[]? InitialValues { get; set; }
 
     protected override void OnInitialized()
     {

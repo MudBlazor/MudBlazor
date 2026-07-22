@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
     /// <summary>
     /// Indicates the behavior performed when a button is clicked.
     /// </summary>
+    [EnumExtensions]
     public enum ButtonType
     {
         /// <summary>

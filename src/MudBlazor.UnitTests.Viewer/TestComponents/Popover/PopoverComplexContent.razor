@@ -1,4 +1,4 @@
-﻿<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <div class="popoverparent">
 	<p>Some Text</p>
@@ -13,14 +13,12 @@
 	</MudPopover>
 </div>
 
-
 @code {
+	private int _rowAmount;
 
-	private int _rowAmount = 0;
-
-	public async Task AddRow()
+	public Task AddRow()
 	{
 		_rowAmount++;
-		await InvokeAsync(StateHasChanged);
+		return InvokeAsync(StateHasChanged);
 	}
 }

@@ -3,8 +3,8 @@
 <MudStack Row>
     <MudCard>
         <MudCardContent>
-            <MudText Align="Align.Center" Class="mb-n4">ReadOnly Form</MudText>
-            <MudForm ReadOnly="ReadOnly">
+            <MudText Align="Align.Center">ReadOnly Form</MudText>
+            <MudForm ReadOnly="ReadOnly" Spacing="2">
                 <MudTextField T="string" Label="Text" />
                 <MudNumericField T="int" Label="Number" />
                 <MudDatePicker Label="Date" />
@@ -14,8 +14,8 @@
                     <MudRadio Value="@("1")">1</MudRadio>
                     <MudRadio Value="@("2")">2</MudRadio>
                 </MudRadioGroup>
-                <MudForm ReadOnly="NestedReadOnly">
-                    <MudText Align="Align.Center" Class="mb-n4 mt-2">Nested Form</MudText>
+                <MudForm ReadOnly="NestedReadOnly" Spacing="2">
+                    <MudText Align="Align.Center">Nested Form</MudText>
                     <MudTextField T="string" Label="Nested Text" />
                     <MudNumericField T="int" Label="Nested Number" />
                 </MudForm>
@@ -23,13 +23,13 @@
         </MudCardContent>
         <MudCardActions>
             <MudCheckBox @bind-Value="ReadOnly">ReadOnly</MudCheckBox>
-            <MudCheckBox @bind-Value="NestedReadOnly">Nested ReadOnly</MudCheckBox>
+            <MudCheckBox @bind-Value="NestedReadOnly">Nested</MudCheckBox>
         </MudCardActions>
     </MudCard>
     <MudCard>
         <MudCardContent>
-            <MudText Align="Align.Center" Class="mb-n4">Disabled Form</MudText>
-            <MudForm Disabled="Disabled">
+            <MudText Align="Align.Center">Disabled Form</MudText>
+            <MudForm Disabled="Disabled" Spacing="2">
                 <MudTextField T="string" Label="Text" />
                 <MudNumericField T="int" Label="Number" />
                 <MudDatePicker Label="Date" />
@@ -39,8 +39,8 @@
                     <MudRadio Value="@("1")">1</MudRadio>
                     <MudRadio Value="@("2")">2</MudRadio>
                 </MudRadioGroup>
-                <MudForm Disabled="NestedDisabled">
-                    <MudText Align="Align.Center" Class="mb-n4 mt-2">Nested Form</MudText>
+                <MudForm Disabled="NestedDisabled" Spacing="2">
+                    <MudText Align="Align.Center">Nested Form</MudText>
                     <MudTextField T="string" Label="Nested Text" />
                     <MudNumericField T="int" Label="Nested Number" />
                 </MudForm>
@@ -48,7 +48,7 @@
         </MudCardContent>
         <MudCardActions>
             <MudCheckBox @bind-Value="Disabled">Disabled</MudCheckBox>
-            <MudCheckBox @bind-Value="NestedDisabled">Nested Disabled</MudCheckBox>
+            <MudCheckBox @bind-Value="NestedDisabled">Nested</MudCheckBox>
         </MudCardActions>
     </MudCard>
 </MudStack>

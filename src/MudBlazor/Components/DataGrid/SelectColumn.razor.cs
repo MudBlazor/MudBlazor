@@ -2,16 +2,24 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Resources;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a checkbox column used to select rows in a <see cref="MudDataGrid{T}"/>.
+/// Checkboxes for selecting rows in a <see cref="MudDataGrid{T}"/>, with an optional header checkbox to select or clear all rows.
 /// </summary>
 /// <typeparam name="T">The type of item to select.</typeparam>
-public partial class SelectColumn<T>
+/// <seealso cref="Column{T}" />
+/// <seealso cref="MudDataGrid{T}" />
+/// <seealso cref="TemplateColumn{T}" />
+public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : TemplateColumn<T>
 {
+    [Inject]
+    private InternalMudLocalizer Localizer { get; set; } = null!;
+
     /// <summary>
     /// Shows a checkbox in the header.
     /// </summary>
@@ -40,35 +48,60 @@ public partial class SelectColumn<T>
     public Size Size { get; set; } = Size.Medium;
 
     /// <summary>
-    /// Allows this column to be reordered via drag-and-drop operations.
+    /// Determines if the checkbox for a specific row should be disabled.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// When set, this function is called for each row to determine if the checkbox should be disabled.
     /// </remarks>
     [Parameter]
-    public bool? DragAndDropEnabled { get; set; } = false;
+    public Func<T, bool>? DisabledFunc { get; set; }
 
     /// <summary>
-    /// Allows this column to be hidden.
+    /// Provides a custom <c>aria-label</c> for a row selection checkbox.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Hideable"/> property.
+    /// This function is evaluated for each row item.  When the returned value is <c>null</c>, empty, or whitespace,
+    /// the checkbox falls back to the default row selection label.
     /// </remarks>
     [Parameter]
-    public bool? Hideable { get; set; }
+    public Func<T, string?>? AriaLabelFunc { get; set; }
 
-    /// <summary>
-    /// Hides this column.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
-    [Parameter]
-    public bool Hidden { get; set; }
+    public override RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => ShowInHeader ? GetSelectHeaderTemplate() : null;
+    public override RenderFragment<CellContext<T>> GetCellTemplate() => GetSelectCellTemplate();
+    public override RenderFragment<FooterContext<T>>? GetFooterTemplate() => ShowInFooter ? GetSelectFooterTemplate() : null;
 
-    /// <summary>
-    /// Occurs when the <see cref="Hidden"/> property has changed.
-    /// </summary>
-    [Parameter]
-    public EventCallback<bool> HiddenChanged { get; set; }
+    public SelectColumn()
+    {
+        Tag = "select-column";
+        Editable = false;
+        Sortable = false;
+        Resizable = false;
+        Filterable = false;
+        ShowColumnOptions = false;
+        HeaderStyle = "width:0%";
+    }
+
+    private Dictionary<string, object> GetSelectAllAttributes()
+    {
+        return new Dictionary<string, object>(1)
+        {
+            ["aria-label"] = Localizer[LanguageResource.MudDataGrid_SelectAllRows].Value
+        };
+    }
+
+    private string GetRowCheckboxAriaLabel(T item)
+    {
+        var ariaLabel = GetCustomAriaLabel(item);
+        if (!string.IsNullOrWhiteSpace(ariaLabel))
+        {
+            return ariaLabel;
+        }
+
+        return Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
+    }
+
+    private string? GetCustomAriaLabel(T item)
+    {
+        return AriaLabelFunc?.Invoke(item);
+    }
 }

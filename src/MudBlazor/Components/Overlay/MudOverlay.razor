@@ -3,16 +3,35 @@
 
 @if (_visibleState.Value)
 {
-    <div @attributes="UserAttributes" class="@Classname" style="@Styles" @onclick="OnClickHandlerAsync" @onclick:stopPropagation="true">
-        @if(LightBackground || DarkBackground)
-        {
-            <div class="@ScrimClassname"></div>
-        }
-        @if(ChildContent is not null)
-        {
-            <div class="mud-overlay-content">
-                @ChildContent
-            </div>
-        }
-    </div>
+    if (RenderOutsideOfSection)
+    {
+        @OverlayFragment
+    }
+    else
+    {
+        <SectionContent SectionName="mud-overlay-to-popover-provider">
+            @OverlayFragment
+        </SectionContent>
+    }
+}
+
+@code {
+    private RenderFragment OverlayFragment => 
+        @<div @attributes="UserAttributes"
+              id="@_elementId"
+              class="@Classname"
+              style="@Styles"
+              @onclick="OnClickHandlerAsync"
+              @onclick:stopPropagation>
+            @if (LightBackground || DarkBackground)
+            {
+                <div class="@ScrimClassname"></div>
+            }
+            @if (ChildContent is not null)
+            {
+                <div class="mud-overlay-content">
+                    @ChildContent
+                </div>
+            }
+        </div>;
 }

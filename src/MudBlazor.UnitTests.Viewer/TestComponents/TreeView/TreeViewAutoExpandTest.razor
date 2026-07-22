@@ -1,5 +1,4 @@
-﻿
-<MudTreeView @ref="TreeView" Hover AutoExpand="@AutoExpand" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode.ToggleSelection">
+﻿<MudTreeView @ref="_treeView" Hover AutoExpand="@AutoExpand" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode.ToggleSelection">
     <MudTreeViewItem Value='"C:"' Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
         <MudTreeViewItem Value='"config"' CanExpand="@ConfigCanExpand" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
             <MudTreeViewItem Value='"launch.json"' Icon="@Icons.Custom.FileFormats.FileCode" />
@@ -12,8 +11,8 @@
 </MudTreeView>
 
 <MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
-    <MudButton Class="expand-all" Color="Color.Primary" OnClick="@(()=>TreeView.ExpandAllAsync())" Variant="Variant.Filled">Expand All</MudButton>
-    <MudButton Class="collapse-all" Color="Color.Dark" OnClick="@(()=>TreeView.CollapseAllAsync())" Variant="Variant.Filled">Collapse All</MudButton>
+    <MudButton Class="expand-all" Color="Color.Primary" OnClick="@(() => _treeView.ExpandAllAsync())" Variant="Variant.Filled">Expand All</MudButton>
+    <MudButton Class="collapse-all" Color="Color.Dark" OnClick="@(() => _treeView.CollapseAllAsync())" Variant="Variant.Filled">Collapse All</MudButton>
     <MudChipSet T="string" @bind-SelectedValue="SelectedValue" Color="Color.Primary" Variant="Variant.Text" SelectionMode="@SelectionMode.ToggleSelection">
         <MudChip Text="config" />
         <MudChip Text="launch.json" />
@@ -25,10 +24,10 @@
 </MudStack>
 
 @code {
-    public MudTreeView<string> TreeView;
+    private MudTreeView<string> _treeView = null!;
 
     [Parameter]
-    public string SelectedValue { get; set; } = null;
+    public string? SelectedValue { get; set; }
 
     [Parameter]
     public bool AutoExpand { get; set; } = true;

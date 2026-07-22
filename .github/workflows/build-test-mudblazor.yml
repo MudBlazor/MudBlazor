@@ -1,14 +1,139 @@
 name: build-test-mudblazor
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
+    branches:
+      - dev
   pull_request:
 
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('{0}-{1}', github.workflow, github.ref) || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
 jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
+          path: ${{ env.NUGET_PACKAGES }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+
+      - name: Restore dependencies
+        working-directory: src
+        run: dotnet restore
+
+      - uses: xt0rted/dotnet-format-problem-matcher@v1
+
+      - name: Determine changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v47
+        with:
+          files: |
+            src/**
+
+      - name: dotnet format
+        run: |
+          # Skip format check when nothing changed under src.
+          if [ "${{ steps.changed-files.outputs.any_changed }}" != "true" ]; then
+            exit 0
+          fi
+          # .editorconfig changes can affect any file, so check all.
+          if ${{ contains(format(' {0} ', steps.changed-files.outputs.all_changed_files), ' src/.editorconfig ') }}; then
+            dotnet format src --no-restore --verify-no-changes
+            exit 0
+          fi
+          dotnet format src --no-restore --verify-no-changes --include ${{ steps.changed-files.outputs.all_changed_files }}
+
   build-test:
-    name: Build and test mudblazor projects
-    uses: MudBlazor/Workflows/.github/workflows/template-build-test.yml@main
-    with:
-      check-eslint: 'MudBlazor/TScripts'
-      publish-coverage: true
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project-path: src/MudBlazor.UnitTests
+            project-name: MudBlazor.UnitTests
+            generate-coverage: true
+          - project-path: src/MudBlazor.UnitTests.Docs
+            project-name: MudBlazor.UnitTests.Docs
+            generate-coverage: true
+          - project-path: src/MudBlazor.UnitTests.Analyzers
+            project-name: MudBlazor.UnitTests.Analyzers
+            generate-coverage: false
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build and Restore ${{ matrix.project-path }}
+        uses: ./.github/actions/build
+        with:
+          project-path: ${{ matrix.project-path }}
+
+      - name: Test ${{ matrix.project-path }}
+        run: |
+          coverage_args=()
+          if [ "${{ matrix.generate-coverage }}" = "true" ]; then
+            coverage_args=(
+              --coverlet
+              --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute"
+              --coverlet-exclude-by-attribute "CompilerGeneratedAttribute"
+              --coverlet-exclude-by-file "**/*.g.cs"
+              --coverlet-include "[MudBlazor]*"
+              --coverlet-skip-auto-props
+            )
+          fi
+
+          dotnet test \
+          --project ${{ matrix.project-path }} \
+          -c Release \
+          --no-build \
+          --hangdump \
+          --hangdump-timeout 60s \
+          "${coverage_args[@]}" \
+          --report-spekt-junit \
+          --report-spekt-junit-filename junit.xml \
+          --results-directory ${{ matrix.project-path }}/TestResults
+
+      - name: Publish coverage
+        if: ${{ !cancelled() && matrix.generate-coverage }}
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+          flags: ${{ matrix.project-name }}
+
+      - name: Publish test results
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ matrix.project-path }}/TestResults/junit.xml
+          flags: ${{ matrix.project-name }}
+          report_type: test_results
+
+  build-only:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Project that are not covered by 'build-test' job
+        project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build and Restore ${{ matrix.project-path }}
+        uses: ./.github/actions/build
+        with:
+          project-path: ${{ matrix.project-path }}

@@ -1,10 +1,9 @@
 ﻿@page "/components/iconbutton"
-@page "/components/MudIconButton"
 
 <DocsPage>
-    <DocsPageHeader Title="Icon Button">
+    <DocsPageHeader Title="Icon Button" Component="@nameof(MudIconButton)">
         <Description>
-            Similar to <CodeInline>MudButton</CodeInline> but with icons. For guidance and suggestions, go to <MudLink Href="/components/icons">Icons.</MudLink>
+            Similar to <ApiTypeLink TypeName="MudButton" /> but with icons. For guidance and suggestions, go to <MudLink Href="/components/icons">Icons.</MudLink>
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -19,7 +18,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Using font icons">
+            <SectionHeader Title="Using Font Icons">
                 <Description>In this example, we are passing down <MudLink Href="https://fontawesome.com/icons">Font Awesome</MudLink> icon classes instead.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(IconButtonFontIconExample)">
@@ -28,7 +27,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Variant">
+            <SectionHeader Title="Variant and Size">
                 <Description>If preferred, it's possible to apply the same style of a text button using the <CodeInline>Variant</CodeInline> parameter.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(IconButtonStyleExample)">

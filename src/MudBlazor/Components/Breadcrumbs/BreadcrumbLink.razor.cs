@@ -7,11 +7,13 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// Represents a segment in a list of breadcrumbs.
+/// The clickable link rendered for each <see cref="BreadcrumbItem"/> in a <see cref="MudBreadcrumbs"/> trail.
 /// </summary>
+/// <seealso cref="BreadcrumbItem" />
+/// <seealso cref="BreadcrumbSeparator" />
+/// <seealso cref="MudBreadcrumbs" />
 public partial class BreadcrumbLink
 {
     /// <summary>

@@ -2,17 +2,21 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
+    /// Renders custom template content in a <see cref="MudDataGrid{T}"/> column instead of binding to a data property, useful for action buttons or computed cells.
     /// </summary>
     /// <typeparam name="T">The type of data represented by this column.</typeparam>
-    public partial class TemplateColumn<T> : Column<T>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="PropertyColumn{T, TProperty}" />
+    /// <seealso cref="SelectColumn{T}" />
+    public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
     {
         protected internal override object? CellContent(T item)
             => null;
@@ -25,7 +29,7 @@ namespace MudBlazor
         protected internal override object? PropertyFunc(T item)
             => null;
 
-        protected internal override void SetProperty(object item, object value)
+        protected internal override void SetProperty(object? item, object? value)
         {
         }
 
@@ -70,5 +74,29 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public override bool? ShowColumnOptions { get; set; } = false;
+
+        /// <summary>
+        /// Sets the initial expansion state of this column if used as a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, toggling will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+        /// <summary>
+        /// Occurs when hierarchy visibility is toggled if used as a Hierarchy Column.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
+
+        /// <summary>
+        /// Sets the function which determines whether buttons are disabled if used in a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, setting this will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool> ButtonDisabledFunc { get; set; } = _ => false;
     }
 }

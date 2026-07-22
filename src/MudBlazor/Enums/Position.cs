@@ -1,7 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// The position of an element relative to its container.
+    /// </summary>
+    [EnumExtensions]
     public enum Position
     {
         [Description("bottom")]

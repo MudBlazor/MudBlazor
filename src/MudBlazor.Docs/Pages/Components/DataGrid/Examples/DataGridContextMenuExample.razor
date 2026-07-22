@@ -1,0 +1,67 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudDataGrid T="ClientInfo" Items="Clients" Filterable="true"
+             RowContextMenuClick="@((_rightClick ? OpenMenuContent : null)!)"
+             RowClick="@((!_rightClick ? OpenMenuContent : null)!)">
+    <Columns>
+        <PropertyColumn Property="x => x.Username" Title="Username" />
+        <PropertyColumn Property="x => x.HwId" Title="HWID" />
+        <TemplateColumn T="ClientInfo" Title="Status">
+            <CellTemplate>
+                <MudChip Color="Color.Error" Size="Size.Small">Offline</MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudStack Row AlignItems="AlignItems.Center" Class="ml-2">
+            <MudText><strong>Activator:&nbsp;&nbsp;</strong> Left Click</MudText>
+            <MudSwitch Class="ml-n3" @bind-Value="_rightClick" Label="Right Click" />
+        </MudStack>
+    </PagerContent>
+</MudDataGrid>
+<MudMenu PositionAtCursor="true" @ref="_contextMenu" id="_contextMenu">
+    <MudMenuItem Icon="@Icons.Material.Filled.Block">
+        Ban @_contextRow?.Username
+    </MudMenuItem>
+    <MudMenuItem Icon="@Icons.Material.Filled.Info" OnClick="@ShowHiddenInfo">
+        View Details for @_contextRow?.HwId
+    </MudMenuItem>
+</MudMenu>
+
+@code {
+#nullable enable
+    private ClientInfo? _contextRow;
+    private bool _rightClick = true;
+    private MudMenu _contextMenu = null!;
+
+    public List<ClientInfo> Clients =
+    [
+        new() { Username = "user123", HwId = "000-000-000-000", HiddenInformation = "Not good Grid info for user123" },
+        new() { Username = "joedoe", HwId = "111-000-111-000", HiddenInformation = "Not good Grid info for joedoe" }
+    ];
+
+    private async Task OpenMenuContent(DataGridRowClickEventArgs<ClientInfo> args)
+    {
+        _contextRow = args.Item;
+        await _contextMenu.OpenMenuAsync(args.MouseEventArgs);
+    }
+
+    private void ShowHiddenInfo()
+    {
+        if (_contextRow is not null)
+        {
+            Snackbar.Add($"Hidden information for {_contextRow.HwId}: {_contextRow.HiddenInformation}", Severity.Info);
+        }
+    }
+
+    public class ClientInfo
+    {
+        public string Username { get; set; } = string.Empty;
+
+        public string HwId { get; set; } = string.Empty;
+
+        public string HiddenInformation { get; set; } = string.Empty;
+    }
+}

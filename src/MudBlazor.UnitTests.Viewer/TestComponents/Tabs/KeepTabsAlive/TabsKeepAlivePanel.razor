@@ -1,20 +1,21 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudButton OnClick="@(()=>Counter++)">@($"{ComponentName}={Counter}")</MudButton>
+﻿<MudButton OnClick="@(() => Counter++)">@($"{ComponentName}={Counter}")</MudButton>
 
 @code {
+    [Parameter]
+    public string? ComponentName { get; set; }
 
-    [Parameter] public string ComponentName { get; set; }
+    [Parameter]
+    public EventCallback<string> FirstRender { get; set; }
 
     public int Counter { get; set; } = 0;
-
-    [Parameter] public EventCallback<string> FirstRender { get; set; }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
+        {
             FirstRender.InvokeAsync(ComponentName);
+        }
+
         return base.OnAfterRenderAsync(firstRender);
     }
-
 }

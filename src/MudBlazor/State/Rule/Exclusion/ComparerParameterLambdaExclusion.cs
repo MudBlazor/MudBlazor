@@ -2,11 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-
 namespace MudBlazor.State.Rule.Exclusion;
 
-#nullable enable
 /// <summary>
 /// Represents an exclusion rule based on the <see cref="ParameterMetadata"/>.
 /// </summary>

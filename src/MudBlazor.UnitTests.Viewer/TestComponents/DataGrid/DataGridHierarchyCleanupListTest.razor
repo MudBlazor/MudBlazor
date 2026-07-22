@@ -1,0 +1,46 @@
+﻿@* Test component for hierarchy cleanup with regular List<T> *@
+
+<MudDataGrid Items="@Items">
+    <Columns>
+        <HierarchyColumn T="Model" InitiallyExpandedFunc="@(x => x.InitiallyExpanded)" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+    <ChildRowContent>
+        <tr>
+            <td colspan="3">Details for @context.Item.Name</td>
+        </tr>
+    </ChildRowContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Hierarchy expansions should be cleaned up when Items is reassigned with a filtered List.";
+
+    public List<Model> Items { get; set; } =
+    [
+        new Model("Sam", 56, false),
+        new Model("Alicia", 54, false),
+        new Model("Ira", 27, true), // Initially expanded
+        new Model("John", 32, false)
+    ];
+
+    public void RemoveItem(Model item)
+    {
+        Items = Items.Where(x => x != item).ToList();
+        StateHasChanged();
+    }
+
+    public void ClearItems()
+    {
+        Items = [];
+        StateHasChanged();
+    }
+
+    public void AddItem(Model item)
+    {
+        Items = Items.Append(item).ToList();
+        StateHasChanged();
+    }
+
+    public record Model(string Name, int Age, bool InitiallyExpanded);
+}

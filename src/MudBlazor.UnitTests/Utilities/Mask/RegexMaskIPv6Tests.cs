@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
@@ -73,6 +73,15 @@ public class RegexMaskIPv6Tests
         mask.Insert("0:0:0:0:0:0:0:0\n");
         mask.ToString().Should().Be("0:0:0:0:0:0:0:0|");
         mask.Text.IndexOf('\n').Should().Be(-1);
+    }
+
+    [Test]
+    public void IPv6_Insert_FifthHexDigitJumpsToNextGroup()
+    {
+        // each group is capped at 4 hex chars ([0-9A-Fa-f]{0,4}); the 5th jumps the delimiter
+        var mask = RegexMask.IPv6();
+        mask.Insert("aaaaa");
+        mask.ToString().Should().Be("aaaa:a|");
     }
 
     [Test]

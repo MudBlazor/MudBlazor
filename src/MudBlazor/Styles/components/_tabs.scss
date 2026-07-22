@@ -30,6 +30,7 @@
 
     .mud-tabs-panels {
       border-radius: var(--mud-default-borderradius);
+      flex-grow: 1;
     }
   }
 }
@@ -121,9 +122,36 @@
   position: relative;
   transition: .3s cubic-bezier(.25,.8,.5,1);
 
+  > .mud-tab-panel {
+    display: none;
+
+    &.mud-tab-panel-active:not(.mud-tab-panel-hidden) {
+      display: contents;
+    }
+  }
+
   &.mud-tabs-vertical {
     display: flex;
     flex-grow: 1;
+    min-width: 0;
+
+    > .mud-tab-panel-active > * {
+      min-width: 0;
+    }
+  }
+}
+
+.mud-tabs-dropzone-horizontal {
+  > .mud-drop-item-preview-start {
+    width: 20px;
+    height: 100%;
+  }
+}
+
+.mud-tabs-dropzone-vertical {
+  > .mud-drop-item-preview-start {
+    width: 100%;
+    height: 20px;
   }
 }
 
@@ -172,6 +200,10 @@
     margin-inline-end: 8px;
     margin-inline-start: unset;
   }
+
+  &.mud-tab-panel-hidden {
+    display: none;
+  }
 }
 
 .mud-tab-slider {
@@ -207,6 +239,16 @@
   margin-left: 8px;
   margin-inline-start: 8px;
   margin-inline-end: unset;
+}
+
+.mud-tab-slider.mud-default {
+  background: var(--mud-palette-action-default);
+}
+
+@each $color in $mud-palette-colors {
+  .mud-tab-slider.mud-#{$color} {
+    background: var(--mud-palette-#{$color});
+  }
 }
 
 @each $color in $mud-palette-colors {

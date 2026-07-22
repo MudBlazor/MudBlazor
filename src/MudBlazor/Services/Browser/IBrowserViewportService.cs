@@ -2,15 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents a service that serves to listen to browser window size changes and breakpoints.
+/// Reports browser window resize events and responsive <see cref="Breakpoint"/> changes to subscribed observers, and answers media-query and breakpoint checks.
 /// </summary>
 public interface IBrowserViewportService : IAsyncDisposable
 {

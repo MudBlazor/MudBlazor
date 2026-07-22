@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid Items="@_items">
+﻿<MudDataGrid Items="@_items">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -12,7 +10,7 @@
 </MudDataGrid>
 
 @code {
-    private IEnumerable<Model> _items = new List<Model>();
+    private readonly IEnumerable<Model> _items = new List<Model>();
 
     public record Model (string Name, int Age, Severity Status);
 }

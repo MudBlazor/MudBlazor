@@ -1,13 +1,10 @@
 ﻿@using System.ComponentModel
 @using System.Runtime.CompilerServices
-@namespace MudBlazor.UnitTests.TestComponents
-
 <MudPaper>
-    <MudTable InlineEdit="false"
-              Items="@viewModel.Items"
+    <MudTable Items="@_viewModel.Items"
               Dense="true" Hover="true"
               FixedHeader="true"
-              Filter="new Func<Item, bool>(viewModel.Filter)"
+              Filter="new Func<Item, bool>(ViewModel.Filter)"
               SortLabel="Sort By">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortBy="new Func<Item, object>(x => x.Text)">Text</MudTableSortLabel></MudTh>
@@ -24,29 +21,31 @@
 @code
 {
     public static string __description__ = "Setting items delayed should work well and update pager also.";
-    private ViewModel viewModel = new ViewModel();
 
-    private sealed class Item
-    {
-        public string Text { get; set; }
-    }
+    private readonly ViewModel _viewModel = new();
 
     protected override async Task OnInitializedAsync()
     {
-        viewModel.PropertyChanged += (sender, args) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
-        await viewModel.LoadItemsAsync().ConfigureAwait(false);
+        _viewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await _viewModel.LoadItemsAsync().ConfigureAwait(false);
         await base.OnInitializedAsync();
+    }
+
+    private sealed class Item
+    {
+        public required string Text { get; init; }
     }
 
     private sealed class ViewModel : INotifyPropertyChanged
     {
-        private List<Item> _items = new List<Item>();
-        public bool Filter(Item arg) { return true; }
+        private List<Item> _items = [];
+
+        public static bool Filter(Item arg) { return true; }
 
         public List<Item> Items
         {
             get => _items;
-            set
+            private set
             {
                 _items = value;
                 OnPropertyChanged();
@@ -65,12 +64,11 @@
             Items = list;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this,
-                                    new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

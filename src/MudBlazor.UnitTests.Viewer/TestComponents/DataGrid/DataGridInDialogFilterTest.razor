@@ -1,0 +1,33 @@
+﻿<div class="d-flex">
+    <MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+        Show
+    </MudButton>
+</div>
+
+<MudDialog @bind-Visible="_visible" Options="_dialogOptions">
+    <DialogContent>
+        <MudDataGrid Items="@_items" Virtualize="true" FixedHeader="true" Height="350px" Filterable>
+            <Columns>
+                <PropertyColumn Property="x => x.Column1" />
+                <PropertyColumn Property="x => x.Column2" />
+                <PropertyColumn Property="x => x.Column3" />
+                <PropertyColumn Property="x => x.Column4" />
+                <PropertyColumn Property="x => x.Column5" />
+            </Columns>
+        </MudDataGrid>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    public static string __description__ = "Datagrid inside a Dialog making sure Filter popover shows and goes away properly.";
+
+    private readonly List<Model> _items = Enumerable.Repeat(0, 200)
+        .Select((_, i) => new Model($"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}"))
+        .ToList();
+    private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
+    private bool _visible;
+
+    private void OpenDialog() => _visible = true;
+
+    public record Model(string Column1, string Column2, string Column3, string Column4, string Column5);
+}

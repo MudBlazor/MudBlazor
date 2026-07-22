@@ -1,18 +1,11 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
-namespace MudBlazor
-{
-    // used in MudCollapse
-    [EventHandler("onanimationend", typeof(EventArgs), enableStopPropagation: true, enablePreventDefault: false)]
-#if !NET7_0_OR_GREATER
-    [EventHandler("onmouseenter", typeof(MouseEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
-    [EventHandler("onmouseleave", typeof(MouseEventArgs), enableStopPropagation: true, enablePreventDefault: true)]
-#endif
-    public static class EventHandlers
-    {
+namespace MudBlazor;
 
-    }
-
-}
+// used in MudCollapse
+/// <summary>
+/// Registers the <c>ontransitionend</c> DOM event with Blazor's event system.
+/// </summary>
+[EventHandler("ontransitionend", typeof(EventArgs), enableStopPropagation: true, enablePreventDefault: false)]
+public static class EventHandlers;
