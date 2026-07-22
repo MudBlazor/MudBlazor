@@ -3,22 +3,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// The header area of a <see cref="MudCard"/>, typically holding an avatar, title, and action buttons.
+    /// Represents the top portion of a <see cref="MudCard"/>.
     /// </summary>
-    /// <seealso cref="MudCard" />
-    /// <seealso cref="MudCardActions" />
-    /// <seealso cref="MudCardContent" />
-    /// <seealso cref="MudCardMedia" />
     public partial class MudCardHeader : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-header")
-            .AddClass("mud-card-header-padding", ParentCard?.ContentPadding ?? true)
             .AddClass(Class)
             .Build();
-
-        [CascadingParameter]
-        private MudCard? ParentCard { get; set; }
 
         /// <summary>
         /// The avatar to display within this header.

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
@@ -11,15 +10,13 @@ using MudBlazor.Utilities.Expressions;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Binds a <see cref="MudDataGrid{T}"/> column to an object property, with automatic sorting, filtering, and formatting of its values.
+    /// Represents a column in a <see cref="MudDataGrid{T}"/> associated with an object's property.
     /// </summary>
     /// <typeparam name="T">The type of object represented by each row in the data grid.</typeparam>
     /// <typeparam name="TProperty">The type of the property whose values are displayed in the column's cells.</typeparam>
-    /// <seealso cref="Column{T}" />
-    /// <seealso cref="MudDataGrid{T}" />
-    /// <seealso cref="TemplateColumn{T}" />
-    public partial class PropertyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T, TProperty> : Column<T>
+    public partial class PropertyColumn<T, TProperty> : Column<T>
     {
         private readonly Guid _id = Guid.NewGuid();
 
@@ -53,8 +50,7 @@ namespace MudBlazor
             if (_lastAssignedProperty != Property)
             {
                 _lastAssignedProperty = Property;
-                var safePropertyExpression = ExpressionNull.AddNullChecks(Property);
-                var compiledPropertyExpression = safePropertyExpression.Compile();
+                var compiledPropertyExpression = Property.Compile();
                 _cellContentFunc = item => compiledPropertyExpression(item);
             }
 
@@ -107,7 +103,7 @@ namespace MudBlazor
         /// If the Property expression looks like 'x => x.y.z', to set the value of 'z' we need to find the value of 'y', we can dig recursively until we find it.
         /// </summary>
         /// <exception cref="NullReferenceException"></exception>
-        private object? RecursiveGetSubProperties(MemberExpression memberExpression, object? item)
+        private object RecursiveGetSubProperties(MemberExpression memberExpression, object item)
         {
             if (memberExpression.Expression is MemberExpression { Member: PropertyInfo propertyInfo } subMemberExpress)
             {
@@ -119,7 +115,7 @@ namespace MudBlazor
             return item;
         }
 
-        protected internal override void SetProperty(object? item, object? value)
+        protected internal override void SetProperty(object item, object? value)
         {
             var expression = Property.Body;
 

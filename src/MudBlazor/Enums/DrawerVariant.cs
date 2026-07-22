@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the behavior of a <see cref="MudDrawer"/>.
 /// </summary>
-[EnumExtensions]
 public enum DrawerVariant
 {
     /// <summary>
@@ -28,7 +26,7 @@ public enum DrawerVariant
     Persistent,
 
     /// <summary>
-    /// The drawer has a small width on larger screens and can expand when hovered, but behaves like <see cref="DrawerVariant.Temporary"/> below its breakpoint.
+    /// The drawer has a small width but will expand when hovering over it.
     /// </summary>
     [Description("mini")]
     Mini

@@ -4,30 +4,27 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// A clickable icon for actions and commands.
+    /// Represents a button consisting of an icon.
     /// </summary>
     /// <remarks>
-    /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
-    /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// Creates a <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
-    /// <seealso cref="MudButton" />
-    /// <seealso cref="MudFab" />
-    /// <seealso cref="MudToggleIconButton" />
-    /// <seealso cref="MudIcon"/>
-    public partial class MudIconButton : MudBaseButton
+    public partial class MudIconButton : MudBaseButton, IHandleEvent
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-button", when: AsButton)
-            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !AsButton && Color != Color.Default)
-            .AddClass($"mud-button-{Variant.ToStringFast(true)}", AsButton)
-            .AddClass($"mud-button-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}", AsButton)
-            .AddClass($"mud-button-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}", AsButton)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !AsButton && Color != Color.Default)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-ripple-icon", Ripple && !AsButton)
-            .AddClass($"mud-icon-button-size-{Size.ToStringFast(true)}", when: () => Size != Size.Medium)
-            .AddClass($"mud-icon-button-edge-{Edge.ToStringFast(true)}", when: () => Edge != Edge.False)
+            .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
+            .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
             .AddClass(Class)
             .Build();
@@ -48,7 +45,7 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -75,10 +72,10 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// The display variation to use.
+        /// The variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -93,5 +90,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+        /// <para/>
+        /// Since <see cref="MudIconButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
+        /// </remarks>
+        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

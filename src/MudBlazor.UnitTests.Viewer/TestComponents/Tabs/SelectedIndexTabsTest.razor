@@ -1,4 +1,6 @@
-﻿<MudTabs @bind-ActivePanelIndex="@SelectedTab" @ref="Tabs">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs @bind-ActivePanelIndex="@SelectedTab" @ref="Tabs">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -14,7 +16,8 @@
 </MudTabs>
 
 @code {
-    public static int SelectedTab { get; set; } = 1;
 
-    public MudTabs Tabs { get; set; } = null!;
+    public static int SelectedTab { get; set; } = 1;
+    public MudTabs Tabs;
+
 }

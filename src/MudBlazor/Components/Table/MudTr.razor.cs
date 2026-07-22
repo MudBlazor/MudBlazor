@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
     /// A row of data within a <see cref="MudTable{T}"/>.
     /// </summary>
-    public partial class MudTr : MudComponentBase, IDisposable
+    public partial class MudTr : MudComponentBase
     {
         private bool _checked;
         private bool _hasBeenCanceled;
@@ -17,7 +19,6 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
-            .AddClass(DisabledClass, Disabled)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -35,13 +36,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
-
-        /// <summary>
-        /// Optional ID for the row, used for programmatic scrolling and focusing.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
-        public string? RowId { get; set; }
 
         /// <summary>
         /// The data being displayed for this row.
@@ -62,7 +56,7 @@ namespace MudBlazor
         /// Prevents the change of the current selection.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// Defaults to <c>true</c>.  Requires <see cref="Checkable"/> to be <c>true</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
         public bool SelectionChangeable { get; set; } = true;
@@ -71,7 +65,7 @@ namespace MudBlazor
         /// Allows this row to be edited.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
         public bool Editable { get; set; }
@@ -80,7 +74,7 @@ namespace MudBlazor
         /// Allows this row to expand to display nested content.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// Defaults to <c>false</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
         public bool Expandable { get; set; }
@@ -90,29 +84,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<bool> CheckedChanged { get; set; }
-
-        /// <summary>
-        /// Disables mouse events and sets the color to <c>--mud-palette-text-disabled</c>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. Managed automatically by the parent <see cref="MudTable{T}"/>.
-        /// </remarks>
-        [Parameter]
-        public bool Disabled { get; set; }
-
-        /// <summary>
-        /// The class to use if <see cref="Disabled"/> is <c>true</c>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>mud-table-row-disabled</c>
-        /// </remarks>
-        [Parameter]
-        public string DisabledClass { get; set; } = "mud-table-row-disabled";
-
-        /// <summary>
-        /// Suppresses the browser's default context menu when a custom <c>@oncontextmenu</c> handler is supplied via <see cref="MudComponentBase.UserAttributes"/>.
-        /// </summary>
-        protected bool PreventContextMenuDefault => UserAttributes is not null && UserAttributes.ContainsKey("oncontextmenu");
 
         /// <summary>
         /// The state of the checkbox when <see cref="Checkable"/> is <c>true</c>.
@@ -266,21 +237,6 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources used by this row.
-        /// </summary>
-        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing)
-            {
-                return;
-            }
-
             Context?.Remove(this, Item);
         }
 
@@ -308,16 +264,10 @@ namespace MudBlazor
             }
         }
 
-        private async Task FinishEdit(MouseEventArgs ev)
+        private void FinishEdit(MouseEventArgs ev)
         {
-            // Gating the commit on the synchronous IsValid alone let an async validator's errors arrive after the check, committing an invalid row.
-            // Read Errors directly: the IsValid getter starts a fresh fire-and-forget validation pass, which would clear the errors just gathered.
-            var validator = Context?.Table?.Validator;
-            if (validator is not null)
-            {
-                await validator.ValidateAsync();
-                if (validator.Errors.Length > 0) return;
-            }
+            // Check the validity of the item
+            if (!(Context?.Table?.Validator.IsValid ?? true)) return;
 
             // Set the item value to cancel edit mode
             Context?.Table?.SetEditingItem(null);

@@ -1,6 +1,8 @@
-﻿namespace MudBlazor.Interpolation
+﻿using System;
+
+namespace MudBlazor.Components.Chart.Interpolation
 {
-    internal interface ILineInterpolator
+    public interface ILineInterpolator
     {
         public double[] GivenYs { get; set; }
         public double[] GivenXs { get; set; }

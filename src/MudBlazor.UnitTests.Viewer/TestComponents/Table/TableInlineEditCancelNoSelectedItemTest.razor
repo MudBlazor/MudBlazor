@@ -1,4 +1,6 @@
-﻿<MudTable Items="_items" CanCancelEdit="true">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable Items="items" CanCancelEdit="true">
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Value</MudTh>
@@ -18,17 +20,16 @@
 </MudTable>
 
 @code {
-    private readonly List<Element> _items =
-    [
-        new() { Value = "A", Id = "Id1" },
-        new() { Value = "B", Id = "Id2" },
-        new() { Value = "C", Id = "Id3" }
-    ];
+    List<Element> items = new List<Element>
+    {
+        new Element { Value = "A", Id = "Id1" },
+        new Element { Value = "B", Id = "Id2" },
+        new Element { Value = "C", Id = "Id3" },
+    };
 
     public class Element
     {
-        public required string Id { get; set; }
-
-        public required string Value { get; set; }
+        public string Id { get; set; }
+        public string Value { get; set; }
     }
 }

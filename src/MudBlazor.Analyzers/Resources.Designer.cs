@@ -61,20 +61,38 @@ namespace MudBlazor.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://mudblazor.com/features/analyzers.
+        ///   Looks up a localized string similar to This is not a component parameter, it could be an attribute..
         /// </summary>
-        internal static string HelpLinkUrl {
+        internal static string MUD0001Description {
             get {
-                return ResourceManager.GetString("HelpLinkUrl", resourceCulture);
+                return ResourceManager.GetString("MUD0001Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is not a component parameter, it could be an attribute..
+        ///   Looks up a localized string similar to Illegal Parameter &apos;{0}&apos; on &apos;{1}&apos; using &apos;{2}&apos; source location &apos;{3}&apos;.
         /// </summary>
-        internal static string MUD0002Description {
+        internal static string MUD0001MessageFormat {
             get {
-                return ResourceManager.GetString("MUD0002Description", resourceCulture);
+                return ResourceManager.GetString("MUD0001MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown MudBlazor attribute/parameter.
+        /// </summary>
+        internal static string MUD0001Title {
+            get {
+                return ResourceManager.GetString("MUD0001Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://mudblazor.com/features/analyzers.
+        /// </summary>
+        internal static string MUD0001Url {
+            get {
+                return ResourceManager.GetString("MUD0001Url", resourceCulture);
             }
         }
         
@@ -84,96 +102,6 @@ namespace MudBlazor.Analyzers {
         internal static string MUD0002MessageFormat {
             get {
                 return ResourceManager.GetString("MUD0002MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown MudBlazor attribute/parameter.
-        /// </summary>
-        internal static string MUD0002Title {
-            get {
-                return ResourceManager.GetString("MUD0002Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reading a parameter state property is not allowed..
-        /// </summary>
-        internal static string MUD0010Description {
-            get {
-                return ResourceManager.GetString("MUD0010Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reading &apos;{0}&apos; parameter state property is not allowed. Use the backing ParameterState&lt;{1}&gt;.Value instance instead..
-        /// </summary>
-        internal static string MUD0010MessageFormat {
-            get {
-                return ResourceManager.GetString("MUD0010MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reading ParameterState property.
-        /// </summary>
-        internal static string MUD0010Title {
-            get {
-                return ResourceManager.GetString("MUD0010Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Writing to a parameter state property is not allowed..
-        /// </summary>
-        internal static string MUD0011Description {
-            get {
-                return ResourceManager.GetString("MUD0011Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Writing to &apos;{0}&apos; parameter state property is not allowed. Use the backing ParameterState&lt;{1}&gt;.SetValueAsync instead..
-        /// </summary>
-        internal static string MUD0011MessageFormat {
-            get {
-                return ResourceManager.GetString("MUD0011MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Writing to ParameterState property.
-        /// </summary>
-        internal static string MUD0011Title {
-            get {
-                return ResourceManager.GetString("MUD0011Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to External access of a parameter state property is not allowed..
-        /// </summary>
-        internal static string MUD0012Description {
-            get {
-                return ResourceManager.GetString("MUD0012Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to External access of &apos;{0}&apos; parameter state property is not allowed. Use GetState(x =&gt; x.{0}) instead..
-        /// </summary>
-        internal static string MUD0012MessageFormat {
-            get {
-                return ResourceManager.GetString("MUD0012MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to External access of ParameterState property.
-        /// </summary>
-        internal static string MUD0012Title {
-            get {
-                return ResourceManager.GetString("MUD0012Title", resourceCulture);
             }
         }
     }

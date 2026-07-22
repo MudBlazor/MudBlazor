@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Components
         public void GuttersProperty_AddsClass(bool gutters)
         {
             // Arrange
-            var component = Context.Render<MudContainer>(builder => builder
+            var component = Context.RenderComponent<MudContainer>(builder => builder
                 .Add(p => p.Gutters, gutters)
             );
 

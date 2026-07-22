@@ -7,9 +7,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
-/// A thin line that groups content in lists and layouts. Only use dividers if items can't be grouped with open space. Use dividers to group things, not separate individual items.
+/// A thin line that groups content in lists and layouts.
 /// </summary>
 public partial class MudDivider : MudComponentBase
 {
@@ -19,7 +20,7 @@ public partial class MudDivider : MudComponentBase
             .AddClass("mud-divider-flexitem", FlexItem)
             .AddClass("mud-divider-light", Light)
             .AddClass("mud-divider-vertical", Vertical)
-            .AddClass($"mud-divider-{DividerType.ToStringFast(true)}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && Vertical == false))
+            .AddClass($"mud-divider-{DividerType.ToDescriptionString()}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && Vertical == false))
             .AddClass(Class)
             .Build();
 

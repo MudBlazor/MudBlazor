@@ -2,176 +2,121 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// A chronological item displayed as part of a <see cref="MudTimeline"/>
-    /// </summary>
-    /// <seealso cref="MudTimeline"/>
+#nullable enable
     public partial class MudTimelineItem : MudComponentBase, IDisposable
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline-item")
-                .AddClass($"mud-timeline-item-{TimelineAlign.ToStringFast(true)}")
+                .AddClass($"mud-timeline-item-{TimelineAlign.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
 
         protected string DotClassnames =>
             new CssBuilder("mud-timeline-item-dot")
-                .AddClass($"mud-timeline-dot-size-{Size.ToStringFast(true)}")
+                .AddClass($"mud-timeline-dot-size-{Size.ToDescriptionString()}")
                 .AddClass($"mud-elevation-{Elevation}")
                 .Build();
 
         protected string DotInnerClassnames =>
             new CssBuilder("mud-timeline-item-dot-inner")
                 .AddClass($"mud-timeline-dot-fill", Variant == Variant.Filled)
-                .AddClass($"mud-timeline-dot-{Color.ToStringFast(true)}")
-                .AddClass(DotClass)
+                .AddClass($"mud-timeline-dot-{Color.ToDescriptionString()}")
                 .Build();
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        protected string? DotStyleValue => DotStyle;
-#pragma warning restore CS0618 // Type or member is obsolete
 
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
-        /// The icon displayed inside the dot.
+        /// Dot Icon
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>. Ignored when <see cref="ItemDot"/> is set.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The display variant for the dot.
+        /// Variant of the dot.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Variant.Outlined"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public Variant Variant { get; set; } = Variant.Outlined;
 
         /// <summary>
-        /// The CSS classes applied to the dot.
+        /// User styles, applied to the lineItem dot.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Timeline.Dot)]
-        public string? DotClass { get; set; }
-
-        /// <summary>
-        /// The CSS styles applied to the dot.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>. Styles such as <c>background-color</c> can be applied (e.g. <c>background-color:red;</c>).
-        /// </remarks>
-        [Obsolete("Prefer the DotClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public string? DotStyle { get; set; }
 
         /// <summary>
-        /// The color of the dot.
+        /// Color of the dot.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of the dot.
+        /// Size of the dot.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Small"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public Size Size { get; set; } = Size.Small;
 
         /// <summary>
-        /// The size of the dot's drop shadow.
+        /// Elevation of the dot. The higher the number, the heavier the drop-shadow.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>1</c>. A higher number creates a heavier drop shadow. Use a value of <c>0</c> for no shadow.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public int Elevation { set; get; } = 1;
 
         /// <summary>
-        /// Overrides <see cref="MudTimeline.TimelineAlign"/> with a custom value.
+        /// Overrides Timeline Parents default sorting method in Default and Reverse mode.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="TimelineAlign.Default"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public TimelineAlign TimelineAlign { get; set; }
 
         /// <summary>
-        /// Hides the dot for this item.
+        /// If true, dot will not be displayed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public bool HideDot { get; set; }
 
         /// <summary>
-        /// The custom content for the opposite side of this item.
+        /// If used renders child content of the ItemOpposite.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public RenderFragment? ItemOpposite { get; set; }
 
         /// <summary>
-        /// The custom content for this item.
+        /// If used renders child content of the ItemContent.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>. Only applies if <see cref="ChildContent"/> is <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public RenderFragment? ItemContent { get; set; }
 
         /// <summary>
-        /// The custom content for the dot.
+        /// If used renders child content of the ItemDot.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public RenderFragment? ItemDot { get; set; }
 
         /// <summary>
-        /// The custom content for the entire item.
+        /// Optional child content if no other RenderFragments is used.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>. When set, <see cref="ItemContent"/> will not be displayed.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        /// <inheritdoc />
         protected override Task OnInitializedAsync()
         {
             Parent?.Items.Add(this);
@@ -185,9 +130,6 @@ namespace MudBlazor
             Parent?.MoveTo(myIndex ?? 0);
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
         public void Dispose()
         {
             Parent?.Items.Remove(this);

@@ -1,6 +1,8 @@
-﻿<ErrorBoundary>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<ErrorBoundary>
     <ChildContent>
-        <MudTextField @bind-Value="_text"
+        <MudTextField @bind-Value="Text"
                       OnBlur="@HandleBlurAsync"
                       OnKeyDown="@HandleKeyDownAsync"
                       OnKeyUp="@HandleKeyUpAsync"
@@ -14,21 +16,21 @@
 </ErrorBoundary>
 
 @code {
-    private string _text = string.Empty;
+    public string Text { get; set; } = "";
 
-    private static async Task HandleBlurAsync()
+    public async Task HandleBlurAsync()
     {
         await Task.Delay(100);
         throw new Exception("Something went wrong...");
     }
 
-    private static async Task HandleKeyDownAsync(KeyboardEventArgs arg)
+    private async Task HandleKeyDownAsync(KeyboardEventArgs arg)
     {
         await Task.Delay(100);
         throw new Exception("Something went wrong...");
     }
 
-    private static async Task HandleKeyUpAsync(KeyboardEventArgs arg)
+    private async Task HandleKeyUpAsync(KeyboardEventArgs arg)
     {
         await Task.Delay(100);
         throw new Exception("Something went wrong...");

@@ -1,72 +1,50 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// A label which describes a <see cref="MudInput{T}"/> component.
-    /// </summary>
     public partial class MudInputLabel : MudComponentBase
     {
-        protected string Classname => new CssBuilder()
-            .AddClass("mud-input-label")
-            .AddClass("mud-input-label-animated")
-            .AddClass($"mud-input-label-{Variant.ToStringFast(true)}")
-            .AddClass($"mud-input-label-margin-{Margin.ToStringFast(true)}", when: () => Margin != Margin.None)
-            .AddClass("mud-disabled", Disabled)
-            .AddClass("mud-input-error", Error)
-            .AddClass(Class)
-            .Build();
+        protected string Classname =>
+       new CssBuilder()
+         .AddClass("mud-input-label")
+         .AddClass("mud-input-label-animated")
+         .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
+         .AddClass($"mud-input-label-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+         .AddClass("mud-disabled", Disabled)
+         .AddClass("mud-input-error", Error)
+         .AddClass(Class)
+       .Build();
 
         /// <summary>
-        /// The content within this label.
+        /// Child content of component.
         /// </summary>
-        [Parameter]
-        public RenderFragment? ChildContent { get; set; }
+        [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Prevents the user from interacting with this label.
+        /// If true, the input element will be disabled.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter]
-        public bool Disabled { get; set; }
+        [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
-        /// Displays this label in an error state.
+        /// If true, the label will be displayed in an error state.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter]
-        public bool Error { get; set; }
+        [Parameter] public bool Error { get; set; }
 
         /// <summary>
-        /// The display variant of this label.
+        /// Variant to use.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
-        /// </remarks>
-        [Parameter]
-        public Variant Variant { get; set; } = Variant.Text;
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// The amount of vertical spacing to apply.
+        ///  Will adjust vertical spacing.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Margin.None"/>.
-        /// </remarks>
-        [Parameter]
-        public Margin Margin { get; set; } = Margin.None;
+        [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// For WCAG accessibility, the ID of the input component related to this label.
+        ///  Will set the for attribute for WCAG accessiblility
         /// </summary>
-        /// <remarks>
-        /// Defaults to an empty string.
-        /// </remarks>
-        [Parameter]
-        public string ForId { get; set; } = string.Empty;
+        [Parameter] public string ForId { get; set; } = string.Empty;
     }
 }

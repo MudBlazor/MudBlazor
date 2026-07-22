@@ -1,0 +1,73 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudSwitch @bind-Value="_groupsDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
+<MudSwitch @bind-Value="_groupsDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
+<MudSwitch @bind-Value="_groupsDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
+<MudSwitch @bind-Value="_virtualize" Color="Color.Primary">Virtualize</MudSwitch>
+
+<MudText>Total items: @_cars?.Count() - Selected items: @selectedItems?.Count</MudText>
+
+<MudTable @ref="MudTable" Items="@_cars" Height="500px" FixedHeader="true" Hover Dense MultiSelection Virtualize="@_virtualize"
+          @bind-SelectedItems="selectedItems"
+          GroupBy="@_groupsDefinition"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterStyle="background-color:var(--mud-palette-background-gray)">
+    <HeaderContent>
+        <MudTh>Model:</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        <MudTh Style="font-weight: 500;" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+    </GroupHeaderTemplate>
+        <RowTemplate>
+            <MudTd DataLabel="Nr">@context.ToString()</MudTd>
+        </RowTemplate>
+    <GroupFooterTemplate>
+        <MudTh Style="font-weight: 500;text-align: right;">Count: @context.Items.Count()</MudTh>
+    </GroupFooterTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "All row-, group- and header/footer checkbox states must be false; nothing selected, no indeterminate state.";
+    public MudTable<TableGroupingTest.RacingCar> MudTable;
+    bool _virtualize;
+    IEnumerable<TableGroupingTest.RacingCar> _cars;
+    HashSet<TableGroupingTest.RacingCar> selectedItems = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        _cars = new List<TableGroupingTest.RacingCar>()
+        {
+                new("919 Hybrid", "Porsche", "LMP1"),
+                new("911 RSR", "Porsche", "GTE"),
+                new("911 RS", "Porsche", "GT3"),
+                new("R18 e-tron quattor", "Audi", "LMP1"),
+                new("R8 LMS", "Audi", "GT3"),
+                new ("F488", "Ferrari", "GTE"),
+                new ("SF-1000", "Ferrari", "Formula 1"),
+                new ("MCL35M", "McLaren", "Formula 1"),
+                new ("720s", "McLaren", "GT3"),
+                new ("Vantage", "Aston Martin", "GTE"),
+                new ("AMR21", "Aston Martin", "Formula 1"),
+        };
+        return base.OnInitializedAsync();
+    }
+
+    private TableGroupDefinition<TableGroupingTest.RacingCar> _groupsDefinition = new()
+    {
+        GroupName = "Category",
+        Selector = rc => rc.Category,
+        Indentation = true,
+        Expandable = true,
+
+        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+        {
+            GroupName = "Brand",
+            Indentation = true,
+            Expandable = true,
+            Selector = rc => rc.Brand
+        }
+    };
+}

@@ -2,8 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
-using Microsoft.Extensions.Time.Testing;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using MudBlazor.Utilities.Throttle;
 using NUnit.Framework;
 
@@ -14,426 +17,93 @@ namespace MudBlazor.UnitTests.Utilities.Throttle;
 public class ThrottleDispatcherTests
 {
     [Test]
-    public async Task ThrottleAsync_SingleCall_ExecutesImmediately()
+    public async Task ThrottleDispatcher_ThrottleAsync()
     {
         // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        var executed = false;
-        Task Invoke()
-        {
-            executed = true;
-            return Task.CompletedTask;
-        }
-
-        // Act
-        await dispatcher.ThrottleAsync(Invoke);
-
-        // Assert
-        executed.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task ThrottleAsync_MultipleRapidCalls_ExecutesOnce()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
         var counter = 0;
+        var dispatcher = new ThrottleDispatcher(100);
+        var tasks = new List<Task>();
+
         async Task Invoke()
         {
             Interlocked.Increment(ref counter);
-            await Task.Delay(10); // Small delay to keep the task running
+            await Task.Yield();
         }
 
-        // Act - All three calls should return the same task
-        var task1 = dispatcher.ThrottleAsync(Invoke);
-        var task2 = dispatcher.ThrottleAsync(Invoke);
-        var task3 = dispatcher.ThrottleAsync(Invoke);
-
-        await Task.WhenAll(task1, task2, task3);
-
-        // Assert
-        counter.Should().Be(1);
-        task1.Should().BeSameAs(task2);
-        task2.Should().BeSameAs(task3);
-    }
-
-    [Test]
-    public async Task ThrottleAsync_CallsSpacedByInterval_ExecutesMultipleTimes()
-    {
-        // Arrange
-        var timeProvider = new FakeTimeProvider();
-        using var dispatcher = new ThrottleDispatcher(50, timeProvider);
-        var counter = 0;
-        Task Invoke()
+        Task CallThrottleAsyncAfterDelay(int delay)
         {
-            Interlocked.Increment(ref counter);
-            return Task.CompletedTask;
+            Task.Delay(delay).ConfigureAwait(false).GetAwaiter().GetResult();
+
+            return dispatcher.ThrottleAsync(Invoke);
         }
 
         // Act
-        var task1 = dispatcher.ThrottleAsync(Invoke);
-        await task1;
-        counter.Should().Be(1);
-
-        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
-        var task2 = dispatcher.ThrottleAsync(Invoke);
-        await task2;
-        counter.Should().Be(2);
-
-        timeProvider.Advance(TimeSpan.FromMilliseconds(100));
-        var task3 = dispatcher.ThrottleAsync(Invoke);
-        await task3;
+        for (var i = 0; i < 20; i++)
+        {
+            tasks.Add(CallThrottleAsyncAfterDelay(50));
+        }
 
         // Assert
-        counter.Should().Be(3);
-    }
-
-    [Test]
-    public void ThrottleAsync_ExceptionInAction_PropagatesException()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        Task ThrowingAction()
-        {
-            throw new InvalidOperationException("Test exception");
-        }
-
-        // Act & Assert
-        var exception = Assert.ThrowsAsync<InvalidOperationException>(
-            () => dispatcher.ThrottleAsync(ThrowingAction));
-        exception!.Message.Should().Be("Test exception");
-    }
-
-    [Test]
-    public async Task ThrottleAsync_ExceptionResetsThrottle_AllowsImmediateNextCall()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        var counter = 0;
-
-        Task ThrowingAction()
-        {
-            Interlocked.Increment(ref counter);
-            throw new InvalidOperationException();
-        }
-
-        Task SuccessAction()
-        {
-            Interlocked.Increment(ref counter);
-            return Task.CompletedTask;
-        }
-
-        // Act
-        Assert.ThrowsAsync<InvalidOperationException>(
-            () => dispatcher.ThrottleAsync(ThrowingAction));
-        counter.Should().Be(1);
-
-        // Should be able to call immediately after exception
-        await dispatcher.ThrottleAsync(SuccessAction);
-
-        // Assert
-        counter.Should().Be(2);
-    }
-
-    [Test]
-    public async Task ThrottleAsync_ZeroInterval_AllowsEveryCall()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(0);
-        var counter = 0;
-        Task Invoke()
-        {
-            Interlocked.Increment(ref counter);
-            return Task.CompletedTask;
-        }
-
-        // Act
-        await dispatcher.ThrottleAsync(Invoke);
-        await dispatcher.ThrottleAsync(Invoke);
-        await dispatcher.ThrottleAsync(Invoke);
-
-        // Assert - With zero interval, each call should execute
-        counter.Should().Be(3);
-    }
-
-    [Test]
-    public async Task ThrottleAsync_ConcurrentCalls_ThreadSafe()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        var executionCount = 0;
-        var callCount = 0;
-
-        Task Invoke()
-        {
-            Interlocked.Increment(ref executionCount);
-            return Task.Delay(10); // Small delay to simulate work
-        }
-
-        // Act - Fire many concurrent calls rapidly
-        var tasks = Enumerable.Range(0, 100)
-            .Select(_ => Task.Run(async () =>
-            {
-                Interlocked.Increment(ref callCount);
-                await dispatcher.ThrottleAsync(Invoke);
-            }))
-            .ToArray();
-
         await Task.WhenAll(tasks);
-
-        // Assert
-        callCount.Should().Be(100); // All calls should have been made
-        executionCount.Should().BeGreaterThanOrEqualTo(1); // At least one execution
-        executionCount.Should().BeLessThan(20); // But throttled to much fewer executions
+        counter.Should().BeInRange(9, 11);
     }
 
     [Test]
-    public void ThrottleAsync_CancellationToken_PreventsNewExecution()
+    public async Task ThrottleDispatcher_ThrottleDelayAfterExecutionAsync()
     {
         // Arrange
-        using var dispatcher = new ThrottleDispatcher(1000);
-        using var cts = new CancellationTokenSource();
-        var executed = false;
-
-        Task Invoke()
-        {
-            executed = true;
-            return Task.CompletedTask;
-        }
-
-        // Act
-        cts.Cancel();
-
-        // Assert - should return completed task silently
-        var task = dispatcher.ThrottleAsync(Invoke, cts.Token);
-        task.IsCompleted.Should().BeTrue();
-        executed.Should().BeFalse();
-    }
-
-    [Test]
-    public void ThrottleAsync_Dispose_PreventsNewCalls()
-    {
-        // Arrange
-        var dispatcher = new ThrottleDispatcher(100);
-        Task Invoke() => Task.CompletedTask;
-
-        // Act
-        dispatcher.Dispose();
-
-        // Assert - should return completed task silently
-        var task = dispatcher.ThrottleAsync(Invoke);
-        task.IsCompleted.Should().BeTrue();
-    }
-
-    [Test]
-    [CancelAfter(5000)]
-    public async Task ThrottleAsync_Dispose_DoesNotCancelRunningAction()
-    {
-        // Arrange
-        var dispatcher = new ThrottleDispatcher(100);
-        var actionStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var actionCanComplete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var actionCompleted = false;
-
-        async Task LongRunningAction()
-        {
-            actionStarted.SetResult(true);
-            await actionCanComplete.Task;
-            actionCompleted = true;
-        }
-
-        // Act
-        var task = dispatcher.ThrottleAsync(LongRunningAction);
-        await actionStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken); // Wait for action to start
-
-        dispatcher.Dispose(); // Dispose while action is running
-
-        actionCanComplete.SetResult(true); // Allow action to complete
-        await task.WaitAsync(TestContext.CurrentContext.CancellationToken);
-
-        // Assert
-        actionCompleted.Should().BeTrue();
-    }
-
-    [Test]
-    public void ThrottleAsync_DoubleDispose_DoesNotThrow()
-    {
-        // Arrange
-        var dispatcher = new ThrottleDispatcher(100);
-
-        // Act - Dispose twice
-        dispatcher.Dispose();
-        dispatcher.Dispose();
-
-        // Assert - Should not throw, just pass if we get here
-        Assert.Pass();
-    }
-
-    [Test]
-    [CancelAfter(5000)]
-    public async Task ThrottleAsync_DisposeDuringLock_HandlesGracefully()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        var firstStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var firstCanComplete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        async Task SlowAction()
-        {
-            firstStarted.SetResult(true);
-            await firstCanComplete.Task;
-        }
-
-        // Act - Start a slow action to hold the task
-        var task1 = dispatcher.ThrottleAsync(SlowAction);
-        await firstStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken);
-
-        // Now dispose and try to call again
-        // ReSharper disable once DisposeOnUsingVariable
-        dispatcher.Dispose();
-        var task2 = dispatcher.ThrottleAsync(() => Task.CompletedTask);
-
-        // Complete the first action
-        firstCanComplete.SetResult(true);
-        await task1.WaitAsync(TestContext.CurrentContext.CancellationToken);
-
-        // Assert - second task should complete immediately (disposed)
-        task2.IsCompleted.Should().BeTrue();
-    }
-
-    [Test]
-    public void Constructor_NegativeInterval_ThrowsArgumentOutOfRangeException()
-    {
-        // Act & Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(-100));
-        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new ThrottleDispatcher(TimeSpan.FromMilliseconds(-100)));
-    }
-
-    [Test]
-    public void ThrottleAsync_NullAction_ThrowsArgumentNullException()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-
-        // Act & Assert
-        Assert.ThrowsAsync<ArgumentNullException>(
-            async () => await dispatcher.ThrottleAsync(null!));
-    }
-
-    [Test]
-    public async Task ThrottleAsync_FaultedTaskWithinInterval_ReExecutesInsteadOfSuppressing()
-    {
-        // Arrange - a faulted current task must not suppress later calls within the interval.
-        var timeProvider = new FakeTimeProvider();
-        using var dispatcher = new ThrottleDispatcher(1000, timeProvider);
         var counter = 0;
-
-        Task ThrowingAction()
-        {
-            Interlocked.Increment(ref counter);
-            return Task.FromException(new InvalidOperationException());
-        }
-
-        // Act - first call faults; second call is well within the interval but should still execute.
-        Func<Task> first = () => dispatcher.ThrottleAsync(ThrowingAction);
-        await first.Should().ThrowAsync<InvalidOperationException>();
-        counter.Should().Be(1);
-
-        timeProvider.Advance(TimeSpan.FromMilliseconds(1)); // far inside the 1000ms interval
-        Func<Task> second = () => dispatcher.ThrottleAsync(ThrowingAction);
-        await second.Should().ThrowAsync<InvalidOperationException>();
-
-        // Assert
-        counter.Should().Be(2);
-    }
-
-    [Test]
-    public async Task ThrottleAsync_LongRunningAction_AllowsNewCallAfterCompletion()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(50);
-        var firstCompleted = false;
-        var secondExecuted = false;
-
-        async Task FirstAction()
-        {
-            await Task.Delay(200); // Longer than throttle interval
-            firstCompleted = true;
-        }
-
-        Task SecondAction()
-        {
-            secondExecuted = true;
-            return Task.CompletedTask;
-        }
-
-        // Act
-        await dispatcher.ThrottleAsync(FirstAction);
-        firstCompleted.Should().BeTrue();
-
-        // Now call again - should execute since first is complete and time has passed
-        await dispatcher.ThrottleAsync(SecondAction);
-
-        // Assert
-        secondExecuted.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task ThrottleAsync_RapidCallsWithSlowAction_ThrottlesCorrectly()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(200); // 200ms throttle
-        var counter = 0;
-
-        async Task SlowInvoke()
-        {
-            Interlocked.Increment(ref counter);
-            await Task.Delay(50); // Task takes 50ms
-        }
-
-        // Act - Fire 10 rapid calls with no delay between them
+        var dispatcher = new ThrottleDispatcher(100, delayAfterExecution: true);
         var tasks = new List<Task>();
-        for (var i = 0; i < 10; i++)
+
+        async Task Invoke()
         {
-            tasks.Add(dispatcher.ThrottleAsync(SlowInvoke));
+            Interlocked.Increment(ref counter);
+            await Task.Delay(50);
         }
 
-        await Task.WhenAll(tasks);
+        Task CallThrottleAsyncAfterDelay(int delay)
+        {
+            Task.Delay(delay).ConfigureAwait(false).GetAwaiter().GetResult();
 
-        // Assert - All calls during the first action's execution should share the same task
-        // So we should only see 1 execution (or maybe 2 if timing is tight)
-        counter.Should().BeLessThanOrEqualTo(2);
+            return dispatcher.ThrottleAsync(Invoke);
+        }
+
+        // Act
+        for (var i = 0; i < 20; i++)
+        {
+            tasks.Add(CallThrottleAsyncAfterDelay(50));
+        }
+
+        // Assert
+        await Task.WhenAll(tasks);
+        counter.Should().BeInRange(6, 8);
     }
 
     [Test]
-    public async Task ThrottleAsync_RapidCallsWithFastAction_ThrottlesCorrectly()
+    public async Task ThrottleAsync_ResetsIntervalOnException()
     {
         // Arrange
-        var timeProvider = new FakeTimeProvider();
-        using var dispatcher = new ThrottleDispatcher(50, timeProvider);
+        var dispatcher = new ThrottleDispatcher(100, resetIntervalOnException: true);
         var counter = 0;
-        Task Invoke()
+
+        // Act & Assert
+        var throttledAction = async () =>
         {
+            await dispatcher.ThrottleAsync(async () =>
+            {
+                await Task.Delay(50);
+                Interlocked.Increment(ref counter);
+
+                throw new InvalidOperationException();
+            });
+        };
+        await throttledAction.Should().ThrowAsync<InvalidOperationException>();
+        await dispatcher.ThrottleAsync(async () =>
+        {
+            await Task.Delay(50);
             Interlocked.Increment(ref counter);
-            return Task.CompletedTask;
-        }
-
-        // Act - First call executes immediately (leading edge)
-        await dispatcher.ThrottleAsync(Invoke);
-        counter.Should().Be(1);
-
-        // Rapid calls within the interval should be suppressed even though the task completed
-        timeProvider.Advance(TimeSpan.FromMilliseconds(10));
-        await dispatcher.ThrottleAsync(Invoke);
-        counter.Should().Be(1);
-
-        timeProvider.Advance(TimeSpan.FromMilliseconds(10));
-        await dispatcher.ThrottleAsync(Invoke);
-        counter.Should().Be(1);
-
-        // After the interval elapses, the next call should execute
-        timeProvider.Advance(TimeSpan.FromMilliseconds(50));
-        await dispatcher.ThrottleAsync(Invoke);
+        });
         counter.Should().Be(2);
     }
 }

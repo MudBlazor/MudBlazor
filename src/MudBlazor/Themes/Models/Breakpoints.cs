@@ -2,9 +2,10 @@
 
 namespace MudBlazor
 {
+#nullable enable
 #pragma warning disable IDE1006 // must being with upper case
     /// <summary>
-    /// Pixel width thresholds for the responsive breakpoints (xs, sm, md, lg, xl, and xxl) used to adapt layouts to screen size.
+    /// Represents the breakpoints for responsive design.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class Breakpoints
@@ -12,38 +13,38 @@ namespace MudBlazor
         // ReSharper disable InconsistentNaming
 
         /// <summary>
-        /// The breakpoint value for extra small screens (xs).
-        /// Defaults to <c>0px</c>.
+        /// Gets or sets the breakpoint value for extra small screens (xs).
+        /// Default value is "0px".
         /// </summary>
         public string xs { get; set; } = "0px";
 
         /// <summary>
-        /// The breakpoint value for small screens (sm).
-        /// Defaults to <c>600px</c>.
+        /// Gets or sets the breakpoint value for small screens (sm).
+        /// Default value is "600px".
         /// </summary>
         public string sm { get; set; } = "600px";
 
         /// <summary>
-        /// The breakpoint value for medium screens (md).
-        /// Defaults to <c>960px</c>.
+        /// Gets or sets the breakpoint value for medium screens (md).
+        /// Default value is "960px".
         /// </summary>
         public string md { get; set; } = "960px";
 
         /// <summary>
-        /// The breakpoint value for large screens (lg).
-        /// Defaults to <c>1280px</c>.
+        /// Gets or sets the breakpoint value for large screens (lg).
+        /// Default value is "1280px".
         /// </summary>
         public string lg { get; set; } = "1280px";
 
         /// <summary>
-        /// The breakpoint value for extra large screens (xl).
-        /// Defaults to <c>1920px</c>.
+        /// Gets or sets the breakpoint value for extra large screens (xl).
+        /// Default value is "1920px".
         /// </summary>
         public string xl { get; set; } = "1920px";
 
         /// <summary>
-        /// The breakpoint value for extra extra large screens (xxl).
-        /// Defaults to <c>2560px</c>.
+        /// Gets or sets the breakpoint value for extra extra large screens (xxl).
+        /// Default value is "2560px".
         /// </summary>
         public string xxl { get; set; } = "2560px";
 

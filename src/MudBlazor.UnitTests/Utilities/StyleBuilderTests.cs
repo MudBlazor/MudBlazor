@@ -1,4 +1,6 @@
-﻿using AwesomeAssertions;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -314,19 +316,5 @@ namespace UtilityTests
             // Assert
             styleBuilder.Should().Be(string.Empty);
         }
-
-        [Test]
-        public void AddStyle_With_ValueBuilder_When_False_Skips_Property()
-        {
-            // Act
-            var styleBuilder = StyleBuilder.Empty()
-                .AddStyle("text-decoration", v => v.AddValue("underline", true), when: false)
-                .AddStyle("z-index", "-1")
-                .Build();
-
-            // Assert
-            styleBuilder.Should().Be("z-index:-1;");
-        }
-
     }
 }

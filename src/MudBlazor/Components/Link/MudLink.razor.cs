@@ -1,35 +1,24 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-
-/// <summary>
-/// A clickable link which can navigate to a URL.
-/// </summary>
-public partial class MudLink : MudComponentBase
+#nullable enable
+public partial class MudLink : MudComponentBase, IHandleEvent
 {
     protected string Classname =>
         new CssBuilder("mud-typography mud-link")
-            .AddClass($"mud-{Color.ToStringFast(true)}-text")
-            .AddClass($"mud-link-underline-{Underline.ToStringFast(true)}")
-            .AddClass($"mud-typography-{Typo.ToStringFast(true)}", Typo != Typo.inherit)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text")
+            .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
+            .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
             // When Href is empty, link's hover cursor is text "I beam" even when OnClick has a delegate.
             // To change this for more expected look change hover cursor to a pointer:
             .AddClass("cursor-pointer", Href == default && OnClick.HasDelegate && !Disabled)
             .AddClass("mud-link-disabled", Disabled)
             .AddClass(Class)
-            .Build();
-
-    protected string StartIconClassname =>
-        new CssBuilder("mud-link-icon-start")
-            .AddClass(IconClass)
-            .Build();
-
-    protected string EndIconClassname =>
-        new CssBuilder("mud-link-icon-end")
-            .AddClass(IconClass)
             .Build();
 
     private Dictionary<string, object?> Attributes
@@ -74,47 +63,17 @@ public partial class MudLink : MudComponentBase
     public Color Color { get; set; } = Color.Primary;
 
     /// <summary>
-    /// The icon displayed before the text.
+    /// Typography variant to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.
+    /// Defaults to <see cref="Typo.body1"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public string? StartIcon { get; set; }
+    public Typo Typo { get; set; } = Typo.body1;
 
     /// <summary>
-    /// The icon displayed after the text.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Link.Appearance)]
-    public string? EndIcon { get; set; }
-
-    /// <summary>
-    /// The CSS classes applied to the icons.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Link.Appearance)]
-    public string? IconClass { get; set; }
-
-    /// <summary>
-    /// The typography variant to use.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Typo.inherit"/>.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Link.Appearance)]
-    public Typo Typo { get; set; } = Typo.inherit;
-
-    /// <summary>
-    /// Applies an underline to the link.
+    /// Applies a style of underline on the link.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Underline.Hover"/>.
@@ -124,7 +83,7 @@ public partial class MudLink : MudComponentBase
     public Underline Underline { get; set; } = Underline.Hover;
 
     /// <summary>
-    /// The URL to navigate to upon click.
+    /// The URL, which is the actual link.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>.
@@ -134,10 +93,12 @@ public partial class MudLink : MudComponentBase
     public string? Href { get; set; }
 
     /// <summary>
-    /// The browser frame to open this link when <see cref="Href"/> is specified.
+    /// Specifies where to open the link if <see cref="Href"/> is specified.
     /// </summary>
     /// <remarks>
-    /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
+    /// <para>
+    /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+    /// </para>
     /// Defaults to <c>null</c>.
     /// </remarks>
     [Parameter]
@@ -145,7 +106,7 @@ public partial class MudLink : MudComponentBase
     public string? Target { get; set; }
 
     /// <summary>
-    /// Prevents user interaction with this link.
+    /// Prevents user interaction with the link.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -155,14 +116,14 @@ public partial class MudLink : MudComponentBase
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// The content within this component.
+    /// Child content of the component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Link.Behavior)]
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// Occurs when this link has been clicked.
+    /// Occurs when the link has been clicked.
     /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -176,4 +137,12 @@ public partial class MudLink : MudComponentBase
 
         await OnClick.InvokeAsync(ev);
     }
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
+    /// <para/>
+    /// Since <see cref="MudLink"/> implements only single <see cref="EventCallback"/> <see cref="OnClick"/> this is safe to disable globally within the component.
+    /// </remarks>
+    Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
 }

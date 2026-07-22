@@ -6,7 +6,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -20,18 +20,18 @@
     }
 
     .dialog-background-title {
-        background: rgba(var(--mud-palette-info-rgb), 0.5);
+        background: rgb(from var(--mud-palette-info-lighten) r g b / 50%);
         color: var(--mud-palette-white);
     }
 
     .dialog-background-surface {
-        background: rgba(var(--mud-palette-surface-rgb), 0.75);
+        background: rgb(from var(--mud-palette-surface) r g b / 75%);
     }
 </style>
 
 @code {
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
+    private MudDialogInstance MudDialog { get; set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
 

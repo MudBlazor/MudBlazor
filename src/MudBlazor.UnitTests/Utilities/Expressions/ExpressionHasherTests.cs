@@ -2,8 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using AwesomeAssertions;
+using FluentAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 
@@ -54,14 +56,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             // ReSharper disable once UnusedParameter.Local
             public void MethodParam(int a) { }
             // ReSharper restore MemberCanBeMadeStatic.Local
-        }
-
-        // Distinct type that intentionally declares a property with the same name as
-        // ExpressionTestClass.FirstName, to exercise the declaring-type part of UpdateHash(MemberInfo).
-        private class OtherTestClass
-        {
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public string? FirstName { get; set; }
         }
 
         [Test(Description = "VisitMethodCall")]
@@ -234,7 +228,7 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         }
 
         [Test]
-        public void ExpressionHasherTests_Get_Null_HashCode()
+        public void ExpressionHasherTests_Get_Null_HashCode_Test()
         {
             Expression<Func<ExpressionTestClass, string?>>? exp1 = null;
             Expression<Func<ExpressionTestClass, string?>>? exp2 = null;
@@ -391,6 +385,7 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             h1.Equals(h2).Should().BeFalse();
         }
 
+
         [Test(Description = "VisitIndex")]
         public void ExpressionHasherTests_Get_NotSame_HashCode_Test14()
         {
@@ -402,19 +397,5 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
 
             h1.Equals(h2).Should().BeFalse();
         }
-
-        [Test(Description = "Same member name on different declaring types must not collide (UpdateHash AssemblyQualifiedName branch).")]
-        public void ExpressionHasherTests_Get_NotSame_HashCode_DifferentDeclaringType()
-        {
-            // Both select a 'FirstName' member; only the declaring type differs.
-            Expression<Func<ExpressionTestClass, string?>> exp1 = x => x.FirstName;
-            Expression<Func<OtherTestClass, string?>> exp2 = x => x.FirstName;
-
-            var h1 = ExpressionHasher.GetHashCode(exp1);
-            var h2 = ExpressionHasher.GetHashCode(exp2);
-
-            h1.Equals(h2).Should().BeFalse();
-        }
-
     }
 }

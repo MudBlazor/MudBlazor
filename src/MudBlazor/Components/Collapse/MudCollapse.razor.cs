@@ -1,35 +1,44 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// A container for content which can be collapsed and expanded.
+    /// Represents a container for content which can be collapsed and expanded.
     /// </summary>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudExpansionPanel"/>
     public partial class MudCollapse : MudComponentBase
     {
-        private enum CollapseState
+        internal enum CollapseState
         {
             Entering, Entered, Exiting, Exited
         }
 
+        internal double _height;
         private readonly ParameterState<bool> _expandedState;
-        private CollapseState _state = CollapseState.Exited;
-
-        protected string Classname => new CssBuilder("mud-collapse-container")
-            .AddClass("mud-collapse-entering", _state == CollapseState.Entering)
-            .AddClass("mud-collapse-entered", _state == CollapseState.Entered)
-            .AddClass("mud-collapse-exiting", _state == CollapseState.Exiting)
-            .AddClass("invisible", _state == CollapseState.Exited)
-            .AddClass(Class)
-            .Build();
+        private bool _isRendered;
+        private bool _updateHeight;
+        private ElementReference _wrapper;
+        internal CollapseState _state = CollapseState.Exited;
 
         protected string Stylename => new StyleBuilder()
             .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
+            .AddStyle("height", "auto", _state == CollapseState.Entered)
+            .AddStyle("height", _height.ToPx(), _state is CollapseState.Entering or CollapseState.Exiting)
+            .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
             .AddStyle(Style)
+            .Build();
+
+        protected string Classname => new CssBuilder("mud-collapse-container")
+            .AddClass($"mud-collapse-entering", _state == CollapseState.Entering)
+            .AddClass($"mud-collapse-entered", _state == CollapseState.Entered)
+            .AddClass($"mud-collapse-exiting", _state == CollapseState.Exiting)
+            .AddClass(Class)
             .Build();
 
         /// <summary>
@@ -77,41 +86,90 @@ namespace MudBlazor
                 .WithChangeHandler(OnExpandedParameterChangedAsync);
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        private async Task OnExpandedParameterChangedAsync()
         {
-            base.OnAfterRender(firstRender);
-
-            if (firstRender && _expandedState.Value)
+            if (_isRendered)
+            {
+                _state = _expandedState.Value ? CollapseState.Entering : CollapseState.Exiting;
+                await UpdateHeightAsync();
+                _updateHeight = true;
+            }
+            else if (_expandedState.Value)
             {
                 _state = CollapseState.Entered;
-                StateHasChanged();
+            }
+
+            await ExpandedChanged.InvokeAsync(_expandedState.Value);
+        }
+
+        /// <summary>
+        /// Modified Animation duration that scales with height parameter.
+        /// Basic implementation for now but should be a math formula to allow it to scale between 0.1s and 1s for the effect to be consistently smooth.
+        /// </summary>
+        private double CalculatedAnimationDuration
+        {
+            get
+            {
+                return MaxHeight switch
+                {
+                    null => Math.Min(_height / 800.0, 1),
+                    <= 200 => 0.2,
+                    <= 600 => 0.4,
+                    <= 1400 => 0.6,
+                    _ => 1
+                };
             }
         }
 
-        private Task OnExpandedParameterChangedAsync(ParameterChangedEventArgs<bool> args)
+        internal async Task UpdateHeightAsync()
         {
-            _state = args.Value ? CollapseState.Entering : CollapseState.Exiting;
+            try
+            {
+                _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            }
+            catch (Exception ex) when (ex is JSDisconnectedException or TaskCanceledException)
+            {
+                _height = 0;
+            }
 
-            return Task.CompletedTask;
+            if (_height > MaxHeight)
+            {
+                _height = MaxHeight.Value;
+            }
         }
 
-        private Task AnimationEndAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _isRendered = true;
+                await UpdateHeightAsync();
+            }
+            else if (_updateHeight && _state is CollapseState.Entering or CollapseState.Exiting)
+            {
+                _updateHeight = false;
+                await UpdateHeightAsync();
+                StateHasChanged();
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        /// <summary>
+        /// Completes an ongoing animation.
+        /// </summary>
+        public Task AnimationEndAsync()
         {
             if (_state == CollapseState.Entering)
             {
                 _state = CollapseState.Entered;
                 StateHasChanged();
-                return OnAnimationEnd.InvokeAsync(_expandedState.Value);
             }
-
-            if (_state == CollapseState.Exiting)
+            else if (_state == CollapseState.Exiting)
             {
                 _state = CollapseState.Exited;
                 StateHasChanged();
-                return OnAnimationEnd.InvokeAsync(_expandedState.Value);
             }
-
-            return Task.CompletedTask;
+            return OnAnimationEnd.InvokeAsync(_expandedState.Value);
         }
     }
 }

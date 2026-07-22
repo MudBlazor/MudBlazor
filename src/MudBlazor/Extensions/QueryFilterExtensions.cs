@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
 /// Provides extension methods for filtering queryable data sources using filter definitions.
 /// </summary>
@@ -21,7 +21,7 @@ public static class QueryFilterExtensions
     /// <param name="caseSensitivity">The filtering case sensitivity. Defaults to <see cref="DataGridFilterCaseSensitivity.Ignore"/> for best compatibility with database providers.</param>
     /// <typeparam name="T">The type of the elements of source.</typeparam>
     /// <returns>An <see cref="IQueryable{T}"/> that contains elements from the input sequence that satisfy the filter definitions.</returns>
-    public static IQueryable<T> Where<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(
+    public static IQueryable<T> Where<T>(
         this IQueryable<T> source,
         IEnumerable<IFilterDefinition<T>> filterDefinitions,
         DataGridFilterCaseSensitivity caseSensitivity = DataGridFilterCaseSensitivity.Ignore)

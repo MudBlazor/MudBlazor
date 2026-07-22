@@ -1,19 +1,21 @@
-﻿<MudDialog>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog>
     <DialogContent>
         <MudText>Journey of life</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    public static int OnInitializedCount;
-    public static int OnParametersSetCount;
+    public static int OnInitializedCount = 0;
+    public static int OnParametersSetCount = 0;
 
     [CascadingParameter]
-    public IMudDialogInstance MudDialog { get; set; } = null!;
+    public MudDialogInstance MudDialog { get; set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
     private void Cancel() => MudDialog.Cancel();

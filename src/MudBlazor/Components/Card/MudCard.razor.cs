@@ -3,13 +3,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Cards contain actions, text, or media like images or graphics. Keeping a card to a single subject keeps the design clean.
+    /// Represents a block of content which can include a header, image, content, and actions.
     /// </summary>
-    /// <seealso cref="MudCardActions" />
-    /// <seealso cref="MudCardContent" />
-    /// <seealso cref="MudCardHeader" />
-    /// <seealso cref="MudCardMedia" />
     public partial class MudCard : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card")
@@ -45,16 +42,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
         public bool Outlined { get; set; }
-
-        /// <summary>
-        /// Adds visual padding to the content (<see cref="MudCardHeader"/>, <see cref="MudCardContent"/> or <see cref="MudCardActions"/>).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Card.Appearance)]
-        public bool ContentPadding { get; set; } = true;
 
         /// <summary>
         /// The content within this component.

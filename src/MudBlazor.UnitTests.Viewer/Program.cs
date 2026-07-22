@@ -1,21 +1,23 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MudBlazor.Examples.Data;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 
-namespace MudBlazor.UnitTests;
-
-public class Program
+namespace MudBlazor.UnitTests
 {
-    public static Task Main(string[] args)
+    public class Program
     {
-        var builder = WebAssemblyHostBuilder.CreateDefault(args);
-        builder.RootComponents.Add<App>("#app");
+        public static Task Main(string[] args)
+        {
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.RootComponents.Add<App>("#app");
 
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-        builder.Services.AddMudServices();
-        builder.Services.AddSingleton<ISearchService, SearchService>();
-        builder.Services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddMudServices();
 
-        return builder.Build().RunAsync();
+            return builder.Build().RunAsync();
+        }
     }
 }

@@ -1,4 +1,9 @@
-﻿<MudTable Items="_states" RowsPerPage="@_rows">
+﻿@using System.ComponentModel
+@using System.Runtime.CompilerServices
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable Items="states" RowsPerPage="@rows">
+
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate> 

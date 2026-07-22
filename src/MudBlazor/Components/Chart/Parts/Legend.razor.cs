@@ -1,64 +1,30 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
     /// <summary>
-    /// Legend that lists text labels identifying each data series shown in a <see cref="MudChart{T}" />.
+    /// Represents a set of text labels which describe data values in a <see cref="MudChart"/>.
     /// </summary>
-    /// <typeparam name="T">The numeric type of the charted values.</typeparam>
-    public partial class Legend<T> : MudChartBase<T, IChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    public partial class Legend : MudChartBase
     {
         /// <summary>
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChart<T>? ChartContainer { get; set; }
+        public MudChartBase MudChartParent { get; set; }
 
         /// <summary>
         /// The data labels for this legend.
         /// </summary>
         [Parameter]
-        [EditorRequired]
-        public List<SvgLegend> Data { get; set; } = [];
-
-        /// <summary>
-        /// Whether the chart legend should be displayed.
-        /// </summary>
-        [Parameter]
-        public bool? ShowLegend { get; set; }
-
-        /// <summary>
-        /// The palette of colors to use for the chart series.
-        /// </summary>
-        [Parameter]
-        public string[]? ChartPalette { get; set; }
-
-        /// <summary>
-        /// Raised when a legend item is clicked.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chart.Behavior)]
-        public EventCallback<int> OnLegendSelected { get; set; }
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-
-            CanHideSeries = ChartContainer?.CanHideSeries ?? CanHideSeries;
-            ShowLegend ??= ChartContainer?.ChartOptions?.ShowLegend ?? true;
-            ChartPalette ??= ChartContainer?.ChartOptions?.ChartPalette ?? new ChartOptions().ChartPalette;
-
-            if (!OnLegendSelected.HasDelegate && ChartContainer is not null)
-                OnLegendSelected = EventCallback.Factory.Create<int>(this, async index => await ChartContainer!.SetSelectedIndexAsync(index));
-        }
+        public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();
 
         private string GetCheckBoxStyle(int index)
         {
-            var color = ChartPalette?.GetValue(index % ChartPalette.Length)?.ToString() ?? string.Empty;
+            var color = MudChartParent.ChartOptions.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length);
             return $"--checkbox-color: {color};";
         }
-
-        public override void RebuildChart() => ChartContainer?.RebuildChart();
     }
 }

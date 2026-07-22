@@ -1,12 +1,13 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudGrid>
     <MudItem xs="12">
         <MudSelect T="Coffee" Label="Coffee"
                    MultiSelection="true"
-                   SelectedValues="_selected" SelectedValuesChanged="SelectedChanged"
+                   SelectedValues="Selected" SelectedValuesChanged="SelectedChanged"
                    Comparer="Comparer"
-                   ToStringFunc="@(x => x?.Name)">
+                   ToStringFunc="@(x => x.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
             <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
             <MudSelectItem Value="@(new Coffee("esp","Espresso"))" />
@@ -14,44 +15,38 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12">
-        <MudButton id="set-selection-button" OnClick="SetSelection">Set Selection</MudButton>
+        <MudButton OnClick="SetSelection">Set Selection</MudButton>
     </MudItem>
 </MudGrid>
 
 @code {
-    private static CoffeeComparer Comparer { get; } = new();
+    static CoffeeComparer Comparer { get; } = new();
 
-    private HashSet<Coffee?> _selected = new(Comparer);
+    HashSet<Coffee> Selected { get; } = new(Comparer);
 
-    private void SelectedChanged(IReadOnlyCollection<Coffee?>? newSelected)
+    void SelectedChanged(IEnumerable<Coffee> newSelected)
     {
-        _selected.Clear();
-        if (newSelected is not null)
-        {
-            _selected.UnionWith(newSelected);
-        }
+        Selected.Clear();
+        Selected.UnionWith(newSelected);
     }
 
-    private void SetSelection()
+    void SetSelection()
     {
-        _selected = new HashSet<Coffee?>(Comparer)
-        {
-            new Coffee("lat", "Selected Cafe Latte"),
-            new Coffee("esp", "Selected Espresso")
-        };
-        StateHasChanged();
+        Selected.Clear();
+        Selected.Add(new("lat", "Selected Cafe Latte"));
+        Selected.Add(new("esp", "Selected Espresso"));
     }
 
-    private class Coffee(string key, string name)
+    class Coffee
     {
-        public string Key { get; } = key;
-        public string Name { get; } = name;
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public Coffee(string key, string name) { Key = key; Name = name; }
     }
 
-    private class CoffeeComparer : IEqualityComparer<Coffee?>
+    class CoffeeComparer : IEqualityComparer<Coffee>
     {
-        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
-
-        public int GetHashCode(Coffee? x) => HashCode.Combine(x?.Key);
+        public bool Equals(Coffee a, Coffee b) => a.Key == b.Key;
+        public int GetHashCode(Coffee x) => HashCode.Combine(x.Key);
     }
 }

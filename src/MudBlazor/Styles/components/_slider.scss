@@ -18,7 +18,8 @@
   }
 
   .mud-slider-input {
-    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     position: relative;
     display: block;
     width: 100%;
@@ -43,6 +44,7 @@
 
     @include slider-thumb {
       appearance: none;
+      -webkit-appearance: none;
       border: none;
       border-radius: 50%;
       cursor: pointer;
@@ -193,10 +195,6 @@
     transition: opacity .2s ease-in-out;
     pointer-events: none;
     user-select: none;
-  }
-
-  .mud-application-layout-rtl & .mud-slider-value-label {
-    transform: translateX(50%) translateY(-125%);
   }
 
   .mud-slider-tickmarks {

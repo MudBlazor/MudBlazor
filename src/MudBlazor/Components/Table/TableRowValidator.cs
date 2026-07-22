@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
     /// A validator for rows within a <see cref="MudTable{T}"/>.
@@ -14,16 +14,11 @@ namespace MudBlazor
         /// <summary>
         /// Whether the table row is valid.
         /// </summary>
-        /// <remarks>
-        /// Reading this drives a validation pass that only completes inline for synchronous validators.
-        /// Callers that must respect asynchronous validators should await <see cref="ValidateAsync"/> and read <see cref="Errors"/>.
-        /// </remarks>
         public bool IsValid
         {
             get
             {
-                // IForm.IsValid must remain synchronous, so drive validation without awaiting; exceptions are forwarded to MudGlobal.UnhandledExceptionHandler.
-                ValidateAsync().CatchAndLog();
+                Validate();
                 return Errors.Length <= 0;
             }
         }
@@ -57,6 +52,7 @@ namespace MudBlazor
 
         void IForm.Update(IFormComponent formControl)
         {
+            //Validate(formControl);
         }
 
         protected HashSet<IFormComponent> _formControls = new();
@@ -64,22 +60,12 @@ namespace MudBlazor
         /// <summary>
         /// Checks for data errors within this row.
         /// </summary>
-        [Obsolete("Use ValidateAsync instead.")]
-        [ExcludeFromCodeCoverage]
         public void Validate()
-        {
-            ValidateAsync().CatchAndLog();
-        }
-
-        /// <summary>
-        /// Checks for data errors within this row, awaiting asynchronous validators before collecting their errors.
-        /// </summary>
-        public async Task ValidateAsync()
         {
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                await formControl.ValidateAsync();
+                formControl.Validate();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);

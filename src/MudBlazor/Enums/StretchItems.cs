@@ -3,48 +3,46 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies how items in a flex container are stretched along the main axis.
+/// Specifies how children of a flex container are stretched along the main axis.
 /// </summary>
-[EnumExtensions]
 public enum StretchItems
 {
     /// <summary>
-    /// No stretching is applied.
+    /// No stretching is applied to children.
     /// </summary>
     [Description("none")]
     None,
 
     /// <summary>
-    /// The first item is stretched.
+    /// The first child is stretched.
     /// </summary>
     [Description("start")]
     Start,
 
     /// <summary>
-    /// The last item is stretched.
+    /// The last child is stretched.
     /// </summary>
     [Description("end")]
     End,
 
     /// <summary>
-    /// The first and last items are stretched.
+    /// The first and last children are stretched.
     /// </summary>
     [Description("start-and-end")]
     StartAndEnd,
 
     /// <summary>
-    /// All items except for the first and last are stretched.
+    /// All children except for the first and last are stretched.
     /// </summary>
     [Description("middle")]
     Middle,
 
     /// <summary>
-    /// All items are stretched evenly.
+    /// All children are stretched.
     /// </summary>
     [Description("all")]
     All,

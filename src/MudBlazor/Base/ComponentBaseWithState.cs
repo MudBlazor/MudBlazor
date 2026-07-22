@@ -2,14 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
-/// Base class for Blazor components that track parameter changes and manage state through MudBlazor's parameter framework, such as <see cref="MudComponentBase"/>.
+/// Represents a base class for designing components which maintain state.
 /// </summary>
 public class ComponentBaseWithState : ComponentBase
 {

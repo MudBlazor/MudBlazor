@@ -16,14 +16,10 @@
         @if(!HideDot)
         {
             <div class="@DotClassnames">
-                <div class="@DotInnerClassnames" style="@DotStyleValue">
+                <div class="@DotInnerClassnames" style="@DotStyle">
                     @if (ItemDot is not null)
                     {
                         @ItemDot
-                    }
-                    else if (!string.IsNullOrEmpty(Icon))
-                    {
-                        <MudIcon Icon="@Icon" Class="mud-timeline-item-dot-icon" />
                     }
                 </div>
             </div>

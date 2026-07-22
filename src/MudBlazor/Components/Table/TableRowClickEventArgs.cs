@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
 /// The information passed during a <see cref="MudTable{T}"/> row click event.

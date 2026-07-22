@@ -1,5 +1,6 @@
 ﻿namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
 /// Indicates the position of the edit button which starts inline edits for a <see cref="MudTable{T}"/>.

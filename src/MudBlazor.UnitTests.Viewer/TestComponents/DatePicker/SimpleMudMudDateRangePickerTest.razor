@@ -1,4 +1,7 @@
-﻿<MudPopoverProvider />
+﻿@using System.Globalization;
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
 
 @if (IsDateDisabledFunc != null)
 {
@@ -8,9 +11,7 @@
                         @bind-PickerMonth="PickerMonth"
                         OpenTo="@OpenTo"
                         StartMonth="@StartMonth"
-                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
-                        AllowDisabledDatesInRange="@AllowDisabledDatesInRange"
-                        InputId="@InputId"/>
+                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 else
 {
@@ -19,37 +20,19 @@ else
                         @bind-PickerMonth="PickerMonth"
                         OpenTo="@OpenTo"
                         StartMonth="@StartMonth"
-                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc"
-                        InputId="@InputId" />
+                        AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 @code {
-    private MudDateRangePicker _picker = null!;
+    private MudDateRangePicker _picker;
 
-    [Parameter]
-    public DateRange? DateRange { get; set; }
-
-    [Parameter]
-    public Func<DateTime, bool>? IsDateDisabledFunc { get; set; }
-
-    [Parameter]
-    public DateTime? PickerMonth { get; set; }
-
-    [Parameter]
-    public OpenTo OpenTo { get; set; } = OpenTo.Date;
-
-    [Parameter]
-    public DateTime? StartMonth { get; set; }
-
-    [Parameter]
-    public Func<DateTime, string>? AdditionalDateClassesFunc { get; set; }
-
-    [Parameter]
-    public bool AllowDisabledDatesInRange { get; set; }
-
-    [Parameter]
-    public string? InputId { get; set; }
+    [Parameter] public DateRange DateRange { get; set; }
+    [Parameter] public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
+    [Parameter] public DateTime? PickerMonth { get; set; }
+    [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
+    [Parameter] public DateTime? StartMonth { get; set; }
+    [Parameter] public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
 
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
-
     public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
+
 }

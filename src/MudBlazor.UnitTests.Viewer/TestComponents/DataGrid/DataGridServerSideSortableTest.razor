@@ -1,4 +1,6 @@
-﻿<MudDataGrid T="Item" ServerData="@(new Func<GridState<Item>, CancellationToken, Task<GridData<Item>>>(ServerReload))">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Item" ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Value" />
@@ -9,24 +11,31 @@
 @code {
     public static string __description__ = @"Test Sortable DataGrid with loading of data and sorting being simulated on server side.";
 
-    public class Item(string name, int value, string misc)
+    // Allow disable of simulated server time for unit-tests
+    public static bool DisableServerTimeoutForTests = false;
+
+    public class Item
     {
-        public string Name { get; set; } = name;
-        public int Value { get; set; } = value;
-        public string Misc { get; set; } = misc;
+        public string Name { get; set; }
+        public int Value { get; set; }
+        public string Misc { get; set; }
+
+        public Item(string name, int value, String misc)
+        {
+            Name = name;
+            Value = value;
+            Misc = misc;
+        }
     }
 
     private int _totalItems;
 
-    [Parameter]
-    public TimeSpan ServerDelay { get; set; } = TimeSpan.FromSeconds(1);
-
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<GridData<Item>> ServerReload(GridState<Item> state, CancellationToken token)
+    private async Task<GridData<Item>> ServerReload(GridState<Item> state)
     {
-        IEnumerable<Item> data = new List<Item>
+        IEnumerable<Item> data = new List<Item>()
         {
             new Item("B", 42, "555"), 
             new Item("A", 73, "7"), 
@@ -41,9 +50,10 @@
 
         data = data.OrderBySortDefinitions(state);
 
-        if (ServerDelay > TimeSpan.Zero)
-            await Task.Delay(ServerDelay, token);
+        // Simulate some load on the server.
+        if (!DisableServerTimeoutForTests)
+            await Task.Delay(1000);
 
-        return await Task.FromResult(new GridData<Item> { TotalItems = _totalItems, Items = data });
+        return await Task.FromResult(new GridData<Item>() { TotalItems = _totalItems, Items = data });
     }
 }

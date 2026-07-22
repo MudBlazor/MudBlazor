@@ -2,9 +2,7 @@
 @inherits MudComponentBase
 
 <MudElement HtmlTag="div" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
-    <CascadingValue IsFixed="true" Value="this">
-        @ChildContent
-    </CascadingValue>
+    @ChildContent
 </MudElement>
 
 @{

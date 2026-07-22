@@ -3,86 +3,68 @@
  *  http://www.mosismath.com/AngleSplines/EndSlopeSplines.html
  */
 
-using System.Diagnostics;
+using System;
 
-namespace MudBlazor.Interpolation
+namespace MudBlazor.Components.Chart
 {
-    internal class EndSlopeSpline : SplineInterpolator
+    public class EndSlopeSpline : SplineInterpolator
     {
         public EndSlopeSpline(double[] xs, double[] ys,
            int resolution = 10, double firstSlopeDegrees = 0, double lastSlopeDegrees = 0) :
            base(xs, ys, resolution)
         {
+            m = new Matrix(n);
+            gauss = new MatrixSolver(n, m);
+
             a = new double[n];
             b = new double[n];
             c = new double[n];
             d = new double[n];
-            h = new double[n - 1];
+            h = new double[n];
 
             CalcParameters(firstSlopeDegrees, lastSlopeDegrees);
             Interpolate();
         }
 
-        private void CalcParameters(double alpha, double beta)
+        public void CalcParameters(double alpha, double beta)
         {
-            Debug.Assert(a != null);
-            Debug.Assert(b != null);
-            Debug.Assert(c != null);
-            Debug.Assert(d != null);
-            Debug.Assert(h != null);
-
             for (var i = 0; i < n; i++)
-            {
                 a[i] = GivenYs[i];
-            }
 
             for (var i = 0; i < n - 1; i++)
-            {
                 h[i] = GivenXs[i + 1] - GivenXs[i];
-            }
 
-            if (n == 1)
-            {
-                return;
-            }
-
-            var sub = new double[n];
-            var diag = new double[n];
-            var sup = new double[n];
-            var rhs = new double[n];
-
-            diag[0] = 2.0 * h[0];
-            sup[0] = h[0];
-            rhs[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
+            m.a[0, 0] = 2.0 * h[0];
+            m.a[0, 1] = h[0];
+            m.y[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
 
             for (var i = 0; i < n - 2; i++)
             {
-                sub[i + 1] = h[i];
-                diag[i + 1] = 2.0 * (h[i] + h[i + 1]);
-                sup[i + 1] = h[i + 1];
+                m.a[i + 1, i] = h[i];
+                m.a[i + 1, i + 1] = 2.0 * (h[i] + h[i + 1]);
+                if (i < n - 2)
+                    m.a[i + 1, i + 2] = h[i + 1];
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                {
-                    rhs[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
-                }
+                    m.y[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
                 else
-                {
-                    rhs[i + 1] = 0.0;
-                }
+                    m.y[i + 1] = 0.0;
             }
 
-            sub[n - 1] = h[n - 2];
-            diag[n - 1] = 2.0 * h[n - 2];
-            rhs[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - ((a[n - 1] - a[n - 2]) / h[n - 2]));
+            m.a[n - 1, n - 2] = h[n - 2];
+            m.a[n - 1, n - 1] = 2.0 * h[n - 2];
+            m.y[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - ((a[n - 1] - a[n - 2]) / h[n - 2]));
 
-            var xValues = TridiagonalSolver.Solve(sub, diag, sup, rhs);
+            if (gauss.Eliminate() == false)
+                throw new InvalidOperationException();
+
+            gauss.Solve();
 
             for (var i = 0; i < n; i++)
             {
-                c[i] = xValues[i];
+                c[i] = m.x[i];
             }
-
-            for (var i = 0; i < n - 1; i++)
+            for (var i = 0; i < n; i++)
             {
                 if (h[i] != 0.0)
                 {

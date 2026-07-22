@@ -1,15 +1,17 @@
-﻿<MudPopoverProvider></MudPopoverProvider>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+<MudPopoverProvider></MudPopoverProvider>
 
-<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" AdornmentIcon="@Icon" />
+<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" AdornmentIcon="@Icon" />
 
 <MudButton OnClick="ChangeIcon">Change Icon</MudButton>
 
 @code {
 	public static string __description__ = "The adornment icon should change after button click";
 
-	private string _value1 = "Alabama";
+	private string value1 = "Alabama";
 
-	private readonly string[] _states =
+	private string[] states =
 	{
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -37,13 +39,15 @@
 
 		// if text is null or empty, show complete list
 		if (string.IsNullOrEmpty(value))
-			return _states;
-		return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+			return states;
+		return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
 	}
+
 
 	public void ChangeIcon()
 	{
 		Icon = Icons.Material.Filled.AccessAlarm;
 		StateHasChanged();
 	}
+
 }

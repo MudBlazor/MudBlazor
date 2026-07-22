@@ -3,21 +3,17 @@
     Changes and improvements Copyright (c) The MudBlazor Team.
 *@
 
-@{
-#pragma warning disable IL2111
-}
-
 @namespace MudBlazor
 @using MudBlazor.Resources
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-@_css
+@Css
 <div role="alert"
      aria-live="polite"
      class="@SnackbarClass"
      style="@AnimationStyle"
-     @onclick="this.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
      @onpointerenter="InteractionStartHandler"
      @onpointerleave="InteractionEndHandler"
      @ontouchstart="InteractionStartHandler"

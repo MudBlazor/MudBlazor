@@ -1,18 +1,18 @@
 ﻿@using System.Globalization
 
-<MudText>@FieldImmediate.ReadText</MudText>
-<MudText>@FieldNotImmediate.ReadText</MudText>
+<MudText>@FieldImmediate.Text</MudText>
+<MudText>@FieldNotImmediate.Text</MudText>
 
-<MudNumericField id="immediate" @ref="FieldImmediate" T="double?" @bind-Value="_value" Immediate Label="English Immediate" Format="N2" Culture="_english" />
-<MudNumericField id="notImmediate" @ref="FieldNotImmediate" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german" />
+<MudNumericField @ref="FieldImmediate" T="double?" @bind-Value="_value" Immediate Label="English Immediate" Format="N2" Culture="_english"/>
+<MudNumericField @ref="FieldNotImmediate" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german"/>
 
 @code {
-    private double? _value;
-    private double? _value2;
-    private readonly CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
-    private readonly CultureInfo _english = CultureInfo.GetCultureInfo("en-US");
+    public CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
+    public CultureInfo _english = CultureInfo.GetCultureInfo("en-US");
 
-    public MudNumericField<double?> FieldImmediate { get; private set; } = null!;
+    public double? _value { get; set; }
+    public double? _value2 { get; set; }
 
-    public MudNumericField<double?> FieldNotImmediate { get; private set; } = null!;
+    public MudNumericField<double?> FieldImmediate { get; set; }
+    public MudNumericField<double?> FieldNotImmediate { get; set; }
 }

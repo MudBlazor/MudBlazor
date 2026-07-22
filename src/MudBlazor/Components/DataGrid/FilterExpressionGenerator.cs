@@ -2,14 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
-/// Builds LINQ filter expressions from <see cref="MudDataGrid{T}"/> filter definitions and operators for in-memory or <see cref="IQueryable{T}"/> querying.
+/// Represents a service which generates C# functions from text-based filter operations.
 /// </summary>
 public static class FilterExpressionGenerator
 {
@@ -20,7 +20,7 @@ public static class FilterExpressionGenerator
     /// <param name="filter">The filter definition used to generate the expression.</param>
     /// <param name="filterOptions">Any options to apply such as case sensitivity.</param>
     /// <returns>An expression which can be executed to perform a filter.</returns>
-    public static Expression<Func<T, bool>> GenerateExpression<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(IFilterDefinition<T> filter, FilterOptions? filterOptions)
+    public static Expression<Func<T, bool>> GenerateExpression<T>(IFilterDefinition<T> filter, FilterOptions? filterOptions)
     {
         filterOptions ??= FilterOptions.Default; //Default if null
         var propertyExpression = filter.Column?.PropertyExpression;
@@ -102,25 +102,6 @@ public static class FilterExpressionGenerator
             };
         }
 
-        if (fieldType.IsDateOnly)
-        {
-            if (filter.Value is null && filter.Operator != FilterOperator.DateOnly.Empty && filter.Operator != FilterOperator.DateOnly.NotEmpty)
-                return x => true;
-
-            return filter.Operator switch
-            {
-                FilterOperator.DateOnly.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
-                FilterOperator.DateOnly.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
-                FilterOperator.DateOnly.After => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThan, filter.Value),
-                FilterOperator.DateOnly.OnOrAfter => propertyExpression.GenerateBinary<T>(ExpressionType.GreaterThanOrEqual, filter.Value),
-                FilterOperator.DateOnly.Before => propertyExpression.GenerateBinary<T>(ExpressionType.LessThan, filter.Value),
-                FilterOperator.DateOnly.OnOrBefore => propertyExpression.GenerateBinary<T>(ExpressionType.LessThanOrEqual, filter.Value),
-                FilterOperator.DateOnly.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
-                FilterOperator.DateOnly.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
-                _ => x => true
-            };
-        }
-
         if (fieldType.IsDateTime)
         {
             if (filter.Value is null && filter.Operator != FilterOperator.DateTime.Empty && filter.Operator != FilterOperator.DateTime.NotEmpty)
@@ -154,15 +135,13 @@ public static class FilterExpressionGenerator
 
         if (fieldType.IsEnum)
         {
-            if (filter.Value is null && filter.Operator != FilterOperator.Enum.Empty && filter.Operator != FilterOperator.Enum.NotEmpty)
+            if (filter.Value is null)
                 return x => true;
 
             return filter.Operator switch
             {
                 FilterOperator.Enum.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
                 FilterOperator.Enum.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
-                FilterOperator.Enum.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
-                FilterOperator.Enum.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
                 _ => x => true
             };
         }

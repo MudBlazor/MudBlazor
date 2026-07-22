@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -9,26 +11,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-/// <summary>
-/// Wraps a single item inside a <see cref="MudDropZone{T}"/> so it can be dragged and dropped between zones using mouse or touch gestures.
-/// </summary>
-/// <typeparam name="T">The type of the data item this element carries.</typeparam>
-/// <seealso cref="MudDropContainer{T}"/>
-/// <seealso cref="MudDropZone{T}"/>
+#nullable enable
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
-    private readonly string _id = Identifier.Create();
-
-    // The id actually rendered on the item div: a consumer-supplied id (splatted after the explicit id, so it wins)
-    // overrides _id. The mudDragAndDrop touch helpers do document.getElementById on this value (and compare it to
-    // sibling element ids), so they must target the rendered id or drag movement throws / mis-targets the item.
-    private string ResolvedElementId => GetEffectiveElementId(_id);
+    private Guid _id = Guid.NewGuid();
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;
     private double _onTouchLastY;
-    private int _dragHandleCount = 0;
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -91,68 +82,17 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     [Category(CategoryTypes.DropZone.Disabled)]
     public string? DisabledClass { get; set; }
 
-    /// <summary>
-    /// The index of this item within its drop zone.
-    /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
     public int Index { get; set; } = -1;
 
-    /// <summary>
-    /// Hides this item's content.
-    /// </summary>
     [Parameter]
     [Category(CategoryTypes.DropZone.Sorting)]
     public bool HideContent { get; set; }
 
-    /// <summary>
-    /// At least one <see cref="MudDragHandle{T}"/> is registered for this item.
-    /// When <c>true</c>, the item is not directly draggable and drag starts from a handle.
-    /// </summary>
-    public bool HasDragHandle => _dragHandleCount > 0;
-
-    /// <summary>
-    /// Returns <c>true</c> when the outer div should carry <c>draggable="true"</c>.
-    /// This is suppressed when a <see cref="MudDragHandle{T}"/> is present so that only
-    /// the handle element initiates the browser drag gesture.
-    /// </summary>
-    private bool IsEffectivelyDraggable => !Disabled && !HasDragHandle;
-
-    #region Drag-handle registration
-
-    /// <summary>
-    /// Increments the handle reference count and, once at least one handle exists,
-    /// suppresses the default full-item draggable behavior.
-    /// </summary>
-    internal void RegisterDragHandle()
-    {
-        _dragHandleCount++;
-        // Re-render so the draggable attribute reflects the new state.
-        StateHasChanged();
-    }
-
-    /// <summary>
-    /// Decrements the handle reference count and restores full-item draggable behavior
-    /// when no handles remain.
-    /// </summary>
-    internal void UnregisterDragHandle()
-    {
-        if (_dragHandleCount > 0)
-        {
-            _dragHandleCount--;
-            StateHasChanged();
-        }
-    }
-
-    #endregion
-
     #region Event handling and callbacks
 
-    private Task OnTouchStart(TouchEventArgs e) => IsEffectivelyDraggable ? TouchStartedAsync(e) : Task.CompletedTask;
-    private Task OnTouchMove(TouchEventArgs e) => IsEffectivelyDraggable ? TouchMovedAsync(e) : Task.CompletedTask;
-    private Task OnTouchEnd(TouchEventArgs e) => IsEffectivelyDraggable ? TouchEndedAsync(e) : Task.CompletedTask;
-
-    internal async Task DragStartedAsync()
+    private async Task DragStartedAsync()
     {
         if (Container is null)
         {
@@ -164,7 +104,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         await OnDragStarted.InvokeAsync();
     }
 
-    internal async Task TouchStartedAsync(TouchEventArgs e)
+    private async Task TouchStartedAsync(TouchEventArgs e)
     {
         if (Index == -1) return; //the -1 item shouldn't be ever moved.
         if (Disabled) return; //disabled items shouldn't be moved.
@@ -189,7 +129,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", ResolvedElementId);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -197,12 +137,12 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedCanceled()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", ResolvedElementId);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id.ToString());
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
 
-    internal async Task DragEndedAsync()
+    private async Task DragEndedAsync(DragEventArgs e)
     {
         if (_dragOperationIsInProgress)
         {
@@ -218,7 +158,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         }
     }
 
-    internal async Task TouchMovedAsync(TouchEventArgs e)
+    private async Task TouchMovedAsync(TouchEventArgs e)
     {
         if (Index == -1 || Disabled) return;
 
@@ -230,20 +170,21 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         _onTouchLastY = e.ChangedTouches[0].ClientY;
 
         //Send to JS to move DOM element
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", ResolvedElementId, x, y);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id.ToString(), x, y);
 
         if (Container is not null && Container.TransactionInProgress())
         {
-            var dropIndexOnPositionString = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, ResolvedElementId);
+            var dropIndexOnPositionString = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, _id);
             if (int.TryParse(dropIndexOnPositionString, out var dropIndex))
             {
                 Container.UpdateTransactionIndex(dropIndex);
             }
         }
 
+        //JS.InvokeVoidAsync("draggableTouch");
     }
 
-    internal async Task TouchEndedAsync(TouchEventArgs e)
+    private async Task TouchEndedAsync(TouchEventArgs e)
     {
         if (Index == -1 || Disabled)
         {
@@ -279,6 +220,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
                 StateHasChanged();
             }
         }
+        //await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesRelative");
     }
 
     /// <summary>
@@ -330,16 +272,9 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     #endregion
 
     protected string Classname =>
-        new CssBuilder("mud-drop-item")
-            .AddClass("mud-drop-item-draggable", IsEffectivelyDraggable)
-            .AddClass(DraggingClass, _dragOperationIsInProgress)
-            .AddClass(DisabledClass, Disabled)
-            .AddClass(Class)
-            .Build();
-
-    protected string Stylename =>
-        new StyleBuilder()
-            .AddStyle("transform", "translate3d(0px, 0px, 0px)")
-            .AddStyle(Style)
-            .Build();
+    new CssBuilder("mud-drop-item")
+        .AddClass(DraggingClass, _dragOperationIsInProgress)
+        .AddClass(DisabledClass, Disabled)
+        .AddClass(Class)
+        .Build();
 }

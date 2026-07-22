@@ -2,17 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor;
 
-/// <summary>
-/// Toggles the expansion state of a <see cref="MudTreeViewItem{T}"/>.
-/// </summary>
-/// <seealso cref="MudTreeView{T}"/>
-/// <seealso cref="MudTreeViewItem{T}"/>
 public partial class MudTreeViewItemToggleButton : MudComponentBase
 {
     private readonly ParameterState<bool> _expandedState;
@@ -34,64 +31,49 @@ public partial class MudTreeViewItemToggleButton : MudComponentBase
             .Build();
 
     /// <summary>
-    /// Shows this button.
+    /// If true, displays the button.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Behavior)]
     public bool Visible { get; set; }
 
     /// <summary>
-    /// Prevents the user from interacting with this button.
+    /// Propagate disabled state to icon.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.TreeView.Behavior)]
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Whether this button is in the "expanded" state.
+    /// Determines when to flip the expanded icon.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Behavior)]
     public bool Expanded { get; set; }
 
     /// <summary>
-    /// Displays the loading icon.
+    /// If true, displays the loading icon.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>. Typically used when time is required to load child items.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Behavior)]
     public bool Loading { get; set; }
 
     /// <summary>
-    /// Occurs when <see cref="Expanded"/>.
+    /// Called whenever expanded changed.
     /// </summary>
     [Parameter]
     public EventCallback<bool> ExpandedChanged { get; set; }
 
     /// <summary>
-    /// The icon shown when in the "loading" state.
+    /// The loading icon.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.Loop"/>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Appearance)]
     public string LoadingIcon { get; set; } = Icons.Material.Filled.Loop;
 
     /// <summary>
-    /// The color of the loading icon.
+    /// The color of the loading. It supports the theme colors.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Color.Default"/>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Appearance)]
     public Color LoadingIconColor { get; set; } = Color.Default;
@@ -99,19 +81,13 @@ public partial class MudTreeViewItemToggleButton : MudComponentBase
     /// <summary>
     /// The expand/collapse icon.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Appearance)]
     public string ExpandedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
     /// <summary>
-    /// The color of the expand/collapse icon.
+    /// The color of the expand/collapse. It supports the theme colors.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Color.Default"/>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.TreeView.Appearance)]
     public Color ExpandedIconColor { get; set; } = Color.Default;

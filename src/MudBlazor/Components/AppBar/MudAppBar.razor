@@ -1,32 +1,18 @@
-@using Microsoft.AspNetCore.Components.Sections;
-
 @namespace MudBlazor
 @inherits MudComponentBase
-
-@if (Contextual)
+@if (Bottom)
 {
-    <SectionOutlet SectionId="@ContextualActionBar" />
-    <SectionContent SectionId="@ContextualActionBar">
-        @(Bottom ? Footer : Header)
-    </SectionContent>
+<footer @attributes="UserAttributes" class="@Classname" style="@Style">
+    <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+        @ChildContent
+    </MudToolBar>
+</footer>
 }
 else
 {
-    @(Bottom ? Footer : Header)
-}
-
-@code {
-    private RenderFragment Header =>
-        @<header @attributes="@UserAttributes" class="@Classname" style="@Style">
-            <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-                @ChildContent
-            </MudToolBar>
-        </header>;
-
-    private RenderFragment Footer =>
-        @<footer @attributes="@UserAttributes" class="@Classname" style="@Style">
-            <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-                @ChildContent
-            </MudToolBar>
-        </footer>;
+<header @attributes="UserAttributes" class="@Classname" style="@Style">
+    <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+        @ChildContent
+    </MudToolBar>
+</header>
 }

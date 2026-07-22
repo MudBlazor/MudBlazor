@@ -9,7 +9,7 @@
             "type": "shell",
             "args": [
                 "clean",
-                "src/MudBlazor.slnx",
+                "src/MudBlazor.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -22,7 +22,7 @@
             "type": "shell",
             "args": [
                 "build",
-                "src/MudBlazor.slnx",
+                "src/MudBlazor.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -73,7 +73,7 @@
             "problemMatcher": []
         },
         {
-            "label": "docs generator",
+            "label": "compile docs",
             "command": "dotnet",
             "type": "shell",
             "args": [

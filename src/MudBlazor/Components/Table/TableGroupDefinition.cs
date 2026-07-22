@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
     /// A definition of a group within a <see cref="MudTable{T}"/>.

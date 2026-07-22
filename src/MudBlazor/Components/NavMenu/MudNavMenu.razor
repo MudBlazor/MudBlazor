@@ -5,9 +5,7 @@
      id="@NavigationContext?.MenuId"
      class="@Classname"
      style="@Style">
-    <CascadingValue Value="@this" IsFixed="true">
-        <CascadingValue Value="@NavigationContext">
-            @ChildContent
-        </CascadingValue>
+    <CascadingValue Value="@NavigationContext">
+        @ChildContent
     </CascadingValue>
 </nav>

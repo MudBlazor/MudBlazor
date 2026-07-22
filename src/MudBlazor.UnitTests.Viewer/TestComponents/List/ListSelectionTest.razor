@@ -1,8 +1,10 @@
-﻿<MudList T="string" @bind-SelectedValue="_selectedValue" SelectionMode="@SelectionMode">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudList T="string" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode">
     <MudListSubheader>
         Your drink:
         <MudChip Color="Color.Secondary">
-            @(_selectedValue ?? "You are dry")
+            @(SelectedValue ?? "You are dry")
         </MudChip>
     </MudListSubheader>
     <MudListItem Text="Sparkling Water" />
@@ -22,10 +24,10 @@
     </MudListItem>
 </MudList>
 
-@code {
+@code
+{
     public static string __description__ = "Clicking the drinks selects them. The child lists are updated accordingly.";
-    
-    private string? _selectedValue;
+    public string SelectedValue;
 
     [Parameter]
     public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;

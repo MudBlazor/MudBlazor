@@ -1,4 +1,4 @@
-﻿
+﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc" Groupable="true">
     <Columns>
@@ -36,7 +36,7 @@
         new Item("Calcium", 20)
     };
 
-    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState, CancellationToken token)
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
     {
         await Task.CompletedTask;
         List<Item> itemsAscendingByNumber = _items.ToList();

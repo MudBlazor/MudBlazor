@@ -1,4 +1,6 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudForm ValidationDelay="0">
     <MudDateRangePicker Required="true" @bind-DateRange="DateRange">
@@ -9,5 +11,5 @@
     public static string __description__ = "Form should validate date range picker's date range.";
 
     [Parameter]
-    public DateRange? DateRange { get; set; }
+    public DateRange DateRange { get; set; }
 }

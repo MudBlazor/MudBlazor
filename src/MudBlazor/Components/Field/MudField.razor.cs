@@ -4,43 +4,39 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    // TODO: Maybe can inherit from MudBaseInput?
+#nullable enable
+    //TODO Maybe can inherit from MudBaseInput?
+
     /// <summary>
-    /// Displays custom content inside a form field with the same label, adornment, and border styling as a <see cref="MudTextField{T}"/>.
+    /// A component similar to <see cref="MudTextField{T}"/> which supports custom content.
     /// </summary>
-    /// <seealso cref="MudTextField{T}" />
     public partial class MudField : MudComponentBase
     {
         protected string Classname =>
             new CssBuilder("mud-input")
-                .AddClass($"mud-input-{Variant.ToStringFast(true)}")
-                .AddClass($"mud-input-{Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(Label))
-                .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
-                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                // Without the mud-shrink class, the label will become a placeholder
-                // Apply "mud-shrink" only if ShrinkLabel is false AND
-                // (there is content OR the adornment is at the start)
-                .AddClass("mud-shrink",
-                    !ShrinkLabel &&
-                         (ChildContent != null || Adornment == Adornment.Start))
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
+                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
-                .AddClass($"mud-typography-{Typo.ToStringFast(true)}")
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .Build();
 
         protected string InnerClassname =>
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
-                .AddClass("mud-input-slot-nopadding", () => InnerPadding == false)
-                .AddClass($"mud-input-root-{Variant.ToStringFast(true)}")
-                .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
+                .AddClass("mud-input-slot-nopadding", when: () => InnerPadding == false)
+                .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
+                .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .Build();
 
         protected string AdornmentClassname =>
-            new CssBuilder()
-                .AddClass($"mud-input-adornment-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
+            new CssBuilder("mud-input-adornment")
+                .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
                 .Build();
@@ -72,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public Typo Typo { get; set; } = Typo.subtitle1;
+        public Typo Typo { get; set; } = Typo.input;
 
         /// <summary>
         /// Displays the error in <see cref="ErrorText"/>.
@@ -182,16 +178,6 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The <c>aria-label</c> for the adornment.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public string? AdornmentAriaLabel { get; set; }
-
-        /// <summary>
         /// The size of the icon.
         /// </summary>
         /// <remarks>
@@ -202,7 +188,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Occurs when the adornment icon (but not the text) has been clicked.
+        /// Occurs when the adornment text or icon has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
@@ -226,17 +212,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
         public bool Underline { get; set; } = true;
-
-        /// <summary>
-        /// Controls whether the label is displayed inside the field or shrinks above it when the field does not have focus.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// <para>When <c>false</c>, the label behaves like a placeholder and shrinks only if there is content or an adornment at the start.</para>
-        /// <para>When <c>true</c>, the label does not shrink and remains as a placeholder regardless of content, which may result in overlap.</para>
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool ShrinkLabel { get; set; }
     }
 }

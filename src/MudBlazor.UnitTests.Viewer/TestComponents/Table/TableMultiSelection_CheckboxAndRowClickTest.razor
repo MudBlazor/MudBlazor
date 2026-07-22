@@ -1,5 +1,7 @@
-﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
-<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true">
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate>
@@ -8,6 +10,6 @@
 @code {
     public static string __description__ = "A checkbox- or row-click should toggle the checkbox state.";
 
-    private readonly int[] _items = [0, 1, 2];
-    private HashSet<int> _selectedItems = [];
+    int[] items = new int[]{0,1,2};
+    HashSet<int> selectedItems=new HashSet<int>();
 }

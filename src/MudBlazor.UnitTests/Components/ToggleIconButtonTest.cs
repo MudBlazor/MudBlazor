@@ -1,6 +1,6 @@
-﻿using AwesomeAssertions;
-using Bunit;
-using MudBlazor.UnitTests.TestComponents.ToggleIconButton;
+﻿using Bunit;
+using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -11,7 +11,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultState()
         {
-            var comp = Context.Render<MudToggleIconButton>();
+            var comp = Context.RenderComponent<MudToggleIconButton>();
             comp.Instance.Toggled.Should().BeFalse();
             comp.Instance.Icon.Should().BeNull();
             comp.Instance.ToggledIcon.Should().BeNull();
@@ -29,39 +29,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ShouldToggleOnClickAsync()
+        public void ShouldToggleOnClick()
         {
             var boundValue = false;
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Toggled, boundValue)
                 .Add(p => p.ToggledChanged, (toggleValue) => boundValue = toggleValue)
             );
 
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
             boundValue.Should().BeTrue();
 
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
             boundValue.Should().BeFalse();
+
+            comp.RenderCount.Should().Be(3);
         }
 
         [Test]
-        public async Task ShouldSetAriaPressedAttributeAsync()
+        public void ShouldSetAriaPressedAttribute()
         {
-            var comp = Context.Render<MudToggleIconButton>();
+            var comp = Context.RenderComponent<MudToggleIconButton>();
 
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("false");
 
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("true");
 
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
             comp.Find("button").GetAttribute("aria-pressed").Should().Be("false");
         }
 
         [Test]
-        public async Task ShouldSynchronizeStateWithOtherComponentAsync()
+        public void ShouldSynchronizeStateWithOtherComponent()
         {
-            var comp = Context.Render<ToggleIconButtonTest1>();
+            var comp = Context.RenderComponent<ToggleIconButtonTest1>();
             // select elements needed for the test
             var group = comp.FindComponents<MudToggleIconButton>();
             var comp1 = group[0];
@@ -70,16 +72,16 @@ namespace MudBlazor.UnitTests.Components
             comp1.Instance.Toggled.Should().BeFalse();
             comp2.Instance.Toggled.Should().BeFalse();
             // click first button
-            await comp1.Find("button").ClickAsync();
+            comp1.Find("button").Click();
             // make sure both buttons state changed
             comp1.Instance.Toggled.Should().BeTrue();
             comp2.Instance.Toggled.Should().BeTrue();
         }
 
         [Test]
-        public async Task Disabled_ShouldPreventInteractionAsync()
+        public void Disabled_ShouldPreventInteraction()
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Disabled, true)
             );
 
@@ -88,7 +90,7 @@ namespace MudBlazor.UnitTests.Components
             button.HasAttribute("disabled").Should().BeTrue();
 
             // Try to toggle the button
-            await button.ClickAsync();
+            button.Click();
 
             // Verify that the toggled state has not changed
             comp.Instance.Toggled.Should().BeFalse();
@@ -96,9 +98,9 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase("icon-default", "icon-toggled", "icon-default", "icon-toggled")]
         [TestCase("icon-default", null, "icon-default", "icon-default")]
-        public async Task GetIcon_ShouldReturnCorrectValueAsync(string icon, string toggledIcon, string expectedIcon, string expectedToggledIcon)
+        public void GetIcon_ShouldReturnCorrectValue(string icon, string toggledIcon, string expectedIcon, string expectedToggledIcon)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Icon, icon)
                 .Add(p => p.ToggledIcon, toggledIcon)
             );
@@ -107,7 +109,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetIcon().Should().Be(expectedIcon);
 
             // Toggle state
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
 
             // Check toggled state
             comp.Instance.GetIcon().Should().Be(expectedToggledIcon);
@@ -115,9 +117,9 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase(Size.Small, Size.Large, Size.Small, Size.Large)]
         [TestCase(Size.Small, null, Size.Small, Size.Small)]
-        public async Task GetSize_ShouldReturnCorrectValueAsync(Size size, Size? toggledSize, Size expectedSize, Size expectedToggledSize)
+        public void GetSize_ShouldReturnCorrectValue(Size size, Size? toggledSize, Size expectedSize, Size expectedToggledSize)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Size, size)
                 .Add(p => p.ToggledSize, toggledSize)
             );
@@ -126,7 +128,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetSize().Should().Be(expectedSize);
 
             // Toggle state
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
 
             // Check toggled state
             comp.Instance.GetSize().Should().Be(expectedToggledSize);
@@ -134,9 +136,9 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase(Color.Tertiary, Color.Secondary, Color.Tertiary, Color.Secondary)]
         [TestCase(Color.Tertiary, null, Color.Tertiary, Color.Tertiary)]
-        public async Task GetColor_ShouldReturnCorrectValueAsync(Color color, Color? toggledColor, Color expectedColor, Color expectedToggledColor)
+        public void GetColor_ShouldReturnCorrectValue(Color color, Color? toggledColor, Color expectedColor, Color expectedToggledColor)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Color, color)
                 .Add(p => p.ToggledColor, toggledColor)
             );
@@ -145,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetColor().Should().Be(expectedColor);
 
             // Toggle state
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
 
             // Check toggled state
             comp.Instance.GetColor().Should().Be(expectedToggledColor);
@@ -153,9 +155,9 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase(Variant.Outlined, Variant.Filled, Variant.Outlined, Variant.Filled)]
         [TestCase(Variant.Outlined, null, Variant.Outlined, Variant.Outlined)]
-        public async Task GetVariant_ShouldReturnCorrectValueAsync(Variant variant, Variant? toggledVariant, Variant expectedVariant, Variant expectedToggledVariant)
+        public void GetVariant_ShouldReturnCorrectValue(Variant variant, Variant? toggledVariant, Variant expectedVariant, Variant expectedToggledVariant)
         {
-            var comp = Context.Render<MudToggleIconButton>(parameters => parameters
+            var comp = Context.RenderComponent<MudToggleIconButton>(parameters => parameters
                 .Add(p => p.Variant, variant)
                 .Add(p => p.ToggledVariant, toggledVariant)
             );
@@ -164,7 +166,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetVariant().Should().Be(expectedVariant);
 
             // Toggle state
-            await comp.Find("button").ClickAsync();
+            comp.Find("button").Click();
 
             // Check toggled state
             comp.Instance.GetVariant().Should().Be(expectedToggledVariant);

@@ -1,0 +1,97 @@
+﻿@using System.Threading
+@using System.IO
+@using System.Text
+
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudForm Model="@_model"
+         @bind-IsValid="_isValid"
+         @bind-IsTouched="_isTouched"
+         ValidationDelay="0">
+    <MudItem xs="12">
+        <MudStack Style="width: 100%">
+            <MudFileUpload T="IBrowserFile"
+                           @ref="@_fileUpload"
+                           @bind-Files="@_model.File"
+                           Accept=".png,.jpg,.jpeg"
+                           Hidden="@false"
+                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                           InputStyle="opacity:0"
+                           tabindex="-1"
+                           Required="@true"
+                           @ondrop="@ClearDragClass"
+                           @ondragenter="@SetDragClass"
+                           @ondragleave="@ClearDragClass"
+                           @ondragend="@ClearDragClass">
+                <ActivatorContent>
+                    <MudPaper Height="300px"
+                              Outlined="true"
+                              Class="@_dragClass">
+                        <MudText Typo="Typo.h6">
+                            Drag and drop files here or click
+                        </MudText>
+                        <MudChip T="string"
+                                 Color="Color.Dark"
+                                 Text="@_model.File?.Name"
+                                 tabindex="-1" />
+                    </MudPaper>
+                </ActivatorContent>
+            </MudFileUpload>
+            <MudToolBar Gutters="@false"
+                        Class="relative d-flex justify-end gap-4">
+                <MudButton Id="open-file-picker-button"
+                           OnClick="@OpenFilePickerAsync">
+                    Open file picker
+                </MudButton>
+                <MudButton Id="clear-button"
+                           OnClick="@ClearAsync">
+                    Clear
+                </MudButton>
+            </MudToolBar>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12">
+        IsValid: @_isValid - IsTouched: @_isTouched
+    </MudItem>
+</MudForm>
+
+@code {
+#nullable enable
+    public record BrowserFile(string Name, DateTimeOffset LastModified, long Size, string ContentType, byte[] Content) : IBrowserFile
+    {
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
+
+    public class Model
+    {
+        public IBrowserFile? File { get; set; } = new BrowserFile(
+            Guid.NewGuid().ToString(),
+            DateTimeOffset.Now,
+            default,
+            "text/plain",
+            Encoding.ASCII.GetBytes(FileContent));
+    }
+
+    private Model _model = null!;
+    private bool _isValid;
+    private bool _isTouched;
+    private MudFileUpload<IBrowserFile>? _fileUpload;
+    private const string FileContent = "this is content";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    private string _dragClass = DefaultDragClass;
+
+    protected override void OnInitialized()
+        => _model = new Model();
+
+    private void SetDragClass()
+        => _dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+
+    private Task OpenFilePickerAsync()
+        => _fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask;
+
+    private Task ClearAsync()
+        => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
+}

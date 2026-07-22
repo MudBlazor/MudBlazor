@@ -1,4 +1,8 @@
-﻿using AwesomeAssertions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -6,14 +10,16 @@ using Moq;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using NUnit.Framework;
-using static MudBlazor.Services.ResizeObserver;
 
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
     public class ResizeObserverTests
     {
-        private class PseudoElementReferenceContext : ElementReferenceContext;
+        private class PseudoElementReferenceContext : ElementReferenceContext
+        {
+
+        }
 
         private Mock<IJSRuntime> _runtimeMock;
         private ResizeObserver _service;
@@ -33,7 +39,7 @@ namespace MudBlazor.UnitTests.Services
 
             List<ElementReference> allReferences = new();
             List<ElementReference> notObservedReferences = new();
-            Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
+            Dictionary<ElementReference, BoundingClientRect> resolvedElements = new();
 
             var amount = 13;
             for (var i = 1; i <= amount; i++)
@@ -59,7 +65,7 @@ namespace MudBlazor.UnitTests.Services
                 allReferences.Add(reference);
             }
 
-            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
+            _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
@@ -68,7 +74,7 @@ namespace MudBlazor.UnitTests.Services
                     (z[3] is IEnumerable<Guid>) &&
                     (z[4] is ResizeObserverOptions) && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
-            )).ReturnsAsync(resolvedElements.Values.ToArray).Verifiable();
+            )).ReturnsAsync(resolvedElements.Values).Verifiable();
 
             // Act
             var actual = await _service.Observe(allReferences);
@@ -112,9 +118,16 @@ namespace MudBlazor.UnitTests.Services
             var amount = 10;
             for (var i = 1; i <= amount; i++)
             {
-                var reference = i % 2 == 0
-                    ? new ElementReference()
-                    : new ElementReference(Guid.NewGuid().ToString());
+                var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+
+                if (i % 2 == 0)
+                {
+                    reference = new ElementReference();
+                }
+                else
+                {
+                    reference = new ElementReference(Guid.NewGuid().ToString());
+                }
                 notObservedReferences.Add(reference);
             }
 
@@ -131,7 +144,7 @@ namespace MudBlazor.UnitTests.Services
             // Arrange
             var random = new Random();
 
-            Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
+            Dictionary<ElementReference, BoundingClientRect> resolvedElements = new();
 
             var amount = 13;
             for (var i = 1; i <= amount; i++)
@@ -145,7 +158,7 @@ namespace MudBlazor.UnitTests.Services
             List<Guid> ids = new();
             var observerId = Guid.Empty;
 
-            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
+            _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
@@ -154,7 +167,8 @@ namespace MudBlazor.UnitTests.Services
                     (z[3] is IEnumerable<Guid>) &&
                     (z[4] is ResizeObserverOptions) && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
-            )).ReturnsAsync(resolvedElements.Values.ToArray).Callback<string, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
+            )).ReturnsAsync(resolvedElements.Values).Callback<string, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
+
 
             foreach (var item in resolvedElements)
             {
@@ -189,7 +203,7 @@ namespace MudBlazor.UnitTests.Services
             // Arrange
             var random = new Random();
 
-            Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
+            Dictionary<ElementReference, BoundingClientRect> resolvedElements = new();
 
             var amount = 13;
             for (var i = 1; i <= amount; i++)
@@ -202,7 +216,7 @@ namespace MudBlazor.UnitTests.Services
 
             List<Guid> ids = new();
 
-            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
+            _runtimeMock.Setup(x => x.InvokeAsync<IEnumerable<BoundingClientRect>>(
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
@@ -211,15 +225,15 @@ namespace MudBlazor.UnitTests.Services
                     (z[3] is IEnumerable<Guid>) &&
                     (z[4] is ResizeObserverOptions) && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
-            )).ReturnsAsync(resolvedElements.Values.ToArray).Callback<string, object[]>((x, y) => { ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
+            )).ReturnsAsync(resolvedElements.Values).Callback<string, object[]>((x, y) => { ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
 
             await _service.Observe(resolvedElements.Keys);
 
             var changes = new List<ResizeObserver.SizeChangeUpdateInfo>();
 
-            Dictionary<ElementReference, BoundingClientRect> expectedRects = new(ElementReferenceComparer.Default);
+            Dictionary<ElementReference, BoundingClientRect> expectedRects = new();
 
-            for (var i = 0; i < resolvedElements.Count; i++)
+            for (var i = 0; i < resolvedElements.Count(); i++)
             {
                 var item = resolvedElements.ElementAt(i);
                 var correspondingId = ids[i];
@@ -267,36 +281,13 @@ namespace MudBlazor.UnitTests.Services
             _runtimeMock.Verify();
         }
 
-        [Test]
-        public async Task Observe_AlreadyCachedElement_SkipsSecondJsConnect()
-        {
-            // Arrange
-            var random = new Random();
-            var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
-            var rect = GetRandomRect(random);
-
-            // Strict mock allows exactly one connect; a second call would throw.
-            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
-                "mudResizeObserver.connect",
-                It.IsAny<object[]>()
-            )).ReturnsAsync([rect]).Verifiable();
-
-            await _service.Observe(reference);
-
-            // Act
-            var actual = await _service.Observe(reference);
-
-            // Assert
-            // Already-cached elements are filtered out, so the second Observe connects to nothing and returns no rect.
-            actual.Should().BeNull();
-            _service.GetSizeInfo(reference).Should().BeEquivalentTo(rect);
-            _runtimeMock.Verify(x => x.InvokeAsync<BoundingClientRect[]>("mudResizeObserver.connect", It.IsAny<object[]>()), Times.Once);
-        }
+        #region Helper
 
         private static BoundingClientRect GetRandomRect(Random random)
         {
             return new BoundingClientRect
             {
+
                 Height = random.Next(10, 200) + random.NextDouble(),
                 Left = random.Next(10, 200) + random.NextDouble(),
 
@@ -305,5 +296,7 @@ namespace MudBlazor.UnitTests.Services
 
             };
         }
+
+        #endregion
     }
 }

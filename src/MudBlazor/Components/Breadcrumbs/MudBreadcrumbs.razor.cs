@@ -4,12 +4,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Breadcrumbs show a navigation trail of links marking the user's current location within a page hierarchy.
+    /// Represents a series of links used to show the user's current location.
     /// </summary>
-    /// <seealso cref="BreadcrumbItem" />
-    /// <seealso cref="BreadcrumbLink" />
-    /// <seealso cref="BreadcrumbSeparator" />
     public partial class MudBreadcrumbs : MudComponentBase
     {
         private string Classname => new CssBuilder("mud-breadcrumbs")
@@ -49,7 +47,7 @@ namespace MudBlazor
         public RenderFragment<BreadcrumbItem>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// The maximum number of items to display.
+        /// The maximum number of items to dislpay.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  If <see cref="Collapsed"/> is <c>true</c> and the number of items exceeds this value, the breadcrumbs will automatically collapse.
@@ -62,7 +60,7 @@ namespace MudBlazor
         /// The icon to display when items are collapsed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.SettingsEthernet" />.  Displays when <see cref="Collapsed"/> and the number of items exceeds <see cref="MaxItems"/>.
+        /// Defaults to <c>Icons.Material.Filled.SettingsEthernet</c>.  Displays when <see cref="Collapsed"/> and the number of items exceeds <see cref="MaxItems"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Appearance)]

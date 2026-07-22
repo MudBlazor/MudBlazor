@@ -1,12 +1,7 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// The type of animation used when content transitions.
-    /// </summary>
-    [EnumExtensions]
     public enum Transition
     {
         [Description("None")]

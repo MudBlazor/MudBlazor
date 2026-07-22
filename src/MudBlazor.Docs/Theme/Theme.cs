@@ -2,6 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace MudBlazor.Docs
 {
     public class Theme
@@ -30,6 +36,8 @@ namespace MudBlazor.Docs
             };
             return theme;
         }
+
+
 
         #region Docs
 
@@ -78,64 +86,62 @@ namespace MudBlazor.Docs
         {
             DefaultBorderRadius = "6px"
         };
-
         private static readonly Typography LandingPageTypography = new()
         {
-            Default = new DefaultTypography()
+            Default = new Default()
             {
                 FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" },
                 LetterSpacing = "normal"
             },
-            H1 = new H1Typography()
+            H1 = new H1()
             {
                 FontSize = "4rem",
-                FontWeight = "700",
+                FontWeight = 700,
             },
-            H3 = new H3Typography()
+            H3 = new H3()
             {
                 FontSize = "3rem",
-                FontWeight = "600",
-                LineHeight = "1.8",
+                FontWeight = 600,
+                LineHeight = 1.8,
             },
-            H4 = new H4Typography()
+            H4 = new H4()
             {
                 FontSize = "1.8rem",
-                FontWeight = "700",
+                FontWeight = 700,
             },
-            H5 = new H5Typography()
+            H5 = new H5()
             {
                 FontSize = "1.8rem",
-                FontWeight = "700",
-                LineHeight = "2",
+                FontWeight = 700,
+                LineHeight = 2,
             },
-            H6 = new H6Typography()
+            H6 = new H6()
             {
                 FontSize = "1.125rem",
-                FontWeight = "700",
-                LineHeight = "2",
+                FontWeight = 700,
+                LineHeight = 2,
             },
-            Subtitle1 = new Subtitle1Typography()
+            Subtitle1 = new Subtitle1()
             {
                 FontSize = "1.1rem",
-                FontWeight = "500"
+                FontWeight = 500
             },
-            Subtitle2 = new Subtitle2Typography()
+            Subtitle2 = new Subtitle2()
             {
                 FontSize = "1rem",
-                FontWeight = "600",
-                LineHeight = "1.8",
+                FontWeight = 600,
+                LineHeight = 1.8,
             },
-            Body1 = new Body1Typography()
+            Body1 = new Body1()
             {
                 FontSize = "1rem",
-                FontWeight = "400"
+                FontWeight = 400
             },
-            Button = new ButtonTypography()
+            Button = new Button()
             {
                 TextTransform = "none"
             }
         };
-
         private static readonly PaletteLight LandingPageLightPalette = new()
         {
             AppbarText = "#424242",
@@ -170,8 +176,8 @@ namespace MudBlazor.Docs
 
         private static readonly Shadow LandingPageShadows = new()
         {
-            Elevation =
-            [
+            Elevation = new string[]
+            {
             "none",
             "0 2px 4px -1px rgba(6, 24, 44, 0.2)",
             "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
@@ -198,7 +204,7 @@ namespace MudBlazor.Docs
             "0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.30)",
             "2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),12.5px 12.5px 10px rgba(0, 0, 0, 0.035),22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),100px 100px 80px rgba(0, 0, 0, 0.07)",
             "0px 0px 20px 0px rgba(0, 0, 0, 0.05)"
-            ]
+            }
         };
         #endregion
     }

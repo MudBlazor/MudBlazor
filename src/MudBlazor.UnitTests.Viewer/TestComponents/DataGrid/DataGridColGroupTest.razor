@@ -1,4 +1,6 @@
-﻿<MudDataGrid Items="@_items" Filterable="true">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items" Filterable="true">
     <ColGroup>
         <col />
         <col />
@@ -12,7 +14,7 @@
 </MudDataGrid>
 
 @code {
-    private readonly IEnumerable<Model> _items = new List<Model>()
+    private IEnumerable<Model> _items = new List<Model>()
     {
         new Model("Sam", 56, Severity.Normal), 
         new Model("Alicia", 54, Severity.Info), 

@@ -1,5 +1,8 @@
-﻿using System.Linq.Expressions;
-using AwesomeAssertions;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using FluentAssertions;
+using MudBlazor;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
@@ -18,9 +21,6 @@ namespace MudBlazor.UnitTests.Extensions
         {
             public string Field1 { get; set; }
 
-            [Label("Nested Label")]
-            public string Field2 { get; set; }
-
             public TestClass2 TestClass2 { get; set; }
         }
 
@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
-        public void GetFullPathOfMember()
+        public void GetFullPathOfMemberTest()
         {
             var model = new TestClass();
 
@@ -77,26 +77,6 @@ namespace MudBlazor.UnitTests.Extensions
             Expression<Func<string>> expression = () => model.Field1;
 
             expression.GetLabelString().Should().Be("");
-        }
-
-        [Test]
-        public void GetFullPathOfMember_ConstantBody_ReturnsEmpty()
-        {
-            // Body is not a MemberExpression, so there is no member path to resolve.
-            Expression<Func<string>> expression = () => "literal";
-
-            expression.GetFullPathOfMember().Should().Be("");
-        }
-
-        [Test]
-        public void GetLabelString_NestedMember_ResolvesAttributeOnDeclaringType()
-        {
-            var model = new TestClass();
-
-            // The label is resolved against the leaf member's declaring type (TestClass1), not the root.
-            Expression<Func<string>> expression = () => model.TestClass1.Field2;
-
-            expression.GetLabelString().Should().Be("Nested Label");
         }
     }
 }

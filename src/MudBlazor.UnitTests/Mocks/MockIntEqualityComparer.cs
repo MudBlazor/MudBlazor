@@ -1,4 +1,6 @@
-﻿namespace MudBlazor.UnitTests.Mocks
+﻿using System.Collections.Generic;
+
+namespace MudBlazor.UnitTests.Mocks
 {
 #nullable enable
     public class MockIntEqualityComparer : IEqualityComparer<int>

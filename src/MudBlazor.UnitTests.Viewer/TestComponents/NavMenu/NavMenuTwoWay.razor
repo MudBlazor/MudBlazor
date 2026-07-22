@@ -1,7 +1,9 @@
-﻿<MudNavGroup Title="Settings" @bind-Expanded="Expanded">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudNavGroup Title="Settings" @bind-Expanded="_expanded">
     <MudNavLink Href="/users">Users</MudNavLink>
 </MudNavGroup>
 
 @code{
-   public bool Expanded { get; private set; }
+   public bool _expanded;
 }

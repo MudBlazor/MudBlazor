@@ -4,14 +4,7 @@
 
 namespace MudBlazor;
 
-
-/// <summary>
-/// The type of user interaction when <see cref="MudTabs.OnPreviewInteraction"/> occurs.
-/// </summary>
 public enum TabInteractionType
 {
-    /// <summary>
-    /// An attempt to activate a tab panel.
-    /// </summary>
     Activate
 }

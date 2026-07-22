@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
 /// Indicates the position of the commit button during inline edits to a <see cref="MudTable{T}"/>.

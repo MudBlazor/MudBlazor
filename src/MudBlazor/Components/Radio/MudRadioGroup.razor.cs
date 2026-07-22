@@ -1,22 +1,21 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// A group of <see cref="MudRadio{T}"/> components.
-    /// </summary>
-    /// <typeparam name="T">The type of value being selected.</typeparam>
+#nullable enable
     public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
     {
         private MudRadio<T>? _selectedRadio;
-        private readonly HashSet<MudRadio<T>> _radios = new();
+        private HashSet<MudRadio<T>> _radios = new();
+
+        public MudRadioGroup() : base(new Converter<T, T>()) { }
 
         protected string Classname =>
             new CssBuilder("mud-input-control-boolean-input")
@@ -35,77 +34,49 @@ namespace MudBlazor
         private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// The CSS classes for this button group.
+        /// User class names for the input, separated by space
         /// </summary>
-        /// <remarks>
-        /// Multiple classes must be separated by spaces.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public string? InputClass { get; set; }
 
         /// <summary>
-        /// The CSS styles for this button group.
+        /// User style definitions for the input
         /// </summary>
-        [Obsolete("Prefer the InputClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public string? InputStyle { get; set; }
 
-        /// <summary>
-        /// The content within this button group.
-        /// </summary>
-        /// <remarks>
-        /// Usually a set of <see cref="MudRadio{T}"/> components.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        /// <summary>
-        /// The unique name for this button group.
-        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public string Name { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// Prevents the user from interacting with this group.
+        /// If true, the input will be disabled.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents the selected value from being changed.
+        /// If true, the input will be read-only.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
 
-        /// <summary>
-        /// The current value.
-        /// </summary>
-        /// <remarks>
-        /// When this value changes, the <see cref="ValueChanged"/> event occurs.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
         public T? Value
         {
             get => _value;
-            set => SetSelectedOptionAsync(value, true, updateValue: false).CatchAndLog();
+            set => SetSelectedOptionAsync(value, true).CatchAndLog();
         }
 
-        /// <summary>
-        /// Occurs whenever <see cref="Value"/> has changed.
-        /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
@@ -113,7 +84,7 @@ namespace MudBlazor
 
         internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
-        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio, bool updateValue = true)
+        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio)
         {
             if (!OptionEquals(_value, option))
             {
@@ -121,23 +92,17 @@ namespace MudBlazor
 
                 if (updateRadio)
                 {
-                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.ReadValue, _value));
+                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Value, _value));
                     await SetSelectedRadioAsync(radio, false);
                 }
 
-                if (updateValue)
-                    await ValueChanged.InvokeAsync(_value);
+                await ValueChanged.InvokeAsync(_value);
 
                 await BeginValidateAsync();
                 FieldChanged(_value);
             }
         }
 
-        /// <summary>
-        /// Tests whether the specified value is valid for this button.
-        /// </summary>
-        /// <param name="selectItem">The value to examine.</param>
-        /// <exception cref="GenericTypeMismatchException">Raised if the specified value does not match <c>T</c>.</exception>
         public void CheckGenericTypeMatch(object selectItem)
         {
             var itemT = selectItem.GetType().GenericTypeArguments[0];
@@ -177,7 +142,7 @@ namespace MudBlazor
 
             if (_selectedRadio is null)
             {
-                if (OptionEquals(radio.ReadValue, _value))
+                if (OptionEquals(radio.Value, _value))
                 {
                     return SetSelectedRadioAsync(radio, false);
                 }
@@ -195,19 +160,20 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task ResetValueAsync()
+        protected override Task ResetValueAsync()
         {
-            // Route through SetSelectedOptionAsync so the value, selected radio, and checked markup stay in sync.
-            await SetSelectedOptionAsync(default, updateRadio: true);
-            await base.ResetValueAsync();
-        }
+            if (_selectedRadio is not null)
+            {
+                _selectedRadio.SetChecked(false);
+                _selectedRadio = null;
+            }
 
-        /// <inheritdoc />
-        protected override IConverter<T?, T?> GetDefaultConverter() => EmptyConverter<T?>.Instance;
+            return base.ResetValueAsync();
+        }
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
         {
-            return radio is not null ? radio.ReadValue : default;
+            return radio is not null ? radio.Value : default;
         }
 
         private static bool OptionEquals(T? option1, T? option2)

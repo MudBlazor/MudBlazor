@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
     /// </summary>
-    /// <seealso cref="MudExpansionPanel"/>
-    /// <seealso cref="MudCollapse"/>
     public partial class MudExpansionPanels : MudComponentBase
     {
-        private readonly List<MudExpansionPanel> _panels = new();
+        private List<MudExpansionPanel> _panels = new();
 
         protected string Classname =>
             new CssBuilder("mud-expansion-panels")
@@ -85,14 +88,6 @@ namespace MudBlazor
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        /// <summary>
-        /// A read-only list of the panels within this component. 
-        /// </summary>
-        /// <remarks>
-        /// Expansion panels are controlled by adding more <see cref="MudExpansionPanel"/> components in the Razor page.
-        /// </remarks>
-        public IReadOnlyList<MudExpansionPanel> Panels => _panels;
-
         internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
             if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))
@@ -150,11 +145,15 @@ namespace MudBlazor
         /// <param name="panel">The panel to keep expanded.</param>
         public async Task CollapseAllExceptAsync(MudExpansionPanel panel)
         {
-            foreach (var expansionPanel in _panels.Where(expansionPanel => expansionPanel != panel))
+            foreach (var expansionPanel in _panels)
             {
+                if (expansionPanel == panel)
+                {
+                    continue;
+                }
+
                 await expansionPanel.CollapseAsync();
             }
-
             await InvokeAsync(UpdateAllAsync);
         }
 

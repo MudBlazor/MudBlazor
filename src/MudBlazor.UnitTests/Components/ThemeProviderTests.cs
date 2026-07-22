@@ -1,13 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
-using AwesomeAssertions;
 using Bunit;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Moq;
+using FluentAssertions;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestComponents.ThemeProvider;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -29,7 +27,7 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            var comp = Context.Render<MudThemeProvider>();
+            var comp = Context.RenderComponent<MudThemeProvider>();
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
             styleNodes.Should().HaveCount(3);
@@ -89,17 +87,13 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-dark-lighten: rgb(87,87,87);",
                 "--mud-palette-dark-hover: rgba(66,66,66,0.058823529411764705);",
                 "--mud-palette-text-primary: rgba(66,66,66,1);",
-                "--mud-palette-text-primary-rgb: 66,66,66;",
                 "--mud-palette-text-secondary: rgba(0,0,0,0.5372549019607843);",
-                "--mud-palette-text-secondary-rgb: 0,0,0;",
                 "--mud-palette-text-disabled: rgba(0,0,0,0.3764705882352941);",
-                "--mud-palette-text-disabled-rgb: 0,0,0;",
                 "--mud-palette-action-default: rgba(0,0,0,0.5372549019607843);",
                 "--mud-palette-action-default-hover: rgba(0,0,0,0.058823529411764705);",
                 "--mud-palette-action-disabled: rgba(0,0,0,0.25882352941176473);",
                 "--mud-palette-action-disabled-background: rgba(0,0,0,0.11764705882352941);",
                 "--mud-palette-surface: rgba(255,255,255,1);",
-                "--mud-palette-surface-rgb: 255,255,255;",
                 "--mud-palette-background: rgba(255,255,255,1);",
                 "--mud-palette-background-gray: rgba(245,245,245,1);",
                 "--mud-palette-drawer-background: rgba(255,255,255,1);",
@@ -113,9 +107,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-table-striped: rgba(0,0,0,0.0196078431372549);",
                 "--mud-palette-table-hover: rgba(0,0,0,0.0392156862745098);",
                 "--mud-palette-divider: rgba(224,224,224,1);",
-                "--mud-palette-divider-rgb: 224,224,224;",
                 "--mud-palette-divider-light: rgba(0,0,0,0.8);",
-                "--mud-palette-skeleton: rgba(0,0,0,0.10980392156862745);",
                 "--mud-palette-gray-default: #9E9E9E;",
                 "--mud-palette-gray-light: #BDBDBD;",
                 "--mud-palette-gray-lighter: #E0E0E0;",
@@ -123,7 +115,6 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-gray-darker: #616161;",
                 "--mud-palette-overlay-dark: rgba(33,33,33,0.4980392156862745);",
                 "--mud-palette-overlay-light: rgba(255,255,255,0.4980392156862745);",
-                "--mud-palette-border-opacity: 1;",
                 "--mud-ripple-color: var(--mud-palette-text-primary);",
                 "--mud-ripple-opacity: 0.1;",
                 "--mud-ripple-opacity-secondary: 0.2;",
@@ -159,85 +150,91 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-drawer-width-mini-left: 56px;",
                 "--mud-drawer-width-mini-right: 56px;",
                 "--mud-appbar-height: 64px;",
-                "--mud-typography-default-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-default-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-default-size: .875rem;",
                 "--mud-typography-default-weight: 400;",
                 "--mud-typography-default-lineheight: 1.43;",
                 "--mud-typography-default-letterspacing: .01071em;",
                 "--mud-typography-default-text-transform: none;",
-                "--mud-typography-h1-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-h1-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-h1-size: 6rem;",
                 "--mud-typography-h1-weight: 300;",
                 "--mud-typography-h1-lineheight: 1.167;",
                 "--mud-typography-h1-letterspacing: -.01562em;",
                 "--mud-typography-h1-text-transform: none;",
-                "--mud-typography-h2-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-h2-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-h2-size: 3.75rem;",
                 "--mud-typography-h2-weight: 300;",
                 "--mud-typography-h2-lineheight: 1.2;",
                 "--mud-typography-h2-letterspacing: -.00833em;",
                 "--mud-typography-h2-text-transform: none;",
-                "--mud-typography-h3-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-h3-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-h3-size: 3rem;",
                 "--mud-typography-h3-weight: 400;",
                 "--mud-typography-h3-lineheight: 1.167;",
                 "--mud-typography-h3-letterspacing: 0;",
                 "--mud-typography-h3-text-transform: none;",
-                "--mud-typography-h4-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-h4-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-h4-size: 2.125rem;",
                 "--mud-typography-h4-weight: 400;",
                 "--mud-typography-h4-lineheight: 1.235;",
                 "--mud-typography-h4-letterspacing: .00735em;",
                 "--mud-typography-h4-text-transform: none;",
-                "--mud-typography-h5-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-h5-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-h5-size: 1.5rem;",
                 "--mud-typography-h5-weight: 400;",
                 "--mud-typography-h5-lineheight: 1.334;",
                 "--mud-typography-h5-letterspacing: 0;",
                 "--mud-typography-h5-text-transform: none;",
-                "--mud-typography-h6-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-h6-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-h6-size: 1.25rem;",
                 "--mud-typography-h6-weight: 500;",
                 "--mud-typography-h6-lineheight: 1.6;",
                 "--mud-typography-h6-letterspacing: .0075em;",
                 "--mud-typography-h6-text-transform: none;",
-                "--mud-typography-subtitle1-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-subtitle1-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-subtitle1-size: 1rem;",
                 "--mud-typography-subtitle1-weight: 400;",
                 "--mud-typography-subtitle1-lineheight: 1.75;",
                 "--mud-typography-subtitle1-letterspacing: .00938em;",
                 "--mud-typography-subtitle1-text-transform: none;",
-                "--mud-typography-subtitle2-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-subtitle2-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-subtitle2-size: .875rem;",
                 "--mud-typography-subtitle2-weight: 500;",
                 "--mud-typography-subtitle2-lineheight: 1.57;",
                 "--mud-typography-subtitle2-letterspacing: .00714em;",
                 "--mud-typography-subtitle2-text-transform: none;",
-                "--mud-typography-body1-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-body1-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-body1-size: 1rem;",
                 "--mud-typography-body1-weight: 400;",
                 "--mud-typography-body1-lineheight: 1.5;",
                 "--mud-typography-body1-letterspacing: .00938em;",
                 "--mud-typography-body1-text-transform: none;",
-                "--mud-typography-body2-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-body2-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-body2-size: .875rem;",
                 "--mud-typography-body2-weight: 400;",
                 "--mud-typography-body2-lineheight: 1.43;",
                 "--mud-typography-body2-letterspacing: .01071em;",
                 "--mud-typography-body2-text-transform: none;",
-                "--mud-typography-button-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-input-family: 'Roboto','Helvetica','Arial','sans-serif';",
+                "--mud-typography-input-size: 1rem;",
+                "--mud-typography-input-weight: 400;",
+                "--mud-typography-input-lineheight: 1.1876;",
+                "--mud-typography-input-letterspacing: .00938em;",
+                "--mud-typography-input-text-transform: none;",
+                "--mud-typography-button-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-button-size: .875rem;",
                 "--mud-typography-button-weight: 500;",
                 "--mud-typography-button-lineheight: 1.75;",
                 "--mud-typography-button-letterspacing: .02857em;",
                 "--mud-typography-button-text-transform: uppercase;",
-                "--mud-typography-caption-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-caption-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-caption-size: .75rem;",
                 "--mud-typography-caption-weight: 400;",
                 "--mud-typography-caption-lineheight: 1.66;",
                 "--mud-typography-caption-letterspacing: .03333em;",
                 "--mud-typography-caption-text-transform: none;",
-                "--mud-typography-overline-family: Roboto, Helvetica, Arial, sans-serif;",
+                "--mud-typography-overline-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-overline-size: .75rem;",
                 "--mud-typography-overline-weight: 400;",
                 "--mud-typography-overline-lineheight: 2.66;",
@@ -249,7 +246,6 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-zindex-popover: 1200;",
                 "--mud-zindex-snackbar: 1500;",
                 "--mud-zindex-tooltip: 1600;",
-                "--mud-native-html-color-scheme: light;",
                 "}"
             };
 
@@ -259,16 +255,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void IsDarkMode()
+        public void DarkMode_Test()
         {
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
+            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
             comp.Should().NotBeNull();
             comp.Instance.GetState(x => x.IsDarkMode).Should().BeTrue();
         }
 
         [Test]
-        public void CustomThemeDarkMode()
+        public void CustomThemeDarkModeTest()
         {
             var myCustomTheme = new MudTheme
             {
@@ -285,7 +281,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDarkModePrimaryDerivateColor()
+        public void CustomThemeDarkModePrimaryDerivateColorTest()
         {
             // ensure it is backwards compatible by setting Palette() instead of PaletteDark()
             var myCustomTheme = new MudTheme()
@@ -302,7 +298,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void CustomThemeDefault()
+        public void CustomThemeDefaultTest()
         {
             var defaultTheme = new MudTheme();
 
@@ -321,7 +317,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task WatchSystemDarkMode()
+        public async Task WatchSystemTest()
         {
             var systemMockValue = false;
             Task SystemChangedResult(bool newValue)
@@ -329,9 +325,9 @@ namespace MudBlazor.UnitTests.Components
                 systemMockValue = newValue;
                 return Task.CompletedTask;
             }
-            var comp = Context.Render<MudThemeProvider>();
-            await comp.Instance.WatchSystemDarkModeAsync(SystemChangedResult);
-            await comp.Instance.SystemDarkModeChangedAsync(true);
+            var comp = Context.RenderComponent<MudThemeProvider>();
+            await comp.Instance.WatchSystemPreference(SystemChangedResult);
+            await comp.Instance.SystemPreferenceChanged(true);
             systemMockValue.Should().BeTrue();
         }
 
@@ -341,7 +337,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("host")]
         [TestCase(":root")]
         [TestCase(":host")]
-        public void PseudoCssScope(string scope)
+        public void PseudoCssScope_Test(string scope)
         {
             var mudTheme = new MudTheme
             {
@@ -350,7 +346,7 @@ namespace MudBlazor.UnitTests.Components
                     Scope = scope
                 }
             };
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters.Add(p => p.Theme, mudTheme));
+            var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters.Add(p => p.Theme, mudTheme));
             comp.Should().NotBeNull();
 
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
@@ -360,20 +356,14 @@ namespace MudBlazor.UnitTests.Components
             var styleLines = rootStyleNode.InnerHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
             if (string.IsNullOrEmpty(scope))
-            {
                 scope = ":root";
-            }
-
             if (!scope.StartsWith(':'))
-            {
                 scope = $":{scope}";
-            }
-
             styleLines.Should().Contain($"{scope}{{");
         }
 
         [Test]
-        public void PseudoCssRootColor()
+        public void PseudoCssRootColor_Test()
         {
             const string Scope = ":root";
             var mudTheme = new MudTheme
@@ -387,7 +377,7 @@ namespace MudBlazor.UnitTests.Components
                     Scope = Scope
                 }
             };
-            var comp = Context.Render<MudThemeProvider>(
+            var comp = Context.RenderComponent<MudThemeProvider>(
                 parameters =>
                     parameters.Add(p => p.Theme, mudTheme)
                         .Add(p => p.IsDarkMode, true)
@@ -413,297 +403,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ObserveSystemDarkModeChange()
-        {
-            // Arrange & Act
-            Context.JSInterop.SetupVoid("mudThemeProvider.stopWatchingDarkMode");
-            Context.JSInterop.SetupVoid("mudThemeProvider.watchDarkMode");
-            var themeProvider = Context.Render<ThemeProviderObserveSystemDarkModeChangeTest>();
-
-            // Assert
-            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.watchDarkMode");
-            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.stopWatchingDarkMode");
-
-            // Act
-            await themeProvider.InvokeAsync(themeProvider.Instance.EnableObserve);
-
-            // Assert
-            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode", 1);
-            Context.JSInterop.VerifyNotInvoke("mudThemeProvider.stopWatchingDarkMode");
-
-            // Act
-            await themeProvider.InvokeAsync(themeProvider.Instance.DisableObserve);
-
-            // Assert
-            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode", 1);
-            Context.JSInterop.VerifyInvoke("mudThemeProvider.stopWatchingDarkMode", 1);
-        }
-
-        [Test]
-        public async Task Dispose_ShouldInvokeJs()
+        public void Dispose_ShouldInvokeJs()
         {
             // Arrange
-            Context.JSInterop.SetupVoid("mudThemeProvider.stopWatchingDarkMode");
-            Context.Render<MudThemeProvider>();
+            Context.JSInterop.SetupVoid("stopWatchingDarkThemeMedia");
+            Context.RenderComponent<MudThemeProvider>();
 
             //Act
-            await Context.DisposeComponentsAsync();
+            Context.DisposeComponents();
 
             // Assert
-            Context.JSInterop.VerifyInvoke("mudThemeProvider.stopWatchingDarkMode");
+            Context.JSInterop.VerifyInvoke("stopWatchingDarkThemeMedia");
         }
 
         [Test]
         public void RenderComponent_ShouldInvokeJs()
         {
             // Act & Arrange
-            Context.JSInterop.SetupVoid("mudThemeProvider.watchDarkMode");
-            Context.Render<MudThemeProvider>();
+            Context.JSInterop.SetupVoid("watchDarkThemeMedia");
+            Context.RenderComponent<MudThemeProvider>();
 
             // Assert
-            Context.JSInterop.VerifyInvoke("mudThemeProvider.watchDarkMode");
-        }
-
-        [Test]
-        public void ThemeProvider_ShouldHave_ClassName()
-        {
-            const string Scope = ":root";
-            var mudTheme = new MudTheme
-            {
-                PaletteDark = new PaletteDark
-                {
-                    Primary = Colors.Green.Darken1,
-                },
-                PseudoCss = new PseudoCss
-                {
-                    Scope = Scope
-                }
-            };
-            var comp = Context.Render<MudThemeProvider>(
-                parameters =>
-                    parameters.Add(p => p.Theme, mudTheme)
-                        .Add(p => p.IsDarkMode, true)
-            );
-            comp.Should().NotBeNull();
-
-            var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
-
-            var rootStyleNode = styleNodes[2];
-            rootStyleNode.ClassName.Should().Be("mud-theme-provider");
-        }
-
-        [Test]
-        public void CurrentPalette_ShouldBeLight_WhenNotInDarkMode()
-        {
-            // Arrange & Act
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.IsDarkMode, false));
-
-            // Assert
-            comp.Instance.GetState(x => x.CurrentPalette).Should().NotBeNull();
-            comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteLight>();
-        }
-
-        [Test]
-        public void CurrentPalette_ShouldBeDark_WhenInDarkMode()
-        {
-            // Arrange & Act
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.IsDarkMode, true));
-
-            // Assert
-            comp.Instance.GetState(x => x.CurrentPalette).Should().NotBeNull();
-            comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteDark>();
-        }
-
-        [Test]
-        public async Task CurrentPalette_ShouldUpdateToLight_WhenDarkModeChangesToFalse()
-        {
-            // Arrange
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.IsDarkMode, true));
-
-            // Verify initial state
-            comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteDark>();
-
-            // Act
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.IsDarkMode, false));
-
-            // Assert
-            comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteLight>();
-        }
-
-        [Test]
-        public async Task CurrentPalette_ShouldUpdateToDark_WhenDarkModeChangesToTrue()
-        {
-            // Arrange
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.IsDarkMode, false));
-
-            // Verify initial state
-            comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteLight>();
-
-            // Act
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.IsDarkMode, true));
-
-            // Assert
-            comp.Instance.GetState(x => x.CurrentPalette).Should().BeOfType<PaletteDark>();
-        }
-
-        [Test]
-        public void CurrentPalette_ShouldUseCustomTheme_WhenProvided()
-        {
-            // Arrange
-            var customTheme = new MudTheme
-            {
-                PaletteLight = new PaletteLight
-                {
-                    Primary = Colors.Green.Default
-                }
-            };
-
-            // Act
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.Theme, customTheme)
-                .Add(p => p.IsDarkMode, false));
-
-            // Assert
-            var currentPalette = comp.Instance.GetState(x => x.CurrentPalette);
-            currentPalette.Should().NotBeNull();
-            currentPalette!.Primary.Should().Be(new MudColor(Colors.Green.Default));
-        }
-
-        [Test]
-        public async Task CurrentPaletteChanged_ShouldFire_WhenDarkModeChanges()
-        {
-            // Arrange
-            Palette? capturedPalette = null;
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.IsDarkMode, false)
-                .Add(p => p.CurrentPaletteChanged, EventCallback.Factory.Create<Palette?>(this, palette => capturedPalette = palette)));
-
-            // Act
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.IsDarkMode, true));
-
-            // Assert
-            capturedPalette.Should().NotBeNull();
-            capturedPalette.Should().BeOfType<PaletteDark>();
-        }
-
-        [Test]
-        public async Task CurrentPalette_ShouldUpdate_WhenThemeChanges()
-        {
-            // Arrange
-            var theme1 = new MudTheme
-            {
-                PaletteLight = new PaletteLight
-                {
-                    Primary = Colors.Blue.Default
-                }
-            };
-
-            var theme2 = new MudTheme
-            {
-                PaletteLight = new PaletteLight
-                {
-                    Primary = Colors.Red.Default
-                }
-            };
-
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.Theme, theme1)
-                .Add(p => p.IsDarkMode, false));
-
-            // Verify initial state
-            comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Blue.Default));
-
-            // Act
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.Theme, theme2));
-
-            // Assert
-            comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Red.Default));
-        }
-
-        [Test]
-        public async Task CurrentPalette_ShouldReflectBothDarkModeAndThemeChanges()
-        {
-            // Arrange
-            var customTheme = new MudTheme
-            {
-                PaletteLight = new PaletteLight
-                {
-                    Primary = Colors.Blue.Default
-                },
-                PaletteDark = new PaletteDark
-                {
-                    Primary = Colors.Green.Default
-                }
-            };
-
-            var comp = Context.Render<MudThemeProvider>(parameters => parameters
-                .Add(p => p.Theme, customTheme)
-                .Add(p => p.IsDarkMode, false));
-
-            // Verify light mode
-            comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Blue.Default));
-
-            // Act - switch to dark mode
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.IsDarkMode, true));
-
-            // Assert - should use dark palette
-            comp.Instance.GetState(x => x.CurrentPalette)!.Primary.Should().Be(new MudColor(Colors.Green.Default));
-        }
-
-        [Test]
-        public async Task CurrentPalette_Binding_ShouldWorkInTestComponent()
-        {
-            // Arrange
-            var comp = Context.Render<ThemeProviderCurrentPaletteTest>();
-
-            // Initial state - light mode
-            comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
-
-            // Act - toggle to dark mode
-            await comp.InvokeAsync(() => comp.Find("button").Click());
-
-            // Assert - should be dark palette
-            comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteDark>();
-
-            // Act - toggle back to light mode
-            await comp.InvokeAsync(() => comp.Find("button").Click());
-
-            // Assert - should be light palette again
-            comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
-        }
-
-        [Test]
-        public void FirstRender_WithoutScript_LogsGuidance()
-        {
-            // window.mudElementRef missing means MudBlazor.min.js never loaded; interop degrades silently, so surface the one actionable hint.
-            var loggerMock = new Mock<ILogger<MudThemeProvider>>();
-            Context.Services.AddSingleton(loggerMock.Object);
-            Context.JSInterop.Setup<bool>("window.hasOwnProperty", "mudElementRef").SetResult(false);
-
-            Context.Render<MudThemeProvider>();
-
-            loggerMock.VerifyLogging(MudThemeProvider.MissingScriptMessage, LogLevel.Error, Times.Once());
-        }
-
-        [Test]
-        public void FirstRender_WithScript_DoesNotLog()
-        {
-            var loggerMock = new Mock<ILogger<MudThemeProvider>>();
-            Context.Services.AddSingleton(loggerMock.Object);
-            Context.JSInterop.Setup<bool>("window.hasOwnProperty", "mudElementRef").SetResult(true);
-
-            Context.Render<MudThemeProvider>();
-
-            loggerMock.VerifyLogging(MudThemeProvider.MissingScriptMessage, LogLevel.Error, Times.Never());
+            Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
         }
     }
 }

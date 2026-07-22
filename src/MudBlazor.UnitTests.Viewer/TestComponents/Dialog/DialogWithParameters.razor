@@ -1,4 +1,7 @@
-﻿<MudDialog>
+﻿@using MudBlazor.Interfaces
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDialog>
     <DialogContent>
         <MudInput @bind-Value="TestValue" />
     </DialogContent>
@@ -10,10 +13,10 @@
 
 @code {
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; } = null!;
+    private MudDialogInstance MudDialog { get; set; }
 
     [Parameter]
-    public string? TestValue { get; set; }
+    public string TestValue { get; set; }
 
     [Parameter]
     public Color ColorTest { get; set; }
@@ -28,7 +31,7 @@
 
     private void OnTest()
     {
-        MudDialog.StateHasChanged();
+        ((IMudStateHasChanged)MudDialog).StateHasChanged();
         StateHasChanged();
     }
 }

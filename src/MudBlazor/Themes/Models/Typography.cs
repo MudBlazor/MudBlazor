@@ -1,411 +1,376 @@
-﻿using System.Text.Json.Serialization;
-
-namespace MudBlazor
+﻿namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Typography settings for <see cref="Typo"/> types used throughout the theme.
+    /// Represents the typography settings for different components.
     /// </summary>
     public class Typography
     {
         /// <summary>
-        /// The typography settings for the default typo.
+        /// Gets or sets the default typography settings.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="DefaultTypography"/> constructor.
-        /// </remarks>
-        public BaseTypography Default { get; set; } = new DefaultTypography();
+        public Default Default { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.h1"/>.
+        /// Gets or sets the typography settings for H1.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="H1Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography H1 { get; set; } = new H1Typography();
+        public H1 H1 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.h2"/>.
+        /// Gets or sets the typography settings for H2.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="H2Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography H2 { get; set; } = new H2Typography();
+        public H2 H2 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.h3"/>.
+        /// Gets or sets the typography settings for H3.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="H3Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography H3 { get; set; } = new H3Typography();
+        public H3 H3 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.h4"/>.
+        /// Gets or sets the typography settings for H4.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="H4Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography H4 { get; set; } = new H4Typography();
+        public H4 H4 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.h5"/>.
+        /// Gets or sets the typography settings for H5.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="H5Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography H5 { get; set; } = new H5Typography();
+        public H5 H5 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.h6"/>.
+        /// Gets or sets the typography settings for H6.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="H6Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography H6 { get; set; } = new H6Typography();
+        public H6 H6 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.subtitle1"/>.
+        /// Gets or sets the typography settings for H7.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="Subtitle1Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography Subtitle1 { get; set; } = new Subtitle1Typography();
+        public Subtitle1 Subtitle1 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.subtitle2"/>.
+        /// Gets or sets the typography settings for H8.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="Subtitle2Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography Subtitle2 { get; set; } = new Subtitle2Typography();
+        public Subtitle2 Subtitle2 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.body1"/>.
+        /// Gets or sets the typography settings for H9.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="Body1Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography Body1 { get; set; } = new Body1Typography();
+        public Body1 Body1 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.body2"/>.
+        /// Gets or sets the typography settings for Body2.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="Body2Typography"/> constructor.
-        /// </remarks>
-        public BaseTypography Body2 { get; set; } = new Body2Typography();
+        public Body2 Body2 { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.button"/>.
+        /// Gets or sets the typography settings for Input.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="ButtonTypography"/> constructor.
-        /// </remarks>
-        public BaseTypography Button { get; set; } = new ButtonTypography();
+        public Input Input { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.caption"/>.
+        /// Gets or sets the typography settings for Button.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="CaptionTypography"/> constructor.
-        /// </remarks>
-        public BaseTypography Caption { get; set; } = new CaptionTypography();
+        public Button Button { get; set; } = new();
 
         /// <summary>
-        /// The typography settings for <see cref="Typo.overline"/>.
+        /// Gets or sets the typography settings for Caption.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the values from the <see cref="OverlineTypography"/> constructor.
-        /// </remarks>
-        public BaseTypography Overline { get; set; } = new OverlineTypography();
+        public Caption Caption { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the typography settings for Overline.
+        /// </summary>
+        public Overline Overline { get; set; } = new();
     }
 
     /// <summary>
-    /// Default font settings applied to text without a specific <see cref="Typo"/> style.
+    /// Represents the default typography settings.
     /// </summary>
-    public class DefaultTypography : BaseTypography
+    public class Default : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="DefaultTypography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Default"/> class with default values.
         /// </summary>
-        public DefaultTypography()
+        public Default()
         {
-            FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"];
+            FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" };
             FontSize = ".875rem";
-            FontWeight = "400";
-            LineHeight = "1.43";
+            FontWeight = 400;
+            LineHeight = 1.43;
             LetterSpacing = ".01071em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.h1"/> headings.
+    /// Represents the H1 typography settings.
     /// </summary>
-    public class H1Typography : BaseTypography
+    public class H1 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="H1Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="H1"/> class with default values.
         /// </summary>
-        public H1Typography()
+        public H1()
         {
             FontSize = "6rem";
-            FontWeight = "300";
-            LineHeight = "1.167";
+            FontWeight = 300;
+            LineHeight = 1.167;
             LetterSpacing = "-.01562em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.h2"/> headings.
+    /// Represents the H2 typography settings.
     /// </summary>
-    public class H2Typography : BaseTypography
+    public class H2 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="H2Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="H2"/> class with default values.
         /// </summary>
-        public H2Typography()
+        public H2()
         {
             FontSize = "3.75rem";
-            FontWeight = "300";
-            LineHeight = "1.2";
+            FontWeight = 300;
+            LineHeight = 1.2;
             LetterSpacing = "-.00833em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.h3"/> headings.
+    /// Represents the H3 typography settings.
     /// </summary>
-    public class H3Typography : BaseTypography
+    public class H3 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="H3Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="H3"/> class with default values.
         /// </summary>
-        public H3Typography()
+        public H3()
         {
             FontSize = "3rem";
-            FontWeight = "400";
-            LineHeight = "1.167";
+            FontWeight = 400;
+            LineHeight = 1.167;
             LetterSpacing = "0";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.h4"/> headings.
+    /// Represents the H4 typography settings.
     /// </summary>
-    public class H4Typography : BaseTypography
+    public class H4 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="H4Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="H4"/> class with default values.
         /// </summary>
-        public H4Typography()
+        public H4()
         {
             FontSize = "2.125rem";
-            FontWeight = "400";
-            LineHeight = "1.235";
+            FontWeight = 400;
+            LineHeight = 1.235;
             LetterSpacing = ".00735em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.h5"/> headings.
+    /// Represents the H5 typography settings.
     /// </summary>
-    public class H5Typography : BaseTypography
+    public class H5 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="H5Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="H5"/> class with default values.
         /// </summary>
-        public H5Typography()
+        public H5()
         {
             FontSize = "1.5rem";
-            FontWeight = "400";
-            LineHeight = "1.334";
+            FontWeight = 400;
+            LineHeight = 1.334;
             LetterSpacing = "0";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.h6"/> headings.
+    /// Represents the H6 typography settings.
     /// </summary>
-    public class H6Typography : BaseTypography
+    public class H6 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="H6Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="H6"/> class with default values.
         /// </summary>
-        public H6Typography()
+        public H6()
         {
             FontSize = "1.25rem";
-            FontWeight = "500";
-            LineHeight = "1.6";
+            FontWeight = 500;
+            LineHeight = 1.6;
             LetterSpacing = ".0075em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.subtitle1"/> text.
+    /// Represents the Subtitle1 typography settings.
     /// </summary>
-    public class Subtitle1Typography : BaseTypography
+    public class Subtitle1 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="Subtitle1Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Subtitle1"/> class with default values.
         /// </summary>
-        public Subtitle1Typography()
+        public Subtitle1()
         {
             FontSize = "1rem";
-            FontWeight = "400";
-            LineHeight = "1.75";
+            FontWeight = 400;
+            LineHeight = 1.75;
             LetterSpacing = ".00938em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.subtitle2"/> text.
+    /// Represents the Subtitle2 typography settings.
     /// </summary>
-    public class Subtitle2Typography : BaseTypography
+    public class Subtitle2 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="Subtitle2Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Subtitle2"/> class with default values.
         /// </summary>
-        public Subtitle2Typography()
+        public Subtitle2()
         {
             FontSize = ".875rem";
-            FontWeight = "500";
-            LineHeight = "1.57";
+            FontWeight = 500;
+            LineHeight = 1.57;
             LetterSpacing = ".00714em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.body1"/> body text.
+    /// Represents the Body1 typography settings.
     /// </summary>
-    public class Body1Typography : BaseTypography
+    public class Body1 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="Body1Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Body1"/> class with default values.
         /// </summary>
-        public Body1Typography()
+        public Body1()
         {
             FontSize = "1rem";
-            FontWeight = "400";
-            LineHeight = "1.5";
+            FontWeight = 400;
+            LineHeight = 1.5;
             LetterSpacing = ".00938em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.body2"/> body text.
+    /// Represents the Body2 typography settings.
     /// </summary>
-    public class Body2Typography : BaseTypography
+    public class Body2 : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="Body2Typography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Body2"/> class with default values.
         /// </summary>
-        public Body2Typography()
+        public Body2()
         {
             FontSize = ".875rem";
-            FontWeight = "400";
-            LineHeight = "1.43";
+            FontWeight = 400;
+            LineHeight = 1.43;
             LetterSpacing = ".01071em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.button"/> text, rendered in uppercase.
+    /// Represents the Input typography settings.
     /// </summary>
-    public class ButtonTypography : BaseTypography
+    public class Input : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="ButtonTypography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Input"/> class with default values.
         /// </summary>
-        public ButtonTypography()
+        public Input()
+        {
+            FontSize = "1rem";
+            FontWeight = 400;
+            LineHeight = 1.1876;
+            LetterSpacing = ".00938em";
+        }
+    }
+
+    /// <summary>
+    /// Represents the Button typography settings.
+    /// </summary>
+    public class Button : BaseTypography
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Button"/> class with default values.
+        /// </summary>
+        public Button()
         {
             FontSize = ".875rem";
-            FontWeight = "500";
-            LineHeight = "1.75";
+            FontWeight = 500;
+            LineHeight = 1.75;
             LetterSpacing = ".02857em";
             TextTransform = "uppercase";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.caption"/> text.
+    /// Represents the Caption typography settings.
     /// </summary>
-    public class CaptionTypography : BaseTypography
+    public class Caption : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="CaptionTypography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Caption"/> class with default values.
         /// </summary>
-        public CaptionTypography()
+        public Caption()
         {
             FontSize = ".75rem";
-            FontWeight = "400";
-            LineHeight = "1.66";
+            FontWeight = 400;
+            LineHeight = 1.66;
             LetterSpacing = ".03333em";
         }
     }
 
     /// <summary>
-    /// Default font settings for <see cref="Typo.overline"/> text.
+    /// Represents the Overline typography settings.
     /// </summary>
-    public class OverlineTypography : BaseTypography
+    public class Overline : BaseTypography
     {
         /// <summary>
-        /// Initializes the <see cref="OverlineTypography"/> class with default values.
+        /// Initializes a new instance of the <see cref="Overline"/> class with default values.
         /// </summary>
-        public OverlineTypography()
+        public Overline()
         {
             FontSize = ".75rem";
-            FontWeight = "400";
-            LineHeight = "2.66";
+            FontWeight = 400;
+            LineHeight = 2.66;
             LetterSpacing = ".08333em";
         }
     }
 
     /// <summary>
-    /// Base class for MudBlazor typography presets, defining the font family, weight, size, line height, letter spacing, and text transform for a <see cref="Typo"/> style.
+    /// Represents the base typography settings.
     /// </summary>
-    [JsonDerivedType(typeof(DefaultTypography), nameof(DefaultTypography))]
-    [JsonDerivedType(typeof(H1Typography), nameof(H1Typography))]
-    [JsonDerivedType(typeof(H2Typography), nameof(H2Typography))]
-    [JsonDerivedType(typeof(H3Typography), nameof(H3Typography))]
-    [JsonDerivedType(typeof(H4Typography), nameof(H4Typography))]
-    [JsonDerivedType(typeof(H5Typography), nameof(H5Typography))]
-    [JsonDerivedType(typeof(H6Typography), nameof(H6Typography))]
-    [JsonDerivedType(typeof(Subtitle1Typography), nameof(Subtitle1Typography))]
-    [JsonDerivedType(typeof(Subtitle2Typography), nameof(Subtitle2Typography))]
-    [JsonDerivedType(typeof(Body1Typography), nameof(Body1Typography))]
-    [JsonDerivedType(typeof(Body2Typography), nameof(Body2Typography))]
-    [JsonDerivedType(typeof(ButtonTypography), nameof(ButtonTypography))]
-    [JsonDerivedType(typeof(CaptionTypography), nameof(CaptionTypography))]
-    [JsonDerivedType(typeof(OverlineTypography), nameof(OverlineTypography))]
-    public abstract class BaseTypography
+    public class BaseTypography
     {
         /// <summary>
-        /// The font family.
+        /// Gets or sets the font family.
         /// </summary>
         public string[]? FontFamily { get; set; }
 
         /// <summary>
-        /// The font weight.
+        /// Gets or sets the font weight.
         /// </summary>
-        public string? FontWeight { get; set; }
+        public int FontWeight { get; set; }
 
         /// <summary>
-        /// The font size.
+        /// Gets or sets the font size.
         /// </summary>
         public string? FontSize { get; set; }
 
         /// <summary>
-        /// The line height.
+        /// Gets or sets the line height.
         /// </summary>
-        public string? LineHeight { get; set; }
+        public double LineHeight { get; set; }
 
         /// <summary>
-        /// The letter spacing.
+        /// Gets or sets the letter spacing.
         /// </summary>
         public string? LetterSpacing { get; set; }
 
         /// <summary>
-        /// The text transformation.
+        /// Gets or sets the text transform.
         /// </summary>
         public string TextTransform { get; set; } = "none";
     }

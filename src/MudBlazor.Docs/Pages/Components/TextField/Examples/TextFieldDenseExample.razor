@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTextField @bind-Value="TextValue" Label="Standard" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Filled" Variant="Variant.Filled" Margin="Margin.Dense"></MudTextField>
+<MudTextField @bind-Value="TextValue" Label="Outlined" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+
+@code {
+    public string TextValue { get; set; }
+}

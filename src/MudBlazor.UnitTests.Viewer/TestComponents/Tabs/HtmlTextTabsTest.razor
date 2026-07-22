@@ -1,4 +1,6 @@
-﻿<MudTabs>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs @ref="Tabs">
     <MudTabPanel Text="Hello <span>World</span>!">
         <MudText>Content One with HTML panel text</MudText>
     </MudTabPanel>
@@ -6,3 +8,7 @@
         <MudText>Content Two without HTML panel text</MudText>
     </MudTabPanel>
 </MudTabs>
+
+@code {
+    public MudTabs Tabs;
+}

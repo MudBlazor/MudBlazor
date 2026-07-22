@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor.Docs.Services;
 
-[EnumExtensions]
 public enum NavigationSection
 {
     [Description("unspecified")]

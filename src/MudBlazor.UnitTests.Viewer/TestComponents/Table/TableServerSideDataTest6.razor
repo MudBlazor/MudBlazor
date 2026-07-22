@@ -1,4 +1,7 @@
-﻿<MudTable ServerData="ServerReload">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudTable ServerData="ServerReload">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -8,13 +11,14 @@
 </MudTable>
 
 @code {
+    #pragma warning disable CS1998 // async without await
     public static string __description__ = "The table should not crash when the TableData Items are null.";
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private static Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
-        return Task.FromResult(new TableData<int>());
+        return new TableData<int>();
     }
 }

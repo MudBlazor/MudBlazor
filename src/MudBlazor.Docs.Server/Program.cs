@@ -1,5 +1,4 @@
 ﻿using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
 
@@ -48,8 +47,6 @@ using (var scope = app.Services.CreateScope())
     {
         inMemoryService.Preload();
     }
-    // Warm up the documentation
-    ApiDocumentation.GetType("MudAlert");
 }
 
 app.Run();

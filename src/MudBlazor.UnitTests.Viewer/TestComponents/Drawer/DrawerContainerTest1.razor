@@ -1,16 +1,19 @@
-﻿<MudDrawerContainer>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDrawerContainer @ref="DrawerContainer">
     @if (_isShown)
     {
         <MudDrawer Open="true" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Always" Anchor="Anchor.Right"></MudDrawer>
     }
 </MudDrawerContainer>
-
-<button id="hide-drawer-button" @onclick="@HandleButtonClick">hide</button>
+<button @onclick="@HandleButtonClick" />
 
 @code {
-    private bool _isShown = true;
+    public MudDrawerContainer DrawerContainer;
 
-    private void HandleButtonClick()
+    public bool _isShown = true;
+
+    public void HandleButtonClick()
     {
         _isShown = false;
     }

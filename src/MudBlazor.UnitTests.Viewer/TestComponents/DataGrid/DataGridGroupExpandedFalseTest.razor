@@ -1,4 +1,6 @@
-﻿<MudDataGrid @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="true"
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid @ref="dataGrid" Items="@Fruits" Filterable="true" Hideable="true" Groupable="true"
              GroupExpanded="false">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
@@ -22,30 +24,33 @@
 </div>
 
 @code {
-    private MudDataGrid<Fruit> _dataGrid = null!;
-    private readonly List<Fruit> _fruits =
-    [
+    MudDataGrid<Fruit> dataGrid;
+    public record Fruit(string Name, int Count, string Category);
+
+    List<Fruit> Fruits { get; set; } = new()
+    {
         new Fruit("Apple", 2, "Pome"),
         new Fruit("Pear", 4, "Pome"),
         new Fruit("Orange", 4, "Citrus")
-    ];
+    };
     
-    private readonly Func<Fruit, object> _groupBy = x => x.Category;
+    Func<Fruit, object> _groupBy = x => 
+    {
+        return x.Category;
+    };
 
     public void AddFruit()
     {
-        _fruits.Add(new Fruit("Banana", 5, "Musa"));
+        Fruits.Add(new Fruit("Banana", 5, "Musa"));
     }
 
-    public Task ExpandAllGroups()
+    public void ExpandAllGroups()
     {
-        return _dataGrid.ExpandAllGroupsAsync();
+        dataGrid?.ExpandAllGroups();
     }
 
-    public Task CollapseAllGroups()
+    public void CollapseAllGroups()
     {
-        return _dataGrid.CollapseAllGroupsAsync();
+        dataGrid?.CollapseAllGroups();
     }
-
-    public record Fruit(string Name, int Count, string Category);
 }

@@ -1,4 +1,6 @@
-﻿<MudRadioGroup @bind-Value="@_option">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudRadioGroup @bind-Value="@option">
     <MudRadio Value="@("1")" />
     <MudRadio Value="@("2")" />
     <MudRadio Value="@("3")" />
@@ -7,5 +9,5 @@
 @code {
     public static string __description__ = "Radio 2 should be pre-selected.";
 
-    private string _option = "2";
+    string option = "2";
 }

@@ -1,24 +1,18 @@
-<MudPopoverProvider />
+@namespace MudBlazor.UnitTests.TestComponents
 
-<MudMenu @ref="Menu"
-         OpenChanged="@OnOpenChanged" />
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudMenu
+    @ref="Menu"
+    OpenChanged="@(o => _ = o ? TrueInvocationCount++ : FalseInvocationCount++)"/>
+
 
 @code {
-    public MudMenu Menu { get; private set; } = null!;
+
+    public MudMenu Menu { get; set; }
 
     public int FalseInvocationCount { get; private set; }
 
     public int TrueInvocationCount { get; private set; }
 
-    private void OnOpenChanged(bool open)
-    {
-        if (open)
-        {
-            TrueInvocationCount++;
-        }
-        else
-        {
-            FalseInvocationCount++;
-        }
-    }
 }

@@ -1,0 +1,55 @@
+﻿@*illegal parameter OffserX with value *@
+<MudAutocomplete T="string" OffsetX="5" />
+@*illegal parameter icon different case *@
+<MudFab icon="dd"></MudFab>
+@*illegal parameter Text no value *@
+<MudSlider T="int" Text/>
+
+@*inheritence with AvatarClass implemented *@
+<InheritedMudChip T="string" Text="Href set" Avatar="" AvatarClass="@bindx" />
+
+@*sub component invalid Parameter Image*@
+<MudContainer>
+    <MudAvatar Image="y" />
+</MudContainer>
+
+@*in code section parameter Minimum*@
+@{
+    <MudProgressLinear Minimum="0" />
+}
+
+@*in loop section parameter Dense *@
+@for (int i = 0; i < 5; i++)
+{
+    <MudToggleGroup T="string" Dense="true"  />
+}
+
+@*bind-ErrorText will create ErrorTextChanged event which is invalid*@
+<MudCheckBox Value="@bindx" @bind-ErrorText=@bindx />
+
+@*bind-Value will mean a TypeInference class in source generator*@
+<MudChip @bind-Value="@bindx" Text="Href set" @bind-Value:after="Test" AvatarClass="@bindx" />
+
+@*bind- case2*@
+<MudChip T="string" @bind="@bindx" Text="Href set" @bind:after="Test" />
+
+@*valid bind*@
+<MudTextField @bind-Value="@bindx" @bind-Value:after="Test" Label="Standard" Variant="Variant.Text"></MudTextField>
+
+@*attribute casing*@
+<MudProgressCircular lowerCase UpperCase />
+
+@*attribute dataandaria*@
+<MudRadio T="string" data-animation="a" aria-disabled="false" />
+
+@code
+{
+    public static string __description__ = "Invalid parameter Avatar on MudChip";
+
+    public string bindx = "y";
+
+    internal Task Test()
+    {
+        return Task.CompletedTask;
+    }
+}

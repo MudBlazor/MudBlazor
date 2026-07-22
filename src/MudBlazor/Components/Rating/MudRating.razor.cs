@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// Ratings provide insight regarding other's opinions and experiences with a product. Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.
-    /// </summary>
-    /// <seealso cref="MudRatingItem"/>
+#nullable enable
     public partial class MudRating : MudComponentBase
     {
         private readonly ParameterState<int> _selectedValueState;
@@ -24,177 +22,124 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The CSS classes applied to this component.
+        /// Space separated class names.
         /// </summary>
         protected string ClassName =>
             new CssBuilder("mud-rating-root")
                 .AddClass("mud-disabled", Disabled)
-                .AddClass("mud-readonly", ReadOnly)
                 .AddClass(Class)
                 .Build();
 
         /// <summary>
-        /// The CSS classes to apply to each <see cref="MudRatingItem"/>.
+        /// User class names for RatingItems, separated by space.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsClass { get; set; }
 
         /// <summary>
-        /// The CSS styles to apply to each <see cref="MudRatingItem"/>.
+        /// User styles for RatingItems.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Obsolete("Prefer the RatingItemsClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsStyle { get; set; }
 
         /// <summary>
-        /// The name of this input.
+        /// Input name. If not initialized, name will be a random GUID.
         /// </summary>
-        /// <remarks>
-        /// Defaults to a new <see cref="Guid"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public string Name { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// The number of <see cref="MudRatingItem"/> items to display.
+        /// Max value and how many elements to click will be generated. Default: 5.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>5</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public int MaxValue { get; set; } = 5;
 
         /// <summary>
-        /// The icon displayed for selected items.
+        /// Selected or hovered icon. Default @Icons.Material.Star.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.Star"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string FullIcon { get; set; } = Icons.Material.Filled.Star;
 
         /// <summary>
-        /// The icon displayed for unselected items.
+        /// Non-selected item icon. Default @Icons.Material.StarBorder.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.StarBorder"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string EmptyIcon { get; set; } = Icons.Material.Filled.StarBorder;
 
         /// <summary>
-        /// The color of the <see cref="FullIcon"/> for selected items.
+        /// Selected or hovered icon color.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color? FullIconColor { get; set; }
 
         /// <summary>
-        /// The color of the <see cref="EmptyIcon"/> for unselected items.
+        /// Non-selected item icon color.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color? EmptyIconColor { get; set; }
 
         /// <summary>
-        /// The color of each item.
+        /// The color of the component. It supports the theme colors.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of the <see cref="FullIcon"/> and <see cref="EmptyIcon"/> icons.
+        /// The size of the icons.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Shows a ripple effect when an item is clicked.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public bool Ripple { get; set; } = false;
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Prevents the user from interacting with this rating and shows a disabled color.
+        /// If true, the controls will be disabled.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents this rating from being changed.
+        /// If true, the ratings will show without interactions.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Occurs when <see cref="SelectedValue"/> has changed.
+        /// Fires when SelectedValue changes.
         /// </summary>
         [Parameter]
         public EventCallback<int> SelectedValueChanged { get; set; }
 
         /// <summary>
-        /// The currently selected value.
+        /// Selected value. This property is two-way bindable.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>0</c>.  Must be equal or less than <see cref="MaxValue"/>.
-        /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter]
         [Category(CategoryTypes.Rating.Data)]
         public int SelectedValue { get; set; } = 0;
 
         /// <summary>
-        /// Occurs when <see cref="HoveredValue"/> has changed.
+        /// Fires when hovered value changes. Value will be null if no rating item is hovered.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         public EventCallback<int?> HoveredValueChanged { get; set; }
 
-        /// <summary>
-        /// The value the user is hovering over.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  When the value is selected, <see cref="SelectedValue"/> will change.
-        /// </remarks>
         internal int? HoveredValue => _hoveredValue;
 
         internal Task SetHoveredValueAsync(int? hoveredValue)
@@ -220,15 +165,7 @@ namespace MudBlazor
             }
         }
 
-        internal Task HandleItemHoveredAsync(int? itemValue)
-        {
-            if (ReadOnly || Disabled)
-            {
-                return Task.CompletedTask;
-            }
-
-            return SetHoveredValueAsync(itemValue);
-        }
+        internal Task HandleItemHoveredAsync(int? itemValue) => SetHoveredValueAsync(itemValue);
 
         private async Task IncreaseValueAsync(int val)
         {
@@ -239,14 +176,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Occurs when a key is pressed.
-        /// </summary>
-        /// <param name="keyboardEventArgs">The pressed key information.</param>
-        /// <remarks>
-        /// Has no effect if <see cref="Disabled"/> or <see cref="ReadOnly"/> is <c>true</c>.  
-        /// The supported keyboard keys are: <c>ArrowRight</c> (increase value) and <c>ArrowLeft</c> (decrease value).
-        /// </remarks>
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
             if (Disabled || ReadOnly)

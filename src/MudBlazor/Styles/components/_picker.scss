@@ -15,10 +15,6 @@
       margin-inline-start: 8px;
       margin-inline-end: unset;
     }
-
-    &:empty {
-      display: none;
-    }
   }
 }
 
@@ -91,6 +87,7 @@
 
 .mud-picker-view {
   display: none;
+  margin-top: 20px;
 
   &.mud-picker-open {
     display: block;
@@ -99,13 +96,13 @@
 
 .mud-picker-content {
   display: flex;
+  //max-width: 325px;
   max-width: 100%;
   min-width: 310px;
   min-height: 305px;
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
-  cursor: default;
 
   &.mud-picker-content-landscape {
     padding: 0 8px;

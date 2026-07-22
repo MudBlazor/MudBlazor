@@ -1,4 +1,6 @@
-﻿<MudTable T="Element" MultiSelection Comparer="Comparer">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable T="Element" MultiSelection Comparer="Comparer">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -10,24 +12,19 @@
 @code {
     public static string __description__ = "setting a comparer should be reflected in all layers of the table.";
 
-    public ElementComparer? Comparer;
+    public ElementComparer Comparer = null;
 
-    public void SetComparer()
-    {
-        Comparer = new ElementComparer();
-        StateHasChanged();
-    }
+    public void SetComparer() { Comparer = new(); StateHasChanged(); }
 
     public class ElementComparer : IEqualityComparer<Element>
     {
-        public bool Equals(Element? a, Element? b) => a?.Id == b?.Id;
+        public bool Equals(Element a, Element b) => a?.Id == b?.Id;
         public int GetHashCode(Element x) => HashCode.Combine(x?.Id);
     }
 
     public record Element
     {
-        public string? Id { get; set; }
-
-        public string? Value { get; set; }
+        public string Id { get; set; }
+        public string Value { get; set; }
     }
 }

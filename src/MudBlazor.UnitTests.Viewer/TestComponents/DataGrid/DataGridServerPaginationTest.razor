@@ -1,4 +1,6 @@
-﻿<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, CancellationToken, Task<GridData<Model>>>(ServerReload))">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid T="Model" ServerData="@(new Func<GridState<Model>, Task<GridData<Model>>>(ServerReload))">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -11,12 +13,12 @@
 
 @code {
     public record Model (string Name, int Age, Severity Status);
-    private readonly int _totalItems = 100;
-    private IEnumerable<Model> _data = [];
+    private int _totalItems = 100;
+    IEnumerable<Model> _data;
 
     protected override void OnInitialized()
     {
-        var data = new List<Model>();
+        List<Model> data = new List<Model>();
 
         // populate the data
         for (var i = 0; i < 100; i++)
@@ -27,11 +29,12 @@
         _data = data;
     }
 
-    private async Task<GridData<Model>> ServerReload(GridState<Model> state, CancellationToken token)
+    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
     {
         var data = _data.OrderBySortDefinitions(state);
         data = data.Skip(state.Page * state.PageSize).Take(state.PageSize);
 
-        return await Task.FromResult(new GridData<Model> { TotalItems = _totalItems, Items = data });
+        return await Task.FromResult(new GridData<Model>() { TotalItems = _totalItems, Items = data });
     }
+
 }

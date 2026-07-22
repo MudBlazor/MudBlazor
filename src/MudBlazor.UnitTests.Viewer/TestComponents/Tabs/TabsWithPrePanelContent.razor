@@ -1,4 +1,6 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudTabs @bind-ActivePanelIndex="SelectedIndex" Class="">
 	<ChildContent>
@@ -14,7 +16,10 @@
 	</PrePanelContent>
 </MudTabs>
 
+
 @code {
+
 	[Parameter]
-	public int SelectedIndex { get; set; }
+	public Int32 SelectedIndex { get; set; } = 0;
+
 }

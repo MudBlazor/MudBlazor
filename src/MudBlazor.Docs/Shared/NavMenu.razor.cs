@@ -23,17 +23,8 @@ namespace MudBlazor.Docs.Shared
 
         public void Refresh()
         {
-            var section = NavMan.GetSection();
-            var componentLink = NavMan.GetComponentLink();
-
-            // The menu only depends on the active section (which group is expanded), so skip re-rendering when nothing changed.
-            if (section == _section && componentLink == _componentLink)
-            {
-                return;
-            }
-
-            _section = section;
-            _componentLink = componentLink;
+            _section = NavMan.GetSection();
+            _componentLink = NavMan.GetComponentLink();
             StateHasChanged();
         }
     }

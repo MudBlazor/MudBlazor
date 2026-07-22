@@ -1,6 +1,9 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
 
-<MudAutocomplete @bind-Value="_value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("o") == true)" Label="DisabledItemsTest" MaxItems="25">
+<MudPopoverProvider></MudPopoverProvider>
+
+<MudAutocomplete @bind-Value="value" SearchFunc="@Search" ItemDisabledFunc="@(s => s?.ToLower().Contains("o") == true)" Label="DisabledItemsTest" MaxItems="25">
     <ItemTemplate>
         @context
     </ItemTemplate>
@@ -14,9 +17,9 @@
 {
     public static string __description__ = "The Autocomplete should show states containing 'o' as disabled. They should not be selectable.";
 
-    private string? _value = null;
+    string value = null;
 
-    private readonly string[] _states =
+    private string[] states =
     {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -34,10 +37,9 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private Task<IEnumerable<string?>> Search(string value, CancellationToken token)
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
-        var result = string.IsNullOrEmpty(value) ? _states : _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-
-        return Task.FromResult<IEnumerable<string?>>(result);
+        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult(result);
     }
 }

@@ -8,37 +8,18 @@
         <div class="@Classname">
             @if (Adornment == Adornment.Start)
             {
-                <MudInputAdornment Class="@AdornmentClassname"
-                                   Icon="@AdornmentIcon"
-                                   Color="@AdornmentColor"
-                                   Size="@IconSize"
-                                   Text="@AdornmentText"
-                                   Placement="@Adornment.Start"
-                                   AriaLabel="@AdornmentAriaLabel"
-                                   AdornmentClick="@OnAdornmentClick" />
+                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" Color="@AdornmentColor" />
             }
             <div class="@InnerClassname">
                 @ChildContent
             </div>
             @if (Adornment == Adornment.End)
             {
-                <MudInputAdornment Class="@AdornmentClassname"
-                                   Icon="@AdornmentIcon"
-                                   Color="@AdornmentColor"
-                                   Size="@IconSize"
-                                   Text="@AdornmentText"
-                                   Placement="@Adornment.End"
-                                   AriaLabel="@AdornmentAriaLabel"
-                                   AdornmentClick="@OnAdornmentClick" />
+                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick"  Color="@AdornmentColor" />
             }
             @if (Variant == Variant.Outlined)
             {
-                <fieldset class="mud-input-outlined-border">
-                    @if(!string.IsNullOrEmpty(Label))
-                    {
-                        <legend>@Label</legend>
-                    }
-                </fieldset>
+                <div class="mud-input-outlined-border"></div>
             }
         </div>
     </InputContent>

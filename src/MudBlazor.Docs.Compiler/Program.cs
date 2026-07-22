@@ -1,20 +1,23 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
-namespace MudBlazor.Docs.Compiler;
-
-public class Program
+namespace MudBlazor.Docs.Compiler
 {
-    public static int Main(string[] args)
+    public class Program
     {
-        var stopWatch = Stopwatch.StartNew();
-        // Optional arg 0: path to MudBlazor's reference assembly (stable unless the public API changes).
-        var referenceAssemblyPath = args.Length > 0 ? args[0] : null;
-        var success =
-            new CodeSnippets().Execute()
-            && new ApiDocumentationBuilder { ReferenceAssemblyPath = referenceAssemblyPath }.Execute()
-            && new ExamplesMarkup().Execute();
+        public static int Main()
+        {
+            var stopWatch = Stopwatch.StartNew();
+            var success =
+                new CodeSnippets().Execute()
+                && new ApiDocumentationBuilder().Execute()
+                && new ExamplesMarkup().Execute()
+                && new TestsForExamples().Execute()
+                && new TestsForApiPages().Execute();
 
-        Console.WriteLine(@$"Docs.Compiler completed in {stopWatch.ElapsedMilliseconds} milliseconds.");
-        return success ? 0 : 1;
+            Console.WriteLine($"Docs.Compiler completed in {stopWatch.ElapsedMilliseconds} msecs");
+            return success ? 0 : 1;
+        }
     }
 }

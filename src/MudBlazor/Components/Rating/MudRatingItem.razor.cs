@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -9,107 +10,71 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// A clickable item as part of a <see cref="MudRating"/>.
-    /// </summary>
-    /// <seealso cref="MudRating"/>
+#nullable enable
     public partial class MudRatingItem : MudComponentBase
     {
         /// <summary>
-        /// The CSS classes applied to this component.
+        /// Space separated class names.
         /// </summary>
         protected string ClassName =>
             new CssBuilder("mud-rating-item")
-                .AddClass("mud-ripple", Ripple && !ReadOnly)
-                .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default)
-                .AddClass("mud-rating-item-active", Active)
-                .AddClass("mud-disabled", Disabled)
-                .AddClass("mud-readonly", ReadOnly)
+                .AddClass($"mud-ripple mud-ripple-icon", Ripple)
+                .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
+                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
+                .AddClass($"mud-rating-item-active", Active)
+                .AddClass($"mud-disabled", Disabled)
+                .AddClass($"mud-readonly", ReadOnly)
                 .AddClass(Class)
                 .Build();
 
-        /// <summary>
-        /// The parent <see cref="MudRating"/> containing this item.
-        /// </summary>
         [CascadingParameter]
         private MudRating? Rating { get; set; }
 
         /// <summary>
-        /// The value for this item.
+        /// This rating item value.
         /// </summary>
-        /// <remarks>
-        /// Defaults to the index of this item in the parent <see cref="MudRating"/>.  (e.g. The 3rd item has a value of <c>3</c>.)
-        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Rating.Data)]
         public int ItemValue { get; set; }
 
         /// <summary>
-        /// The size of this item.
+        /// The size of the icon.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.  When used within a <see cref="MudRating"/>, the value of <see cref="MudRating.Size"/> is applied instead.
-        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Rating.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of this item.
+        /// The color of the component. It supports the theme colors.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  When used within a <see cref="MudRating"/>, the value of <see cref="MudRating.Color"/> is applied instead.
-        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Rating.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Show a ripple effect when the user clicks the button.
+        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  When used within a <see cref="MudRating"/>, the value of <see cref="MudRating.Ripple"/> is applied instead.
-        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Rating.Appearance)]
-        public bool Ripple { get; set; } = false;
+        public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Prevents the user from interacting with this item, and uses a disabled style.
+        /// If true, the controls will be disabled.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Rating.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents this item from being changed.
+        /// If true, the item will be readonly.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Rating.Behavior)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Occurs when this item is clicked.
+        /// Fires when element clicked.
         /// </summary>
-        /// <remarks>
-        /// When clicked, the <see cref="MudRating.SelectedValue"/> is changed.
-        /// </remarks>
         [Parameter]
         public EventCallback<int> ItemClicked { get; set; }
 
         /// <summary>
-        /// Occurs when the user hovers over this item.
+        /// Fires when element hovered.
         /// </summary>
-        /// <remarks>
-        /// When hovered, the <see cref="MudRating.HoveredValue"/> is changed.
-        /// </remarks>
         [Parameter]
         public EventCallback<int?> ItemHovered { get; set; }
 
@@ -196,7 +161,7 @@ namespace MudBlazor
         // rating item lose hover
         internal Task HandlePointerOutAsync(PointerEventArgs e)
         {
-            if (Disabled || ReadOnly || Rating is null)
+            if (Disabled || Rating is null)
             {
                 return Task.CompletedTask;
             }
@@ -208,7 +173,7 @@ namespace MudBlazor
 
         internal Task HandlePointerOverAsync(PointerEventArgs e)
         {
-            if (Disabled || ReadOnly)
+            if (Disabled)
             {
                 return Task.CompletedTask;
             }
@@ -220,7 +185,7 @@ namespace MudBlazor
 
         private Task HandleClickAsync()
         {
-            if (Disabled || ReadOnly)
+            if (Disabled)
             {
                 return Task.CompletedTask;
             }

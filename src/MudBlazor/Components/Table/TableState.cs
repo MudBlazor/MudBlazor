@@ -2,6 +2,7 @@
 
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
     /// The state of a <see cref="MudTable{T}"/> when requesting data via <see cref="MudTable{T}.ServerData"/>.

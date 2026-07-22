@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Base class for components that manage a collection of child items with a selected index, such as <see cref="MudCarousel{T}"/> and <see cref="MudTimeline"/>.
+    /// Represents a base class for designing components which contain items.
     /// </summary>
     /// <typeparam name="TChildComponent">The type of <see cref="MudComponentBase"/> managed by this component.</typeparam>
     public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase

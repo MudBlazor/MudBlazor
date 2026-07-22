@@ -2,6 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -16,8 +19,8 @@ internal class PopoverServiceMock : PopoverService
 {
     private readonly IPopoverTimerMock _popoverTimerMock;
 
-    public PopoverServiceMock(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IPopoverTimerMock? popoverTimerMock = null, IOptions<PopoverOptions>? options = null)
-        : base(logger, jsInterop, timeProvider, options)
+    public PopoverServiceMock(ILogger<PopoverService> logger, IJSRuntime jsInterop, IPopoverTimerMock? popoverTimerMock = null, IOptions<PopoverOptions>? options = null)
+        : base(logger, jsInterop, options)
     {
         _popoverTimerMock = popoverTimerMock ?? new PopoverTimerEmpty();
     }

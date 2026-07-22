@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>

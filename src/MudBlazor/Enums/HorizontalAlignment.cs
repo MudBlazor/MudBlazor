@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// The position of a component relative to its container.
 /// </summary>
-[EnumExtensions]
 public enum HorizontalAlignment
 {
     /// <summary>

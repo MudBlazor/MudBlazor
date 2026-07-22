@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
+#nullable enable
 /// <summary>
 /// Represents information about a parameter.
 /// </summary>
@@ -14,9 +15,6 @@ internal class ParameterMetadata
     /// </summary>
     public string ParameterName { get; }
 
-    /// <summary>
-    /// Gets the associated comparer parameter name of the component's <see cref="ParameterAttribute"/>.
-    /// </summary>
     public string? ComparerParameterName { get; }
 
     /// <summary>
@@ -45,7 +43,7 @@ internal class ParameterMetadata
     /// </summary>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
     /// <param name="handlerName">The handler's name.</param>
-    /// <param name="comparerParameterName">The name of the comparer parameter.</param>
+    /// <param name="comparerParameterName"></param>
     public ParameterMetadata(string parameterName, string? handlerName, string? comparerParameterName)
         : this(parameterName, handlerName)
     {
@@ -61,6 +59,5 @@ internal class ParameterMetadata
     {
     }
 
-    /// <inheritdoc />
     public override string ToString() => ParameterName;
 }

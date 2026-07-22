@@ -1,0 +1,63 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using System.Threading
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <div>
+            <MudCheckBox T="bool" ValueChanged="ChangeMargin" Color="Color.Primary" Label="@(" Margin: " + _margin)" />
+        </div>
+        <div>
+            <MudCheckBox @bind-Value="_dense" Color="Color.Primary" Label="@(" Dense: " + _dense)" />
+        </div>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" Margin="@_margin" Dense="@_dense" Variant="Variant.Outlined" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    Margin _margin = Margin.None;
+    bool _dense = false;
+
+    private void ChangeMargin()
+    {
+        if (_margin == Margin.None)
+        {
+            _margin = Margin.Dense;
+        }
+        else
+        {
+            _margin = Margin.None;
+        }
+    }
+
+    private string value1;
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

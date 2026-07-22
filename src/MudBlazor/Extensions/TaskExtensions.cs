@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
 #pragma warning disable CS1998
     public static class TaskExtensions
     {

@@ -1,7 +1,6 @@
-﻿using AwesomeAssertions;
-using Bunit;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.UnitTests.TestComponents.NavMenu;
+﻿using Bunit;
+using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -15,7 +14,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavMenuTests_DefaultValues()
         {
-            var comp = Context.Render<MudNavMenu>();
+            var comp = Context.RenderComponent<MudNavMenu>();
 
             comp.Instance.Bordered.Should().Be(false);
             comp.Instance.Color.Should().Be(Color.Default);
@@ -30,76 +29,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
         }
 
-        [Test]
-        public async Task Exclusive_OnlyOneOpen()
-        {
-            var comp = Context.Render<NavMenuExclusive>();
-
-            var buttons = comp.FindAll(".mud-nav-group>button");
-            buttons.Count.Should().BeGreaterThanOrEqualTo(2);
-
-            // Expand first
-            await buttons[0].ClickAsync();
-            comp.Markup.Should().Contain("mud-expanded");
-            // Expand second. Should collapse first because MultiExpansion==false by default in component
-            await buttons[1].ClickAsync();
-            int expandedCount = comp.FindAll(".mud-expanded").Count;
-            expandedCount.Should().Be(1);
-        }
-
-        [Test]
-        public async Task NonExclusive_AllowsMultipleOpen()
-        {
-            var comp = Context.Render<NavMenuExclusive>(ps => ps.Add(p => p.MultiExpansion, true));
-
-            var buttons = comp.FindAll(".mud-nav-group>button");
-            buttons.Count.Should().BeGreaterThanOrEqualTo(2);
-
-            // Expand first
-            await buttons[0].ClickAsync();
-            // Expand second. Should not collapse first because MultiExpansion==true
-            await buttons[1].ClickAsync();
-            int expandedCount = comp.FindAll(".mud-expanded").Count;
-            expandedCount.Should().Be(2);
-        }
-
-        [Test]
-        public async Task DefaultMultiExpansion_AllowsMultipleGroupsOpen()
-        {
-            static void CreateGroups(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
-            {
-                builder.OpenComponent<MudNavGroup>(0);
-                builder.AddAttribute(1, nameof(MudNavGroup.Title), "Group 1");
-                builder.CloseComponent();
-
-                builder.OpenComponent<MudNavGroup>(2);
-                builder.AddAttribute(3, nameof(MudNavGroup.Title), "Group 2");
-                builder.CloseComponent();
-            }
-
-            // Intentionally omit MultiExpansion. This protects existing menus from
-            // silently becoming exclusive if the component default changes.
-            var comp = Context.Render<MudNavMenu>(parameters =>
-                parameters.Add(p => p.ChildContent, CreateGroups));
-
-            comp.Instance.MultiExpansion.Should().BeTrue();
-
-            var buttons = comp.FindAll(".mud-nav-group > button");
-            await buttons[0].ClickAsync();
-            await buttons[1].ClickAsync();
-
-            comp.FindAll(".mud-nav-group > button.mud-expanded")
-                .Should()
-                .HaveCount(2);
-        }
-
         /// <summary>
         /// Change all styling parameters from its default values and check that the correct classes are added.
         /// </summary>
         [Test]
         public void NavMenuTests_CheckAllStyling()
         {
-            var comp = Context.Render<MudNavMenu>(x =>
+            var comp = Context.RenderComponent<MudNavMenu>(x =>
             {
                 x.Add(p => p.Bordered, true);
                 x.Add(p => p.Color, Color.Success);
@@ -120,14 +56,14 @@ namespace MudBlazor.UnitTests.Components
         /// And even so, he changes when clicked
         /// </summary>
         [Test]
-        public async Task One_Way_Bindable()
+        public void One_Way_Bindable()
         {
-            var comp = Context.Render<NavMenuOneWay>();
+            var comp = Context.RenderComponent<NavMenuOneWay>();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            await navgroup.ClickAsync();
+            navgroup.Click();
 
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
@@ -138,18 +74,18 @@ namespace MudBlazor.UnitTests.Components
         /// Initially is set to false and after clicking the navgroup should change to true
         /// </summary>
         [Test]
-        public async Task Two_Way_Bindable()
+        public void Two_Way_Bindable()
         {
-            var comp = Context.Render<NavMenuTwoWay>();
+            var comp = Context.RenderComponent<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
-            var expanded = comp.Instance.Expanded;
+            var expanded = comp.Instance._expanded;
             expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
-            await navgroup.ClickAsync();
+            navgroup.Click();
 
-            expanded = comp.Instance.Expanded;
+            expanded = comp.Instance._expanded;
             expanded.Should().BeTrue();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");

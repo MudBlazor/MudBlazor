@@ -2,10 +2,10 @@
   display: inline-flex;
   color: #ffb400;
 
-  &:focus-visible {
+  &:focus-visible, &:active {
     outline: none;
 
-    &:not(.mud-disabled):not(.mud-readonly) {
+    &:not(.mud-disabled) {
       background-color: var(--mud-palette-action-default-hover);
     }
   }
@@ -13,7 +13,6 @@
 
 .mud-rating-item {
   cursor: pointer;
-  --mud-ripple-color: currentColor;
   transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
   &.mud-rating-item-active {
@@ -27,6 +26,18 @@
     & * {
       cursor: default;
       color: var(--mud-palette-text-disabled);
+    }
+  }
+
+  @media(hover: hover) and (pointer: fine) {
+    .mud-disabled:hover {
+      cursor: default;
+      pointer-events: none;
+
+      & * {
+        cursor: default;
+        color: var(--mud-palette-text-disabled);
+      }
     }
   }
 

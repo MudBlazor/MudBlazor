@@ -1,0 +1,27 @@
+﻿<MudTreeView T="DocumentedType" Dense="true" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
+    <ItemTemplate>
+        <MudTreeViewItem T="DocumentedType" Expanded="@context.Expanded" Text="@context.Text" Items="@context.Children" OnClick="@(() => OnTypeClicked(context))">
+            <Content>
+                @if (context.Value.Name == "Root")
+                {
+                    <MudIcon Icon="@Icons.Material.Filled.Home" Color="Color.Primary" Class="mr-2" />
+                    <MudText>@context.Text</MudText>
+                }
+                else
+                {
+                    <MudTreeViewItemToggleButton @bind-Expanded="@context.Expanded" Visible="@(context.Children.Count > 0)" />
+
+                    @if (context.Value.Name == Type.NameFriendly)
+                    {
+                        <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Class="mr-2" />
+                        <MudText>@context.Text</MudText>
+                    }
+                    else if (!string.IsNullOrEmpty(context.Value.ApiUrl))
+                    {
+                        <MudLink Href="@context.Value.ApiUrl">@context.Text</MudLink>
+                    }
+                }
+            </Content>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>

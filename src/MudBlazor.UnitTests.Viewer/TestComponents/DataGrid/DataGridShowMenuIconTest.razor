@@ -1,4 +1,6 @@
-﻿<MudDataGrid Items="@_items">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid Items="@_items">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
     </Columns>
@@ -9,8 +11,9 @@
 </div>
 
 @code {
-    private readonly List<Item> _items = [];
-    private readonly HashSet<Item> _selectedItems = [];
+    private List<Item> _items = new List<Item>();
+
+    private HashSet<Item> _selectedItems = new();
 
     protected override void OnInitialized()
     {
@@ -21,8 +24,13 @@
         }
     }
 
-    public class Item(string name)
+    public class Item
     {
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
     }
 }

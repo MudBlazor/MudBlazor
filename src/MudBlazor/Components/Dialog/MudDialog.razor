@@ -3,13 +3,13 @@
 @inherits MudComponentBase
 
 @{
-#pragma warning disable CS0618 // Type or member is obsolete
+    #nullable enable
 }
 
 @*this makes dialog inlineable, it will only render inside a MudDialogInstance*@
 @if (!IsInline)
 {
-    <MudFocusTrap DefaultFocus="DefaultFocus ?? GlobalDialogOptions.DefaultFocus ?? MudBlazor.DefaultFocus.Element">
+    <MudFocusTrap DefaultFocus="DefaultFocus">
 
         <div @attributes="UserAttributes" class="@ContentClassname" style="@ContentStyle">
             <CascadingValue Value="true" IsFixed Name="IsNested">

@@ -2,9 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
+
+#nullable enable
 
 /// <summary>
 /// Represents a base class for designing documented members.
@@ -18,50 +21,55 @@ public abstract class DocumentedMember
     /// <remarks>
     /// This value comes from the <see cref="CategoryAttribute"/> applied to the member.
     /// </remarks>
-    public string? Category { get; init; }
+    public string? Category { get; set; }
 
     /// <summary>
     /// The type which defines this member.
     /// </summary>
-    public Type? DeclaringType { get; init; }
+    public Type? DeclaringType { get; set; }
 
     /// <summary>
-    /// The type which defines this member.
+    /// The name of the type which defines this member.
     /// </summary>
-    public DocumentedType? DeclaringDocumentedType { get; set; }
+    public string? DeclaringTypeFullName { get; set; }
 
     /// <summary>
     /// Whether this member is only visible to inheritors.
     /// </summary>
-    public bool IsProtected { get; init; }
+    public bool IsProtected { get; set; }
 
     /// <summary>
     /// The name of this member.
     /// </summary>
-    public required string Name { get; init; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// The order of this member relative to other members.
     /// </summary>
-    public int Order { get; init; } = int.MaxValue;
+    public int? Order { get; set; }
 
     /// <summary>
     /// The unique key for this member in dictionaries.
     /// </summary>
-    public required string Key { get; init; }
+    public string? Key { get; set; }
+
+    /// <summary>
+    /// The unique key for this member in XML documentation.
+    /// </summary>
+    public string? XmlKey { get; set; }
 
     /// <summary>
     /// The detailed description for this member, and any related information.
     /// </summary>
-    public string? Summary { get; init; }
+    public string? Summary { get; set; }
 
     /// <summary>
     /// The brief summary of this member.
     /// </summary>
-    public string? Remarks { get; init; }
+    public string? Remarks { get; set; }
 
     /// <summary>
     /// The type of this member.
     /// </summary>
-    public Type? Type { get; init; }
+    public Type? Type { get; set; }
 }

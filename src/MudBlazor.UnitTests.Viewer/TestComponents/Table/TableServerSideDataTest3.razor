@@ -1,4 +1,7 @@
-﻿<MudTable ServerData="ServerReload">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+
+<MudTable ServerData="ServerReload">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." InitialDirection="SortDirection.Descending" T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -11,20 +14,24 @@
 </MudTable>
 
 @code {
+#pragma warning disable CS1998 // async without await
     public static string __description__ = "The server-side loaded table should reflect initial sort direction in its initial table state.";
 
-    private int _totalItems;
+    private int totalItems;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
-        var p = state.Page * 3;
-        IEnumerable<int> data = new List<int> { 1 + p, 2 + p, 3 + p };
-        _totalItems = 99;
-        var sortedData = state.SortDirection == SortDirection.Descending ? data.Reverse() : data;
+        //if (state.SortDirection != SortDirection.None && string.IsNullOrWhiteSpace(state.SortLabel))
+        //    throw new ArgumentException("SortDirection is set but SortLabel is not");
 
-        return Task.FromResult(new TableData<int> { TotalItems = _totalItems, Items = sortedData });
+        var p = state.Page*3;
+        IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
+        totalItems = 99;
+        var sortedData = state.SortDirection == SortDirection.Descending ? data.Reverse() : data;
+        return new TableData<int>() { TotalItems = totalItems, Items = sortedData };
     }
+
 }

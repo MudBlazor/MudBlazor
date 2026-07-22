@@ -1,4 +1,6 @@
-﻿<MudTimeline @bind-SelectedIndex="SelectedIndex">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTimeline @bind-SelectedIndex="SelectedIndex">
     <MudTimelineItem>
         <MudText>Item A</MudText>
     </MudTimelineItem>
@@ -17,5 +19,7 @@
 </MudTimeline>
 
 @code {
-    public int SelectedIndex { get; private set; }
+
+    public int SelectedIndex { get; private set; } = 0;
+
 }

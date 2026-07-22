@@ -3,12 +3,12 @@
 @using Severity = MudBlazor.Severity
 @inject ISnackbar Snackbar
 
-<MudCard Style="width: 600px;">
-    <MudForm Model="@_model" @ref="@_form" Validation="@(_validationRules.ValidateValue)" ValidationDelay="0">
+<MudCard>
+    <MudForm Model="@model" @ref="@form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
         <MudCardContent>
             <MudStack>
-                <MudTextField @bind-Value="_model.Name"
-                              For="@(() => _model.Name)"
+                <MudTextField @bind-Value="model.Name"
+                              For="@(() => model.Name)"
                               Immediate="true"
                               Label="Name" />
 
@@ -17,19 +17,17 @@
                     <MudItem>
                         <MudFileUpload @ref="@_fileUpload"
                                        T="IBrowserFile"
-                                       For="@(() => _model.File)"
-                                       @bind-Files="_model.File"
+                                       For="@(() => model.File)"
+                                       @bind-Files="model.File"
                                        OnFilesChanged="UploadFiles"
-                                       SuppressOnChangeWhenInvalid="_suppressOnChangeWhenInvalid">
-                            <CustomContent>
+                                       SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
+                            <ActivatorContent>
                                 <MudButton Variant="Variant.Filled"
                                            Color="Color.Primary"
-                                           OnClick="@context.OpenFilePickerAsync"
                                            StartIcon="@Icons.Material.Filled.CloudUpload">
-                                    Choose file
+                                    Upload Files
                                 </MudButton>
-                            </CustomContent>
-                            <SelectedTemplate />
+                            </ActivatorContent>
                         </MudFileUpload>
                     </MudItem>
                     <MudItem>
@@ -37,14 +35,14 @@
                                    Color="Color.Primary"
                                    StartIcon="@Icons.Material.Filled.Clear"
                                    OnClick="@ClearAsync">
-                            Clear selection
+                            Clear Files
                         </MudButton>
                     </MudItem>
                 </MudGrid>
             </MudStack>
         </MudCardContent>
         <MudCardActions>
-            <MudSwitch Color="Color.Primary" @bind-Value="_suppressOnChangeWhenInvalid"><CodeInline Class="ml-n1">SuppressOnChangeWhenInvalid</CodeInline></MudSwitch>
+            <MudSwitch Color="Color.Primary" @bind-Value="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
         </MudCardActions>
     </MudForm>
@@ -52,26 +50,26 @@
 
 @code
 {
-    private readonly FileModelFluentValidator _validationRules = new();
-    private readonly FileModel _model = new();
-    private MudForm _form;
-    private bool _suppressOnChangeWhenInvalid;
+    private MudForm form;
+    private FileModel model = new();
+    private FileModelFluentValidator ValidationRules = new();
+    private bool SuppressOnChangeWhenInvalid;
     private MudFileUpload<IBrowserFile> _fileUpload;
 
     private void UploadFiles(InputFileChangeEventArgs e)
     {
         //If SuppressOnChangeWhenInvalid is false, perform your validations here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add($"Selected file type: .{_model.File.Name.Split(".").Last()}", Severity.Info);
+        Snackbar.Add($"This file has the extension {model.File.Name.Split(".").Last()}", Severity.Info);
 
         //TODO upload the files to the server
     }
 
     private async Task Submit()
     {
-        await _form.ValidateAsync();
+        await form.Validate();
 
-        if (_form.IsValid)
+        if (form.IsValid)
         {
             Snackbar.Add("Submitted!");
         }

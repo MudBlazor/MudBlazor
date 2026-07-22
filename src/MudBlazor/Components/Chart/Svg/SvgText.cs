@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 
-namespace MudBlazor
+namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
-    /// A text label rendered as an SVG element in a chart, positioned by X and Y coordinates.
+    /// Represents a piece of text as an SVG path.
     /// </summary>
     [DebuggerDisplay("X={X}, Y={Y}, Value={Value}")]
-    public sealed class SvgText
+    public class SvgText
     {
         /// <summary>
         /// The horizontal position of the text.
@@ -21,6 +21,6 @@ namespace MudBlazor
         /// <summary>
         /// The text to display.
         /// </summary>
-        public string? Value { get; set; }
+        public string Value { get; set; }
     }
 }

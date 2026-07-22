@@ -1,12 +1,7 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// A maximum width based on a responsive breakpoint.
-    /// </summary>
-    [EnumExtensions]
     public enum MaxWidth
     {
         [Description("lg")]

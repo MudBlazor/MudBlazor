@@ -1,12 +1,14 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
-<MudSelect Label="Select Item"
-           MultiSelection="true"
-           T="string"
-           Delimiter="^"
-           SelectAll="true"
-           @bind-SelectedValues="@_selectedItems">
-    @foreach (var item in _allItems)
+<MudSelect Label="Select Item" 
+    MultiSelection="true" 
+    T="string" 
+    Delimiter="^"
+    SelectAll="true"
+    @bind-SelectedValues="@SelectedItems">
+
+    @foreach (var item in AllItems)
     {
         <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
     }
@@ -14,16 +16,12 @@
 
 @code {
     public static string __description__ = "Test for the Select All option";
-
-    private readonly List<string> _allItems = [];
-    private IReadOnlyCollection<string> _selectedItems = [];
-
+    private List<string> AllItems = new();    
+    private IEnumerable<string> SelectedItems = new HashSet<string>();
     protected override void OnInitialized()
     {
-        _allItems.Add("FirstA");
-        _allItems.Add("SecondA");
-        _allItems.Add("ThirdA");
-
-        base.OnInitialized();
+        AllItems.Add("FirstA");
+        AllItems.Add("SecondA");
+        AllItems.Add("ThirdA");
     }
 }

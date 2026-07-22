@@ -3,14 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// The location of a <see cref="MudDialog"/> when it is opened.
 /// </summary>
-[EnumExtensions]
 public enum DialogPosition
 {
     /// <summary>

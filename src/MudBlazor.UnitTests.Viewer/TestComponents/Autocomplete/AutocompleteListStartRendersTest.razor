@@ -1,6 +1,8 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using System.Threading
+<MudPopoverProvider></MudPopoverProvider>
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" MaxItems="10">
+<MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1" MaxItems="10">
     <BeforeItemsTemplate>
         <MudText>StartList_Content</MudText>
     </BeforeItemsTemplate>
@@ -9,10 +11,10 @@
 @code {
     public static string __description__ = "There are no items after filtering, so the no items template should render";
 
-    private string? _value1;
+    private string value1;
 
-    private readonly string[] _states =
-    [
+    private string[] states =
+    {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -26,13 +28,13 @@
         "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming"
-    ];
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
 
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5, token);
-        return _states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
+        return states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
     }
 }

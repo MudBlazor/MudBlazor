@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@*based on a bugreport*@
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 mb-16">
+
+    <MudTextField T="string" @bind-Value="text" Label="First edit here"
+                  Variant="Variant.Outlined" Immediate="true"></MudTextField>
+
+    <MudTextField T="string" Lines="2" @bind-Value="text" Label="Then edit here"
+                  Variant="Variant.Outlined" Immediate="true"></MudTextField>
+
+    <p>Then edit the first TF again to see how the binding breaks down for the second</p>
+</MudContainer>
+
+
+@code
+{
+    string text;
+
+}

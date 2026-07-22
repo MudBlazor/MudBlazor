@@ -1,12 +1,7 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// The type of an HTML input element.
-    /// </summary>
-    [EnumExtensions]
     public enum InputType
     {
         [Description("text")]
@@ -37,6 +32,7 @@ namespace MudBlazor
         Time,
         [Description("week")]
         Week
+
 
     }
 }

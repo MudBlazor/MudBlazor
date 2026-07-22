@@ -1,0 +1,35 @@
+﻿.mud-markdown {
+  margin: 0px;
+  padding: 15px;
+  border-radius: var(--mud-default-borderradius);
+  background-color: var(--mud-palette-dark);
+  margin-bottom: 1.5rem;
+
+  & .mud-markdown-pre {
+    white-space: normal;
+  }
+
+  & .mud-markdown-code {
+    color: #fff;
+    font-size: 1em;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  }
+}
+
+.mud-markdown .mud-markdown-pre .mud-markdown-code {
+
+  & mark {
+    color: #808078;
+    background-color: none;
+  }
+
+  & mark {
+    color: #008080;
+    font-weight: bold;
+    background-color: none;
+  }
+}
+
+.token.attr-value > .punctuation {
+  color: #d0d0d0;
+}

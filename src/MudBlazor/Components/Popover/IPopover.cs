@@ -2,50 +2,51 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
-/// A popover surface that displays floating content anchored over the page, implemented by <see cref="MudPopoverBase"/> and managed by the <see cref="IPopoverService"/>.
+/// Represents a popover component.
 /// </summary>
 public interface IPopover
 {
     /// <summary>
-    /// The unique identifier of the popover.
+    /// Gets the unique identifier of the popover.
     /// </summary>
     Guid Id { get; }
 
     /// <summary>
-    /// The CSS class of the popover.
+    /// Gets the CSS class of the popover.
     /// </summary>
-    string PopoverClass { get; }
+    public string PopoverClass { get; }
 
     /// <summary>
-    /// The inline styles of the popover.
+    /// Gets the inline styles of the popover.
     /// </summary>
-    string PopoverStyles { get; }
+    public string PopoverStyles { get; }
 
     /// <summary>
-    /// Shows the popover.
+    /// If true, the popover is visible.
     /// </summary>
     bool Open { get; set; }
 
     /// <summary>
-    /// Any user data to link to this popover.
+    /// Use Tag to attach any user data object to the component for your convenience.
     /// </summary>
     object? Tag { get; set; }
 
     /// <summary>
-    /// Any additional attributes to add to this component.
+    /// UserAttributes carries all attributes you add to the component that don't match any of its parameters.
+    /// They will be splatted onto the underlying HTML tag.
     /// </summary>
-    /// <remarks>
-    /// Use this for any attributes which don't have a parameter.  They will be "splatted" onto the underlying HTML tag.
-    /// </remarks>
     Dictionary<string, object?> UserAttributes { get; set; }
 
     /// <summary>
-    /// The content within this popover.
+    /// Child content of the component.
     /// </summary>
     RenderFragment? ChildContent { get; set; }
 }

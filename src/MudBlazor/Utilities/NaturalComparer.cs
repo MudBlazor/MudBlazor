@@ -2,28 +2,26 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace MudBlazor.Utilities
 {
-    /// <summary>
-    /// Compares objects using natural sort order, so strings with embedded numbers sort the way a person expects.
-    /// </summary>
-    public class NaturalComparer : IComparer<object?>
+    public class NaturalComparer : IComparer<object>
     {
-        public int Compare(object? x, object? y)
+        public int Compare(object x, object y)
         {
-            if (ReferenceEquals(x, y))
+            // Check if the objects are null
+            if (x == null && y == null)
             {
                 return 0;
             }
-
-            if (x is null)
+            else if (x == null)
             {
                 return -1;
             }
-
-            if (y is null)
+            else if (y == null)
             {
                 return 1;
             }
@@ -33,13 +31,15 @@ namespace MudBlazor.Utilities
             {
                 return CompareNatural(xString, yString);
             }
-
-            if (x is IComparable xComparable && y is IComparable)
+            else if (x is IComparable && y is IComparable)
             {
-                return xComparable.CompareTo(y);
+                return ((IComparable)x).CompareTo(y);
+            }
+            else
+            {
+                return x.ToString().CompareTo(y.ToString());
             }
 
-            return string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -164,4 +164,6 @@ namespace MudBlazor.Utilities
         }
 
     }
+
+
 }

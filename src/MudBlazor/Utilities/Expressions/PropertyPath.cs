@@ -2,11 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace MudBlazor.Utilities.Expressions;
 
+#nullable enable
 internal static class PropertyPath
 {
     public static PropertyHolder Visit<TSource, TResult>(Expression<Func<TSource, TResult>> expression)
@@ -18,9 +22,6 @@ internal static class PropertyPath
         return visitor.PropertyHolder;
     }
 
-    /// <summary>
-    /// Carries the ordered chain of members that make up a property path extracted from a lambda expression.
-    /// </summary>
     public sealed class PropertyHolder
     {
         private readonly List<MemberInfo> _members;
@@ -51,9 +52,6 @@ internal static class PropertyPath
         public override string ToString() => GetPath();
     }
 
-    /// <summary>
-    /// Walks a lambda expression tree and records each member access into a <c>PropertyHolder</c> to build a property path.
-    /// </summary>
     public sealed class PropertyVisitor : ExpressionVisitor
     {
         public PropertyHolder PropertyHolder { get; }

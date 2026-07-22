@@ -3,7 +3,7 @@
 @inject ISnackbar Snackbar
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Show">
-    Open clickable snackbar
+    Open Clickable Snackbar
 </MudButton>
 
 @code {
@@ -12,7 +12,7 @@
     {
         Snackbar.Add("I got a message for you", Severity.Normal, config =>
         {
-            config.OnClick = snackbar =>
+            config.Onclick = snackbar =>
             {
                 SayHello();
                 return Task.CompletedTask;

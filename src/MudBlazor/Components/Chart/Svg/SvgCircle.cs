@@ -1,13 +1,18 @@
 ﻿using System.Diagnostics;
 
-namespace MudBlazor
+namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
-    /// Circle shape rendered as SVG, used to draw points and markers in a chart.
+    /// Represents a circular shape drawn as an SVG path.
     /// </summary>
     [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
-    public sealed class SvgCircle : SvgPath
+    public class SvgCircle
     {
+        /// <summary>
+        /// The position of this path within a list.
+        /// </summary>
+        public int Index { get; set; }
+
         /// <summary>
         /// The horizontal position of the center of the circle.
         /// </summary>
@@ -26,7 +31,7 @@ namespace MudBlazor
         /// <summary>
         /// The pattern of dashes and gaps used to paint the outline of the circle.
         /// </summary>
-        public string? StrokeDashArray { get; set; }
+        public string StrokeDashArray { get; set; }
 
         /// <summary>
         /// The offset applied to the <see cref="StrokeDashArray"/>.

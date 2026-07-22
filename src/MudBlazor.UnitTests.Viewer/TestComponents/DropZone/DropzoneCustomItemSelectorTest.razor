@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDropContainer T="SimpleDropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)" Class="d-flex">
+	<ChildContent>
+		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone">
+			<ChildContent>
+				<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
+			</ChildContent>
+			<ItemRenderer>
+				<MudText>@context.Name by Drop Zone 1</MudText>
+			</ItemRenderer>
+		</MudDropZone>
+		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone">
+			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
+		</MudDropZone>
+	</ChildContent>
+	<ItemRenderer>
+		<MudText>@context.Name</MudText>
+	</ItemRenderer>
+</MudDropContainer>
+
+@code {
+	public record SimpleDropItem(String Name, String ZoneIdentifier);
+
+	private IEnumerable<SimpleDropItem> _items = new[]
+		{
+		new SimpleDropItem("First Item", "Column 1"),
+		new SimpleDropItem("Second Item", "Column 2"),
+		new SimpleDropItem("Third Item", "Column 2"),
+	};
+
+}

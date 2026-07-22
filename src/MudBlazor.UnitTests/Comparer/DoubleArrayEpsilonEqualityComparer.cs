@@ -2,6 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+
 namespace MudBlazor.UnitTests.Comparer;
 
 #nullable enable
@@ -49,7 +52,7 @@ public class DoubleArrayEpsilonEqualityComparer : IEqualityComparer<double[]>
             var hash = 17;
             foreach (var item in obj)
             {
-                hash = (hash * 31) + _elementComparer.GetHashCode(item);
+                hash = hash * 31 + _elementComparer.GetHashCode(item);
             }
 
             return hash;

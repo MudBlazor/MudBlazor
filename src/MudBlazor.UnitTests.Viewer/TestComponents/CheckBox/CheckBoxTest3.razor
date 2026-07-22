@@ -1,8 +1,10 @@
-﻿<MudCheckBox  @bind-Value="_isChecked">Synced</MudCheckBox>
-<MudCheckBox @bind-Value="_isChecked">Synced</MudCheckBox>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudCheckBox  @bind-Value="is_checked">Synced</MudCheckBox>
+<MudCheckBox @bind-Value="is_checked">Synced</MudCheckBox>
 
 @code {
     public static string __description__ = "Clicking any checkbox should toggle both.";
 
-    private bool _isChecked = true;
+    bool is_checked = true;
 }

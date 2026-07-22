@@ -2,37 +2,27 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Adds an expand or collapse button to each <see cref="MudDataGrid{T}"/> row, revealing nested detail content when expanded.
+/// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
-/// <seealso cref="Column{T}" />
-/// <seealso cref="MudDataGrid{T}" />
-/// <seealso cref="PropertyColumn{T, TProperty}" />
-/// <seealso cref="SelectColumn{T}" />
-/// <seealso cref="TemplateColumn{T}" />
-public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
+public partial class HierarchyColumn<T> : MudComponentBase
 {
-    /// <summary>
-    /// Displays the content right-to-left.
-    /// </summary>
-    [CascadingParameter(Name = "RightToLeft")]
-    public bool RightToLeft { get; set; }
+    private bool _finishedInitialExpanded;
 
     /// <summary>
     /// The icon to display for the close button.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/> or <see cref="Icons.Material.Filled.ChevronLeft"/> if RightToLeft.
+    /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
     /// </remarks>
     [Parameter]
-    public string? ClosedIcon { get; set; }
+    public string ClosedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
     /// <summary>
     /// The icon to display for the open button.
@@ -41,7 +31,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
     /// </remarks>
     [Parameter]
-    public string? OpenIcon { get; set; }
+    public string OpenIcon { get; set; } = Icons.Material.Filled.ExpandMore;
 
     /// <summary>
     /// The size of the open and close icons.
@@ -89,90 +79,23 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public EventCallback<bool> HiddenChanged { get; set; }
 
     /// <summary>
-    /// Whether or not to show a button in the header to expand/collapse all columns.
-    /// </summary>
-    /// <remarks>Defaults to <c>false</c>.</remarks>
-    [Parameter]
-    public bool EnableHeaderToggle { get; set; } = false;
-
-    /// <summary>
-    /// The CSS class applied to the header.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
-    /// </remarks>
-    [Parameter]
-    public string? HeaderClass { get; set; }
-
-    /// <summary>
-    /// The function which calculates CSS classes for the header.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
-    /// </remarks>
-    [Parameter]
-    public Func<IEnumerable<T>, string>? HeaderClassFunc { get; set; }
-
-    /// <summary>
-    /// The CSS style applied to this column's header.
-    /// </summary>
-    [Parameter]
-    public string HeaderStyle { get; set; } = "width:0%;";
-
-    /// <summary>
-    /// The function which calculates CSS styles for the header.
-    /// </summary>
-    [Parameter]
-    public Func<IEnumerable<T>, string>? HeaderStyleFunc { get; set; }
-
-    /// <summary>
-    /// The template used to display this column's header.
-    /// </summary>
-    [Parameter]
-    public RenderFragment<HeaderContext<T>>? HeaderTemplate { get; set; }
-
-    /// <summary>
-    /// The template used to display this column's value cells.
-    /// </summary>
-    [Parameter]
-    public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
-
-    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
     /// This function takes an item of type <typeparamref name="T"/> as input and returns a boolean indicating
-    /// whether the row should be expanded. Requires item to override the Equals and GetHashCode methods.
+    /// whether the row should be expanded.
     /// Defaults to a function that always returns <c>false</c>.
     /// </remarks>
     [Parameter]
-    public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+    public Func<T, bool> InitiallyExpandedFunc { get; set; } = _ => false;
 
-    /// <summary>
-    /// Occurs when hierarchy visibility is toggled for an item in this column.
-    /// </summary>
-    [Parameter]
-    public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
-#nullable disable
-
-    private string GetGroupIcon(CellContext<T> context)
+    /// <inheritdoc/>
+    protected override void OnAfterRender(bool firstRender)
     {
-        var isItemOpen = context.OpenHierarchies.Contains(context.Item);
-        var isOpenIconEmpty = string.IsNullOrEmpty(OpenIcon);
-        var isClosedIconEmpty = string.IsNullOrEmpty(ClosedIcon);
-        var isGetGroupDefined = context.Actions.GetGroupIcon != null;
-
-        if (isItemOpen)
+        base.OnAfterRender(firstRender);
+        if (firstRender)
         {
-            return isOpenIconEmpty && isGetGroupDefined
-                ? context.Actions.GetGroupIcon(true, RightToLeft)
-                : OpenIcon;
-        }
-        else
-        {
-            return isClosedIconEmpty && isGetGroupDefined
-                ? context.Actions.GetGroupIcon(false, RightToLeft)
-                : ClosedIcon;
+            _finishedInitialExpanded = true;
         }
     }
 }

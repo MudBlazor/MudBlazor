@@ -1,12 +1,28 @@
-﻿<MudSelect Label="Roles" T="string" SelectedValues="_selectedValues" MultiSelection="true">
-    @foreach (var role in _posts)
+@if (_posts != null)
+{
+    <MudSelect Label="Roles" T="string" SelectedValues="SelectedValues" MultiSelection="true">
+        @foreach (var role in _posts)
+        {
+            <MudSelectItem T="string" Value="@role">@role</MudSelectItem>
+        }
+    </MudSelect>
+}
+
+
+@code
+{
+    private IEnumerable<string> SelectedValues { get; set; } = new HashSet<string>()
+    { 
+        "Programista", "test"
+    };
+
+    private HashSet<string> _posts;
+
+    protected override void OnInitialized()
     {
-        <MudSelectItem T="string" Value="@role">@role</MudSelectItem>
+        _posts = new HashSet<string>
+        {
+            "Programista", "Programista 2", "test", "Technik", "Tester", "Tester tester"
+        };
     }
-</MudSelect>
-
-@code {
-    private readonly IReadOnlyCollection<string> _selectedValues = ["Programista", "test"];
-
-    private readonly HashSet<string> _posts = ["Programista", "Programista 2", "test", "Technik", "Tester", "Tester tester"];
 }

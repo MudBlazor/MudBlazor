@@ -2,14 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
+
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
-/// Wraps popover holder updates so the popover service can batch or process operations consistently.
+/// Represents a container for <see cref="IMudPopoverHolder"/>, along with the associated <see cref="PopoverHolderOperation"/>.
 /// </summary>
-/// <remarks>
-/// This container travels through the popover update pipeline, letting the service communicate add/remove/update operations with the holders affected by the change.
-/// </remarks>
 public class PopoverHolderContainer
 {
     /// <summary>

@@ -4,18 +4,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
-    /// Footer state and actions passed to a <see cref="MudDataGrid{T}"/> footer template, exposing the displayed items and select-all command.
+    /// Represents the current state of a footer in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
-    public class FooterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
+    public class FooterContext<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
 
@@ -36,11 +36,6 @@ namespace MudBlazor
         /// The behaviors which can be performed on this footer.
         /// </summary>
         public FooterActions Actions { get; }
-
-        /// <summary>
-        /// Indicates whether the data grid supports multiple selection.
-        /// </summary>
-        public bool IsMultiSelection => _dataGrid.MultiSelection;
 
         /// <summary>
         /// Indicates whether all values are currently selected.
@@ -82,7 +77,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Select-all delegate for a <see cref="MudDataGrid{T}"/> footer, exposed through <see cref="FooterContext{T}"/>.
+        /// Represents the actions which can be performed on the footer of <see cref="MudDataGrid{T}"/> columns.
         /// </summary>
         public class FooterActions
         {

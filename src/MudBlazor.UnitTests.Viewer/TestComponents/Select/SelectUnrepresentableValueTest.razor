@@ -1,6 +1,7 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
-<MudSelect @bind-Value="_value">
+<MudSelect IsPreRendered @bind-Value="value">
     <MudSelectItem T="int" Value="1">One</MudSelectItem>
     <MudSelectItem T="int" Value="2">Two</MudSelectItem>
     <MudSelectItem T="int" Value="3">Three</MudSelectItem>
@@ -9,5 +10,5 @@
 @code {
     public static string __description__ = "Initially, since the value is not in the list of options, it should be shown as text instead of render fragment.";
 
-    private int _value = 17;
+    int value=17;
 }

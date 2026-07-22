@@ -1,7 +1,9 @@
 ﻿@page "/components/switch"
+@page "/components/MudSwitch"
+@page "/components/MudSwitch`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Switch" Component="@nameof(MudSwitch<T>)" />
+    <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -26,7 +28,7 @@
             <SectionHeader Title="Switch with label">
                 <Description>
                     Text can be added using the <CodeInline>Label</CodeInline> property and its
-                    position can be specified using the <CodeInline>LabelPlacement</CodeInline> property
+                    position can be specified using the <CodeInline>LabelPosition</CodeInline> property
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchWithLabelExample)">
@@ -37,7 +39,7 @@
         <DocsPageSection>
             <SectionHeader Title="Thumb Icon">
                 <Description>
-                    An icon can be specified with the <CodeInline>ThumbIcon</CodeInline> parameter.
+                    An icon can be determined with <CodeInline>ThumbIcon</CodeInline> parameter.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchWithIconExample)" ShowCode="false">
@@ -55,17 +57,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Content Placement">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(SwitchContentPlacementExample)" ShowCode="false">
-                <SwitchContentPlacementExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
             <SectionHeader Title="ReadOnly mode">
-                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> stops the switch control from listening to user input.</Description>
+                <Description>Setting <CodeInline>ReadOnly="true"</CodeInline> will make the switch control stop listening to user inputs.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchReadOnlyExample)" Block="true">
                 <SwitchReadOnlyExample />
@@ -75,7 +68,7 @@
         <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
-                    <MudText>MudSwitch supports keyboard navigation.</MudText>
+                    <MudText>MudSwitch accepts keys to keyboard navigation.</MudText>
                     <br />
                     <MudText><CodeInline>Space</CodeInline> key to toggle state true/false</MudText>
                     <MudText><CodeInline>Delete</CodeInline> or <CodeInline>ArrowLeft</CodeInline> keys to set UnChecked</MudText>
@@ -91,7 +84,7 @@
         <DocsPageSection>
             <SectionHeader Title="Size">
                 <Description>
-                    <MudText>MudSwitch size can be changed with the <CodeInline>Size</CodeInline> parameter.</MudText>
+                    <MudText>MudSwitch size can be changed with the <CodeInline>Size</CodeInline> parameter.</MudText>          
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchSizeExample)" ShowCode="false">

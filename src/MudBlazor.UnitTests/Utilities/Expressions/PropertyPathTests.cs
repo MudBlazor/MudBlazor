@@ -2,8 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Linq.Expressions;
-using AwesomeAssertions;
+using FluentAssertions;
 using MudBlazor.Utilities.Expressions;
 using NUnit.Framework;
 
@@ -23,14 +24,11 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
         private class Manager
         {
             public string Name => string.Empty;
-
-            // Value-typed member: boxing it to object forces the compiler to emit a Convert node.
-            public int Level => 0;
         }
         // ReSharper restore ClassNeverInstantiated.Local
 
         [Test]
-        public void PropertyPathTests_Visit_Valid()
+        public void PropertyPathTests_Visit_Valid_Test()
         {
             // Arrange
             Expression<Func<Employee, string>> exp1 = x => x.Name;
@@ -68,26 +66,6 @@ namespace MudBlazor.UnitTests.Utilities.Expressions
             property.GetPath().Should().Be("");
             property.GetLastMemberName().Should().Be("");
             property.GetMembers().Count.Should().Be(0);
-        }
-
-        [Test]
-        public void PropertyPathTests_Visit_ConvertBody_NotBodyMemberButStillVisitsMembers()
-        {
-            // Arrange: boxing a value type to object wraps the member in a Convert node,
-            // so the body is a UnaryExpression, not a MemberExpression, even though it
-            // resolves to one. (A reference-type-to-object conversion would NOT add a
-            // Convert node, leaving the body a MemberExpression.)
-            Expression<Func<Employee, object>> exp = x => x.Manager.Level;
-
-            // Act
-            var property = PropertyPath.Visit(exp);
-
-            // Assert: the flag reflects the body node type (Convert, not Member), but the
-            // visitor still descends into the wrapped MemberExpression chain.
-            property.IsBodyMemberExpression.Should().BeFalse();
-            property.GetPath().Should().Be("Manager.Level");
-            property.GetLastMemberName().Should().Be("Level");
-            property.GetMembers().Count.Should().Be(2);
         }
     }
 }

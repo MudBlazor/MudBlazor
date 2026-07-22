@@ -1,17 +1,16 @@
 ﻿@page "/components/element"
+@page "/components/MudElement"
 
 <DocsPage>
-    <DocsPageHeader Title="MudElement" Component="@nameof(MudElement)" />
+    <DocsPageHeader Title="MudElement" SubTitle="A primitive component that allows you to dynamically change the rendered html element." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic example">
-                <Description>
-                    <CodeInline>MudElement</CodeInline> has an <CodeInline>HtmlTag</CodeInline> parameter that
-                    tells it which html element to render. It also accepts all possible html attributes and passes them on
-                    to the underlying element. Furthermore, you can set the parameters <CodeInline>Class</CodeInline> and
-                    <CodeInline>Style</CodeInline> for styling.
-                </Description>
+                <Description><CodeInline>MudElement</CodeInline> has an <CodeInline>HtmlTag</CodeInline> parameter that 
+                tells it which html element to render. It also accepts all possible html attributes and passes them on 
+                to the underlying element. Furthermore, you can set the parameters <CodeInline>Class</CodeInline> and 
+                <CodeInline>Style</CodeInline> for styling.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(MudElementSimpleExample)">
                 <MudElementSimpleExample />
@@ -20,10 +19,8 @@
 
         <DocsPageSection>
             <SectionHeader Title="Interactive example">
-                <Description>
-                    In this example the rendered html element changes dynamically. This is the main use-case of
-                    <CodeInline>MudElement</CodeInline>.
-                </Description>
+                <Description>In this example the rendered html element changes dynamically. This is the main use-case of
+                <CodeInline>MudElement</CodeInline>.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(MudElementChangingExample)" ShowCode="false">
                 <MudElementChangingExample />
@@ -33,7 +30,7 @@
         <DocsPageSection>
             <SectionHeader Title="Obtaining an ElementReference">
                 <Description>
-                    If you need access to the underlying element, you can two-way bind an <CodeInline>ElementReference</CodeInline>
+                    If you need access to the underlying element, you can two-way bind an <CodeInline>ElementReference</CodeInline> 
                     to <CodeInline>MudElement</CodeInline> which in turn passes it to the element it renders.
                     <br />
                     Just make sure that you use use <CodeInline>@("@")bind-Ref</CodeInline> instead of just <CodeInline>Ref</CodeInline>
@@ -48,4 +45,4 @@
     </DocsPageContent>
 </DocsPage>
 
-
+    

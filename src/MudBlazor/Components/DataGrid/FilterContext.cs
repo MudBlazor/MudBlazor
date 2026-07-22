@@ -4,45 +4,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Filter state and actions passed to a <see cref="MudDataGrid{T}"/> column filter template, exposing the filter definition and apply, clear, and close commands.
+    /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
-    /// <seealso cref="MudDataGrid{T}"/>
-    public class FilterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
+    public class FilterContext<T>
     {
         private readonly MudDataGrid<T> _dataGrid;
+
+        internal IFilterDefinition<T>? FilterDefinition { get; set; }
 
         internal HeaderCell<T>? HeaderCell { get; set; }
 
         /// <summary>
-        /// The definition of this filter.
-        /// </summary>
-        public IFilterDefinition<T>? FilterDefinition { get; set; }
-
-        /// <summary>
         /// The items to filter.
         /// </summary>
-        public IEnumerable<T>? Items => _dataGrid.Items;
-
-        /// <summary>
-        /// Indicates whether this filter currently has an applied value in the data grid.
-        /// </summary>
-        public bool IsFiltered => _dataGrid.HasFilter(FilterDefinition?.Column);
-
-        /// <summary>
-        /// The icon which reflects whether this filter is currently applied.
-        /// </summary>
-        /// <remarks>
-        /// Returns <see cref="MudDataGrid{T}.FilterIconFilled"/> when <see cref="IsFiltered"/> is <c>true</c>;
-        /// otherwise returns <see cref="MudDataGrid{T}.FilterIconEmpty"/>.
-        /// </remarks>
-        public string FilterIcon => IsFiltered ? _dataGrid.FilterIconFilled : _dataGrid.FilterIconEmpty;
+        public IEnumerable<T> Items => _dataGrid.Items;
 
         /// <summary>
         /// The definitions of all filters in the grid.
@@ -52,7 +34,7 @@ namespace MudBlazor
         /// <summary>
         /// The behaviors which occur when filters are applied or cleared.
         /// </summary>
-        public FilterActions Actions { get; private set; }
+        public FilterActions Actions { get; }
 
         /// <summary>
         /// Creates a new instance.
@@ -61,28 +43,17 @@ namespace MudBlazor
         public FilterContext(MudDataGrid<T> dataGrid)
         {
             _dataGrid = dataGrid;
-            Actions = CreateHeaderCellActions();
-        }
-
-        internal void SetActions(FilterActions actions)
-        {
-            Actions = actions;
-        }
-
-        internal FilterActions CreateHeaderCellActions()
-        {
-            return new FilterActions
+            Actions = new FilterActions
             {
                 ApplyFilterAsync = async x => await (HeaderCell?.ApplyFilterAsync(x) ?? Task.CompletedTask),
                 ApplyFiltersAsync = async x => await (HeaderCell?.ApplyFiltersAsync(x) ?? Task.CompletedTask),
                 ClearFilterAsync = async x => await (HeaderCell?.ClearFilterAsync(x) ?? Task.CompletedTask),
                 ClearFiltersAsync = async x => await (HeaderCell?.ClearFiltersAsync(x) ?? Task.CompletedTask),
-                CloseFilterAsync = async () => await (HeaderCell?.CloseFilterAsync() ?? Task.CompletedTask),
             };
         }
 
         /// <summary>
-        /// Apply, clear, and close delegates for a <see cref="MudDataGrid{T}"/> column filter, exposed through <see cref="FilterContext{T}"/>.
+        /// Represents the apply and clear behaviors for a filter of a<see cref="MudDataGrid{T}"/>.
         /// </summary>
         public class FilterActions
         {
@@ -105,15 +76,6 @@ namespace MudBlazor
             /// The function which clears multiple filters.
             /// </summary>
             public required Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; }
-
-            /// <summary>
-            /// The function which closes the filter UI associated with this context.
-            /// </summary>
-            /// <remarks>
-            /// In <see cref="DataGridFilterMode.Simple"/>, this closes the data grid filter panel.
-            /// In <see cref="DataGridFilterMode.ColumnFilterMenu"/>, this closes the column filter popover.
-            /// </remarks>
-            public required Func<Task> CloseFilterAsync { get; init; }
         }
     }
 }

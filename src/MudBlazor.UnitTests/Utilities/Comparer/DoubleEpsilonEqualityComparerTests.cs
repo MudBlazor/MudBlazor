@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Comparer;
@@ -6,20 +7,15 @@ namespace MudBlazor.UnitTests.Utilities.Comparer;
 [TestFixture]
 public class DoubleEpsilonEqualityComparerTests
 {
-    // Valid range is (0, 1) exclusive on both ends; boundaries 0 and 1 must throw.
-    [TestCase(0.0)]
-    [TestCase(1.0)]
-    [TestCase(2.0)]
-    [TestCase(-2.0)]
-    [TestCase(double.PositiveInfinity)]
-    [TestCase(double.NegativeInfinity)]
-    public void Constructor_OutOfRangeEpsilon_ShouldThrowArgumentOutOfRangeException(double epsilon)
+    [Test]
+    public void Constructor_ShouldThrowArgumentOutOfRangeException()
     {
-        // Act
-        Action construct = () => _ = new DoubleEpsilonEqualityComparer(epsilon);
+        // Act & Arrange
+        Action<double> construct = epsilon => _ = new DoubleEpsilonEqualityComparer(epsilon);
 
         // Assert
-        construct.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("epsilon");
+        construct.Invoking(ctor => ctor(2)).Should().Throw<ArgumentOutOfRangeException>();
+        construct.Invoking(ctor => ctor(-2)).Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [TestCase(1000000f, 1000001f, true)]

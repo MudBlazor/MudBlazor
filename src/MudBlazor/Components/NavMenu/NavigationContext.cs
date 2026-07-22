@@ -1,19 +1,12 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using System;
 
 namespace MudBlazor;
 
-
-/// <summary>
-/// The state of a navigation component based on the state of its parent.
-/// </summary>
-/// <param name="Disabled">The parent is preventing user interaction.</param>
-/// <param name="Expanded">The parent is expanded.</param>
+#nullable enable
 public record NavigationContext(bool Disabled, bool Expanded)
 {
-    /// <summary>
-    /// The unique identifier for this context.
-    /// </summary>
-    public string MenuId { get; } = Identifier.Create();
+    public string MenuId { get; } = $"mudnavmenu-{Guid.NewGuid()}";
 }

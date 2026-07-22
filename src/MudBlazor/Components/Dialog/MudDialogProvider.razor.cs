@@ -1,11 +1,19 @@
-﻿// Copyright (c) 2019 Blazored
+﻿// Copyright (c) 2020 Jonny Larsson
+// License: MIT
+// See https://github.com/MudBlazor/MudBlazor
+// Modified version of Blazored Modal
+// Copyright (c) 2019 Blazored
 // License: MIT
 // See https://github.com/Blazored
-// Copyright (c) 2020 - Adapted by MudBlazor Contributors
 
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -15,17 +23,13 @@ namespace MudBlazor
     /// Add this component to your layout page if your application needs to display dialogs.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogContainer"/>
+    /// <seealso cref="MudDialogInstance"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
-    /// <seealso cref="MudBlazor.DialogService"/>
+    /// <seealso cref="DialogService"/>
     public partial class MudDialogProvider : IDisposable
     {
-        private DialogOptions _globalDialogOptions = new();
-        private readonly List<IDialogReference> _dialogs = [];
-        private string? _currentUri;
-
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
 
@@ -109,26 +113,8 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? BackgroundClass { get; set; }
 
-        /// <summary>
-        /// The element which will receive focus when a dialog is shown by default.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus? DefaultFocus { get; set; }
-
-        /// <summary>
-        /// Reverses the button order in all <see cref="MudMessageBox"/> instances.
-        /// </summary>
-        /// <remarks>
-        /// This is primarily useful for Blazor Hybrid Windows applications where the native OS button order differs from standard Material Design guidelines.
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Dialog.Behavior)]
-        public bool ReverseMessageBoxButtonOrder { get; set; }
+        private readonly Collection<IDialogReference> _dialogs = new();
+        private readonly DialogOptions _globalDialogOptions = new();
 
         protected override void OnInitialized()
         {
@@ -136,40 +122,27 @@ namespace MudBlazor
             DialogService.OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
-            var newOptions = _globalDialogOptions with
-            {
-                BackdropClick = BackdropClick,
-                CloseOnEscapeKey = CloseOnEscapeKey,
-                CloseButton = CloseButton,
-                NoHeader = NoHeader,
-                Position = Position,
-                FullWidth = FullWidth,
-                MaxWidth = MaxWidth,
-                BackgroundClass = BackgroundClass,
-                DefaultFocus = DefaultFocus
-            };
-
-            _globalDialogOptions = newOptions;
+            _globalDialogOptions.BackdropClick = BackdropClick;
+            _globalDialogOptions.CloseOnEscapeKey = CloseOnEscapeKey;
+            _globalDialogOptions.CloseButton = CloseButton;
+            _globalDialogOptions.NoHeader = NoHeader;
+            _globalDialogOptions.Position = Position;
+            _globalDialogOptions.FullWidth = FullWidth;
+            _globalDialogOptions.MaxWidth = MaxWidth;
+            _globalDialogOptions.BackgroundClass = BackgroundClass;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
             {
-                foreach (var dialogReference in _dialogs.ToArray().Where(x => !x.Result.IsCompleted))
+                foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
                 {
                     dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(true);
                 }
             }
 
             return base.OnAfterRenderAsync(firstRender);
-        }
-
-        internal void SetOptions(Guid id, DialogOptions options)
-        {
-            var reference = GetDialogReference(id);
-            if (reference != null)
-                reference.InjectOptions(options);
         }
 
         internal void DismissInstance(Guid id, DialogResult result)
@@ -179,29 +152,10 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
-        internal bool ShouldDismissOnNavigation(IDialogReference dialog, string newUri)
-        {
-            if (dialog.Options?.CloseOnNavigation == null)
-            {
-                return HasRouteChanged(newUri);
-            }
-
-            return dialog.Options.CloseOnNavigation.Value;
-        }
-
-        internal bool HasRouteChanged(string newUri)
-        {
-            if (_currentUri == null)
-            {
-                return true;
-            }
-
-            return !string.Equals(_currentUri, newUri, StringComparison.OrdinalIgnoreCase);
-        }
-
         private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
+
             return InvokeAsync(StateHasChanged);
         }
 
@@ -210,10 +164,7 @@ namespace MudBlazor
         /// </summary>
         public void DismissAll()
         {
-            foreach (var dialog in _dialogs.ToArray())
-            {
-                DismissInstance(dialog, DialogResult.Cancel());
-            }
+            _dialogs.ToList().ForEach(r => DismissInstance(r, DialogResult.Cancel()));
             StateHasChanged();
         }
 
@@ -227,36 +178,22 @@ namespace MudBlazor
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.ToArray().FirstOrDefault(d => d.Id == id);
+            return _dialogs.SingleOrDefault(x => x.Id == id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
         {
-            var newUri = NavigationManager.ToAbsoluteUri(args.Location).AbsolutePath.TrimEnd('/');
-
-            foreach (var dialog in _dialogs.ToArray().Where(d => ShouldDismissOnNavigation(d, newUri)))
-            {
-                DismissInstance(dialog, DialogResult.Cancel());
-            }
-
-            _currentUri = newUri;
-            StateHasChanged();
+            DismissAll();
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                NavigationManager.LocationChanged -= LocationChanged;
-                DialogService.DialogInstanceAddedAsync -= AddInstanceAsync;
-                DialogService.OnDialogCloseRequested -= DismissInstance;
-            }
-        }
-
+        /// <summary>
+        /// Releases resources used by this provider.
+        /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            NavigationManager.LocationChanged -= LocationChanged;
+            DialogService.DialogInstanceAddedAsync -= AddInstanceAsync;
+            DialogService.OnDialogCloseRequested -= DismissInstance;
         }
     }
 }

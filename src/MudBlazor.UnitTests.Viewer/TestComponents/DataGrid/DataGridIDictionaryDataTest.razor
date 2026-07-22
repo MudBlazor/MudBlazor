@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@*<MudDataGrid Items="@_items" Sortable="true" Filterable="true">
+    <Columns>
+        <Column T="IDictionary<string, object>" Field="Name" />
+        <Column T="IDictionary<string, object>" Field="Age" />
+        <Column T="IDictionary<string, object>" Field="Status" />
+        <Column T="IDictionary<string, object>" Field="Hired" />
+        <Column T="IDictionary<string, object>" Field="HiredOn" />
+    </Columns>
+</MudDataGrid>*@
+
+@code {
+    private IEnumerable<IDictionary<string, object>> _items = new List<IDictionary<string, object>>
+    {
+        new Dictionary<string, object> { { "Name", "John" }, { "Age", 45 }, { "Status", Severity.Normal }, { "Hired", false }, { "HiredOn", null } },
+        new Dictionary<string, object> { { "Name", "Johanna" }, { "Age", 23 }, { "Status", Severity.Info }, { "Hired", true }, { "HiredOn", new DateTime(2011, 1, 2) } },
+        new Dictionary<string, object> { { "Name", "Steve" }, { "Age", 32 }, { "Status", null }, { "Hired", false }, { "HiredOn", null } },
+    };
+}

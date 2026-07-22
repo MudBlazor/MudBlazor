@@ -7,6 +7,7 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
+#nullable enable
 public partial class ParameterStateMultipleScopeTestComp : MudComponentBase
 {
     public ParameterStateMultipleScopeTestComp()
@@ -30,12 +31,12 @@ public partial class ParameterStateMultipleScopeTestComp : MudComponentBase
     private readonly ParameterState<int> _b;
     private readonly ParameterState<int> _c;
 
-    [Parameter, ParameterState]
+    [Parameter]
     public int A { get; set; }
 
-    [Parameter, ParameterState]
+    [Parameter]
     public int B { get; set; }
 
-    [Parameter, ParameterState]
+    [Parameter]
     public int C { get; set; }
 }

@@ -1,6 +1,8 @@
-<MudTable FixedHeader="true" Filter="new Func<RacingCar, bool>(FilterFunc)" Items="@_cars" GroupBy="@_groupDefinition" Loading="_loading">
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable FixedHeader="true" Filter="new Func<RacingCar, bool>(FilterFunc)" Items="@cars" GroupBy="@groupDefinition" Loading="loading">
     <ToolBarContent>
-        <MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search"></MudTextField>
+        <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Model:</MudTh>
@@ -18,24 +20,26 @@
     </GroupFooterTemplate>
 </MudTable>
 
-<MudSwitch id="switch" @bind-Value="_loading">Show Loading</MudSwitch>
+<MudSwitch id="switch" @bind-Value="loading">Show Loading</MudSwitch>
 
 @code {
     public static string __description__ = "Loading text and no records in grouped table test.";
 
-    private IEnumerable<RacingCar> _cars = [];
-    private bool _loading; 
-    private string _searchString = string.Empty;
+    private IEnumerable<RacingCar> cars;
 
-    private readonly TableGroupDefinition<RacingCar> _groupDefinition = new()
+    private bool loading = false; 
+
+    private string searchString = "";
+
+    private TableGroupDefinition<RacingCar> groupDefinition = new TableGroupDefinition<RacingCar>()
 	{
 		GroupName = "Brand",
-		Selector = e => e.Brand
+		Selector = (e) => e.Brand
 	};
 
     protected override Task OnInitializedAsync()
     {
-        _cars = new List<RacingCar>() {
+        cars = new List<RacingCar>() {
             new("919 Hybrid", "Porsche", "LMP1"),
             new("911 RSR", "Porsche", "GTE")  
         };
@@ -44,21 +48,29 @@
 
     private bool FilterFunc(RacingCar car)
     {
-        if (string.IsNullOrWhiteSpace(_searchString))
+        if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (car.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (car.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
 
-    public class RacingCar(string name, string brand, string category)
+    public class RacingCar
     {
-        public string Name { get; set; } = name;
+        public RacingCar(string name, string brand, string category)
+        {
+            Name = name;
+            Brand = brand;
+            Category = category;
+        }
 
-        public string Brand { get; set; } = brand;
+        public string Name { get; set; }
+        public string Brand { get; set; }
+        public string Category { get; set; }
 
-        public string Category { get; set; } = category;
-
-        public override string ToString() => $"({Category}) {Brand} {Name}";
+        public override string ToString()
+        {
+            return $"({Category}) {Brand} {Name}";
+        }
     }
 }

@@ -20,6 +20,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -111,7 +112,7 @@ namespace PrimitiveCalculator
                 if (val == null)
                     return double.NaN;
                 if (op.Operator == "-")
-                    Value = -1.0 * val.Value;
+                    Value = (-1.0 * (val.Value));
                 else
                     Value = val;
             }
@@ -193,15 +194,16 @@ namespace PrimitiveCalculator
                 return double.NaN;
             return Operator switch
             {
-                "+" => (v + Expression.Value) ?? double.NaN,
-                "-" => (v - Expression.Value) ?? double.NaN,
-                "*" => (v * Expression.Value) ?? double.NaN,
-                "/" => (v / Expression.Value) ?? double.NaN,
-                "%" => (v % Expression.Value) ?? double.NaN,
+                "+" => v + Expression.Value ?? double.NaN,
+                "-" => v - Expression.Value ?? double.NaN,
+                "*" => v * Expression.Value ?? double.NaN,
+                "/" => v / Expression.Value ?? double.NaN,
+                "%" => v % Expression.Value ?? double.NaN,
                 "^" => Math.Pow(v, Expression.Value ?? double.NaN),
                 _ => double.NaN,
             };
         }
     }
+
 
 }

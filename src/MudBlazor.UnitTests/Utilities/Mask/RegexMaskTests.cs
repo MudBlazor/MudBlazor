@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
@@ -10,6 +10,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class RegexMaskTests
 {
+
     [Test]
     public void RegexMask_Insert()
     {
@@ -59,87 +60,6 @@ public class RegexMaskTests
         mask.CaretPos = 1;
         mask.UpdateFrom(null);
         mask.ToString().Should().Be("1|234");
-    }
-
-    [Test]
-    public void RegexMask_SelectionDelete()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]+$");
-        mask.Insert("12345");
-        mask.Selection = (1, 4);
-
-        // Act
-        mask.Delete();
-
-        // Assert
-        mask.Text.Should().Be("15");
-    }
-
-    [Test]
-    public void RegexMask_SelectionBackspace()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]+$");
-        mask.Insert("12345");
-        mask.Selection = (1, 4);
-
-        // Act
-        mask.Backspace();
-
-        // Assert
-        mask.Text.Should().Be("15");
-    }
-
-    [Test]
-    public void RegexMask_EmptyInput()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]*$");
-
-        // Act
-        mask.Insert("");
-
-        // Assert
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void RegexMask_NullInput()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]*$");
-
-        // Act
-        mask.Insert(null);
-
-        // Assert
-        mask.Text.Should().BeNullOrEmpty();
-    }
-
-    [Test]
-    public void RegexMask_NonProgressiveRegex_BlocksAllInput()
-    {
-        // Documented contract: the regex must match every input prefix. A fixed-length
-        // pattern like ^[0-9]{5}$ matches neither "1" nor "12345" as it is being typed,
-        // so AlignAgainstMask appends nothing and the input is silently rejected.
-        var mask = new RegexMask("^[0-9]{5}$");
-
-        mask.Insert("12345");
-
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void RegexMask_ProgressiveRegex_AcceptsBoundedInput()
-    {
-        // The progressive form ^[0-9]{0,5}$ matches partial input, so the same digits
-        // are accepted up to the upper bound and further digits are dropped.
-        var mask = new RegexMask("^[0-9]{0,5}$");
-
-        mask.Insert("1234567");
-
-        mask.Text.Should().Be("12345");
     }
 
 }

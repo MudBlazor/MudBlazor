@@ -1,20 +1,13 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// Displays additional context when users hover over or focus on an element.
-    /// </summary>
+#nullable enable
     public partial class MudTooltip : MudComponentBase
     {
-        private int _parentUpdateCount;
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
@@ -35,210 +28,147 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass("d-flex")
             .AddClass("mud-tooltip-default", Color == Color.Default)
-            .AddClass($"mud-tooltip-{ConvertPlacement().ToStringFast(true)}")
+            .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
             .AddClass("mud-tooltip-arrow", Arrow)
-            .AddClass($"mud-border-{Color.ToStringFast(true)}", Arrow && Color != Color.Default)
-            .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
+            .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
+            .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
             .Build();
 
-        /// <summary>
-        /// Displays content right-to-left.
-        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// The tooltip color.
+        /// The color of the component. It supports the theme colors.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The tooltip text.
+        /// Sets the text to be displayed inside the tooltip.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Behavior)]
         public string? Text { get; set; } = string.Empty;
 
         /// <summary>
-        /// Displays an arrow pointing towards the tooltip content.
+        /// If true, an arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool Arrow { get; set; } = false;
 
         /// <summary>
-        /// The length of time to animate the opening transition.
+        /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Defaults to 251ms in <see cref="MudGlobal.TooltipDefaults.Duration"/>.
+        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Duration { get; set; } = MudGlobal.TooltipDefaults.Duration.TotalMilliseconds;
+        public double Duration { get; set; } = MudGlobal.TransitionDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
-        /// The amount of time, in milliseconds, to wait from opening the popover before performing the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         /// <remarks>
-        /// Defaults to 0ms in <see cref="MudGlobal.TooltipDefaults.Delay"/>.
+        /// Set globally via <see cref="MudGlobal.TooltipDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public double Delay { get; set; } = MudGlobal.TooltipDefaults.Delay.TotalMilliseconds;
 
         /// <summary>
-        /// The location of the tooltip relative to its content.
+        /// Tooltip placement.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Placement.Bottom"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public Placement Placement { get; set; } = Placement.Bottom;
 
         /// <summary>
-        /// The content described by this tooltip.
+        /// Child content of component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The content of the tooltip.
+        /// Tooltip content. May contain any valid html
         /// </summary>
-        /// <remarks>
-        /// Can contain any valid HTML.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Behavior)]
         public RenderFragment? TooltipContent { get; set; }
 
         /// <summary>
-        /// Displays this tooltip inline with its container.
+        /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>. When <c>false</c>, the content will display as a block element.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool Inline { get; set; } = true;
 
         /// <summary>
-        /// Any CSS styles applied to the tooltip.
+        /// Styles applied directly to root component of the tooltip
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootStyle { get; set; }
 
         /// <summary>
-        /// Any CSS classes applied to the tooltip.
+        /// Classes applied directly to root component of the tooltip
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootClass { get; set; }
 
         /// <summary>
-        /// Shows this tooltip when hovering over its content.
+        /// Determines on which events the tooltip will act
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool ShowOnHover { get; set; } = true;
 
         /// <summary>
-        /// Shows this tooltip when its content is focused.
+        /// Determines on which events the tooltip will act
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool ShowOnFocus { get; set; } = true;
 
-        /// <summary>
-        /// Shows this tooltip when its content is clicked.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool ShowOnClick { get; set; } = false;
 
         /// <summary>
-        /// Shows this tooltip.
+        /// The visible state of the Tooltip.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Visible { get; set; }
 
         /// <summary>
-        /// Occurs when <see cref="Visible"/> has changed.
+        /// An event triggered when the state of Visible has changed
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public EventCallback<bool> VisibleChanged { get; set; }
 
         /// <summary>
-        /// Prevents this tooltip from being displayed.
+        /// If true, the tooltip will be disabled; the popover will not be visible.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
-        /// <summary>
-        /// Gets whether the tooltip should be shown.
-        /// </summary>
-        /// <remarks>
-        /// The tooltip will be displayed if not disabled, not already visible, and either <see cref="TooltipContent"/> or <see cref="Text"/> is specified.
-        /// </remarks>
-        internal bool ShowToolTip()
+        private Task HandlePointerEnterAsync()
         {
-            return !Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
+            return ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
         }
 
-        /// <inheritdoc />
-        public override Task SetParametersAsync(ParameterView parameters)
+        private Task HandlePointerLeaveAsync()
         {
-            unchecked { _parentUpdateCount++; }
-
-            return base.SetParametersAsync(parameters);
+            return ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
-
-        /// <inheritdoc />
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-
-            ConvertPlacement();
-        }
-
-        internal Task HandlePointerEnterAsync() => ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
-
-        internal Task HandlePointerLeaveAsync() => ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
 
         private Task HandleFocusInAsync()
         {

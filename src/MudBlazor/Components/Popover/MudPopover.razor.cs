@@ -1,26 +1,19 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// Displays content as a window over other content.
-    /// </summary>
+#nullable enable
     public partial class MudPopover : MudPopoverBase
     {
         protected internal override string PopoverClass =>
             new CssBuilder("mud-popover")
                 .AddClass($"mud-popover-fixed", Fixed)
                 .AddClass($"mud-popover-open", Open)
-                .AddClass($"mud-popover-{TransformOrigin.ToStringFast(true)}")
-                .AddClass($"mud-popover-anchor-{AnchorOrigin.ToStringFast(true)}")
-                .AddClass($"mud-popover-overflow-{GetOverflowBehavior().ToStringFast(true)}")
-                .AddClass($"mud-popover-{RelativeWidth.ToStringFast(true)}-width", RelativeWidth != DropdownWidth.Ignore)
+                .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
+                .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
+                .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
+                .AddClass($"mud-popover-relative-width", RelativeWidth)
                 .AddClass($"mud-paper", Paper)
                 .AddClass($"mud-paper-square", Paper && Square)
                 .AddClass($"mud-elevation-{Elevation}", Paper && DropShadow)
@@ -30,8 +23,8 @@ namespace MudBlazor
 
         protected internal override string PopoverStyles =>
             new StyleBuilder()
-                .AddStyle("transition-duration", $"{GetDuration()}ms")
-                .AddStyle("transition-delay", $"{GetDelay()}ms")
+                .AddStyle("transition-duration", $"{Duration}ms")
+                .AddStyle("transition-delay", $"{Delay}ms")
                 .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
                 .AddStyle(Style)
                 .Build();
@@ -46,148 +39,100 @@ namespace MudBlazor
             };
         }
 
-        /// <summary>
-        /// Displays text Right-to-Left.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  This property is set via the <see cref="MudRTLProvider"/>.
-        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Sets the maximum height, in pixels, of this popover.
+        /// Sets the maxheight the popover can have when open.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public int? MaxHeight { get; set; } = null;
 
         /// <summary>
-        /// Displays content within a <see cref="MudPaper"/>.
+        /// If true, will apply default MudPaper classes.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public bool Paper { get; set; } = true;
 
         /// <summary>
-        /// Shows a drop shadow to help this popover stand out.
+        /// Determines whether the popover has a drop-shadow. Default is true.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// The amount of drop shadow to apply.
+        /// The higher the number, the heavier the drop-shadow.
         /// </summary>
-        /// <remarks>
-        /// Defaults to 8.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public int Elevation { set; get; } = 8;
+        public int Elevation { set; get; } = MudGlobal.PopoverDefaults.Elevation;
 
         /// <summary>
-        /// Displays square borders around this popover.
+        /// If true, border-radius is set to 0.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// When <c>true</c>, the CSS <c>border-radius</c> is set to <c>0</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public bool Square { get; set; }
 
         /// <summary>
-        /// Displays this popover in a fixed position, even through scrolling.
+        /// If true the popover will be fixed position instead of absolute.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>False</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Behavior)]
         public bool Fixed { get; set; }
 
         /// <summary>
-        /// The length of time that the opening transition takes to complete.
+        /// Sets the length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="PopoverOptions.Duration"/>.
+        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public double? Duration { get; set; }
+        public double Duration { get; set; } = MudGlobal.TransitionDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
-        /// The amount of time, in milliseconds, from opening the popover to beginning the transition. 
+        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="PopoverOptions.Delay"/>.
+        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public double? Delay { get; set; }
+        public double Delay { get; set; } = MudGlobal.TransitionDefaults.Delay.TotalMilliseconds;
 
         /// <summary>
-        /// The location this popover will appear relative to its parent container.
+        /// Set the anchor point on the element of the popover.
+        /// The anchor point will determinate where the popover will be placed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.  Use <see cref="TransformOrigin"/> to control the direction of the popover from this point.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// The direction this popover will appear relative to the <see cref="Origin"/>.
+        /// Sets the intersection point if the anchor element. At this point the popover will lay above the popover. 
+        /// This property in conjunction with AnchorPlacement determinate where the popover will be placed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// The behavior applied when there is not enough space for this popover to be visible.
+        /// Set the overflow behavior of a popover and controls how the element should react if there is not enough space for the element to be visible
+        /// Defaults to none, which doens't apply any overflow logic
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="PopoverOptions.OverflowBehavior" />.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior? OverflowBehavior { get; set; }
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
         /// <summary>
-        /// Gets the resolved overflow behavior, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// If true, the popover will have the same width at its parent element, default to false
         /// </summary>
-        protected OverflowBehavior GetOverflowBehavior() => OverflowBehavior ?? PopoverService.PopoverOptions.OverflowBehavior;
-
-        /// <summary>
-        /// Gets the resolved transition duration in milliseconds, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
-        /// </summary>
-        protected double GetDuration() => Duration ?? PopoverService.PopoverOptions.Duration.TotalMilliseconds;
-
-        /// <summary>
-        /// Gets the resolved transition delay in milliseconds, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
-        /// </summary>
-        protected double GetDelay() => Delay ?? PopoverService.PopoverOptions.Delay.TotalMilliseconds;
-
-        /// <summary>
-        /// Determines the width of this popover in relation the parent container.
-        /// </summary>
-        /// <remarks>
-        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
-        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
-        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
+        public bool RelativeWidth { get; set; } = false;
     }
 }

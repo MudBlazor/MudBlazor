@@ -14,9 +14,6 @@
     }
     else
     {
-        if (Parent.ItemTemplate is not null && Item is not null)
-        {
-            @Parent.ItemTemplate(Item)
-        }
+        @Parent?.ItemTemplate(Item);
     }
 </li>

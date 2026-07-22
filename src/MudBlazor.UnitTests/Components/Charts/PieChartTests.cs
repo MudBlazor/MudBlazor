@@ -1,11 +1,14 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-using AngleSharp.Dom;
-using AwesomeAssertions;
+
+using System.Linq;
+using System.Reflection.Metadata;
 using Bunit;
-using Microsoft.AspNetCore.Components;
+using FluentAssertions;
+using Moq;
 using MudBlazor.Charts;
+using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -40,31 +43,28 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void PieChartEmptyData()
         {
-            var comp = Context.Render<Pie<double>>(parameters => parameters
-                .Add(p => p.ChartSeries, null));
-
+            var comp = Context.RenderComponent<Pie>();
             comp.Markup.Should().Contain("mud-chart-pie");
-            comp.Instance.ChartSeries.Should().BeNull();
         }
 
         [Theory]
         [TestCase(new double[] { 77, 25, 20, 5 })]
         [TestCase(new double[] { 77, 25, 20, 5, 8 })]
-        public async Task PieChartExampleData(double[] data)
+        public void PieChartExampleData(double[] data)
         {
             string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
                 "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
                 "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
 
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
-                .Add(p => p.ChartSeries, [data])
-                .Add(p => p.ChartLabels, labels));
+                .Add(p => p.InputData, data)
+                .Add(p => p.InputLabels, labels));
 
-            comp.Markup.Should().Contain("class=\"mud-chart-pie mud-ltr\"");
+            comp.Markup.Should().Contain("class=\"mud-chart-pie\"");
             comp.Markup.Should().Contain("class=\"mud-chart-serie\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
@@ -79,35 +79,36 @@ namespace MudBlazor.UnitTests.Charts
                 comp.Markup.Should()
                     .Contain("Technetium");
             }
+
             if (data.Length == 4 && data.Contains(77))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M 0 -140 A 140 140 0 1 1 -86.7071 109.9176 L 0 0 Z\"");
+                    .Contain("M 1 0 A 1 1 0 1 1 -0.7851254621398548 -0.6193367490305087 L 0 0");
             }
 
             if (data.Length == 4 && data.Contains(5))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M -34.2796 -135.7384 A 140 140 0 0 1 -0 -140 L 0 0 Z\"");
+                    .Contain("M 0.9695598647982466 -0.24485438238350116 A 1 1 0 0 1 1 -2.4492935982947064E-16 L 0 0");
             }
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters
+            comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 
             comp.Markup.Should().Contain(_modifiedPalette[0]);
         }
 
         [Test]
-        public async Task PieChartColoring()
+        public void PieChartColoring()
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = new string[] { "#1E9AB0" } })
-                .Add(p => p.ChartSeries, [data]));
+                .Add(p => p.InputData, data));
 
             var paths1 = comp.FindAll("path");
 
@@ -115,7 +116,7 @@ namespace MudBlazor.UnitTests.Charts
             count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"{"#1E9AB0"}\""));
             count.Should().Be(22);
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters
+            comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _customPalette }));
 
             var paths2 = comp.FindAll("path");
@@ -132,124 +133,6 @@ namespace MudBlazor.UnitTests.Charts
                     count.Should().Be(1);
                 }
             }
-        }
-
-        [Test]
-        public void PieChart100Percent()
-        {
-            double[] data = { 50, 0, 0 };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Pie)
-                .Add(p => p.ChartSeries, [data]));
-
-            comp.Markup.Should().Contain("d=\"M 0 -140 A 140 140 0 1 1 0 140 A 140 140 0 1 1 -0 -140 L 0 0 Z\"");
-        }
-
-        [Test]
-        public async Task PieChart_CanHideSeries()
-        {
-            var chartData = new double[] { 10, 20, 30, 40 };
-            string[] chartLabels = { "Slice 1", "Slice 2", "Slice 3", "Slice 4" };
-            var chartSeries = new List<ChartSeries<double>>() { new() { Data = chartData } };
-            // For Pie charts, individual data points (slices) are hidden, not the whole series object usually.
-            // The `ChartSeries.Visible` property might not apply here in the same way as for other charts if we want to hide slices.
-            // Instead, the legend interaction directly controls visibility of slices.
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Pie)
-                .Add(p => p.Height, "300px")
-                .Add(p => p.Width, "300px")
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, chartLabels)
-                .Add(p => p.CanHideSeries, true) // This enables legend item clicking to hide/show
-                .Add(p => p.ChartOptions, new PieChartOptions { ChartPalette = _baseChartPalette })
-            );
-
-            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
-            seriesCheckboxes.Count.Should().Be(chartLabels.Length, "Number of checkboxes should match number of labels (slices)");
-
-            var series1 = "[stroke='#2979FF']";
-            var series2 = "[stroke='#1DE9B6']";
-            var series3 = "[stroke='#FFC400']";
-            var series4 = "[stroke='#FF9100']";
-
-            string[] series = [series1, series2, series3, series4];
-
-            // Initially, all slices should be visible and their checkboxes checked
-            for (var i = 0; i < chartLabels.Length; i++)
-            {
-                seriesCheckboxes[i].IsChecked().Should().BeTrue($"{chartLabels[i]} checkbox should be initially checked");
-                comp.FindAll($"path.mud-chart-serie{series[i]}").Count.Should().Be(1, $"{chartLabels[i]} path should be initially visible");
-            }
-
-            // Hide "Slice 1"
-            await seriesCheckboxes[0].ChangeAsync(false);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[0].IsChecked().Should().BeFalse("Slice 1 checkbox should be unchecked after hiding");
-            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Slice 1 path should be hidden");
-            comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Slice 2 path should remain visible"); // Check other slices
-
-            // Show "Slice 1" again
-            await seriesCheckboxes[0].ChangeAsync(true);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[0].IsChecked().Should().BeTrue("Slice 1 checkbox should be checked after re-showing");
-            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Slice 1 path should be visible again");
-
-            // Hide "Slice 3"
-            await seriesCheckboxes[2].ChangeAsync(false);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[2].IsChecked().Should().BeFalse("Slice 3 checkbox should be unchecked after hiding");
-            comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Slice 3 path should be hidden");
-            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Slice 1 path should still be visible");
-            comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Slice 2 path should still be visible");
-            comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Slice 4 path should still be visible");
-
-            // Show "Slice 3" again
-            await seriesCheckboxes[2].ChangeAsync(true);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[2].IsChecked().Should().BeTrue("Slice 3 checkbox should be checked after re-showing");
-            comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Slice 3 path should be visible again");
-        }
-
-        [Test]
-        public async Task PieChart_ClickingSerie_UpdatesSelectedIndex()
-        {
-            var selectedIndex = -1;
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Pie)
-                .Add(p => p.Width, "300px")
-                .Add(p => p.Height, "300px")
-                .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
-                .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
-                .Add(p => p.ChartOptions, new PieChartOptions { ChartPalette = _baseChartPalette })
-                .Add(p => p.SelectedIndex, selectedIndex)
-                .Add(p => p.SelectedIndexChanged, EventCallback.Factory.Create<int>(this, v => selectedIndex = v)));
-
-            var paths = comp.FindAll("path.mud-chart-serie");
-            paths.Count.Should().BeGreaterThan(1);
-
-            // Clicking the last serie path raises SelectedIndexChanged with that index.
-            await paths.Last().ClickAsync();
-            selectedIndex.Should().Be(2);
-        }
-
-        [Test]
-        public void PieChart_WhitespaceLabel_IsSkippedInLegend()
-        {
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Pie)
-                .Add(p => p.Width, "300px")
-                .Add(p => p.Height, "300px")
-                .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
-                .Add(p => p.ChartLabels, new[] { "Visible", "   ", "Other" })
-                .Add(p => p.ChartOptions, new PieChartOptions { ChartPalette = _baseChartPalette }));
-
-            var pie = comp.FindComponent<Pie<double>>().Instance;
-
-            // The blank/whitespace label produces no legend entry.
-            pie._legends.Should().HaveCount(2);
-            pie._legends.Select(l => l.Labels).Should().Contain("Visible").And.Contain("Other");
         }
     }
 }

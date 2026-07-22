@@ -1,4 +1,5 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc">
     <Columns>
@@ -7,7 +8,7 @@
 </MudDataGrid>
 
 @code {
-    private readonly IEnumerable<Item> _items = new List<Item>
+    private IEnumerable<Item> _items = new List<Item>()
     {
         new Item("B"), 
         new Item("A"), 
@@ -15,19 +16,25 @@
         new Item("C")
     };
 
-    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState, CancellationToken token)
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
     {
         await Task.CompletedTask;
         var filterFunctions = gridState.FilterDefinitions.Select(x => x.GenerateFilterFunction());
         return new GridData<Item>
         {
-            Items = _items.Where(x => filterFunctions.All(f => f(x))),
-            TotalItems = _items.Count()
+            Items = this._items.Where(x => filterFunctions.All(f => f(x))),
+            TotalItems = this._items.Count()
         };
     }
 
-    public class Item(string name)
+    public class Item
     {
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
     }
+
 }

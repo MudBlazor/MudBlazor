@@ -2,12 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State.Comparer;
 
+#nullable enable
 /// <summary>
 /// Represents a hot swappable parameter comparer that can transform from one type to another.
 /// </summary>

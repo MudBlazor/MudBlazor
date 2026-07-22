@@ -1,42 +1,38 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// A form input for boolean values or selecting multiple items in a list. Use checkboxes (instead of switches or radio buttons) if multiple options can be selected from a list.
+    /// Represents a form input for boolean values or selecting multiple items in a list.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
-    /// <seealso cref="MudRadio{T}"/>
-    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
-        private readonly string _elementId = Identifier.Create("checkbox");
-        private readonly string _ariaId = Identifier.Create("cbox-aria-");
+        private IKeyInterceptor? _keyInterceptor;
+        private string _elementId = "checkbox" + Guid.NewGuid().ToString().Substring(0, 8);
 
         [Inject]
-        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
 
-        protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
-            .AddClass($"mud-disabled", GetDisabledState())
-            .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass("mud-input-with-content", ChildContent is not null)
+        protected string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass(Class)
             .Build();
 
-        protected override string LabelClassname => new CssBuilder("mud-checkbox")
+        protected string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
+            .AddClass("flex-row-reverse", LabelPosition == LabelPosition.Start)
             .Build();
 
-        protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && (UncheckedColor == null || BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text", !GetDisabledState() && UncheckedColor != null && BoolValue != true)
-            .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || BoolValue == true))
-            .AddClass($"hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue != true)
+        protected string CheckBoxClassname => new CssBuilder("mud-button-root mud-icon-button")
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-disabled", GetDisabledState())
@@ -45,6 +41,16 @@ namespace MudBlazor
             .AddClass($"mud-checkbox-false", BoolValue == false)
             .AddClass($"mud-checkbox-null", BoolValue is null)
             .Build();
+
+        /// <summary>
+        /// The color of the checkbox.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The color of the checkbox when its <c>Value</c> is <c>false</c> or <c>null</c>.
@@ -57,14 +63,24 @@ namespace MudBlazor
         public Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
-        /// The Aria Label to be assigned to the checkbox.
+        /// The text to display next to the checkbox.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Used to improve accessibility for screen readers. Adds an aria-labelledby to <c>UserAttributes</c>.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public string? AriaLabel { get; set; }
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// The position of the <see cref="Label" /> text.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="LabelPosition.End"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
         /// Allows this checkbox to be controlled via the keyboard.
@@ -77,6 +93,16 @@ namespace MudBlazor
         public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
+        /// Shows a ripple effect when this checkbox is clicked.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool Ripple { get; set; } = true;
+
+        /// <summary>
         /// Uses compact padding.
         /// </summary>
         /// <remarks>
@@ -85,6 +111,23 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// The size of the checkbox.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The content within this checkbox.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The icon to display for a checked state.
@@ -142,7 +185,7 @@ namespace MudBlazor
             if (TriState && typeof(T) == typeof(bool?))
             {
                 // The cycle is forced with the following steps: true, false, indeterminate, true, false, indeterminate...
-                var boolValue = (bool?)(object?)ReadValue;
+                var boolValue = (bool?)(object?)_value;
                 if (!boolValue.HasValue)
                 {
                     return SetBoolValueAsync(true, true);
@@ -156,77 +199,96 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+        protected void HandleKeyDown(KeyboardEventArgs obj)
+        {
+            if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
+            {
+                return;
+            }
+
+            switch (obj.Key)
+            {
+                case "Delete":
+                    SetBoolValueAsync(false, true);
+                    break;
+                case "Enter" or "NumpadEnter":
+                    SetBoolValueAsync(true, true);
+                    break;
+                case "Backspace":
+                    if (TriState)
+                    {
+                        SetBoolValueAsync(null, true);
+                    }
+
+                    break;
+                case " ":
+                    switch (BoolValue)
+                    {
+                        case null:
+                            SetBoolValueAsync(true, true);
+                            break;
+                        case true:
+                            SetBoolValueAsync(false, true);
+                            break;
+                        case false when TriState:
+                            SetBoolValueAsync(null, true);
+                            break;
+                        case false:
+                            SetBoolValueAsync(true, true);
+                            break;
+                    }
+
+                    break;
+            }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label is null && For is not null)
+            {
+                Label = For.GetLabelString();
+            }
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                var options = new KeyInterceptorOptions(
-                    "mud-button-root",
-                    [
-                        // prevent scrolling page
-                        new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
-                    ]);
+                _keyInterceptor = KeyInterceptorFactory.Create();
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
-                        .OnKeyDown("Backspace", HandleBackspaceAsync)
-                        .OnKeyDown(" ", HandleSpaceAsync)));
+                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
+                {
+                    //EnableLogging = true,
+                    TargetClass = "mud-button-root",
+                    Keys =
+                    {
+                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
+                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
+                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
+                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
+                    },
+                });
+                _keyInterceptor.KeyDown += HandleKeyDown;
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        /// <summary>
-        /// Determines whether the checkbox is considered to have a value.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if a value is considered present; otherwise, <c>false</c>.<br/>
-        /// When <see cref="TriState"/> is <c>true</c>, this returns <c>true</c> if <paramref name="value"/> is not <c>null</c>.
-        /// Otherwise, it defers to the base implementation.
-        /// </returns>
-        protected override bool HasValue(T? value)
+        protected override void Dispose(bool disposing)
         {
-            if (TriState)
+            base.Dispose(disposing);
+
+            if (disposing)
             {
-                return BoolValue is not null;
-            }
-
-            return base.HasValue(value);
-        }
-
-        private bool CanHandleKeys() => KeyboardEnabled && !GetDisabledState() && !GetReadOnlyState();
-
-        private Task HandleSpaceAsync()
-        {
-            bool? nextValue = BoolValue switch
-            {
-                null => true,
-                true => false,
-                false when TriState => null,
-                false => true
-            };
-
-            return SetBoolValueAsync(nextValue, true);
-        }
-
-        private Task HandleBackspaceAsync() => TriState
-                ? SetBoolValueAsync(null, true)
-                : Task.CompletedTask;
-
-        /// <inheritdoc />
-        protected override async ValueTask DisposeAsyncCore()
-        {
-            await base.DisposeAsyncCore();
-
-            if (IsJSRuntimeAvailable)
-            {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                if (_keyInterceptor is not null)
+                {
+                    _keyInterceptor.KeyDown -= HandleKeyDown;
+                    if (IsJSRuntimeAvailable)
+                    {
+                        _keyInterceptor.Dispose();
+                    }
+                }
             }
         }
     }

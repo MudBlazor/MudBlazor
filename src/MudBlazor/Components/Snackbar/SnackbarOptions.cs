@@ -1,103 +1,60 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
+using System;
+using System.Threading.Tasks;
+
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// The options applied to an individual snackbar.
-    /// </summary>
     public class SnackbarOptions : CommonSnackbarOptions
     {
-        /// <summary>
-        /// Occurs when the snackbar is clicked.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        public Func<Snackbar, Task>? OnClick { get; set; }
+        public Func<Snackbar, Task> Onclick { get; set; }
 
-        /// <summary>
-        /// Occurs when the <c>Close</c> button is clicked.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        public Func<Snackbar, Task>? CloseButtonClickFunc { get; set; }
+        public string Action { get; set; }
 
-        /// <summary>
-        /// The text for a custom button in the snackbar message.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        public string? Action { get; set; }
-
-        /// <summary>
-        /// The display variant of the action button.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
         public Variant? ActionVariant { get; set; }
 
-        /// <summary>
-        /// The color of the action button.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
-        /// </remarks>
         public Color ActionColor { get; set; } = Color.Default;
 
-        /// <summary>
-        /// The severity of the snackbar.
-        /// </summary>
         public Severity Severity { get; }
 
-        /// <summary>
-        /// The custom CSS classes for the snackbar.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
-        /// </remarks>
-        public string? SnackbarTypeClass { get; set; }
+        public string SnackbarTypeClass { get; set; }
 
-        /// <summary>
-        /// Closes the snackbar after navigating away from the current page.
-        /// </summary>
         public bool CloseAfterNavigation { get; set; }
 
-        /// <summary>
-        /// The custom icon to display for the snackbar.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  Will be set to match the <see cref="Severity"/>.
-        /// </remarks>
+        public bool HideIcon { get; set; }
+
         public string Icon { get; set; }
-
-        /// <summary>
-        /// The color of the icon to display.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Inherit" />.
-        /// </remarks>
         public Color IconColor { get; set; } = Color.Inherit;
+        public Size IconSize { get; set; } = Size.Medium;
 
-        /// <summary>
-        /// The action applied when duplicate snackbars are detected.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="SnackbarDuplicatesBehavior.GlobalDefault"/> which is set via <see cref="SnackbarConfiguration.PreventDuplicates"/>.
-        /// </remarks>
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
 
-        internal bool RequiresInteraction => RequireInteraction ?? !string.IsNullOrWhiteSpace(Action);
+        /// <summary>
+        /// Custom normal icon.
+        /// </summary>
+        public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
 
         /// <summary>
-        /// Creates new options for a snackbar.
+        /// Custom info icon.
         /// </summary>
-        /// <param name="severity">The severity of the snackbar to display.</param>
-        /// <param name="options">Any other options to apply.</param>
+        public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
+
+        /// <summary>
+        /// Custom success icon.
+        /// </summary>
+        public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
+
+        /// <summary>
+        /// Custom warning icon.
+        /// </summary>
+        public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
+
+        /// <summary>
+        /// Custom error icon.
+        /// </summary>
+        public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
+
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {
             Severity = severity;
@@ -111,7 +68,7 @@ namespace MudBlazor
                     Severity.Success => SuccessIcon,
                     Severity.Warning => WarningIcon,
                     Severity.Error => ErrorIcon,
-                    _ => throw new ArgumentOutOfRangeException(nameof(severity)),
+                    _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }
         }

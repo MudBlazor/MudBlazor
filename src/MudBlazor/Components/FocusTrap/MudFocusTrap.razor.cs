@@ -6,9 +6,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
 
     /// <summary>
-    /// Prevents the keyboard focus from cycling out of its child content. Typically used within dropdown selectors and modal dialogs.
+    /// A component which prevents the keyboard focus from cycling out of its child content.
     /// </summary>
     /// <remarks>
     /// Typically used within dialogs and other overlays.
@@ -17,7 +18,6 @@ namespace MudBlazor
     {
         private bool _shiftDown;
         private bool _disabled;
-        private bool _disposed;
         private bool _initialized;
         private bool _shouldRender = true;
 
@@ -76,33 +76,28 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            // need to check _disposed because we do not want to Save Focus if disposed - will cause an exception
-            if (_disposed) return;
             if (firstRender)
             {
                 await SaveFocusAsync();
             }
 
-            // need to check _disposed again because it could have changed during the above await
-            // we do not want to initialize focus if disposed - will cause an exception
-            if (_disposed) return;
             if (!_initialized)
             {
                 await InitializeFocusAsync();
             }
         }
 
-        private Task OnBottomFocusAsync()
+        private Task OnBottomFocusAsync(FocusEventArgs args)
         {
             return FocusLastAsync();
         }
 
-        private Task OnBumperFocusAsync()
+        private Task OnBumperFocusAsync(FocusEventArgs args)
         {
             return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
         }
 
-        private Task OnRootFocusAsync()
+        private Task OnRootFocusAsync(FocusEventArgs args)
         {
             return FocusFallbackAsync();
         }
@@ -117,7 +112,7 @@ namespace MudBlazor
             HandleKeyEvent(args);
         }
 
-        private Task OnTopFocusAsync()
+        private Task OnTopFocusAsync(FocusEventArgs args)
         {
             return FocusFirstAsync();
         }
@@ -189,7 +184,6 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            _disposed = true;
             if (!_disabled)
             {
                 RestoreFocusAsync().CatchAndLog(ignoreExceptions: true);

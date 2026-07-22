@@ -9,10 +9,7 @@ namespace MudBlazor.Docs.Models
         public string Name { get; set; }
         public string From { get; set; }
         public string GitHub { get; set; }
-        public bool GitHubSponsor { get; set; }
-        public string Avatar => $"https://github.com/{GitHub}.png?size=128";
+        public string Avatar { get; set; }
         public string LinkedIn { get; set; }
-        public string Bio { get; set; }
-        public Team Team { get; set; }
     }
 }

@@ -2,10 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+
 namespace MudBlazor.State.Builder;
 
 /// <summary>
-/// Disposable scope for registering MudBlazor component parameters through a <see cref="RegisterParameterBuilder{T}"/>.
+/// Represents a scope for registering parameters.
 /// </summary>
 public interface IParameterRegistrationBuilderScope : IDisposable
 {

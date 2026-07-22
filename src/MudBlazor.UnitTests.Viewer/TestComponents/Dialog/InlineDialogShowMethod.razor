@@ -1,4 +1,5 @@
-﻿@inject IDialogService DialogService
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@inject IDialogService DialogService
 
 <MudButton OnClick="OpenDialogAsync" Class="open-dialog-button">
     Options Dialog
@@ -9,12 +10,12 @@
         <p>Here be dragons</p>
     </DialogContent>
     <DialogActions>
-        <MudButton Class="close-dialog-button" OnClick="CloseAsync">OK</MudButton>
+        <MudButton Class="close-dialog-button" OnClick="CloseAsync">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    private MudDialog _dialog = null!;
+    private MudDialog _dialog;
 
     private async Task OpenDialogAsync()
     {
@@ -26,16 +27,16 @@
 
             if (result is not null)
             {
-                await DialogService.ShowMessageBoxAsync("result", (string?)result.Data ?? string.Empty);
+                await DialogService.ShowMessageBox("result", result.Data as string);
             }
             else
             {
-                await DialogService.ShowMessageBoxAsync("error", "result was null");
+                await DialogService.ShowMessageBox("error", "result was null");
             }
         }
         catch (Exception exception)
         {
-            await DialogService.ShowMessageBoxAsync("error", exception.ToString());
+            await DialogService.ShowMessageBox("error", exception.ToString());
         }
     }
 

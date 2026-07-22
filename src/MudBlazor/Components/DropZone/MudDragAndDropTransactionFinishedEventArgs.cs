@@ -6,6 +6,7 @@ using System;
 
 namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
 /// The information related to a <see cref="MudDropZone{T}"/> completed drag-and-drop transaction.

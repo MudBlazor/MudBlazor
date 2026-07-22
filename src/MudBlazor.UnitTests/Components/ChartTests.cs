@@ -1,15 +1,12 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using System.Globalization;
-using AngleSharp.Dom;
-using AwesomeAssertions;
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Bunit;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts;
+using FluentAssertions;
+using MudBlazor.Docs.Examples;
+using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Charts;
-using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -21,96 +18,77 @@ namespace MudBlazor.UnitTests.Components
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public async Task PieChartSelection()
+        public void PieChartSelectionTest()
         {
-            var comp = Context.Render<PieChartSelectionTest>();
+            var comp = Context.RenderComponent<PieExample1>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            await comp.FindAll("path.mud-chart-serie")[0].ClickAsync();
+            comp.FindAll("path.mud-chart-serie")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            await comp.FindAll("path.mud-chart-serie")[3].ClickAsync();
+            comp.FindAll("path.mud-chart-serie")[3].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
         [Test]
-        public async Task DonutChartSelection()
+        public void DonutChartSelectionTest()
         {
-            var comp = Context.Render<DonutChartSelectionTest>();
+            var comp = Context.RenderComponent<DonutExample1>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            await comp.FindAll("path.mud-chart-serie")[0].ClickAsync();
+            comp.FindAll("circle.mud-chart-serie")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            await comp.FindAll("path.mud-chart-serie")[3].ClickAsync();
+            comp.FindAll("circle.mud-chart-serie")[3].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
         [Test]
-        public async Task LineChartSelection()
+        public void LineChartSelectionTest()
         {
-            var comp = Context.Render<LineChartSelectionTest>();
+            var comp = Context.RenderComponent<LineChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            await comp.FindAll("path.mud-chart-line")[0].ClickAsync();
+            comp.FindAll("path.mud-chart-line")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            await comp.FindAll("path.mud-chart-line")[1].ClickAsync();
+            comp.FindAll("path.mud-chart-line")[1].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
         [Test]
-        public async Task BarChartSelection()
+        public void BarChartSelectionTest()
         {
-            var comp = Context.Render<BarChartSelectionTest>();
+            var comp = Context.RenderComponent<BarExample1>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
-
-            //check tooltip
-            comp.FindAll("path.mud-chart-bar")[0].MouseOver();
-            comp.Find("tspan").InnerHtml.Trim().Should().Be("40");
-
             // now click something and see that the selected index changes:
-            await comp.FindAll("path.mud-chart-bar")[0].ClickAsync();
+            comp.FindAll("path.mud-chart-bar")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-
-            comp.FindAll("path.mud-chart-bar")[10].MouseOver();
-            comp.Find("tspan").InnerHtml.Trim().Should().Be("24");
-
-            await comp.FindAll("path.mud-chart-bar")[10].ClickAsync();
+            comp.FindAll("path.mud-chart-bar")[10].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
         [Test]
-        [TestCase(ChartType.Bar)]
-        [TestCase(ChartType.Line)]
-        [TestCase(ChartType.StackedBar)]
-        public async Task ChartYAxisFormat(ChartType chartType)
+        public void BarChartYAxisFormat()
         {
-            DefaultAxisChartOptions options = chartType switch
+            var options = new ChartOptions();
+            var series = new List<ChartSeries>()
             {
-                ChartType.Bar => new BarChartOptions(),
-                ChartType.Line => new LineChartOptions(),
-                ChartType.StackedBar => new StackedBarChartOptions(),
-                _ => throw new NotImplementedException()
-            };
-
-            var series = new List<ChartSeries<double>>()
-            {
-                new() { Name = "Series 1", Data = new([90, 79, 72, 69, 62, 62, 55, 65, 70]) },
-                new() { Name = "Series 2", Data = new([10, 41, 35, 51, 49, 62, 69, 91, 148]) },
+                new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+                new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
             };
             var xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             var width = "100%";
             var height = "350px";
 
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, chartType)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartLabels, xAxis)
-                .Add(p => p.ChartOptions, options)
-                .Add(p => p.Width, width)
-                .Add(p => p.Height, height)
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+              .Add(p => p.ChartType, ChartType.Line)
+              .Add(p => p.ChartSeries, series)
+              .Add(p => p.XAxisLabels, xAxis)
+              .Add(p => p.ChartOptions, options)
+              .Add(p => p.Width, width)
+              .Add(p => p.Height, height)
             );
 
             // check the first Y Axis value without any format
@@ -120,13 +98,13 @@ namespace MudBlazor.UnitTests.Components
 
             // now, we will apply currency format
             options.YAxisFormat = "c2";
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.ChartType, chartType)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartLabels, xAxis)
-                .Add(p => p.ChartOptions, options)
-                .Add(p => p.Width, width)
-                .Add(p => p.Height, height)
+            comp.SetParametersAndRender(parameters => parameters
+              .Add(p => p.ChartType, ChartType.Line)
+              .Add(p => p.ChartSeries, series)
+              .Add(p => p.XAxisLabels, xAxis)
+              .Add(p => p.ChartOptions, options)
+              .Add(p => p.Width, width)
+              .Add(p => p.Height, height)
             );
             yaxis = comp.FindAll("g.mud-charts-yaxis");
             yaxis.Should().NotBeNull();
@@ -134,13 +112,13 @@ namespace MudBlazor.UnitTests.Components
 
             //number format
             options.YAxisFormat = "n6";
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.ChartType, chartType)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartLabels, xAxis)
-                .Add(p => p.ChartOptions, options)
-                .Add(p => p.Width, width)
-                .Add(p => p.Height, height)
+            comp.SetParametersAndRender(parameters => parameters
+              .Add(p => p.ChartType, ChartType.Line)
+              .Add(p => p.ChartSeries, series)
+              .Add(p => p.XAxisLabels, xAxis)
+              .Add(p => p.ChartOptions, options)
+              .Add(p => p.Width, width)
+              .Add(p => p.Height, height)
             );
             yaxis = comp.FindAll("g.mud-charts-yaxis");
             yaxis.Should().NotBeNull();
@@ -154,7 +132,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartWithSingleXAxisValue()
         {
-            var comp = Context.Render<BarChartWithSingleXAxisTest>();
+            var comp = Context.RenderComponent<BarChartWithSingleXAxisTest>();
 
             comp.Markup.Should().NotContain("NaN");
         }
@@ -169,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // the test should run through instantly (max 5s for a slow build server). 
             // without the fix it took minutes on a fast computer
-            var comp = Context.Render<LineChartWithBigValuesTest>();
+            var comp = Context.RenderComponent<LineChartWithBigValuesTest>();
         }
 
         /// <summary>
@@ -179,7 +157,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void LineChartWithZeroValues()
         {
-            var comp = Context.Render<LineChartWithZeroValuesTest>();
+            var comp = Context.RenderComponent<LineChartWithZeroValuesTest>();
 
             comp.Markup.Should().NotContain("NaN");
         }
@@ -194,7 +172,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(ChartType.Pie, "henon")]
         public void ChartCustomGraphics(ChartType chartType, string text)
         {
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
               .Add(p => p.ChartType, chartType)
               .Add(p => p.Width, "100%")
               .Add(p => p.Height, "300px")
@@ -203,823 +181,6 @@ namespace MudBlazor.UnitTests.Components
 
             //Checks if the innerHtml of the added text element matches the text parameter
             comp.Find("text.text-ref").InnerHtml.Should().Be(text);
-        }
-
-        [Test]
-        public void HeatMap_ShouldInitializeCorrectly()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-            var options = new HeatMapChartOptions { ShowLegend = true, ShowLegendLabels = true };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            comp.Instance.Should().NotBeNull();
-            comp.Instance.ChartSeries.Count.Should().Be(2);
-            comp.Instance.ChartOptions.Should().NotBeNull();
-        }
-
-        [Test]
-        public void HeatMap_ShouldBuildLegendsCorrectly()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-            var options = new ChartOptions() { ShowLegend = true };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            var legends = comp.FindAll(".mud-chart-heatmap-legend");
-            legends.Count.Should().Be(5);
-        }
-
-        [Test]
-        public void HeatMap_ShouldFormatValueForDisplayCorrectly()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1.176, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4.152, 5, 6]) }
-            };
-
-            var options = new HeatMapChartOptions() { ValueFormatString = "F2" };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            var formattedValues = comp.FindAll(".mud-chart-cell");
-
-            formattedValues.Count.Should().Be(6);
-
-            var cellTexts = formattedValues.Select(cell => cell.QuerySelector("text")?.TextContent?.Trim()).ToList();
-
-            cellTexts[0].Should().Be("1.18");
-            cellTexts[3].Should().Be("4.15");
-        }
-
-        [Test]
-        public void HeatMap_ShouldHandleEmptyAndNullData()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Empty Series", Data = [] },
-                new() { Name = "Null Series", Data = null },
-                new() { Name = "Valid Series", Data = new([1.0, 2.0]) }
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-            );
-
-            // Should render without errors and only show cells for valid data
-            var cells = comp.FindAll(".mud-chart-cell");
-            cells.Count.Should().Be(2); // Only the valid series should render cells
-        }
-
-        [Test]
-        public void HeatMap_ShouldHandleSeriesVisibility()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2]), Visible = false },
-                new() { Name = "Series 2", Data = new([3, 4]), Visible = true }
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-            );
-
-            var cells = comp.FindAll(".mud-chart-cell");
-            cells.Count.Should().Be(2); // Only visible series should render
-        }
-
-        [Test]
-        [TestCase(Position.Top)]
-        [TestCase(Position.Bottom)]
-        [TestCase(Position.Left)]
-        [TestCase(Position.Right)]
-        public void HeatMap_ShouldRenderLegendInCorrectPosition(Position position)
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) }
-            };
-
-            var options = new HeatMapChartOptions
-            {
-                ShowLegend = true,
-                ShowLegendLabels = true
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-                .Add(p => p.LegendPosition, position)
-            );
-
-            // Verify legend exists and is positioned correctly
-            var legends = comp.FindAll(".mud-chart-heatmap-legend");
-            legends.Should().NotBeEmpty();
-
-            // Verify "Less" and "More" labels are present
-            comp.Markup.Should().Contain("Less");
-            comp.Markup.Should().Contain("More");
-        }
-
-        [Test]
-        public void HeatMap_ShouldHandleSmoothGradients()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-
-            var options = new HeatMapChartOptions { EnableSmoothGradient = true };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            // Verify gradient definitions exist
-            comp.Markup.Should().Contain("linearGradient");
-
-            // Check for gradient overlays
-            var gradientRects = comp.FindAll("rect[fill^='url(#gradient-']");
-            gradientRects.Should().NotBeEmpty();
-        }
-
-        [Test]
-        [TestCase(XAxisLabelPosition.Top)]
-        [TestCase(XAxisLabelPosition.Bottom)]
-        [TestCase(YAxisLabelPosition.Left)]
-        [TestCase(YAxisLabelPosition.Right)]
-        public void HeatMap_ShouldRenderAxisLabelsInCorrectPosition(Enum position)
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2]) }
-            };
-            var xAxisLabels = new[] { "Label 1", "Label 2" };
-
-            var options = new HeatMapChartOptions();
-            if (position is XAxisLabelPosition xPos)
-            {
-                options.XAxisLabelPosition = xPos;
-            }
-            else if (position is YAxisLabelPosition yPos)
-            {
-                options.YAxisLabelPosition = yPos;
-            }
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartLabels, xAxisLabels)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            // Verify axis labels exist
-            var axisLabels = comp.FindAll("g text.mud-charts-xaxis, g text.mud-charts-yaxis");
-            axisLabels.Should().NotBeEmpty();
-        }
-
-        [Test]
-        public void HeatMap_ShouldShowTooltipsWhenEnabled()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2]) }
-            };
-
-            var options = new ChartOptions { ShowToolTips = true };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            comp.FindAll("rect[fill]")[0].MouseOver();
-            comp.Find("tspan").InnerHtml.Trim().Should().Be("1");
-        }
-
-        [Test]
-        public void HeatMap_ShouldCalculateDynamicFontSize()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1]) }
-            };
-
-            // Test with different dimensions
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.Width, "200px") // Smaller width to test font size adaptation
-                .Add(p => p.Height, "200px")
-            );
-
-            var cellText = comp.Find(".mud-chart-cell text");
-            var fontSize = cellText.GetAttribute("font-size");
-
-            // Font size should be calculated based on cell dimensions
-            fontSize.Should().NotBeNull();
-            double.Parse(fontSize, CultureInfo.InvariantCulture).Should().BeGreaterThan(0);
-        }
-
-        [Test]
-        public void HeatMap_ShouldGenerateCorrectColorPaletteForDifferentInputs()
-        {
-            // Single color palette
-            var singleColorOptions = new ChartOptions { ChartPalette = ["#587934"] };
-            var singleColorComp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartOptions, singleColorOptions)
-                .Add(p => p.ChartSeries, [
-                    new() { Name = "Series 1", Data = new([1, 2, 3]) }
-                ])
-            );
-
-            var singleColorPalette = singleColorComp.Instance.ChartOptions.ChartPalette;
-            singleColorPalette.Should().HaveCount(1);
-            singleColorPalette.Should().AllBeOfType<string>();
-
-            // Multi-color palette
-            var multiColorOptions = new ChartOptions { ChartPalette = ["#587934", "#FF0000", "#00FF00"] };
-            var multiColorComp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartOptions, multiColorOptions)
-                .Add(p => p.ChartSeries, [
-                    new() { Name = "Series 1", Data = new([1, 2, 3]) }
-                ])
-            );
-
-            var multiColorPalette = multiColorComp.Instance.ChartOptions.ChartPalette;
-            multiColorPalette.Should().HaveCount(3);
-            multiColorPalette.Should().AllBeOfType<string>();
-        }
-
-        [Test]
-        [TestCase(null, "")]
-        [TestCase(0, "0")]
-        [TestCase(1.23456, "1.234")]
-        [TestCase(1000.123, "1000.")]
-        public void HeatMap_ShouldFormatValuesCorrectly(double? input, string expected)
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = input.HasValue ? new([input.Value]) : [] }
-            };
-
-            var options = new HeatMapChartOptions { ValueFormatString = "G" };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, options)
-            );
-
-            var cellTexts = comp.FindAll(".mud-chart-cell text");
-
-            if (input.HasValue)
-            {
-                cellTexts.Should().NotBeEmpty();
-                cellTexts[0].TextContent.Trim().Should().Be(expected);
-            }
-            else
-            {
-                cellTexts.Should().BeEmpty();
-            }
-        }
-
-        [Test]
-        [SetCulture("en-US")]
-        public void HeatMap_ShouldHandleCustomHeatMapCellOverrides()
-        {
-            static void CellFragment(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
-            {
-                builder.OpenComponent<MudHeatMapCell<double>>(0);
-                builder.AddAttribute(1, "Row", 0);
-                builder.AddAttribute(2, "Column", 0);
-                builder.AddAttribute(3, "Value", 10.05);
-                builder.AddAttribute(6, "MudColor", new MudColor("#FF5733"));
-                builder.AddAttribute(7, "ChildContent", (RenderFragment)(childBuilder =>
-                {
-                    childBuilder.AddContent(0, "Custom Content");
-                }));
-                builder.CloseComponent();
-            }
-
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, new ChartOptions() { ShowToolTips = true })
-                .AddChildContent(CellFragment) // Add custom cells as child content
-            );
-
-            // Verify that the custom cell content is rendered
-            var customContent = comp.Find(".mud-chart-cell div");
-            customContent.TextContent.Trim().Should().Be("Custom Content");
-
-            // Verify that the custom cell has the correct color
-            var customCell = comp.Find(".mud-chart-cell rect");
-            customCell.GetAttribute("fill").Should().Contain(new MudColor("#FF5733").ToString(MudColorOutputFormats.RGBA));
-
-            // Verify custom value override
-            customCell.MouseOver(); //value is shown via the tooltip
-            comp.Find("tspan").InnerHtml.Trim().Should().Be("10.05");
-        }
-
-        [Test]
-        public void MudHeatMapCell_ShouldThrowExceptionIfNotInMudChart()
-        {
-            // Attempt to render MudHeatMapCell outside of MudChart
-            var exception = Assert.Throws<InvalidOperationException>(() =>
-                Context.Render<MudHeatMapCell<double>>(parameters => parameters
-                    .Add(p => p.Row, 0)
-                    .Add(p => p.Column, 0)
-                )
-            );
-
-            // Verify that the exception message is appropriate
-            exception.Message.Should().Contain("MudHeatMapCell must be used inside a MudChart component.");
-        }
-
-        [TestCase(Position.Top)]
-        [TestCase(Position.Bottom)]
-        [TestCase(Position.Left)]
-        [TestCase(Position.Right)]
-        [TestCase(Position.Start)]
-        [TestCase(Position.End)]
-        [TestCase(Position.Center)]
-        [Test]
-        public void HeatMap_ShouldCorrectBadPositions(Position pos)
-        {
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.LegendPosition, pos)
-                .Add(p => p.ChartSeries, [
-                    new() { Name = "Series 1", Data = new([1, 2, 3]) }
-                ])
-            );
-
-            var heatMap = comp.FindComponent<HeatMap<double>>();
-            heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
-        }
-
-        [TestCase(null, null)]
-        [TestCase(0, 100)]
-        [TestCase(0, .95)]
-        public void HeatMap_Override_Min_Max(double? min, double? max)
-        {
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
-                {
-                    new() { Name = "Series 1", Data = new([-0.5, .5, .98]) }
-                })
-                .Add(p => p.ChildContent, (RenderFragment)(builder =>
-                {
-                    builder.OpenComponent<MudHeatMapCell<double>>(0);
-                    builder.AddAttribute(1, "Row", 0);
-                    builder.AddAttribute(2, "Column", 0);
-                    builder.AddAttribute(3, "MinValue", min);
-                    builder.AddAttribute(4, "MaxValue", max);
-                    builder.CloseComponent();
-                }))
-            );
-            var heatmap = comp.FindComponent<HeatMap<double>>();
-            heatmap.Instance._minValue.Should().Be(min.HasValue ? min : -0.5);
-            heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
-        }
-
-        [Test]
-        public async Task HeatMap_CellMouseOver_SetsAndClearsHoveredCellTooltip()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, new ChartOptions { ShowToolTips = true })
-            );
-
-            // Hovering toggles the svg overflow to visible and surfaces the cell tooltip; OnCellMouseOut clears both.
-            var firstCellRect = comp.FindAll(".mud-chart-cell rect")[0];
-            await firstCellRect.MouseOverAsync();
-
-            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().Contain("overflow:visible");
-
-            await firstCellRect.MouseOutAsync();
-            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
-            comp.FindAll("tspan").Count.Should().Be(0);
-        }
-
-        [Test]
-        public async Task HeatMap_LegendMouseOver_SetsAndClearsHoveredLegend()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, new ChartOptions { ShowLegend = true, ShowToolTips = true })
-            );
-
-            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
-
-            // Hovering a legend swatch sets _hoveredLegend, flipping the style and rendering the legend tooltip.
-            var legendRect = comp.FindAll(".mud-chart-heatmap-legend rect")[0];
-            await legendRect.MouseOverAsync();
-
-            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().Contain("overflow:visible");
-            comp.FindAll("tspan").Count.Should().BeGreaterThan(0);
-
-            await legendRect.MouseOutAsync();
-            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
-        }
-
-        [Test]
-        public async Task HeatMap_ClickCell_SetsSelectedCellAndSelectedIndex()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                new() { Name = "Series 2", Data = new([4, 5, 6]) }
-            };
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, series)
-            );
-
-            var hm = comp.FindComponent<HeatMap<double>>().Instance;
-
-            // Pre-seed a non-zero selection so the click is proven to mutate state, not merely match the default.
-            await comp.InvokeAsync(() => hm.SetSelectedCellAsync(1, 2));
-            hm.SelectedCell.Should().Be((1, 2));
-
-            // Click a cell on the second row (rect index 3 == row 1, column 0).
-            var rects = comp.FindAll(".mud-chart-cell rect");
-            await rects[3].ClickAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
-
-            hm.SelectedCell.Should().Be((1, 0));
-            // SelectedIndex is driven by the row through SetSelectedIndexAsync.
-            hm.SelectedIndex.Should().Be(1);
-        }
-
-        [TestCase("400px", "300px", "0 0 400 300")]
-        [TestCase("100%", "100%", "0 0 800 350")]
-        public void HeatMap_MatchBoundsToSize_ProducesExpectedViewBox(string width, string height, string expectedViewBox)
-        {
-            // With MatchBoundsToSize and no JS-provided element size, SetBounds parses px Width/Height;
-            // non-px values cannot be parsed and fall back to the default 800x350 bounds.
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
-                {
-                    new() { Name = "Series 1", Data = new([1, 2, 3]) },
-                    new() { Name = "Series 2", Data = new([4, 5, 6]) }
-                })
-                .Add(p => p.MatchBoundsToSize, true)
-                .Add(p => p.Width, width)
-                .Add(p => p.Height, height)
-            );
-
-            comp.Find("svg.mud-chart-heat").GetAttribute("viewBox").Should().Be(expectedViewBox);
-        }
-
-        [TestCase(ChartType.Donut)]
-        [TestCase(ChartType.Line)]
-        [TestCase(ChartType.Pie)]
-        [TestCase(ChartType.Bar)]
-        [TestCase(ChartType.StackedBar)]
-        [TestCase(ChartType.HeatMap)]
-        [TestCase(ChartType.Timeseries)]
-        [Test]
-        public void NoLabel_Chart_IsValid(ChartType chart)
-        {
-            var series = new List<ChartSeries<double>>()
-            {
-                new() { Name = "Series 1", Data = new([90, 79, 72, 69, 62, 62, 55, 65, 70]) },
-                new() { Name = "Series 2", Data = new([10, 41, 35, 51, 49, 62, 69, 91, 148]) },
-            };
-
-            IChartOptions options = new ChartOptions();
-
-            if (chart == ChartType.Line)
-            {
-                options = new LineChartOptions() { InterpolationOption = InterpolationOption.Periodic };
-            }
-            else if (chart == ChartType.Timeseries)
-            {
-                options = new TimeSeriesChartOptions() { InterpolationOption = InterpolationOption.Periodic };
-            }
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                              .Add(p => p.ChartType, chart)
-                              .Add(p => p.ChartOptions, options)
-                              .Add(p => p.ChartSeries, series));
-
-        }
-
-        [Test]
-        public async Task HeatmapChart_CanHideSeries()
-        {
-            var chartSeries = new List<ChartSeries<double>>()
-            {
-                new () { Name = "Sensor Alpha", Data = new double[] { 10, 20, 30, 25 } }, // Row 1
-                new () { Name = "Sensor Beta", Data = new double[] { 15, 25, 35, 20 } },  // Row 2
-                new () { Name = "Sensor Gamma", Data = new double[] { 5, 10, 15, 12 }, Visible = false } // Row 3, initially hidden
-            };
-            string[] xAxisLabels = { "Time 1", "Time 2", "Time 3", "Time 4" }; // Columns
-
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.HeatMap)
-                .Add(p => p.Height, "300px")
-                .Add(p => p.Width, "400px")
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, xAxisLabels) // X-axis labels for columns
-                .Add(p => p.CanHideSeries, true)
-            );
-
-            // Initial state assertions for checkboxes
-            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
-            seriesCheckboxes.Count.Should().Be(chartSeries.Count, "Number of checkboxes should match number of series");
-
-            seriesCheckboxes[0].IsChecked().Should().BeTrue("Sensor Alpha checkbox should be initially checked");
-            seriesCheckboxes[1].IsChecked().Should().BeTrue("Sensor Beta checkbox should be initially checked");
-            seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be initially unchecked");
-
-            // Initial state assertions for heatmap cells (rects)
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
-
-            // Hide Sensor Alpha series
-            await seriesCheckboxes[0].ChangeAsync(false);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[0].IsChecked().Should().BeFalse("Sensor Alpha checkbox should be unchecked after hiding");
-            chartSeries[0].Visible.Should().BeFalse("Sensor Alpha Visible property should be false after hiding");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
-
-            // Show Sensor Alpha series again
-            await seriesCheckboxes[0].ChangeAsync(true);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[0].IsChecked().Should().BeTrue("Sensor Alpha checkbox should be checked after re-showing");
-            chartSeries[0].Visible.Should().BeTrue("Sensor Alpha Visible property should be true after re-showing");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
-
-            // Show Sensor Gamma series (initially hidden)
-            await seriesCheckboxes[2].ChangeAsync(true);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[2].IsChecked().Should().BeTrue("Sensor Gamma checkbox should be checked after showing");
-            chartSeries[2].Visible.Should().BeTrue("Sensor Gamma Visible property should be true after showing");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
-
-            // Hide Sensor Gamma series again
-            await seriesCheckboxes[2].ChangeAsync(false);
-            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
-            seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be unchecked after hiding again");
-            chartSeries[2].Visible.Should().BeFalse("Sensor Gamma Visible property should be false after hiding again");
-            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count), "should equal count of visible cells");
-        }
-
-        public record YAxisTestCase(Func<double, string> YAxisToStringFunc, string ExpectedValue);
-
-        private const double YAxisTestValue = 20;
-
-        private static IEnumerable<YAxisTestCase> YAxisFuncs()
-        {
-            yield return new YAxisTestCase(x => "hardcoded", "hardcoded");
-            yield return new YAxisTestCase(x => $"{x}/tCO2e", "20/tCO2e");
-            yield return new YAxisTestCase(x => x.ToString("0.00", CultureInfo.InvariantCulture), "20.00");
-            yield return new YAxisTestCase(null!, "20");
-        }
-
-        [Test, TestCaseSource(nameof(YAxisFuncs))]
-        [SetCulture("en-US")]
-        public void YAxisToStringFunc(YAxisTestCase testCase)
-        {
-            var comp = Context.Render<MudChart<double>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
-                .Add(p => p.ChartLabels, [""])
-                .Add(p => p.ChartOptions, new LineChartOptions() { YAxisToStringFunc = testCase.YAxisToStringFunc })
-                .Add(p => p.ChartSeries, [new() { Data = new([YAxisTestValue]) }])
-            );
-
-            var yaxis = comp.FindAll("g.mud-charts-yaxis");
-            yaxis.Should().NotBeNull();
-            yaxis[0].Children[0].InnerHtml.Trim().Should().Be(testCase.ExpectedValue);
-        }
-
-        [Test]
-        public void RadarChart_FillOpacity_Should_RenderInvariant_InDifferentCultures()
-        {
-            var originalCulture = CultureInfo.CurrentCulture;
-            var originalUiCulture = CultureInfo.CurrentUICulture;
-
-            try
-            {
-                var noNbCulture = new CultureInfo("nb-NO");
-                CultureInfo.CurrentCulture = noNbCulture;
-                CultureInfo.CurrentUICulture = noNbCulture;
-
-                var noNbComp = Context.Render<MudChart<double>>(parameters => parameters
-                    .Add(p => p.ChartType, ChartType.Radar)
-                    .Add(p => p.ChartSeries, new List<ChartSeries<double>>
-                    {
-                        new() { Name = "Series 1", Data = new([10, 20, 30]) }
-                    })
-                    .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
-                    .Add(p => p.ChartOptions, new RadarChartOptions
-                    {
-                        FillOpacity = 0.4,
-                        AggregationOption = AggregationOption.GroupByDataSet
-                    })
-                );
-
-                var noNbOpacity = noNbComp.Find("path.mud-chart-serie").GetAttribute("fill-opacity");
-
-                CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-                CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
-
-                var invariantComp = Context.Render<MudChart<double>>(parameters => parameters
-                    .Add(p => p.ChartType, ChartType.Radar)
-                    .Add(p => p.ChartSeries, new List<ChartSeries<double>>
-                    {
-                        new() { Name = "Series 1", Data = new([10, 20, 30]) }
-                    })
-                    .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
-                    .Add(p => p.ChartOptions, new RadarChartOptions
-                    {
-                        FillOpacity = 0.4,
-                        AggregationOption = AggregationOption.GroupByDataSet
-                    })
-                );
-
-                var invariantOpacity = invariantComp.Find("path.mud-chart-serie").GetAttribute("fill-opacity");
-
-                noNbOpacity.Should().Be("0.4");
-                invariantOpacity.Should().Be("0.4");
-            }
-            finally
-            {
-                CultureInfo.CurrentCulture = originalCulture;
-                CultureInfo.CurrentUICulture = originalUiCulture;
-            }
-        }
-
-        [Test]
-        public void BarChart_LongValues_ShouldNotRoundDown()
-        {
-            var chartSeries = new List<ChartSeries<long>>()
-            {
-                new() { Name = "A", Data = new long[] { 3 } },
-                new() { Name = "B", Data = new long[] { 324 } },
-            };
-            string[] xAxisLabels = { "DataPoint" };
-
-            var comp = Context.Render<MudChart<long>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Bar)
-                .Add(p => p.Height, "550px")
-                .Add(p => p.Width, "100%")
-                .Add(p => p.ChartOptions, new BarChartOptions
-                {
-                    YAxisTicks = 10,
-                    YAxisLines = true,
-                    MaxNumYAxisTicks = 50
-                })
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, xAxisLabels));
-
-            var bars = comp.FindAll("path.mud-chart-bar");
-            bars.Count.Should().Be(2);
-
-            var barA = bars[0];
-            var dA = barA.GetAttribute("d").Split(' ');
-
-            dA[2].Should().NotBe(dA[5], "Bar A should have a non-zero height for value 3");
-
-            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
-            yAxisLabels.Select(x => x.TextContent).Should().Contain("330", "Y-axis should extend to 330 for value 324 with ticks of 10");
-        }
-
-        [Test]
-        public void LineChart_LongValues_ShouldNotRoundDown()
-        {
-            var chartSeries = new List<ChartSeries<long>>()
-            {
-                new() { Name = "A", Data = new long[] { 3, 324 } },
-            };
-            string[] xAxisLabels = { "D1", "D2" };
-
-            var comp = Context.Render<MudChart<long>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
-                .Add(p => p.Height, "550px")
-                .Add(p => p.Width, "100%")
-                .Add(p => p.ChartOptions, new LineChartOptions
-                {
-                    YAxisTicks = 10,
-                    MaxNumYAxisTicks = 50
-                })
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, xAxisLabels));
-
-            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
-            yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
-
-            var circles = comp.FindAll("circle.mud-chart-point");
-            circles.Count.Should().Be(2);
-
-            var cyValues = circles
-                .Select(c => double.Parse(c.GetAttribute("cy")!, CultureInfo.InvariantCulture))
-                .ToList();
-
-            cyValues[0].Should().NotBe(cyValues[1]);
-            cyValues[0].Should().BeGreaterThan(cyValues[1]);
-        }
-
-        [Test]
-        public void StackedBarChart_LongValues_ShouldNotRoundDown()
-        {
-            var chartSeries = new List<ChartSeries<long>>()
-            {
-                new() { Name = "A", Data = new long[] { 3 } },
-                new() { Name = "B", Data = new long[] { 324 } },
-            };
-            string[] xAxisLabels = { "DataPoint" };
-
-            var comp = Context.Render<MudChart<long>>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.StackedBar)
-                .Add(p => p.Height, "550px")
-                .Add(p => p.Width, "100%")
-                .Add(p => p.ChartOptions, new StackedBarChartOptions
-                {
-                    YAxisTicks = 10,
-                    MaxNumYAxisTicks = 50
-                })
-                .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, xAxisLabels));
-
-            var yAxisLabels = comp.FindAll(".mud-charts-yaxis text");
-            yAxisLabels.Select(x => x.TextContent).Should().Contain("330");
-
-            var barPaths = comp.FindAll("path.mud-chart-bar");
-            barPaths.Should().NotBeEmpty("stacked bar chart should render bar paths");
-            var smallSegmentPath = barPaths.First();
-            var dAttribute = smallSegmentPath.GetAttribute("d");
-            dAttribute.Should().NotBeNullOrWhiteSpace("bar path should have a valid 'd' attribute");
-
-            var numericChars = dAttribute!
-                .Select(c => char.IsDigit(c) || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E' ? c : ' ')
-                .ToArray();
-            var numericParts = new string(numericChars)
-                .Split((char[])null!, StringSplitOptions.RemoveEmptyEntries);
-            var coordinates = numericParts
-                .Select(p => double.Parse(p, CultureInfo.InvariantCulture))
-                .ToList();
-            var yCoordinates = coordinates
-                .Skip(1)
-                .Where((_, index) => index % 2 == 0)
-                .ToList();
-
-            yCoordinates.Count.Should().BeGreaterThan(0, "bar path should contain Y coordinates");
-            yCoordinates.Distinct().Count().Should().BeGreaterThan(1, "small stacked segment should have non-zero height (different Y coordinates)");
         }
     }
 }

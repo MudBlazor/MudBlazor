@@ -1,12 +1,8 @@
-﻿<h1>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="content/MudBlazor-GitHub-NoBg-Dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="content/MudBlazor-GitHub-NoBg.png">
-    <img alt="MudBlazor" src="content/MudBlazor-GitHub-NoBg.png">
-  </picture>
-</h1>
+# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [](#)
 - [Information and Guidelines for Contributors](#information-and-guidelines-for-contributors)
   - [Code of Conduct](#code-of-conduct)
   - [Minimal Prerequisites to Compile from Source](#minimal-prerequisites-to-compile-from-source)
@@ -26,7 +22,6 @@
     - [Example of a bad code](#example-of-a-bad-code-1)
     - [Example of a good code](#example-of-a-good-code-1)
   - [Unit Testing and Continuous Integration](#unit-testing-and-continuous-integration)
-    - [Test naming conventions](#test-naming-conventions)
     - [How not to break stuff](#how-not-to-break-stuff)
     - [Make your code break-safe](#make-your-code-break-safe)
     - [How to write a unit test?](#how-to-write-a-unit-test)
@@ -34,7 +29,6 @@
     - [What are common errors when writing tests?](#what-are-common-errors-when-writing-tests)
       - [Do not save html elements you query via `Find` or `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-find-or-findall-in-a-variable)
       - [Always use InvokeAsync to set parameter values on a component](#always-use-invokeasync-to-set-parameter-values-on-a-component)
-      - [Keep tests isolated for parallel execution](#keep-tests-isolated-for-parallel-execution)
     - [What does not need to be tested?](#what-does-not-need-to-be-tested)
     - [What is the MudBlazor.UnitTests.Viewer for?](#what-is-the-mudblazorunittestsviewer-for)
     - [What are the auto-generated tests for?](#what-are-the-auto-generated-tests-for)
@@ -52,13 +46,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
--   [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (pinned in `global.json`; it can build the older targets too)
-
-The `MudBlazor` library multi-targets net8.0, net9.0, and net10.0. `dotnet test` and IDE builds only compile the framework that is needed (the tests build just net10.0), but a direct `dotnet build src/MudBlazor` compiles all three. For a faster single-framework build while developing, pass `-f`:
-
-```bash
-dotnet build src/MudBlazor -f net10.0
-```
+-   [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 ## Pull Requests
 - Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in separate Pull Requests
@@ -85,7 +73,7 @@ For example:
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
 - If there are any corresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
-- Your code should be formatted correctly ([Format documentation](https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/formatting-rules))
+- Your code should be formatted correctly ([Format documentation](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules))
 
 
 
@@ -100,7 +88,7 @@ For example:
 in your component and apply styles at component level.
 - You must add tests if your component contains any logic (CSS styling requires no testing)
 - Use our `css variables` if possible. For instance, you should not hard code any colors etc.
-- Include a summary comment for every public property ([Summary documentation](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/recommended-tags))
+- Include a summary comment for every public property ([Summary documentation](https://docs.microsoft.com/de-de/dotnet/csharp/programming-guide/xmldoc/summary))
 - Use the `CssBuilder` for classes and styles
 - Add a doc page and examples which should be ordered from easy to more complex
 - Examples with more than 15 lines should be collapsed by default
@@ -241,7 +229,7 @@ We are slowly but surely refactoring all of those, you can help if you like.
 
 ## Avoid overwriting parameters in Blazor Components
 
-The `ParameterState` framework offers a solution to prevent parameter overwriting issues. For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
+The `ParameterState` framework offers a solution to prevent parameter overwriting issues. For a detailed explanation of this problem, refer to the [article](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters?view=aspnetcore-8.0#overwritten-parameters).
 
 ### Example of a bad code
 
@@ -316,7 +304,7 @@ public class CalendarComponent : ComponentBase
 }
 ```
 
-This code would result in a [BL0005](https://learn.microsoft.com/aspnet/core/diagnostics/bl0005?view=aspnetcore-8.0) warning.
+This code would result in a [BL0005](https://learn.microsoft.com/en-us/aspnet/core/diagnostics/bl0005?view=aspnetcore-8.0) warning.
 
 ### Example of a good code
 
@@ -346,12 +334,6 @@ In the improved version, we pass `ShowOnlyOneCalendar` as a parameter to `Calend
 We strive for complete test coverage to keep stuff from breaking and
 deliver a rock-solid library. For every component that has C# logic we 
 require a bUnit test that checks its logic.
-
-### Test naming conventions
-
-- Do not use `Test` or `Async` suffixes in test method names (e.g., `Toggle_OpenAsync` -> `Toggle_Open`)
-- Do not embed `Test_` in the middle of names (e.g., `AlertTest_Click` -> `Alert_Click`)
-- No trailing underscores or double underscores in test method names (e.g., `BarChart_CanHideSeries_` -> `BarChart_CanHideSeries`)
 
 ### How not to break stuff
 
@@ -398,19 +380,20 @@ In the Test make sure to instantiate the razor file you just prepared above.
    
    // wrong - this will fail:
    var textField = comp.Find("input");
-   await textField.ChangeAsync("Garfield");
-   await textField.BlurAsync();
+   textField.Change("Garfield");
+   textField.Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
+As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
 As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
 
 ```c#
    var comp = ctx.RenderComponent<MudTextField<string>>();
    
    // correct   
-   await comp.Find("input").ChangeAsync("Garfield");
-   await comp.Find("input").BlurAsync();
+   comp.Find("input").Change("Garfield");
+   comp.Find("input").Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
@@ -429,10 +412,6 @@ The bUnit test logic is not running on the Blazor UI-thread, so whenever directl
    // correct
    await comp.InvokeAsync(()=>textField.Value="I love dogs");
 ```
-
-#### Keep tests isolated for parallel execution
-
-Avoid modifying shared/static state (such as `MudGlobal` defaults or singletons) without restoring it in `[TearDown]`. If a fixture must change global state, mark it `[NonParallelizable]` and prefer deterministic timing helpers like `TimeProvider`/`FakeTimeProvider` over `Task.Delay`.
 
 ### What does not need to be tested?
 
@@ -456,12 +435,6 @@ cs files start with an underscore.
 
 ### Continuous Integration
 
-We have a GitHub action which runs against all Pull Requests.
-
-It performs the following checks.
-- Builds the project.
-- Runs the test suite.
-- Checks the code coverage.
-- Checks the code quality.
-
-We generally require all these checks to pass before merging contributions.
+We have an Azure DevOps pipeline which will automatically execute the entire
+test suite on all pushes and PRs. If your commit or PR breaks the tests
+you'll be notified.

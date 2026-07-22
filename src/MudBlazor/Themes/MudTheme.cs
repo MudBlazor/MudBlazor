@@ -1,50 +1,48 @@
 ﻿namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Theme settings that define the light and dark color palettes, typography, shadows, layout dimensions, and z-index values for MudBlazor components.
+    /// Represents the theme settings for the MudBlazor user interface.
     /// </summary>
-    /// <remarks>
-    /// Applied to a page through a <see cref="MudThemeProvider"/>.
-    /// </remarks>
     public class MudTheme
     {
         /// <summary>
-        /// The palette for the light theme.
+        /// Gets or sets the palette for the light theme.
         /// </summary>
-        public Palette PaletteLight { get; set; }
+        public PaletteLight PaletteLight { get; set; }
 
         /// <summary>
-        /// The palette for the dark theme.
+        /// Gets or sets the palette for the dark theme.
         /// </summary>
-        public Palette PaletteDark { get; set; }
+        public PaletteDark PaletteDark { get; set; }
 
         /// <summary>
-        /// The shadow settings.
+        /// Gets or sets the shadow settings.
         /// </summary>
         public Shadow Shadows { get; set; }
 
         /// <summary>
-        /// The typography settings.
+        /// Gets or sets the typography settings.
         /// </summary>
         public Typography Typography { get; set; }
 
         /// <summary>
-        /// The layout properties.
+        /// Gets or sets the layout properties.
         /// </summary>
         public LayoutProperties LayoutProperties { get; set; }
 
         /// <summary>
-        /// The z-index values.
+        /// Gets or sets the z-index values.
         /// </summary>
         public ZIndex ZIndex { get; set; }
 
         /// <summary>
-        /// The pseudo CSS styles.
+        /// Gets or sets the pseudo CSS styles.
         /// </summary>
         public PseudoCss PseudoCss { get; set; }
 
         /// <summary>
-        /// Initializes the <see cref="MudTheme"/> class.
+        /// Initializes a new instance of the <see cref="MudTheme"/> class.
         /// </summary>
         public MudTheme()
         {

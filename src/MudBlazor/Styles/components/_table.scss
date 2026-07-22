@@ -1,10 +1,5 @@
 @import '../abstracts/variables';
 
-$header-height: 59px;
-$header-height-dense: 39px;
-$header-height-with-filter: 109px; // 59px + 50px (filter row height)
-$header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
-
 .mud-table {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-surface);
@@ -12,7 +7,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
   &.mud-table-square {
-    border-radius: 0;
+    border-radius: 0px;
   }
 
   &.mud-table-outlined {
@@ -34,12 +29,8 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
     & .mud-table-cell {
       color: var(--mud-palette-text-primary);
-      font-size: var(--mud-typography-subtitle2-size);
-      font-family: var(--mud-typography-subtitle2-family);
-      font-weight: var(--mud-typography-subtitle2-weight);
-      line-height: var(--mud-typography-subtitle2-lineheight);
-      letter-spacing: var(--mud-typography-subtitle2-letterspacing);
-      text-transform: var(--mud-typography-subtitle2-text-transform);
+      font-weight: 500;
+      line-height: 1.5rem;
     }
   }
 
@@ -48,12 +39,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
     & .mud-table-cell {
       color: var(--mud-palette-text-primary);
-      font-size: var(--mud-typography-body2-size);
-      font-family: var(--mud-typography-body2-family);
-      font-weight: var(--mud-typography-body2-weight);
-      line-height: var(--mud-typography-body2-lineheight);
-      letter-spacing: var(--mud-typography-body2-letterspacing);
-      text-transform: var(--mud-typography-body2-text-transform);
     }
   }
 
@@ -68,34 +53,25 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 .mud-table-sort-label {
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   flex-direction: inherit;
   justify-content: flex-start;
 
-  &.mud-table-sort-label-full-width {
-    width: 100%;
-  }
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--mud-palette-action-default);
 
-  &.mud-clickable {
-    cursor: pointer;
-    user-select: none;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-
-    @media(hover: hover) and (pointer: fine) {
-      &:hover {
-        opacity: 0.64;
-
-        .mud-table-sort-label-icon {
-          opacity: 1;
-        }
+      .mud-table-sort-label-icon {
+        opacity: 0.8;
       }
     }
   }
 
   .mud-table-sort-label-icon {
     font-size: 18px;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     margin-left: 4px;
     user-select: none;
     margin-right: 4px;
@@ -114,8 +90,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 .mud-table-toolbar {
-  left: 0;
-  position: sticky;
   padding-left: 16px;
   padding-right: 8px;
   padding-inline-start: 16px;
@@ -123,39 +97,20 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 
+
 .mud-table-cell {
   display: table-cell;
   padding: 16px;
+  font-size: 0.875rem;
   text-align: start;
+  font-weight: 400;
+  line-height: 1.43;
   border-bottom: 1px solid var(--mud-palette-table-lines);
+  letter-spacing: 0.01071em;
   vertical-align: inherit;
 
   & .mud-checkbox {
-    margin: -4px;
-
-    > .mud-icon-button {
-      padding: 4px;
-    }
-  }
-
-  & > .mud-input-control {
-    & > div.mud-input.mud-input-text {
-      color: var(--mud-theme-on-surface);
-      font-size: var(--mud-typography-body2-size);
-      margin-top: -14px;
-      margin-bottom: -8px;
-    }
-  }
-
-  & > .mud-select {
-    & > .mud-input-control {
-      & > div.mud-input.mud-input-text {
-        color: var(--mud-theme-on-surface);
-        font-size: var(--mud-typography-body2-size);
-        margin-top: -14px;
-        margin-bottom: -8px;
-      }
-    }
+    margin: -12px;
   }
 }
 
@@ -220,31 +175,41 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   & .mud-table-bordered {
     & .mud-table-container .mud-table-root .mud-table-body {
       & .mud-table-row {
-        .mud-table-cell:first-child {
-          border-right: none;
-          border-top-right-radius: 0;
-        }
-
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0;
+          border-top-right-radius: 0px;
+        }
+      }
+    }
+
+    & .mud-table-container .mud-table-root .mud-table-body {
+      & .mud-table-row {
+        .mud-table-cell:first-child {
+          border-right: none;
+          border-top-right-radius: 0px;
+        }
+      }
+    }
+
+
+    & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
+      & .mud-table-row {
+        .mud-table-cell:last-child {
+          border-right: 1px solid var(--mud-palette-table-lines);
+          border-top-right-radius: 0px;
         }
       }
     }
 
     & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
       & .mud-table-row {
-        .mud-table-cell:last-child {
-          border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0;
-        }
-
         .mud-table-cell:only-child {
           border-right: none;
           border-top-right-radius: var(--mud-default-borderradius);
         }
       }
     }
+
 
     & .mud-table-container .mud-table-root .mud-table-head {
       & .mud-table-row {
@@ -259,7 +224,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       & .mud-table-row {
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0;
+          border-top-right-radius: 0px;
         }
       }
     }
@@ -280,61 +245,21 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 
   & * .mud-table-root {
+
     .mud-table-head {
       & * .mud-table-cell:first-child {
-        border-radius: var(--mud-default-borderradius) 0 0 0;
+        border-radius: var(--mud-default-borderradius) 0px 0px 0px;
       }
 
       & * .mud-table-cell:last-child {
-        border-radius: 0 var(--mud-default-borderradius) 0 0;
+        border-radius: 0px var(--mud-default-borderradius) 0px 0px;
       }
 
-      //Shared Sticky Header Styles
-      .mud-table-cell, .mud-table-loading {
+      & * .mud-table-cell {
         background-color: var(--mud-palette-surface);
         position: sticky;
         z-index: 2;
-      }
-
-      // Row 1 (always)
-      .mud-table-cell {
         top: 0;
-      }
-
-      // Row 2 (filter or panel row)
-      .filter-header-cell {
-        top: $header-height;
-      }
-
-      // Row 2 (filter or panel row if table is dense)
-      &.mud-table-dense .filter-header-cell {
-        top: $header-height-dense;
-      }
-
-      // Row 2 (loading row without filter header)
-      .mud-table-loading {
-        top: $header-height;
-      }
-
-      // Row 2 (loading row without filter header if table is dense)
-      &.mud-table-dense .mud-table-loading {
-        top: $header-height-dense;
-      }
-
-      // Row 3 (loading row with filter header)
-      &:has(.filter-header-cell) .mud-table-loading {
-        top: $header-height-with-filter;
-      }
-
-      // Row 3 (loading row with filter header if table is dense)
-      &.mud-table-dense:has(.filter-header-cell) .mud-table-loading {
-        top: $header-height-with-filter-dense;
-      }
-
-      & * .mud-table-cell.sticky-left,
-      & * .mud-table-cell.sticky-right {
-        z-index: 3;
-        background-color: var(--mud-palette-background-gray);
       }
     }
   }
@@ -346,6 +271,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 
   & * .mud-table-root {
+
     .mud-table-foot {
       position: sticky;
       z-index: 2;
@@ -358,25 +284,12 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
+
 .mud-table-row {
   color: inherit;
   display: table-row;
   outline: 0;
   vertical-align: middle;
-}
-
-.mud-table-row-clickable {
-  cursor: pointer;
-}
-
-.mud-table-row-disabled {
-  color: var(--mud-palette-text-disabled);
-  cursor: default;
-  pointer-events: none;
-
-  & .mud-table-cell {
-    color: var(--mud-palette-text-disabled) !important;
-  }
 }
 
 .mud-table-hover {
@@ -391,14 +304,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 .mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    // Non-virtualized: nth-of-type works because no <tr> spacers exist.
-    &:not(.mud-table-body-virtualized) .mud-table-row:nth-of-type(odd) {
-      background-color: var(--mud-palette-table-striped);
-    }
-
-    // Virtualized: <Virtualize> renders <tr> spacers that shift nth-of-type ordering.
-    // Use index-based .mud-table-row-stripe class instead.
-    &.mud-table-body-virtualized .mud-table-row.mud-table-row-stripe {
+    & .mud-table-row:nth-of-type(odd) {
       background-color: var(--mud-palette-table-striped);
     }
   }
@@ -406,19 +312,32 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 .mud-table-hover.mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    &:not(.mud-table-body-virtualized) {
-      @media(hover: hover) and (pointer: fine) {
-        & .mud-table-row:nth-of-type(odd):hover {
-          background-color: var(--mud-palette-table-hover);
-        }
+    @media(hover: hover) and (pointer: fine) {
+      & .mud-table-row:nth-of-type(odd):hover {
+        background-color: var(--mud-palette-table-hover);
       }
     }
+  }
+}
 
-    &.mud-table-body-virtualized {
-      @media(hover: hover) and (pointer: fine) {
-        & .mud-table-row.mud-table-row-stripe:hover {
-          background-color: var(--mud-palette-table-hover);
-        }
+
+.mud-table-cell {
+  & > .mud-input-control {
+    & > div.mud-input.mud-input-text {
+      color: var(--mud-theme-on-surface);
+      font-size: 0.875rem;
+      margin-top: -14px;
+      margin-bottom: -8px;
+    }
+  }
+
+  & > .mud-select {
+    & > .mud-input-control {
+      & > div.mud-input.mud-input-text {
+        color: var(--mud-theme-on-surface);
+        font-size: 0.875rem;
+        margin-top: -14px;
+        margin-bottom: -8px;
       }
     }
   }
@@ -471,8 +390,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   overflow: auto;
   font-size: 0.875rem;
   display: initial;
-  position: sticky;
-  left: 0;
 }
 
 .mud-table-pagination:last-child {
@@ -496,11 +413,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-.mud-table-pagination-top .mud-table-pagination-toolbar {
-  border-top: none;
-  border-bottom: 1px solid var(--mud-palette-table-lines);
-}
-
 .mud-table-pagination-spacer {
   flex: 1 1 100%;
 }
@@ -517,11 +429,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   cursor: pointer;
   margin-left: 10px !important;
   margin-right: 10px !important;
-  margin-top: 0 !important;
+  margin-top: 0px !important;
   min-width: 52px;
 
   & .mud-select-input {
-    margin-top: 0 !important;
+    margin-top: 0px !important;
     padding: 0 7px !important;
   }
 
@@ -571,20 +483,13 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-.mud-header-togglehierarchy .mud-table-row-expander {
-  padding: 6px;
-}
-
 .mud-table-row-expander {
-  margin-top: -12px;
-  margin-bottom: -12px;
-  margin-inline-start: -12px;
-  margin-inline-end: -2px;
+  margin: -12px -2px -12px -12px;
 }
 
-@mixin table-display-smalldevices($breakpoint) {
+@mixin table-display-smalldevices ($breakpoint) {
   .mud-#{$breakpoint}table {
-    .mud-table-root .mud-table-head .mud-table-row,
+    .mud-table-root .mud-table-head,
     .mud-table-root .mud-table-foot {
       display: none;
     }
@@ -596,10 +501,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
     .mud-table-body {
       border-top: 1px solid var(--mud-palette-table-lines);
-    }
-
-    .mud-table-root colgroup {
-      display: none;
     }
 
     .mud-table-row {
@@ -618,6 +519,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       padding: 14px 16px;
       text-align: start !important;
     }
+
 
     &.mud-table-dense {
       & .mud-table-cell {
@@ -645,6 +547,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
     }
 
     .mud-table-pagination {
+
       .mud-table-pagination-spacer {
         flex: none;
       }
@@ -673,7 +576,9 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
           }
         }
       }
+    }
 
+    &.mud-table-bordered {
       & .mud-table-container .mud-table-root .mud-table-body {
         & .mud-table-row {
           .mud-table-cell {
@@ -684,9 +589,8 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
     }
   }
 }
-
 // Table Pagination Flex Wrapper on old phones
-@media (max-width: 360px) {
+@media (max-width:360px) {
   .mud-table {
     .mud-table-pagination {
       .mud-select {
@@ -704,7 +608,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-@media (max-width: 416px) {
+@media (max-width:416px) {
   .mud-table {
     .mud-table-pagination {
       .mud-table-pagination-toolbar {
@@ -726,26 +630,26 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   }
 }
 
-@media (max-width: $breakpoint-sm) {
+@media (max-width:$breakpoint-sm) {
   @include table-display-smalldevices("xs-");
 }
 
-@media (max-width: $breakpoint-md) {
+@media (max-width:$breakpoint-md) {
   @include table-display-smalldevices("sm-");
 }
 
-@media (max-width: $breakpoint-lg) {
+@media (max-width:$breakpoint-lg) {
   @include table-display-smalldevices("md-");
 }
 
-@media (max-width: $breakpoint-xl) {
+@media (max-width:$breakpoint-xl) {
   @include table-display-smalldevices("lg-");
 }
 
-@media (max-width: $breakpoint-xxl) {
+@media (max-width:$breakpoint-xxl) {
   @include table-display-smalldevices("xl-");
 }
 
-@media (min-width: $breakpoint-xxl) {
+@media (min-width:$breakpoint-xxl) {
   @include table-display-smalldevices("xxl-");
 }

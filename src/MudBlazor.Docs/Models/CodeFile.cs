@@ -4,4 +4,4 @@
 
 namespace MudBlazor.Docs.Models;
 
-public record CodeFile(string Title, string Code);
+public record CodeFile(string title, string code);

@@ -1,4 +1,7 @@
-﻿@inject ISnackbar SnackbarService
+﻿@using Microsoft.AspNetCore.Components.Rendering
+
+@namespace MudBlazor.UnitTests.TestComponents
+@inject ISnackbar SnackbarService
 
 <MudButton OnClick="@OnClick">Show the snackbar!</MudButton>
 

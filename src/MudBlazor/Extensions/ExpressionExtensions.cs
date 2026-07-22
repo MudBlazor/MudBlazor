@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 
 namespace MudBlazor
 {
+#nullable enable
     public static class ExpressionExtensions
     {
         public static string GetFullPathOfMember<T>(this Expression<Func<T>> property)

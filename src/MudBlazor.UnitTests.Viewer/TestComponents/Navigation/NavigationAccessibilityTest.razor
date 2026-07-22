@@ -1,4 +1,6 @@
-﻿<MudNavGroup id="custom-top-level-id"
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudNavGroup id="custom-top-level-id"
              Disabled="@TopLevelDisabled"
              Title="Top level"
              Expanded="@TopLevelExpanded">
@@ -54,13 +56,10 @@
 @code {
     [Parameter]
     public bool TopLevelDisabled { get; set; }
-
     [Parameter]
     public bool TopLevelExpanded { get; set; } = true;
-
     [Parameter]
     public bool SecondLevelExpanded { get; set; } = true;
-
     [Parameter]
     public string SecondLevelTitle { get; set; } = "Second level";
 }

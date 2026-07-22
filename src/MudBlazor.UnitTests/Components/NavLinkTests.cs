@@ -1,9 +1,16 @@
-﻿using AngleSharp.Dom;
-using AwesomeAssertions;
+﻿
+#pragma warning disable CS1998 // async without await
+
+using System;
+using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents.NavLink;
+using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Link;
 using NUnit.Framework;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -20,9 +27,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("_parent", "noopener noreferrer")]
         [TestCase("_top", "noopener noreferrer")]
         [TestCase("myFrameName", "noopener noreferrer")]
-        public void NavLink_CheckRelAttribute(string target, string expectedRel)
+        public async Task NavLink_CheckRelAttribute(string target, string expectedRel)
         {
-            var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.Target, target));
+            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.Target), target));
             // print the generated html
             // select elements needed for the test
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);
@@ -32,10 +39,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task NavLink_CheckOnClickEvent()
         {
             var clicked = false;
-            var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.OnClick, (MouseEventArgs args) => { clicked = true; }));
+            var comp = Context.RenderComponent<MudNavLink>(EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }));
             // print the generated html
             comp.FindAll("a").Should().BeEmpty();
-            await comp.Find(".mud-nav-link").ClickAsync();
+            comp.Find(".mud-nav-link").Click();
             clicked.Should().BeTrue();
         }
 
@@ -43,34 +50,34 @@ namespace MudBlazor.UnitTests.Components
         public async Task NavLink_Active()
         {
             const string activeClass = "Custom__nav_active_css";
-            var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.ActiveClass, activeClass));
-            await comp.Find(".mud-nav-link").ClickAsync();
+            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.ActiveClass), activeClass));
+            comp.Find(".mud-nav-link").Click();
             comp.Markup.Should().Contain(activeClass);
         }
 
         [Test]
         public async Task NavLink_Enabled_CheckNavigation()
         {
-            var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, false));
-            await comp.Find("a").ClickAsync();
+            var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), false));
+            comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeTrue();
         }
 
         [Test]
         public async Task NavLink_Disabled_CheckNoNavigation()
         {
-            var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, true));
-            await comp.Find("a").ClickAsync();
+            var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), true));
+            comp.Find("a").Click();
             comp.Instance.IsNavigated.Should().BeFalse();
         }
 
         [Test]
         public async Task NavLinkOnClickErrorContentCaughtException()
         {
-            var comp = Context.Render<NavLinkErrorContenCaughtException>();
+            var comp = Context.RenderComponent<NavLinkErrorContenCaughtException>();
             IElement AlertText() => MudAlert().Find("div.mud-alert-message");
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
-            IReadOnlyList<IElement> Links() => comp.FindAll(".mud-nav-link");
+            IRefreshableElementCollection<IElement> Links() => comp.FindAll(".mud-nav-link");
             IElement MudLink() => Links()[0];
 
             await MudLink().ClickAsync(new MouseEventArgs());

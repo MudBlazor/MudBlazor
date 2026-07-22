@@ -1,19 +1,8 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using FluentValidation
 
-@using FluentValidation
+@namespace MudBlazor.Docs.Examples
 
 @inject ISnackbar Snackbar
-
-<style>
-    .file-upload-input {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: 10;
-        opacity: 0;
-    }
-</style>
 
 <MudStack Style="width: 100%">
     <MudForm Model="@_model"
@@ -25,35 +14,36 @@
                            @ref="@_fileUpload"
                            @bind-Files="_model.Files"
                            For="@(() => _model.Files)"
-                           AppendMultipleFiles="true"
+                           AppendMultipleFiles
                            Hidden="@false"
-                           InputClass="file-upload-input"
+                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                           InputStyle="opacity:0"
                            ErrorText="@string.Empty"
                            tabindex="-1"
-                           OnDrop="@(_ => ClearDragClass())"
-                           OnDragEnter="@(_ => SetDragClass())"
-                           OnDragLeave="@(_ => ClearDragClass())"
-                           OnDragEnd="@(_ => ClearDragClass())">
-                <CustomContent>
+                           @ondrop="@ClearDragClass"
+                           @ondragenter="@SetDragClass"
+                           @ondragleave="@ClearDragClass"
+                           @ondragend="@ClearDragClass">
+                <ActivatorContent>
                     <MudPaper Height="300px"
                               Outlined="true"
                               Class="@_dragClass">
                         <MudText Typo="Typo.h6">
-                            Drag files here or click to browse
+                            Drag and drop files here or click
                         </MudText>
                         @foreach (var file in _model.Files?.Select(file => file.Name) ?? Enumerable.Empty<string>())
                         {
                             <MudChip T="string" Color="Color.Dark" Text="@file" />
                         }
                     </MudPaper>
-                </CustomContent>
+                </ActivatorContent>
             </MudFileUpload>
             <MudToolBar Gutters="@false"
                         Class="relative d-flex justify-end gap-4">
                 <MudButton Color="Color.Primary"
                            OnClick="@OpenFilePickerAsync"
                            Variant="Variant.Filled">
-                    Browse files
+                    Open file picker
                 </MudButton>
                 <MudButton Color="Color.Primary"
                            Disabled="@(!_isValid || !_isTouched || _model.Files is null || !_model.Files.Any())"
@@ -84,23 +74,27 @@
     </MudForm>
 </MudStack>
 
-@code
-{
+@code {
 #nullable enable
-    private const string FileContent = "this is content";
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
-    private readonly Model _model = new();
-    private readonly ModelFluentValidator _validationRules = new();
-    private string _dragClass = DefaultDragClass;
+    public class Model
+    {
+        public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
+    }
+
+    private Model _model =  new();
+    private ModelFluentValidator _validationRules = new();
     private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
     private bool _isValid;
     private bool _isTouched;
+    private const string FileContent = "this is content";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private string _dragClass = DefaultDragClass;
 
     private void Upload()
     {
         // Upload the files here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("Upload started (demo).");
+        Snackbar.Add("TODO: Upload your files!");
     }
 
     private void SetDragClass()
@@ -115,18 +109,13 @@
     private Task ClearAsync()
         => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
 
-    public class Model
-    {
-        public IReadOnlyList<IBrowserFile>? Files { get; set; } = new List<IBrowserFile>();
-    }
-
     public class ModelFluentValidator : AbstractValidator<Model>
     {
         public ModelFluentValidator()
         {
             RuleFor(x => x.Files)
                 .NotEmpty()
-                .WithMessage("Please select at least one file.");
+                .WithMessage("There must be at least 1 file.");
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>

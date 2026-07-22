@@ -18,9 +18,9 @@
     <MudItem xs="6" Class="d-flex justify-center align-center">
         <MudBadge Origin="@AnchorOrigin" Color="Color.Primary" Icon="@GetIcon()" Overlap="true" Elevation="4">
             <MudMenu Label="Advanced Placement" Variant="Variant.Filled" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Color="Color.Default" Size="Size.Large">
-                <MudMenuItem Label="Enlist" />
-                <MudMenuItem Label="Barracks" />
-                <MudMenuItem Label="Armory" />
+                <MudMenuItem>Enlist</MudMenuItem>
+                <MudMenuItem>Barracks</MudMenuItem>
+                <MudMenuItem>Armory</MudMenuItem>
             </MudMenu>
         </MudBadge>
     </MudItem>
@@ -86,7 +86,7 @@
     {
         string align = "";
         string justify = "";
-        string[] pos = TransformOrigin.ToStringFast(true).Split("-");
+        string[] pos = TransformOrigin.ToDescriptionString().Split("-");
 
         if (pos[0] == "center")
         {
@@ -115,4 +115,5 @@
 
         return $"absolute mud-height-full mud-width-full d-flex ma-n3 {align} {justify}";
     }
+    
 }

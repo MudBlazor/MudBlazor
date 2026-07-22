@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor
 {
-
-    /// <summary>
-    /// Conditionally renders its content based on the current screen-size breakpoint, showing or hiding it as the viewport changes.
-    /// </summary>
-    /// <remarks>
-    /// This component uses JavaScript to listen for browser window size changes.  If you want a solution using only CSS, you can use the <see href="https://mudblazor.com/features/display#class-reference">responsive display classes</see>.
-    /// </remarks>
+#nullable enable
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
         private readonly ParameterState<bool> _hiddenState;
@@ -19,53 +15,38 @@ namespace MudBlazor
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
-        /// <summary>
-        /// The current breakpoint.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Breakpoint.None"/>.
-        /// </remarks>
         [CascadingParameter]
         public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
         /// <summary>
-        /// The breakpoint at which component is not rendered, when <see cref="Invert"/> is <c>false</c>.
+        /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
         /// </summary>
-        /// <remarks>
-        /// When <see cref="Invert"/> is <c>true</c>, this property controls when the content is shown.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public Breakpoint Breakpoint { get; set; }
 
         /// <summary>
-        /// Causes the <see cref="Breakpoint"/> to control when content is displayed.
+        /// Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Invert { get; set; }
 
         /// <summary>
-        /// Hides the content within this component.
+        /// True if the component is hidden (two-way bindable)
         /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Hidden { get; set; } = true;
 
         /// <summary>
-        /// Occurs when <see cref="Hidden"/> has changed.
+        /// Fires when the breakpoint changes visibility of the component
         /// </summary>
         [Parameter]
         public EventCallback<bool> HiddenChanged { get; set; }
 
         /// <summary>
-        /// The content within this component.
+        /// Child content of component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
@@ -103,9 +84,6 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
         public async ValueTask DisposeAsync()
         {
             if (IsJSRuntimeAvailable)

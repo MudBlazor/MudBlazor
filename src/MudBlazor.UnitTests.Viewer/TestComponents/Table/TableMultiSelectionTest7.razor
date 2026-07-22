@@ -1,5 +1,7 @@
-﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
-<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true" Filter="new Func<int,bool>(FilterFunc)">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
+<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" Filter="new Func<int,bool>(FilterFunc)">
     <HeaderContent>
         <MudTh>Nr</MudTh>
     </HeaderContent>
@@ -8,23 +10,23 @@
     </RowTemplate>
 </MudTable>
 
-<MudTextField id="searchInput" @bind-Value="_searchString"></MudTextField>
+<MudTextField @bind-Value="searchString"></MudTextField>
 
 @code {
     public static string __description__ = "the selected items (check-box click or row click) should be represented in SelectedItems.";
     
-    private string _searchString = string.Empty;
-    private readonly int[] _items = [0, 1, 2];
-    private HashSet<int> _selectedItems = [];
+    public string searchString = "";
+    int[] items = new int[] { 0, 1, 2 };
+    HashSet<int> selectedItems = new HashSet<int>();
 
     private bool FilterFunc(int element)
     {
-        if (string.IsNullOrWhiteSpace(_searchString))
+        if (string.IsNullOrWhiteSpace(searchString))
         {
             return true;
         }
 
-        if (element == int.Parse(_searchString))
+        if (element == int.Parse(searchString))
         {
             return true;
         }

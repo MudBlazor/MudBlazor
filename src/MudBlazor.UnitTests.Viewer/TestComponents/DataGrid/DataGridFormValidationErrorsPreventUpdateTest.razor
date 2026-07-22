@@ -1,0 +1,57 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+@using System.Text.RegularExpressions;
+
+<MudDialogProvider />
+
+<MudDataGrid Items="this.Items" ReadOnly="false" EditMode="DataGridEditMode.Form" EditTrigger="DataGridEditTrigger.Manual">
+    <Columns>
+        <PropertyColumn Property="x => x.FirstName" />
+        <PropertyColumn Property="x => x.LastName" />
+        <PropertyColumn Property="x => x.Email">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Email" Required Validation="(string s) => this.ValidateEmail(s)" Variant="Variant.Outlined" Label="Email"/>
+            </EditTemplate>
+        </PropertyColumn>
+        <TemplateColumn>
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public class Model
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+    }
+
+    public List<Model> Items = new()
+    {
+        new() { FirstName = "Augusta", LastName = "Homenick", Email = "Augusta_Homenick26@mud.com" },
+        new() { FirstName = "Kiel", LastName = "Bogisich", Email = "Kiel.Bogisich@mud.com" },
+        new() { FirstName = "Brigitte", LastName = "Breitenberg", Email = "Brigitte27@mud.com" },
+        new() { FirstName = "Kamren", LastName = "McKenzie", Email = "Kamren64@mud.com" },
+        new() { FirstName = "Pansy", LastName = "West", Email = "Pansy82@mud.com" },
+    };
+
+    public string ValidateEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return null;
+
+        // really basic e-mail match (anything@anything.anything):
+        //  - anything other than '@' and white space
+        //  - single '@'
+        //  - anything other than '.' and white space
+        //  - single '.'
+        //  - anything other than white space
+        if (!Regex.IsMatch(email, @"^[^@\s]+@[^\.\s]+\.[^\s]+$"))
+            return "This is not a valid e-mail address";
+
+        return null;
+    }
+}

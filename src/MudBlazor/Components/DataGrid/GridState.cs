@@ -3,20 +3,20 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Paging, sorting, and filtering state that a <see cref="MudDataGrid{T}"/> passes to its <c>ServerData</c> callback for server-side data loading.
+    /// Represents the current paging, sorting, and filtering for a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
-    public class GridState<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
+    public class GridState<T>
     {
         /// <summary>
-        /// The current page being displayed. The page index is zero-based.
+        /// The current page being displayed.
         /// </summary>
         public int Page { get; set; }
 
@@ -36,11 +36,7 @@ namespace MudBlazor
         public ICollection<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
     }
 
-    /// <summary>
-    /// The state a <see cref="MudDataGrid{T}"/> passes to its <c>VirtualizeServerData</c> callback when loading virtualized rows from the server.
-    /// </summary>
-    /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
-    public class GridStateVirtualize<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
+    public class GridStateVirtualize<T>
     {
         /// <summary>
         /// The zero-based index of the first item to be supplied.
@@ -68,7 +64,7 @@ namespace MudBlazor
     /// Represents data to display in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
-    public class GridData<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
+    public class GridData<T>
     {
         /// <summary>
         /// The items to display in the grid.

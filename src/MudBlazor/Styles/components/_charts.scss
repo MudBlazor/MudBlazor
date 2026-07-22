@@ -1,11 +1,5 @@
-.mud-chart {
+﻿.mud-chart {
   display: flex;
-  min-height: fit-content;
-  min-width: fit-content;
-
-  svg {
-    order: 2
-  }
 
   &.mud-chart-legend-bottom {
     flex-direction: column;
@@ -14,17 +8,15 @@
       margin-top: 10px;
       justify-content: center;
       width: 100%;
-      order: 3;
     }
   }
 
   &.mud-chart-legend-top {
-    flex-direction: column;
+    flex-direction: column-reverse;
 
     & .mud-chart-legend {
       justify-content: center;
       width: 100%;
-      order: 1;
     }
   }
 
@@ -33,32 +25,26 @@
 
     & .mud-chart-legend {
       flex-direction: column;
-      order: 3;
-      min-width: fit-content;
-      margin-left: 10px;
     }
   }
 
   &.mud-chart-legend-left {
-    flex-direction: row;
+    flex-direction: row-reverse;
 
     & .mud-chart-legend {
       flex-direction: column;
-      order: 1;
-      min-width: fit-content;
-      margin-right: 10px;
     }
   }
 
-  & .mud-chart-donut, .mud-chart-pie, .mud-chart-radar, .mud-chart-line, .mud-chart-bar {
+
+  & .mud-chart-donut, .mud-chart-pie, mud-chart-line {
     display: flex;
     margin: auto;
-    overflow: unset; // Workaround for clipped axis notations
   }
 
   & .mud-chart-legend {
     display: flex;
-    padding: 10px 0;
+    padding: 10px 0px;
     margin: auto;
     flex-wrap: wrap;
 
@@ -90,28 +76,12 @@
   }
 }
 
-.mud-chart-fill-bounds {
-  height: 100%;
-  width: 100%;
-  min-height: unset;
-  min-width: unset;
-}
-
 .mud-charts-yaxis {
   fill: var(--mud-palette-text-primary);
 }
 
 .mud-charts-xaxis {
   fill: var(--mud-palette-text-primary);
-}
-
-.mud-chart-axis-label {
-  fill: var(--mud-palette-text-primary);
-}
-
-.mud-chart-value-label {
-  fill: var(--mud-palette-text-primary);
-  user-select: none;
 }
 
 .mud-chart-donut {
@@ -123,23 +93,19 @@
 
   & .mud-donut-ring {
     fill: transparent;
+    stroke-width: 5;
     stroke: white;
     pointer-events: unset;
   }
 
   & .mud-donut-segment {
+    stroke-width: 5;
     fill: transparent;
     pointer-events: stroke;
     -webkit-transition: stroke .2s ease;
     -moz-transition: stroke .2s ease;
     -o-transition: stroke .2s ease;
     transition: stroke .2s ease;
-  }
-
-  & .mud-donut-text {
-    dominant-baseline: central;
-    text-anchor: middle;
-    fill: var(--mud-palette-text-primary);
   }
 }
 
@@ -169,29 +135,4 @@
 
 .mud-chart-marker-color-4 {
   background-color: #594ae2;
-}
-
-.mud-chart-cell text {
-  fill: black;
-}
-
-.mud-chart-heatmap-legend line {
-  stroke: var(--mud-palette-text-primary);
-}
-
-.mud-chart-heatmap-legend text {
-  fill: var(--mud-palette-text-primary);
-}
-
-.mud-chart-sankey {
-  width: 100%;
-  height: 100%;
-}
-
-.mud-chart-sankey text {
-  font-family: var(--mud-typography-caption-family), sans-serif;
-  font-weight: var(--mud-typography-caption-weight);
-  line-height: var(--mud-typography-caption-lineheight);
-  letter-spacing: var(--mud-typography-caption-letterspacing);
-  text-transform: var(--mud-typography-caption-text-transform);
 }

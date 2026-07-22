@@ -35,7 +35,6 @@ namespace MudBlazor.Docs.Extensions
             });
 
             services.AddScoped<IDocsJsApiService, DocsJsApiService>();
-            services.AddScoped<IAdBlockDetectionService, AdBlockDetectionService>();
             services.AddSingleton<DiscordApiClient>();
             services.AddSingleton<NugetApiClient>();
             services.AddSingleton<GitHubApiClient>();
@@ -74,7 +73,7 @@ namespace MudBlazor.Docs.Extensions
                         new CookieCategoryService
                         {
                             Identifier = "necessary",
-                            PolicyUrl = "https://privacy.microsoft.com/privacystatement",
+                            PolicyUrl = "https://privacy.microsoft.com/en-us/privacystatementy",
                             TitleText = new()
                             {
                                 ["en"] = "Azure App Service",

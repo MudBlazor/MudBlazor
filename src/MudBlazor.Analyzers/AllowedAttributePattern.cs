@@ -2,13 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.Analyzers;
-
-public enum AllowedAttributePattern
+namespace MudBlazor.Analyzers
 {
-    Any,
-    LowerCase,
-    HTMLAttributes,
-    DataAndAria,
-    None
+    public enum AllowedAttributePattern
+    {
+        Any,
+        LowerCase,
+        DataAndAria,
+        None
+    }
 }

@@ -5,16 +5,16 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// A single slide within a <see cref="MudCarousel{TData}"/>, holding the content shown while it is the selected item.
+    /// Represents a slide displayed within a <see cref="MudCarousel{TData}"/>.
     /// </summary>
-    /// <seealso cref="MudCarousel{TData}" />
     public partial class MudCarouselItem : MudComponentBase, IDisposable
     {
         private bool _disposed = false;
 
         protected string Classname => new CssBuilder("mud-carousel-item")
-            .AddClass($"mud-carousel-item-{Color.ToStringFast(true)}")
+            .AddClass($"mud-carousel-item-{Color.ToDescriptionString()}")
             .AddClass("mud-carousel-item-exit", !_disposed && Parent?.LastContainer == this)
             .AddClass("mud-carousel-transition-fade-in", !_disposed && Transition == Transition.Fade && Parent?.SelectedContainer == this)
             .AddClass("mud-carousel-transition-fade-out", !_disposed && Transition == Transition.Fade && Parent?.LastContainer == this)
@@ -27,8 +27,8 @@ namespace MudBlazor
             .AddClass("mud-carousel-transition-slide-prev-rtl-enter", !_disposed && Transition == Transition.Slide && RightToLeft && Parent?.SelectedContainer == this && !Parent._moveNext)
             .AddClass("mud-carousel-transition-slide-prev-rtl-exit", !_disposed && Transition == Transition.Slide && RightToLeft && Parent?.LastContainer == this && !Parent._moveNext)
             .AddClass("mud-carousel-transition-none", !_disposed && Transition == Transition.None && Parent?.SelectedContainer != this)
-            .AddClass(CustomTransitionEnter, !_disposed && Transition == Transition.Custom && Parent?.SelectedContainer == this)
-            .AddClass(CustomTransitionExit, !_disposed && Transition == Transition.Custom && Parent?.LastContainer == this)
+            .AddClass(CustomTransitionEnter, !_disposed && Transition == Transition.Custom && Parent?.SelectedContainer == this && Parent.SelectedContainer == this)
+            .AddClass(CustomTransitionExit, !_disposed && Transition == Transition.Custom && Parent?.LastContainer == this && Parent.LastContainer == this)
             .AddClass(Class)
             .Build();
 
@@ -42,9 +42,6 @@ namespace MudBlazor
         [CascadingParameter]
         protected internal MudBaseItemsControl<MudCarouselItem>? Parent { get; set; }
 
-        /// <summary>
-        /// Displays this item right-to-left.
-        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -100,21 +97,6 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
-        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing)
-            {
-                return;
-            }
-
             _disposed = true;
             Parent?.Items.Remove(this);
         }

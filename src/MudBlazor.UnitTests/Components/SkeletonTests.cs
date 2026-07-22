@@ -1,5 +1,5 @@
-﻿using AwesomeAssertions;
-using Bunit;
+﻿using Bunit;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -8,9 +8,9 @@ namespace MudBlazor.UnitTests.Components
     public class SkeletonTests : BunitTest
     {
         [Test]
-        public async Task SkeletonStyleIsAppliedAfterInitialRendering()
+        public void SkeletonStyleIsAppliedAfterInitialRendering()
         {
-            var comp = Context.Render<MudSkeleton>();
+            var comp = Context.RenderComponent<MudSkeleton>();
 
             var skeleton = comp.Instance;
             var span = comp.Find("span");
@@ -22,15 +22,15 @@ namespace MudBlazor.UnitTests.Components
             skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
 
             // add new style and check if it was applied
-            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Style, "background:blue"));
+            comp.SetParametersAndRender(p => p.Add(x => x.Style, "background:blue"));
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("background:blue;");
         }
 
         [Test]
-        public async Task SkeletonHeightIsAppliedAfterInitialRendering()
+        public void SkeletonHeightIsAppliedAfterInitialRendering()
         {
-            var comp = Context.Render<MudSkeleton>(p => p.Add(x => x.Height, "100px"));
+            var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Height, "100px"));
 
             var skeleton = comp.Instance;
             var span = comp.Find("span");
@@ -42,15 +42,15 @@ namespace MudBlazor.UnitTests.Components
             skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
 
             // add new style and check if it was applied
-            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Height, "50px"));
+            comp.SetParametersAndRender(p => p.Add(x => x.Height, "50px"));
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("height:50px;");
         }
 
         [Test]
-        public async Task SkeletonWidthIsAppliedAfterInitialRendering()
+        public void SkeletonWidthIsAppliedAfterInitialRendering()
         {
-            var comp = Context.Render<MudSkeleton>(p => p.Add(x => x.Width, "300px"));
+            var comp = Context.RenderComponent<MudSkeleton>(p => p.Add(x => x.Width, "300px"));
 
             var skeleton = comp.Instance;
             var span = comp.Find("span");
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
             skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
 
             // add new style and check if it was applied
-            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Width, "500px"));
+            comp.SetParametersAndRender(p => p.Add(x => x.Width, "500px"));
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("width:500px;");
         }

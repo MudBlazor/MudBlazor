@@ -1,18 +1,13 @@
-﻿<MudPopoverProvider />
+﻿<MudPopoverProvider></MudPopoverProvider>
 
-<MudTimePicker @ref="Picker" Label="With action buttons" @bind-Time="_time" AutoClose="AutoClose">
+<MudTimePicker Label="With action buttons" @bind-Time="time">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
         <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
-        <MudButton Id="theCloseButton" Color="Color.Primary" OnClick="@(() => context.CloseAsync())">OK</MudButton>
+        <MudButton Id="theCloseButton" Color="Color.Primary" OnClick="@(() => context.CloseAsync())">Ok</MudButton>
     </PickerActions>
 </MudTimePicker>
 
 @code{
-    private TimeSpan? _time = new TimeSpan(00, 45, 00);
-
-    public MudTimePicker Picker { get; private set; } = null!;
-
-    [Parameter]
-    public bool AutoClose { get; set; }
+    TimeSpan? time = new TimeSpan(00, 45, 00);
 }

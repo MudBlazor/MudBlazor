@@ -2,75 +2,75 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace MudBlazor
 {
-    /// <summary>
-    /// Implements input masking features for a mask.
-    /// </summary>
     public interface IMask
     {
         /// <summary>
-        /// The characters which define the accepted input.
+        /// The mask defining the structure of the accepted input. 
+        /// Its format depends on the implementation.
         /// </summary>
-        string? Mask { get; }
+        string Mask { get; }
 
         /// <summary>
-        /// The current text displayed in the input, including delimiter and placeholder characters.
+        /// The current text as it is displayed in the component
         /// </summary>
-        string? Text { get; }
+        string Text { get; }
 
         /// <summary>
-        /// The current text in the input, excluding delimiter or placeholder characters.
+        /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
+        /// Clean text will usually be used for the Value property of a mask field. 
         /// </summary>
-        string? GetCleanText() => Text;
+        string GetCleanText() => Text;
 
         /// <summary>
-        /// The current cursor position.
+        /// The current caret position
         /// </summary>
         int CaretPos { get; set; }
 
         /// <summary>
-        /// The start and end range of selected characters.
+        /// The currently selected sub-section of the Text
         /// </summary>
         (int, int)? Selection { get; set; }
 
         /// <summary>
-        /// Inserts text at the current cursor position.
+        /// Implements user input at the current caret position (single key strokes or pasting longer text)
         /// </summary>
-        /// <param name="input">The characters to insert.</param>
-        void Insert(string? input);
+        /// <param name="input"></param>
+        void Insert(string input);
 
         /// <summary>
-        /// Triggers a delete at the current cursor position.
+        /// Implements the effect of the Del key at the current cursor position
         /// </summary>
-        /// <remarks>
-        /// Has the same effect as pressing the <c>Delete</c> key.
-        /// </remarks>
         void Delete();
 
         /// <summary>
-        /// Triggers a backspace at the current cursor position.
+        /// Implements the effect of the Backspace key at the current cursor position
         /// </summary>
-        /// <remarks>
-        /// Has the same effect as pressing the <c>Backspace</c> key.
-        /// </remarks>
         void Backspace();
 
         /// <summary>
-        /// Clears the text and selection.
+        /// Reset the mask as if the whole textfield was cleared
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// Overwrites the text without losing the cursor position.
+        /// Overwrite the mask text without losing caret position
         /// </summary>
-        /// <param name="text">The text to set.</param>
-        void SetText(string? text);
+        /// <param name="text"></param>
+        void SetText(string text);
 
         /// <summary>
-        /// Copies the mask and mask characters from the specified mask.
+        /// Copy config from other mask but preserve own state.
         /// </summary>
-        /// <param name="mask">The mask to copy from.</param>
-        void UpdateFrom(IMask? mask);
+        /// <param name="other"></param>
+        void UpdateFrom(IMask other);
+
     }
 }

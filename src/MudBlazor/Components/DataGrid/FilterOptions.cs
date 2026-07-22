@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 
 /// <summary>
 /// Represents additional options applied to the filter of a <see cref="MudDataGrid{T}"/>.

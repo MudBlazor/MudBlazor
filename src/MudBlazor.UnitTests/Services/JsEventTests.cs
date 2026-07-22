@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
+using System;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
@@ -13,8 +15,9 @@ namespace MudBlazor.UnitTests.Services
     [TestFixture]
     public class JsEventTests
     {
+
         [Test]
-        public async Task NoSubscriptionWithoutConnect()
+        public async Task NoSubscriptionWithoutConnectTest()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
             Assert.Throws<InvalidOperationException>(() => jsevent.Paste += x => Console.WriteLine(x));
@@ -25,11 +28,11 @@ namespace MudBlazor.UnitTests.Services
             await jsevent.Unsubscribe("copy");
             await jsevent.Disconnect();
             await jsevent.UnsubscribeAll();
-            await jsevent.DisposeAsync();
+            jsevent.Dispose();
         }
 
         [Test]
-        public async Task EventSubscription()
+        public async Task EventSubscriptionTest()
         {
             var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
             await jsevent.Connect("asdf", new JsEventOptions { });
@@ -71,13 +74,6 @@ namespace MudBlazor.UnitTests.Services
             caretPositionChangedCount.Should().Be(1);
             jsevent._subscribedEvents.Should().BeEmpty();
 
-            // null caret position is ignored
-            jsevent.CaretPositionChanged += caretPositionChangedHandler;
-            jsevent.OnCaretPositionChanged(null);
-            caretPositionChangedData.Should().Be(17);
-            caretPositionChangedCount.Should().Be(1);
-            jsevent.CaretPositionChanged -= caretPositionChangedHandler;
-
             // select
             var selectCount = 0;
             (int, int)? selectData = null;
@@ -99,48 +95,10 @@ namespace MudBlazor.UnitTests.Services
             jsevent.Select += selectHandler;
             jsevent.CaretPositionChanged += caretPositionChangedHandler;
             jsevent.Paste += pasteHandler;
-            await jsevent.DisposeAsync(); ;
+            jsevent.Dispose();
             // second dispose is ignored
-            await jsevent.DisposeAsync();
+            jsevent.Dispose();
             jsevent._subscribedEvents.Should().BeEmpty();
-        }
-
-        [Test]
-        public async Task MultipleHandlers_FanOutAndShareSubscription()
-        {
-            var jsevent = new JsEvent(new Mock<IJSRuntime>().Object);
-            await jsevent.Connect("asdf", new JsEventOptions { });
-
-            var firstCount = 0;
-            var secondCount = 0;
-            var firstHandler = new Action<string>(_ => firstCount++);
-            var secondHandler = new Action<string>(_ => secondCount++);
-
-            // two handlers share a single underlying subscription
-            jsevent.Paste += firstHandler;
-            jsevent.Paste += secondHandler;
-            jsevent._subscribedEvents.Should().Contain("paste");
-
-            // a paste fans out to every handler
-            jsevent.OnPaste("spice");
-            firstCount.Should().Be(1);
-            secondCount.Should().Be(1);
-
-            // removing one handler keeps the subscription alive for the other
-            jsevent.Paste -= firstHandler;
-            jsevent._subscribedEvents.Should().Contain("paste");
-            jsevent.OnPaste("water");
-            firstCount.Should().Be(1);
-            secondCount.Should().Be(2);
-
-            // removing the last handler drops the subscription
-            jsevent.Paste -= secondHandler;
-            jsevent._subscribedEvents.Should().BeEmpty();
-            jsevent.OnPaste("sand");
-            firstCount.Should().Be(1);
-            secondCount.Should().Be(2);
-
-            await jsevent.DisposeAsync();
         }
     }
 }

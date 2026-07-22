@@ -1,12 +1,12 @@
-﻿namespace MudBlazor.Services
+﻿using System;
+using System.Collections.Generic;
+
+namespace MudBlazor.Services
 {
+#nullable enable
     /// <summary>
-    /// Options that control browser resize observation and breakpoint handling.
+    /// Represents options for <see cref="IBrowserViewportService"/>.
     /// </summary>
-    /// <remarks>
-    /// Configure these values when subscribing to the viewport service to balance responsiveness,
-    /// logging, and breakpoint behavior for your component.
-    /// </remarks>
     public class ResizeOptions : IEquatable<ResizeOptions>
     {
         /// <summary>

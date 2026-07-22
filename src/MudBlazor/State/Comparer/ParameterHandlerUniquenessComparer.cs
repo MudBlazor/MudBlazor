@@ -1,14 +1,15 @@
-﻿using MudBlazor.State.Invocation;
+﻿using System.Collections.Generic;
 
 namespace MudBlazor.State.Comparer;
 
+#nullable enable
 /// <summary>
 /// Provides functionality to compare instances of <see cref="ParameterMetadata"/> or <see cref="IParameterComponentLifeCycle.Metadata"/> for equality.
 /// </summary>
 /// <remarks>
 /// This checks only uniqueness of <see cref="ParameterMetadata.HandlerName"/>.
 /// </remarks>
-internal class ParameterHandlerUniquenessComparer : IEqualityComparer<ParameterMetadata>, IEqualityComparer<IParameterComponentLifeCycle>, IEqualityComparer<IParameterStateInvocationSnapshot>
+internal class ParameterHandlerUniquenessComparer : IEqualityComparer<ParameterMetadata>, IEqualityComparer<IParameterComponentLifeCycle>
 {
     /// <inheritdoc />
     public bool Equals(ParameterMetadata? x, ParameterMetadata? y)
@@ -58,27 +59,6 @@ internal class ParameterHandlerUniquenessComparer : IEqualityComparer<ParameterM
     }
 
     /// <inheritdoc />
-    public bool Equals(IParameterStateInvocationSnapshot? x, IParameterStateInvocationSnapshot? y)
-    {
-        if (ReferenceEquals(x, y))
-        {
-            return true;
-        }
-
-        if (ReferenceEquals(x, null))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(y, null))
-        {
-            return false;
-        }
-
-        return Equals(x.Metadata, y.Metadata);
-    }
-
-    /// <inheritdoc />
     public int GetHashCode(ParameterMetadata parameterMetadata)
     {
         return parameterMetadata.HandlerName is not null
@@ -88,9 +68,6 @@ internal class ParameterHandlerUniquenessComparer : IEqualityComparer<ParameterM
 
     /// <inheritdoc />
     public int GetHashCode(IParameterComponentLifeCycle parameterComponentLifeCycle) => GetHashCode(parameterComponentLifeCycle.Metadata);
-
-    /// <inheritdoc />
-    public int GetHashCode(IParameterStateInvocationSnapshot snapshot) => GetHashCode(snapshot.Metadata);
 
     /// <summary>
     /// Gets the default instance of <see cref="ParameterHandlerUniquenessComparer"/>.

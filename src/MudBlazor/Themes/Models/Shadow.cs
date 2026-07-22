@@ -1,12 +1,13 @@
 ﻿namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Box-shadow values for each elevation level, controlling the depth appearance of MudBlazor surfaces.
+    /// Represents the typography settings for Shadow.
     /// </summary>
     public class Shadow
     {
         /// <summary>
-        /// The elevation levels for the shadow.
+        /// Gets or sets the elevation levels for the shadow.
         /// </summary>
         public string[] Elevation { get; set; } =
         {

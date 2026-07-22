@@ -1,20 +1,37 @@
-.mud-collapse-container {
+﻿.mud-collapse-container {
+  height: 0px;
   overflow: hidden;
-  display: grid;
-  grid-template-rows: minmax(0, 0fr);
-  transition: grid-template-rows 300ms ease-in-out;
+}
+
+@keyframes mud-expand-anim {
+  from {
+    height: 0;
+  }
 }
 
 .mud-collapse-entering {
-  grid-template-rows: minmax(0, 1fr);
+  animation: mud-expand-anim 1s ease-in-out 0ms 1 forwards;
+
+  &.mud-navgroup-collapse {
+    animation-duration: 300ms !important;
+  }
 }
 
 .mud-collapse-entered {
   overflow: initial;
-  grid-template-rows: minmax(0, 1fr);
+}
 
-  & .mud-collapse-wrapper {
-      overflow-y: auto;
+@keyframes mud-collapse-anim {
+  to {
+    height: 0;
+  }
+}
+
+.mud-collapse-exiting {
+  animation: mud-collapse-anim 0.5s cubic-bezier(0, 1, 0, 1) 0ms 1 forwards;
+
+  &.mud-navgroup-collapse {
+    animation-duration: 300ms;
   }
 }
 
@@ -23,7 +40,6 @@
 }
 
 .mud-collapse-wrapper {
-  overflow: hidden;
   display: flex;
 }
 

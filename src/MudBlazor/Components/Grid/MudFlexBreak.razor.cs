@@ -6,12 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-
-/// <summary>
-/// Forces a line break in a flexbox layout so the items that follow wrap onto a new line.
-/// </summary>
-/// <seealso cref="MudGrid" />
-/// <seealso cref="MudStack" />
+#nullable enable
 public partial class MudFlexBreak : MudComponentBase
 {
     /// <summary>

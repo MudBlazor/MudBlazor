@@ -4,8 +4,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -15,18 +13,16 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Pagination controls for navigating pages of a <see cref="MudDataGrid{T}"/>, with page-size selection and next and previous buttons.
+    /// Represents a pager for navigating pages of a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of data displayed in the grid.</typeparam>
-    /// <seealso cref="MudDataGrid{T}" />
-    /// <seealso cref="MudTablePager" />
-    public partial class MudDataGridPager<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
+    public partial class MudDataGridPager<T> : MudComponentBase, IDisposable
     {
         /// <summary>
         /// The grid which contains this pager.
         /// </summary>
         [CascadingParameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
         /// Shows the page-size drop-down list.
@@ -100,21 +96,20 @@ namespace MudBlazor
             {
                 if (DataGrid == null)
                     return "DataGrid==null";
-                Debug.Assert(DataGrid is not null);
-                var firstItem = DataGrid.GetFilteredItemsCount() == 0 ? 0 : (DataGrid.CurrentPage * DataGrid.RowsPerPage) + 1;
+                Debug.Assert(DataGrid != null);
+                var firstItem = DataGrid?.GetFilteredItemsCount() == 0 ? 0 : DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
                 var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
-                var allItems = DataGrid.GetFilteredItemsCount();
-                var culture = DataGrid.Culture ?? CultureInfo.InvariantCulture;
+                var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
 
-                if (string.IsNullOrEmpty(InfoFormat))
+                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
                 {
-                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem.ToString("N0", culture), lastItem.ToString("N0", culture), allItems.ToString("N0", culture)];
+                    return InfoFormat
+                        .Replace("{first_item}", $"{firstItem}")
+                        .Replace("{last_item}", $"{lastItem}")
+                        .Replace("{all_items}", $"{allItems}");
                 }
 
-                return InfoFormat
-                    .Replace("{first_item}", firstItem.ToString("N0", culture))
-                    .Replace("{last_item}", lastItem.ToString("N0", culture))
-                    .Replace("{all_items}", allItems.ToString("N0", culture));
+                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, allItems];
             }
         }
 
@@ -124,8 +119,8 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
-                .AddClass(Class)
-                .Build();
+            .AddClass(Class)
+            .Build();
 
         private async Task SetRowsPerPageAsync(int size)
         {
@@ -167,21 +162,6 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources used by this pager.
-        /// </summary>
-        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing)
-            {
-                return;
-            }
-
             if (DataGrid != null)
             {
                 DataGrid.PagerStateHasChangedEvent -= StateHasChanged;

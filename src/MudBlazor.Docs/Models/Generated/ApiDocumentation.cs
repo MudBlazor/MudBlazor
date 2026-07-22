@@ -2,6 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MudBlazor.Docs.Models;
 
 /// <summary>
@@ -27,7 +31,7 @@ public static partial class ApiDocumentation
     /// <summary>
     /// The generated documentation for properties.
     /// </summary>
-    public static Dictionary<string, DocumentedProperty> Properties { get; private set; }
+    public static Dictionary<string, DocumentedProperty> Properties { get; private set; } = [];
 
     /// <summary>
     /// The generated documentation for methods.
@@ -41,20 +45,10 @@ public static partial class ApiDocumentation
     /// <returns></returns>
     public static DocumentedMember GetMember(string name)
     {
-        // Is this an external member?
-        if (!name.StartsWith("MudBlazor", StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
-        // Is this an icon?  (We don't document those, but we show them as icons)
-        if (name.StartsWith("MudBlazor.Icons", StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
         DocumentedMember result = GetProperty(name);
         result ??= GetField(name);
-        result ??= GetEvent(name);
         result ??= GetMethod(name);
+        result ??= GetEvent(name);
         return result;
     }
 
@@ -69,58 +63,27 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-
-        // Is this an external member?
-        if (name.StartsWith("System", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
-
         // First, try an exact match
         if (Types.TryGetValue(name, out var match))
         {
             return match;
         }
-
         // Next, try with the MudBlazor namespace
         if (Types.TryGetValue("MudBlazor." + name, out match))
         {
             return match;
         }
-
-        // Look for a component with a generic
-        if (Types.TryGetValue("MudBlazor." + name + "`1", out match))
-        {
-            return match;
-        }
-
-        // Look for a component with two generics
-        if (Types.TryGetValue("MudBlazor." + name + "`2", out match))
-        {
-            return match;
-        }
-
         // Look for legacy links like "api/bar"
         if (LegacyToModernTypeNames.TryGetValue(name.ToLowerInvariant(), out var newTypeName) && Types.TryGetValue(newTypeName, out match))
         {
             return match;
         }
-
         // Try to match just on the name
-        var looseMatch = Types.FirstOrDefault(type =>
-            // Look for a match on just the name
-            type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
-            // Look for a match on the name with a generic
-            || type.Value.Name.Equals(name + "`1", StringComparison.OrdinalIgnoreCase)
-            // Look for a match on the name with two generics
-            || type.Value.Name.Equals(name + "`2", StringComparison.OrdinalIgnoreCase)
-            // .. or the friendly name
-            || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
+        var looseMatch = Types.FirstOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
         if (looseMatch != null)
         {
             return looseMatch;
         }
-
         // Nothing found        
         return null;
     }
@@ -253,8 +216,8 @@ public static partial class ApiDocumentation
         { "avatargroup", "MudBlazor.MudAvatarGroup" },
         { "autocomplete", "MudBlazor.MudAutocomplete`1" },
         { "badge", "MudBlazor.MudBadge" },
-        { "bar", "MudBlazor.Charts.Bar`1" },
-        { "barchart", "MudBlazor.Charts.Bar`1" },
+        { "bar", "MudBlazor.Charts.Bar" },
+        { "barchart", "MudBlazor.Charts.Bar" },
         { "breadcrumbs", "MudBlazor.MudBreadcrumbs" },
         { "breakpointprovider", "MudBlazor.MudBreakpointProvider" },
         { "button", "MudBlazor.MudButton" },
@@ -277,11 +240,11 @@ public static partial class ApiDocumentation
         { "datepicker", "MudBlazor.MudDatePicker" },
         { "daterangepicker", "MudBlazor.MudDateRangePicker" },
         { "dialog", "MudBlazor.MudDialog" },
-        { "dialoginstance", "MudBlazor.MudDialogContainer" },
+        { "dialoginstance", "MudBlazor.MudDialogInstance" },
         { "dialogprovider", "MudBlazor.MudDialogProvider" },
         { "divider", "MudBlazor.MudDivider" },
-        { "donut", "MudBlazor.Charts.Donut`1" },
-        { "donutchart", "MudBlazor.Charts.Donut`1" },
+        { "donut", "MudBlazor.Charts.Donut" },
+        { "donutchart", "MudBlazor.Charts.Donut" },
         { "drawer", "MudBlazor.MudDrawer" },
         { "drawercontainer", "MudBlazor.MudDrawerContainer" },
         { "drawerheader", "MudBlazor.MudDrawerHeader" },
@@ -302,9 +265,9 @@ public static partial class ApiDocumentation
         { "inputcontrol", "MudBlazor.MudInputControl" },
         { "inputlabel", "MudBlazor.MudInputLabel" },
         { "item", "MudBlazor.MudItem" },
-        { "legend", "MudBlazor.Charts.Legend`1" },
-        { "line", "MudBlazor.Charts.Line`1" },
-        { "linechart", "MudBlazor.Charts.Line`1" },
+        { "legend", "MudBlazor.Charts.Legend" },
+        { "line", "MudBlazor.Charts.Line" },
+        { "linechart", "MudBlazor.Charts.Line" },
         { "link", "MudBlazor.MudLink" },
         { "list", "MudBlazor.MudList`1" },
         { "listitem", "MudBlazor.MudListItem`1" },
@@ -321,8 +284,8 @@ public static partial class ApiDocumentation
         { "pagecontentnavigation", "MudBlazor.MudPageContentNavigation" },
         { "pagination", "MudBlazor.MudPagination" },
         { "paper", "MudBlazor.MudPaper" },
-        { "pie", "MudBlazor.Charts.Pie`1" },
-        { "piechart", "MudBlazor.Charts.Pie`1" },
+        { "pie", "MudBlazor.Charts.Pie" },
+        { "piechart", "MudBlazor.Charts.Pie" },
         { "popover", "MudBlazor.MudPopover" },
         { "progress", "MudBlazor.MudProgressLinear" },
         { "radio", "MudBlazor.MudRadio`1" },
@@ -339,8 +302,8 @@ public static partial class ApiDocumentation
         { "slider", "MudBlazor.MudSlider`1" },
         { "snackbar", "MudBlazor.MudSnackbarProvider" },
         { "snackbarelement", "MudBlazor.MudSnackbarElement" },
-        { "sparkline", "MudBlazor.Charts.Line`1" },
-        { "stackedbar", "MudBlazor.Charts.StackedBar`1" },
+        { "sparkline", "MudBlazor.Charts.Line" },
+        { "stackedbar", "MudBlazor.Charts.StackedBar" },
         { "swipearea", "MudBlazor.MudSwipeArea" },
         { "switch", "MudBlazor.MudSwitch`1" },
         { "table", "MudBlazor.MudTable`1" },
@@ -356,7 +319,7 @@ public static partial class ApiDocumentation
         { "timeline", "MudBlazor.MudTimeline" },
         { "timelineitem", "MudBlazor.MudTimelineItem" },
         { "timepicker", "MudBlazor.MudTimePicker" },
-        { "timeseries", "MudBlazor.Charts.TimeSeries`1" },
+        { "timeseries", "MudBlazor.Charts.TimeSeries" },
         { "toggleiconbutton", "MudBlazor.MudToggleIconButton" },
         { "toolbar", "MudBlazor.MudToolBar" },
         { "tooltip", "MudBlazor.MudTooltip" },

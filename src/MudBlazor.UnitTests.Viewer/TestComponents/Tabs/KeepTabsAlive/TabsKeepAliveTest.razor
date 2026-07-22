@@ -1,28 +1,28 @@
-﻿<MudTabs KeepPanelsAlive="@KeepPanelsAlive" LazyLoadPanels="@LazyLoadPanels">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs KeepPanelsAlive="@KeepPanelsAlive">
     <MudTabPanel Text="Item One">
-        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@(x => _firstRenders.Add(x))" />
+        <TabsKeepAlivePanel ComponentName="Panel 1" FirstRender="@((x)=>firstRenders.Add(x))"/>
     </MudTabPanel>
     <MudTabPanel Text="Item Two">
-        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@(x => _firstRenders.Add(x))" />
+        <TabsKeepAlivePanel ComponentName="Panel 2" FirstRender="@((x)=>firstRenders.Add(x))" />
     </MudTabPanel>
     <MudTabPanel Text="Item Three">
-        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@(x => _firstRenders.Add(x))" />
+        <TabsKeepAlivePanel ComponentName="Panel 3" FirstRender="@((x)=>firstRenders.Add(x))" />
     </MudTabPanel>
 </MudTabs>
 
 <p>
-    @foreach (var firstRender in _firstRenders)
+    @foreach (var firstRender in firstRenders)
     {
         @firstRender<br />
     }
 </p>
 
 @code {
-    private readonly List<string> _firstRenders = [];
 
     [Parameter]
     public bool KeepPanelsAlive { get; set; } = true;
 
-    [Parameter]
-    public bool LazyLoadPanels { get; set; } = false;
+    List<string> firstRenders = new List<string>();
 }

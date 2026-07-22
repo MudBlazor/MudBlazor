@@ -1,0 +1,61 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+@using FluentValidation
+
+<MudForm Model="_model" Validation="@_validator.ValidateValue" FieldChanged="@FieldChanged">
+    <MudTextField T="string" @bind-Value="@_model.Value" For="() => _model.Value" Immediate="true" DebounceInterval="@DebounceInterval" Required="true" RequiredError="Enter a star"></MudTextField>
+</MudForm>
+
+<MudText>RenderCount: @_renderCount</MudText>
+
+@code {
+    public static string __description__ = "User validation should not be swallowed when new text is added during async validation.";
+
+    public int DebounceInterval = 500;
+    public int AsyncTaskDelay = 2000;
+
+    private Model _model = new();
+
+    private ModelFluentValidator _validator = new();
+
+    private int _renderCount;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        _renderCount++;
+    }
+
+    private void FieldChanged()
+    {
+        return;
+    }
+    
+    public class Model
+    {
+        public string Value { get; set; }
+    }
+
+    private class ModelFluentValidator : AbstractValidator<Model>
+    {
+        public ModelFluentValidator()
+        {
+            RuleFor(x => x.Value)
+                .NotEmpty()
+                .MustAsync(async (value, _) => await CustomValidation(value));
+        }
+        
+        private async Task<bool> CustomValidation(string val)
+        {
+            await Task.Delay(2000);
+            return val == "star";
+        }
+        
+        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
+        {
+            var result = await ValidateAsync(ValidationContext<Model>.CreateWithOptions((Model)model, x => x.IncludeProperties(propertyName)));
+            if (result.IsValid)
+                return Array.Empty<string>();
+            return result.Errors.Select(e => e.ErrorMessage);
+        };
+    }
+}

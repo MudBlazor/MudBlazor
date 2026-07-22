@@ -1,6 +1,8 @@
-﻿<MudDialogProvider />
+@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditDialogOptions="_options" EditTrigger="@DataGridEditTrigger.OnRowClick">
+<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Form" EditDialogOptions="Options" EditTrigger="@DataGridEditTrigger.OnRowClick">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -13,21 +15,18 @@
 </MudDataGrid>
 
 @code {
-    public static string __description__ = "This form used in unit test. If you are in a Viewer you cannot close Dialog due to two DialogProviders.";
-    private readonly DialogOptions _options = new() { CloseButton = true };
-    private readonly IEnumerable<Model> _items = new List<Model>
-    {
-        new() { Name = "John", Age = 45 },
-        new() { Name = "Johanna", Age = 23 },
-        new() { Name = "Steve", Age = 32 }
+    private DialogOptions Options = new DialogOptions() { CloseButton = true };
+    private IEnumerable<Model> _items = new List<Model>()
+{
+        new Model{ Name= "John", Age= 45 },
+        new Model{ Name= "Johanna", Age= 23 },
+        new Model{ Name= "Steve", Age= 32 }
     };
 
     public class Model
     {
-        public required string Name { get; set; }
-
-        public required int Age { get; set; }
-
+        public string Name { get; set; }
+        public int Age { get; set; }
         public string GetOnly => "snakex64";
     }
 }

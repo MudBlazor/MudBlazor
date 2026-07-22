@@ -2,20 +2,12 @@
 @typeparam T
 @inherits MudFormComponent<T, T>
 
-@{
-#pragma warning disable CS0618 // Type or member is obsolete
-}
-
-<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
-            <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
-                <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
-                    <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle" aria-required="@Required.ToString().ToLowerInvariant()">
-                        @ChildContent
-                    </div>
-                </CascadingValue>
-            </CascadingValue>
+            <div role="radiogroup" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle" required="@Required" aria-required="@Required.ToString().ToLowerInvariant()">
+                @ChildContent
+            </div>
         </CascadingValue>
     </InputContent>
 </MudInputControl>

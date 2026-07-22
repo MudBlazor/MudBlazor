@@ -1,8 +1,10 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudTooltip>
 	<ChildContent>
-	<MudButton id="sample-button">My Button</MudButton>
+	<MudButton>My Buttion</MudButton>
 	</ChildContent>
 	<TooltipContent>
 		<MudPaper Class="my-customer-paper">
@@ -10,3 +12,7 @@
 		</MudPaper>
 	</TooltipContent>
 </MudTooltip>
+
+@code {
+}
+

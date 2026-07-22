@@ -1,3 +1,4 @@
+@namespace MudBlazor.UnitTests.TestComponents
 @typeparam TItem
 
 <MudGrid>
@@ -5,7 +6,7 @@
         <MudDataGrid T="WeatherForecast"
                      @ref="MudGridRef"
                      Elevation="25"
-                     Items="@_forecasts"
+                     Items="@forecasts"
                      Hover="true"
                      Outlined="false"
                      Filterable="true"
@@ -28,31 +29,29 @@
 </MudGrid>
 
 @code {
+    public MudDataGrid<WeatherForecast> MudGridRef { get; private set; }
     private bool _loading;
-    private IEnumerable<WeatherForecast> _forecasts = new List<WeatherForecast>();
-
-    public MudDataGrid<WeatherForecast> MudGridRef { get; private set; } = null!;
+    private IEnumerable<WeatherForecast> forecasts = new List<WeatherForecast>();
 
     // These cannot be strings...
     //public string Guid1 => "98ee67d6-0302-40f4-935a-0014e712a9e1";
     //public string Guid2 => "C3D88136-44AF-4955-B422-5EE13463FDCE";
-    public Guid Guid1 { get; } = Guid.Parse("98ee67d6-0302-40f4-935a-0014e712a9e1");
-
-    public Guid Guid2 { get; } = Guid.Parse("C3D88136-44AF-4955-B422-5EE13463FDCE");
+    public Guid Guid1 => Guid.Parse("98ee67d6-0302-40f4-935a-0014e712a9e1");
+    public Guid Guid2 => Guid.Parse("C3D88136-44AF-4955-B422-5EE13463FDCE");
 
     protected override void OnInitialized()
     {
         _loading = true;
-        _forecasts = new List<WeatherForecast>
+        forecasts = new List<WeatherForecast>()
         {
-            new()
+            new WeatherForecast()
             {
                 Id = Parse(Guid1),
                 Date = DateTime.UtcNow,
                 TemperatureC = 14,
                 Summary = "Bracing"
             },
-            new()
+            new WeatherForecast()
             {
                 Id = Parse(Guid2),
                 Date = DateTime.UtcNow,
@@ -70,13 +69,13 @@
 
     public class WeatherForecast
     {
-        public required TItem Id { get; set; }
+        public TItem Id { get; set; }
 
-        public required DateTime Date { get; set; }
+        public DateTime Date { get; set; }
 
-        public required int TemperatureC { get; set; }
+        public int TemperatureC { get; set; }
 
-        public required string Summary { get; set; }
+        public string Summary { get; set; }
 
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }

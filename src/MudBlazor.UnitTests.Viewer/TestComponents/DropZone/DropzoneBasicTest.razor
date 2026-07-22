@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDropContainer T="SimpleDropItem"
+				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
+				  Class="d-flex"
+				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
+				  ItemDropped="ItemUpdated">
+	<ChildContent>
+		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone">
+			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
+		</MudDropZone>
+		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
+					 DraggingClass="my-special-drop-zone-dragging-class" ItemDraggingClass="my-special-item-drop-zone-dragging-class">
+			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
+		</MudDropZone>
+	</ChildContent>
+	<ItemRenderer>
+		<MudText>@context.Name</MudText>
+	</ItemRenderer>
+</MudDropContainer>
+
+@code {
+	public class SimpleDropItem
+	{
+		public string Name { get; set; }
+		public string ZoneIdentifier { get; set; }
+
+		public SimpleDropItem(string name, string zoneIdentifier)
+		{
+			Name = name;
+			ZoneIdentifier = zoneIdentifier;
+		}
+	}
+
+	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+	{
+		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
+		IndexHistory.Add(dropItem.IndexInZone);
+	}
+
+	public List<int> IndexHistory { get; set; } = new();
+
+	private IEnumerable<SimpleDropItem> _items = new[]
+		{
+		new SimpleDropItem("First Item", "Column 1"),
+		new SimpleDropItem("Second Item", "Column 2"),
+		new SimpleDropItem("Third Item", "Column 2"),
+	};
+
+}

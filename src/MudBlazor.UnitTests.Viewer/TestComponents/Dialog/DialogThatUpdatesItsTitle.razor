@@ -1,4 +1,5 @@
-﻿<MudDialog>
+﻿@using MudBlazor.Interfaces
+<MudDialog>
     <TitleContent>
      Title: @_textTest
     </TitleContent>
@@ -7,24 +8,24 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 
 
 @code {
-    private string? _textTest;
+    private string _textTest;
 
     [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; } = null!;
+    private MudDialogInstance MudDialog { get; set; }
 
     private void Submit()
     {
         _textTest = "Test123";
-        MudDialog.StateHasChanged();
+        ((IMudStateHasChanged)MudDialog).StateHasChanged();
     }
 
-    private static void Cancel()
+    private void Cancel()
     {
     }
 }

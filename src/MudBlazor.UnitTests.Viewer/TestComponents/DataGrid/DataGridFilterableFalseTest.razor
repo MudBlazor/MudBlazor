@@ -1,4 +1,5 @@
-﻿<MudPopoverProvider />
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider></MudPopoverProvider>
 
 <MudDataGrid T="Model" Items="@_items" Filterable="true">
     <Columns>
@@ -11,7 +12,7 @@
 </MudDataGrid>
 
 @code {
-    private readonly IEnumerable<Model> _items = new List<Model>()
+    private IEnumerable<Model> _items = new List<Model>()
     {
         new Model("Sam", 56, Severity.Normal, false, null), 
         new Model("Alicia", 54, Severity.Info, null, null), 

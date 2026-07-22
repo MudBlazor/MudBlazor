@@ -2,10 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
+using System;
+using System.Threading.Tasks;
 using Bunit;
-using MudBlazor.UnitTests.TestComponents.Card;
+using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -15,13 +18,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task CardChildContent()
         {
-            //Card header with child content should be render successfully
-            var comp = Context.Render<CardChildContentTest>();
+            //Card header with child content should be render succesfully
+            var comp = Context.RenderComponent<CardChildContentTest>();
             var button = comp.FindComponent<MudButton>();
             var numeric = comp.FindComponent<MudNumericField<int>>();
-            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(0));
+            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
             await comp.InvokeAsync(() => button.Instance.OnClick.InvokeAsync());
-            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(1));
+            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
         }
     }
 }

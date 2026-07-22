@@ -1,5 +1,7 @@
-﻿<MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
-    ServerData="@(new Func<GridState<Item>, CancellationToken, Task<GridData<Item>>>(ServerReload))">
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
+    ServerData="@(new Func<GridState<Item>, Task<GridData<Item>>>(ServerReload))">
     <Columns>
         <SelectColumn T="Item" ShowInFooter="true"/>
         <PropertyColumn Property="x => x.Name" />
@@ -11,17 +13,22 @@
 </div>
 
 @code {
-    private HashSet<Item> _selectedItems = [];
+    private HashSet<Item> _selectedItems = new();
 
-    public class Item(string name)
+    public class Item
     {
-        public string Name { get; set; } = name;
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
     }
 
     /// <summary>
     /// Here we simulate getting the data from the server
     /// </summary>
-    private static async Task<GridData<Item>> ServerReload(GridState<Item> state, CancellationToken token)
+    private async Task<GridData<Item>> ServerReload(GridState<Item> state)
     {
         var letters = "ABC";
         var data = new List<Item>();

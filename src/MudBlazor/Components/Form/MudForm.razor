@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<form @attributes="UserAttributes" class="@Classname" style="@Style" @onkeydown="this.AsNonRenderingEventHandler<KeyboardEventArgs>(OnKeyDownAsync)">
+
+<form @attributes="UserAttributes" class="@Classname" style="@Style">
     @if (SuppressImplicitSubmission)
     {
         <!-- Prevent implicit submission of the form -->
@@ -16,3 +17,4 @@
         </CascadingValue>
     </CascadingValue>
 </form>
+

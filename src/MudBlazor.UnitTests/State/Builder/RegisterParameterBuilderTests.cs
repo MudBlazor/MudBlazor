@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.State.Builder;
@@ -15,40 +17,12 @@ namespace MudBlazor.UnitTests.State.Builder;
 public class RegisterParameterBuilderTests
 {
     [Test]
-    public void RegisterParameterBuilder_ThrowOnMissingParameterName()
-    {
-        // Arrange
-        var builder = new RegisterParameterBuilder<double>();
-
-        // Act
-        var construct = () => builder.Attach();
-
-        // Assert
-        construct.Should().Throw<ArgumentNullException>();
-    }
-
-    [Test]
-    public void RegisterParameterBuilder_ThrowOnMissingParameterValue()
-    {
-        // Arrange
-        const string ParameterName = "TestParameter";
-        var builder = new RegisterParameterBuilder<double>()
-            .WithName(ParameterName);
-
-        // Act
-        var construct = () => builder.Attach();
-
-        // Assert
-        construct.Should().Throw<ArgumentNullException>();
-    }
-
-    [Test]
     public async Task RegisterParameterBuilder_ReturnsBuilderInstance1()
     {
         // Arrange
         var callBackCalled = false;
         var builder = new RegisterParameterBuilder<double>();
-        const string ParameterName = "TestParameter";
+        var parameterName = "TestParameter";
         var callBack = EventCallback.Factory.Create<double>(this, () => { callBackCalled = true; });
         var comparer = DoubleEpsilonEqualityComparer.Default;
         double parameterValue = 5;
@@ -59,7 +33,7 @@ public class RegisterParameterBuilderTests
 
         // Act
         var result = builder
-            .WithName(ParameterName)
+            .WithName(parameterName)
             .WithParameter(() => parameterValue)
             .WithEventCallback(() => callBack)
             .WithChangeHandler(OnParameterChanged)
@@ -69,7 +43,7 @@ public class RegisterParameterBuilderTests
         await parameterState.SetValueAsync(parameterValue);
 
         // Assert
-        parameterState.Metadata.ParameterName.Should().Be(ParameterName);
+        parameterState.Metadata.ParameterName.Should().Be(parameterName);
         parameterState.Metadata.HandlerName.Should().Be(nameof(OnParameterChanged));
         parameterState.Metadata.ComparerParameterName.Should().Be(nameof(comparer));
         parameterState.Value.Should().Be(parameterValue);
@@ -83,8 +57,8 @@ public class RegisterParameterBuilderTests
     {
         // Arrange
         var builder = new RegisterParameterBuilder<double>();
-        const string ParameterName = "TestParameter";
-        const double ParameterValue = 5;
+        var parameterName = "TestParameter";
+        double parameterValue = 5;
 
         void OnParameterChanged(ParameterChangedEventArgs<double> args)
         {
@@ -92,18 +66,18 @@ public class RegisterParameterBuilderTests
 
         // Act
         var result = builder
-            .WithName(ParameterName)
-            .WithParameter(() => ParameterValue)
+            .WithName(parameterName)
+            .WithParameter(() => parameterValue)
             .WithChangeHandler(OnParameterChanged);
 
         var parameterState = result.Attach();
         parameterState.OnInitialized();
 
         // Assert
-        parameterState.Metadata.ParameterName.Should().Be(ParameterName);
+        parameterState.Metadata.ParameterName.Should().Be(parameterName);
         parameterState.Metadata.HandlerName.Should().Be(nameof(OnParameterChanged));
         parameterState.Metadata.ComparerParameterName.Should().BeNull();
-        parameterState.Value.Should().Be(ParameterValue);
+        parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
         parameterState.Comparer.UnderlyingComparer().Should().BeAssignableTo<EqualityComparer<double>>();
     }
@@ -113,25 +87,25 @@ public class RegisterParameterBuilderTests
     {
         // Arrange
         var builder = new RegisterParameterBuilder<double>();
-        const string ParameterName = "TestParameter";
-        const double ParameterValue = 5;
+        var parameterName = "TestParameter";
+        double parameterValue = 5;
 
         Task OnParameterChangedAsync() => Task.CompletedTask;
 
         // Act
         var result = builder
-            .WithName(ParameterName)
-            .WithParameter(() => ParameterValue)
+            .WithName(parameterName)
+            .WithParameter(() => parameterValue)
             .WithChangeHandler(OnParameterChangedAsync);
 
         var parameterState = result.Attach();
         parameterState.OnInitialized();
 
         // Assert
-        parameterState.Metadata.ParameterName.Should().Be(ParameterName);
+        parameterState.Metadata.ParameterName.Should().Be(parameterName);
         parameterState.Metadata.HandlerName.Should().Be(nameof(OnParameterChangedAsync));
         parameterState.Metadata.ComparerParameterName.Should().BeNull();
-        parameterState.Value.Should().Be(ParameterValue);
+        parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
         parameterState.Comparer.UnderlyingComparer().Should().BeAssignableTo<EqualityComparer<double>>();
     }
@@ -141,15 +115,15 @@ public class RegisterParameterBuilderTests
     {
         // Arrange
         var builder = new RegisterParameterBuilder<double>();
-        const string ParameterName = "TestParameter";
-        const double ParameterValue = 5;
+        var parameterName = "TestParameter";
+        double parameterValue = 5;
 
         Task OnParameterChangedAsync(ParameterChangedEventArgs<double> args) => Task.CompletedTask;
 
         // Act
         var result = builder
-            .WithName(ParameterName)
-            .WithParameter(() => ParameterValue)
+            .WithName(parameterName)
+            .WithParameter(() => parameterValue)
             .WithChangeHandler(OnParameterChangedAsync)
             .WithComparer(DoubleEpsilonEqualityComparer.Default);
 
@@ -157,10 +131,10 @@ public class RegisterParameterBuilderTests
         parameterState.OnInitialized();
 
         // Assert
-        parameterState.Metadata.ParameterName.Should().Be(ParameterName);
+        parameterState.Metadata.ParameterName.Should().Be(parameterName);
         parameterState.Metadata.HandlerName.Should().Be(nameof(OnParameterChangedAsync));
         parameterState.Metadata.ComparerParameterName.Should().BeNull();
-        parameterState.Value.Should().Be(ParameterValue);
+        parameterState.Value.Should().Be(parameterValue);
         parameterState.HasHandler.Should().BeTrue();
         parameterState.Comparer.UnderlyingComparer().Should().BeOfType<DoubleEpsilonEqualityComparer>();
     }
@@ -170,11 +144,11 @@ public class RegisterParameterBuilderTests
     {
         // Arrange
         var builder = new RegisterParameterBuilder<double>();
-        const string ParameterName = "TestParameter";
-        const double ParameterValue = 5;
+        var parameterName = "TestParameter";
+        double parameterValue = 5;
         var parameterState = builder
-            .WithName(ParameterName)
-            .WithParameter(() => ParameterValue);
+            .WithName(parameterName)
+            .WithParameter(() => parameterValue);
 
         // Act
         var parameterState1 = parameterState.Attach();

@@ -6,9 +6,6 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3 mb-0">
-                Masking has known limitations in Blazor Server, particularly in high-latency environments. See <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/8186">issue #8186</MudLink> for details.
-            </MudAlert>
             <SectionHeader Title="PatternMask">
                 <Description>
                     <CodeInline Tag>MudTextField</CodeInline> can be configured to apply rules to the user input by setting 
@@ -83,12 +80,7 @@
                     Instead it lets you define the allowed input with a single C# regular expression. The advantage of RegexMask is that it 
                     can allow input of variable length. The disadvantage is that it can be applied only in very specific use-cases. The problem
                     is that the Regex needs to match <b>all incomplete versions of the input value</b> which can be very challenging for non-trivial 
-                    use-cases.
-                    <br/>
-                    <MudAlert Class="my-3" Severity="Severity.Warning">
-                        The regex must begin with <b>^</b> and end with <b>$</b>.
-                    </MudAlert>
-                    <br/>
+                    use-cases.<br/><br/> 
                     The following example restricts user input to digits only on the left and restricts input to Russian postal codes 
                     (first digit between 1 and 6, total of 6 digits) on the right. 
                 </Description>
@@ -97,27 +89,6 @@
                 <RegexMaskExample />
             </SectionContent>
             <SectionSubGroups>
-                <DocsPageSection>
-                    <SectionHeader Title="Writing a progressive regex">
-                        <Description>
-                            <CodeInline>RegexMask</CodeInline> validates input as it grows, one character at a time, so your
-                            expression must match <b>every partial input</b> — the empty string, then <CodeInline>1</CodeInline>,
-                            then <CodeInline>12</CodeInline>, and so on. If a prefix doesn't match, that keystroke is rejected,
-                            which is the most common cause of a mask that appears to block all input.
-                            <br /><br />
-                            Avoid exact (<CodeInline>{5}</CodeInline>) and lower-bounded (<CodeInline>{6,14}</CodeInline>)
-                            quantifiers, which never match shorter prefixes. Use open-ended or zero-bounded quantifiers instead:
-                            <ul>
-                                <li><CodeInline>^[0-9]{5}$</CodeInline> blocks input → use <CodeInline>^[0-9]{0,5}$</CodeInline></li>
-                                <li><CodeInline>^\+[0-9]{6,14}$</CodeInline> blocks input → use <CodeInline>^\+?[0-9]{0,14}$</CodeInline></li>
-                            </ul>
-                            The left field below won't accept any input; the right field accepts up to five digits.
-                        </Description>
-                    </SectionHeader>
-                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskProgressiveExample)" ShowCode="false">
-                        <RegexMaskProgressiveExample />
-                    </SectionContent>
-                </DocsPageSection>
                 <DocsPageSection>
                     <SectionHeader Title="RegexMask.IPv4">
                         <Description>

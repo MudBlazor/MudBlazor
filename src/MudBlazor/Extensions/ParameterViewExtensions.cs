@@ -1,8 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+#nullable enable
     internal static class ParameterViewExtensions
     {
         public static bool Contains<T>(this ParameterView view, string parameterName)
@@ -21,7 +23,7 @@ namespace MudBlazor
         /// <returns><c>true</c> if the parameter value has changed, <c>false</c> otherwise.</returns>
         public static bool HasParameterChanged<T>(this ParameterView parameters, string parameterName, T parameterValue, IEqualityComparer<T>? comparer = null)
         {
-            return parameters.HasParameterChanged(parameterName, parameterValue, out _, comparer);
+            return HasParameterChanged(parameters, parameterName, parameterValue, out _, comparer);
         }
 
         /// <summary>

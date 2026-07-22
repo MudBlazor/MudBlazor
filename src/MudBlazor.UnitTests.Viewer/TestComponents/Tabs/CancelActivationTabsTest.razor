@@ -1,4 +1,6 @@
-﻿<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="true" Position="Position" OnPreviewInteraction="OnPreviewTabInteraction">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="true" Position="Position" OnPreviewInteraction="OnPreviewTabInteraction">
     @foreach (var tab in _tabs)
     {
         <MudTabPanel @key="tab" Text="@tab">
@@ -8,23 +10,24 @@
 </MudTabs>
 
 @code
-{
-    public static string __description__ = "activation cancelling should work";
+{ 
+    private MudTabs _tabElement;
 
-    private MudTabs _tabElement = null!;
-    private readonly List<string> _tabs = ["1", "2", "3", "4", "5", "6"];
+    public static string __description__ = "activation cancelling should work";
 
     [Parameter]
     public Position Position { get; set; } = Position.Top;
 
+    private List<string> _tabs = new List<string> { "1", "2", "3", "4", "5", "6" };
+
     public int ActivePanel => _tabElement.ActivePanelIndex;
 
-    public Task SetPanelActiveAsync(int index)
+    public void SetPanelActive(int index)
     {
-        return InvokeAsync(() => _tabElement.ActivatePanelAsync(index));
+        InvokeAsync(() => _tabElement.ActivatePanel(index));
     }
 
-    private static Task OnPreviewTabInteraction(TabInteractionEventArgs args)
+    private Task OnPreviewTabInteraction(TabInteractionEventArgs args)
     {
         args.Cancel = true;
 

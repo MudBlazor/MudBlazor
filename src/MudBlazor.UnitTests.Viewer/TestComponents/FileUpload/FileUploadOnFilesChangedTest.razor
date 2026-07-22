@@ -1,19 +1,18 @@
-﻿<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles">
-    <CustomContent>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudFileUpload T="IBrowserFile" OnFilesChanged="UploadFiles" >
+    <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
             Upload using OnFilesChanged
         </MudButton>
-    </CustomContent>
+    </ActivatorContent>
 </MudFileUpload>
 
-@code {
-    public static string __description__ = "Tests assigning selected file state from the OnFilesChanged callback.";
+@code{
 
-    public IBrowserFile? File { get; private set; }
-
+    public IBrowserFile File { get; private set; }
     private void UploadFiles(InputFileChangeEventArgs args)
     {
         File = args.File;

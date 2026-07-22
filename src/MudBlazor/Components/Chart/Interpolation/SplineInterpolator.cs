@@ -1,11 +1,15 @@
-﻿using System.Diagnostics;
+﻿using System;
+using MudBlazor.Components.Chart.Interpolation;
 
-namespace MudBlazor.Interpolation
+namespace MudBlazor.Components.Chart
 {
-    internal abstract class SplineInterpolator : ILineInterpolator
+    public abstract class SplineInterpolator : ILineInterpolator
     {
+        protected Matrix m;
+        protected MatrixSolver gauss;
+
         protected readonly int n;
-        protected double[]? a, b, c, d, h;
+        protected double[] a, b, c, d, h;
 
         public double[] GivenYs { get; set; }
         public double[] GivenXs { get; set; }
@@ -15,20 +19,17 @@ namespace MudBlazor.Interpolation
 
         public SplineInterpolator(double[] xs, double[] ys, int resolution = 10)
         {
-            if (xs.Length != ys.Length)
-            {
-                throw new ArgumentException("xs and ys must have the same length");
-            }
+            if (xs is null || ys is null)
+                throw new ArgumentException("xs and ys cannot be null");
 
-            if (xs.Length < 1)
-            {
-                throw new ArgumentException("xs and ys must have a length of 1 or greater");
-            }
+            if (xs.Length != ys.Length)
+                throw new ArgumentException("xs and ys must have the same length");
+
+            if (xs.Length < 4)
+                throw new ArgumentException("xs and ys must have a length of 4 or greater");
 
             if (resolution < 1)
-            {
                 throw new ArgumentException("resolution must be 1 or greater");
-            }
 
             GivenXs = xs;
             GivenYs = ys;
@@ -39,14 +40,7 @@ namespace MudBlazor.Interpolation
         }
         public void Interpolate()
         {
-            Debug.Assert(a != null);
-            Debug.Assert(b != null);
-            Debug.Assert(c != null);
-            Debug.Assert(d != null);
-            Debug.Assert(h != null);
-
             var resolution = InterpolatedXs.Length / n;
-
             for (var i = 0; i < h.Length; i++)
             {
                 for (var k = 0; k < resolution; k++)
@@ -78,12 +72,6 @@ namespace MudBlazor.Interpolation
 
         public double Integrate()
         {
-            Debug.Assert(a != null);
-            Debug.Assert(b != null);
-            Debug.Assert(c != null);
-            Debug.Assert(d != null);
-            Debug.Assert(h != null);
-
             double integral = 0;
             for (var i = 0; i < h.Length; i++)
             {
@@ -93,7 +81,6 @@ namespace MudBlazor.Interpolation
                 var termD = d[i] * Math.Pow(h[i], 4) / 4.0;
                 integral += termA + termB + termC + termD;
             }
-
             return integral;
         }
     }

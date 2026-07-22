@@ -1,16 +1,16 @@
-﻿using MudBlazor.Charts;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MudBlazor.Charts;
+
 namespace MudBlazor.Docs.Models
 {
 #nullable enable
     public static class ApiLink
     {
-        /// <summary>
-        /// Gets the URL of the API documentation for a type.
-        /// </summary>
-        /// <param name="type">The type to find.</param>
         public static string GetApiLinkFor(Type type)
         {
-            return $"api/{type.Name.Replace("`1", "").Replace("`2", "").ToLowerInvariant()}";
+            return $"api/{type.Name}";
         }
 
         public static string GetComponentLinkFor(Type type)
@@ -84,13 +84,12 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudProgressCircular)] = "progress",
                 [typeof(MudText)] = "typography",
                 [typeof(MudSnackbarProvider)] = "snackbar",
-                [typeof(Bar<T>)] = "barchart",
-                [typeof(StackedBar<T>)] = "stackedbarchart",
-                [typeof(Donut<T>)] = "donutchart",
-                [typeof(Line<T>)] = "linechart",
-                [typeof(TimeSeries<T>)] = "timeserieschart",
-                [typeof(ScatterPlot<T>)] = "scatterplotchart",
-                [typeof(Pie<T>)] = "piechart",
+                [typeof(Bar)] = "barchart",
+                [typeof(StackedBar)] = "stackedbarchart",
+                [typeof(Donut)] = "donutchart",
+                [typeof(Line)] = "linechart",
+                [typeof(TimeSeries)] = "timeserieschart",
+                [typeof(Pie)] = "piechart",
                 [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"
             };

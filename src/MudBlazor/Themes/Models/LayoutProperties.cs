@@ -1,37 +1,38 @@
 ﻿namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Layout dimensions for MudBlazor components, including the default border radius, drawer widths, and app bar height.
+    /// Represents the layout properties for a user interface.
     /// </summary>
     public class LayoutProperties
     {
         /// <summary>
-        /// The default border radius.
+        /// Gets or sets the default border radius.
         /// </summary>
         public string DefaultBorderRadius { get; set; } = "4px";
 
         /// <summary>
-        /// The width of the mini drawer on the left side.
+        /// Gets or sets the width of the mini drawer on the left side.
         /// </summary>
         public string DrawerMiniWidthLeft { get; set; } = "56px";
 
         /// <summary>
-        /// The width of the mini drawer on the right side.
+        /// Gets or sets the width of the mini drawer on the right side.
         /// </summary>
         public string DrawerMiniWidthRight { get; set; } = "56px";
 
         /// <summary>
-        /// The width of the drawer on the left side.
+        /// Gets or sets the width of the drawer on the left side.
         /// </summary>
         public string DrawerWidthLeft { get; set; } = "240px";
 
         /// <summary>
-        /// The width of the drawer on the right side.
+        /// Gets or sets the width of the drawer on the right side.
         /// </summary>
         public string DrawerWidthRight { get; set; } = "240px";
 
         /// <summary>
-        /// The height of the appbar.
+        /// Gets or sets the height of the appbar.
         /// </summary>
         public string AppbarHeight { get; set; } = "64px";
     }

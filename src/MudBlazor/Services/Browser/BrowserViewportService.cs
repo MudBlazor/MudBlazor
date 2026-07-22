@@ -2,7 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -13,18 +17,15 @@ using MudBlazor.Utilities.ObserverManager;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
-/// Tracks browser window size changes and resolves them to MudBlazor breakpoints.
+/// Represents a service that serves to listen to browser window size changes and breakpoints.
 /// </summary>
-/// <remarks>
-/// This service manages the JS listener lifecycle, caches the latest size, and notifies observers so components can respond to viewport changes without rolling their own interop.
-/// </remarks>
-internal sealed class BrowserViewportService : IBrowserViewportService
+internal class BrowserViewportService : IBrowserViewportService
 {
     private bool _disposed;
-    private readonly CancellationToken _cancellationToken;
+    private readonly SemaphoreSlim _semaphore;
     private readonly ResizeListenerInterop _resizeListenerInterop;
-    private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly Lazy<DotNetObjectReference<BrowserViewportService>> _dotNetReferenceLazy;
     private readonly ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver> _observerManager;
 
@@ -48,9 +49,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     public BrowserViewportService(ILogger<BrowserViewportService> logger, IJSRuntime jsRuntime, IOptions<ResizeOptions>? options = null)
     {
         ResizeOptions = options?.Value ?? new ResizeOptions();
-        _cancellationTokenSource = new CancellationTokenSource();
-        // Cache the token to avoid passing the CancellationTokenSource itself because it will throw once you access it after it's disposed
-        _cancellationToken = _cancellationTokenSource.Token;
+        _semaphore = new SemaphoreSlim(1, 1);
         _resizeListenerInterop = new ResizeListenerInterop(jsRuntime);
         _observerManager = new ObserverManager<BrowserViewportSubscription, IBrowserViewportObserver>(logger);
         _dotNetReferenceLazy = new Lazy<DotNetObjectReference<BrowserViewportService>>(CreateDotNetObjectReference);
@@ -95,25 +94,40 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             return;
         }
 
-        // Always clone the ResizeOptions, regardless of the circumstances.
-        // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
-        // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
-        var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
-        // Safe to modify now
-        optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
-
-        var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-
-        if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out var newObserver))
+        try
         {
-            if (fireImmediately)
+            await _semaphore.WaitAsync();
+
+            // Always clone the ResizeOptions, regardless of the circumstances.
+            // This is necessary because the options may originate from the "ResizeOptions" variable (IOptions<ResizeOptions>) - these are the user-defined options when adding this service in the DI container.
+            // Only the user should be allowed to modify these settings, and the service should not directly modify the reference to prevent potential bugs.
+            var optionsClone = (observer.ResizeOptions ?? ResizeOptions).Clone();
+            // Safe to modify now
+            optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone);
+
+            var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
+            if (_observerManager.Observers.ContainsKey(subscription))
             {
-                // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
-                var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
-                var latestBreakpoint = await GetCurrentBreakpointAsync();
-                // Notify only current subscription
-                await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
+                // Only re-subscribe
+                _observerManager.Subscribe(subscription, observer);
             }
+            else
+            {
+                // Subscribe and fire if necessary
+                _observerManager.Subscribe(subscription, observer);
+                if (fireImmediately)
+                {
+                    // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
+                    var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
+                    var latestBreakpoint = await GetCurrentBreakpointAsync();
+                    // Notify only current subscription
+                    await observer.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
+                }
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 
@@ -144,22 +158,26 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     /// <inheritdoc />
     public async Task UnsubscribeAsync(Guid observerId)
     {
-        if (_disposed)
+        try
         {
-            return;
-        }
+            await _semaphore.WaitAsync();
 
-        var subscription = await RemoveJavaScriptListener(observerId);
-        if (subscription is not null)
+            var subscription = await RemoveJavaScriptListener(observerId);
+            if (subscription is not null)
+            {
+                _observerManager.Unsubscribe(subscription);
+            }
+        }
+        finally
         {
-            _observerManager.Unsubscribe(subscription);
+            _semaphore.Release();
         }
     }
 
     /// <inheritdoc />
     public async Task<bool> IsMediaQueryMatchAsync(string mediaQuery)
     {
-        return await _resizeListenerInterop.MatchMedia(mediaQuery, CancellationToken.None);
+        return await _resizeListenerInterop.MatchMedia(mediaQuery);
     }
 
     /// <inheritdoc />
@@ -181,28 +199,28 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     }
 
     /// <inheritdoc />
-    public Task<bool> IsBreakpointWithinReferenceSizeAsync(Breakpoint breakpoint, Breakpoint reference)
+    public Task<bool> IsBreakpointWithinReferenceSizeAsync(Breakpoint breakpoint, Breakpoint referenceBreakpoint)
     {
         var isBreakpointMet = breakpoint switch
         {
             Breakpoint.None => false,
             Breakpoint.Always => true,
-            Breakpoint.Xs => reference == Breakpoint.Xs,
-            Breakpoint.Sm => reference == Breakpoint.Sm,
-            Breakpoint.Md => reference == Breakpoint.Md,
-            Breakpoint.Lg => reference == Breakpoint.Lg,
-            Breakpoint.Xl => reference == Breakpoint.Xl,
-            Breakpoint.Xxl => reference == Breakpoint.Xxl,
+            Breakpoint.Xs => referenceBreakpoint == Breakpoint.Xs,
+            Breakpoint.Sm => referenceBreakpoint == Breakpoint.Sm,
+            Breakpoint.Md => referenceBreakpoint == Breakpoint.Md,
+            Breakpoint.Lg => referenceBreakpoint == Breakpoint.Lg,
+            Breakpoint.Xl => referenceBreakpoint == Breakpoint.Xl,
+            Breakpoint.Xxl => referenceBreakpoint == Breakpoint.Xxl,
             // * and down
-            Breakpoint.SmAndDown => reference <= Breakpoint.Sm,
-            Breakpoint.MdAndDown => reference <= Breakpoint.Md,
-            Breakpoint.LgAndDown => reference <= Breakpoint.Lg,
-            Breakpoint.XlAndDown => reference <= Breakpoint.Xl,
+            Breakpoint.SmAndDown => referenceBreakpoint <= Breakpoint.Sm,
+            Breakpoint.MdAndDown => referenceBreakpoint <= Breakpoint.Md,
+            Breakpoint.LgAndDown => referenceBreakpoint <= Breakpoint.Lg,
+            Breakpoint.XlAndDown => referenceBreakpoint <= Breakpoint.Xl,
             // * and up
-            Breakpoint.SmAndUp => reference >= Breakpoint.Sm,
-            Breakpoint.MdAndUp => reference >= Breakpoint.Md,
-            Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
-            Breakpoint.XlAndUp => reference >= Breakpoint.Xl,
+            Breakpoint.SmAndUp => referenceBreakpoint >= Breakpoint.Sm,
+            Breakpoint.MdAndUp => referenceBreakpoint >= Breakpoint.Md,
+            Breakpoint.LgAndUp => referenceBreakpoint >= Breakpoint.Lg,
+            Breakpoint.XlAndUp => referenceBreakpoint >= Breakpoint.Xl,
             _ => false
         };
 
@@ -216,7 +234,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
 
         // Note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
         // But there is potential problem, if there are no active observers, you are stuck will old cached value, it's not clear if such cases should be handled
-        _latestWindowSize ??= await _resizeListenerInterop.GetBrowserWindowSize(CancellationToken.None);
+        _latestWindowSize ??= await _resizeListenerInterop.GetBrowserWindowSize();
 
         if (_latestWindowSize == null)
             return Breakpoint.Xs;
@@ -237,71 +255,87 @@ internal sealed class BrowserViewportService : IBrowserViewportService
     /// <inheritdoc />
     public async Task<BrowserWindowSize> GetCurrentBrowserWindowSizeAsync()
     {
-        return await _resizeListenerInterop.GetBrowserWindowSize(CancellationToken.None);
+        return await _resizeListenerInterop.GetBrowserWindowSize();
     }
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
+    {
+        return DisposeAsyncCore(true);
+    }
+
+    private ValueTask DisposeAsyncCore(bool disposing)
     {
         if (!_disposed)
         {
-            _disposed = true;
-            await _cancellationTokenSource.CancelAsync();
-            _observerManager.Clear();
-
-            // Only tear down the JS listener if one was ever created. During prerendering the DI scope
-            // disposes this service before a circuit exists; skipping the call avoids a first-chance
-            // InvalidOperationException and cannot leak, since nothing was registered on the JS side.
-            if (_dotNetReferenceLazy.IsValueCreated)
+            if (disposing)
             {
-                _dotNetReferenceLazy.Value.Dispose();
+                _observerManager.Clear();
 
-                // Do not send our CancellationTokenSource as it was cancelled.
-                await _resizeListenerInterop.DisposeAsync(CancellationToken.None);
+                if (_dotNetReferenceLazy.IsValueCreated)
+                {
+                    _dotNetReferenceLazy.Value.Dispose();
+                }
+
+                // https://github.com/MudBlazor/MudBlazor/pull/5367#issuecomment-1258649968
+                // Fixed in NET8
+                _ = _resizeListenerInterop.Dispose();
             }
 
-            _cancellationTokenSource.Dispose();
+            _disposed = true;
         }
+
+        return ValueTask.CompletedTask;
     }
 
+
     // ReSharper disable once UnusedMember.Global used in tests
-    internal BrowserViewportSubscription? GetInternalSubscription(IBrowserViewportObserver observer) => GetInternalSubscription(observer.Id);
+    internal BrowserViewportSubscription? GetInternalSubscription(IBrowserViewportObserver observer)
+    {
+        return GetInternalSubscription(observer.Id);
+    }
 
     internal BrowserViewportSubscription? GetInternalSubscription(Guid observerId)
     {
         var subscription = _observerManager
-            .FindObserverIdentities((key, _) => key.ObserverId == observerId)
-            .FirstOrDefault();
+            .Observers
+            .Select(x => x.Key)
+            .FirstOrDefault(x => x.ObserverId == observerId);
 
         return subscription;
     }
 
-    private DotNetObjectReference<BrowserViewportService> CreateDotNetObjectReference() => DotNetObjectReference.Create(this);
+    private DotNetObjectReference<BrowserViewportService> CreateDotNetObjectReference()
+    {
+        return DotNetObjectReference.Create(this);
+    }
 
     private async Task<BrowserViewportSubscription> CreateJavaScriptListener(ResizeOptions clonedOptions, Guid observerId)
     {
         // We check if we have an observer with equals options or same observer id
         var javaScriptListenerId = _observerManager
-            .FindObserverIdentities((key, _) => clonedOptions.Equals(key.Options ?? clonedOptions) || key.ObserverId == observerId)
-            .Select(x => x.JavaScriptListenerId)
+            .Observers
+            .Where(x => clonedOptions.Equals(x.Key.Options ?? clonedOptions) || x.Key.ObserverId == observerId)
+            .Select(x => x.Key.JavaScriptListenerId)
             .FirstOrDefault();
 
         // This implementation serves as an optimization to avoid creating a new JavaScript "listener" each time a subscription occurs.
         // Instead, it checks if a listener with the corresponding ResizeOption already exists (which is why it implements IEquatable), and only creates a new listener if necessary.
         // In certain scenarios, you may have multiple observers monitoring changes (e.g., 10 observers), but only a single JavaScript listener on the other side.
         // Without this optimization, the number of observers and JavaScript listeners would be equal.
-        if (javaScriptListenerId == Guid.Empty)
+        if (javaScriptListenerId == default)
         {
             // Create new listener on JS side
             var dotNetReference = _dotNetReferenceLazy.Value;
             var jsListenerId = Guid.NewGuid();
-            await _resizeListenerInterop.ListenForResize(dotNetReference, clonedOptions, jsListenerId, _cancellationToken);
+            await _resizeListenerInterop.ListenForResize(dotNetReference, clonedOptions, jsListenerId);
 
             return new BrowserViewportSubscription(jsListenerId, observerId, clonedOptions);
         }
 
         // Reuse existing JS listener
         return new BrowserViewportSubscription(javaScriptListenerId, observerId, clonedOptions);
+
     }
 
     private async Task<BrowserViewportSubscription?> RemoveJavaScriptListener(Guid observerId)
@@ -313,12 +347,12 @@ internal sealed class BrowserViewportService : IBrowserViewportService
             return null;
         }
 
-        var observersWithSameJsListenerIdCount = _observerManager.FindObserverIdentities((key, _) => key.JavaScriptListenerId == subscription.JavaScriptListenerId).Count();
+        var observersWithSameJsListenerIdCount = _observerManager.Observers.Keys.Count(x => x.JavaScriptListenerId == subscription.JavaScriptListenerId);
 
         if (observersWithSameJsListenerIdCount == 1)
         {
             // This is the last observer with such JavaScriptListenerId therefore we need to remove it on the JS side.
-            await _resizeListenerInterop.CancelListener(subscription.JavaScriptListenerId, _cancellationToken);
+            await _resizeListenerInterop.CancelListener(subscription.JavaScriptListenerId);
         }
 
         return subscription;

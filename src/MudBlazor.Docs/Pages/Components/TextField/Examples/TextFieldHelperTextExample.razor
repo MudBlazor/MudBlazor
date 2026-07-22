@@ -1,9 +1,4 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTextField @bind-Value="_value" Label="Always visible" HelperText="Helper text is always shown" Variant="Variant.Outlined" />
-<MudTextField @bind-Value="_valueOnFocus" Label="On focus only" HelperText="Helper text appears while focused" HelperTextOnFocus="true" Variant="Variant.Outlined" />
-
-@code {
-    private string _value;
-    private string _valueOnFocus;
-}
+<MudTextField T="string" Label="OnFocus Helper" HelperText="Some helping text" HelperTextOnFocus="true" Variant="Variant.Text" />
+<MudTextField T="string" Label="With Helper" HelperText="Some helping text" Variant="Variant.Text" />

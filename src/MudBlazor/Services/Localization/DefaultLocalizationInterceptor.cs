@@ -1,14 +1,16 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace MudBlazor;
 
+#nullable enable
 /// <summary>
-/// Default localization interceptor that blends built-in English resources with optional custom translations.
+/// The <see cref="DefaultLocalizationInterceptor"/> manages translations, incorporating English as the default language,
+/// facilitating the addition of custom translations without imposing limitations on their implementation.
 /// </summary>
-/// <remarks>
-/// This is the standard interceptor used by MudBlazor. It keeps the internal English resources as a reliable fallback while allowing apps to override or extend translations.
-/// </remarks>
 public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 {
     /// <summary>
@@ -41,6 +43,19 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 
         return TranslationWithFallback(key, arguments);
     }
+
+    /// <summary>
+    /// Gets the string resource with the given name.
+    /// </summary>
+    /// <param name="key">The name of the string resource</param>
+    /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
+    /// <remarks>
+    /// This method is called when the default English translation is ignored or unavailable, and a custom MudLocalizer service implementation is registered.
+    /// It attempts to use user-provided languages, falling back to the internal English translation if MudLocalizer is missing or no resource is found.
+    /// </remarks>
+    [ExcludeFromCodeCoverage]
+    [Obsolete("Use TranslationWithFallback(string key, params object[] arguments) overload instead! Will be removed in v8.", true)]
+    protected virtual LocalizedString TranslationFallback(string key) => TranslationWithFallback(key, Array.Empty<object>());
 
     /// <summary>
     /// Gets the string resource with the given name.

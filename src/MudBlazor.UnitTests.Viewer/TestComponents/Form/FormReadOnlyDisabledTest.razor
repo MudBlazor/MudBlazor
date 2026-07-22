@@ -1,4 +1,6 @@
-﻿<div style="max-width: 400px;">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<div style="max-width: 400px;">
     <MudCard>
         <MudCardContent>
             <MudForm ReadOnly="FormReadOnly" Disabled="FormDisabled">
@@ -18,12 +20,12 @@
                 <MudAutocomplete T="string" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudNumericField T="int" ReadOnly="CompReadOnly" Disabled="CompDisabled" />
                 <MudFileUpload T="IBrowserFile" Disabled="CompDisabled">
-                    <CustomContent>
+                    <ActivatorContent>
                         <MudButton Variant="Variant.Filled"
                                    Color="Color.Primary">
                             Disabled Button
                         </MudButton>
-                    </CustomContent>
+                    </ActivatorContent>
                 </MudFileUpload>
             </MudForm>
         </MudCardContent>
@@ -35,18 +37,15 @@
         </MudCardActions>
     </MudCard>
 </div>
-@code {
+@code
+{
     public static string __description__ = "All child form fields should be disabled or readonly if the Form property is changed";
-    
     [Parameter]
     public bool FormReadOnly { get; set; }
-
     [Parameter]
     public bool CompReadOnly { get; set; }
-
     [Parameter]
     public bool FormDisabled { get; set; }
-
     [Parameter]
     public bool CompDisabled { get; set; }
 }

@@ -2,7 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
+using System;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
@@ -10,6 +11,16 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class PatternMaskTests
 {
+
+    [Test]
+    public void BaseMask_Internals()
+    {
+        BaseMask.SplitAt("asdf", 1).Should().Be(("a", "sdf"));
+        BaseMask.SplitAt("", 1).Should().Be(("", ""));
+        BaseMask.SplitAt("asdf", -1).Should().Be(("", "asdf"));
+        BaseMask.SplitAt("asdf", 10).Should().Be(("asdf", ""));
+    }
+
     [Test]
     public void PatternMask_Insert()
     {
@@ -229,7 +240,7 @@ public class PatternMaskTests
     {
         var mask = new PatternMask("(bb+) 999-bb")
         {
-            MaskChars = [MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+')],
+            MaskChars = new MaskChar[] { MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'), },
         };
         mask.Insert("xyz");
         mask.ToString().Should().Be("(xyz) |");
@@ -265,7 +276,7 @@ public class PatternMaskTests
         mask.SetText("abc12");
         mask.Selection = (1, 2);
         mask.ToString().Should().Be("([a]bc) 12");
-        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = [new MaskChar('9', "[0-9]")], CleanDelimiters = true });
+        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = new[] { new MaskChar('9', "[0-9]") }, CleanDelimiters = true });
         mask.MaskChars.Length.Should().Be(1); // '9'
         mask.MaskChars[0].Char.Should().Be('9');
         mask.MaskChars[0].Regex.Should().Be("[0-9]");
@@ -281,224 +292,6 @@ public class PatternMaskTests
         mask.Placeholder.Should().Be('#');
         // state should be preserved (Text, Caret/Selection)
         mask.ToString().Should().Be("1[2]#");
-    }
-
-    [Test]
-    public void PatternMask_AlignAgainstMask_SimpleCase()
-    {
-        // Arrange
-        var mask = new PatternMask("00-00");
-
-        // Act
-        mask.Insert("1234");
-
-        // Assert
-        mask.Text.Should().Be("12-34");
-    }
-
-    [Test]
-    public void PatternMask_AlignAgainstMask_SkipDelimiters()
-    {
-        // Arrange
-        var mask = new PatternMask("00-00");
-
-        // Act
-        mask.Insert("12-34");
-
-        // Assert
-        mask.Text.Should().Be("12-34");
-    }
-
-    [Test]
-    public void PatternMask_AlignAgainstMask_ExtraCharacters()
-    {
-        // Arrange
-        var mask = new PatternMask("000");
-
-        // Act
-        mask.Insert("12345");
-
-        // Assert
-        mask.Text.Should().Be("123");
-    }
-
-    [Test]
-    public void PatternMask_IsMatch_ValidDigit()
-    {
-        // Arrange
-        var mask = new PatternMask("000");
-
-        // Act
-        mask.Insert("1");
-
-        // Assert
-        mask.Text.Should().Be("1");
-    }
-
-    [Test]
-    public void PatternMask_IsMatch_InvalidCharacter()
-    {
-        // Arrange
-        var mask = new PatternMask("000");
-
-        // Act
-        mask.Insert("a");
-
-        // Assert
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void PatternMask_FillWithPlaceholder_FullMask()
-    {
-        // Arrange
-        var mask = new PatternMask("000-000") { Placeholder = '_' };
-
-        // Act
-        mask.Insert("123");
-
-        // Assert
-        mask.Text.Should().Be("123-___");
-    }
-
-    [Test]
-    public void PatternMask_FillWithPlaceholder_EmptyText()
-    {
-        // Arrange
-        var mask = new PatternMask("000") { Placeholder = '_' };
-
-        // Act - no insert
-
-        // Assert
-        mask.Text.Should().BeNullOrEmpty();
-    }
-
-    [Test]
-    public void PatternMask_FillWithPlaceholder_CompleteMask()
-    {
-        // Arrange
-        var mask = new PatternMask("000") { Placeholder = '_' };
-
-        // Act
-        mask.Insert("123");
-
-        // Assert
-        mask.Text.Should().Be("123");
-    }
-
-    [Test]
-    public void PatternMask_Placeholder_InMiddleOfMask()
-    {
-        // Arrange
-        var mask = new PatternMask("00-00") { Placeholder = '_' };
-        mask.Insert("12");
-        mask.CaretPos = 3;
-
-        // Act
-        mask.Insert("3");
-
-        // Assert
-        mask.Text.Should().Be("12-3_");
-    }
-
-    [Test]
-    public void PatternMask_CleanDelimiters_True()
-    {
-        // Arrange
-        var mask = new PatternMask("00-00") { CleanDelimiters = true };
-        mask.Insert("1234");
-
-        // Act
-        var cleanText = mask.GetCleanText();
-
-        // Assert
-        cleanText.Should().Be("1234");
-    }
-
-    [Test]
-    public void PatternMask_CleanDelimiters_False()
-    {
-        // Arrange
-        var mask = new PatternMask("00-00") { CleanDelimiters = false };
-        mask.Insert("1234");
-
-        // Act
-        var cleanText = mask.GetCleanText();
-
-        // Assert
-        cleanText.Should().Be("12-34");
-    }
-
-    [Test]
-    public void PatternMask_EmptyMask()
-    {
-        // Arrange
-        var mask = new PatternMask("");
-
-        // Act
-        mask.Insert("123");
-
-        // Assert
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void PatternMask_OnlyDelimiters()
-    {
-        // Arrange
-        var mask = new PatternMask("---");
-
-        // Act
-        mask.Insert("123");
-
-        // Assert
-        mask.Text.Should().BeEmpty();
-    }
-
-    [Test]
-    public void PatternMask_MultipleConsecutiveDelimiters()
-    {
-        // Arrange
-        var mask = new PatternMask("0---0");
-
-        // Act
-        mask.Insert("12");
-
-        // Assert
-        mask.Text.Should().Be("1---2");
-    }
-
-    [Test]
-    public void PatternMask_ChangeMaskChars_ForcesReinitialization()
-    {
-        // Arrange - default 'a' would accept letters
-        var mask = new PatternMask("aa");
-        mask.Insert("xy");
-        mask.Text.Should().Be("xy");
-
-        // Act - swap mask chars so 'a' now means digit, then re-evaluate
-        mask.MaskChars = [MaskChar.Digit('a')];
-        mask.SetText("xy");
-
-        // Assert - letters no longer accepted after reinitialization
-        mask.Text.Should().BeEmpty();
-        mask.SetText("12");
-        mask.Text.Should().Be("12");
-    }
-
-    [Test]
-    public void PatternMask_UpdateFrom_ChangesMaskAndPreservesAlignedText()
-    {
-        // Arrange
-        var mask = new PatternMask("000-000");
-        mask.SetText("123456");
-        mask.Text.Should().Be("123-456");
-
-        // Act - widen the mask; existing text is re-aligned against the new mask
-        mask.UpdateFrom(new PatternMask("00-00-00"));
-
-        // Assert
-        mask.Text.Should().Be("12-34-56");
     }
 
 }

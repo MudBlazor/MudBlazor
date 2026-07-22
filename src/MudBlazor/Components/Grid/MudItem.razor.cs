@@ -7,11 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-
-/// <summary>
-/// A portion of a <see cref="MudGrid"/>.
-/// </summary>
-/// <seealso cref="MudGrid"/>
+#nullable enable
 public partial class MudItem : MudComponentBase
 {
     protected string Classname =>

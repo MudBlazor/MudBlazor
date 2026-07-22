@@ -1,388 +1,171 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
-using MudBlazor.Interfaces;
-using MudBlazor.Justification.StackedBars;
+using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
     /// <summary>
     /// Represents a chart which displays series values as portions of vertical rectangles.
     /// </summary>
-    /// <seealso cref="Bar{T}"/>
-    /// <seealso cref="Donut{T}"/>
-    /// <seealso cref="Line{T}"/>
-    /// <seealso cref="Pie{T}"/>
-    /// <seealso cref="TimeSeries{T}"/>
-    partial class StackedBar<T> : MudAxisChartBase<T, StackedBarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    partial class StackedBar : MudCategoryChartBase
     {
-        public override RenderFragment? OverlayContent { get; set; }
-
-        private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
-
-        private readonly List<SvgPath> _bars = [];
-        private readonly List<SvgText> _valueLabels = [];
-        private double _barWidth;
-        private double _barWidthStroke;
-        private SvgPath? _hoveredBar;
-
-        private const double MinBarWidth = 6;
-        private const double ValueLabelOffset = 5;
-        private const double ValueLabelFontSize = 12;
-
-        protected override void OnInitialized()
-        {
-            ChartType = ChartType.StackedBar;
-            ChartOptions ??= new StackedBarChartOptions();
-
-            if (ChartReference is IMudAxisChart<T> axisChart)
-            {
-                axisChart.OverlayChart = this;
-                axisChart.OverlayContent = this.Chart;
-            }
-
-            base.OnInitialized();
-        }
-
-        public override void RebuildChart()
-        {
-            // shared plot points should be initialized before generating overlay charts
-            if (IsOverlayChart && SharedData is null)
-            {
-                return;
-            }
-
-            Series = (ChartContainer != null && ChartReference is MudChart<T>)
-                ? ChartContainer.ChartSeries
-                : ChartSeries;
-
-            // ensure the stacked bar width ratio is within the valid range
-            ChartOptions!.BarWidthRatio = ChartOptions.BarWidthRatio.EnsureRange(0.01, 1);
-
-            GeneratePlotArea(out var lowestHorizontalLine, out var gridYUnits, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
-
-            if (!IsOverlayChart)
-            {
-                // If this is not an overlay chart, we generate the shared plot points if an overlay exists
-                SharedData = OverlayChart is IMudAxisChart<T> ? new AxisGridData<T>(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
-            }
-            else
-            {
-                // If this is an overlay chart, we use the shared plot points from the main chart
-                var area = SharedData!.Value;
-
-                lowestHorizontalLine = SharedData.Value.LowestHorizontalLine;
-                gridYUnits = SharedData.Value.YAxisTicks;
-
-                _boundWidth = area.BoundWidth;
-                _boundHeight = area.BoundHeight;
-            }
-
-            GenerateStackedBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
-            GenerateLegends();
-            RenderOverlay();
-        }
-
-        private void GeneratePlotArea(out int lowestHorizontalLine, out T gridYUnits, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
-        {
-            SetBounds();
-            ComputeStackedUnitsAndNumberOfLines(out lowestHorizontalLine, out gridYUnits, out numHorizontalLines, out var numVerticalLines);
-
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
-
-            horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
-            verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
-
-            // If this is an overlay chart, we do not generate the grid lines
-            if (IsOverlayChart)
-            {
-                return;
-            }
-
-            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
-            GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
-        }
-
         /// <summary>
-        /// Computes the grid units and the number of grid lines needed for the stacked bar chart.
+        /// The chart, if any, containing this component.
         /// </summary>
-        private void ComputeStackedUnitsAndNumberOfLines(out int lowestHorizontalLine, out T gridYUnits, out int numHorizontalLines, out int numVerticalLines)
+        [CascadingParameter]
+        public MudChart MudChartParent { get; set; }
+
+        private List<SvgPath> _horizontalLines = new();
+        private List<SvgText> _horizontalValues = new();
+
+        private List<SvgPath> _verticalLines = new();
+        private List<SvgText> _verticalValues = new();
+
+        private List<SvgLegend> _legends = new();
+        private List<ChartSeries> _series = new();
+
+        private List<SvgPath> _bars = new();
+
+        /// <inheritdoc />
+        protected override void OnParametersSet()
         {
-            var yAxisTicks = ChartOptions?.YAxisTicks;
+            base.OnParametersSet();
+            _horizontalLines.Clear();
+            _verticalLines.Clear();
+            _horizontalValues.Clear();
+            _verticalValues.Clear();
+            _legends.Clear();
+            _bars.Clear();
 
-            gridYUnits = T.CreateSaturating(yAxisTicks.HasValue && yAxisTicks.Value > 0 ? yAxisTicks.Value : 20);
-            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Values.Count);
+            if (MudChartParent != null)
+                _series = MudChartParent.ChartSeries;
 
-            CalculateStrokeWidth(numVerticalLines);
-
-            var (stackedPos, stackedNeg) = ComputeStackedColumnTotals(numVerticalLines);
-            var (maxY, minY) = GetYAxisExtremes(stackedPos, stackedNeg);
-
-            numHorizontalLines = StackedBar<T>.CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestHorizontalLine);
-
-            ClampNumHorizontalLines(ref gridYUnits, ref numHorizontalLines, ref lowestHorizontalLine, maxY, minY);
-        }
-
-        private (T[] stackedPositive, T[] stackedNegative) ComputeStackedColumnTotals(int columnCount)
-        {
-            var posTotals = new T[columnCount];
-            var negTotals = new T[columnCount];
-
-            for (var j = 0; j < columnCount; j++)
+            var maxY = 0.0;
+            var numXLabels = XAxisLabels.Length;
+            var numValues = _series.Any() ? _series.Max(x => x.Data.Length) : 0;
+            var barTopValues = new double[numValues];
+            foreach (var item in _series)
             {
-                foreach (var seriesData in Series.Select(x => x.Data))
+                var dataNumber = 0;
+                foreach (int i in item.Data)
                 {
-                    if (j >= seriesData.Values.Count)
-                    {
-                        continue;
-                    }
-
-                    var value = seriesData[j].Y;
-
-                    if (value < T.Zero)
-                    {
-                        negTotals[j] += value;
-                    }
-                    else
-                    {
-                        posTotals[j] += value;
-                    }
+                    barTopValues[dataNumber] += i;
+                    dataNumber++;
                 }
             }
+            maxY = barTopValues.Any() ? barTopValues.Max() : 0;
 
-            return (posTotals, negTotals);
-        }
+            var boundHeight = 350.0;
+            var boundWidth = 650.0;
 
-        private (T maxY, T minY) GetYAxisExtremes(T[] stackedPositiveTotals, T[] stackedNegativeTotals)
-        {
-            var maxY = stackedPositiveTotals.Length == 0 ? T.Zero : stackedPositiveTotals.Max();
+            double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            double gridXUnits = 30;
 
-            if (ChartOptions?.YAxisSuggestedMax is { } suggestedMax)
+            var numVerticalLines = numValues;
+
+            var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+
+            var verticalStartSpace = 25.0;
+            var horizontalStartSpace = 35.0;
+            var verticalEndSpace = 25.0;
+            var horizontalEndSpace = 30.0;
+
+            var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / numHorizontalLines;
+            var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / numVerticalLines;
+
+            //Horizontal Grid Lines
+            var y = verticalStartSpace;
+            double startGridY = 0;
+            for (var counter = 0; counter <= numHorizontalLines; counter++)
             {
-                maxY = T.Max(T.CreateSaturating(suggestedMax), maxY);
-            }
-
-            var minY = stackedNegativeTotals.Length == 0 ? T.Zero : stackedNegativeTotals.Min();
-
-            return (maxY, minY);
-        }
-
-        private static int CalculateNumHorizontalLines(T gridYUnits, T maxY, T minY, out int lowestLine)
-        {
-            var highestLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
-            lowestLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
-            return highestLine - lowestLine + 1;
-        }
-
-        private void ClampNumHorizontalLines(ref T gridYUnits, ref int numLines, ref int lowestLine, T maxY, T minY)
-        {
-            var maxTicks = ChartOptions?.MaxNumYAxisTicks ?? 20;
-            while (numLines > maxTicks)
-            {
-                gridYUnits *= T.CreateSaturating(2);
-                numLines = CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestLine);
-            }
-        }
-
-        private void CalculateStrokeWidth(int numVerticalLines)
-        {
-            if (ChartOptions?.FixedBarWidth is not null)
-            {
-                _barWidthStroke = _barWidth = ChartOptions.FixedBarWidth.Value;
-                ChartOptions!.BarWidthRatio = 1;
-                return;
-            }
-
-            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1), 1);
-
-            _barWidthStroke = _barWidth = Math.Max(MinBarWidth, barWidth * ChartOptions!.BarWidthRatio);
-
-            if (ChartOptions!.BarWidthRatio >= 0.9999)
-            {
-                // Optimisation to remove gaps between bars due to floating point rounding causing gaps to be visible between bars.
-                // This givs a very slight overlap which isn't visible without purposeful inspection and zooming.
-                _barWidthStroke += BarOverlapAmountFix;
-            }
-            else
-            {
-                var roundedBarWidth = Math.Round(_barWidth, 0);
-                if (roundedBarWidth * numVerticalLines < (_boundWidth - HorizontalStartSpace - HorizontalEndSpace))
+                var line = new SvgPath()
                 {
-                    _barWidthStroke = _barWidth = roundedBarWidth;
-                }
+                    Index = counter,
+                    Data = $"M {ToS(horizontalStartSpace)} {ToS(boundHeight - y)} L {ToS(boundWidth - horizontalEndSpace)} {ToS(boundHeight - y)}"
+                };
+                _horizontalLines.Add(line);
+
+                var lineValue = new SvgText() { X = horizontalStartSpace, Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
+                _horizontalValues.Add(lineValue);
+
+                startGridY += gridYUnits;
+                y += verticalSpace;
             }
-        }
 
-        /// <summary>
-        /// Generates the vertical grid lines and corresponding X-axis labels.
-        /// </summary>
-        private void GenerateVerticalGridLines(int numVerticalLines, double horizontalSpace)
-        {
-            VerticalLines.Clear();
-            VerticalValues.Clear();
-
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
-            var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
-
-            for (var j = 0; j < numVerticalLines; j++)
+            //Vertical Grid Lines
+            var x = horizontalStartSpace + 24;
+            double startGridX = 0;
+            for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-                var x = barPositions.Length == 0 ? 0 : barPositions[j];
 
                 var line = new SvgPath()
                 {
-                    Index = j,
-                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                    Index = counter,
+                    Data = $"M {ToS(x)} {ToS(boundHeight - verticalStartSpace)} L {ToS(x)} {ToS(verticalEndSpace)}"
                 };
-                VerticalLines.Add(line);
+                _verticalLines.Add(line);
 
-                var label = j < ChartLabels.Length ? ChartLabels[j] : "";
-                var text = new SvgText()
+                var xLabels = "";
+                if (counter < numXLabels)
                 {
-                    X = x,
-                    Y = _boundHeight - XAxisLabelOffset,
-                    Value = label,
-                };
-                VerticalValues.Add(text);
+                    xLabels = XAxisLabels[counter];
+                }
+
+                var lineValue = new SvgText() { X = x, Y = boundHeight - 2, Value = xLabels };
+                _verticalValues.Add(lineValue);
+
+                startGridX += gridXUnits;
+                x += horizontalSpace;
             }
-        }
 
-        /// <summary>
-        /// Generates the stacked bars by drawing each segment on top of the previous one.
-        /// </summary>
-        private void GenerateStackedBars(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
-        {
-            _bars.Clear();
-            _valueLabels.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
-            var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
-
-            for (var dataIndex = 0; dataIndex < maxSeriesLength; dataIndex++)
+            //Bars
+            var colorcounter = 0;
+            double barsPerSeries = 0;
+            double[] barValuesOffset = null;
+            foreach (var item in _series)
             {
-                var x = barPositions[dataIndex];
-                var baseY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
-                var positiveStack = baseY;
-                var negativeStack = baseY;
-                var barTotal = T.Zero;
-                var hasVisibleSegment = false;
+                var gridValueX = horizontalStartSpace + 24;
 
-                foreach (var (series, seriesIndex) in Series.Select((s, i) => (s, i)))
+                if (barValuesOffset == null)
                 {
-                    if (dataIndex >= series.Data.Values.Count)
+                    barValuesOffset = new double[item.Data.Length];
+                    for (var i = 0; i < item.Data.Length; i++)
                     {
-                        continue;
-                    }
-
-                    if (series.Visible)
-                    {
-                        hasVisibleSegment = true;
-                    }
-
-                    var dataValue = series.Visible ? series.Data[dataIndex].Y : T.Zero;
-                    barTotal += dataValue;
-
-                    if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues)
-                    {
-                        continue;
-                    }
-
-                    var segmentHeight = double.CreateSaturating(dataValue) / double.CreateSaturating(gridYUnits) * verticalSpace;
-                    var isNegative = dataValue < T.Zero;
-
-                    var yStart = isNegative ? negativeStack : positiveStack;
-                    var yEnd = yStart - double.CreateSaturating(segmentHeight);
-
-                    _bars.Add(new SvgPath
-                    {
-                        Index = seriesIndex,
-                        Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(isNegative ? yEnd + BarOverlapAmountFix : yEnd - BarOverlapAmountFix)}",
-                        LabelXValue = ChartLabels.Length > dataIndex ? ChartLabels[dataIndex] : string.Empty,
-                        LabelYValue = dataValue.ToString(series.TooltipYValueFormat, null),
-                        LabelX = x,
-                        LabelY = isNegative ? yStart : yEnd
-                    });
-
-                    if (isNegative)
-                    {
-                        negativeStack = yEnd;
-                    }
-                    else
-                    {
-                        positiveStack = yEnd;
+                        barValuesOffset[i] = boundHeight - verticalStartSpace;
                     }
                 }
 
-                if (ChartOptions!.ShowValues && hasVisibleSegment)
+                var dataNumber = 0;
+                foreach (var dataLine in item.Data)
                 {
-                    // Positive totals render above the stack, negative totals below it.
-                    var labelY = barTotal < T.Zero
-                        ? negativeStack + ValueLabelOffset + ValueLabelFontSize
-                        : positiveStack - ValueLabelOffset;
+                    var dataValue = dataLine * verticalSpace / gridYUnits;
+                    var dataGridValueY = barValuesOffset[dataNumber];
+                    var dataGridValue = dataGridValueY - dataValue;
+                    var bar = $"M {ToS(gridValueX)} {ToS(dataGridValueY)} L {ToS(gridValueX)} {ToS(dataGridValue)}";
 
-                    _valueLabels.Add(new SvgText
+                    gridValueX += horizontalSpace;
+                    barValuesOffset[dataNumber] = dataGridValue;
+
+                    var line = new SvgPath()
                     {
-                        X = x,
-                        Y = labelY,
-                        Value = BuildYAxisValueString(barTotal),
-                    });
+                        Index = colorcounter,
+                        Data = bar
+                    };
+                    _bars.Add(line);
+                    dataNumber++;
                 }
-            }
-        }
 
-        private double[] CalculateBarGroupPositions(double horizontalSpace, int maxColumns)
-        {
-            if (Series.Count == 0)
-            {
-                return [];
-            }
+                barsPerSeries += 10;
 
-            var context = new StackedBarContext
-            {
-                BarWidth = _barWidth,
-                MaxColumns = maxColumns,
-                HorizontalSpace = horizontalSpace,
-                HorizontalStartSpace = HorizontalStartSpace,
-                HorizontalEndSpace = HorizontalEndSpace,
-                SpaceBetweenBars = CalculateSpaceWidth(horizontalSpace, maxColumns),
-            };
-
-            var strategy = StackedBarStrategyFactory.GetStrategy(ChartOptions!.Justify);
-
-            return strategy.CalculatePositions(context);
-        }
-
-        private int CalculateSpaceWidth(double horizontalSpace, int maxColumns)
-        {
-            if (maxColumns <= 1)
-            {
-                return 0;
-            }
-
-            var spaceCount = maxColumns - 1;
-            var remainingWidth = horizontalSpace - (_barWidth * maxColumns);
-            var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.0, 1.0);
-            var spaceBetweenBars = spaceWidth / spaceCount;
-
-            return (int)Math.Max(0, spaceBetweenBars);
-        }
-
-        private void OnBarMouseOver(SvgPath bar)
-        {
-            _hoveredBar = bar;
-
-            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-            {
-                chart.StateHasChanged();
-            }
-        }
-
-        private void OnBarMouseOut()
-        {
-            _hoveredBar = null;
-
-            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
-            {
-                chart.StateHasChanged();
+                var legend = new SvgLegend()
+                {
+                    Index = colorcounter,
+                    Labels = item.Name
+                };
+                colorcounter++;
+                _legends.Add(legend);
             }
         }
     }

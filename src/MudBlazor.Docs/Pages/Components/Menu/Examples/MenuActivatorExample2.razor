@@ -1,28 +1,41 @@
-@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Left Click" FullWidth="true" ActivationEvent="@MouseEvent.LeftClick" Variant="Variant.Filled" Color="Color.Primary">
+
+<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.LeftClick">
+    <ActivatorContent>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left click</MudChip>
+    </ActivatorContent>
     <ChildContent>
-        <MudMenuItem Label="Profile" />
-        <MudMenuItem Label="Theme" />
-        <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
     </ChildContent>
 </MudMenu>
 
-<MudMenu Label="Right Click" ActivationEvent="@MouseEvent.RightClick" Variant="Variant.Filled" Color="Color.Primary">
+<MudMenu ActivationEvent="@MouseEvent.RightClick">
+    <ActivatorContent>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right click</MudChip>
+    </ActivatorContent>
     <ChildContent>
-        <MudMenuItem Label="Profile" />
-        <MudMenuItem Label="Theme" />
-        <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
     </ChildContent>
 </MudMenu>
 
-<MudMenu Label="Mouse Over" FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" Variant="Variant.Filled" Color="Color.Primary" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+    <ActivatorContent>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse over</MudChip>
+    </ActivatorContent>
     <ChildContent>
-        <MudMenuItem Label="Profile" />
-        <MudMenuItem Label="Theme" />
-        <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
     </ChildContent>
 </MudMenu>
+
+
+

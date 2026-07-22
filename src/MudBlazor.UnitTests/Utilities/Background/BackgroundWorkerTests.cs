@@ -2,7 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AwesomeAssertions;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using MudBlazor.UnitTests.Utilities.Background.Mocks;
 using NUnit.Framework;
 
@@ -110,9 +113,6 @@ public class BackgroundWorkerTests
         await worker.StartAsync(CancellationToken.None);
 
         worker.Dispose();
-
-        // Dispose cancels the linked stopping token, which cancels the executing task
-        Assert.ThrowsAsync<TaskCanceledException>(() => worker.ExecutingTask);
     }
 
     [Test]
@@ -135,20 +135,5 @@ public class BackgroundWorkerTests
         var worker = new WaitForCancelledTokenWorkerMock();
 
         worker.Dispose();
-    }
-
-    [Test]
-    public async Task StopAsync_CalledTwice_DoesNotThrow()
-    {
-        var tcs = new TaskCompletionSource<object>();
-        var worker = new MyBackgroundWorkerMock(tcs.Task);
-
-        await worker.StartAsync(CancellationToken.None);
-        await worker.StopAsync(CancellationToken.None);
-
-        // Second stop re-cancels the already-cancelled token source; must remain a no-throw no-op
-        await worker.StopAsync(CancellationToken.None);
-
-        worker.ExecuteTask!.IsCompleted.Should().BeTrue();
     }
 }

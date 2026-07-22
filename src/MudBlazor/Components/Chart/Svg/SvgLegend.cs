@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor
+namespace MudBlazor.Charts.SVG.Models
 {
     /// <summary>
-    /// A single legend entry describing one chart series, with its label, value, and visibility toggle.
+    /// Represents a series of series labels as an SVG path.
     /// </summary>
     [DebuggerDisplay("{Index} = {Labels}")]
     public class SvgLegend
@@ -17,12 +18,12 @@ namespace MudBlazor
         /// <summary>
         /// The series labels to display.
         /// </summary>
-        public string Labels { get; set; } = string.Empty;
+        public string Labels { get; set; }
 
         /// <summary>
         /// The data values to display.
         /// </summary>
-        public string? Data { get; set; }
+        public string Data { get; set; }
 
         /// <summary>
         /// Whether the legend is displayed.

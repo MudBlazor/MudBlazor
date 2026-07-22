@@ -2,17 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.Analyzers.Internal;
-
-internal static class SyntaxNodeExtensions
+namespace MudBlazor.Analyzers.Internal
 {
-    public static ClassDeclarationSyntax? FindClass(this SyntaxNode? node)
+    internal static class SyntaxNodeExtensions
     {
-        while (node is not null && node is not ClassDeclarationSyntax)
+        public static ClassDeclarationSyntax? FindClass(this SyntaxNode? node)
         {
-            node = node.Parent;
-        }
+            while (node is not null && node is not ClassDeclarationSyntax)
+            {
+                node = node.Parent;
+            }
 
-        return (ClassDeclarationSyntax?)node;
+            return (ClassDeclarationSyntax?)node;
+        }
     }
 }

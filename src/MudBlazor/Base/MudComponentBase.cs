@@ -2,6 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
@@ -9,17 +14,15 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Base class for every MudBlazor component, supplying the shared <c>Class</c>, <c>Style</c>, <c>Tag</c>, and <c>UserAttributes</c> parameters.
+    /// Represents a base class for designing MudBlazor components.
     /// </summary>
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
-        private ILogger? _logger;
-        private readonly string _id = Identifier.Create("mudinput");
-
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
-
+        private ILogger? _logger;
         protected ILogger Logger => _logger ??= LoggerFactory.CreateLogger(GetType());
 
         /// <summary>
@@ -63,18 +66,14 @@ namespace MudBlazor
         public Dictionary<string, object?> UserAttributes { get; set; } = new Dictionary<string, object?>();
 
         /// <summary>
-        /// Whether the component has executed OnAfterRender at least once.
-        /// </summary>
-        protected bool HasRendered { get; private set; }
-
-        /// <summary>
         /// Whether the <see cref="JSRuntime" /> is available.
         /// </summary>
         /// <remarks>
         /// When <c>true</c>, JavaScript interop calls can be made.
         /// </remarks>
-        protected bool IsJSRuntimeAvailable => HasRendered;
+        protected bool IsJSRuntimeAvailable { get; set; }
 
+        private readonly string _id = $"mudinput-{Guid.NewGuid()}";
         /// <summary>
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
@@ -82,42 +81,15 @@ namespace MudBlazor
             ? id.ToString() ?? _id
             : _id;
 
-        /// <summary>
-        /// Resolves the element ID to use for JavaScript interop, honoring a consumer-supplied <c>id</c>.
-        /// </summary>
-        /// <param name="fallbackId">The internally generated ID used when no <c>id</c> is supplied via <see cref="UserAttributes"/>.</param>
-        /// <returns>The non-empty <c>id</c> from <see cref="UserAttributes"/> when present; otherwise <paramref name="fallbackId"/>.</returns>
-        /// <remarks>
-        /// When a consumer sets <c>id="..."</c> in Razor it is captured into <see cref="UserAttributes"/> and, depending on
-        /// attribute order, can override the generated ID on the rendered element. Components that subscribe JavaScript handlers
-        /// (such as the key interceptor) by element ID must target this effective ID so the subscription, dispatch, and disposal
-        /// all reference the element that is actually rendered, avoiding "no element found for id" lookup mismatches.
-        /// </remarks>
-        protected string GetEffectiveElementId(string fallbackId)
-        {
-            if (UserAttributes.TryGetValue("id", out var id) && id is not null)
-            {
-                var userId = id.ToString();
-                if (!string.IsNullOrWhiteSpace(userId))
-                {
-                    return userId;
-                }
-            }
-
-            return fallbackId;
-        }
-
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
         {
-            if (firstRender)
-            {
-                HasRendered = true;
-            }
+            IsJSRuntimeAvailable = true;
             base.OnAfterRender(firstRender);
         }
 
         /// <inheritdoc />
         void IMudStateHasChanged.StateHasChanged() => StateHasChanged();
+
     }
 }

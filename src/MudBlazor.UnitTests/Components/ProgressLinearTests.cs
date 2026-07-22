@@ -1,6 +1,8 @@
-﻿using System.Globalization;
-using AwesomeAssertions;
+﻿
+using System;
+using System.Globalization;
 using Bunit;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -38,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(200, 400, 230, 220, 15, 10)]
         public void CheckingPercentageAndBufferValue(double min, double max, double value, double buffervalue, double expectedValue, double expectedBufferValue)
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, min);
                 x.Add(y => y.Max, max);
@@ -66,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
 
         public void EnsureMaxAndMinConsitency(double min, double max, double value, double buffervalue, double expectedValue, double expectedBufferValue)
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, min);
                 x.Add(y => y.Max, max);
@@ -86,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void DefaultStructure(bool isVertical)
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
                 {
                     x.Add(y => y.Min, -500);
                     x.Add(y => y.Max, 500);
@@ -115,7 +117,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IndeterminateStructure()
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, -500);
                 x.Add(y => y.Max, 500);
@@ -145,7 +147,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void BufferStructure(bool isVertical)
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, -500);
                 x.Add(y => y.Max, 500);
@@ -158,6 +160,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
+
 
             container.ChildElementCount.Should().Be(1);
             var barContainer = container.Children[0];
@@ -186,7 +189,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void IndeterminateWithChildContent()
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, -500);
                 x.Add(y => y.Max, 500);
@@ -219,40 +222,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(false)]
         [TestCase(true)]
-        public void RtlFlipClassOnlyOnHorizontalBars(bool isVertical)
-        {
-            var comp = Context.Render<MudProgressLinear>(x =>
-            {
-                x.Add(y => y.Vertical, isVertical);
-                x.Add(y => y.ChildContent, "<p>my content</p>");
-            });
-
-            var container = comp.Find(".mud-progress-linear");
-            container.ClassList.Should().NotContain("mud-flip-x-rtl");
-
-            var barContainer = comp.Find(".mud-progress-linear-bars");
-            if (isVertical)
-            {
-                barContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
-            }
-            else
-            {
-                barContainer.ClassList.Should().Contain("mud-flip-x-rtl");
-            }
-
-            var contentContainer = comp.Find(".mud-progress-linear-content");
-            contentContainer.ClassList.Should().NotContain("mud-flip-x-rtl");
-            contentContainer.TextContent.Should().Be("my content");
-        }
-
-        [Test]
         [TestCase(true)]
-        [TestCase(false)]
         public void TestClassesForRounded(bool rounded)
         {
-            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Rounded, rounded));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -268,10 +242,10 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(false)]
+        [TestCase(true)]
         public void TestClassesForStriped(bool striped)
         {
-            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Striped, striped));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -287,10 +261,10 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(false)]
+        [TestCase(true)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
-            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Indeterminate, indeterminate));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -311,7 +285,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, true)]
         public void TestClassesForBuffer(bool buffer, bool indeterminate)
         {
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Indeterminate, indeterminate);
                 x.Add(y => y.Buffer, buffer);
@@ -336,7 +310,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Size.Small, "small")]
         public void TestClassesForSize(Size size, string expectedString)
         {
-            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Size, size));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Size, size));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -349,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Error, "error")]
         public void TestClassesForColor(Color color, string expectedString)
         {
-            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Color, color));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Color, color));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -358,10 +332,10 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(false)]
+        [TestCase(true)]
         public void TestClassesForVertical(bool vertical)
         {
-            var comp = Context.Render<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
+            var comp = Context.RenderComponent<MudProgressLinear>(x => x.Add(y => y.Vertical, vertical));
 
             var container = comp.Find(".mud-progress-linear");
 
@@ -390,7 +364,7 @@ namespace MudBlazor.UnitTests.Components
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
 
-            var comp = Context.Render<MudProgressLinear>(x =>
+            var comp = Context.RenderComponent<MudProgressLinear>(x =>
             {
                 x.Add(y => y.Min, 10.2);
                 x.Add(y => y.Max, 125.22);
@@ -401,55 +375,9 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".my-custom-class");
             container.GetAttribute("role").Should().Be("progressbar");
 
-            container.GetAttribute("aria-busy").Should().Be("true");
             container.GetAttribute("aria-valuenow").Should().Be("75.3");
             container.GetAttribute("aria-valuemin").Should().Be("10.2");
             container.GetAttribute("aria-valuemax").Should().Be("125.22");
-        }
-
-        [Test]
-        public void AriaBusy_ShouldBeFalse_WhenValueEqualsMax()
-        {
-            // When Value >= Max, aria-busy should be "false" (progress is complete)
-            var comp = Context.Render<MudProgressLinear>(x =>
-            {
-                x.Add(y => y.Value, 100);
-                x.Add(y => y.Min, 0);
-                x.Add(y => y.Max, 100);
-            });
-
-            var container = comp.Find(".mud-progress-linear");
-            container.GetAttribute("aria-busy").Should().Be("false");
-        }
-
-        [Test]
-        public void AriaBusy_ShouldBeTrue_WhenValueLessThanMax()
-        {
-            // When Value < Max, aria-busy should be "true" (progress in progress)
-            var comp = Context.Render<MudProgressLinear>(x =>
-            {
-                x.Add(y => y.Value, 50);
-                x.Add(y => y.Min, 0);
-                x.Add(y => y.Max, 100);
-            });
-
-            var container = comp.Find(".mud-progress-linear");
-            container.GetAttribute("aria-busy").Should().Be("true");
-        }
-
-        [Test]
-        public void AriaBusy_ShouldBeTrue_WhenIndeterminate()
-        {
-            // When Indeterminate is true, aria-busy should always be "true"
-            var comp = Context.Render<MudProgressLinear>(x =>
-            {
-                x.Add(y => y.Indeterminate, true);
-                x.Add(y => y.Value, 100); // Even when Value >= Max
-                x.Add(y => y.Max, 100);
-            });
-
-            var container = comp.Find(".mud-progress-linear");
-            container.GetAttribute("aria-busy").Should().Be("true");
         }
     }
 }

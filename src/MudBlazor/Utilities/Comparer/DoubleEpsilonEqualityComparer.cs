@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace MudBlazor;
 
 /// <summary>
-/// Equality comparer for <see cref="double"/> values that treats numbers within an epsilon tolerance as equal.
+/// Provides a comparer for <see cref="double"/> values with an epsilon tolerance.
 /// </summary>
 [DebuggerDisplay("Epsilon = {_epsilon}")]
 public class DoubleEpsilonEqualityComparer : IEqualityComparer<double>

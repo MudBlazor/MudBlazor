@@ -2,61 +2,36 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.Extensions.Logging;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
-using MudBlazor.State;
-using MudBlazor.Utilities.Comparer;
-using MudBlazor.Utilities.Converter.Base;
 using static System.String;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
-    /// Base class for form components that support validation, error messages, and value conversion, such as <see cref="MudBaseInput{T}"/> and <see cref="MudBooleanInput{T}"/>.
+    /// Represents a base class for designing form input components.
     /// </summary>
     /// <typeparam name="T">The complex type managed by this input.</typeparam>
     /// <typeparam name="U">The value type managed by this input.</typeparam>
-    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
+    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IDisposable
     {
-        private IConverter<T?, U?>? _defaultConverter;
-        private ConversionResult<T?>? _getConversionResult;
-        // ReSharper disable NotAccessedField.Local maybe we use it later, original converter didn't read the set errors
-        private ConversionResult<U?>? _setConversionResult;
-        // ReSharper restore NotAccessedField.Local
-        protected readonly ParameterState<bool> ErrorState;
-        protected readonly ParameterState<string?> ErrorIdState;
-        protected readonly ParameterState<string?> ErrorTextState;
-        private readonly ParameterState<CultureInfo> _cultureState;
+        private Converter<T, U> _converter;
 
-        [Inject]
-        private InternalMudLocalizer Localizer { get; set; } = null!;
-
-        protected MudFormComponent()
+        protected MudFormComponent(Converter<T, U> converter)
         {
-            using var registerScope = CreateRegisterScope();
-            ErrorTextState = registerScope.RegisterParameter<string?>(nameof(ErrorText))
-                .WithParameter(() => ErrorText)
-                .WithEventCallback(() => ErrorTextChanged);
-            ErrorState = registerScope.RegisterParameter<bool>(nameof(Error))
-                .WithParameter(() => Error)
-                .WithEventCallback(() => ErrorChanged);
-            ErrorIdState = registerScope.RegisterParameter<string?>(nameof(ErrorId))
-                .WithParameter(() => ErrorId)
-                .WithEventCallback(() => ErrorIdChanged);
-            _cultureState = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
-                .WithParameter(() => Culture)
-                .WithChangeHandler(OnCultureAndFormatChangedAsync)
-                .WithComparer(ReferenceCultureComparer.Default);
-            registerScope.RegisterParameter<IConverter<T?, U?>?>(nameof(Converter))
-                .WithParameter(() => Converter)
-                .WithChangeHandler(OnConverterChangedAsync);
+            _converter = converter ?? throw new ArgumentNullException(nameof(converter));
+            _converter.OnError = OnConversionError;
         }
 
         [CascadingParameter]
@@ -67,7 +42,7 @@ namespace MudBlazor
         /// If it is sub-component, it will NOT do form validation!!
         /// </summary>
         [CascadingParameter(Name = "SubscribeToParentForm")]
-        protected bool SubscribeToParentForm { get; set; } = true;
+        internal bool SubscribeToParentForm { get; set; } = true;
 
         /// <summary>
         /// Requires an input value.
@@ -92,20 +67,9 @@ namespace MudBlazor
         /// <summary>
         /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
         /// </summary>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public string? ErrorText { get; set; }
-
-        /// <summary>
-        /// Raised when the <see cref="ErrorText"/> parameter value changes.
-        /// </summary>
-        /// <remarks>
-        /// This callback is triggered to support two-way binding of the <see cref="ErrorText"/> parameter.
-        /// The callback receives the updated <see cref="ErrorText"/> value.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public EventCallback<string?> ErrorTextChanged { get; set; }
+        public string? ErrorText { get; set; }
 
         /// <summary>
         /// Displays an error.
@@ -113,20 +77,9 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the text in <see cref="ErrorText"/> is displayed.
         /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public bool Error { get; set; }
-
-        /// <summary>
-        /// Raised when the <see cref="Error"/> parameter value changes.
-        /// </summary>
-        /// <remarks>
-        /// This callback is triggered to support two-way binding of the <see cref="Error"/> parameter.
-        /// The callback receives the updated <see cref="Error"/> value.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public EventCallback<bool> ErrorChanged { get; set; }
+        public bool Error { get; set; }
 
         /// <summary>
         /// The ID of the error description element, for use by <c>aria-describedby</c> when <see cref="Error"/> is <c>true</c>.
@@ -134,31 +87,35 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  When set and the <see cref="Error"/> property is <c>true</c>, an <c>aria-describedby</c> attribute is rendered to improve accessibility for users.
         /// </remarks>
-        [Parameter, ParameterState]
-        [Category(CategoryTypes.FormComponent.Validation)]
-        public string? ErrorId { get; set; }
-
-        /// <summary>
-        /// Raised when the <see cref="ErrorId"/> parameter value changes.
-        /// </summary>
-        /// <remarks>
-        /// This callback is triggered to support two-way binding of the <see cref="ErrorId"/> parameter.
-        /// The callback receives the updated <see cref="ErrorId"/> value.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public EventCallback<string?> ErrorIdChanged { get; set; }
+        public string? ErrorId { get; set; }
 
         /// <summary>
         /// The type converter for this input.
         /// </summary>
         /// <remarks>
-        /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.
-        /// You can assign <c>null</c> to this property; in that case, the component will use the default converter returned by <see cref="GetDefaultConverter"/>.
+        /// This property provides a way to customize conversions between <typeparamref name="T"/> objects and <typeparamref name="U"/> values.  If no converter is specified, a default will be chosen based on the kind of input.
         /// </remarks>
-        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
+        [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IConverter<T?, U?>? Converter { get; set; }
+        public Converter<T, U> Converter
+        {
+            get => _converter;
+            set => SetConverter(value);
+        }
+
+        protected virtual bool SetConverter(Converter<T, U> value)
+        {
+            var changed = _converter != value;
+            if (changed)
+            {
+                _converter = value ?? throw new ArgumentNullException(nameof(value));   // converter is mandatory at all times
+                _converter.OnError = OnConversionError;
+            }
+
+            return changed;
+        }
 
         /// <summary>
         /// The culture used to format and interpret values such as dates and currency.
@@ -166,9 +123,33 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
         /// </remarks>
-        [Parameter, ParameterState]
+        [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public CultureInfo Culture { get; set; } = CultureInfo.CurrentUICulture;
+        public CultureInfo Culture
+        {
+            get => _converter.Culture;
+            set => SetCulture(value);
+        }
+
+        protected virtual bool SetCulture(CultureInfo value)
+        {
+            var changed = _converter.Culture != value;
+            if (changed)
+            {
+                _converter.Culture = value;
+            }
+
+            return changed;
+        }
+
+        private void OnConversionError(string error)
+        {
+            // note: we need to update the form here because the conversion error might lead to not updating the value
+            // ... which leads to not updating the form
+            Touched = true;
+            Form?.Update(this);
+            OnConversionErrorOccurred(error);
+        }
 
         protected virtual void OnConversionErrorOccurred(string error)
         {
@@ -182,7 +163,7 @@ namespace MudBlazor
         /// When <c>true</c>, the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
         /// </remarks>
         [MemberNotNullWhen(true, nameof(ConversionErrorMessage))]
-        public bool ConversionError => _getConversionResult is { Success: false };
+        public bool ConversionError => _converter.GetError;
 
         /// <summary>
         /// The error describing why type conversion failed.
@@ -190,19 +171,7 @@ namespace MudBlazor
         /// <remarks>
         /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
         /// </remarks>
-        public string? ConversionErrorMessage
-        {
-            get
-            {
-                if (_getConversionResult is not { Success: false } result)
-                    return null;
-
-                if (result.ErrorMessageKey is not null)
-                    return Localizer[result.ErrorMessageKey, result.ErrorMessageArgs];
-
-                return result.ExceptionError.Message;
-            }
-        }
+        public string? ConversionErrorMessage => _converter.GetErrorMessage;
 
         /// <summary>
         /// Indicates any error, conversion error, or validation error with this input.
@@ -210,7 +179,7 @@ namespace MudBlazor
         /// <remarks>
         /// When <c>true</c>, the <see cref="Error"/> property is <c>true</c>, or <see cref="ConversionError"/> is <c>true</c>, or one or more <see cref="ValidationErrors"/> exists.
         /// </remarks>
-        public bool HasErrors => ErrorState.Value || ConversionError || ValidationErrors.Count > 0;
+        public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
         /// <summary>
         /// The current error or conversion error.
@@ -221,9 +190,9 @@ namespace MudBlazor
         public string? GetErrorText()
         {
             // ErrorText is either set from outside or the first validation error
-            if (!IsNullOrWhiteSpace(ErrorTextState.Value))
+            if (!IsNullOrWhiteSpace(ErrorText))
             {
-                return ErrorTextState.Value;
+                return ErrorText;
             }
 
             if (!IsNullOrWhiteSpace(ConversionErrorMessage))
@@ -241,34 +210,6 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.  When <c>true</c>, the user has performed input, or focus has moved away from this input.  This property is typically used to show the <see cref="RequiredError"/> text only after the user has interacted with this input.
         /// </remarks>
         public bool Touched { get; protected set; }
-
-        // While set, a programmatic / parameter-driven value sync is running and the gated Touched /
-        // FieldChanged writes are skipped - those reflect genuine user interaction only. This stops a
-        // non-default initial or async-loaded value from touching the input (and its MudForm) on load
-        // (#13064, #13246). It is toggled ONLY by SuppressInteractionEffectsWhileAsync, and only around
-        // AWAITED parameter-change handlers, so it is always restored before the awaiting caller resumes.
-        // Fire-and-forget value setters (the date/time pickers) deliberately do NOT use this flag - they
-        // pass suppression as an explicit argument instead, so it can never be left set across their awaits
-        // and swallow a concurrent user interaction. Validation is intentionally not suppressed.
-        private protected bool _suppressInteractionEffects;
-
-        /// <summary>
-        /// Runs a programmatic or parameter-driven value/text sync without marking this component
-        /// <see cref="Touched"/> or firing <see cref="FieldChanged"/> - those reflect user interaction only.
-        /// </summary>
-        private protected async Task SuppressInteractionEffectsWhileAsync(Func<Task> synchronize)
-        {
-            var previous = _suppressInteractionEffects;
-            _suppressInteractionEffects = true;
-            try
-            {
-                await synchronize();
-            }
-            finally
-            {
-                _suppressInteractionEffects = previous;
-            }
-        }
 
         #region MudForm Validation
 
@@ -314,15 +255,15 @@ namespace MudBlazor
         {
             Func<Task> execute = async () =>
             {
-                var value = ReadValue;
+                var value = ReadValue();
 
                 await task;
 
                 // we validate only if the value hasn't changed while we waited for task.
                 // if it has in fact changed, another validate call will follow anyway
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue))
+                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
                 {
-                    await ValidateValue();
+                    await BeginValidateAsync();
                 }
             };
 
@@ -333,11 +274,11 @@ namespace MudBlazor
         {
             Func<Task> execute = async () =>
             {
-                var value = ReadValue;
+                var value = ReadValue();
 
                 await ValidateValue();
 
-                if (EqualityComparer<T>.Default.Equals(value, ReadValue))
+                if (EqualityComparer<T>.Default.Equals(value, ReadValue()))
                 {
                     EditFormValidate();
                 }
@@ -352,7 +293,7 @@ namespace MudBlazor
         /// <remarks>
         /// When using a <see cref="MudForm"/>, the input is validated via the function set in the <see cref="Validation"/> property.
         /// </remarks>
-        public Task ValidateAsync()
+        public Task Validate()
         {
             // when a validation is forced, we must set Touched to true, because for untouched fields with
             // no value, validation does nothing due to the way forms are expected to work (display errors
@@ -363,6 +304,12 @@ namespace MudBlazor
 
         protected virtual async Task ValidateValue()
         {
+            // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+            if (EditContext is not null)
+            {
+                return;
+            }
+
             var changed = false;
             var errors = new List<string>();
             try
@@ -375,19 +322,19 @@ namespace MudBlazor
                 // validation errors
                 if (Validation is ValidationAttribute validationAttribute)
                 {
-                    ValidateWithAttribute(validationAttribute, ReadValue, errors);
+                    ValidateWithAttribute(validationAttribute, ReadValue(), errors);
                 }
                 else if (Validation is Func<T?, bool> funcBooleanValidation)
                 {
-                    ValidateWithFunc(funcBooleanValidation, ReadValue, errors);
+                    ValidateWithFunc(funcBooleanValidation, ReadValue(), errors);
                 }
                 else if (Validation is Func<T?, string?> funcStringValidation)
                 {
-                    ValidateWithFunc(funcStringValidation, ReadValue, errors);
+                    ValidateWithFunc(funcStringValidation, ReadValue(), errors);
                 }
                 else if (Validation is Func<T?, IEnumerable<string?>> funcEnumerableValidation)
                 {
-                    ValidateWithFunc(funcEnumerableValidation, ReadValue, errors);
+                    ValidateWithFunc(funcEnumerableValidation, ReadValue(), errors);
                 }
                 else if (Validation is Func<object, string, IEnumerable<string?>> funcModelWithFullPathOfMember)
                 {
@@ -395,26 +342,26 @@ namespace MudBlazor
                 }
                 else
                 {
-                    var value = ReadValue;
+                    var value = ReadValue();
 
                     if (Validation is Func<T?, Task<bool>> funcTaskBooleanValidation)
                     {
-                        await ValidateWithFunc(funcTaskBooleanValidation, ReadValue, errors);
+                        await ValidateWithFunc(funcTaskBooleanValidation, ReadValue(), errors);
                     }
                     else if (Validation is Func<T?, Task<string?>> funcTaskStringValidation)
                     {
-                        await ValidateWithFunc(funcTaskStringValidation, ReadValue, errors);
+                        await ValidateWithFunc(funcTaskStringValidation, ReadValue(), errors);
                     }
                     else if (Validation is Func<T?, Task<IEnumerable<string?>>> funcTaskEnumerableValidation)
                     {
-                        await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue, errors);
+                        await ValidateWithFunc(funcTaskEnumerableValidation, ReadValue(), errors);
                     }
                     else if (Validation is Func<object, string, Task<IEnumerable<string?>>> funcTaskModelWithFullPathOfMember)
                     {
                         await ValidateModelWithFullPathOfMember(funcTaskModelWithFullPathOfMember, errors);
                     }
 
-                    changed = !EqualityComparer<T>.Default.Equals(value, ReadValue);
+                    changed = !EqualityComparer<T>.Default.Equals(value, ReadValue());
                 }
 
                 // Run each validation attributes of the property targeted with `For`
@@ -422,14 +369,14 @@ namespace MudBlazor
                 {
                     foreach (var attr in _validationAttrsFor)
                     {
-                        ValidateWithAttribute(attr, ReadValue, errors);
+                        ValidateWithAttribute(attr, ReadValue(), errors);
                     }
                 }
 
                 // required error (must be last, because it is least important!)
                 if (Required)
                 {
-                    if (Touched && !HasValue(ReadValue))
+                    if (Touched && !HasValue(ReadValue()))
                     {
                         errors.Add(RequiredError);
                     }
@@ -440,30 +387,15 @@ namespace MudBlazor
                 // If Value has changed while we were validating it, ignore results and exit
                 if (!changed)
                 {
-                    if (EditContext is not null)
-                    {
-                        // Surface the assessment through the message store instead of writing ErrorState directly. OnValidationStateChanged then applies the merged messages (#13381).
-                        StageEditContextValidationMessages(errors);
-                    }
-                    else
-                    {
-                        // Error/ErrorText are consumer-managed unless this component has its own validation source; publishing an empty assessment here would wipe a consumer-set error on every validate pass (#12732, #11244, #4593).
-                        // _hasInternalError keeps us writing long enough to clear an error this component previously published (e.g. a resolved conversion error) even after its source goes away.
-                        // _validationAttrsFor is non-null but empty when the For-targeted property carries no ValidationAttribute, so require an actual attribute rather than just a non-null For.
-                        var hasValidationSource = Validation is not null || Required || _validationAttrsFor?.Any() == true || ConversionError;
-                        if (hasValidationSource || _hasInternalError)
-                        {
-                            _hasInternalError = errors.Count > 0;
-                            ValidationErrors = errors;
-                            await ErrorState.SetValueAsync(errors.Count > 0);
-                            await ErrorTextState.SetValueAsync(errors.FirstOrDefault());
-                        }
-
-                        // Refresh the aria-describedby error id and the form/render regardless, so a consumer-managed error stays wired up.
-                        await UpdateErrorIdStateAsync(HasErrors);
-                        Form?.Update(this);
-                        StateHasChanged();
-                    }
+                    // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
+                    // if Error and ErrorText are set by the user, setting them here will have no effect.
+                    // if Error, create an error id that can be used by aria-describedby on input control
+                    ValidationErrors = errors;
+                    Error = errors.Count > 0;
+                    ErrorText = errors.FirstOrDefault();
+                    ErrorId = HasErrors ? Guid.NewGuid().ToString() : null;
+                    Form?.Update(this);
+                    StateHasChanged();
                 }
             }
         }
@@ -475,17 +407,8 @@ namespace MudBlazor
                 return !IsNullOrWhiteSpace(valueString);
             }
 
-            // A collection value (e.g. a multi-file MudFileUpload bound to an empty list) only counts as a value when it holds at least one element.
-            if (value is System.Collections.IEnumerable enumerable)
-            {
-                return enumerable.Cast<object?>().Any();
-            }
-
             return value is not null;
         }
-
-        /// <inheritdoc />
-        bool IFormComponent.HasValue() => HasValue(ReadValue);
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "In the context of EditContext.Model / FieldIdentifier.Model they won't get trimmed.")]
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T? value, List<string> errors)
@@ -695,15 +618,15 @@ namespace MudBlazor
         public async Task ResetAsync()
         {
             await ResetValueAsync();
-            await ResetValidationAsync();
+            ResetValidation();
         }
 
         protected virtual async Task ResetValueAsync()
         {
             /* to be overridden */
-            await SetValueCoreAsync(default);
+            await WriteValueAsync(default);
             Touched = false;
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
 
         /// <summary>
@@ -712,18 +635,12 @@ namespace MudBlazor
         /// <remarks>
         /// When called, the <see cref="Error"/>, <see cref="ErrorText"/>, and <see cref="ValidationErrors"/> properties are all reset.
         /// </remarks>
-        public virtual async Task ResetValidationAsync()
+        public void ResetValidation()
         {
-            await ErrorState.SetValueAsync(false);
+            Error = false;
             ValidationErrors.Clear();
-            await ErrorTextState.SetValueAsync(null);
-            await UpdateErrorIdStateAsync(false);
-            ResetConverterErrors();
-            _lastInternalErrors = [];
-            _hasInternalError = false;
-            RetractStagedEditContextMessages();
-
-            await InvokeAsync(StateHasChanged);
+            ErrorText = null;
+            StateHasChanged();
         }
 
         #endregion
@@ -737,7 +654,7 @@ namespace MudBlazor
         /// When using an <see cref="EditForm"/>, gets a context used to perform validation.
         /// </remarks>
         [CascadingParameter]
-        private EditContext? EditContext { get; set; }
+        private EditContext? EditContext { get; set; } = default!;
 
         /// <summary>
         /// Triggers field to be validated.
@@ -746,72 +663,7 @@ namespace MudBlazor
         {
             if (!IsNullOrEmpty(_fieldIdentifier.FieldName))
             {
-                // A genuine value change hands the field to the external validators. If they stay silent for it, restore our own assessment so it isn't lost.
-                ClearStagedEditContextMessages();
                 EditContext?.NotifyFieldChanged(_fieldIdentifier);
-                StageEditContextValidationMessages(_lastInternalErrors);
-            }
-        }
-
-        /// <summary>
-        /// Surfaces this component's own errors to the EditContext without dirtying the form.
-        /// </summary>
-        private void StageEditContextValidationMessages(List<string> errors)
-        {
-            // Without an EditContext or a field identity (no For) there is nothing to stage against.
-            var editContext = EditContext;
-            if (editContext is null || _editContextValidationMessages is null || _fieldIdentifier.Equals(default))
-            {
-                return;
-            }
-
-            var changed = _hasStagedEditContextMessages;
-            ClearStagedEditContextMessages();
-            _lastInternalErrors = errors;
-
-            // While an external validator holds messages for this field it is authoritative; staging ours alongside would duplicate them in a ValidationSummary.
-            if (errors.Count > 0 && !editContext.GetValidationMessages(_fieldIdentifier).Any())
-            {
-                foreach (var error in errors)
-                {
-                    _editContextValidationMessages.Add(_fieldIdentifier, error);
-                }
-
-                _hasStagedEditContextMessages = true;
-                changed = true;
-            }
-
-            if (changed)
-            {
-                editContext.NotifyValidationStateChanged();
-            }
-        }
-
-        private void ClearStagedEditContextMessages()
-        {
-            if (_editContextValidationMessages is not null && !_fieldIdentifier.Equals(default))
-            {
-                _editContextValidationMessages.Clear(_fieldIdentifier);
-            }
-
-            _hasStagedEditContextMessages = false;
-        }
-
-        private void OnValidationRequested(object? sender, ValidationRequestedEventArgs e)
-        {
-            // Submit re-runs the external validators over every field; ours must not duplicate theirs.
-            RetractStagedEditContextMessages();
-        }
-
-        /// <summary>
-        /// Clears any staged messages and refreshes the display so a retracted error can't linger.
-        /// </summary>
-        private void RetractStagedEditContextMessages()
-        {
-            if (_hasStagedEditContextMessages)
-            {
-                ClearStagedEditContextMessages();
-                EditContext?.NotifyValidationStateChanged();
             }
         }
 
@@ -836,38 +688,19 @@ namespace MudBlazor
         /// </summary>
         private IEnumerable<ValidationAttribute>? _validationAttrsFor;
 
-        private async void OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+        private void OnValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
         {
-            try
+            if (EditContext is not null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
             {
-                if (EditContext is not null && !_fieldIdentifier.Equals(default))
-                {
-                    var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
-                    var hasError = errorMessages.Length > 0;
-                    //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
-                    await ErrorState.SetValueAsync(hasError);
-                    await ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null);
-                    await UpdateErrorIdStateAsync(hasError);
+                var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
+                Error = errorMessages.Length > 0;
+                ErrorText = Error ? errorMessages[0] : null;
 
-                    ValidationErrors.Clear();
-                    ValidationErrors.AddRange(errorMessages);
+                ValidationErrors.Clear();
+                ValidationErrors.AddRange(errorMessages);
 
-                    await InvokeAsync(StateHasChanged);
-                }
+                StateHasChanged();
             }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception, "An unexpected exception occurred: {ExceptionMessage}", exception.Message);
-            }
-        }
-
-        private Task UpdateErrorIdStateAsync(bool hasErrors)
-        {
-            var errorId = hasErrors
-                ? ErrorIdState.RenderValue ?? ErrorIdState.Value ?? Guid.NewGuid().ToString()
-                : ErrorIdState.RenderValue;
-
-            return ErrorIdState.SetValueAsync(errorId);
         }
 
         /// <summary>
@@ -885,30 +718,13 @@ namespace MudBlazor
         /// </summary>
         private EditContext? _currentEditContext;
 
-        /// <summary>
-        /// Surfaces this component's own validation assessment to a cascaded EditContext (#13381).
-        /// </summary>
-        private ValidationMessageStore? _editContextValidationMessages;
-
-        private bool _hasStagedEditContextMessages;
-
-        private bool _hasInternalError;
-
-        /// <summary>
-        /// The most recent internal assessment, kept so <see cref="EditFormValidate"/> can restore it when the external validators produce nothing for the field.
-        /// </summary>
-        private List<string> _lastInternalErrors = [];
-
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
-                // For is a fresh expression instance on every render for an inline lambda, so only do the reflection and rebinding work when the field it points at actually changed.
-                var fieldIdentifier = FieldIdentifier.Create(For);
-                if (!_fieldIdentifier.Equals(fieldIdentifier))
+                // if there is an EditContext, there is no need for internal validation as it will get overwritten by 'OnValidationStateChanged'
+                if (EditContext is null)
                 {
                     // Extract validation attributes
                     // Sourced from https://stackoverflow.com/a/43076222/4839162
@@ -921,18 +737,9 @@ namespace MudBlazor
                     var propertyInfo = expression.Expression?.Type.GetProperty(expression.Member.Name);
 #pragma warning restore IL2075
                     _validationAttrsFor = propertyInfo?.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
-
-                    // Drop anything staged for the previous field and reconcile the display so its error can't linger on the newly bound field.
-                    var wasStaged = _hasStagedEditContextMessages;
-                    ClearStagedEditContextMessages();
-                    _lastInternalErrors = [];
-                    _fieldIdentifier = fieldIdentifier;
-                    if (wasStaged)
-                    {
-                        EditContext?.NotifyValidationStateChanged();
-                    }
                 }
 
+                _fieldIdentifier = FieldIdentifier.Create(For);
                 _currentFor = For;
             }
 
@@ -940,15 +747,7 @@ namespace MudBlazor
             {
                 DetachValidationStateChangedListener();
                 EditContext.OnValidationStateChanged += OnValidationStateChanged;
-                EditContext.OnValidationRequested += OnValidationRequested;
-                _editContextValidationMessages = new ValidationMessageStore(EditContext);
                 _currentEditContext = EditContext;
-            }
-            else if (EditContext is null && _currentEditContext is not null)
-            {
-                // The cascaded EditContext was removed; detach so staged state can't outlive it.
-                DetachValidationStateChangedListener();
-                _currentEditContext = null;
             }
         }
 
@@ -957,16 +756,6 @@ namespace MudBlazor
             if (_currentEditContext is not null)
             {
                 _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
-                _currentEditContext.OnValidationRequested -= OnValidationRequested;
-                var hadStagedMessages = _hasStagedEditContextMessages;
-                _editContextValidationMessages?.Clear();
-                _editContextValidationMessages = null;
-                _hasStagedEditContextMessages = false;
-                if (hadStagedMessages)
-                {
-                    // We just removed our staged messages from the context (on dispose or an EditContext swap); refresh subscribers like a ValidationSummary so a cleared error can't linger.
-                    _currentEditContext.NotifyValidationStateChanged();
-                }
             }
         }
 
@@ -986,239 +775,9 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Sets the culture used for parsing and formatting values in this component.
-        /// </summary>
-        /// <remarks>
-        /// This method updates the <see cref="Culture"/> parameter.
-        /// The converter will automatically use the latest culture when performing conversions.
-        /// If the converter supports <see cref="ICultureAwareConverter"/>, it will be updated with the new culture and format after the state change.
-        /// </remarks>
-        /// <param name="newCultureInfo">The new <see cref="CultureInfo"/> to use for this component. Must not be <c>null</c>.</param>
-        /// <returns>
-        /// A <see cref="Task"/> representing the asynchronous operation of updating the culture.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="newCultureInfo"/> is <c>null</c>.
-        /// </exception>
-        protected async Task SetCultureAsync(CultureInfo newCultureInfo)
-        {
-            ArgumentNullException.ThrowIfNull(newCultureInfo);
+        protected virtual T? ReadValue() => _value;
 
-            await _cultureState.SetValueAsync(newCultureInfo);
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-        }
-
-        /// <summary>
-        /// Called when the <see cref="Culture"/> or format string changes.
-        /// </summary>
-        /// <remarks>
-        /// Override this method in derived components to react to changes in culture or format settings.
-        /// The default implementation updates the converter with the latest culture and format,
-        /// but only if the converter implements <see cref="ICultureAwareConverter"/>.
-        /// This method is typically invoked automatically when the <see cref="Culture"/> or format parameter changes,
-        /// allowing components to refresh parsing and formatting logic as needed.
-        /// </remarks>
-        /// <returns>
-        /// A <see cref="Task"/> representing the asynchronous operation.
-        /// </returns>
-        protected virtual Task OnCultureAndFormatChangedAsync()
-        {
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Called when the <see cref="Converter"/> parameter changes.
-        /// </summary>
-        /// <remarks>
-        /// Override this method in derived components to react to changes in the converter.
-        /// The default implementation updates the converter with the latest culture and format,
-        /// but only if the converter implements <see cref="ICultureAwareConverter"/>.
-        /// This method is typically invoked automatically when the <see cref="Converter"/> parameter is set or updated,
-        /// allowing components to refresh parsing and formatting logic as needed.
-        /// </remarks>
-        /// <returns>
-        /// A <see cref="Task"/> representing the asynchronous operation.
-        /// </returns>
-        protected virtual Task OnConverterChangedAsync()
-        {
-            InjectCultureAndFormatToConverter(GetCulture, GetFormat);
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Returns the <see cref="CultureInfo"/> used for parsing and formatting values in this component.
-        /// </summary>
-        /// <remarks>
-        /// Override this method in derived components to provide a custom culture for value conversion and display.
-        /// The culture is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>) 
-        /// to control how values are parsed from and formatted to strings, such as date, time, or numeric formats.
-        /// <para>
-        /// By default, this method returns the value of the <see cref="Culture"/> parameter, which is tracked by the component's state.
-        /// </para>
-        /// </remarks>
-        /// <returns>
-        /// The <see cref="CultureInfo"/> to be used for parsing and formatting values.
-        /// </returns>
-        protected virtual CultureInfo GetCulture() => _cultureState.Value;
-
-        /// <summary>
-        /// Returns the format string used for parsing and formatting values in this component.
-        /// </summary>
-        /// <remarks>
-        /// Override this method in derived components to provide a custom format string for value conversion and display.
-        /// The format string is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>) 
-        /// to control how values are parsed from and formatted to strings, such as date, time, or numeric formats.
-        /// <para>
-        /// By default, this method returns <c>null</c>, which means the converter will use its default formatting behavior.
-        /// </para>
-        /// </remarks>
-        /// <returns>
-        /// A format string to be used for parsing and formatting values, or <c>null</c> to use the default format.
-        /// </returns>
-        protected virtual string? GetFormat() => null;
-
-        /// <summary>
-        /// Returns the default converter used to convert between the component's model type <typeparamref name="T"/> and value type <typeparamref name="U"/>.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This method is used when no custom <see cref="Converter"/> is provided (that is, when <see cref="Converter"/> is <c>null</c>). Derived components must
-        /// override this method to supply an appropriate default converter for their value type. The converter is responsible for converting
-        /// between the model value and the input value, including parsing, formatting, and handling culture-specific conversions if needed via
-        /// <see cref="ICultureAwareConverter"/>.
-        /// </para>
-        /// <para>
-        /// This method is called at most once per component instance: it is invoked the first time a default converter is needed (when
-        /// <see cref="Converter"/> is <c>null</c>), and the returned converter is cached and reused for all subsequent operations. Do not include
-        /// conditional logic that depends on per-call state or parameters.
-        /// </para>
-        /// </remarks>
-        /// <returns>
-        /// An <see cref="IConverter{T, U}"/> instance that performs the default conversion for this component.
-        /// </returns>
-        protected abstract IConverter<T?, U?> GetDefaultConverter();
-
-        /// <summary>
-        /// Converts the specified input value of type <typeparamref name="U"/> to the model value of type <typeparamref name="T"/>.
-        /// </summary>
-        /// <remarks>
-        /// This method uses the current <see cref="Converter"/> (or the default converter <see cref="GetDefaultConverter"/> if none is set) to convert the input value
-        /// from the component's value type to its model type. If conversion fails, the error is captured and can be accessed via
-        /// <see cref="ConversionError"/> and <see cref="ConversionErrorMessage"/>.
-        /// </remarks>
-        /// <param name="input">The input value to convert.</param>
-        /// <returns>
-        /// The converted value of type <typeparamref name="T"/>, or <c>null</c> if conversion fails.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if <see cref="GetDefaultConverter"/> returns <c>null</c>, which indicates a programming error in the derived component class.
-        /// </exception>
-        protected virtual T? ConvertGet(U? input)
-        {
-            var converter = GetConverter();
-            var result = converter.TryConvertBack(input);
-            _getConversionResult = result;
-            HandleConversionResult(result);
-
-            return result.Value;
-        }
-
-        /// <summary>
-        /// Converts the specified model value of type <typeparamref name="T"/> to the component's value type <typeparamref name="U"/>.
-        /// </summary>
-        /// <remarks>
-        /// This method uses the current <see cref="Converter"/> (or the default converter from <see cref="GetDefaultConverter"/> if none is set) to convert the model value
-        /// to the component's value type. If conversion fails, the error is captured and can be accessed via
-        /// <see cref="ConversionError"/> and <see cref="ConversionErrorMessage"/>.
-        /// </remarks>
-        /// <param name="input">The model value to convert.</param>
-        /// <returns>
-        /// The converted value of type <typeparamref name="U"/>, or <c>null</c> if conversion fails.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if <see cref="GetDefaultConverter"/> returns <c>null</c>, which indicates a programming error in the derived component class.
-        /// </exception>
-        protected virtual U? ConvertSet(T? input)
-        {
-            var converter = GetConverter();
-            var result = converter.TryConvert(input);
-            _setConversionResult = result;
-            HandleConversionResult(result);
-
-            return result.Value;
-        }
-
-        /// <summary>
-        /// Gets the converter used to convert between the component's model type <typeparamref name="T"/> and value type <typeparamref name="U"/>.
-        /// </summary>
-        /// <remarks>
-        /// If the <see cref="Converter"/> property is set, this method returns it. Otherwise, it returns the default converter from <see cref="GetDefaultConverter"/>.
-        /// If no converter is available, an <see cref="InvalidOperationException"/> is thrown.
-        /// </remarks>
-        /// <returns>
-        /// An <see cref="IConverter{T, U}"/> instance for value conversion.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if neither <see cref="Converter"/> nor <see cref="GetDefaultConverter"/> provide a non-null converter.
-        /// </exception>
-        protected internal IConverter<T?, U?> GetConverter()
-        {
-            if (Converter is not null)
-            {
-                return Converter;
-            }
-
-            // Cached default converter
-            return _defaultConverter ??= GetDefaultConverter() ?? throw new InvalidOperationException(
-                $"{nameof(GetDefaultConverter)} must return a non-null IConverter.");
-        }
-
-        private void HandleConversionResult<TResult>(ConversionResult<TResult?> result)
-        {
-            if (result.Success)
-            {
-                return;
-            }
-
-            if (result.ErrorMessageKey is not null)
-            {
-                OnConversionError(result.ErrorMessageKey, result.ErrorMessageArgs);
-            }
-            else
-            {
-                OnConversionError(result.ExceptionError.Message, []);
-            }
-        }
-
-        private void OnConversionError(string error, object[] arguments)
-        {
-            // note: we need to update the form here because the conversion error might lead to not updating the value
-            // ... which leads to not updating the form
-            Touched = true;
-            Form?.Update(this);
-            OnConversionErrorOccurred(Localizer[error, arguments]);
-        }
-
-        private void InjectCultureAndFormatToConverter(Func<CultureInfo> culture, Func<string?> format)
-        {
-            if (GetConverter() is ICultureAwareConverter cultureAwareConverter)
-            {
-                cultureAwareConverter.Culture = culture;
-                cultureAwareConverter.Format = format;
-            }
-        }
-
-        protected void ResetConverterErrors()
-        {
-            _getConversionResult = null;
-            _setConversionResult = null;
-        }
-
-        protected internal virtual T? ReadValue => _value;
-
-        protected virtual Task SetValueCoreAsync(T? value)
+        protected virtual Task WriteValueAsync(T? value)
         {
             _value = value;
 
@@ -1228,23 +787,21 @@ namespace MudBlazor
         /// <summary>
         /// Called to dispose this instance.
         /// </summary>
-        protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
+        /// <param name="disposing"><see langword="true"/> if called within <see cref="IDisposable.Dispose"/>.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+        }
 
-        /// <inheritdoc />
-        public async ValueTask DisposeAsync()
+        void IDisposable.Dispose()
         {
             try
             {
                 Form?.Remove(this);
             }
-            catch
-            {
-                // ignored
-            }
+            catch { /* ignore */ }
 
             DetachValidationStateChangedListener();
-            await DisposeAsyncCore();
-            GC.SuppressFinalize(this);
+            Dispose(disposing: true);
         }
     }
 }

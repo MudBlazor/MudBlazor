@@ -7,11 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-
-/// <summary>
-/// A set of action buttons.  
-/// </summary>
-/// <seealso cref="MudIconButton" />
+#nullable enable
 public partial class MudToolBar : MudComponentBase
 {
     protected string Classname =>
@@ -23,11 +19,8 @@ public partial class MudToolBar : MudComponentBase
             .Build();
 
     /// <summary>
-    /// Uses compact vertical padding.
+    /// Uses compact padding.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ToolBar.Appearance)]
     public bool Dense { get; set; }
@@ -35,19 +28,13 @@ public partial class MudToolBar : MudComponentBase
     /// <summary>
     /// Adds left and right padding.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>true</c>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ToolBar.Appearance)]
     public bool Gutters { get; set; } = true;
 
     /// <summary>
-    /// The content of the toolbar.
+    /// Child content of component.
     /// </summary>
-    /// <remarks>
-    /// Typically a set of <see cref="MudIconButton"/> components.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ToolBar.Behavior)]
     public RenderFragment? ChildContent { get; set; }
@@ -55,9 +42,6 @@ public partial class MudToolBar : MudComponentBase
     /// <summary>
     /// Allows the toolbar's content to wrap.
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.ToolBar.Behavior)]
     public bool WrapContent { get; set; }

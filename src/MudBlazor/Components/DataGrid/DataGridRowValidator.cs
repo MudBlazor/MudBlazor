@@ -10,23 +10,18 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
     /// <summary>
-    /// Validates the input fields of a <see cref="MudDataGrid{T}"/> row during inline or form editing.
+    /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
     /// </summary>
     public class DataGridRowValidator : IForm
     {
         /// <summary>
         /// Indicates whether the row is valid.
         /// </summary>
-        /// <remarks>
-        /// Reading this drives a validation pass that only completes inline for synchronous validators.
-        /// Callers that must respect asynchronous validators should await <see cref="ValidateAsync"/> and read <see cref="Errors"/>.
-        /// </remarks>
         public bool IsValid
         {
             get
             {
-                // IForm.IsValid must remain synchronous, so drive validation without awaiting; exceptions are forwarded to MudGlobal.UnhandledExceptionHandler.
-                ValidateAsync().CatchAndLog();
+                Validate();
                 return Errors.Length <= 0;
             }
         }
@@ -39,6 +34,7 @@ namespace MudBlazor
             get => _errors.ToArray();
         }
 
+#nullable enable
         /// <summary>
         /// The data to validate for this row.
         /// </summary>
@@ -47,6 +43,7 @@ namespace MudBlazor
 #nullable disable
 
         protected HashSet<string> _errors = new HashSet<string>();
+
 
         void IForm.FieldChanged(IFormComponent formControl, object newValue)
         {
@@ -65,6 +62,7 @@ namespace MudBlazor
 
         void IForm.Update(IFormComponent formControl)
         {
+            //Validate(formControl);
         }
 
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
@@ -72,27 +70,19 @@ namespace MudBlazor
         /// <summary>
         /// Checks this row for any validation errors.
         /// </summary>
-        [Obsolete("Use ValidateAsync instead.")]
         [ExcludeFromCodeCoverage]
         public void Validate()
-        {
-            ValidateAsync().CatchAndLog();
-        }
-
-        /// <summary>
-        /// Checks this row for any validation errors, awaiting asynchronous validators before collecting their errors.
-        /// </summary>
-        public async Task ValidateAsync()
         {
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                await formControl.ValidateAsync();
+                formControl.Validate();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);
                 }
             }
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿<MudPopoverProvider/>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider/>
 
 <MudDateRangePicker id="picker" @ref="_picker" Label="With action buttons" @bind-DateRange="DateRange">
     <PickerActions>
@@ -7,10 +8,10 @@
 </MudDateRangePicker>
 
 @code {
-    private MudDateRangePicker _picker = null!;
+    private MudDateRangePicker _picker;
 
     [Parameter]
-    public DateRange? DateRange { get; set; }
+    public DateRange DateRange { get; set; }
 
     [Parameter]
     public bool CloseOnClear { get; set; }

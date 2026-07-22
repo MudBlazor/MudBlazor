@@ -2,11 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
+#nullable enable
 public partial class ParameterStateChildBindingTestComp : MudComponentBase
 {
     private readonly List<(bool lastValue, bool value)> _parameterChangedEvents = new();
@@ -16,13 +20,13 @@ public partial class ParameterStateChildBindingTestComp : MudComponentBase
     [Parameter]
     public string? Id { get; set; }
 
-    [Parameter, ParameterState]
+    [Parameter]
     public bool Expanded { get; set; }
 
     [Parameter]
     public EventCallback<bool> ExpandedChanged { get; set; }
 
-    public ParameterState<bool> ExpandedState => _expandedState;
+    public bool ExpandedStateValue => _expandedState.Value;
 
     public IReadOnlyList<(bool lastValue, bool value)> ParameterChangedEvents => _parameterChangedEvents;
 

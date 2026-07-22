@@ -17,11 +17,5 @@ public enum DataGridEditMode
     /// <summary>
     /// A dialog is shown to edit values.
     /// </summary>
-    Form,
-
-    /// <summary>
-    /// A single row is edited inline when triggered manually.
-    /// Only the row being edited shows input controls; all other rows display plain text.
-    /// </summary>
-    Inline
+    Form
 }

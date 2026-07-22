@@ -1,17 +1,17 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
+using System;
+
 namespace MudBlazor
 {
-    /// <summary>
-    /// Global options for the <see cref="ISnackbar"/> service.
-    /// </summary>
+#nullable enable
     public class SnackbarConfiguration : CommonSnackbarOptions
     {
         private bool _newestOnTop;
         private bool _preventDuplicates;
         private int _maxDisplayedSnackbars;
-        private string _positionClass = string.Empty;
+        private string? _positionClass;
         private bool _clearAfterNavigation;
 
         internal event Action? OnUpdate;
@@ -46,7 +46,7 @@ namespace MudBlazor
             }
         }
 
-        public string PositionClass
+        public string? PositionClass
         {
             get => _positionClass;
             set

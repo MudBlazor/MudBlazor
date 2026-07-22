@@ -2,13 +2,17 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
+#nullable enable
 /// <summary>
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
@@ -103,33 +107,9 @@ internal class ParameterAttachBuilder<T>
     /// </summary>
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Func<ParameterChangedContext, Task> parameterChangedHandler)
-    {
-        _parameterChangedHandler = new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler);
-
-        return this;
-    }
-
-    /// <summary>
-    /// Sets the parameter changed handler for the parameter.
-    /// </summary>
-    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
-    /// <returns>The current instance of the builder.</returns>
     public ParameterAttachBuilder<T> WithParameterChangedHandler(Action parameterChangedHandler)
     {
         _parameterChangedHandler = new ParameterChangedLambdaHandler<T>(parameterChangedHandler);
-
-        return this;
-    }
-
-    /// <summary>
-    /// Sets the parameter changed handler for the parameter.
-    /// </summary>
-    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
-    /// <returns>The current instance of the builder.</returns>
-    public ParameterAttachBuilder<T> WithParameterChangedHandler(Action<ParameterChangedContext> parameterChangedHandler)
-    {
-        _parameterChangedHandler = new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler);
 
         return this;
     }
@@ -185,12 +165,9 @@ internal class ParameterAttachBuilder<T>
     /// <exception cref="ArgumentNullException">Thrown when required parameters are not provided.</exception>
     public ParameterStateInternal<T> Attach()
     {
-        ArgumentNullException.ThrowIfNull(_metadata);
-        ArgumentNullException.ThrowIfNull(_getParameterValueFunc);
-
         return ParameterStateInternal<T>.Attach(
-            _metadata,
-            _getParameterValueFunc,
+            _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
+            _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
             _eventCallbackFunc,
             _parameterChangedHandler,
             _comparer

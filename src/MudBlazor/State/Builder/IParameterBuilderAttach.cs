@@ -4,6 +4,7 @@
 
 namespace MudBlazor.State.Builder;
 
+#nullable enable
 /// <summary>
 /// Represents an interface for non-generic builder to attach <see cref="ParameterState{T}"/>.
 /// </summary>

@@ -2,11 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.State.Invocation;
 
 namespace MudBlazor.State;
 
+#nullable enable
 /// <summary>
 /// Represents the lifecycle methods for Blazor component parameters used by the ParameterState framework.
 /// </summary>
@@ -30,17 +31,15 @@ internal interface IParameterComponentLifeCycle
     bool HasParameterChanged(ParameterView parameters);
 
     /// <summary>
-    /// Creates a snapshot of the current parameter invocation state.
+    /// Called by the <see cref="ParameterState{T}"/> framework when <see cref="IParameterChangedHandler{T}"/> is supplied.
     /// </summary>
     /// <remarks>
-    /// This method is used by the parameter lifecycle system to prepare safe, immutable handler invocation snapshots.
-    /// The returned object contains cloned event arguments and current handler bindings, ensuring that
-    /// asynchronous invocations or concurrent renders cannot mutate live state.
+    /// This method is intended for internal use and is controlled by the <see cref="MudComponentBase"/> and <see cref="ParameterScopeContainer"/>.
+    /// It should only be invoked after <see cref="HasParameterChanged"/> has been called.
+    /// Direct invocation of this method by external code is discouraged.
     /// </remarks>
-    /// <returns>
-    /// An <see cref="IParameterStateInvocationSnapshot"/> representing the current state of the parameter.
-    /// </returns>
-    IParameterStateInvocationSnapshot CreateInvocationSnapshot();
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    Task ParameterChangeHandleAsync();
 
     /// <summary>
     /// Invoked when <see cref="ComponentBase.OnInitialized"/> is called, used to set the initial parameter value.

@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// The type of <see cref="MudDivider"/> to display.
 /// </summary>
-[EnumExtensions]
 public enum DividerType
 {
     /// <summary>

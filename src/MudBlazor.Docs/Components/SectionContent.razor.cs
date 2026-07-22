@@ -2,7 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
@@ -15,7 +20,6 @@ public partial class SectionContent
 {
     [Inject] protected IJsApiService JsApiService { get; set; }
     [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
-    [Inject] protected ISnackbar SnackbarService { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
@@ -46,7 +50,7 @@ public partial class SectionContent
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
 
-    private readonly string _snippetId = Identifier.Create();
+    private string _snippetId = "_" + Guid.NewGuid().ToString()[..8];
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
@@ -56,8 +60,9 @@ public partial class SectionContent
     [Parameter] public bool FullWidth { get; set; }
     [Parameter] public string Code { get; set; }
     [Parameter] public string HighLight { get; set; }
-    [Parameter] public IReadOnlyList<CodeFile> Codes { get; set; }
+    [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
+
     [Parameter] public bool IsApiSection { get; set; }
 
     private bool _hasCode;
@@ -68,7 +73,7 @@ public partial class SectionContent
         if (Codes != null)
         {
             _hasCode = true;
-            _activeCode = Codes.FirstOrDefault()?.Code;
+            _activeCode = Codes.FirstOrDefault()?.code;
         }
         else if (!string.IsNullOrWhiteSpace(Code))
         {
@@ -89,9 +94,14 @@ public partial class SectionContent
 
     private string GetActiveCode(string value)
     {
-        return value == _activeCode
-            ? "file-button active"
-            : "file-button";
+        if (value == _activeCode)
+        {
+            return "file-button active";
+        }
+        else
+        {
+            return "file-button";
+        }
     }
 
     private async Task CopyTextToClipboard()
@@ -99,10 +109,9 @@ public partial class SectionContent
         var code = Snippets.GetCode(Code);
         code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
-        SnackbarService.Add("Copied to clipboard");
     }
 
-    private RenderFragment CodeComponent(string code) => builder =>
+    RenderFragment CodeComponent(string code) => builder =>
     {
         try
         {
@@ -111,9 +120,6 @@ public partial class SectionContent
             using (var reader = new StreamReader(stream))
             {
                 var read = reader.ReadToEnd();
-
-                // Ensure the code uses spaces for indentation regardless of the formatting within the source code.
-                read = read.Replace("\t", "    ");
 
                 if (!string.IsNullOrEmpty(HighLight))
                 {
@@ -141,7 +147,7 @@ public partial class SectionContent
         }
     };
 
-    protected virtual async Task RunOnTryMudBlazorAsync()
+    protected virtual async void RunOnTryMudBlazor()
     {
         string firstFile;
         if (Codes == null)
@@ -150,15 +156,10 @@ public partial class SectionContent
         }
         else
         {
-            firstFile = Codes.FirstOrDefault()?.Code ?? Code;
+            firstFile = Codes.FirstOrDefault().code;
         }
 
-        if (string.IsNullOrWhiteSpace(firstFile))
-        {
-            return;
-        }
-
-        // We use a separator that won't be in code so we can send 2 files later
+        // We use a separator that wont be in code so we can send 2 files later
         var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(firstFile);
 
         // Add dialogs for dialog examples
@@ -176,13 +177,13 @@ public partial class SectionContent
         // Data models
         if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
         {
-            if (ElementRegularExpression().IsMatch(codeFiles))
+            if (ElementRegularExpression().Match(codeFiles).Success)
             {
                 var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
                 codeFiles = codeFiles + (char)31 + elementCodeFile;
             }
 
-            if (ServerRegularExpression().IsMatch(codeFiles))
+            if (ServerRegularExpression().Match(codeFiles).Success)
             {
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
@@ -191,8 +192,8 @@ public partial class SectionContent
 
         var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
         // var tryMudBlazorLocation = "https://localhost:5001/";
-        const string TryMudBlazorLocation = "https://try.mudblazor.com/";
-        var url = $"{TryMudBlazorLocation}snippet/{codeFileEncoded}";
+        var tryMudBlazorLocation = "https://try.mudblazor.com/";
+        var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
         await JsApiService.OpenInNewTabAsync(url);
     }
 

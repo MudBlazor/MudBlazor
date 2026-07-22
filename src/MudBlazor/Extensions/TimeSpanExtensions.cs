@@ -1,10 +1,9 @@
-﻿// Copyright (c) MudBlazor 2021
-// MudBlazor licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿// Copyright (c) MudBlazor
+
+using System;
 
 // ReSharper disable once CheckNamespace
-namespace MudBlazor;
-
+#nullable enable
 internal static class TimeSpanExtensions
 {
     public static string ToIsoString(this TimeSpan self, bool seconds = false, bool ms = false)
@@ -20,6 +19,11 @@ internal static class TimeSpanExtensions
         }
 
         return $"{self.Hours:D2}:{self.Minutes:D2}-{self.Seconds:D2},{self.Milliseconds}";
+    }
+
+    public static string? ToIsoString(this TimeSpan? self, bool seconds = false, bool ms = false)
+    {
+        return self?.ToIsoString(seconds, ms);
     }
 
     public static int ToAmPmHour(this TimeSpan time)

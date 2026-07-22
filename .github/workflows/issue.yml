@@ -1,0 +1,53 @@
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  apply-label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const body = context.payload.issue.body;
+            let labels = [];
+            if (body.includes("- [X] I would like to do a Pull Request")) {
+              labels.push("wants to do a PR");
+              const author = context.payload.issue.user.login;              
+              const comment = 'Thanks for wanting to do a PR, @' + author + ' !\n\nWe try to merge all non-breaking bugfixes and will deliberate the value of new features for the community. Please note there is no guarantee your pull request will be merged, so if you want to be sure before investing the work, feel free to contact the team first.'
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              })
+              github.rest.issues.addAssignees({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                assignees: [author]
+              })
+              console.log("Author wants to do a PR.");
+            }
+        
+            if (body.includes("### Feature request type\n\nNew component")) {
+              labels.push("new component");
+              console.log("Feature request type: new component.");
+              
+            } else if (body.includes("### Feature request type\n\nPerformance improvement")) {
+              labels.push("performance");
+              console.log("Feature request type: Performance improvement.");
+              
+            } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
+              labels.push("docs");
+              console.log("Bug type: docs.");
+            }
+            
+            if(labels.length != 0) {
+              github.rest.issues.addLabels({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: labels
+              })
+            }

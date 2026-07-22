@@ -1,9 +1,5 @@
 @import '../abstracts/variables';
 
-.mud-chip-container {
-  display: contents;
-}
-
 .mud-chip {
   border: none;
   display: inline-flex;
@@ -128,13 +124,9 @@
     }
 
     @media(hover: hover) and (pointer: fine) {
-      &:hover:not(.mud-disabled) {
+      &:hover {
         opacity: .70;
       }
-    }
-
-    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
-      opacity: .70;
     }
   }
 
@@ -204,7 +196,7 @@
     &.mud-chip-color-#{$color} {
       color: var(--mud-palette-#{$color});
       --mud-ripple-color: var(--mud-palette-#{$color}) !important;
-      border: 1px solid rgba(var(--mud-palette-#{$color}-rgb), var(--mud-palette-border-opacity));
+      border: 1px solid var(--mud-palette-#{$color});
 
       &.mud-clickable {
         @media(hover: hover) and (pointer: fine) {

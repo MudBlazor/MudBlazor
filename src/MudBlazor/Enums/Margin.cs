@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the amount of spacing to apply.
 /// </summary>
-[EnumExtensions]
 public enum Margin
 {
     /// <summary>

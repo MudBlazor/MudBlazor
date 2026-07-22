@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel;
-using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the display orientation of a <see cref="MudPicker{T}"/>.
 /// </summary>
-[EnumExtensions]
 public enum Orientation
 {
     /// <summary>

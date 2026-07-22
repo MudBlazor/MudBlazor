@@ -2,18 +2,25 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
 namespace MudBlazor;
 
-/// <summary>
-/// Base class for input masks applied by the <see cref="MudMask"/>, <see cref="MudTextField{T}"/>, and <see cref="MudPicker{T}"/> components.
-/// Concrete masks include <see cref="PatternMask"/>, <see cref="RegexMask"/>, <see cref="BlockMask"/>, <see cref="DateMask"/>, and <see cref="MultiMask"/>.
-/// </summary>
 public abstract class BaseMask : IMask
 {
-    private bool _initialized;
-    private Dictionary<char, MaskChar> _maskDict = [];
-    private MaskChar[] _maskChars = [MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*')];
-    private HashSet<char> _delimiters = [];
+    protected bool _initialized;
+    protected Dictionary<char, MaskChar> _maskDict;
+
+    protected MaskChar[] _maskChars = new MaskChar[]
+    {
+        MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
+    };
+
+    // per definition (unless defined otherwise in subclasses) delimiters are chars
+    // in the mask which do not match any MaskChar
+    protected HashSet<char> _delimiters;
 
     /// <summary>
     /// Initialize all internal data structures. Can be called multiple times,
@@ -27,43 +34,51 @@ public abstract class BaseMask : IMask
         InitInternals();
     }
 
-    /// <summary>
-    /// Initializes this mask's characters and delimiters.
-    /// </summary>
     protected virtual void InitInternals()
     {
         _maskDict = _maskChars.ToDictionary(x => x.Char);
-        _delimiters = string.IsNullOrEmpty(Mask)
-            ? []
-            : new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
+        if (Mask == null)
+            _delimiters = new();
+        else
+            _delimiters =
+                new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
 
-    /// <inheritdoc />
-    public string? Mask { get; protected set; }
+    /// <summary>
+    /// The mask defining the structure of the accepted input. 
+    /// The mask format depends on the implementation.
+    /// </summary>
+    public string Mask { get; protected set; }
 
-    /// <inheritdoc />
-    public string? Text { get; protected set; }
+    /// <summary>
+    /// The current text as it is displayed in the component
+    /// </summary>
+    public string Text { get; protected set; }
 
-    /// <inheritdoc />
-    public virtual string? GetCleanText() => Text;
+    /// <summary>
+    /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
+    /// Clean text will usually be used for the Value property of a mask field. 
+    /// </summary>
+    public virtual string GetCleanText() => Text;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// The current caret position
+    /// </summary>
     public int CaretPos { get; set; }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// The currently selected sub-section of the Text
+    /// </summary>
     public (int, int)? Selection { get; set; }
 
     /// <summary>
-    /// Allows showing text which consists only of delimiter characters.
+    /// Allow showing a text consisting only of delimiters
     /// </summary>
     public bool AllowOnlyDelimiters { get; set; }
 
     /// <summary>
-    /// The list of mask characters and their meanings.
+    /// The mask chars define the meaning of single mask characters such as 'a', '0'
     /// </summary>
-    /// <remarks>
-    /// Defaults to <c>a</c> for letters, <c>0</c> for digits, and <c>*</c> for letters or digits.
-    /// </remarks>
     public MaskChar[] MaskChars
     {
         get => _maskChars;
@@ -76,127 +91,89 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Gets the mask dictionary for internal use.
+    /// Implements user input at the current caret position (single key strokes or pasting longer text)
     /// </summary>
-    protected IReadOnlyDictionary<char, MaskChar> MaskDictionary => _maskDict;
+    /// <param name="input"></param>
+    public abstract void Insert(string input);
 
     /// <summary>
-    /// Gets the set of delimiter characters.
+    /// Implements the effect of the Del key at the current cursor position
     /// </summary>
-    protected IReadOnlySet<char> Delimiters => _delimiters;
-
-    /// <summary>
-    /// Adds a delimiter character to the set of delimiters.
-    /// </summary>
-    /// <param name="delimiter">The delimiter character to add.</param>
-    protected void AddDelimiter(char delimiter)
-    {
-        _delimiters.Add(delimiter);
-    }
-
-    /// <summary>
-    /// Clears all delimiters and sets new ones.
-    /// </summary>
-    /// <param name="delimiters">The string of delimiter characters.</param>
-    protected void SetDelimiters(string delimiters)
-    {
-        _delimiters.Clear();
-        foreach (var d in delimiters)
-        {
-            _delimiters.Add(d);
-        }
-    }
-
-    /// <summary>
-    /// Forces reinitialization on next access.
-    /// </summary>
-    protected void ForceReinitialize()
-    {
-        _initialized = false;
-    }
-
-    /// <inheritdoc />
-    public abstract void Insert(string? input);
-
-    /// <inheritdoc />
     public abstract void Delete();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Implements the effect of the Backspace key at the current cursor position
+    /// </summary>
     public abstract void Backspace();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Reset the mask as if the whole textfield was cleared
+    /// </summary>
     public void Clear()
     {
         Init();
-        Text = string.Empty;
+        Text = "";
         CaretPos = 0;
         Selection = null;
     }
 
-    /// <inheritdoc />
-    public void SetText(string? text)
+    /// <summary>
+    /// Overwrite the mask text from the outside without losing caret position
+    /// </summary>
+    /// <param name="text"></param>
+    public void SetText(string text)
     {
         Clear();
         Insert(text);
     }
 
     /// <summary>
-    /// Overwrites the text and updates the cursor position.
+    /// Update Text from the inside
     /// </summary>
-    /// <param name="text">The text to set.</param>
+    /// <param name="text"></param>
     protected virtual void UpdateText(string text)
     {
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (!AllowOnlyDelimiters && text.All(c => Delimiters.Contains(c)))
+        if (!AllowOnlyDelimiters && text.All(c => _delimiters.Contains(c)))
         {
-            Text = string.Empty;
+            Text = "";
             return;
         }
-
         Text = text;
         CaretPos = ConsolidateCaret(Text, CaretPos);
     }
 
-    /// <summary>
-    /// Deletes the selected characters.
-    /// </summary>
-    /// <param name="align">When <c>true</c>, the text to the right of the selection will be shifted to the left.</param>
     protected abstract void DeleteSelection(bool align);
 
-    /// <summary>
-    /// Gets whether the specified character is a mask character.
-    /// </summary>
-    /// <param name="maskChar">The character to examine.</param>
-    /// <returns>When <c>true</c>, the character is a delimiter.</returns>
     protected virtual bool IsDelimiter(char maskChar)
     {
-        return Delimiters.Contains(maskChar);
+        return _delimiters.Contains(maskChar);
     }
 
-    /// <inheritdoc />
-    public virtual void UpdateFrom(IMask? mask)
+    public virtual void UpdateFrom(IMask o)
     {
-        if (mask is BaseMask baseMask)
+        if (o is not BaseMask other)
+            return;
+        if (other.Mask != Mask)
         {
-            if (baseMask.Mask != Mask)
-            {
-                Mask = baseMask.Mask;
-                _initialized = false;
-            }
-
-            var maskChars = new HashSet<MaskChar>(_maskChars);
-            if (baseMask.MaskChars.Length != MaskChars.Length || baseMask.MaskChars.Any(maskChar => !maskChars.Contains(maskChar)))
-            {
-                _maskChars = baseMask.MaskChars;
-                _initialized = false;
-            }
-
-            Refresh();
+            Mask = other.Mask;
+            _initialized = false;
         }
+        if (other.MaskChars != null)
+        {
+            var maskChars = new HashSet<MaskChar>(_maskChars ?? new MaskChar[0]);
+            if (other.MaskChars.Length != MaskChars.Length || other.MaskChars.Any(x => !maskChars.Contains(x)))
+            {
+                _maskChars = other.MaskChars;
+                _initialized = false;
+            }
+        }
+        Refresh();
     }
 
     /// <summary>
-    /// Reapplies parameters after they change, while preserving <see cref="Text"/>, <see cref="CaretPos"/>, and <see cref="Selection"/>.
+    /// Re-applies parameters (i.e. after they changed) without loosing internal state
+    /// such as Text, CaretPos and Selection
     /// </summary>
     protected virtual void Refresh()
     {
@@ -205,35 +182,23 @@ public abstract class BaseMask : IMask
         SetText(Text);
         CaretPos = ConsolidateCaret(Text, caret);
         Selection = sel;
-        if (sel is not null)
-        {
+        if (sel != null)
             ConsolidateSelection();
-        }
     }
 
-    /// <summary>
-    /// Divides a string into two strings at the specified index.
-    /// </summary>
-    /// <param name="text">The text to split.</param>
-    /// <param name="pos">The index of the string to split.</param>
-    /// <returns>Two strings split at the specified position.</returns>
-    internal static (string, string) SplitAt(string? text, int pos)
+    internal static (string, string) SplitAt(string text, int pos)
     {
-        text ??= string.Empty;
         if (pos <= 0)
-            return (string.Empty, text);
+            return ("", text);
         if (pos >= text.Length)
-            return (text, string.Empty);
-        return (text[..pos], text[pos..]);
+            return (text, "");
+        return (text.Substring(0, pos), text.Substring(pos));
     }
 
     /// <summary>
-    /// Adjusts the cursor position to be within the text.
+    /// Performs simple border checks and corrections to the caret position
     /// </summary>
-    /// <remarks>
-    /// If <see cref="Text"/> is empty, the position becomes <c>0</c>.  If the position was beyond the length of <see cref="Text"/>, the position is adjusted to the end.  Otherwise, no change is made.
-    /// </remarks>
-    protected static int ConsolidateCaret(string? text, int caretPos)
+    protected static int ConsolidateCaret(string text, int caretPos)
     {
         if (string.IsNullOrEmpty(text) || caretPos < 0)
             return 0;
@@ -243,14 +208,12 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Adjusts the selection to be within the text.
+    /// Performs simple border checks and corrections to the selection
+    /// and removes zero-width selections
     /// </summary>
-    /// <remarks>
-    /// If the selection has zero length, the selection is deleted.  If the selection start is less than <c>0</c>, the start becomes <c>0</c>.  If the end is longer than the length of <see cref="Text"/>, the end becomes the text length.
-    /// </remarks>
     protected void ConsolidateSelection()
     {
-        if (Selection is null)
+        if (Selection == null)
             return;
         var sel = Selection.Value;
         if (sel.Item1 == sel.Item2)
@@ -261,42 +224,44 @@ public abstract class BaseMask : IMask
         }
         if (sel.Item1 < 0)
             sel.Item1 = 0;
-        if (Text is not null && sel.Item2 >= Text.Length)
+        if (sel.Item2 >= Text.Length)
             sel.Item2 = Text.Length;
     }
 
-    internal static (string, string, string) SplitSelection(string? text, (int, int) selection)
+    internal static (string, string, string) SplitSelection(string text, (int, int) selection)
     {
         var start = ConsolidateCaret(text, selection.Item1);
         var end = ConsolidateCaret(text, selection.Item2);
-        var (s1, rest) = SplitAt(text, start);
-        var (s2, s3) = SplitAt(rest, end - start);
+        (var s1, var rest) = SplitAt(text, start);
+        (var s2, var s3) = SplitAt(rest, end - start);
         return (s1, s2, s3);
     }
 
     /// <summary>
-    /// Gets the current input including markers for caret and selection.
+    /// Prints a representation of the input including markers for caret and selection
+    /// Used heavily by the tests
     /// </summary>
-    /// <remarks>
-    /// This method is used frequently by unit tests.
-    /// </remarks>
+    /// <returns></returns>
     public override string ToString()
     {
-        var text = Text ?? string.Empty;
+        var text = Text ?? "";
         ConsolidateSelection();
-        if (Selection is null)
+        if (Selection == null)
         {
             var pos = ConsolidateCaret(text, CaretPos);
             if (pos < text.Length)
                 return text.Insert(pos, "|");
             return text + "|";
         }
-
-        var sel = Selection.Value;
-        var start = ConsolidateCaret(text, sel.Item1);
-        var end = ConsolidateCaret(text, sel.Item2);
-        var (s1, rest) = SplitAt(text, start);
-        var (s2, s3) = SplitAt(rest, end - start);
-        return s1 + "[" + s2 + "]" + s3;
+        else
+        {
+            var sel = Selection.Value;
+            var start = ConsolidateCaret(text, sel.Item1);
+            var end = ConsolidateCaret(text, sel.Item2);
+            (var s1, var rest) = SplitAt(text, start);
+            (var s2, var s3) = SplitAt(rest, end - start);
+            return s1 + "[" + s2 + "]" + s3;
+        }
     }
+
 }

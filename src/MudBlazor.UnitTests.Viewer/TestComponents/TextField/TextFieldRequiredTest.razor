@@ -1,10 +1,14 @@
-﻿<MudTextField @bind-Value="_value"
-              Label="Input"
-              Variant="Variant.Filled"
-              Required="true" />
+﻿@namespace MudBlazor.UnitTests.TestComponents
 
+<MudTextField
+    @bind-Value="_value"
+     Label="Input" 
+     Variant="Variant.Filled"
+     Required="true"
+/>
+   
 @code {
     public static string __description__ = "The textfield should not show required-error initially!";
 
-    private string _value = string.Empty;
+    private string _value = "";
 }

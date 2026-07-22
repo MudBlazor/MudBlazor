@@ -2,6 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 
@@ -28,7 +35,6 @@ public partial class ApiBreadcrumbs
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        // Start with the top-level link
         Items = [new("Index", "/api")];
 
         if (Type == null)

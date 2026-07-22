@@ -2,8 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using AwesomeAssertions;
+using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -53,6 +56,7 @@ namespace MudBlazor.UnitTests.Utilities
                 "KndlaXoxKndlaXoyKndlacOfMSp3ZWnDnzIqeSBhMyp5IGE0KnknYTMqeSdhNCp5K2EzKnkrYTQqeS1h" +
                 "Myp5LWE0KnlhMyp5YTQqej96IDA1MD96IDIxP3ohMjE/ejIwP3oyMj96YTIxP3rCqTIxP1sxKl8xKsKt" +
                 "bjEyKsKtbjEzKsSwKg==";
+
 
         private static string[] s_orderedFileNames = new string[]
         {
@@ -333,7 +337,6 @@ namespace MudBlazor.UnitTests.Utilities
         /// Test if comparer works as intended
         /// </summary>
         [Test]
-        [SetCulture("en-US")]
         public void SortFiles()
         {
             var fileNames = Encoding.UTF8.GetString(Convert.FromBase64String(s_encodedFileNames))
