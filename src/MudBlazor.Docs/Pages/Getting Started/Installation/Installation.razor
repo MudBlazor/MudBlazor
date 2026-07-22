@@ -70,12 +70,24 @@
                         new CodeFile("WebAssembly Standalone", nameof(InstallationManualCssFontsExampleWasmStandalone)),
                     ])" />
                     <SectionHeader Class="mt-6">
-                        <Description>Next, add the MudBlazor js file next to the default Blazor script at the end:</Description>
+                        <Description>
+                            MudBlazor loads its script automatically, so the following reference is optional.
+                            Adding it next to the default Blazor script is still recommended on .NET 9 or later so that
+                            <CodeInline>@@Assets[""]</CodeInline> fingerprints the file for cache busting;
+                            auto-loading detects the reference and won't load the script twice.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Codes="@([
                         new CodeFile(".NET 9", nameof(InstallScriptManual)),
                         new CodeFile("WebAssembly Standalone", nameof(InstallScriptManualWasmStandalone)),
                     ])" />
+                    <SectionHeader Class="mt-6">
+                        <Description>
+                            To disable auto-loading entirely, for example under a strict Content Security Policy,
+                            set <CodeInline>window.mudBlazorNoAutoLoad = true</CodeInline> in a script before the Blazor script.
+                            Blazor Hybrid apps on WebView packages older than 8.0.4 don't run JavaScript initializers and still require the manual reference.
+                        </Description>
+                    </SectionHeader>
                     <SectionHeader Class="mt-6">
                         <Description>
                             On .NET 9 or later, ensure that the <CodeInline>app.MapStaticAssets()</CodeInline> middleware
