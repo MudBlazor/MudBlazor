@@ -81,8 +81,7 @@
                     }
                     else if (_items != null && _items.Length != 0)
                     {
-                        @* T="string" (not T) so the list's unset SelectedValue is null. With T it would default to default(T), which for value types is a real item (an enum 0 member) that the list would wrongly highlight (#13358). This component applies the selected styling itself, below. *@
-                        <MudList T="string" Class="@ListClass" Dense="@Dense">
+                        <MudList T="T" Class="@ListClass" Dense="@Dense">
                             @if (BeforeItemsTemplate is not null)
                             {
                                 <div class="mud-autocomplete-before-items">
@@ -97,8 +96,7 @@
                                 bool showSelectedTemplate = ItemSelectedTemplate is not null && isSelected;
                                 bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
                                 var captureIndex = index;
-                                var itemId = GetListItemId(captureIndex);
-                                <MudListItem T="string" Value="@itemId" @key="@item" id="@itemId" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (showDisabledTemplate)
                                     {
                                         @ItemDisabledTemplate!(item)

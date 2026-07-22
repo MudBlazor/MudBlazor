@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             await ButtonClicker(); // open popover
             var pop = await comp.WaitForElementAsync("div.mud-popover"); // doesn't return until popover exists
             await comp.WaitForAssertionAsync(() => pop.ClassList.Should().Contain("mud-popover-open")); // wait for popover to open
-            var items = comp.FindComponents<MudListItem<string>>();
+            var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
             items.Count.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
             await ButtonClicker(); // close popover
             await comp.WaitForAssertionAsync(() => pop.ClassList.Should().NotContain("mud-popover-open"));
@@ -48,7 +48,7 @@ namespace MudBlazor.UnitTests.Components
             // set search
             await autocompleteComponent.Find("input").InputAsync("he");
             await comp.WaitForAssertionAsync(() => pop.ClassList.Should().Contain("mud-popover-open"));
-            var filteredItems = comp.FindComponents<MudListItem<string>>();
+            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>();
             filteredItems.Count.Should().Be(4, "The popover should contain 4 items.");
         }
 
@@ -1813,7 +1813,7 @@ namespace MudBlazor.UnitTests.Components
             //California should appear as index 5 and be selected
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
-            var items = comp.FindComponents<MudListItem<string>>().ToArray();
+            var items = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items.Length.Should().Be(10);
             var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
             items.ToList().IndexOf(item).Should().Be(5);
@@ -1830,7 +1830,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
-            var items2 = comp.FindComponents<MudListItem<string>>().ToArray();
+            var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items2.Length.Should().Be(10);
             // Select Virginia
             var item2 = items2.FirstOrDefault(x => x.Markup.Contains(virginiaString));
@@ -1925,6 +1925,25 @@ namespace MudBlazor.UnitTests.Components
                 var carrot = comp.FindAll(listItemQuerySelector).Single(x => x.TextContent.Contains("carrot"));
                 carrot.ClassList.Should().Contain(disabledItemClassName);
                 carrot.ClassList.Should().Contain(selectedItemClassName);
+            });
+        }
+
+        // A consumer can put a typed MudListItem<T> in BeforeItemsTemplate/AfterItemsTemplate.
+        // It sits under the internal list, so it must keep finding the cascading MudList<T> to inherit Dense, and must not be selected just because its value is default(T).
+        [Test]
+        public async Task Autocomplete_TypedListItemInBeforeItemsTemplate_InheritsListCascade()
+        {
+            var comp = Context.Render<AutocompleteBeforeItemsListItemTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteBeforeItemsListItemTest.Season>>();
+
+            await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var beforeItem = comp.Find("div.before-item");
+                beforeItem.ClassList.Should().Contain("mud-list-item-dense");
+                beforeItem.ClassList.Should().NotContain("mud-selected-item");
             });
         }
 

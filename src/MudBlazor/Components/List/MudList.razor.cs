@@ -59,7 +59,29 @@ namespace MudBlazor
         private readonly HashSet<MudList<T>> _childLists = new();
         private HashSet<T> _selection = new();
         private MudListItem<T>? _activeItem;
+        private bool _hasSingleSelection;
         internal MudList<T> TopLevelList { get; private set; }
+
+        /// <summary>
+        /// Whether a single selection actually exists, as opposed to <see cref="SelectedValue"/> merely sitting at its default.
+        /// </summary>
+        /// <remarks>
+        /// <c>default(T)</c> is <c>null</c> for reference types but a real value for value types, so an unsupplied <see cref="SelectedValue"/> would otherwise select whichever item happens to equal it, such as an enum's <c>0</c> member (#13358).
+        /// Read from the top-level list because nested lists never receive <see cref="SelectedValue"/> themselves.
+        /// </remarks>
+        private bool HasSingleSelection => TopLevelList._hasSingleSelection;
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            // Distinguishes "SelectedValue was never supplied" from "SelectedValue was supplied and happens to be default(T)".
+            if (parameters.TryGetValue<T?>(nameof(SelectedValue), out _))
+            {
+                _hasSingleSelection = true;
+            }
+
+            return base.SetParametersAsync(parameters);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-list")
@@ -310,7 +332,7 @@ namespace MudBlazor
             }
 
             _items.Add(item);
-            if (_selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
+            if (HasSingleSelection && _selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {
                 item.SetSelected(true);
                 _activeItem = item;
@@ -354,6 +376,8 @@ namespace MudBlazor
 
         internal async Task SetSelectedValueAsync(T? value)
         {
+            // Selecting from within the list establishes a selection even when SelectedValue was never supplied.
+            TopLevelList._hasSingleSelection = true;
             await _selectedValueState.SetValueAsync(value);
             // Find and update selected item based on value
             UpdateSelectedItem(value);
@@ -407,9 +431,10 @@ namespace MudBlazor
         private void UpdateSelectedItem(T? value)
         {
             MudListItem<T>? selectedItem = null;
+            var hasSelection = HasSingleSelection;
             foreach (var item in _items.ToArray())
             {
-                var selected = value is not null && Comparer.Equals(value, item.GetValue());
+                var selected = hasSelection && value is not null && Comparer.Equals(value, item.GetValue());
                 item.SetSelected(selected);
                 if (selected)
                 {
