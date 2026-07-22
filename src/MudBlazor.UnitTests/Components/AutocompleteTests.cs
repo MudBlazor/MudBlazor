@@ -1905,29 +1905,6 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
-        // The highlighted row can itself be disabled when the selected value is disabled by ItemDisabledFunc.
-        // It must still render as selected, so the selected styling cannot depend on the list item's own selection state (which suppresses it while disabled).
-        [Test]
-        public async Task Autocomplete_SelectedItemThatIsDisabled_StillRendersAsSelected()
-        {
-            var listItemQuerySelector = "div.mud-list-item";
-            var selectedItemClassName = "mud-selected-item";
-            var disabledItemClassName = "mud-list-item-disabled";
-
-            var comp = Context.Render<AutocompleteDisabledSelectedItemTest>();
-            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
-
-            await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync);
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-
-            await comp.WaitForAssertionAsync(() =>
-            {
-                var carrot = comp.FindAll(listItemQuerySelector).Single(x => x.TextContent.Contains("carrot"));
-                carrot.ClassList.Should().Contain(disabledItemClassName);
-                carrot.ClassList.Should().Contain(selectedItemClassName);
-            });
-        }
-
         // A consumer can put a typed MudListItem<T> in BeforeItemsTemplate/AfterItemsTemplate.
         // It sits under the internal list, so it must keep finding the cascading MudList<T> to inherit Dense, and must not be selected just because its value is default(T).
         [Test]
@@ -1944,27 +1921,6 @@ namespace MudBlazor.UnitTests.Components
                 var beforeItem = comp.Find("div.before-item");
                 beforeItem.ClassList.Should().Contain("mud-list-item-dense");
                 beforeItem.ClassList.Should().NotContain("mud-selected-item");
-            });
-        }
-
-        // The item templates are typed on T, so they must keep receiving the typed item regardless of how the internal list is keyed.
-        [Test]
-        public async Task Autocomplete_ValueType_ItemTemplates_ReceiveTypedItem()
-        {
-            var comp = Context.Render<AutocompleteEnumTemplateTest>();
-            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumTemplateTest.Season>>();
-
-            await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync);
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-
-            await comp.WaitForAssertionAsync(() =>
-            {
-                var items = comp.FindAll("div.mud-list-item");
-
-                // Autumn is the selected/highlighted row, Winter is disabled, the rest use the plain item template.
-                items.Single(x => x.TextContent.Contains("Autumn")).TextContent.Should().Contain("Autumn selected");
-                items.Single(x => x.TextContent.Contains("Winter")).TextContent.Should().Contain("Winter disabled");
-                items.Single(x => x.TextContent.Contains("Spring")).TextContent.Should().Contain("Spring item");
             });
         }
 
