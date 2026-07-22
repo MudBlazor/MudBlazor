@@ -1,0 +1,38 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete T="Season" SearchFunc="@SearchAsync" @bind-Value="@Value"
+                 ItemDisabledFunc="@(x => x == Season.Winter)" Strict="false" DebounceInterval="0">
+    <ItemTemplate>
+        <MudText>@context item</MudText>
+    </ItemTemplate>
+    <ItemSelectedTemplate>
+        <MudText>@context selected</MudText>
+    </ItemSelectedTemplate>
+    <ItemDisabledTemplate>
+        <MudText>@context disabled</MudText>
+    </ItemDisabledTemplate>
+</MudAutocomplete>
+
+@code {
+    public Season Value { get; set; } = Season.Autumn;
+
+    public enum Season
+    {
+        Spring = 0,
+        Summer = 1,
+        Autumn = 2,
+        Winter = 3,
+    }
+
+    public Task<IEnumerable<Season>> SearchAsync(string? text, CancellationToken token)
+    {
+        var all = Enum.GetValues<Season>().AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            all = all.Where(x => x.ToString().Contains(text, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        return Task.FromResult(all);
+    }
+}

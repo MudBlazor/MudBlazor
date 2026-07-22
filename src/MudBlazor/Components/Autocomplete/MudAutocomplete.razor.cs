@@ -66,19 +66,11 @@ namespace MudBlazor
                 .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
                 .Build();
 
-        protected string GetListItemClassname() =>
+        protected string GetListItemClassname(bool isSelected) =>
             new CssBuilder()
+                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
                 .AddClass(ListItemClass)
                 .Build();
-
-        /// <summary>
-        /// The element id of the currently highlighted drop-down item, or <c>null</c> when nothing is highlightable.
-        /// </summary>
-        /// <remarks>
-        /// Drives the internal <see cref="MudList{T}"/>, which is keyed by element id (a reference type) rather than <c>T</c>, so it highlights the same item this component tracks with <see cref="_selectedListItemIndex"/>.
-        /// A nullable id lets "no highlighted row" be genuinely <c>null</c>; a <c>T</c> selected value cannot, because for value types <c>default(T)</c> is itself a valid item (such as an enum with a <c>0</c> member) that the list would wrongly highlight (#13358).
-        /// </remarks>
-        private string? HighlightedItemId => _selectedListItemIndex >= 0 ? GetListItemId(_selectedListItemIndex) : null;
 
         /// <summary>
         /// Input's classnames, separated by space.
