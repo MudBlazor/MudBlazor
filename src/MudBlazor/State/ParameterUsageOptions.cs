@@ -4,6 +4,9 @@
 
 namespace MudBlazor.State;
 
+/// <summary>
+/// How a registered component parameter participates in reading and writing its value.
+/// </summary>
 [Flags]
 public enum ParameterUsageOptions
 {

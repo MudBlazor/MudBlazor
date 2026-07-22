@@ -4,6 +4,9 @@
 
 namespace MudBlazor;
 
+/// <summary>
+/// Controls a dialog that is currently open, from within its content.
+/// </summary>
 public interface IMudDialogInstance
 {
     /// <summary>

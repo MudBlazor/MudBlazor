@@ -12,7 +12,8 @@ using MudBlazor.Interpolation;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base class for axis-based line charts.
+/// Base class for line-based charts such as <see cref="Line{T}"/>, <see cref="ScatterPlot{T}"/>, and <see cref="TimeSeries{T}"/>.
+/// Generates the SVG line paths, area fills, and data-point markers, with optional interpolation.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>

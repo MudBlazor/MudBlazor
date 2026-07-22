@@ -10,6 +10,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Renders the collapsible header row for a group of items in a <see cref="MudDataGrid{T}"/> when grouping is enabled.
+    /// </summary>
+    /// <typeparam name="T">The type of item displayed in the data grid.</typeparam>
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         internal bool _expanded;

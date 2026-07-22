@@ -6,6 +6,9 @@ using System.Globalization;
 
 namespace MudBlazor.Utilities
 {
+    /// <summary>
+    /// Compares objects using natural sort order, so strings with embedded numbers sort the way a person expects.
+    /// </summary>
     public class NaturalComparer : IComparer<object?>
     {
         public int Compare(object? x, object? y)

@@ -9,9 +9,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
+    /// Renders custom template content in a <see cref="MudDataGrid{T}"/> column instead of binding to a data property, useful for action buttons or computed cells.
     /// </summary>
     /// <typeparam name="T">The type of data represented by this column.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="PropertyColumn{T, TProperty}" />
+    /// <seealso cref="SelectColumn{T}" />
     public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
     {
         public override object? CellContent(T item)

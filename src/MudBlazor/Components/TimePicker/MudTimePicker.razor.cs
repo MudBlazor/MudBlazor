@@ -14,10 +14,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Provides a simple way to select time values.
+    /// Selects a time of day from a clock shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudDateRangePicker" />
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private OpenTo _currentView;

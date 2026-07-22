@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a node in a Sankey diagram, including its name, column position, and optional color.
+/// A node in a <see cref="Sankey{T}" /> diagram, defined by its name, column position, and optional color.
 /// </summary>
 /// <remarks>
 /// A Sankey diagram node is a visual element that represents a specific entity or category in

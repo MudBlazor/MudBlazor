@@ -14,10 +14,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a vertical set of values.
+    /// Base class for columns in a <see cref="MudDataGrid{T}"/> such as <see cref="PropertyColumn{T, TProperty}"/>, <see cref="TemplateColumn{T}"/>, and <see cref="SelectColumn{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item for this column.</typeparam>
-    /// <seealso cref="MudDataGrid{T}"/>
+    /// <seealso cref="HierarchyColumn{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="PropertyColumn{T, TProperty}" />
+    /// <seealso cref="SelectColumn{T}" />
+    /// <seealso cref="TemplateColumn{T}" />
     public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };

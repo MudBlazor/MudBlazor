@@ -100,6 +100,12 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, DialogParameters.Default, options);
+        }
+
+        /// <inheritdoc />
         public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters) where T : IComponent
         {
             return ShowAsync<T>(string.Empty, parameters, DialogOptions.Default);
@@ -116,6 +122,12 @@ namespace MudBlazor
             DialogOptions? options) where T : IComponent
         {
             return ShowAsync(typeof(T), title, parameters, options ?? DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters, DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, options);
         }
 
         /// <inheritdoc />
