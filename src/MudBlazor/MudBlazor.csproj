@@ -67,6 +67,7 @@
       <FilesToClean Include="./TScripts/combined/MudBlazor.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.js.map" />
+      <FilesToClean Include="./wwwroot/MudBlazor.lib.module.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
       <FilesToClean Include="./wwwroot/MudBlazor.css" />
       <FilesToClean Include="./wwwroot/css/MudBlazor.css" />
@@ -107,7 +108,7 @@
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
-    <WebAssetOutputs Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.js.map;wwwroot/MudBlazor.min.css" />
+    <WebAssetOutputs Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.js.map;wwwroot/MudBlazor.lib.module.js;wwwroot/MudBlazor.min.css" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -129,7 +130,8 @@
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <Exec Command="$(BunWrapper) run build.mjs"
-          WorkingDirectory="$(MSBuildProjectDirectory)" />
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          EnvironmentVariables="MUD_VERSION=$(Version)" />
   </Target>
 
   <Target Name="BuildWebAssetsInner"
@@ -148,7 +150,8 @@
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <Exec Command="$(BunWrapper) run build.mjs"
-          WorkingDirectory="$(MSBuildProjectDirectory)" />
+          WorkingDirectory="$(MSBuildProjectDirectory)"
+          EnvironmentVariables="MUD_VERSION=$(Version)" />
   </Target>
 
   <Target Name="RegisterGeneratedAssets"

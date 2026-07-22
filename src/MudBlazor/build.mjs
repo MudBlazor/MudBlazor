@@ -22,6 +22,8 @@ const scriptDirectory = path.dirname(scriptFilename);
 const jsDirectory = path.join(scriptDirectory, "TScripts");
 const jsEntrypoint = path.join(scriptDirectory, "TScripts/entrypoint.js");
 const jsOutputFile = path.join(scriptDirectory, "wwwroot/MudBlazor.min.js");
+const initializerInput = path.join(scriptDirectory, "TScripts/MudBlazor.lib.module.js");
+const initializerOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.lib.module.js");
 const scssInput = path.join(scriptDirectory, "Styles/MudBlazor.scss");
 const scssInputDir = path.dirname(scssInput);
 const scssOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.min.css");
@@ -69,6 +71,20 @@ async function buildJS() {
         },
         sourcemap: "linked",
     });
+
+    timer.stop();
+}
+
+function buildInitializer() {
+    console.log("Writing JS initializer", initializerOutput);
+    const timer = startTimer("build-initializer");
+
+    // The JS initializer is not bundled; it is emitted verbatim with the package version stamped in
+    // so it can cache-bust MudBlazor.min.js across updates. MSBuild passes MUD_VERSION to build.mjs.
+    const version = process.env.MUD_VERSION || "dev";
+    const content = fs.readFileSync(initializerInput, "utf8").replace("__MUD_VERSION__", version);
+    fs.mkdirSync(path.dirname(initializerOutput), { recursive: true });
+    fs.writeFileSync(initializerOutput, content);
 
     timer.stop();
 }
@@ -126,6 +142,7 @@ function buildSCSS() {
 async function buildAll() {
     await eslint();
     await buildJS();
+    buildInitializer();
     buildSCSS();
     printTimings();
 }
@@ -148,6 +165,7 @@ if (process.argv.includes("watch")) {
             try {
                 await eslint();
                 await buildJS();
+                buildInitializer();
                 printTimings();
             } catch (e) {
                 console.error("JS build failed:", e);

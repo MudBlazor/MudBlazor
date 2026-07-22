@@ -71,10 +71,11 @@
                     ])" />
                     <SectionHeader Class="mt-6">
                         <Description>
-                            MudBlazor loads its script automatically, so the following reference is optional.
-                            Adding it next to the default Blazor script is still recommended on .NET 9 or later so that
-                            <CodeInline>@@Assets[""]</CodeInline> fingerprints the file for cache busting;
-                            auto-loading detects the reference and won't load the script twice.
+                            MudBlazor's script loads automatically with the package version as a cache-busting query,
+                            so no script reference is needed.
+                            Add one manually only to control script order or satisfy a strict Content Security Policy —
+                            auto-loading detects the reference and won't load the script twice — or on Blazor Hybrid with
+                            WebView packages older than 8.0.4, which don't run JavaScript initializers:
                         </Description>
                     </SectionHeader>
                     <SectionContent Codes="@([
@@ -83,9 +84,8 @@
                     ])" />
                     <SectionHeader Class="mt-6">
                         <Description>
-                            To disable auto-loading entirely, for example under a strict Content Security Policy,
-                            set <CodeInline>window.mudBlazorNoAutoLoad = true</CodeInline> in a script before the Blazor script.
-                            Blazor Hybrid apps on WebView packages older than 8.0.4 don't run JavaScript initializers and still require the manual reference.
+                            To disable auto-loading entirely, set <CodeInline>window.mudBlazorNoAutoLoad = true</CodeInline>
+                            in a script before the Blazor script.
                         </Description>
                     </SectionHeader>
                     <SectionHeader Class="mt-6">

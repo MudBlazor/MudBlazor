@@ -1,4 +1,8 @@
 // Blazor JS initializer: auto-loads MudBlazor.min.js so consumers don't have to add the <script> tag manually.
+// build.mjs stamps the package version and emits this file to wwwroot; it is not part of the bundle.
+
+// Cache-busts the bundle across MudBlazor updates.
+const MUD_VERSION = "__MUD_VERSION__";
 
 function alreadyLoaded() {
     // Opt-out for consumers who want to control script placement/order themselves.
@@ -20,16 +24,17 @@ function loadMudScript() {
     }
 
     // Resolve the bundle relative to this module so a non-root <base href> still works.
-    const scriptUrl = new URL('MudBlazor.min.js', import.meta.url).href;
+    const scriptUrl = new URL('MudBlazor.min.js', import.meta.url);
+    scriptUrl.searchParams.set('v', MUD_VERSION);
 
     return new Promise((resolve) => {
         const script = document.createElement('script');
-        script.src = scriptUrl;
+        script.src = scriptUrl.href;
         script.dataset.mudblazor = '';
         // Never block Blazor startup: resolve on error too. A failed load is handled by MudBlazor's own graceful-degradation (interop calls no-op instead of crashing).
         script.onload = () => resolve();
         script.onerror = () => {
-            console.error(`MudBlazor: failed to load ${scriptUrl}. Interactive features will not work.`);
+            console.error(`MudBlazor: failed to load ${scriptUrl.href}. Interactive features will not work.`);
             resolve();
         };
         document.head.appendChild(script);
