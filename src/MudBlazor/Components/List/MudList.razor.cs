@@ -376,9 +376,20 @@ namespace MudBlazor
 
         internal async Task SetSelectedValueAsync(T? value)
         {
+            var hadSelection = TopLevelList._hasSingleSelection;
+            var valueUnchanged = Comparer.Equals(_selectedValueState.Value, value);
+
             // Selecting from within the list establishes a selection even when SelectedValue was never supplied.
             TopLevelList._hasSingleSelection = true;
             await _selectedValueState.SetValueAsync(value);
+
+            // Going from nothing selected to selected is a change even when the value itself did not move, which is what happens when the chosen item equals default(T).
+            // The parameter state suppresses its callback on an unchanged value, so raise it here or an event-only consumer would never hear about the selection it can now see.
+            if (!hadSelection && valueUnchanged)
+            {
+                await SelectedValueChanged.InvokeAsync(value);
+            }
+
             // Find and update selected item based on value
             UpdateSelectedItem(value);
         }

@@ -276,6 +276,45 @@ namespace MudBlazor.UnitTests.Components
             selected[0].TextContent.Should().Contain("Zero");
         }
 
+        // An event-only consumer (SelectedValueChanged without SelectedValue) selecting the item equal to default(T) goes from nothing selected to selected, so it must be told even though the value itself did not change.
+        [Test]
+        public async Task ValueType_EventOnlyConsumer_SelectingDefaultValue_RaisesCallback()
+        {
+            var raised = new List<TestEnum>();
+            var comp = Context.Render<MudList<TestEnum>>(builder => builder
+                .Add(x => x.SelectedValueChanged, v => raised.Add(v))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).Add(x => x.Text, "Zero"))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).Add(x => x.Text, "One")));
+
+            comp.FindAll("div.mud-list-item.mud-selected-item").Should().BeEmpty();
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync(new MouseEventArgs());
+
+            var selected = comp.FindAll("div.mud-list-item.mud-selected-item");
+            selected.Count.Should().Be(1);
+            selected[0].TextContent.Should().Contain("Zero");
+            raised.Should().Equal(TestEnum.Zero);
+
+            // Selecting on from there keeps raising exactly one callback per change.
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync(new MouseEventArgs());
+            raised.Should().Equal(TestEnum.Zero, TestEnum.One);
+        }
+
+        // The counterpart: selecting a non-default item first must raise exactly one callback, not one from the parameter state and another from the no-selection transition.
+        [Test]
+        public async Task ValueType_EventOnlyConsumer_SelectingNonDefaultValue_RaisesCallbackOnce()
+        {
+            var raised = new List<TestEnum>();
+            var comp = Context.Render<MudList<TestEnum>>(builder => builder
+                .Add(x => x.SelectedValueChanged, v => raised.Add(v))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).Add(x => x.Text, "Zero"))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).Add(x => x.Text, "One")));
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync(new MouseEventArgs());
+
+            raised.Should().Equal(TestEnum.One);
+        }
+
         private enum TestEnum
         {
             Zero = 0,
