@@ -265,13 +265,20 @@
                                                         }
                                                     </CascadingValue>
                                                 </tr>
-                                                @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
+                                                @if (ChildRowContent != null || ChildRowRenderer != null) && (_openHierarchies.Contains(item) || !hasHierarchyColumn))
                                                 {
-                                                    <tr class="mud-table-row">
-                                                        <td class="mud-table-cell" colspan="1000">
-                                                            @ChildRowContent(new CellContext<T>(this, item))
-                                                        </td>
-                                                    </tr>
+                                                    @if (ChildRowRenderer != null)
+                                                    {
+                                                        @ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item))
+                                                    }
+                                                    @if (ChildRowContent != null)
+                                                    {
+                                                        <tr class="mud-table-row">
+                                                            <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                                                                @ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
+                                                            </td>
+                                                        </tr>
+                                                    }
                                                 }
                                                 @{ rowIndex++; }
                                             </ChildContent>
