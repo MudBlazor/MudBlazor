@@ -316,6 +316,10 @@
       height: 18px;
       width: 18px;
     }
+
+    .mud-timeline-item-dot-icon {
+      font-size: 14px;
+    }
   }
 
   &.mud-timeline-dot-size-medium {
@@ -326,6 +330,10 @@
       height: 30px;
       width: 30px;
     }
+
+    .mud-timeline-item-dot-icon {
+      font-size: 22px;
+    }
   }
 
   &.mud-timeline-dot-size-large {
@@ -335,6 +343,10 @@
     .mud-timeline-item-dot-inner {
       height: 42px;
       width: 42px;
+    }
+
+    .mud-timeline-item-dot-icon {
+      font-size: 30px;
     }
   }
 

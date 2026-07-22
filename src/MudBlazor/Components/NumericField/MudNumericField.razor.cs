@@ -379,48 +379,21 @@ namespace MudBlazor
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
+            // Track focus like MudBaseInput.InvokeKeyDownAsync (which MudTextField uses) so the
+            // "preserve user text while editing" guard in SetParametersAsync engages while typing.
+            // Without this, the wrapper's _isFocused stays false and the value->text resync reformats
+            // mid-typing on Blazor Server (#13266/#13002 family).
+            _isFocused = true;
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
+            _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
         }
-
-        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
-        {
-            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
-                return;
-            if (obj.DeltaY < 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Increment();
-                else
-                    await Decrement();
-            }
-            else if (obj.DeltaY > 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Decrement();
-                else
-                    await Increment();
-            }
-        }
-
-        /// <summary>
-        /// Reverses the mouse wheel direction.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  
-        /// When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool InvertMouseWheel { get; set; } = false;
 
         /// <summary>
         /// The minimum allowed value.
@@ -516,9 +489,14 @@ namespace MudBlazor
         {
             await SetTextAndUpdateValueAsync(text);
 
-            // Keep formatted text in sync when using formatted input mode.
-            // This also covers onchange updates that can occur around blur timing.
-            if (UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
+            // Keep formatted text in sync with the value when using managed formatting, but only for a
+            // committed change (onchange), never for live typing (oninput). When Immediate is true this
+            // callback runs on every keystroke; reformatting then would rewrite the text mid-typing and
+            // jump the caret to the end, making multi-digit or decimal entry impossible (e.g. typing
+            // "1234" with Format="F3" collapses to "1.000", and "1." loses its trailing characters).
+            // The parsed value stays correct while typing; the text is reformatted on blur instead
+            // (see OnBlurredAsync). This matches the non-Immediate behavior and pre-v9.1 formatting.
+            if (!Immediate && UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
             {
                 var formattedText = ConvertSet(ReadValue);
                 if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))

@@ -164,4 +164,86 @@ public class ChartOptionsTests
         options.ScaleFactor.Should().Be(0.9);
         options.ShowValues.Should().BeFalse();
     }
+
+    [Test]
+    public void BarChartOptions_Defaults_AreExpected()
+    {
+        var options = new BarChartOptions();
+
+        options.Justify.Should().Be(Justify.SpaceBetween);
+        options.FixedBarWidth.Should().BeNull();
+        options.TooltipTitleFormat.Should().Be("{{Y_VALUE}}");
+    }
+
+    [Test]
+    public void BarChartOptions_ImplicitConversion_CopiesBaseChartOptions()
+    {
+        var source = new ChartOptions
+        {
+            ShowLegend = false,
+            ShowToolTips = false,
+            TooltipTitleFormat = "title",
+            TooltipSubtitleFormat = "subtitle",
+            ChartPalette = ["#0000FF"],
+        };
+
+        BarChartOptions result = source;
+
+        result.ShowLegend.Should().BeFalse();
+        result.ShowToolTips.Should().BeFalse();
+        result.TooltipTitleFormat.Should().Be("title");
+        result.TooltipSubtitleFormat.Should().Be("subtitle");
+        result.ChartPalette.Should().BeEquivalentTo(["#0000FF"]);
+    }
+
+    [Test]
+    public void BarChartOptions_BarSpacingRatio_ClampsToRange()
+    {
+        var options = new BarChartOptions();
+
+        options.BarSpacingRatio.Should().Be(0.20);
+
+        options.BarSpacingRatio = 0.5;
+        options.BarSpacingRatio.Should().Be(0.5);
+
+        options.BarSpacingRatio = 2.0;
+        options.BarSpacingRatio.Should().Be(1.0);
+
+        options.BarSpacingRatio = -1.0;
+        options.BarSpacingRatio.Should().Be(0.0);
+    }
+
+    [Test]
+    public void BarChartOptions_SeriesSpacingRatio_ClampsToRange()
+    {
+        var options = new BarChartOptions();
+
+        options.SeriesSpacingRatio.Should().Be(1.0);
+
+        options.SeriesSpacingRatio = 0.5;
+        options.SeriesSpacingRatio.Should().Be(0.5);
+
+        options.SeriesSpacingRatio = 5.0;
+        options.SeriesSpacingRatio.Should().Be(1.0);
+
+        options.SeriesSpacingRatio = 0.0;
+        options.SeriesSpacingRatio.Should().Be(0.1);
+    }
+
+    [Test]
+    public void BarChartOptions_BarWidthRatio_ClampsToRange()
+    {
+        var options = new BarChartOptions();
+
+        options.BarWidthRatio.Should().Be(0.40);
+
+        options.BarWidthRatio = 0.5;
+        options.BarWidthRatio.Should().Be(0.5);
+
+        options.BarWidthRatio = 9.0;
+        options.BarWidthRatio.Should().Be(1.0);
+
+        options.BarWidthRatio = 0.0;
+        options.BarWidthRatio.Should().Be(0.01);
+    }
 }

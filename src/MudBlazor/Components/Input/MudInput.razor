@@ -36,11 +36,9 @@
                   @bind:set="@OnInputOrOnChangeAsync"
                   @onkeydown="@InvokeKeyDownAsync"
                   @onkeyup="@InvokeKeyUpAsync"
-                  @onpaste="@OnPaste"
                   maxlength="@MaxLength"
                   @onkeydown:preventDefault="@KeyDownPreventDefault"
                   @onkeyup:preventDefault="@KeyUpPreventDefault"
-                  @onwheel="@OnMouseWheel"
                   aria-describedby="@GetAriaDescribedByString()"
                   aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
                   required="@Required"
@@ -70,7 +68,6 @@
                maxlength="@MaxLength"
                @onkeydown:preventDefault="KeyDownPreventDefault"
                @onkeyup:preventDefault="@KeyUpPreventDefault"
-               @onwheel="@OnMouseWheel"
                aria-describedby="@GetAriaDescribedByString()"
                aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
                required="@Required"
@@ -83,6 +80,7 @@
              *@
             <div class="@InputClassname"
                  style="@($"display:{(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none")};")"
+                 @attributes="GetDisplayUserAttributes()"
                  @ref="@_elementReference1">
                 @ChildContent
             </div>
@@ -93,6 +91,7 @@
             <div class="@InputClassname"
                  style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
                  tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
+                 @attributes="GetDisplayUserAttributes()"
                  @ref="@_elementReference1">
                 @ChildContent
             </div>

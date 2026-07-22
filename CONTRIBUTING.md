@@ -52,7 +52,13 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
--   [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+-   [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (pinned in `global.json`; it can build the older targets too)
+
+The `MudBlazor` library multi-targets net8.0, net9.0, and net10.0. `dotnet test` and IDE builds only compile the framework that is needed (the tests build just net10.0), but a direct `dotnet build src/MudBlazor` compiles all three. For a faster single-framework build while developing, pass `-f`:
+
+```bash
+dotnet build src/MudBlazor -f net10.0
+```
 
 ## Pull Requests
 - Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in separate Pull Requests

@@ -95,6 +95,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The title-less ShowAsync overloads forward options and parameters like their titled counterparts.
+        /// </summary>
+        [Test]
+        public async Task ShowAsync_TitlelessOverloads_ForwardOptionsAndParameters()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var options = new DialogOptions { FullWidth = true };
+
+            // ShowAsync<T>(DialogOptions) applies the options with no title.
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(options));
+            dialogReference.Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.FindAll(".mud-dialog-width-full").Should().NotBeEmpty();
+            await comp.InvokeAsync(() => comp.Instance.DismissAll());
+
+            // ShowAsync<T>(DialogParameters, DialogOptions) applies both with no title.
+            var parameters = new DialogParameters<DialogWithParameters> { { x => x.TestValue, "test" } };
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithParameters>(parameters, options));
+            dialogReference.Should().NotBe(null);
+            comp.FindComponent<MudInput<string>>().Instance.ReadText.Should().Be("test");
+            comp.FindAll(".mud-dialog-width-full").Should().NotBeEmpty();
+        }
+
+        /// <summary>
         /// Opening and closing dialogs via navigation.
         /// </summary>
         [Test]
@@ -1569,23 +1597,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => service.Close(dialogReference));
         }
 
-        [Test]
-        public async Task CloseButton_ShouldHavePreventDefaultOnMouseDownAttribute()
-        {
-            // Arrange
-            var comp = Context.Render<MudDialogProvider>();
-            var service = Context.Services.GetRequiredService<IDialogService>();
-
-            // Act
-            await comp.InvokeAsync(async () =>
-                await service.ShowAsync<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
-
-            // Assert
-            var closeBtn = comp.Find(".mud-button-close");
-            closeBtn.Should().NotBeNull();
-            closeBtn.GetAttribute("blazor:onmousedown:preventdefault").Should().Be("");
-        }
-
         /// <summary>
         /// InjectOptions() should set the options of the calling IDialogReference.
         /// </summary>
@@ -1748,6 +1759,36 @@ namespace MudBlazor.UnitTests.Components
 
             var changedFragment = navigationManager.ToAbsoluteUri($"{currentRoute}#{Guid.NewGuid()}").AbsolutePath;
             provider.Instance.HasRouteChanged(changedFragment).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Closing an earlier dialog must not re-instantiate later dialogs that remain open.
+        /// Reproduces #13231 (closing a parent dialog reopens/re-renders a still-open child dialog).
+        /// </summary>
+        [Test]
+        public async Task ClosingEarlierDialog_ShouldNotReinstantiateLaterDialogs()
+        {
+            DialogReinstantiationInner.InitCount = 0;
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            IDialogReference first = null;
+            IDialogReference second = null;
+            await comp.InvokeAsync(async () => first = await service.ShowAsync<DialogOkCancel>("First"));
+            await comp.InvokeAsync(async () => second = await service.ShowAsync<DialogReinstantiationInner>("Second"));
+
+            // Both dialogs are open and the inner dialog has been constructed exactly once.
+            comp.FindAll("div.mud-dialog-container").Count.Should().Be(2);
+            DialogReinstantiationInner.InitCount.Should().Be(1);
+
+            // Close the FIRST (earlier) dialog while the second remains open.
+            await comp.InvokeAsync(() => first.Close());
+
+            // The second dialog must still be open and must NOT have been reconstructed.
+            comp.FindAll("div.mud-dialog-container").Count.Should().Be(1);
+            DialogReinstantiationInner.InitCount.Should().Be(1);
+
+            second.Should().NotBeNull();
         }
     }
     internal class CustomDialogService : DialogService

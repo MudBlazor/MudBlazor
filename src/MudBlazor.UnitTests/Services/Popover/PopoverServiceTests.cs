@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
@@ -138,22 +139,41 @@ public class PopoverServiceTests
     {
         // Arrange
         var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var loggerMock = new Mock<ILogger<PopoverService>>();
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = checkForPopoverProvider };
-        var service = CreateService(jsRuntimeMock, options);
+        var service = new PopoverService(loggerMock.Object, jsRuntimeMock, new FakeTimeProvider(), new OptionsWrapper<PopoverOptions>(options));
 
         // Act
+        // No MudPopoverProvider is subscribed (ObserversCount == 0).
+        // This must never throw: throwing from the popover's OnInitializedAsync tears down the circuit mid-render and surfaces as a cryptic ObjectDisposedException on the other components (#11887).
+        // With the check on, it logs an error instead.
         var create = () => service.CreatePopoverAsync(popover);
 
         // Assert
-        if (checkForPopoverProvider)
-        {
-            await create.Should().ThrowAsync<InvalidOperationException>();
-        }
-        else
-        {
-            await create.Should().NotThrowAsync<InvalidOperationException>();
-        }
+        await create.Should().NotThrowAsync();
+        service.ActivePopovers.Should().ContainSingle(x => x.Id == popover.Id);
+        loggerMock.VerifyLogging(PopoverService.MissingProviderMessage, LogLevel.Error, Times.Exactly(checkForPopoverProvider ? 1 : 0));
+    }
+
+    [Test]
+    public async Task CreatePopoverAsync_LogsMissingProviderOnlyOnce()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var loggerMock = new Mock<ILogger<PopoverService>>();
+        var options = new PopoverOptions { CheckForPopoverProvider = true };
+        var service = new PopoverService(loggerMock.Object, jsRuntimeMock, new FakeTimeProvider(), new OptionsWrapper<PopoverOptions>(options));
+
+        // Act
+        // Several popovers are created without a provider (e.g. multiple pickers on a page).
+        // The actionable error must be logged only once so the log is not flooded with the same message.
+        await service.CreatePopoverAsync(new PopoverMock());
+        await service.CreatePopoverAsync(new PopoverMock());
+
+        // Assert
+        service.ActivePopovers.Should().HaveCount(2);
+        loggerMock.VerifyLogging(PopoverService.MissingProviderMessage, LogLevel.Error, Times.Once());
     }
 
     [Test]
@@ -234,6 +254,23 @@ public class PopoverServiceTests
 
         // Assert
         service.ActivePopovers.Single().ActivationDate.Should().Be(timeProvider.GetLocalNow().DateTime);
+    }
+
+    [Test]
+    public async Task CreatePopoverAsync_ShouldNotAddDuplicateWhenCalledTwiceWithSameId()
+    {
+        // Arrange
+        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var popover = new PopoverMock();
+        var options = new PopoverOptions { CheckForPopoverProvider = false };
+        var service = CreateService(jsRuntimeMock, options);
+
+        // Act
+        await service.CreatePopoverAsync(popover);
+        await service.CreatePopoverAsync(popover);
+
+        // Assert
+        service.ActivePopovers.Should().ContainSingle().Which.Id.Should().Be(popover.Id);
     }
 
     [Test]
@@ -707,6 +744,40 @@ public class PopoverServiceTests
         // Assert
         beforeObserversCount.Should().Be(5);
         afterObserversCount.Should().Be(0);
+    }
+
+    [Test]
+    public async Task DisposeAsync_WhenNeverInitialized_ShouldNotCallJsDispose()
+    {
+        // A scoped service is disposed by the DI scope at the end of a prerender request, before a
+        // circuit exists. With no JS initialization there is nothing to tear down, so DisposeAsync
+        // must not call JS - otherwise it throws a first-chance InvalidOperationException. See #12574.
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = CreateService(jsRuntimeMock.Object);
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        service.IsInitialized.Should().BeFalse();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
+
+    [Test]
+    public async Task DisposeAsync_WhenInitialized_ShouldCallJsDispose()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = CreateService(jsRuntimeMock.Object);
+        await service.UpdatePopoverAsync(new PopoverMock());
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        service.IsInitialized.Should().BeTrue();
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPopover.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
     }
 
     [Test]

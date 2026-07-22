@@ -160,6 +160,31 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    public async Task DebounceAsync_PreCancelledToken_ReturnsWithoutExecuting()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var executed = false;
+        Task Invoke()
+        {
+            executed = true;
+            return Task.CompletedTask;
+        }
+
+        // Act - token is already cancelled before the call; the guard short-circuits before scheduling
+        var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
+
+        // Assert - completes synchronously, action never runs, nothing pending
+        task.IsCompleted.Should().BeTrue();
+        await task;
+        executed.Should().BeFalse();
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
+
+    [Test]
     public async Task DebounceAsync_CancelMethod_CancelsPendingOperation()
     {
         // Arrange

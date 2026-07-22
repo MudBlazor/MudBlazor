@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
     <RootNamespace>MudBlazor.Analyzers.TestComponents</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>

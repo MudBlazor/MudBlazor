@@ -6,9 +6,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for a range of dates.
+    /// Selects a start and end date range from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
+    /// <seealso cref="DateRange" />
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudTimePicker" />
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
@@ -104,7 +106,9 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            set => SetDateRangeAsync(value, true).CatchAndLog();
+            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
+            // awaits inside SetDateRangeAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            set => SetDateRangeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
         }
 
         /// <summary>
@@ -117,7 +121,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
-        protected async Task SetDateRangeAsync(DateRange? range, bool updateValue)
+        protected async Task SetDateRangeAsync(DateRange? range, bool updateValue, bool suppressInteraction = false)
         {
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
@@ -137,7 +141,10 @@ namespace MudBlazor
                     return;
                 }
 
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
 
                 if (range?.Start is not null && StartMonth == null)
                     PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
@@ -165,7 +172,10 @@ namespace MudBlazor
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 
@@ -359,7 +369,8 @@ namespace MudBlazor
             var today = TimeProvider.GetLocalNow().Date;
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
             {
                 return b.AddClass("mud-hidden").Build();
             }

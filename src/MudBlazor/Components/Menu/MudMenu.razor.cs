@@ -28,6 +28,7 @@ namespace MudBlazor
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
         private int _focusedIndex = -1;
+        private bool _disposed;
         private MudButton? _buttonActivator;
         private MudMenuItem? _menuItemActivator;
         private MudIconButton? _iconButtonActivator;
@@ -801,6 +802,17 @@ namespace MudBlazor
         /// <param name="disposing">Indicates if managed resources should be disposed.</param>
         protected virtual void Dispose(bool disposing)
         {
+            // Idempotent: a second Dispose() (e.g. user code disposing a @ref before the
+            // renderer tears the component down) must not re-run cleanup such as Cancel() on
+            // an already-disposed CancellationTokenSource.
+            if (_disposed)
+                return;
+
+            // Set before cleanup so any in-flight async callback (e.g. the fire-and-forget
+            // focus calls in TrackKeyboardInteraction, or a queued OnAfterRenderAsync)
+            // short-circuits instead of running JS interop against the detached DOM. See #12184.
+            _disposed = true;
+
             if (disposing)
             {
                 _hoverCts?.Cancel();
@@ -1018,11 +1030,28 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
+            // The component may have been torn down (e.g. navigation) before this async
+            // callback runs; don't touch the DOM if so. See issue #12184.
+            if (_disposed)
+                return;
+
             if (_openState.Value && _focusedIndex == -1)
             {
                 // Focus the container first. This makes the menu "listen" for keys.
+                // The element can be detached between this render and the focus interop call
+                // (rapid open/close, navigation), which throws "Unable to focus an invalid
+                // element" on WebView hosts. Guard it like FocusActivatorAsync does. See #12184.
                 if (_menuWrapperRef.Context is not null)
-                    await _menuWrapperRef.FocusAsync(preventScroll: true);
+                {
+                    try
+                    {
+                        await _menuWrapperRef.FocusAsync(preventScroll: true);
+                    }
+                    catch (JSException)
+                    {
+                        // Element already gone from the DOM, safe to ignore.
+                    }
+                }
 
                 // Check if opened with keyboard and focus the first item
                 if (_lastInteractionWasKeyboard && _menuItems.Count > 0)
@@ -1050,6 +1079,11 @@ namespace MudBlazor
         /// </summary>
         internal async Task FocusItemAsync(int index)
         {
+            // Reached from every keyboard navigation path, including the fire-and-forget calls
+            // in TrackKeyboardInteraction. Don't touch the DOM after disposal. See issue #12184.
+            if (_disposed)
+                return;
+
             if (index >= 0 && index < _menuItems.Count)
             {
                 var item = _menuItems[index];
@@ -1064,7 +1098,14 @@ namespace MudBlazor
 
                 if (elementRef.Context is not null)
                 {
-                    await elementRef.FocusAsync();
+                    try
+                    {
+                        await elementRef.FocusAsync();
+                    }
+                    catch (JSException)
+                    {
+                        // Element already gone from the DOM (closed/navigated mid-focus), safe to ignore.
+                    }
                 }
             }
         }

@@ -75,13 +75,13 @@
         {
             @if (DataGrid.ChildRowRenderer != null)
             {
-                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item))
+                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
             }
             @if (DataGrid.ChildRowContent != null)
             {
                 <tr class="mud-table-row">
                     <td class="mud-table-cell mud-table-child-content" colspan="1000">
-                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
+                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
                     </td>
                 </tr>
             }

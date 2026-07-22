@@ -6,9 +6,9 @@ namespace MudBlazor
 {
     // TODO: Maybe can inherit from MudBaseInput?
     /// <summary>
-    /// A component similar to <see cref="MudTextField{T}"/> which supports custom content.
+    /// Displays custom content inside a form field with the same label, adornment, and border styling as a <see cref="MudTextField{T}"/>.
     /// </summary>
-    /// <seealso cref="MudTextField{T}"/>
+    /// <seealso cref="MudTextField{T}" />
     public partial class MudField : MudComponentBase
     {
         protected string Classname =>

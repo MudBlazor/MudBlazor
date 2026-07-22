@@ -27,7 +27,7 @@ jobs:
 
       - name: Cache triage DB
         id: cache-db
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: triage-db.json
           key: ${{ runner.os }}-triage-db-${{ github.run_id }}
@@ -40,7 +40,7 @@ jobs:
           issues: ${{ github.event.pull_request.number }}
           prompt-path: .github/AutoTriage.prompt
           model-fast: "" # skip fast pass
-          model-pro: 'gemini-3.5-flash'
+          model-pro: 'gemini-3.6-flash'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

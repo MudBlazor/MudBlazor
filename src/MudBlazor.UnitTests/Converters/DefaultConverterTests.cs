@@ -245,14 +245,16 @@ public class DefaultConverterTests
         conv.ConvertBack("Wednesday").Should().Be(Value);
         conv.ConvertBack(string.Empty).Should().Be(default);
 
-        // invalid should throw ConversionException with expected key
+        // invalid should throw ConversionException with expected key and the enum type name as argument
         Action act = () => conv.ConvertBack("NotAValue");
 
-        act.Should()
+        var exception = act.Should()
             .Throw<ConversionException>()
-            .Which.ErrorMessageKey
-            .Should()
-            .Be(LanguageResource.Converter_NotValueOf);
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_NotValueOf);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(DayOfWeek));
     }
 
     [Test]
@@ -270,13 +272,16 @@ public class DefaultConverterTests
         conv.ConvertBack(string.Empty).Should().BeNull();
         conv.ConvertBack(null).Should().BeNull();
 
-        // invalid back should throw ConversionException
+        // invalid back should throw ConversionException carrying the enum type name as argument
         Action act = () => conv.ConvertBack("NoSuchDay");
-        act.Should()
+
+        var exception = act.Should()
             .Throw<ConversionException>()
-            .Which.ErrorMessageKey
-            .Should()
-            .Be(LanguageResource.Converter_NotValueOf);
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_NotValueOf);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(DayOfWeek));
     }
 
     #endregion
@@ -1026,6 +1031,38 @@ public class DefaultConverterTests
     public void String_ConvertBack_Null_ReturnsNull()
     {
         var conv = DefaultConverter.StringConverter.Instance;
+        conv.ConvertBack(null).Should().BeNull();
+    }
+
+    #endregion
+
+    #region ToStringFallback
+
+    // A type with no built-in converter, that is not an enum and does not implement IParsable,
+    // falls through to the ToString fallback: Convert uses ToString, ConvertBack always returns default.
+    private sealed class UnconvertibleBox(string value)
+    {
+        public override string ToString() => value;
+    }
+
+    [Test]
+    public void DefaultConverter_UnsupportedType_Convert_UsesToString()
+    {
+        var conv = new DefaultConverter<UnconvertibleBox>();
+        var value = new UnconvertibleBox("boxed-payload");
+
+        conv.Convert(value).Should().Be("boxed-payload");
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_UnsupportedType_ConvertBack_AlwaysReturnsDefault()
+    {
+        var conv = new DefaultConverter<UnconvertibleBox>();
+
+        // The fallback cannot reconstruct the value, so it returns default regardless of input.
+        conv.ConvertBack("boxed-payload").Should().BeNull();
+        conv.ConvertBack(string.Empty).Should().BeNull();
         conv.ConvertBack(null).Should().BeNull();
     }
 

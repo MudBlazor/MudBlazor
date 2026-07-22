@@ -11,6 +11,13 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Radar (spider) chart that plots each series as a polygon across shared radial axes, one axis per category.
+/// </summary>
+/// <typeparam name="T">The numeric type of the values being plotted.</typeparam>
+/// <seealso cref="Rose{T}"/>
+/// <seealso cref="Pie{T}"/>
+/// <seealso cref="Donut{T}"/>
 public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     protected List<SvgPath> _gridLines = [];

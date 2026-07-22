@@ -264,8 +264,15 @@ namespace MudBlazor.Charts
                 {
                     var targetColumn = currentColumn + 1;
 
-                    // Always enqueue to ensure we find the longest path
-                    queue.Enqueue((target, targetColumn));
+                    // Only follow an edge when it pushes the target into a deeper column, and never
+                    // past the node count (the longest path in a graph of N nodes spans at most N-1
+                    // edges). Without this guard, circular edge definitions (e.g. A->B, B->A) keep
+                    // enqueueing with an ever-increasing column and hang the render.
+                    if (targetColumn < allNodes.Count && targetColumn > nodeColumns[target])
+                    {
+                        nodeColumns[target] = targetColumn;
+                        queue.Enqueue((target, targetColumn));
+                    }
                 }
             }
 

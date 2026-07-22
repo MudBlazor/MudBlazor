@@ -546,17 +546,14 @@ namespace MudBlazor.UnitTests.Components
             wasEventCallbackCalled.Should().BeFalse();
         }
 
+        // new DateRange() chains to new DateRange(null, null), so both produce an all-null range.
         [Test]
-        public async Task InitializeDateRange_DefaultConstructor()
+        public async Task InitializeDateRange_AllNull_StartAndEndAreNull()
         {
-            var range = new DateRange();
-
             var comp = await OpenPicker(parameters => parameters
-                .Add(x => x.DateRange, range));
+                .Add(x => x.DateRange, new DateRange()));
 
             comp.Instance.DateRange.Should().NotBeNull();
-            comp.Instance.DateRange.Start.Should().NotBe(default);
-            comp.Instance.DateRange.End.Should().NotBe(default);
             comp.Instance.DateRange.Start.Should().BeNull();
             comp.Instance.DateRange.End.Should().BeNull();
         }
@@ -613,21 +610,6 @@ namespace MudBlazor.UnitTests.Components
                 picker.Instance.DateRange.Start.Should().Be(DateTime.Today);
                 picker.Instance.DateRange.End.Should().BeNull();
             });
-        }
-
-        [Test]
-        public async Task InitializeDateRange_AllNullValues()
-        {
-            var range = new DateRange(null, null);
-
-            var comp = await OpenPicker(parameters => parameters
-                .Add(x => x.DateRange, range));
-
-            comp.Instance.DateRange.Should().NotBeNull();
-            comp.Instance.DateRange.Start.Should().NotBe(default);
-            comp.Instance.DateRange.End.Should().NotBe(default);
-            comp.Instance.DateRange.Start.Should().BeNull();
-            comp.Instance.DateRange.End.Should().BeNull();
         }
 
         [Test]
@@ -1009,24 +991,27 @@ namespace MudBlazor.UnitTests.Components
             openBtn.Count.Should().Be(1);
             var openBtnElement = openBtn[0].Find("button");
             await openBtnElement.ClickAsync();
-            await Task.Delay(500);
             IElement DayButton(string dayNumber) =>
                 comp.FindAll("button")
                     .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
+            await comp.WaitForAssertionAsync(() => DayButton("5").Should().NotBeNull());
             await DayButton("5").ClickAsync();
-            await Task.Delay(200);
             await DayButton("7").ClickAsync();
-            await Task.Delay(200);
 
             IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>
                 picker[index].FindComponents<MudIconButton>();
 
-            IconButtons(0).Count.Should().Be(2);
+            // A range is now selected, so each picker shows both the clear and open adornment buttons.
+            await comp.WaitForAssertionAsync(() => IconButtons(0).Count.Should().Be(2));
             IconButtons(1).Count.Should().Be(2);
+            picker[0].Instance.DateRange.Should().NotBeNull();
+
+            // Clicking the clear button removes the value and the clear adornment.
             await IconButtons(0)[0].Find("button").ClickAsync();
             await IconButtons(1)[0].Find("button").ClickAsync();
-            IconButtons(0).Count.Should().Be(1);
+            await comp.WaitForAssertionAsync(() => IconButtons(0).Count.Should().Be(1));
             IconButtons(1).Count.Should().Be(1);
+            picker[0].Instance.DateRange.Should().BeNull();
         }
 
         [Test]
@@ -1147,7 +1132,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [SetCulture("en-US")]
-        public async Task DatePicker_JumpToYear()
+        public async Task DateRangePicker_JumpToYear()
         {
             var selectedRange = new DateRange(new DateTime(2025, 1, 10).Date, new DateTime(2025, 1, 20).Date);
             var comp = Context.Render<DateRangePickerPresetWithoutTimestampTest>(p => p.Add(x => x.DateRange, selectedRange));
@@ -1188,7 +1173,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
 
-            //no restrictions - maximum of 7 days 
+            //no restrictions - maximum of 7 days
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("17")).ToMarkup().Should().Contain("disabled"); //2 days not allowed
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("18")).ToMarkup().Should().NotContain("disabled"); //3 days valid
@@ -1478,11 +1463,131 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().Be(initialRange);
         }
 
+        [Test]
+        public async Task SubmitAsync_WhenReadOnly_DoesNotCommitCompleteRange()
+        {
+            // PickerActions present means the second day click does not auto-submit, so we can build a
+            // COMPLETE pending range (both dates set) and prove the ReadOnly guard - not the null guard -
+            // is what blocks SubmitAsync.
+            RenderFragment<MudPicker<DateTime?>> pickerActions = _ => builder => { };
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.PickerActions, pickerActions));
+            var picker = comp.Instance;
+
+            await comp.InvokeAsync(() => picker.ClickDayAsync(new DateTime(2025, 6, 10)));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(new DateTime(2025, 6, 20)));
+
+            // Both dates are selected but nothing is committed yet (waiting for the OK button).
+            picker.DateRange.Should().BeNull();
+
+            // Flip to ReadOnly and submit the complete pending range: the guard must block the commit.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            await comp.InvokeAsync(picker.Submit);
+
+            picker.DateRange.Should().BeNull();
+        }
+
+        [Test]
+        [SetCulture("en-US")]
+        public void DateRangePicker_ShowAdjacentMonthDays_ShowsAdjacentDays()
+        {
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.StartMonth, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+
+            var adjacentDays = comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.ClassList.Contains("mud-adjacent-month"))
+                .ToList();
+
+            adjacentDays.Should().NotBeEmpty();
+            // Adjacent days on the outer edges of the two-month view stay visible.
+            adjacentDays.Should().Contain(x => !x.ClassList.Contains("mud-hidden"));
+        }
+
+        [Test]
+        [SetCulture("en-US")]
+        public void DateRangePicker_ShowAdjacentMonthDays_DoesNotDuplicateBoundaryDaysAcrossPanels()
+        {
+            // March/April 2025: without the fix March 30-31 and April 1-5 are visible in both panels.
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.StartMonth, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+
+            var panels = comp.FindAll("div.mud-picker-calendar-container");
+            panels.Count.Should().Be(2);
+
+            static List<IElement> DayButtons(IElement panel) =>
+                panel.QuerySelectorAll("button.mud-picker-calendar-day").ToList();
+
+            static bool IsAdjacent(IElement button) => button.ClassList.Contains("mud-adjacent-month");
+
+            var firstPanel = DayButtons(panels[0]);
+            var secondPanel = DayButtons(panels[1]);
+
+            // The current-month days form a contiguous block; adjacent days only appear before/after it.
+            var firstPrimaryStart = firstPanel.FindIndex(b => !IsAdjacent(b));
+            var firstPrimaryEnd = firstPanel.FindLastIndex(b => !IsAdjacent(b));
+            var secondPrimaryStart = secondPanel.FindIndex(b => !IsAdjacent(b));
+            var secondPrimaryEnd = secondPanel.FindLastIndex(b => !IsAdjacent(b));
+
+            // First panel: previous-month days (outer edge) stay visible, next-month days (also rendered as real days in the second panel) are hidden.
+            firstPanel.Take(firstPrimaryStart).Should().OnlyContain(b => !b.ClassList.Contains("mud-hidden"));
+            firstPanel.Skip(firstPrimaryEnd + 1).Should().NotBeEmpty().And.OnlyContain(b => b.ClassList.Contains("mud-hidden"));
+
+            // Second panel: next-month days (outer edge) stay visible, previous-month days (also rendered as real days in the first panel) are hidden.
+            secondPanel.Take(secondPrimaryStart).Should().NotBeEmpty().And.OnlyContain(b => b.ClassList.Contains("mud-hidden"));
+            secondPanel.Skip(secondPrimaryEnd + 1).Should().OnlyContain(b => !b.ClassList.Contains("mud-hidden"));
+        }
+
+        /// <summary>
+        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/11564.
+        /// The user supplied <see cref="MudComponentBase.Class"/> should style the picker's
+        /// input, but must not be copied onto the adornment (the calendar icon).
+        /// </summary>
+        [Test]
+        public void Class_IsNotAppliedToAdornment()
+        {
+            const string customClass = "__custom_picker_class__";
+
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Class, customClass));
+
+            // The class is still applied to the input itself.
+            comp.Find("div.mud-input").ClassList.Should().Contain(customClass);
+
+            // But not to the adornment that holds the calendar icon.
+            comp.Find("div.mud-input-adornment-end").ClassList.Should().NotContain(customClass);
+        }
+
+        [Test]
+        public void Static_StartMonth_IsShownOnFirstRender()
+        {
+            var startMonth = new DateTime(2025, 12, 3);
+            var culture = CultureInfo.GetCultureInfo("en-US");
+
+            var comp = Context.Render<MudDateRangePicker>(ps => ps
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, startMonth)
+                .Add(p => p.DisplayMonths, 1)
+                .Add(p => p.Culture, culture)
+            );
+
+            var expectedMonthName = new DateTime(2025, 12, 1).ToString(culture.DateTimeFormat.YearMonthPattern, culture);
+            comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();
 
             public Task ClickDayAsync(DateTime date) => OnDayClickedAsync(date);
+
+            public Task Submit() => SubmitAsync();
         }
     }
     public static class DatePickerRenderedFragmentExtensions

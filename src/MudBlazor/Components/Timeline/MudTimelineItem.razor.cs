@@ -41,8 +41,11 @@ namespace MudBlazor
         protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
-        /// The icon displayed for the dot.
+        /// The icon displayed inside the dot.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Ignored when <see cref="ItemDot"/> is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
         public string? Icon { get; set; }

@@ -1,0 +1,24 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@blocked" Label="Blocks input: ^[0-9]{5}$"
+                      HelperText="Exact length {5} never matches a shorter prefix, so every keystroke is rejected."
+                      @bind-Value="a" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@works" Label="Accepts input: ^[0-9]{0,5}$"
+                      HelperText="Bounded-from-zero matches every prefix, so up to 5 digits can be typed."
+                      @bind-Value="b" Variant="@Variant.Text" Clearable />
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string a, b;
+
+    // Blocks all input: prefixes "1", "12" do not match ^[0-9]{5}$
+    public IMask blocked = new RegexMask(@"^[0-9]{5}$");
+
+    // Works: every prefix ("", "1", ... "12345") matches ^[0-9]{0,5}$
+    public IMask works = new RegexMask(@"^[0-9]{0,5}$");
+}

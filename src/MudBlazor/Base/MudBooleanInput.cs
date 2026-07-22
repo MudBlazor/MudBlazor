@@ -8,7 +8,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a form input component which stores a boolean value.
+    /// Base class for form inputs backed by a boolean value, such as <see cref="MudCheckBox{T}"/>, <see cref="MudSwitch{T}"/>, and <see cref="MudRadio{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
