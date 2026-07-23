@@ -5370,11 +5370,11 @@ namespace MudBlazor.UnitTests.Components
             );
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
             dataGrid.Instance.DropContainerHasChanged();
-            
+
             var gridElement = (ElementReference)dataGrid.Instance.GetType()
                 .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .GetValue(dataGrid.Instance)!;
-                
+
             Context.JSInterop
                 .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
                 .SetResult(new Interop.BoundingClientRect { Width = 500 });
@@ -5388,21 +5388,21 @@ namespace MudBlazor.UnitTests.Components
                     var headerElement = (ElementReference)col.GetType()
                         .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)!
                         .GetValue(col)!;
-                        
+
                     Context.JSInterop
                         .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
                         .SetResult(new Interop.BoundingClientRect { Width = 100 });
                 }
             }
-            
+
             var headerValues = dataGrid.FindAll(".sortable-column-header");
             headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
-            
+
             headerValues[4].InnerHtml.Should().Be("HiredOn");
-            
+
             var resizers = comp.FindAll(".mud-resizer");
             var getHiredOnResizer = () => comp.FindAll(".mud-resizer").ElementAt(4);
-            
+
             await getHiredOnResizer().PointerDownAsync(new PointerEventArgs { ClientX = 100, PointerId = 1, Detail = 1 });
             await getHiredOnResizer().PointerMoveAsync(new PointerEventArgs { ClientX = 150, PointerId = 1 });
             await getHiredOnResizer().PointerUpAsync(new PointerEventArgs { ClientX = 150, PointerId = 1 });
@@ -5417,19 +5417,19 @@ namespace MudBlazor.UnitTests.Components
             var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
             secondDropZone.Should().NotBeNull();
             var secondDropItem = secondDropZone!.Children[0];
-            
+
             await firstDropItem.DragStartAsync(new DragEventArgs());
             await secondDropItem.DropAsync(new DragEventArgs());
-            
+
             var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
             newHeaderValues[0].InnerHtml.Should().Be("Name");
             newHeaderValues[1].InnerHtml.Should().Be("HiredOn");
             newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Status");
             newHeaderValues[4].InnerHtml.Should().Be("Hired");
-            
+
             var thElements = comp.FindAll("th");
-            
+
             var movedHeaderStyle = thElements.ElementAt(1).GetStyle();
             movedHeaderStyle.Should().Contain(cssProp => cssProp.Name == "width", because: "the dragged column should retain its resized inline width style");
         }
@@ -5567,7 +5567,7 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone.Should().NotBeNull(because: "the pre-insert drop zone for Hired should exist before dropping the dragged item");
             secondDropZone!.Children.Should().BeEmpty(because: "the pre-insert drop zone for Hired should not contain a drop target item");
         }
-        
+
         [Test]
         [TestCase(true)]
         [TestCase(false)]
