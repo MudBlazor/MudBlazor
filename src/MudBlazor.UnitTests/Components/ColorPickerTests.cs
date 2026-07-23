@@ -1532,15 +1532,16 @@ namespace MudBlazor.UnitTests.Components
             const double y2 = 140.0;
             var expectedColor2 = new MudColor(74, 70, 112, 255);
 
-            await overlay.PointerMoveAsync(new PointerEventArgs { OffsetX = x2, OffsetY = y2, Buttons = 1 });
-
-            // Color shouldn't update if the drag effect is disabled.
             if (disableDragEffect)
             {
+                // The pointer move event is not registered at all while the drag effect is disabled,
+                Func<Task> act = () => overlay.PointerMoveAsync(new PointerEventArgs { OffsetX = x2, OffsetY = y2, Buttons = 1 });
+                await act.Should().ThrowAsync<Bunit.MissingEventHandlerException>();
                 await CheckColorRelatedValues(comp, x1, y1, expectedColor1, ColorPickerMode.RGB);
             }
             else
             {
+                await overlay.PointerMoveAsync(new PointerEventArgs { OffsetX = x2, OffsetY = y2, Buttons = 1 });
                 await CheckColorRelatedValues(comp, x2, y2, expectedColor2, ColorPickerMode.RGB);
             }
 
