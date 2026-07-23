@@ -21,7 +21,7 @@
                 {   
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
                         <MudCheckBox Value="@item.Visible" ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense/>
-                        <MudText Typo="Typo.body2" Class="ml-n2 align-self-center cursor-pointer" HtmlTag="span" @onclick="@item.HandleCheckboxChangeAsync">@item.Labels</MudText>
+<MudText Typo="Typo.body2" Class="ml-n2 align-self-center cursor-pointer" HtmlTag="span" tabindex="0" @onclick:stopPropagation="true" @onclick="@item.HandleCheckboxChangeAsync" @onkeydown:stopPropagation="true" @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == \"Enter\") await item.HandleCheckboxChangeAsync(); })">@item.Labels</MudText>
                     </div> 
                 }                 
             </div>
