@@ -1392,11 +1392,6 @@ namespace MudBlazor
             await FocusAsync();
         }
 
-        internal Task OnBlurAsync(FocusEventArgs obj)
-        {
-            return OnBlurredAsync(obj);
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();

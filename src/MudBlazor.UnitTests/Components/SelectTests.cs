@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
             IElement Switch() => comp.Find("#switch");
             await Switch().ChangeAsync(true);
             await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeTrue());
-            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+            await comp.Find($"#{select.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
             await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeFalse());
         }
 
@@ -714,6 +714,20 @@ namespace MudBlazor.UnitTests.Components
                 await comp.Find($"#{select.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
             });
             eventCounter.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Select_OnBlurShouldFireOnceOnFocusLoss()
+        {
+            // A focus loss raises both inner blur and outer focusout; expose one callback.
+            var calls = 0;
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.OnBlur, _ => calls++));
+
+            await comp.Find("input").BlurAsync();
+            await comp.Find($"#{comp.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
+
+            calls.Should().Be(1);
         }
 
         [Test]
