@@ -435,6 +435,107 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void BarChart_LegendLabel_HasTabIndexAndRoleButton_WhenCanHideSeries()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new() { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var legendLabels = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer");
+            legendLabels.Count.Should().Be(chartSeries.Count);
+
+            foreach (var label in legendLabels)
+            {
+                label.GetAttribute("tabindex").Should().Be("0", "label must be keyboard-focusable");
+                label.GetAttribute("role").Should().Be("button", "label must be announced as a button to assistive technologies");
+            }
+        }
+
+        [Test]
+        public async Task BarChart_LegendLabel_EnterKey_TogglesVisibility()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new() { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            chartSeries[0].Visible.Should().BeTrue("Series 1 should be visible initially");
+
+            var label = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer")[0];
+            await label.KeyDownAsync(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Enter" });
+
+            chartSeries[0].Visible.Should().BeFalse("pressing Enter on the label should hide Series 1");
+
+            label = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer")[0];
+            await label.KeyDownAsync(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Enter" });
+
+            chartSeries[0].Visible.Should().BeTrue("pressing Enter again should restore Series 1");
+        }
+
+        [Test]
+        public async Task BarChart_LegendLabel_SpaceKey_TogglesVisibility()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new() { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            chartSeries[0].Visible.Should().BeTrue("Series 1 should be visible initially");
+
+            var label = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer")[0];
+            await label.KeyDownAsync(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " " });
+
+            chartSeries[0].Visible.Should().BeFalse("pressing Space on the label should hide Series 1");
+
+            label = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer")[0];
+            await label.KeyDownAsync(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " " });
+
+            chartSeries[0].Visible.Should().BeTrue("pressing Space again should restore Series 1");
+        }
+
+        [Test]
+        public async Task BarChart_LegendLabel_Click_DoesNotTriggerOnLegendSelected()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new() { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var initialSelectedIndex = comp.Instance.GetState(x => x.SelectedIndex);
+
+            var label = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer")[0];
+            await label.ClickAsync();
+
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(initialSelectedIndex,
+                "clicking the label should only toggle series visibility, not change the selected chart index");
+        }
+
+        [Test]
         public void BarChartOverlay_RendersOverlayBars()
         {
             // Outer StackedBar chart with a nested Bar overlay that shares the outer axis chart.

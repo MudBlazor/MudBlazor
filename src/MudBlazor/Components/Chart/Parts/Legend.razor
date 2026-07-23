@@ -7,23 +7,28 @@
 @if (ShowLegend is not false)
 {
     <div @attributes="UserAttributes" class="mud-chart-legend">
-        @foreach (var item in Data)        
+        @foreach (var item in Data)
         {
             <div class="@($"mud-chart-legend-item {(CanHideSeries ? "" : "pa-1")}")"
-                 @onclick:stopPropagation=@(ChartContainer!=null)
-                 @onclick=@(async () => { if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); }})>
-                @if(!CanHideSeries)
+                 @onclick:stopPropagation=@(ChartContainer != null)
+                 @onclick=@(async () => { if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); } })>
+                @if (!CanHideSeries)
                 {
                     <span class="mud-chart-legend-marker" style="@($"background-color:{ChartPalette!.GetValue(item.Index % ChartPalette.Length)}")"></span>
                     <MudText Typo="Typo.body2" HtmlTag="span">@item.Labels</MudText>
                 }
                 else
-                {   
-                    <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
-                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense/>
-<MudText Typo="Typo.body2" Class="ml-n2 align-self-center cursor-pointer" HtmlTag="span" tabindex="0" @onclick:stopPropagation="true" @onclick="@item.HandleCheckboxChangeAsync" @onkeydown:stopPropagation="true" @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == \"Enter\") await item.HandleCheckboxChangeAsync(); })">@item.Labels</MudText>
-                    </div> 
-                }                 
+                {
+                    <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">
+                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense />
+                        <span class="mud-typography mud-typography-body2 ml-n2 align-self-center cursor-pointer"
+                              tabindex="0"
+                              role="button"
+                              @onclick="@(_ => item.HandleCheckboxChangeAsync())"
+                              @onclick:stopPropagation="true"
+                              @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key is "Enter" or " ") await item.HandleCheckboxChangeAsync(); })">@item.Labels</span>
+                    </div>
+                }
             </div>
         }
     </div>
