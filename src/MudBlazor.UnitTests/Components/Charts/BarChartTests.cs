@@ -347,6 +347,94 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void BarChart_LegendLabel_HasCursorPointerClass_WhenCanHideSeries()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var legendLabels = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer");
+            legendLabels.Count.Should().Be(chartSeries.Count, "each legend item should have a clickable label span");
+        }
+
+        [Test]
+        public async Task BarChart_LegendLabel_Click_TogglesCheckbox()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            // Verify initial state – both series visible
+            var checkboxes = comp.FindAll(".mud-checkbox-input");
+            checkboxes[0].IsChecked().Should().BeTrue("Series 1 should be visible initially");
+            checkboxes[1].IsChecked().Should().BeTrue("Series 2 should be visible initially");
+
+            // Click the label of the first series
+            var legendLabels = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer");
+            await legendLabels[0].ClickAsync();
+
+            checkboxes = comp.FindAll(".mud-checkbox-input");
+            checkboxes[0].IsChecked().Should().BeFalse("clicking the label should uncheck Series 1");
+            checkboxes[1].IsChecked().Should().BeTrue("Series 2 should remain checked");
+            chartSeries[0].Visible.Should().BeFalse("Series 1 Visible should be false after label click");
+
+            // Click the same label again to re-enable the series
+            legendLabels = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer");
+            await legendLabels[0].ClickAsync();
+
+            checkboxes = comp.FindAll(".mud-checkbox-input");
+            checkboxes[0].IsChecked().Should().BeTrue("clicking the label again should re-check Series 1");
+            chartSeries[0].Visible.Should().BeTrue("Series 1 Visible should be true after second label click");
+        }
+
+        [Test]
+        public async Task BarChart_LegendLabel_Click_HidesAndShowsBars()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+            string[] xAxisLabels = { "A", "B", "C" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.ChartOptions, new BarChartOptions { ChartPalette = _baseChartPalette }));
+
+            var series1Selector = $"[fill='{_baseChartPalette[0]}']";
+            comp.FindAll($"path.mud-chart-bar{series1Selector}").Count.Should().Be(3, "Series 1 should show 3 bars initially");
+
+            // Click the label of Series 1 to hide it
+            var legendLabels = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer");
+            await legendLabels[0].ClickAsync();
+
+            comp.FindAll($"path.mud-chart-bar{series1Selector}").Count.Should().Be(0, "Series 1 bars should be hidden after clicking its label");
+
+            // Click the label again to restore Series 1
+            legendLabels = comp.FindAll(".mud-chart-legend-checkbox span.cursor-pointer");
+            await legendLabels[0].ClickAsync();
+
+            comp.FindAll($"path.mud-chart-bar{series1Selector}").Count.Should().Be(3, "Series 1 bars should reappear after clicking its label again");
+        }
+
+        [Test]
         public void BarChartOverlay_RendersOverlayBars()
         {
             // Outer StackedBar chart with a nested Bar overlay that shares the outer axis chart.
