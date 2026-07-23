@@ -6,23 +6,8 @@
 @inject InternalMudLocalizer Localizer
 
 @{
-    var resolvedItems = new List<IndexBag<T>>(0);
-    if (DataGrid.IsGrouped)
-    {
-        if (GroupedItems is not null)
-        {
-            resolvedItems = GroupedItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
-        }
-    }
-    else if (!DataGrid.Virtualize || DataGrid.VirtualizeServerData == null || DataGrid.HasFooter)
-    {
-        resolvedItems = DataGrid.CurrentPageItems.Select((items, index) => new IndexBag<T>(index, items))
-                .ToList();
-    }
-    else
-    {
-        resolvedItems = DataGrid.CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
-    }
+    IEnumerable<T> sourceItems = DataGrid.IsGrouped ? (GroupedItems ?? Enumerable.Empty<T>()) : DataGrid.CurrentPageItems;
+    var resolvedItems = BuildIndexBags(sourceItems);
 }
 
 <MudVirtualize @ref="DataGrid._mudVirtualize"
@@ -63,11 +48,15 @@
             @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
             <CascadingValue Value="@DataGrid.Validator" IsFixed="true">
                 @{
-                    var visibleColumns = DataGrid.RenderedColumns.Where(c => !c.HiddenState.Value).ToList();
-                }
-                @foreach (var (column, colIdx) in visibleColumns.Select((c, i) => (c, i)))
-                {
-                    @DataGrid.Cell(column, itemBag.Item, itemBag.Index, colIdx)
+                    var colIdx = 0;
+                    foreach (var column in DataGrid.RenderedColumns)
+                    {
+                        if (column.HiddenState.Value)
+                            continue;
+
+                        @DataGrid.Cell(column, itemBag.Item, itemBag.Index, colIdx)
+                        colIdx++;
+                    }
                 }
             </CascadingValue>
         </tr>
@@ -99,6 +88,18 @@
 </MudVirtualize>
 
 @code {
+    private readonly List<IndexBag<T>> _resolvedItems = new();
+
+    private List<IndexBag<T>> BuildIndexBags(IEnumerable<T> source)
+    {
+        _resolvedItems.Clear();
+        foreach (var item in source)
+        {
+            _resolvedItems.Add(new IndexBag<T>(_resolvedItems.Count, item));
+        }
+        return _resolvedItems;
+    }
+
     private Dictionary<string, object?>? GetRowAttributes(T item)
     {
         var rowSelectionState = DataGrid.GetRowSelectionState(item);
