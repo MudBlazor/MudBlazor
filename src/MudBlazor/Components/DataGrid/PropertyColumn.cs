@@ -86,7 +86,7 @@ namespace MudBlazor
         protected internal override string? ContentFormat
             => Format;
 
-        public override object? CellContent(T item)
+        protected internal override object? CellContent(T item)
             => _cellContentFunc!(item);
 
         protected internal override object? PropertyFunc(T item)

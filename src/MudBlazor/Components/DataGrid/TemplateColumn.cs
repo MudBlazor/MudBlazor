@@ -18,7 +18,7 @@ namespace MudBlazor
     /// <seealso cref="SelectColumn{T}" />
     public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
     {
-        public override object? CellContent(T item)
+        protected internal override object? CellContent(T item)
             => null;
 
         /// <summary>

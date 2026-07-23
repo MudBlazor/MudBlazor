@@ -50,7 +50,7 @@
         _contextRow = args.Item;
         _contextColumn = args.Column;
         _contextColumnIndex = args.ColumnIndex;
-        _contextCellValue = (string?)args.Column.CellContent(args.Item);
+        _contextCellValue = (string?)args.Column.GetCellContent(args.Item);
 
         await _contextMenu.OpenMenuAsync(args.MouseEventArgs);
     }

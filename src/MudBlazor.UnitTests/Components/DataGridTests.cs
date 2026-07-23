@@ -1494,6 +1494,56 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
         }
 
+        /// <summary>
+        /// Verifies that GetCellContent returns the bound property value for a PropertyColumn.
+        /// </summary>
+        [Test]
+        public void GetCellContent_PropertyColumn_ReturnsPropertyValue()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var propertyColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is PropertyColumn<DataGridGetCellContentTest.Item, string>);
+            var item = dataGrid.Instance.CurrentPageItems.First();
+
+            propertyColumn.GetCellContent(item).Should().Be(item.Name);
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent returns null for a TemplateColumn, which has no backing property.
+        /// </summary>
+        [Test]
+        public void GetCellContent_TemplateColumn_ReturnsNull()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var templateColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is TemplateColumn<DataGridGetCellContentTest.Item>);
+            var item = dataGrid.Instance.CurrentPageItems.First();
+
+            templateColumn.GetCellContent(item).Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent is consistent with CellContent for a PropertyColumn.
+        /// </summary>
+        [Test]
+        public void GetCellContent_MatchesCellContent_ForPropertyColumn()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var propertyColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is PropertyColumn<DataGridGetCellContentTest.Item, string>);
+
+            foreach (var item in dataGrid.Instance.CurrentPageItems)
+            {
+                propertyColumn.GetCellContent(item).Should().Be(propertyColumn.CellContent(item));
+            }
+        }
+
         [Test]
         public async Task DataGridStartedEditingItemOccursOnRowClickInCellEditMode()
         {

@@ -825,7 +825,14 @@ namespace MudBlazor
 
         protected internal virtual string? ContentFormat { get; }
 
-        public abstract object? CellContent(T item);
+        protected internal abstract object? CellContent(T item);
+
+        /// <summary>
+        /// Gets the cell content value for the specified item.
+        /// </summary>
+        /// <param name="item">The item to retrieve the cell content for.</param>
+        /// <returns>The cell content value, or <c>null</c> if not available.</returns>
+        public object? GetCellContent(T item) => CellContent(item);
 
         protected internal abstract object? PropertyFunc(T item);
 
