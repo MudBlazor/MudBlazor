@@ -72,7 +72,7 @@ namespace MudBlazor
             var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{variant.ToStringFast(true)}";
             if (variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
-                className += $"-{drawer.Breakpoint.ToStringFast(true)}";
+                className += $"-{drawer.NormalizedBreakpoint.ToStringFast(true)}";
             }
             className += $"-{drawer.GetPosition()}";
 
