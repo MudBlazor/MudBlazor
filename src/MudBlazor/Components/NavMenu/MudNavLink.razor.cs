@@ -36,12 +36,20 @@ namespace MudBlazor
 
         protected Dictionary<string, object?> Attributes
         {
-            get => Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
+            get
             {
-                { "href", Href },
-                { "target", Target },
-                { "rel", !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty }
-            };
+                var attributes = Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
+                {
+                    { "href", Href },
+                    { "target", Target },
+                    { "rel", !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty }
+                };
+                foreach (var attribute in UserAttributes)
+                {
+                    attributes[attribute.Key] = attribute.Value;
+                }
+                return attributes;
+            }
         }
 
         protected int TabIndex => Disabled || NavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
