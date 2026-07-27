@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -69,7 +70,7 @@ public class RegexMask : BaseMask
     /// </summary>
     protected virtual void InitRegex()
     {
-        _regex = new Regex(_regexPattern);
+        _regex = new Regex(_regexPattern, RegexOptions.None, RegexDefaults.MatchTimeout);
     }
 
     /// <inheritdoc />
