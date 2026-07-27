@@ -249,14 +249,7 @@
   & > .mud-drawer-content > .mud-navmenu {
     // Visually hidden instead of display: none so the link keeps its accessible name.
     & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      padding: 0;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
+      @include sr-only;
     }
   }
 
