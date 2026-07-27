@@ -352,6 +352,33 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void HideNodesSmallerThan_FilteringEveryNode_RendersEmptyChart()
+        {
+            var edges = FanEdges(); // weights 10, 20, 30
+            var options = new SankeyChartOptions { HideNodesSmallerThan = 1000 };
+
+            var comp = RenderSankey(edges, options);
+
+            comp.FindAll("svg > rect").Count.Should().Be(0);
+            comp.FindAll("svg > path").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void HideNodesWithNoEdges_RemovingEveryNode_RendersEmptyChart()
+        {
+            var options = new SankeyChartOptions
+            {
+                HideNodesWithNoEdges = true,
+                NodeOverrides = [new SankeyNode("Isolated", 0)],
+            };
+
+            var comp = RenderSankey([], options);
+
+            comp.FindAll("svg > rect").Count.Should().Be(0);
+            comp.FindAll("svg > path").Count.Should().Be(0);
+        }
+
+        [Test]
         [TestCase(AggregationOption.GroupByDataSet)]
         [TestCase(AggregationOption.GroupByLabel)]
         public void Aggregation_BuildsEdgesBetweenSeriesAndLabels(AggregationOption aggregation)
