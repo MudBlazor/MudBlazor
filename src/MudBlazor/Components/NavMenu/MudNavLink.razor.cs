@@ -38,11 +38,12 @@ namespace MudBlazor
         {
             get
             {
+                var rel = !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty;
                 var attributes = Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
                 {
                     { "href", Href },
                     { "target", Target },
-                    { "rel", !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty }
+                    { "rel", rel }
                 };
                 foreach (var attribute in UserAttributes)
                 {
