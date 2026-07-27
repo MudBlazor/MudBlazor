@@ -59,6 +59,8 @@ namespace MudBlazor
         protected internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToStringFast(true);
+        
+        internal bool IsClearing { get; set; }
 
         /// <summary>
         /// The type of input collected by this component.
@@ -308,6 +310,12 @@ namespace MudBlazor
             await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
+            IsClearing = false;
+        }
+
+        protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
+        {
+            IsClearing = true;
         }
 
         protected virtual async Task HandleSpinButtonPointerDownAsync()
