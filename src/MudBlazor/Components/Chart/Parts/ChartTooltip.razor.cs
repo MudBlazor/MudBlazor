@@ -129,7 +129,15 @@ public partial class ChartTooltip : ComponentBase
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle || _previousX != X || _previousY != Y)
+        // Equals treats NaN as equal to itself, unlike !=.
+        // A chart handing over a non-finite coordinate would otherwise never latch here.
+        // The recalculation ends in StateHasChanged, so every render would queue another one until the renderer overflows the stack.
+        if (firstRender
+            || FontSize != _previousFontSize
+            || Title != _previousTitle
+            || Subtitle != _previousSubtitle
+            || !_previousX.Equals(X)
+            || !_previousY.Equals(Y))
         {
             await RecalculateBoxWidthAsync();
         }
