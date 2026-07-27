@@ -80,8 +80,10 @@
         {
             foreach (var axisLine in _axisLines)
             {
-                var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");
-                var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");
+                var offCenterAnchor = axisLine.LabelX < 0 ? "end" : "start";
+                var offCenterBaseline = axisLine.LabelY < 0 ? "auto" : "hanging";
+                var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : offCenterAnchor;
+                var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : offCenterBaseline;
 
                 builder.OpenElement(seq++, "text");
                 builder.AddAttribute(seq++, "class", "mud-chart-axis-label");

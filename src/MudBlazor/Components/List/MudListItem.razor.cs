@@ -380,7 +380,7 @@ namespace MudBlazor
             // the only case a manual Navigition is required, is when
             // the target is empty, but a force reload is desired, all other cases are handled
             // by the html anchor
-            if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
@@ -547,7 +547,7 @@ namespace MudBlazor
 
             await OnClick.InvokeAsync(new MouseEventArgs());
 
-            if (activateLink && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            if (activateLink && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
