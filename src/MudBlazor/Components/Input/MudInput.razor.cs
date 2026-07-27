@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -310,6 +311,7 @@ namespace MudBlazor
             await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
+            IsClearing = false;
         }
 
         protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
@@ -317,7 +319,7 @@ namespace MudBlazor
             IsClearing = true;
         }
 
-        protected virtual async Task HandleClearMouseUpAsync(MouseEventArgs e)
+        protected virtual async Task HandleClearMouseLeaveAsync(MouseEventArgs e)
         {
             IsClearing = false;
         }

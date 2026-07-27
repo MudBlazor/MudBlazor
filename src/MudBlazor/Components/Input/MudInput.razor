@@ -108,7 +108,7 @@
                        aria-label="@Localizer[LanguageResource.MudInput_Clear]"
                        tabindex="-1"
                        @onmousedown="@HandleClearMouseDownAsync"
-                       @onmouseup="@HandleClearMouseUpAsync"/>
+                       @onmouseleave="@HandleClearMouseLeaveAsync"/>
     }
 
     @if (Adornment == Adornment.End)
