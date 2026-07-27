@@ -1066,6 +1066,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            if (_elementReference.IsClearing)
+            {
+                // To avoid reacting to the clicking of the clear button, we ignore this event because it is propagated.
+                return Task.CompletedTask;
+            }
+            
             return OnInputActivatedAsync(true);
         }
 
@@ -1088,7 +1094,7 @@ namespace MudBlazor
                 // To avoid reacting to the clicking of the clear button, we have to disable focus features while the clearing event chain is happening.
                 return;
             }
-            
+
             var wasFocused = _isFocused;
             _isFocused = true;
 
@@ -1111,7 +1117,7 @@ namespace MudBlazor
         private async Task OnInputActivatedAsync(bool openMenu)
         {
             // The click event also triggers the focus event so we don't want to unnecessarily handle both.
-            if (openMenu && !Open && !_opening && !GetReadOnlyState())
+            if (openMenu && !Open && !_opening && !GetReadOnlyState() && !_elementReference.IsClearing)
             {
                 await OpenMenuAsync();
             }
