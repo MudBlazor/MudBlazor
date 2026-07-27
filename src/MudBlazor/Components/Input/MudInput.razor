@@ -107,7 +107,8 @@
                        OnClick="@HandleClearButtonAsync"
                        aria-label="@Localizer[LanguageResource.MudInput_Clear]"
                        tabindex="-1"
-                       @onmousedown="@HandleClearMouseDownAsync" />
+                       @onmousedown="@HandleClearMouseDownAsync"
+                       @onmouseup="@HandleClearMouseUpAsync"/>
     }
 
     @if (Adornment == Adornment.End)
