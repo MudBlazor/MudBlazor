@@ -102,8 +102,7 @@ namespace MudBlazor.UnitTests.Charts
             sankey.FindAll("svg > rect").Count.Should().Be(2);
 
             // Both nodes settle in the same column, leaving no horizontal span to divide across.
-            // A non-finite x from that division never settles in ChartTooltip's change check
-            // (NaN != NaN) and spins the renderer until it overflows the stack.
+            // A non-finite x from that division never settles in ChartTooltip's change check (NaN != NaN) and spins the renderer until it overflows the stack.
             sankey.FindAll("svg > rect")
                 .Select(rect => rect.GetAttribute("x"))
                 .Should().AllBe("10");
@@ -137,8 +136,7 @@ namespace MudBlazor.UnitTests.Charts
         public void NonContiguousNodeColumns_CollapseToContiguousPositions()
         {
             // Overrides may leave gaps between column indices.
-            // Horizontal placement divides the raw index by the number of distinct columns, so the
-            // indices have to be renormalised to 0..n-1 or the later nodes land far past the viewBox.
+            // Horizontal placement divides the raw index by the number of distinct columns, so the indices have to be renormalised to 0..n-1 or the later nodes land far past the viewBox.
             var edges = new List<SankeyEdge<double>>
             {
                 new("A", "B", 10),
@@ -156,7 +154,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var comp = RenderSankey(edges, options);
 
-            // Columns 0/2/5 collapse to 0/1/2, spreading evenly over the default 650-wide viewBox:
+            // Columns 0/2/5 collapse to 0/1/2, spreading evenly over the default 650-wide viewBox.
             // 10px horizontal padding on each side and 10px node width leave 610px of travel.
             var positions = comp.FindAll("svg > rect")
                 .Select(rect => double.Parse(rect.GetAttribute("x"), CultureInfo.InvariantCulture))

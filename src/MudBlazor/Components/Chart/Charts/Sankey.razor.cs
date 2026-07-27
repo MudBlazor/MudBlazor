@@ -425,8 +425,7 @@ namespace MudBlazor.Charts
         {
             NodeRects.Clear();
 
-            // Mutates in place: the value mapping below is keyed by node, and record equality
-            // covers Column, so every read of nodes has to see the same normalised records.
+            // Mutates in place: the value mapping below is keyed by node, and record equality covers Column, so every read of nodes has to see the same normalised records.
             NormaliseNodeColumnIndices(nodes);
 
             var nodesPerColumn = nodes
@@ -449,9 +448,8 @@ namespace MudBlazor.Charts
             // Draw all nodes column per column
             foreach (var column in nodesPerColumn)
             {
-                // A single-column chart has no horizontal span to spread across, and the sole column
-                // is always column 0 after normalisation. Dividing by zero here yields NaN, which
-                // never settles in ChartTooltip's change check and spins the renderer forever.
+                // A single-column chart has no horizontal span to spread across, and after normalisation its sole column is always 0.
+                // Dividing by zero here yields NaN, which never settles in ChartTooltip's change check and spins the renderer forever.
                 var x = maxColumns == 0
                     ? HorizontalPadding
                     : (column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth) + HorizontalPadding;
@@ -488,8 +486,7 @@ namespace MudBlazor.Charts
         /// </summary>
         /// <remarks>
         /// Column overrides and node filtering can leave gaps between indices.
-        /// Horizontal placement divides the index by the number of distinct columns, so an
-        /// un-normalised index puts the node past the right edge of the chart bounds.
+        /// Horizontal placement divides the index by the number of distinct columns, so an un-normalised index puts the node past the right edge of the chart bounds.
         /// </remarks>
         private static void NormaliseNodeColumnIndices(SankeyNode[] nodes)
         {
