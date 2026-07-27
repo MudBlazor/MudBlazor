@@ -1,0 +1,97 @@
+name: downstream-check
+
+on:
+  push:
+    branches:
+      - dev
+  # So changes to this workflow can be validated on their own PR.
+  pull_request:
+    paths:
+      - .github/workflows/downstream-check.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Synthetic version, high enough that it never collides with a real release.
+  MUDBLAZOR_VERSION: 9.999.0-dev.${{ github.run_id }}
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+jobs:
+  pack:
+    name: pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+
+      - name: Restore
+        working-directory: src/MudBlazor
+        run: dotnet restore
+
+      - name: Pack
+        working-directory: src/MudBlazor
+        run: dotnet pack -c Release --no-restore --output "${{ github.workspace }}/packages" -p:Version=${{ env.MUDBLAZOR_VERSION }}
+
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: mudblazor-dev-package
+          path: packages/*.nupkg
+          if-no-files-found: error
+
+  build:
+    name: ${{ matrix.name }}
+    needs: pack
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ThemeManager
+            repository: MudBlazor/ThemeManager
+            project: src/MudBlazor.ThemeManager/MudBlazor.ThemeManager.csproj
+          - name: Translations
+            repository: MudBlazor/Translations
+            project: src/MudBlazor.Translations/MudBlazor.Translations.csproj
+
+    steps:
+      - name: Checkout ${{ matrix.repository }}
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ matrix.repository }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Download MudBlazor package
+        uses: actions/download-artifact@v7
+        with:
+          name: mudblazor-dev-package
+          path: ${{ runner.temp }}/packages
+
+      - name: Point MudBlazor at this commit's build
+        run: |
+          dotnet nuget add source "${{ runner.temp }}/packages" --name mudblazor-dev
+          dotnet add ${{ matrix.project }} package MudBlazor --version "$MUDBLAZOR_VERSION"
+
+      # These projects reference MudBlazor by minimum version, and NuGet resolves the
+      # lowest version satisfying that. Without this assertion the build below would
+      # quietly succeed against the released MudBlazor and prove nothing.
+      - name: Verify the pin resolved
+        run: dotnet list ${{ matrix.project }} package | grep -F "$MUDBLAZOR_VERSION"
+
+      - name: Build
+        run: dotnet build ${{ matrix.project }} -c Release
