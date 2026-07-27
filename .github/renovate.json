@@ -85,6 +85,23 @@
             "reviewers": [
                 "meenzen"
             ]
+        },
+        {
+            "description": "Group the Microsoft.Testing.Platform runner stack; these packages move and break together. Majors stay separate so breaking changes arrive alone.",
+            "matchPackageNames": [
+                "Microsoft.NET.Test.Sdk",
+                "Microsoft.Testing**",
+                "nunit",
+                "NUnit3TestAdapter",
+                "coverlet**",
+                "JunitXml.TestLogger"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ],
+            "groupName": "test platform",
+            "groupSlug": "test-platform"
         }
     ],
     "customManagers": [
