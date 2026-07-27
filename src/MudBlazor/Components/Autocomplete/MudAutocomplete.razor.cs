@@ -18,7 +18,6 @@ namespace MudBlazor
         private readonly string _componentId = Identifier.Create();
 
         private bool _isCleared;
-        private bool _isClearing;
         private bool _isProcessingValue;
         private int _selectedListItemIndex;
         private readonly int _elementKey = 0;
@@ -611,7 +610,7 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (_isClearing || _isProcessingValue)
+            if (_elementReference.IsClearing || _isProcessingValue)
             {
                 //When you select a value in the popover, SelectOptionAsync will be called.
                 //When it reaches SetValueAsync, it will be awaited.
@@ -856,7 +855,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ClearAsync()
         {
-            _isClearing = true;
+            _elementReference.IsClearing = true;
             try
             {
                 _isCleared = true;
@@ -872,7 +871,7 @@ namespace MudBlazor
             }
             finally
             {
-                _isClearing = false;
+                _elementReference.IsClearing = false;
             }
         }
 
@@ -1084,6 +1083,12 @@ namespace MudBlazor
                 return;
             }
 
+            if (_elementReference.IsClearing)
+            {
+                // To avoid reacting to the clicking of the clear button, we have to disable focus features while the clearing event chain is happening.
+                return;
+            }
+            
             var wasFocused = _isFocused;
             _isFocused = true;
 
