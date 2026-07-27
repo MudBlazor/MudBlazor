@@ -1120,13 +1120,16 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
             if (_items?.Length > 0)
                 _items = [];
-            _open = true;
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedListItemIndex = 0;
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
+            if(Open)
+            {
+                await OpenMenuAsync();
+            }
         }
         internal async Task AdornmentClickHandlerAsync()
         {
