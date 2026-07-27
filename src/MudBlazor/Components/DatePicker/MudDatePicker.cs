@@ -403,7 +403,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }

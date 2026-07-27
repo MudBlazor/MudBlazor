@@ -60,7 +60,7 @@
             @attributes="GetRowAttributes(itemBag.Item)"
             @onclick="@((args) => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
-            @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
+            @oncontextmenu:preventDefault="@DataGrid.RowContextMenuClick.HasDelegate">
             <CascadingValue Value="@DataGrid.Validator" IsFixed="true">
                 @foreach (var column in DataGrid.RenderedColumns)
                 {
