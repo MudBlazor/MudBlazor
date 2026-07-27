@@ -129,7 +129,7 @@ public partial class ChartTooltip : ComponentBase
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle || _previousX != X || _previousY != Y)
+        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle || !_previousX.Equals(X) || !_previousY.Equals(Y))
         {
             await RecalculateBoxWidthAsync();
         }
