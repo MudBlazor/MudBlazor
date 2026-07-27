@@ -1117,7 +1117,7 @@ namespace MudBlazor
         private async Task OnInputActivatedAsync(bool openMenu)
         {
             // The click event also triggers the focus event so we don't want to unnecessarily handle both.
-            if (openMenu && !Open && !_opening && !GetReadOnlyState() && !_elementReference.IsClearing)
+            if (openMenu && !Open && !_opening && !GetReadOnlyState())
             {
                 await OpenMenuAsync();
             }
