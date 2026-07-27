@@ -60,6 +60,16 @@ public sealed class KeyMapBuilder
     }
 
     /// <summary>
+    /// Maps multiple keys to an action on key down with a shared condition.
+    /// More efficient than calling OnKeyDown multiple times with the same condition.
+    /// </summary>
+    public KeyMapBuilder OnKeyDownAny(IEnumerable<string> keys, Func<Task> action, Func<bool> when)
+    {
+        _commands.Add(new ConditionalCommand(new MultiKeyCommand(KeyEventKind.Down, keys, action), when));
+        return this;
+    }
+
+    /// <summary>
     /// Maps multiple keys to a single action on key up.
     /// </summary>
     public KeyMapBuilder OnKeyUpAny(IEnumerable<string> keys, Func<Task> action)
@@ -154,16 +164,6 @@ public sealed class KeyMapBuilder
 
         _commands.Add(command);
 
-        return this;
-    }
-
-    /// <summary>
-    /// Maps multiple keys to an action on key down with a shared condition.
-    /// More efficient than calling OnKeyDown multiple times with the same condition.
-    /// </summary>
-    public KeyMapBuilder OnKeyDownAny(IEnumerable<string> keys, Func<Task> action, Func<bool> when)
-    {
-        _commands.Add(new ConditionalCommand(new MultiKeyCommand(KeyEventKind.Down, keys, action), when));
         return this;
     }
 

@@ -263,19 +263,6 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Replaces the default <see cref="ILocalizationEnumInterceptor"/> with custom implementation.
-        /// </summary>
-        /// <typeparam name="TInterceptor">Custom <see cref="ILocalizationEnumInterceptor"/> implementation.</typeparam>
-        /// <param name="services">IServiceCollection</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddLocalizationEnumInterceptor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TInterceptor>(this IServiceCollection services) where TInterceptor : class, ILocalizationEnumInterceptor
-        {
-            services.Replace(ServiceDescriptor.Transient<ILocalizationEnumInterceptor, TInterceptor>());
-
-            return services;
-        }
-
-        /// <summary>
         /// Replaces the default <see cref="ILocalizationInterceptor"/> with custom implementation.
         /// </summary>
         /// <typeparam name="TInterceptor">Custom <see cref="ILocalizationInterceptor"/> implementation.</typeparam>
@@ -285,6 +272,19 @@ namespace MudBlazor.Services
         public static IServiceCollection AddLocalizationInterceptor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TInterceptor>(this IServiceCollection services, Func<IServiceProvider, TInterceptor> implementationFactory) where TInterceptor : class, ILocalizationInterceptor
         {
             services.Replace(ServiceDescriptor.Transient<ILocalizationInterceptor>(implementationFactory));
+
+            return services;
+        }
+
+        /// <summary>
+        /// Replaces the default <see cref="ILocalizationEnumInterceptor"/> with custom implementation.
+        /// </summary>
+        /// <typeparam name="TInterceptor">Custom <see cref="ILocalizationEnumInterceptor"/> implementation.</typeparam>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddLocalizationEnumInterceptor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TInterceptor>(this IServiceCollection services) where TInterceptor : class, ILocalizationEnumInterceptor
+        {
+            services.Replace(ServiceDescriptor.Transient<ILocalizationEnumInterceptor, TInterceptor>());
 
             return services;
         }

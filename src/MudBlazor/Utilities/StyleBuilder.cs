@@ -72,29 +72,6 @@ namespace MudBlazor.Utilities
                 .Append(';');
 
         /// <summary>
-        /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
-        /// </summary>
-        /// <param name="style">The style to add.</param>
-        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw(style).AddRaw(';') : this;
-
-        /// <summary>
-        /// Adds a conditional style to the builder with a space separator and closing semicolon.
-        /// </summary>
-        /// <param name="style">The style to add.</param>
-        /// <param name="when">The condition.</param>
-        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string? style, bool when) => when ? AddStyle(style) : this;
-
-        /// <summary>
-        /// Adds a conditional style to the builder with a space separator and closing semicolon.
-        /// </summary>
-        /// <param name="style">The style to add.</param>
-        /// <param name="when">The condition as function.</param>
-        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
-        public StyleBuilder AddStyle(string? style, Func<bool>? when) => AddStyle(style, when is not null && when());
-
-        /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next style or value added to the builder.
         /// </summary>
         /// <param name="style">The raw style to add.</param>
@@ -118,6 +95,29 @@ namespace MudBlazor.Utilities
             _stringBuilder.Append(c);
             return this;
         }
+
+        /// <summary>
+        /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.
+        /// </summary>
+        /// <param name="style">The style to add.</param>
+        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
+        public StyleBuilder AddStyle(string? style) => !string.IsNullOrWhiteSpace(style) ? AddRaw(style).AddRaw(';') : this;
+
+        /// <summary>
+        /// Adds a conditional style to the builder with a space separator and closing semicolon.
+        /// </summary>
+        /// <param name="style">The style to add.</param>
+        /// <param name="when">The condition.</param>
+        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
+        public StyleBuilder AddStyle(string? style, bool when) => when ? AddStyle(style) : this;
+
+        /// <summary>
+        /// Adds a conditional style to the builder with a space separator and closing semicolon.
+        /// </summary>
+        /// <param name="style">The style to add.</param>
+        /// <param name="when">The condition as function.</param>
+        /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
+        public StyleBuilder AddStyle(string? style, Func<bool>? when) => AddStyle(style, when is not null && when());
 
         /// <summary>
         /// Adds a conditional in-line style to the builder with a space separator and closing semicolon.

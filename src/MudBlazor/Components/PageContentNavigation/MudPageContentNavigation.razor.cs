@@ -15,6 +15,7 @@ namespace MudBlazor
     public partial class MudPageContentNavigation : IAsyncDisposable, IMudStateHasChanged
     {
         private readonly List<MudPageContentSection> _sections = new();
+        private readonly Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
         private IScrollSpy? _scrollSpy;
 
         [Inject]
@@ -122,8 +123,6 @@ namespace MudBlazor
         /// <param name="sectionId">id of the section. It will be appending to the current url, if the section becomes active</param>
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a re-render of the component</param>
         public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new MudPageContentSection(sectionName, sectionId), forceUpdate);
-
-        private readonly Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
 
         /// <summary>
         /// Add a section to the content navigation

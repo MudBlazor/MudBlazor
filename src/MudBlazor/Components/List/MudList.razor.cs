@@ -324,6 +324,11 @@ namespace MudBlazor
             }
         }
 
+        internal void Register(MudList<T> child)
+        {
+            _childLists.Add(child);
+        }
+
         internal void Unregister(MudListItem<T> item)
         {
             if (!_items.Remove(item))
@@ -336,11 +341,6 @@ namespace MudBlazor
                 _activeItem = null;
                 EnsureActiveItem();
             }
-        }
-
-        internal void Register(MudList<T> child)
-        {
-            _childLists.Add(child);
         }
 
         internal void Unregister(MudList<T> child)

@@ -568,35 +568,6 @@ namespace MudBlazor
             }
         }
 
-        protected virtual void ValidateModelWithFullPathOfMember(Func<object, string, IEnumerable<string?>> func, List<string> errors)
-        {
-            try
-            {
-                if (Form?.Model is null)
-                {
-                    return;
-                }
-
-                if (For is null)
-                {
-                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
-                    return;
-                }
-
-                foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
-                {
-                    if (!IsNullOrEmpty(error))
-                    {
-                        errors.Add(error);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                errors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
         protected virtual async Task ValidateWithFunc(Func<T?, Task<bool>> func, T? value, List<string> errors)
         {
             try
@@ -633,6 +604,35 @@ namespace MudBlazor
             try
             {
                 foreach (var error in await func(value))
+                {
+                    if (!IsNullOrEmpty(error))
+                    {
+                        errors.Add(error);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                errors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        protected virtual void ValidateModelWithFullPathOfMember(Func<object, string, IEnumerable<string?>> func, List<string> errors)
+        {
+            try
+            {
+                if (Form?.Model is null)
+                {
+                    return;
+                }
+
+                if (For is null)
+                {
+                    errors.Add($"For is null, please set parameter For on the form input component of type {GetType().Name}");
+                    return;
+                }
+
+                foreach (var error in func(Form.Model, For.GetFullPathOfMember()))
                 {
                     if (!IsNullOrEmpty(error))
                     {

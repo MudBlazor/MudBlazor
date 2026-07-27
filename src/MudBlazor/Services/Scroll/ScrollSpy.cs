@@ -48,14 +48,14 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);
+
+        /// <inheritdoc />
         public async Task SetSectionAsActive(string id)
         {
             CenteredSection = id;
             await _js.InvokeVoidAsyncWithErrorHandling("mudScrollSpy.activateSection", id.Trim('#'));
         }
-
-        /// <inheritdoc />
-        public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);
 
         /// <summary>
         /// Invoked by JavaScript when a section change occurs.
