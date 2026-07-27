@@ -19,7 +19,9 @@ concurrency:
 
 env:
   # Synthetic version, high enough that it never collides with a real release.
-  MUDBLAZOR_VERSION: 9.999.0-dev.${{ github.run_id }}
+  # Deliberately stable, not prerelease: satellites that pack on build reject a
+  # prerelease dependency (NU5104), and floating ranges skip prereleases.
+  MUDBLAZOR_VERSION: 9.999.0
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
