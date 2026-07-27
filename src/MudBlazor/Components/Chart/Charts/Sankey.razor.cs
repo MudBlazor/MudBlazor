@@ -139,9 +139,7 @@ namespace MudBlazor.Charts
 
             if (Nodes.Count == 0)
             {
-                NodeRects.Clear();
-                EdgePaths.Clear();
-                NodeValues.Clear();
+                ClearChart();
                 return;
             }
 
@@ -150,8 +148,23 @@ namespace MudBlazor.Charts
             var edges = GetAllEdgesToDraw(nodes);
             if (ChartOptions!.HideNodesWithNoEdges) nodes = RemoveNodesWithNoEdges(nodes, edges);
 
+            // HideNodesSmallerThan and HideNodesWithNoEdges can empty the draw set even when Nodes is not.
+            // The layout below aggregates over it with Max, which throws on an empty sequence.
+            if (nodes.Length == 0)
+            {
+                ClearChart();
+                return;
+            }
+
             GenerateNodeRects(nodes, out var maxColumnValue, out var boundHeightRelativeToNodeHeight);
             GenerateEdgePaths(edges, maxColumnValue, boundHeightRelativeToNodeHeight);
+        }
+
+        private void ClearChart()
+        {
+            NodeRects.Clear();
+            EdgePaths.Clear();
+            NodeValues.Clear();
         }
 
         private SankeyNode[] GetAllNodesToDraw()
