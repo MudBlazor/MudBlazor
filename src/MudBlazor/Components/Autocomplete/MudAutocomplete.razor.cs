@@ -1071,7 +1071,7 @@ namespace MudBlazor
                 // To avoid reacting to the clicking of the clear button, we ignore this event because it is propagated.
                 return Task.CompletedTask;
             }
-            
+
             return OnInputActivatedAsync(true);
         }
 
@@ -1137,7 +1137,7 @@ namespace MudBlazor
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
-            if(Open)
+            if (Open)
             {
                 await OpenMenuAsync();
             }

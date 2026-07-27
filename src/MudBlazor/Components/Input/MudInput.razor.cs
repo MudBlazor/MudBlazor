@@ -59,7 +59,7 @@ namespace MudBlazor
         protected internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToStringFast(true);
-        
+
         internal bool IsClearing { get; set; }
 
         /// <summary>
