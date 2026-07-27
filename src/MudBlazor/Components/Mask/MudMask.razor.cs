@@ -523,7 +523,7 @@ namespace MudBlazor
             await JsApiService.CopyToClipboardAsync(text ?? string.Empty);
         }
 
-        [GeneratedRegex(@"^.$")]
+        [GeneratedRegex(@"^.$", RegexOptions.None, RegexDefaults.MatchTimeoutMilliseconds)]
         private static partial Regex ValidCharacterRegularExpression();
     }
 }
