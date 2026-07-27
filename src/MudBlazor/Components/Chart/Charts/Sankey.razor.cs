@@ -425,7 +425,10 @@ namespace MudBlazor.Charts
         {
             NodeRects.Clear();
 
-            var nodesPerColumn = NormaliseNodeColumnIndices(nodes)
+            // Mutates in place: the value mapping below is keyed by node, and record equality covers Column, so every read of nodes has to see the same normalised records.
+            NormaliseNodeColumnIndices(nodes);
+
+            var nodesPerColumn = nodes
                 .GroupBy(x => x.Column)
                 .OrderBy(grp => grp.Key)
                 .ToArray();
@@ -445,7 +448,11 @@ namespace MudBlazor.Charts
             // Draw all nodes column per column
             foreach (var column in nodesPerColumn)
             {
-                var x = (column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth) + HorizontalPadding;
+                // A single-column chart has no horizontal span to spread across, and after normalisation its sole column is always 0.
+                // Dividing by zero here yields NaN, which never settles in ChartTooltip's change check and spins the renderer forever.
+                var x = maxColumns == 0
+                    ? HorizontalPadding
+                    : (column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth) + HorizontalPadding;
                 var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]);
                 var totalVerticalSpace = _boundHeight - (double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight);
                 var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), ChartOptions!.MinVerticalSpacing);
@@ -474,18 +481,27 @@ namespace MudBlazor.Charts
             }
         }
 
-        private static SankeyNode[] NormaliseNodeColumnIndices(SankeyNode[] nodes)
+        /// <summary>
+        /// Rewrites the column indices of <paramref name="nodes"/> in place so they run 0..n-1 with no gaps.
+        /// </summary>
+        /// <remarks>
+        /// Column overrides and node filtering can leave gaps between indices.
+        /// Horizontal placement divides the index by the number of distinct columns, so an un-normalised index puts the node past the right edge of the chart bounds.
+        /// </remarks>
+        private static void NormaliseNodeColumnIndices(SankeyNode[] nodes)
         {
-            // Normalise column indices
             var columnMap = nodes
                 .Select(n => n.Column)
                 .Distinct()
                 .OrderBy(c => c)
                 .Select((c, index) => new { Old = c, New = index })
                 .ToDictionary(x => x.Old, x => x.New);
-            Array.ForEach(nodes, node => node = node with { Column = columnMap[node.Column] });
 
-            return nodes;
+            // SankeyNode is a record class, so the with-copy has to be written back into the array.
+            for (var i = 0; i < nodes.Length; i++)
+            {
+                nodes[i] = nodes[i] with { Column = columnMap[nodes[i].Column] };
+            }
         }
 
         private Dictionary<SankeyNode, double> GetNormalisedNodeValuesMapping(SankeyNode[] nodes, double maxColumnValue)
