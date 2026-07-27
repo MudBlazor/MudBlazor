@@ -100,7 +100,7 @@
         if (hasX)
         {
             builder.OpenElement(seq++, "tspan");
-            builder.AddContent(seq++, path.LabelXValue);
+            builder.AddContent(seq, path.LabelXValue);
             builder.CloseElement();
         }
 

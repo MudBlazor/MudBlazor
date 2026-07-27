@@ -95,7 +95,7 @@ namespace MudBlazor
             }
 
             // Add child content.
-            builder.AddContent(seq++, ChildContent);
+            builder.AddContent(seq, ChildContent);
 
             // Close element.
             builder.CloseElement();

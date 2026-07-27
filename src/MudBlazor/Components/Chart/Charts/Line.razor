@@ -144,7 +144,7 @@
             builder.OpenElement(seq++, "g");
             builder.AddAttribute(seq++, "class", "mud-chart-tooltip");
             builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToStr()},{tooltipY.ToStr()})");
-            builder.AddContent(seq++, TooltipTemplate((HoveredDataPointPath, color)));
+            builder.AddContent(seq, TooltipTemplate((HoveredDataPointPath, color)));
             builder.CloseElement();
         }
         else
@@ -163,7 +163,7 @@
                 builder.AddAttribute(seq++, "Subtitle", tooltipSubtitle);
                 builder.AddAttribute(seq++, "Color", color);
                 builder.AddAttribute(seq++, "X", tooltipX);
-                builder.AddAttribute(seq++, "Y", tooltipY);
+                builder.AddAttribute(seq, "Y", tooltipY);
                 builder.CloseComponent();
             }
         }
