@@ -370,6 +370,70 @@ namespace MudBlazor.UnitTests.Components
                 .BeFalse();
         }
 
+        /// <summary>
+        /// MudFab default variant should be Filled.
+        /// </summary>
+        [Test]
+        public void MudFabDefaultVariantShouldBeFilled()
+        {
+            var comp = Context.Render<MudFab>();
+            comp.Instance.Variant.Should().Be(Variant.Filled);
+        }
+
+        /// <summary>
+        /// MudFab with Variant.Filled should render the filled CSS classes.
+        /// </summary>
+        [TestCase(Color.Default, "mud-fab-filled", "mud-fab-filled-default")]
+        [TestCase(Color.Primary, "mud-fab-filled", "mud-fab-filled-primary")]
+        [TestCase(Color.Secondary, "mud-fab-filled", "mud-fab-filled-secondary")]
+        public void MudFabFilledVariantShouldHaveCorrectCssClasses(Color color, string variantClass, string variantColorClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, Variant.Filled)
+                .Add(p => p.Color, color));
+            var button = comp.Find("button");
+            button.ClassList.Should().Contain(variantClass);
+            button.ClassList.Should().Contain(variantColorClass);
+            button.ClassList.Should().NotContain("mud-fab-text");
+            button.ClassList.Should().NotContain("mud-fab-outlined");
+        }
+
+        /// <summary>
+        /// MudFab with Variant.Text should render the text CSS classes.
+        /// </summary>
+        [TestCase(Color.Default, "mud-fab-text", "mud-fab-text-default")]
+        [TestCase(Color.Primary, "mud-fab-text", "mud-fab-text-primary")]
+        [TestCase(Color.Secondary, "mud-fab-text", "mud-fab-text-secondary")]
+        public void MudFabTextVariantShouldHaveCorrectCssClasses(Color color, string variantClass, string variantColorClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, Variant.Text)
+                .Add(p => p.Color, color));
+            var button = comp.Find("button");
+            button.ClassList.Should().Contain(variantClass);
+            button.ClassList.Should().Contain(variantColorClass);
+            button.ClassList.Should().NotContain("mud-fab-filled");
+            button.ClassList.Should().NotContain("mud-fab-outlined");
+        }
+
+        /// <summary>
+        /// MudFab with Variant.Outlined should render the outlined CSS classes.
+        /// </summary>
+        [TestCase(Color.Default, "mud-fab-outlined", "mud-fab-outlined-default")]
+        [TestCase(Color.Primary, "mud-fab-outlined", "mud-fab-outlined-primary")]
+        [TestCase(Color.Secondary, "mud-fab-outlined", "mud-fab-outlined-secondary")]
+        public void MudFabOutlinedVariantShouldHaveCorrectCssClasses(Color color, string variantClass, string variantColorClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Color, color));
+            var button = comp.Find("button");
+            button.ClassList.Should().Contain(variantClass);
+            button.ClassList.Should().Contain(variantColorClass);
+            button.ClassList.Should().NotContain("mud-fab-filled");
+            button.ClassList.Should().NotContain("mud-fab-text");
+        }
+
         [Test]
         public async Task MudToggleIcon()
         {
