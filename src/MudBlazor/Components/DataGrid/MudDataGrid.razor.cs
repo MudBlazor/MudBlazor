@@ -2291,8 +2291,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// The row's editors are validated first, and the commit is abandoned when any of them reports an error.
-        /// Use the <see cref="CommittedItemChanges"/> callback for validation the editors cannot express,
-        /// returning <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
+        /// Use the <see cref="CommittedItemChanges"/> callback for validation the editors cannot express.
+        /// Return <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
         /// </remarks>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task CommitInlineEditAsync()
@@ -2301,8 +2301,7 @@ namespace MudBlazor
                 return;
 
             // Mirror Form mode, which validates before copying anything back to the source item.
-            // Errors is read instead of IsValid because that getter starts a second, unawaited
-            // validation pass which would clear the errors this one just collected.
+            // Errors is read instead of IsValid because that getter starts a second, unawaited validation pass which would clear the errors this one just collected.
             await Validator.ValidateAsync();
             if (Validator.Errors.Length > 0)
                 return;

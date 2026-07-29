@@ -7579,7 +7579,8 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
 
-            // Clear the Required editor. Nothing else guards the commit, so the editor has to.
+            // Clear the Required editor.
+            // Nothing else guards the commit, so the editor has to.
             await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
             await dataGrid.Find(".commit-btn").ClickAsync();
 
