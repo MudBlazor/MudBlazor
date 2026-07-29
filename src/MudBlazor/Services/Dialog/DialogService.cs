@@ -69,8 +69,21 @@ namespace MudBlazor
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogService"/> class.
         /// </summary>
+        /// <remarks>
+        /// Declared explicitly rather than as an optional parameter on the logger constructor.
+        /// An optional parameter keeps source compatibility but emits no parameterless constructor,
+        /// so assemblies compiled against an earlier version fail with <see cref="MissingMethodException"/>.
+        /// </remarks>
+        public DialogService()
+            : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
         /// <param name="logger">The logger used to surface configuration problems such as a missing provider.</param>
-        public DialogService(ILogger<DialogService>? logger = null)
+        public DialogService(ILogger<DialogService>? logger)
         {
             _logger = logger ?? NullLogger<DialogService>.Instance;
         }
