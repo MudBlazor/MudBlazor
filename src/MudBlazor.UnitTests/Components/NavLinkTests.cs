@@ -28,6 +28,30 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);
         }
 
+        [TestCase(null)]
+        [TestCase("_blank")]
+        public void NavLink_Rel_ReplacesTheDefault(string target)
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.Target, target)
+                .Add(x => x.Rel, "nofollow"));
+
+            comp.Find("a").GetAttribute("rel").Should().Be("nofollow");
+        }
+
+        [Test]
+        public void NavLink_Rel_IsOmittedWhenDisabled()
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.Target, "_blank")
+                .Add(x => x.Rel, "nofollow")
+                .Add(x => x.Disabled, true));
+
+            comp.Find("a").HasAttribute("rel").Should().BeFalse();
+        }
+
         [Test]
         public async Task NavLink_CheckOnClickEvent()
         {
