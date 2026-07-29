@@ -7572,6 +7572,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEdit_RequiredEditor_BlocksCommitWithoutCallback()
+        {
+            var comp = Context.Render<DataGridInlineRequiredTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRequiredTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Clear the Required editor. Nothing else guards the commit, so the editor has to.
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "an invalid row stays in edit mode");
+            comp.Instance.CommittedItems.Should().BeEmpty();
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_RequiredEditor_CommitsOnceValid()
+        {
+            var comp = Context.Render<DataGridInlineRequiredTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRequiredTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
         public async Task DataGridInlineEdit_IsEditingProperty_ReflectsEditState()
         {
             var comp = Context.Render<DataGridInlineEditTest>();

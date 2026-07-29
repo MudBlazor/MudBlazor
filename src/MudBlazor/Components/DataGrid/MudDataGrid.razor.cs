@@ -2290,13 +2290,21 @@ namespace MudBlazor
         /// Commits inline edits, persists changes to the source item, and exits edit mode.
         /// </summary>
         /// <remarks>
-        /// Use the <see cref="CommittedItemChanges"/> callback to perform validation before changes are applied.
-        /// Return <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
+        /// The row's editors are validated first, and the commit is abandoned when any of them reports an error.
+        /// Use the <see cref="CommittedItemChanges"/> callback for validation the editors cannot express,
+        /// returning <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
         /// </remarks>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task CommitInlineEditAsync()
         {
             if (EditMode != DataGridEditMode.Inline || _editingItem is not { } editingItem || _editingSourceItem is not { } editingSourceItem)
+                return;
+
+            // Mirror Form mode, which validates before copying anything back to the source item.
+            // Errors is read instead of IsValid because that getter starts a second, unawaited
+            // validation pass which would clear the errors this one just collected.
+            await Validator.ValidateAsync();
+            if (Validator.Errors.Length > 0)
                 return;
 
             // Allow consumer to validate/persist
