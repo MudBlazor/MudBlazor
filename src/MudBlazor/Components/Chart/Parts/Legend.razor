@@ -20,13 +20,13 @@
                 else
                 {
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">
-                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())" Size="Size.Small" Dense />
-                        <span class="mud-typography mud-typography-body2 ml-n2 align-self-center cursor-pointer"
-                              tabindex="0"
-                              role="button"
-                              @onclick="@(_ => item.HandleCheckboxChangeAsync())"
-                              @onclick:stopPropagation="true"
-                              @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key is "Enter" or " ") await item.HandleCheckboxChangeAsync(); })">@item.Labels</span>
+                        @* The series name is the checkbox's own label, so clicking it toggles the series
+                           natively and the checkbox gains an accessible name, without a second tab stop. *@
+                        <MudCheckBox Value="@item.Visible"
+                                     ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())"
+                                     Label="@item.Labels"
+                                     Size="Size.Small"
+                                     Dense />
                     </div>
                 }
             </div>

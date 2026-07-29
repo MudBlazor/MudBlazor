@@ -84,7 +84,9 @@
       }
 
       & .mud-input-control {
-        width: 35px !important;
+        // Sized to content because the series name is rendered inside the checkbox's label.
+        // A fixed width here would clip it out of the legend item's box.
+        width: auto !important;
       }
     }
   }
