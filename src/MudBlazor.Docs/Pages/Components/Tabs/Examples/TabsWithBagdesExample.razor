@@ -24,3 +24,16 @@
 	<MudTabPanel Text="Timing" BadgeDot="true" BadgeColor="Color.Primary" />
 	<MudTabPanel Text="Metrics" BadgeIcon="@Icons.Material.Filled.Check" BadgeColor="Color.Success" />
 </MudTabs>
+
+<MudTabs Elevation="2" MinimumTabWidth="160px" Class="mb-6">
+    <MudTabPanel Text="Deliveries and returns" BadgeData='"99+"' BadgeColor="Color.Error" />
+    <MudTabPanel Text="Outstanding invoices" BadgeData="128" BadgeMax="999" BadgeColor="Color.Error" />
+    <MudTabPanel Text="Notifications and alerts" Icon="@Icons.Material.Filled.Notifications" BadgeData='"NEW"' BadgeColor="Color.Info" />
+</MudTabs>
+
+<MudRTLProvider RightToLeft="true">
+    <MudTabs Elevation="2" MinimumTabWidth="160px" Class="mb-6">
+        <MudTabPanel Text="التسليمات والمرتجعات" BadgeData='"99+"' BadgeColor="Color.Error" />
+        <MudTabPanel Text="الإشعارات والتنبيهات" Icon="@Icons.Material.Filled.Notifications" BadgeData='"NEW"' BadgeColor="Color.Info" />
+    </MudTabs>
+</MudRTLProvider>
