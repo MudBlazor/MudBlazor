@@ -300,6 +300,12 @@ namespace MudBlazor.UnitTests.Components
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
             items.Count.Should().Be(expectedValues.Length);
+            if (boundaryCount >= 1)
+            {
+                //Boundary pages keep the item count constant so the control doesn't change width while navigating.
+                items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
+            }
+
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);
