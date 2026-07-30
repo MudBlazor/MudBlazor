@@ -195,6 +195,21 @@
     color: var(--mud-palette-text-disabled);
   }
 
+  & .mud-tab-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  & .mud-tab-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   & .mud-tab-icon-text {
     margin-right: 8px;
     margin-inline-end: 8px;
@@ -235,7 +250,27 @@
   }
 }
 
-.mud-tab-badge {
+.mud-tab-content > .mud-tab-badge {
+  &.mud-badge-root {
+    position: static;
+    display: inline-flex;
+    flex: 0 0 auto;
+    margin-inline-start: 4px;
+
+    .mud-badge-wrapper {
+      position: static;
+      width: auto;
+      height: auto;
+      flex: 0 0 auto;
+    }
+
+    .mud-badge {
+      position: static;
+    }
+  }
+}
+
+.mud-tab > .mud-tab-badge {
   margin-left: 8px;
   margin-inline-start: 8px;
   margin-inline-end: unset;
