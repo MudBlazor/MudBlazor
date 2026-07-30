@@ -10,7 +10,6 @@ changelog:
     - title: Bug Fixes
       labels:
         - bug
-        - regression
     - title: Other Changes
       labels:
         - "*"
