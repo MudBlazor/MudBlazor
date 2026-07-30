@@ -147,7 +147,7 @@
                 <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
                 @panel.Text
             }
-            @if (string.IsNullOrEmpty(panel.Text) && HasBadge(panel))
+            @if ((panel.TabContent is not null || string.IsNullOrEmpty(panel.Text)) && HasBadge(panel))
             {
                 <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Max="@panel.BadgeMax" Color="@panel.BadgeColor" Class="mud-tab-badge" />
             }
