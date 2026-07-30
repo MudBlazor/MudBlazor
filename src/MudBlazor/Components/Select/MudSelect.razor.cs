@@ -1006,8 +1006,7 @@ namespace MudBlazor
             }
             // if any selected element is disabled but select all selection is requested : clearing
             else if (!_selectedValues
-                     .Where(disabledValues.Contains)
-                     .Any())
+                     .Any(disabledValues.Contains))
             {
                 await ClearAsync();
                 return;

@@ -88,11 +88,10 @@ internal sealed class MudSelectContext<T>
     /// <returns></returns>
     public bool IsItemSelected(MudSelectItem<T> item)
     {
-        // 
         return _select.MultiSelection switch
         {
             true => _select.GetSelectedValues()?.Contains(item.Value, _select.Comparer) == true,
-            false => (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value) == true
+            false => (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value)
         };
     }
 
