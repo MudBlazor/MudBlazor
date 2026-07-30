@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -18,8 +17,8 @@ internal sealed class MudSelectContext<T>
     private readonly MudSelect<T> _select;
     private readonly List<MudSelectItem<T>> _items = [];
     private readonly List<Func<IReadOnlyCollection<T?>, Task>> _selectionObservers = [];
-    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
-    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
+    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup;
+    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MudSelectContext{T}"/> class.
@@ -28,6 +27,8 @@ internal sealed class MudSelectContext<T>
     public MudSelectContext(MudSelect<T> select)
     {
         _select = select;
+        _valueLookup = new((EqualityComparer<NullableObject<T?>>?)select.Comparer);
+        _shadowLookup = new((EqualityComparer<NullableObject<T?>>?)select.Comparer);
     }
 
     /// <summary>
@@ -77,11 +78,21 @@ internal sealed class MudSelectContext<T>
         // Note: Do NOT add to _shadowLookup here - that's only for shadow items
         // Shadow items are registered separately via RegisterShadowItem
 
-        // Check if this item's value is currently selected
+        return IsItemSelected(item);
+    }
+
+    /// <summary>
+    /// Check if this item's value is currently selected using the select comparer if specified
+    /// </summary>
+    /// <param name="item">The item to check</param>
+    /// <returns></returns>
+    public bool IsItemSelected(MudSelectItem<T> item)
+    {
+        // 
         return _select.MultiSelection switch
         {
-            true => _select.GetSelectedValues()?.Contains(item.Value) == true,
-            false => _select.ReadValue?.Equals(item.Value) == true
+            true => _select.GetSelectedValues()?.Contains(item.Value, _select.Comparer) == true,
+            false => (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value) == true
         };
     }
 
