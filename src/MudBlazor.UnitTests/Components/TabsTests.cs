@@ -273,6 +273,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TextTabBadgeRendersAfterShrinkableLabel()
+        {
+            var comp = Context.Render<MudTabs>(parameters => parameters
+                .AddChildContent<MudTabPanel>(panel => panel
+                    .Add(x => x.Text, "Deliveries and returns")
+                    .Add(x => x.BadgeData, "99+")));
+
+            var content = comp.Find(".mud-tab-content");
+            var children = content.Children;
+
+            children.Should().HaveCount(2);
+            children[0].ClassList.Should().Contain("mud-tab-label");
+            children[0].TrimmedText().Should().Be("Deliveries and returns");
+            children[1].ClassList.Should().Contain("mud-tab-badge");
+            children[1].QuerySelector(".mud-badge")!.TextContent.Trim().Should().Be("99+");
+        }
+
+        [Test]
+        public void IconAndTextTabBadgeRendersInM3InlineOrder()
+        {
+            var comp = Context.Render<MudTabs>(parameters => parameters
+                .AddChildContent<MudTabPanel>(panel => panel
+                    .Add(x => x.Icon, Icons.Material.Filled.Notifications)
+                    .Add(x => x.Text, "Notifications and alerts")
+                    .Add(x => x.BadgeData, 12)));
+
+            var children = comp.Find(".mud-tab-content").Children;
+
+            children.Should().HaveCount(3);
+            children[0].ClassList.Should().Contain("mud-tab-icon-text");
+            children[1].ClassList.Should().Contain("mud-tab-label");
+            children[2].ClassList.Should().Contain("mud-tab-badge");
+        }
+
+        [Test]
         public async Task ScrollToItem_NoScrollingNeeded()
         {
             var comp = Context.Render<ScrollableTabsTest>();
