@@ -7,10 +7,10 @@ changelog:
       labels:
         - new component
         - enhancement
-        - API change
     - title: Bug Fixes
       labels:
         - bug
+        - regression
     - title: Other Changes
       labels:
         - "*"
@@ -21,4 +21,3 @@ changelog:
           - tests
           - dependency
           - refactor
-          - performance
