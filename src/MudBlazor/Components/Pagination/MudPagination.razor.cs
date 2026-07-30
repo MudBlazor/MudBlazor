@@ -279,32 +279,30 @@ namespace MudBlazor
                 return result;
             }
 
-            //BoundaryCount==0 has no fixed boundary pages to bridge a single-page gap into, so the
-            //"absorb the gap into a real page" trick below (used when BoundaryCount>=1) would show one
-            //extra page beyond MiddleCount; handle it separately as a pure sliding window instead.
+            //With no boundary pages there is nothing for a single-page gap to be absorbed into.
+            //The path below would then show one page more than MiddleCount, so use a plain sliding window.
             if (_boundaryCountState.Value == 0)
             {
-                var tightMin = 1;
-                var tightMax = _countState.Value - _middleCountState.Value + 1;
-                var start = Math.Clamp(_selectedState.Value - (_middleCountState.Value / 2), tightMin, tightMax);
+                var maxStart = _countState.Value - _middleCountState.Value + 1;
+                var start = Math.Clamp(_selectedState.Value - (_middleCountState.Value / 2), 1, maxStart);
 
-                var leftGap = start - 1;
-                var rightGap = _countState.Value - (start + _middleCountState.Value - 1);
-
-                var list = new List<int>(_middleCountState.Value + 2);
-                if (leftGap > 0)
+                var window = new List<int>(_middleCountState.Value + 2);
+                if (start > 1)
                 {
-                    list.Add(-1);
+                    window.Add(-1);
                 }
+
                 for (var i = 0; i < _middleCountState.Value; i++)
                 {
-                    list.Add(start + i);
+                    window.Add(start + i);
                 }
-                if (rightGap > 0)
+
+                if (start + _middleCountState.Value - 1 < _countState.Value)
                 {
-                    list.Add(-1);
+                    window.Add(-1);
                 }
-                return list.ToArray();
+
+                return window.ToArray();
             }
 
             var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;
