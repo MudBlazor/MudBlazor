@@ -38,8 +38,7 @@ namespace MudBlazor
         {
             get
             {
-                // Compared without case so a caller cannot slip navigation attributes past the
-                // disabled check by varying their casing, since HTML attribute names are case-insensitive.
+                // Compared without case so a caller cannot slip navigation attributes past the disabled check by varying their casing, since HTML attribute names are case-insensitive.
                 var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
                 if (!Disabled)
                 {
@@ -55,8 +54,7 @@ namespace MudBlazor
 
                 if (Disabled)
                 {
-                    // UserAttributes is a parameter in its own right, so assigning it directly bypasses
-                    // the per-key matching that would otherwise route these to Href and Target.
+                    // UserAttributes is a parameter in its own right, so assigning it directly bypasses the per-key matching that would otherwise route these to Href and Target.
                     // Without this a caller-supplied href leaves a disabled link fully navigable.
                     attributes.Remove("href");
                     attributes.Remove("target");
