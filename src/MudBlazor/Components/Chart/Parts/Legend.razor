@@ -20,8 +20,6 @@
                 else
                 {
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">
-                        @* The series name is the checkbox's own label, so clicking it toggles the series
-                           natively and the checkbox gains an accessible name, without a second tab stop. *@
                         <MudCheckBox Value="@item.Visible"
                                      ValueChanged="@((bool _) => item.HandleCheckboxChangeAsync())"
                                      Label="@item.Labels"
