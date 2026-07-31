@@ -40,6 +40,39 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("a").GetAttribute("rel").Should().Be("nofollow");
         }
 
+        [TestCase("href")]
+        [TestCase("HREF")]
+        [TestCase("target")]
+        public void NavLink_Disabled_DropsNavigationAttributesAssignedDirectly(string attributeName)
+        {
+            // UserAttributes is a parameter, so assigning the dictionary directly skips the per-key
+            // matching that routes href/target to Href/Target. A disabled link must stay inert anyway.
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Disabled, true)
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    [attributeName] = "/dashboard",
+                    ["data-testid"] = "nav-disabled"
+                }));
+
+            var anchor = comp.Find("a");
+            anchor.HasAttribute(attributeName).Should().BeFalse();
+            anchor.HasAttribute("href").Should().BeFalse();
+            anchor.GetAttribute("data-testid").Should().Be("nav-disabled", because: "only navigation attributes are dropped");
+        }
+
+        [Test]
+        public void NavLink_Enabled_KeepsNavigationAttributesAssignedDirectly()
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["data-testid"] = "nav-enabled" }));
+
+            var anchor = comp.Find("a");
+            anchor.GetAttribute("href").Should().Be("/dashboard");
+            anchor.GetAttribute("data-testid").Should().Be("nav-enabled");
+        }
+
         [Test]
         public void NavLink_Rel_IsOmittedWhenDisabled()
         {
