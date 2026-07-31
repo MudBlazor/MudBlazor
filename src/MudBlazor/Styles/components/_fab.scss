@@ -120,6 +120,10 @@
     background-color: var(--mud-palette-action-default-hover);
   }
 
+  &:disabled {
+    background-color: transparent;
+  }
+
   @each $color in $mud-palette-colors {
     &.mud-fab-text-#{$color} {
       color: var(--mud-palette-#{$color});
@@ -159,6 +163,7 @@
 
   &:disabled {
     border: 1px solid var(--mud-palette-action-disabled-background);
+    background-color: transparent;
   }
 
   @each $color in $mud-palette-colors {

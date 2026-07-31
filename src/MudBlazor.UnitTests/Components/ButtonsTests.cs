@@ -461,6 +461,38 @@ namespace MudBlazor.UnitTests.Components
             button.ClassList.Should().NotContain("mud-fab-text");
         }
 
+        /// <summary>
+        /// A disabled MudFab with Variant.Text must retain the mud-fab-text class so that the
+        /// .mud-fab-text:disabled CSS rule (background-color: transparent) takes precedence over
+        /// the base .mud-fab:disabled rule (background-color: action-disabled-background).
+        /// </summary>
+        [TestCase(Variant.Text, "mud-fab-text")]
+        [TestCase(Variant.Outlined, "mud-fab-outlined")]
+        public void MudFabDisabledVariantShouldRetainVariantClass(Variant variant, string variantClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, variant)
+                .Add(p => p.Disabled, true));
+            var button = comp.Find("button");
+            button.HasAttribute("disabled").Should().BeTrue();
+            button.ClassList.Should().Contain(variantClass);
+        }
+
+        /// <summary>
+        /// A disabled MudFab with Variant.Filled should still carry the disabled attribute and
+        /// retain its filled variant class.
+        /// </summary>
+        [Test]
+        public void MudFabFilledDisabledShouldRetainVariantClass()
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, Variant.Filled)
+                .Add(p => p.Disabled, true));
+            var button = comp.Find("button");
+            button.HasAttribute("disabled").Should().BeTrue();
+            button.ClassList.Should().Contain("mud-fab-filled");
+        }
+
         [Test]
         public async Task MudToggleIcon()
         {
