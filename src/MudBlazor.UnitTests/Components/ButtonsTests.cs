@@ -399,6 +399,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// MudFab with Variant.Filled should also emit the legacy mud-fab-{color} class for backward compatibility.
+        /// </summary>
+        [TestCase(Color.Default, "mud-fab-default")]
+        [TestCase(Color.Primary, "mud-fab-primary")]
+        [TestCase(Color.Secondary, "mud-fab-secondary")]
+        public void MudFabFilledVariantShouldEmitLegacyColorClass(Color color, string legacyColorClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, Variant.Filled)
+                .Add(p => p.Color, color));
+            comp.Find("button").ClassList.Should().Contain(legacyColorClass);
+        }
+
+        /// <summary>
+        /// MudFab with non-Filled variants should NOT emit the legacy mud-fab-{color} class.
+        /// </summary>
+        [TestCase(Variant.Outlined, Color.Primary, "mud-fab-primary")]
+        [TestCase(Variant.Text, Color.Primary, "mud-fab-primary")]
+        public void MudFabNonFilledVariantShouldNotEmitLegacyColorClass(Variant variant, Color color, string legacyColorClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Variant, variant)
+                .Add(p => p.Color, color));
+            comp.Find("button").ClassList.Should().NotContain(legacyColorClass);
+        }
+
+        /// <summary>
         /// MudFab with Variant.Text should render the text CSS classes.
         /// </summary>
         [TestCase(Color.Default, "mud-fab-text", "mud-fab-text-default")]

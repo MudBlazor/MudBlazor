@@ -117,6 +117,38 @@ public class FabMenuTests : BunitTest
         container.ClassList.Contains("mud-fab-anchor-top-left").Should().BeFalse();
     }
 
+    /// <summary>
+    /// MudFabMenu should forward its Variant to the inner trigger MudFab button.
+    /// </summary>
+    [TestCase(Variant.Filled, "mud-fab-filled")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined")]
+    [TestCase(Variant.Text, "mud-fab-text")]
+    public void MudFabMenu_ShouldForwardVariantToTriggerButton(Variant variant, string expectedClass)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Variant, variant)
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add));
+
+        comp.Find(".mud-fab-menu-button").ClassList.Should().Contain(expectedClass);
+    }
+
+    /// <summary>
+    /// MudFabMenuItem should forward its Variant to the inner MudFab button.
+    /// </summary>
+    [TestCase(Variant.Filled, "mud-fab-filled")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined")]
+    [TestCase(Variant.Text, "mud-fab-text")]
+    public void MudFabMenuItem_ShouldForwardVariantToButton(Variant variant, string expectedClass)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
+            .AddChildContent<MudFabMenuItem>(item => item
+                .Add(p => p.Variant, variant)
+                .Add(p => p.StartIcon, Icons.Material.Filled.Edit)));
+
+        comp.Find(".mud-fab-menu-item").ClassList.Should().Contain(expectedClass);
+    }
+
     [Test]
     [Combinatorial]
     public void FabMenuItem_ShouldRenderAnchorIfHrefIsSet(
