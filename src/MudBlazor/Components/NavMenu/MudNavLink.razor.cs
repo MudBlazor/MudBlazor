@@ -38,17 +38,28 @@ namespace MudBlazor
         {
             get
             {
-                var rel = Rel ?? (!string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty);
-                var attributes = Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
+                // Compared without case so a caller cannot slip navigation attributes past the disabled check by varying their casing, since HTML attribute names are case-insensitive.
+                var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+                if (!Disabled)
                 {
-                    { "href", Href },
-                    { "target", Target },
-                    { "rel", rel }
-                };
+                    attributes["href"] = Href;
+                    attributes["target"] = Target;
+                    attributes["rel"] = Rel ?? (!string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty);
+                }
+
                 foreach (var attribute in UserAttributes)
                 {
                     attributes[attribute.Key] = attribute.Value;
                 }
+
+                if (Disabled)
+                {
+                    // UserAttributes is a parameter in its own right, so assigning it directly bypasses the per-key matching that would otherwise route these to Href and Target.
+                    // Without this a caller-supplied href leaves a disabled link fully navigable.
+                    attributes.Remove("href");
+                    attributes.Remove("target");
+                }
+
                 return attributes;
             }
         }
