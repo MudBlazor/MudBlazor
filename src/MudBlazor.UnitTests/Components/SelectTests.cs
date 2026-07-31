@@ -992,6 +992,54 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearButtonClicked.Should().BeTrue();
         }
 
+        [Test]
+        public async Task SelectClearable_NonNullableEnum_HiddenWhileValueIsDefault()
+        {
+            // #13372: a non-nullable value type's default (here the zero enum member) is the cleared state,
+            // so the clear button must stay hidden until a different value is selected.
+            var comp = Context.Render<MudSelect<MyEnum>>(p => p
+                .Add(x => x.Clearable, true)
+                .Add(x => x.Value, MyEnum.First));
+
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, MyEnum.Second));
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+
+            // Returning to the default hides it again (clearing default would be a no-op).
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, MyEnum.First));
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task SelectClearable_NonNullableInt_HiddenWhileValueIsDefault()
+        {
+            // #13372: default(int) is the cleared state, so no clear button until a non-zero value is selected.
+            var comp = Context.Render<MudSelect<int>>(p => p
+                .Add(x => x.Clearable, true)
+                .Add(x => x.Value, 0));
+
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, 2));
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+        }
+
+        [Test]
+        public async Task SelectClearable_NullableValueType_ShownForZero()
+        {
+            // #13372: for a nullable value type the default is null, so a real zero selection is distinct from
+            // cleared and stays clearable (clearing takes it from 0 to null).
+            var comp = Context.Render<MudSelect<int?>>(p => p
+                .Add(x => x.Clearable, true)
+                .Add(x => x.Value, (int?)null));
+
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, (int?)0));
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+        }
+
         /// <summary>
         /// Reselect an already selected value should not call SelectedValuesChanged event.
         /// </summary>

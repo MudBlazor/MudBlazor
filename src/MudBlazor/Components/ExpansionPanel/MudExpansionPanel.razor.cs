@@ -7,13 +7,13 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A component which can be expanded to show more content or collapsed to show only its header.
+    /// Accordion-style collapsible panel within a <see cref="MudExpansionPanels"/> group that expands to reveal content or collapses to show only its header.
     /// </summary>
     /// <remarks>
     /// This component is always inside a <see cref="MudExpansionPanels"/> component.
     /// </remarks>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudCollapse"/>
+    /// <seealso cref="MudCollapse" />
+    /// <seealso cref="MudExpansionPanels" />
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
@@ -86,7 +86,6 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Obsolete("Set Icon to an empty string to hide the expand icon instead. This property will be removed in v10.")]
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool HideIcon { get; set; }
@@ -95,11 +94,11 @@ namespace MudBlazor
         /// The icon for expanding this panel.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.  Set to <c>null</c> or an empty string to hide the icon.
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public string? Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+        public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// Removes vertical padding from the panel.

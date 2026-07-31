@@ -6,7 +6,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing form input components.
+    /// Base class for MudBlazor form input components such as <see cref="MudTextField{T}"/>, <see cref="MudNumericField{T}"/>, and <see cref="MudSelect{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>

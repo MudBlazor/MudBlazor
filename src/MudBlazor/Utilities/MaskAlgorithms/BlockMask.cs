@@ -4,6 +4,7 @@
 
 using System.Text;
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -58,7 +59,7 @@ public class BlockMask : RegexMask
         base.InitInternals();
         Blocks ??= [];
         Mask = BuildRegex(Blocks);
-        _regex = new Regex(Mask);
+        _regex = new Regex(Mask, RegexOptions.None, RegexDefaults.MatchTimeout);
     }
 
     /// <inheritdoc />

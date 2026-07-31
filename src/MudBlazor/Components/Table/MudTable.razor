@@ -37,7 +37,7 @@
                 </div>
             }
             <div id="@_tableId" class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
-                <table class="@TableClassname" aria-label="@AriaLabel">
+                <table @attributes="GetTableAttributes()" class="@TableClassname">
                     @if (ColGroup != null)
                     {
                         <colgroup>
@@ -65,7 +65,7 @@
                                     }
                                 </MudTHeadRow>
                             }
-                            @if (Loading)
+                            @if (ShowLoadingProgress)
                             {
                                 <tr class="mud-table-loading-row">
                                     <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
@@ -75,7 +75,7 @@
                             }
                         </thead>
                     }
-                    else if (Loading)
+                    else if (ShowLoadingProgress)
                     {
                         <thead class="@HeadClassname">
                             <tr class="mud-table-loading-row">

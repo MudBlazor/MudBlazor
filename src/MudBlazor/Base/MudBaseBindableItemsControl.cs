@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing components with bindable items.
+    /// Base class for item container components that bind to a data source and render each item through a template, such as <see cref="MudCarousel{T}"/>.
     /// </summary>
-    /// <typeparam name="TChildComponent">The <see cref="MudComponentBase"/> managed within this component..</typeparam>
+    /// <typeparam name="TChildComponent">The <see cref="MudComponentBase"/> managed within this component.</typeparam>
     /// <typeparam name="TData">The type of item managed by this component.</typeparam>
     public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
         where TChildComponent : MudComponentBase

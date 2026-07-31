@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a chart that has axes.
+/// Axis chart options such as Y-axis ticks, number formats, grid lines, and axis titles for charts with X and Y axes.
 /// </summary>
 public interface IAxisChartOptions : IChartOptions
 {

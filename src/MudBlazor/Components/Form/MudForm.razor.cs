@@ -196,7 +196,7 @@ namespace MudBlazor
         public bool? OverrideFieldValidation { get; set; }
 
         /// <summary>
-        /// The validation errors for inputs within this form.
+        /// The validation errors for inputs within this form and any child forms.
         /// </summary>
         /// <remarks>
         /// When this property changes, <see cref="ErrorsChanged"/> occurs.
@@ -205,7 +205,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Form.ValidationResult)]
         public string[] Errors
         {
-            get => _errors.ToArray();
+            get => _errors.Concat(ChildForms.SelectMany(childForm => childForm.Errors)).ToArray();
             set { /* readonly */ }
         }
 
@@ -268,7 +268,7 @@ namespace MudBlazor
         {
             // The form is valid when no control has an error and every required control holds a value.
             // A required field is satisfied by having a value, not by being touched.
-            var noErrors = _formControls.All(x => x.HasErrors == false);
+            var noErrors = _formControls.All(x => !x.HasErrors);
             var requiredAllHaveValue = _formControls.Where(x => x.Required).All(x => x.HasValue());
             return noErrors && requiredAllHaveValue;
         }

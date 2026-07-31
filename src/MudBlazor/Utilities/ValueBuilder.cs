@@ -4,6 +4,9 @@
 
 namespace MudBlazor.Utilities;
 
+/// <summary>
+/// Accumulates space-separated string fragments added conditionally, used to build CSS class and style values.
+/// </summary>
 public class ValueBuilder
 {
     private string? _stringBuffer;

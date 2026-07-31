@@ -1,0 +1,17 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudChart T="double" ChartType="ChartType.StackedBar" ChartSeries="@_series" ChartLabels="@_xAxisLabels"
+          ChartOptions="@_options" Width="100%" Height="350px" />
+
+@code {
+    private readonly StackedBarChartOptions _options = new() { ShowValues = true };
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46 } },
+        new() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28 } },
+        new() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4 } },
+    ];
+
+    private readonly string[] _xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May" };
+}

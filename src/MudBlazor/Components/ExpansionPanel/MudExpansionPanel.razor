@@ -1,10 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@{
-#pragma warning disable CS0618 // Type or member is obsolete
-}
-
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <div class="@HeaderClassname" @onclick="ToggleExpansionAsync" tabindex="@(Disabled ? null : "0")" @onkeydown="HandleKeyDownAsync">
         <div class="mud-expand-panel-text">
@@ -17,7 +13,7 @@
                 @Text
             }
         </div>
-        @if (!HideIcon && !string.IsNullOrEmpty(Icon))
+        @if (!HideIcon)
         {
             <MudIcon Icon="@Icon" class="@(_expandedState.Value ? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")" />
         }

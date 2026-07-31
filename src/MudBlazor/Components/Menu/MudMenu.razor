@@ -13,7 +13,8 @@
      @onkeydown="TrackKeyboardInteraction">
     @if (GetActivatorHidden())
     {
-        @* No content was set so no need to render anything *@
+        // The branch must exist so a menu with no activator falls through to nothing.
+        // Without it the arms below would render a blank button.
     }
     else if (ActivatorContent is not null)
     {

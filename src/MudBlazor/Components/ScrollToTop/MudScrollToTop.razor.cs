@@ -135,7 +135,7 @@ namespace MudBlazor
                 ? e.FirstChildBoundingClientRect?.Top * -1
                 : e.ScrollTop;
 
-            if (topOffset >= TopOffset && Visible != true)
+            if (topOffset >= TopOffset && !Visible)
             {
                 Visible = true;
                 await InvokeAsync(StateHasChanged);

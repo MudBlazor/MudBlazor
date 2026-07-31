@@ -10,6 +10,9 @@ namespace MudBlazor;
 
 internal partial class DefaultConverter
 {
+    /// <summary>
+    /// Converts a <see cref="DateTime"/> value to and from its string representation using a culture and format.
+    /// </summary>
     public sealed class DateTimeConverter(Func<CultureInfo> culture, Func<string?> format)
         : IReversibleConverter<DateTime, string?>, IReversibleConverter<DateTime?, string?>
     {

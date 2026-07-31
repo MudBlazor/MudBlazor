@@ -28,6 +28,30 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);
         }
 
+        [TestCase(null)]
+        [TestCase("_blank")]
+        public void NavLink_Rel_ReplacesTheDefault(string target)
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.Target, target)
+                .Add(x => x.Rel, "nofollow"));
+
+            comp.Find("a").GetAttribute("rel").Should().Be("nofollow");
+        }
+
+        [Test]
+        public void NavLink_Rel_IsOmittedWhenDisabled()
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.Target, "_blank")
+                .Add(x => x.Rel, "nofollow")
+                .Add(x => x.Disabled, true));
+
+            comp.Find("a").HasAttribute("rel").Should().BeFalse();
+        }
+
         [Test]
         public async Task NavLink_CheckOnClickEvent()
         {
@@ -62,6 +86,33 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<NavLinkDisabledTest>(parameters => parameters.Add(x => x.Disabled, true));
             await comp.Find("a").ClickAsync();
             comp.Instance.IsNavigated.Should().BeFalse();
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void NavLink_UserAttributes_AppearOnAnchor(bool disabled)
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.Disabled, disabled)
+                .AddUnmatched("aria-label", "Dashboard")
+                .AddUnmatched("data-testid", "nav-dashboard"));
+            comp.Find("a.mud-nav-link").GetAttribute("aria-label").Should().Be("Dashboard");
+            comp.Find("a.mud-nav-link").GetAttribute("data-testid").Should().Be("nav-dashboard");
+            comp.Find(".mud-nav-item").HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        [Test]
+        public void NavLink_UserAttributes_AppearOnClickableElement()
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.OnClick, (MouseEventArgs _) => { })
+                .AddUnmatched("aria-label", "Dashboard")
+                .AddUnmatched("data-testid", "nav-dashboard"));
+            comp.FindAll("a").Should().BeEmpty();
+            comp.Find(".mud-nav-link").GetAttribute("aria-label").Should().Be("Dashboard");
+            comp.Find(".mud-nav-link").GetAttribute("data-testid").Should().Be("nav-dashboard");
+            comp.Find(".mud-nav-item").HasAttribute("aria-label").Should().BeFalse();
         }
 
         [Test]

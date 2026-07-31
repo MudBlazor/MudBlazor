@@ -36,12 +36,21 @@ namespace MudBlazor
 
         protected Dictionary<string, object?> Attributes
         {
-            get => Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
+            get
             {
-                { "href", Href },
-                { "target", Target },
-                { "rel", !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty }
-            };
+                var rel = Rel ?? (!string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty);
+                var attributes = Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
+                {
+                    { "href", Href },
+                    { "target", Target },
+                    { "rel", rel }
+                };
+                foreach (var attribute in UserAttributes)
+                {
+                    attributes[attribute.Key] = attribute.Value;
+                }
+                return attributes;
+            }
         }
 
         protected int TabIndex => Disabled || NavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
@@ -95,6 +104,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string? Target { get; set; }
+
+        /// <summary>
+        /// The relationship between the current document and the linked document when <see cref="Href"/> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which applies <c>noopener noreferrer</c> whenever <see cref="Target"/> is set.
+        /// Setting this replaces that default. Common values can be found here: <see href="https://www.w3schools.com/tags/att_a_rel.asp" />
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string? Rel { get; set; }
 
         /// <summary>
         /// The CSS applied when this link is active.

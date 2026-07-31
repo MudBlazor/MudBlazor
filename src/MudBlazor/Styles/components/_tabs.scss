@@ -122,7 +122,9 @@
   position: relative;
   transition: .3s cubic-bezier(.25,.8,.5,1);
 
-  > .mud-tab-panel {
+  // Descendant (not child) so panels are matched through wrapper elements such as MudForm.
+  // :not(.mud-tab) skips a nested tabs' bar buttons, which also carry .mud-tab-panel.
+  .mud-tab-panel:not(.mud-tab) {
     display: none;
 
     &.mud-tab-panel-active:not(.mud-tab-panel-hidden) {
@@ -133,6 +135,12 @@
   &.mud-tabs-vertical {
     display: flex;
     flex-grow: 1;
+    min-width: 0;
+
+    // Child combinator on purpose: only the direct-child active panel is the flex item to clamp.
+    > .mud-tab-panel-active > * {
+      min-width: 0;
+    }
   }
 }
 
