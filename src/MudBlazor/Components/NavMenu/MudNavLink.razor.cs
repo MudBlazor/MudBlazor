@@ -38,16 +38,28 @@ namespace MudBlazor
         {
             get
             {
-                var attributes = Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
+                // Compared without case so a caller cannot slip navigation attributes past the disabled check by varying their casing, since HTML attribute names are case-insensitive.
+                var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+                if (!Disabled)
                 {
-                    { "href", Href },
-                    { "target", Target },
-                    { "rel", !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty }
-                };
+                    attributes["href"] = Href;
+                    attributes["target"] = Target;
+                    attributes["rel"] = Rel ?? (!string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty);
+                }
+
                 foreach (var attribute in UserAttributes)
                 {
                     attributes[attribute.Key] = attribute.Value;
                 }
+
+                if (Disabled)
+                {
+                    // UserAttributes is a parameter in its own right, so assigning it directly bypasses the per-key matching that would otherwise route these to Href and Target.
+                    // Without this a caller-supplied href leaves a disabled link fully navigable.
+                    attributes.Remove("href");
+                    attributes.Remove("target");
+                }
+
                 return attributes;
             }
         }
@@ -103,6 +115,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.NavMenu.ClickAction)]
         public string? Target { get; set; }
+
+        /// <summary>
+        /// The relationship between the current document and the linked document when <see cref="Href"/> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which applies <c>noopener noreferrer</c> whenever <see cref="Target"/> is set.
+        /// Setting this replaces that default. Common values can be found here: <see href="https://www.w3schools.com/tags/att_a_rel.asp" />
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string? Rel { get; set; }
 
         /// <summary>
         /// The CSS applied when this link is active.

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -99,6 +100,12 @@ namespace MudBlazor.UnitTests.Charts
             var sankey = RenderSankey(edges);
 
             sankey.FindAll("svg > rect").Count.Should().Be(2);
+
+            // Both nodes settle in the same column, leaving no horizontal span to divide across.
+            // A non-finite x from that division never settles in ChartTooltip's change check (NaN != NaN) and spins the renderer until it overflows the stack.
+            sankey.FindAll("svg > rect")
+                .Select(rect => rect.GetAttribute("x"))
+                .Should().AllBe("10");
         }
 
         [Test]
@@ -123,6 +130,38 @@ namespace MudBlazor.UnitTests.Charts
             // A=0, B=1, C/D=2, E=3 : longest path is 3, so 4 distinct columns.
             sankey.Nodes.Select(n => n.Column).Distinct().Count().Should().Be(4);
             sankey.Nodes.Select(n => n.Name).Should().BeEquivalentTo(["A", "B", "C", "D", "E"]);
+        }
+
+        [Test]
+        public void NonContiguousNodeColumns_CollapseToContiguousPositions()
+        {
+            // Overrides may leave gaps between column indices.
+            // Horizontal placement divides the raw index by the number of distinct columns, so the indices have to be renormalised to 0..n-1 or the later nodes land far past the viewBox.
+            var edges = new List<SankeyEdge<double>>
+            {
+                new("A", "B", 10),
+                new("B", "C", 10),
+            };
+            var options = new SankeyChartOptions
+            {
+                NodeOverrides =
+                [
+                    new SankeyNode("A", 0),
+                    new SankeyNode("B", 2),
+                    new SankeyNode("C", 5),
+                ],
+            };
+
+            var comp = RenderSankey(edges, options);
+
+            // Columns 0/2/5 collapse to 0/1/2, spreading evenly over the default 650-wide viewBox.
+            // 10px horizontal padding on each side and 10px node width leave 610px of travel.
+            var positions = comp.FindAll("svg > rect")
+                .Select(rect => double.Parse(rect.GetAttribute("x"), CultureInfo.InvariantCulture))
+                .OrderBy(x => x)
+                .ToArray();
+
+            positions.Should().Equal(10, 315, 620);
         }
 
         [Test]
@@ -310,6 +349,33 @@ namespace MudBlazor.UnitTests.Charts
             // Dachshund (value 10) is filtered out, leaving Dogs + Bernese + Chihuahua = 3 rects.
             comp.FindAll("svg > rect").Count.Should().Be(3);
             comp.Markup.Should().NotContain(">Dachshund");
+        }
+
+        [Test]
+        public void HideNodesSmallerThan_FilteringEveryNode_RendersEmptyChart()
+        {
+            var edges = FanEdges(); // weights 10, 20, 30
+            var options = new SankeyChartOptions { HideNodesSmallerThan = 1000 };
+
+            var comp = RenderSankey(edges, options);
+
+            comp.FindAll("svg > rect").Count.Should().Be(0);
+            comp.FindAll("svg > path").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void HideNodesWithNoEdges_RemovingEveryNode_RendersEmptyChart()
+        {
+            var options = new SankeyChartOptions
+            {
+                HideNodesWithNoEdges = true,
+                NodeOverrides = [new SankeyNode("Isolated", 0)],
+            };
+
+            var comp = RenderSankey([], options);
+
+            comp.FindAll("svg > rect").Count.Should().Be(0);
+            comp.FindAll("svg > path").Count.Should().Be(0);
         }
 
         [Test]

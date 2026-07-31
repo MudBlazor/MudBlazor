@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Bar" ChartSeries="@_series" @bind-SelectedIndex="_index" ChartLabels="@_xAxisLabels" ChartOptions="_axisChartOptions"
+    <MudChart T="double" ChartType="ChartType.Bar" ChartSeries="@_series" @bind-SelectedIndex="_index" ChartLabels="@_xAxisLabels" ChartOptions="_axisChartOptions"
               Width="100%" Height="@($"{_height}px")" MatchBoundsToSize="@_matchBoundsToSize"></MudChart>
 </MudPaper>
 

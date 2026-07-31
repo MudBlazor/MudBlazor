@@ -649,7 +649,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRefAsync(ElementReference reference)
         {
-            if (HasRendered && _resizeObserver!.IsElementObserved(reference) == false)
+            if (HasRendered && !_resizeObserver!.IsElementObserved(reference))
                 await _resizeObserver!.Observe(reference);
 
             _redraw = true;
@@ -893,23 +893,24 @@ namespace MudBlazor
                 .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
                 .Build();
 
-        protected string SliderStyle => RightToLeft
-            ? new StyleBuilder()
-                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("right", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
-                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
-                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
-                .Build()
-            : new StyleBuilder()
-                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("left", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
-                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
-                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
-                .Build();
+        protected string SliderStyle
+        {
+            get
+            {
+                var horizontalEdge = RightToLeft ? "right" : "left";
+                var horizontalTransition = SliderAnimation ? $"{horizontalEdge} .3s cubic-bezier(.64,.09,.08,1);" : "none";
+                var verticalTransition = SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none";
+
+                return new StyleBuilder()
+                    .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                    .AddStyle(horizontalEdge, _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                    .AddStyle("transition", horizontalTransition, Position is Position.Top or Position.Bottom)
+                    .AddStyle("transition", verticalTransition, _isVerticalTabs)
+                    .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
+                    .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
+                    .Build();
+            }
+        }
 
         private Position ConvertPosition(Position position)
         {

@@ -32,7 +32,7 @@ namespace MudBlazor
         protected string InnerClassname =>
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
-                .AddClass("mud-input-slot-nopadding", () => InnerPadding == false)
+                .AddClass("mud-input-slot-nopadding", () => !InnerPadding)
                 .AddClass($"mud-input-root-{Variant.ToStringFast(true)}")
                 .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
