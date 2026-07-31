@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 @using MudBlazor.Extensions
@@ -377,11 +377,13 @@
                  var showEditMode = column.Editable && !ReadOnly &&
                                     (EditMode == DataGridEditMode.Cell || isInlineEditing) &&
                                     hasEditableContent;
+                 var cellClickCallback = GetCellClickCallback(item, rowIndex, colIndex, column);
+                 var cellContextMenuClickCallback = GetCellContextMenuClickCallback(item, rowIndex, colIndex, column);
              }
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle"
-                 @onclick="@(CellClick.HasDelegate ? EventCallback.Factory.Create<MouseEventArgs>(this, (args) => OnCellClickedAsync(args, item, rowIndex, colIndex, column)) : EventCallback<MouseEventArgs>.Empty)"
+                 @onclick="cellClickCallback"
                  @onclick:stopPropagation="@CellClick.HasDelegate"
-                 @oncontextmenu="@(CellContextMenuClick.HasDelegate ? EventCallback.Factory.Create<MouseEventArgs>(this, (args) => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column)) : EventCallback<MouseEventArgs>.Empty)"
+                 @oncontextmenu="cellContextMenuClickCallback"
                  @oncontextmenu:stopPropagation="@CellContextMenuClick.HasDelegate"
                  @oncontextmenu:preventDefault="@CellContextMenuClick.HasDelegate">
 
