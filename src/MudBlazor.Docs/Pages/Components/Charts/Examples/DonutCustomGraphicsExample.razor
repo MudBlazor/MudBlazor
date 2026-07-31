@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@Data.AsChartDataSet()" ChartLabels="@Labels">
+<MudChart T="int" ChartType="ChartType.Donut" Width="100%" Height="300px" ChartSeries="@Data.AsChartDataSet()" ChartLabels="@Labels">
 	<CustomGraphics>
 		<text class="mud-donut-text mud-typography-h3" x="50%" y="50%">@Data.Sum()</text>
 	</CustomGraphics>

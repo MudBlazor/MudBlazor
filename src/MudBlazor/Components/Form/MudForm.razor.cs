@@ -196,7 +196,7 @@ namespace MudBlazor
         public bool? OverrideFieldValidation { get; set; }
 
         /// <summary>
-        /// The validation errors for inputs within this form and any child forms.
+        /// The validation errors for inputs within this form.
         /// </summary>
         /// <remarks>
         /// When this property changes, <see cref="ErrorsChanged"/> occurs.
@@ -205,7 +205,7 @@ namespace MudBlazor
         [Category(CategoryTypes.Form.ValidationResult)]
         public string[] Errors
         {
-            get => _errors.Concat(ChildForms.SelectMany(childForm => childForm.Errors)).ToArray();
+            get => _errors.ToArray();
             set { /* readonly */ }
         }
 

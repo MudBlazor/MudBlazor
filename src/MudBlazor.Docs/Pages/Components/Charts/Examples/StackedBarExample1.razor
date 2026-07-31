@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.StackedBar" ChartSeries="@_series" LegendPosition="@_legendPosition" ChartLabels="@_xAxisLabels" Width="100%" Height="350px" ChartOptions="_axisChartOptions"
+    <MudChart T="double" ChartType="ChartType.StackedBar" ChartSeries="@_series" LegendPosition="@_legendPosition" ChartLabels="@_xAxisLabels" Width="100%" Height="350px" ChartOptions="_axisChartOptions"
               @bind-SelectedIndex="_index" MatchBoundsToSize="_matchBoundsToSize"/>
 </MudPaper>
 
