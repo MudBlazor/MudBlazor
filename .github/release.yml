@@ -1,4 +1,7 @@
 changelog:
+  exclude:
+    labels:
+      - skip changelog
   categories:
     - title: Breaking Changes
       labels:
