@@ -57,7 +57,7 @@ else if (Column != null && !Column.HiddenState.Value)
                 <span class="@SortHeaderClass" @onclick="SortChangedAsync">
                     @if (headerTemplate != null)
                     {
-                        @headerTemplate(Column.headerContext);
+                        @headerTemplate(Column.headerContext)
                     }
                     else if (IncludeHierarchyToggle)
                     {
@@ -73,7 +73,7 @@ else if (Column != null && !Column.HiddenState.Value)
             { 
                 @if (headerTemplate != null)
                 {
-                    @headerTemplate(Column.headerContext);
+                    @headerTemplate(Column.headerContext)
                 }
                 else if (IncludeHierarchyToggle)
                 {
