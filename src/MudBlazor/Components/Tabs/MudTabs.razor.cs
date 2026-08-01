@@ -1233,7 +1233,7 @@ namespace MudBlazor
                 return;
             if (activeIndex + 1 == _panels.Count)
             {
-                var lastPanel = _panels.Last();
+                var lastPanel = _panels[^1];
                 ScrollToItem(lastPanel, true);
                 return;
             }

@@ -94,8 +94,7 @@ class MudScrollManager {
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
             // remove both lock classes to be sure it's unlocked
-            element.classList.remove(lockclass);
-            element.classList.remove(lockclass + "-no-padding");
+            element.classList.remove(lockclass, lockclass + "-no-padding");
         }
     }
 
