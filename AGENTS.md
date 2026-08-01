@@ -58,7 +58,7 @@
 
 ## Environment Requirements
 
-- The required .NET SDK is defined in `global.json`; use that version to restore, build, and test this repository.
+- The required .NET SDK is defined in `global.json`; use that version to restore, build, and test this repository. If commands fail with SDK resolution errors, compare `dotnet --version` against `global.json`.
 - The library targets `net8.0`, `net9.0`, and `net10.0`.
 
 ## Scoped Commands and Verification
@@ -342,7 +342,7 @@ Before finishing, verify all of the following:
 - Docs were updated when component behavior or public API changed.
 - No new dependencies were added without approval.
 
-In the final response, report what changed, the exact verification commands run, any skipped verification and the reason, and follow-up work intentionally left out of scope.
+In the final response, report what changed, the exact verification commands run, whether formatting was run, any skipped verification and the reason, and follow-up work intentionally left out of scope.
 
 ## Maintaining This File
 
