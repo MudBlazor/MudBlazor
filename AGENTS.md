@@ -35,6 +35,7 @@
 - Treat warnings as errors. Do not ignore analyzer warnings.
 - Do not run solution-wide commands unless explicitly requested.
 - Do not make `dotnet clean` part of the normal local loop. Use it only when incremental build state is clearly stale or corrupted.
+- Incremental builds can reuse cached state and miss a missing `using` directive that CI's clean build rejects with `CS0246`. If a change references a type from a namespace not already imported in that file, verify the namespace (many types such as `FormFieldChangedEventArgs` live in `MudBlazor.Utilities`, not `MudBlazor`) or run the build once with `--no-incremental` before finishing.
 - If no code, project, test, docs app, or asset-pipeline inputs changed, do not call `dotnet`. Changes limited to files such as `README.md`, changelog text, issue templates, or other repo metadata do not require restore, build, test, or format.
 - Prefer a single scoped `dotnet build` or `dotnet test` command as the first verification step. Split build and test only when you will reuse the build outputs for multiple test runs.
 - Do not build `src/MudBlazor/MudBlazor.csproj` immediately before testing `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`; the test project already builds `MudBlazor`, `MudBlazor.UnitTests.Shared`, and `MudBlazor.UnitTests.Viewer`.
@@ -78,6 +79,7 @@
 - For component `.cs` or `.razor` changes that only need compile validation: build one framework with `dotnet build src/MudBlazor/MudBlazor.csproj -f net10.0 /p:SkipBunCompile=true`. The library multi-targets net8.0/net9.0/net10.0; `-f` compiles just one for a faster check (CI covers the rest).
 - For `TScripts` or `Styles`: run a normal scoped project build.
 - For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
+- To check whether current `dev` already contains a fix, use https://dev.mudblazor.com, which is continuously deployed from `dev`, before building anything locally. mudblazor.com tracks the latest release.
 - For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
 - For analyzer or code-fix changes: prefer a single filtered `dotnet test --project ... -- --filter ...` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
 - Prefer the narrowest relevant test filter over running an entire test project.
@@ -117,6 +119,9 @@ dotnet tool restore --tool-manifest .config/dotnet-tools.json
 - For a single validation pass, prefer one filtered `dotnet test` command. This builds the component library plus the relevant test graph and runs the selected tests in one invocation.
 - Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
 - This repository uses Microsoft.Testing.Platform via `global.json`, so pass runner-specific options after `--` and prefer `--hangdump`/`--hangdump-timeout` instead of the older VSTest blame flags.
+- If a `FullyQualifiedName~` filter matches zero tests, retry with `Name~<pattern>`, which matches the short display names. "Zero tests ran" means the filter or a runner flag was wrong; treat it as a failed run, not a passing one.
+- Do not pipe `dotnet` output through filters such as `tail`; that masks the exit code. Read the log for `Build succeeded`, `error CS`, or the test summary instead.
+- On Windows, kill leftover `MudBlazor.UnitTests.exe` test hosts before rebuilding; they lock output assemblies and fail the build with `MSB3027`.
 
 ```bash
 dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
@@ -144,6 +149,8 @@ dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-bu
 Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch whitespace/newline/charset/etc mistakes. Do not run it repeatedly during the normal edit-build-test loop.
 
 Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `--include MudBlazor/Components/List/MudListItem.razor.cs`.
+
+New `.cs` files must be UTF-8 with a BOM (`charset = utf-8-bom` in `src/.editorconfig`). Most agent file-writing tools create files without a BOM, which builds and tests cleanly but fails CI's format check with `error CHARSET`. The final whitespace format pass fixes the encoding in place, so never skip it when new files were added. Keep line endings LF.
 
 If `src/.editorconfig` changed, format the whole `src` tree:
 
@@ -259,6 +266,7 @@ private Task ToggleAsync()
 - Docs examples are exercised by generated tests, so they must render without exceptions.
 - Generated docs tests are emitted as `Generated/*.generated.cs` files and must not be edited by hand.
 - `MudBlazor.UnitTests.Docs` does not generate docs tests in the default local build unless `GenerateDocsTests=true`.
+- The committed `ApiDocumentation.generated.cs` and `Snippets.generated.cs` files can lag the live API, and a clean local build does not always regenerate them. Do not hand-edit or force-regenerate them for public API changes; verify no committed file still references a removed symbol and let CI regenerate them.
 
 ## Breaking Changes and Compatibility
 
@@ -266,6 +274,8 @@ private Task ToggleAsync()
 - Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
 - If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
 - For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
+- A binary break is still a breaking change even when source-compatible. For example, changing a parameter from `EventCallback` to `EventCallback<T>` keeps existing Razor markup compiling but breaks precompiled consumers until they rebuild.
+- When current behavior is wrong compared to common web standards, prefer fixing the default over adding a parameter or `MudGlobal` setting to opt out of the fix. If the corrected default is breaking, hold it for the next major version as a single change.
 
 ## Testing Rules
 
@@ -292,6 +302,8 @@ private Task ToggleAsync()
 - Always use `InvokeAsync()` for parameter changes or method calls.
 - Prefer async interactions such as `ClickAsync`, `ChangeAsync`, `BlurAsync`, and `InputAsync` over sync methods.
 - Register or replace services before rendering the component or provider under test.
+- Components that project content through a popover (menu, tooltip, select, autocomplete, pickers) render no popover content without a `MudPopoverProvider` in the test tree. Render the provider and the component as two separate `Context.Render` calls, which share the same popover service, then query the popover content through the provider.
+- bUnit no longer exposes a public `SetParametersAndRender`. `MudBlazor.UnitTests` has a replacement in `Extensions/IRenderedComponentExtensions.cs`; `MudBlazor.UnitTests.Docs` does not reference it, so re-render the same instance there through a small host component that changes state and calls `StateHasChanged()`.
 - For fake-time bUnit flows, dispatch the event, advance the fake time directly, and use bUnit renderer waits for render observation.
 - Use `WaitForAssertion`, `WaitForState`, and `WaitForElement` only to observe renderer updates, not as timers. Custom wait timeouts should be rare and justified by the test scenario.
 - Prefer semantic assertions over broad markup assertions. Query specific elements, text, classes, ARIA attributes, or component state instead of asserting that the whole markup is empty or equal.
@@ -305,9 +317,9 @@ private Task ToggleAsync()
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
 - Viewer test components should expose explicit parameters, callbacks, or `TaskCompletionSource` gates for pending, loading, cancellation, or ordering flows instead of simulating latency with sleeps.
-- Test methods should be self-documenting and should not use XML documentation.
+- Give each test method a brief one-sentence XML `<summary>` describing the behavior under test.
 - Helper methods in test classes should include XML documentation when they are non-trivial or reused.
-- When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
+- When adding a test for a known issue, reference the issue number in the summary or test name for traceability.
 - Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
 - Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
 
@@ -343,6 +355,9 @@ Verify with bUnit assertions on roles and `aria-*` attributes before and after i
 
 - Fix new warnings instead of suppressing them.
 - Comments should usually explain why a decision exists, not restate what the code already shows or describe straightforward mechanics.
+- Break comment lines at sentence boundaries, one sentence per line, instead of wrapping at a column width.
+- Do not use `#region`.
+- A helper used by only one method should be a `static` local function inside that method. Reserve private members for helpers shared across multiple methods.
 - Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
 
 ## When Verification Fails
