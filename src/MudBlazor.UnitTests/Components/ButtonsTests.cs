@@ -426,6 +426,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Passing a legacy mud-fab-{color} class name via the Class parameter (as a consumer styling hook
+        /// from 9.x) must survive in the rendered class list alongside the new filled variant classes.
+        /// This verifies the backward-compat scenario where consumers write
+        /// &lt;MudFab Class="mud-fab-secondary" /&gt; and expect the filled secondary styling to apply.
+        /// </summary>
+        [TestCase("mud-fab-primary")]
+        [TestCase("mud-fab-secondary")]
+        public void MudFabLegacyColorClassPassedViaClassParameterShouldBePresent(string legacyColorClass)
+        {
+            var comp = Context.Render<MudFab>(parameters => parameters
+                .Add(p => p.Class, legacyColorClass));
+            var button = comp.Find("button");
+            button.ClassList.Should().Contain(legacyColorClass);
+            button.ClassList.Should().Contain("mud-fab");
+        }
+
+        /// <summary>
         /// MudFab with Variant.Text should render the text CSS classes.
         /// </summary>
         [TestCase(Color.Default, "mud-fab-text", "mud-fab-text-default")]

@@ -84,7 +84,8 @@
 
 
 @each $color in $mud-palette-colors {
-  .mud-fab-filled-#{$color} {
+  .mud-fab-filled-#{$color},
+  .mud-fab-#{$color} {
     color: var(--mud-palette-#{$color}-text);
     --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
     --mud-ripple-opacity: var(--mud-ripple-opacity-secondary) !important;
