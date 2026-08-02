@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
@@ -18,6 +19,9 @@ namespace MudBlazor
     {
         private readonly Func<IForm?> _outerValidator;
 
+        // Consumers may swap the grid's validator while an editor is registered, so every forward after Add must target the instance the control actually joined.
+        private readonly Dictionary<IFormComponent, IForm> _outerRegistrations = new();
+
         /// <param name="outerValidator">Reads the grid's current validator, which consumers may replace at any time.</param>
         public DataGridInlineEditValidator(Func<IForm?> outerValidator)
         {
@@ -26,24 +30,37 @@ namespace MudBlazor
 
         void IForm.FieldChanged(IFormComponent formControl, object? newValue)
         {
-            _outerValidator()?.FieldChanged(formControl, newValue);
+            if (_outerRegistrations.TryGetValue(formControl, out var outer))
+            {
+                outer.FieldChanged(formControl, newValue);
+            }
         }
 
         void IForm.Add(IFormComponent formControl)
         {
             _formControls.Add(formControl);
-            _outerValidator()?.Add(formControl);
+            if (_outerValidator() is { } outer)
+            {
+                _outerRegistrations[formControl] = outer;
+                outer.Add(formControl);
+            }
         }
 
         void IForm.Remove(IFormComponent formControl)
         {
             _formControls.Remove(formControl);
-            _outerValidator()?.Remove(formControl);
+            if (_outerRegistrations.Remove(formControl, out var outer))
+            {
+                outer.Remove(formControl);
+            }
         }
 
         void IForm.Update(IFormComponent formControl)
         {
-            _outerValidator()?.Update(formControl);
+            if (_outerRegistrations.TryGetValue(formControl, out var outer))
+            {
+                outer.Update(formControl);
+            }
         }
     }
 }

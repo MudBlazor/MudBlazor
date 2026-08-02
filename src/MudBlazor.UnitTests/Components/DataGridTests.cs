@@ -7656,6 +7656,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEdit_NullValidator_StillValidatesRow()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.NullValidator, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "the row's own editors gate the commit even when the grid has no validator to forward to");
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_EditorLeavesOldFormOnClose()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            // Satisfy the outer form's own field so the editor is the only possible source of errors.
+            await comp.Find(".outer-field input").ChangeAsync("filled");
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+
+            // The invalid editor registered with the outer form, then the grid is handed a different validator before the edit closes.
+            await comp.InvokeAsync(comp.Instance.UnbindOuterForm);
+            await dataGrid.Find(".cancel-btn").ClickAsync();
+
+            // Removal must reach the validator the editor registered with, or the outer form stays invalid forever.
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue(because: "the editor left the form it registered with even though the grid's validator changed");
+        }
+
+        [Test]
         public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_StillBlocksInvalidCommit()
         {
             var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters

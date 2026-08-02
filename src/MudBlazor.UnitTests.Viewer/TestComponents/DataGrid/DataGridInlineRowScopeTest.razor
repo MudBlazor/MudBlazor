@@ -7,7 +7,7 @@
         <MudTextField T="string" Class="outer-field" @bind-Value="_outerValue" Required="true" />
     }
     <MudDataGrid T="Model" Items="@_items" ReadOnly="false"
-                 Validator="@(_boundToOuterForm ? _outerForm : _defaultValidator)"
+                 Validator="@(NullValidator ? null! : _boundToOuterForm ? _outerForm : _defaultValidator)"
                  EditMode="@DataGridEditMode.Inline"
                  EditTrigger="@DataGridEditTrigger.Manual"
                  CommittedItemChanged="@(item => CommittedItems.Add(item.Name))">
@@ -30,6 +30,7 @@
                     @if (context.IsEditing)
                     {
                         <MudIconButton Class="commit-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@context.Actions.CommitEditingItemAsync" />
+                        <MudIconButton Class="cancel-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Close" OnClick="@context.Actions.CancelEditingItemAsync" />
                     }
                     else
                     {
@@ -65,6 +66,12 @@
     /// </summary>
     [Parameter]
     public bool CellField { get; set; }
+
+    /// <summary>
+    /// Nulls out the grid's validator to prove inline editing survives without one.
+    /// </summary>
+    [Parameter]
+    public bool NullValidator { get; set; }
 
     public List<Model> Items => _items;
 
