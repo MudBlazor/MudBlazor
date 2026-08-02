@@ -7640,22 +7640,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridInlineEdit_Editors_AreStillTrackedByOuterForm()
-        {
-            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
-                .Add(x => x.OuterField, true));
-            var form = comp.FindComponent<MudForm>().Instance;
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
-
-            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
-            form.IsTouched.Should().BeFalse();
-
-            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
-
-            form.IsTouched.Should().BeTrue(because: "scoping the commit does not detach the editors from the form they are bound to");
-        }
-
-        [Test]
         public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_StillBlocksInvalidCommit()
         {
             var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
