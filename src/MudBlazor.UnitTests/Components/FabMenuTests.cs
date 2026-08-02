@@ -139,9 +139,9 @@ public class FabMenuTests : BunitTest
     /// may already be present via Classname concatenation while the wrong variant
     /// class is simultaneously present.
     /// </summary>
-    [TestCase(Variant.Filled,   "mud-fab-filled",   "mud-fab-outlined", "mud-fab-text")]
-    [TestCase(Variant.Outlined, "mud-fab-outlined",  "mud-fab-filled",  "mud-fab-text")]
-    [TestCase(Variant.Text,     "mud-fab-text",      "mud-fab-filled",  "mud-fab-outlined")]
+    [TestCase(Variant.Filled, "mud-fab-filled", "mud-fab-outlined", "mud-fab-text")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined", "mud-fab-filled", "mud-fab-text")]
+    [TestCase(Variant.Text, "mud-fab-text", "mud-fab-filled", "mud-fab-outlined")]
     public void MudFabMenuItem_ShouldForwardVariantToButton(Variant variant, string expectedClass, string absentClass1, string absentClass2)
     {
         var comp = Context.Render<MudFabMenu>(parameters => parameters
