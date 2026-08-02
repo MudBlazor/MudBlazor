@@ -15,7 +15,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Filled FAB">
-                <Description>Filled FABs have elevation (box shadow) and is raised on click by default.</Description>
+                <Description>Filled FABs have elevation (box shadow) and are raised on click by default.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(FabFilledExample)">
                 <FabFilledExample />
@@ -24,7 +24,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Text FAB">
-                <Description>Text FABs have no drop shadow, background or border and only a hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the icon and label.</Description>
+                <Description>Text FABs have no drop shadow, background or border and only a hover effect is used. The <CodeInline>Color</CodeInline> property only applies to the icon and label. Because there is no background container, contrast against the surface the FAB floats over is the consumer's responsibility.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(FabTextExample)">
                 <FabTextExample />
@@ -33,7 +33,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Outlined FAB">
-                <Description>Outlined FABs are similar to Text FABs except for the border that inherits its color from the set <CodeInline>Color</CodeInline> property.</Description>
+                <Description>Outlined FABs are similar to Text FABs except for the border that inherits its color from the set <CodeInline>Color</CodeInline> property. As with Text FABs, there is no background container, so contrast against the underlying surface is the consumer's responsibility.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(FabOutlinedExample)">
                 <FabOutlinedExample />
