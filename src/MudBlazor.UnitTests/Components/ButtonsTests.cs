@@ -426,10 +426,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Passing a legacy mud-fab-{color} class name via the Class parameter (as a consumer styling hook
-        /// from 9.x) must survive in the rendered class list alongside the new filled variant classes.
-        /// This verifies the backward-compat scenario where consumers write
-        /// &lt;MudFab Class="mud-fab-secondary" /&gt; and expect the filled secondary styling to apply.
+        /// A legacy mud-fab-{color} class passed through the Class parameter survives into the rendered class list alongside the new variant classes.
+        /// Whether that class still carries styling is a CSS concern this test cannot observe.
         /// </summary>
         [TestCase("mud-fab-primary")]
         [TestCase("mud-fab-secondary")]
