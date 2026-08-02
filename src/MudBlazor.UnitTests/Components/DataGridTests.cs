@@ -1523,6 +1523,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridFilterChangedSimpleApplyAndClear()
+        {
+            var comp = Context.Render<DataGridFilterChangedCallbacksTest>(parameters => parameters
+                .Add(x => x.FilterMode, DataGridFilterMode.Simple));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterChangedCallbacksTest.Item>>();
+
+            // Open the Simple filter panel with a blank filter on the first column.
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilter());
+
+            // Setting a value fires FilterChanged (previously only clearing did).
+            var filterInput = comp.FindComponents<MudTextField<string>>().Single();
+            await comp.InvokeAsync(async () => await filterInput.Instance.ValueChanged.InvokeAsync("second"));
+            comp.Instance.FilterChanged.Should().BeTrue();
+            comp.Instance.FilterChangedCallCount.Should().Be(1);
+
+            // Changing the operator fires FilterChanged.
+            var operatorSelect = comp.FindComponents<MudSelect<string>>().Single();
+            await comp.InvokeAsync(async () => await operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.String.NotContains));
+            comp.Instance.FilterChangedCallCount.Should().Be(2);
+
+            // Clearing the filter fires FilterChanged.
+            await comp.Find(".remove-filter-button").ClickAsync();
+            comp.Instance.FilterChangedCallCount.Should().Be(3);
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DataGridCommittedItemChangedOccursAfterSourceItemUpdateInFormEdit()
         {
             var comp = Context.Render<DataGridCommittedItemChangedTest>();
@@ -3318,26 +3345,26 @@ namespace MudBlazor.UnitTests.Components
             // test internal filter class for string data type.
             var internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, stringFilterDefinition, null);
             stringFilterDefinition.Column.dataType.Should().Be(typeof(string));
-            await comp.InvokeAsync(() => internalFilter.StringValueChanged("J"));
+            await comp.InvokeAsync(() => internalFilter.StringValueChangedAsync("J"));
             stringFilterDefinition.Value.Should().Be("J");
 
             // test internal filter class for number data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, intFilterDefinition, null);
             intFilterDefinition.Column.dataType.Should().Be(typeof(int?));
-            await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
+            await comp.InvokeAsync(() => internalFilter.NumberValueChangedAsync(35));
             intFilterDefinition.Value.Should().Be(35);
 
             // test internal filter class for enum data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, enumFilterDefinition, null);
             enumFilterDefinition.Column.dataType.Should().Be(typeof(Severity?));
-            await comp.InvokeAsync(() => internalFilter.EnumValueChanged(Severity.Warning));
+            await comp.InvokeAsync(() => internalFilter.EnumValueChangedAsync(Severity.Warning));
             enumFilterDefinition.Value.Should().Be(Severity.Warning);
             enumFilterDefinition.FieldType.IsEnum.Should().Be(true);
 
             // test internal filter class for bool data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, boolFilterDefinition, null);
             boolFilterDefinition.Column.dataType.Should().Be(typeof(bool?));
-            await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
+            await comp.InvokeAsync(() => internalFilter.BoolValueChangedAsync(false));
             boolFilterDefinition.Value.Should().Be(false);
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(boolFilterDefinitionWithNull)); // Test adding Bool filter with null value
@@ -3348,16 +3375,16 @@ namespace MudBlazor.UnitTests.Components
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
             dateTimeFilterDefinition.Column.dataType.Should().Be(typeof(DateTime?));
 
-            await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
+            await comp.InvokeAsync(() => internalFilter.DateValueChangedAsync(date));
             dateTimeFilterDefinition.Value.Should().Be(date.Date);
 
-            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
+            await comp.InvokeAsync(() => internalFilter.TimeValueChangedAsync(date.TimeOfDay));
             dateTimeFilterDefinition.Value.Should().Be(date);
 
-            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(null));
+            await comp.InvokeAsync(() => internalFilter.TimeValueChangedAsync(null));
             dateTimeFilterDefinition.Value.Should().Be(date.Date);
 
-            await comp.InvokeAsync(() => internalFilter.DateValueChanged(null));
+            await comp.InvokeAsync(() => internalFilter.DateValueChangedAsync(null));
             dateTimeFilterDefinition.Value.Should().BeNull();
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinitionWithNull)); // Test adding DateTime filter with null value
@@ -3368,10 +3395,10 @@ namespace MudBlazor.UnitTests.Components
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);
             dateOnlyFilterDefinition.Column.dataType.Should().Be(typeof(DateOnly?));
 
-            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyDateTimeInput));
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChangedAsync(dateOnlyDateTimeInput));
             dateOnlyFilterDefinition.Value.Should().Be(DateOnly.FromDateTime(dateOnlyDateTimeInput));
 
-            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(null));
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChangedAsync(null));
             dateOnlyFilterDefinition.Value.Should().BeNull();
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateOnlyFilterDefinitionWithNull)); // Test Adding DateOnly filter with null value
@@ -3381,7 +3408,7 @@ namespace MudBlazor.UnitTests.Components
             var guid = Guid.NewGuid();
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, guidFilterDefinition, null);
             guidFilterDefinition.Column.dataType.Should().Be(typeof(Guid?));
-            await comp.InvokeAsync(() => internalFilter.GuidValueChanged(guid));
+            await comp.InvokeAsync(() => internalFilter.GuidValueChangedAsync(guid));
             guidFilterDefinition.Value.Should().Be(guid);
         }
 
@@ -3408,7 +3435,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridFilterFieldChanged()
+        public async Task DataGridFilterFieldChanged()
         {
             var comp = Context.Render<DataGridFiltersTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
@@ -3421,7 +3448,7 @@ namespace MudBlazor.UnitTests.Components
             var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
             var newBoolColumn = dataGrid.Instance.GetColumnByPropertyName("Hired");
 
-            filter.FieldChanged(newBoolColumn!);
+            await comp.InvokeAsync(() => filter.FieldChangedAsync(newBoolColumn!));
 
             filterDefinition.Column.Should().Be(newBoolColumn);
             filterDefinition.Operator.Should().Be(FilterOperator.Boolean.Is);
@@ -4277,6 +4304,49 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridColumnFilterMenu_OpeningFilter_ClosesColumnsPanel(bool withExistingFilter)
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            if (withExistingFilter)
+            {
+                var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+                var nameColumn = dataGrid.Instance.RenderedColumns.First(c => c.PropertyName == "Name");
+
+                await comp.InvokeAsync(async () =>
+                {
+                    await dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridColumnFilterMenuTest.Model>
+                    {
+                        Column = nameColumn,
+                        Operator = FilterOperator.String.Equal,
+                        Value = "Sam"
+                    });
+                });
+            }
+
+            var buttons = comp.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon");
+            await buttons[0].ClickAsync();
+
+            var menuItem = comp.Find(".mud-menu-item");
+            await menuItem.ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".mud-popover.mud-data-grid-columns-panel").Count.Should().Be(1);
+            });
+
+            var filterButtons = comp.FindAll(".mud-data-grid-columns-panel .filter-button");
+            await filterButtons[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".mud-popover.mud-data-grid-columns-panel").Count.Should().Be(0);
+                comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
+            });
+        }
+
+
         [Test]
         public async Task DataGridCustomPropertyFilterTemplate()
         {
@@ -4767,7 +4837,7 @@ namespace MudBlazor.UnitTests.Components
             var item = dataGrid.Instance.Items.FirstOrDefault();
 
             var column = dataGrid.Instance.RenderedColumns.First();
-            var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item);
+            var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item, item);
 
             cell._cellContext.Selected.Should().Be(false);
             await cell._cellContext.Actions.SetSelectedItemAsync(true);
@@ -7305,6 +7375,480 @@ namespace MudBlazor.UnitTests.Components
             // Verify the filter can be removed
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ClearFiltersAsync());
             dataGrid.Instance.FilterDefinitions.Count.Should().Be(0, "Filter should be removable");
+        }
+
+        [Test]
+        public async Task DataGridTableAttributes_RendersAriaLabel()
+        {
+            var comp = Context.Render<DataGridCellTemplateTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudDataGrid<DataGridCellTemplateTest.Model>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
+        #endregion
+
+        #region Inline Edit Tests
+
+        [Test]
+        public async Task DataGridInlineEdit_StartEditing_ShowsEditControls()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Initially, no row should be in edit mode - should have edit buttons, not commit/cancel
+            var editButtons = dataGrid.FindAll(".edit-btn");
+            editButtons.Count.Should().Be(3, because: "All three rows should have edit buttons");
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0, because: "No row is being edited yet");
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(0, because: "No row is being edited yet");
+
+            // Start editing the first row
+            await editButtons[0].ClickAsync();
+
+            // Verify StartedEditingItem was called
+            comp.Instance.StartedEditingItemCalled.Should().BeTrue();
+            comp.Instance.LastEditedItem.Should().NotBeNull();
+            comp.Instance.LastEditedItem!.Name.Should().Be("John");
+
+            // The first row should now show commit/cancel buttons
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "One row is being edited");
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(1, because: "One row is being edited");
+
+            // The editing row should have input fields
+            var inputs = dataGrid.FindAll("tbody tr:first-child input");
+            inputs.Count.Should().BeGreaterThan(0, because: "Edit mode should show input fields");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_CancelEditing_RestoresOriginalValues()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Start editing the first row
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Change the value in the input
+            var nameInput = dataGrid.Find("tbody tr:first-child input");
+            await nameInput.ChangeAsync("Modified Name");
+
+            // Cancel editing
+            await dataGrid.Find(".cancel-btn").ClickAsync();
+
+            // Verify CanceledEditingItem was called
+            comp.Instance.CanceledEditingItemCalled.Should().BeTrue();
+
+            // The original value should be preserved
+            comp.Instance.Items[0].Name.Should().Be("John", because: "Cancel should not persist changes");
+
+            // Should be back to view mode
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(0);
+            dataGrid.FindAll(".edit-btn").Count.Should().Be(3);
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_CommitEditing_PersistsChanges()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Start editing the first row
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Change the name value
+            var nameInput = dataGrid.Find("tbody tr:first-child input");
+            await nameInput.ChangeAsync("Modified Name");
+
+            // Commit the changes
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            // Verify callbacks were called
+            comp.Instance.CommittedItemChangesCalled.Should().BeTrue();
+            comp.Instance.CommittedItemChangedCalled.Should().BeTrue();
+            comp.Instance.EditedNameWhenCommittedItemChanges.Should().Be("Modified Name");
+            comp.Instance.SourceNameWhenCommittedItemChanged.Should().Be("Modified Name");
+
+            // The source item should now have the new value
+            comp.Instance.Items[0].Name.Should().Be("Modified Name");
+
+            // Should be back to view mode
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_CommittedItemChangesKeepOpen_StaysInEditMode()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Configure to keep form open on commit
+            comp.Instance.NextCommitAction = DataGridEditFormAction.KeepOpen;
+
+            // Start editing the first row
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Change the name value
+            var nameInput = dataGrid.Find("tbody tr:first-child input");
+            await nameInput.ChangeAsync("Modified Name");
+
+            // Try to commit - should stay open due to KeepOpen action
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            // Verify CommittedItemChanges was called but not CommittedItemChanged
+            comp.Instance.CommittedItemChangesCalled.Should().BeTrue();
+            comp.Instance.CommittedItemChangedCalled.Should().BeFalse(because: "KeepOpen should prevent final commit");
+
+            // Should still be in edit mode
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1);
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(1);
+
+            // The source item should NOT have the new value yet
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidationFailure_KeepsEditMode()
+        {
+            var comp = Context.Render<DataGridInlineEditValidationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditValidationTest.Model>>();
+
+            // Start editing the first row
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Clear the name to trigger validation failure
+            var nameInput = dataGrid.Find("tbody tr:first-child input");
+            await nameInput.ChangeAsync("");
+
+            // Try to commit - should stay open due to validation failure
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            comp.Instance.CommitAttempts.Should().Be(1);
+
+            // Should still be in edit mode
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1);
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(1);
+
+            // Source item should be unchanged
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidationFailure_ThenSuccess_CommitsChanges()
+        {
+            var comp = Context.Render<DataGridInlineEditValidationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditValidationTest.Model>>();
+
+            // Start editing the first row
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Clear the name to trigger validation failure
+            var nameInput = dataGrid.Find("tbody tr:first-child input");
+            await nameInput.ChangeAsync("");
+
+            // Try to commit - should stay open due to validation failure
+            await dataGrid.Find(".commit-btn").ClickAsync();
+            comp.Instance.CommitAttempts.Should().Be(1);
+
+            // Fix the validation error
+            nameInput = dataGrid.Find("tbody tr:first-child input");
+            await nameInput.ChangeAsync("Valid Name");
+
+            // Commit again - should succeed now
+            await dataGrid.Find(".commit-btn").ClickAsync();
+            comp.Instance.CommitAttempts.Should().Be(2);
+
+            // Should be back to view mode
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            dataGrid.FindAll(".cancel-btn").Count.Should().Be(0);
+
+            // Source item should have the new value
+            comp.Instance.Items[0].Name.Should().Be("Valid Name");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_RequiredEditor_BlocksCommitWithoutCallback()
+        {
+            var comp = Context.Render<DataGridInlineRequiredTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRequiredTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Clear the Required editor.
+            // Nothing else guards the commit, so the editor has to.
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "an invalid row stays in edit mode");
+            comp.Instance.CommittedItems.Should().BeEmpty();
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_RequiredEditor_CommitsOnceValid()
+        {
+            var comp = Context.Render<DataGridInlineRequiredTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRequiredTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_OuterFormError_DoesNotBlockCommit()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0, because: "the unrelated required field is not part of the edited row");
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_OtherRowError_DoesNotBlockCommit()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.CellField, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0, because: "the second row's empty required cell belongs to another row");
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_Editors_AreStillTrackedByOuterForm()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            form.IsTouched.Should().BeFalse();
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+
+            form.IsTouched.Should().BeTrue(because: "scoping the commit does not detach the editors from the form they are bound to");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_NullValidator_StillValidatesRow()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.NullValidator, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "the row's own editors gate the commit even when the grid has no validator to forward to");
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_EditorLeavesOldFormOnClose()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            // Satisfy the outer form's own field so the editor is the only possible source of errors.
+            await comp.Find(".outer-field input").ChangeAsync("filled");
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+
+            // The invalid editor registered with the outer form, then the grid is handed a different validator before the edit closes.
+            await comp.InvokeAsync(comp.Instance.UnbindOuterForm);
+            await dataGrid.Find(".cancel-btn").ClickAsync();
+
+            // Removal must reach the validator the editor registered with, or the outer form stays invalid forever.
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue(because: "the editor left the form it registered with even though the grid's validator changed");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_StillBlocksInvalidCommit()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+
+            // The editors registered with the outer form, and the grid is handed a different validator mid-edit.
+            await comp.InvokeAsync(comp.Instance.UnbindOuterForm);
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "the editors gate the commit no matter which validator the grid holds");
+            comp.Instance.CommittedItems.Should().BeEmpty();
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_IsEditingProperty_ReflectsEditState()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Initially no item is being edited
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeFalse();
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[1]).Should().BeFalse();
+
+            // Start editing the first row
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // First item should be in edit mode
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeTrue();
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[1]).Should().BeFalse();
+
+            // Cancel editing
+            await dataGrid.Find(".cancel-btn").ClickAsync();
+
+            // No item should be in edit mode
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeFalse();
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[1]).Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_OnlyEditedRowShowsInputs()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Start editing the second row
+            await dataGrid.FindAll(".edit-btn")[1].ClickAsync();
+
+            // Get all rows
+            var rows = dataGrid.FindAll("tbody tr.mud-table-row");
+            rows.Count.Should().Be(3);
+
+            // First row should NOT have inputs (not being edited)
+            var firstRowInputs = rows[0].QuerySelectorAll("input");
+            firstRowInputs.Length.Should().Be(0, because: "First row is not being edited");
+
+            // Second row SHOULD have inputs (being edited)
+            var secondRowInputs = rows[1].QuerySelectorAll("input");
+            secondRowInputs.Length.Should().BeGreaterThan(0, because: "Second row is being edited");
+
+            // Third row should NOT have inputs (not being edited)
+            var thirdRowInputs = rows[2].QuerySelectorAll("input");
+            thirdRowInputs.Length.Should().Be(0, because: "Third row is not being edited");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_CommitInlineEditAsync_DirectCall()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Start editing the first row via the API
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetEditingItemAsync(comp.Instance.Items[0]));
+
+            // Verify we're in edit mode
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeTrue();
+
+            // Modify the editing copy through the internal API (simulating user input)
+            // Then commit via the public API
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CommitInlineEditAsync());
+
+            // Should be back to view mode
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeFalse();
+            comp.Instance.CommittedItemChangesCalled.Should().BeTrue();
+            comp.Instance.CommittedItemChangedCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_CancelEditingItemAsync_DirectCall()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Start editing the first row via the API
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.SetEditingItemAsync(comp.Instance.Items[0]));
+
+            // Verify we're in edit mode
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeTrue();
+
+            // Cancel via the public API
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CancelEditingItemAsync());
+
+            // Should be back to view mode
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeFalse();
+            comp.Instance.CanceledEditingItemCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public void DataGridInlineEdit_EditModeInline_NoDialogOpened()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Start editing via API
+            dataGrid.InvokeAsync(() => dataGrid.Instance.SetEditingItemAsync(comp.Instance.Items[0]));
+
+            // No dialog should be opened for inline mode
+            comp.FindAll(".mud-dialog").Count.Should().Be(0, because: "Inline edit mode should not open a dialog");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_CommitInlineEditAsync_NotEditing_NoOp()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+
+            // Not currently editing any row, so committing should be a no-op
+            dataGrid.Instance.IsEditingItem(comp.Instance.Items[0]).Should().BeFalse();
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CommitInlineEditAsync());
+
+            comp.Instance.CommittedItemChangesCalled.Should().BeFalse();
+            comp.Instance.CommittedItemChangedCalled.Should().BeFalse();
+        }
+
+        [Test]
+        public void DataGridInlineEdit_CellContext_ItemOnlyConstructor()
+        {
+            var comp = Context.Render<DataGridInlineEditTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineEditTest.Model>>();
+            var item = comp.Instance.Items[0];
+
+            var context = new CellContext<DataGridInlineEditTest.Model>(dataGrid.Instance, item);
+
+            context.Item.Should().BeSameAs(item);
+            context.IsEditing.Should().BeFalse();
         }
 
         #endregion

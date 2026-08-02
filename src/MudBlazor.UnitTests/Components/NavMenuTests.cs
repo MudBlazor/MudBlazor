@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
@@ -27,6 +28,69 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("mud-navmenu-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-margin-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Exclusive_OnlyOneOpen()
+        {
+            var comp = Context.Render<NavMenuExclusive>();
+
+            var buttons = comp.FindAll(".mud-nav-group>button");
+            buttons.Count.Should().BeGreaterThanOrEqualTo(2);
+
+            // Expand first
+            await buttons[0].ClickAsync();
+            comp.Markup.Should().Contain("mud-expanded");
+            // Expand second. Should collapse first because MultiExpansion==false by default in component
+            await buttons[1].ClickAsync();
+            int expandedCount = comp.FindAll(".mud-expanded").Count;
+            expandedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task NonExclusive_AllowsMultipleOpen()
+        {
+            var comp = Context.Render<NavMenuExclusive>(ps => ps.Add(p => p.MultiExpansion, true));
+
+            var buttons = comp.FindAll(".mud-nav-group>button");
+            buttons.Count.Should().BeGreaterThanOrEqualTo(2);
+
+            // Expand first
+            await buttons[0].ClickAsync();
+            // Expand second. Should not collapse first because MultiExpansion==true
+            await buttons[1].ClickAsync();
+            int expandedCount = comp.FindAll(".mud-expanded").Count;
+            expandedCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task DefaultMultiExpansion_AllowsMultipleGroupsOpen()
+        {
+            static void CreateGroups(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
+            {
+                builder.OpenComponent<MudNavGroup>(0);
+                builder.AddAttribute(1, nameof(MudNavGroup.Title), "Group 1");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudNavGroup>(2);
+                builder.AddAttribute(3, nameof(MudNavGroup.Title), "Group 2");
+                builder.CloseComponent();
+            }
+
+            // Intentionally omit MultiExpansion. This protects existing menus from
+            // silently becoming exclusive if the component default changes.
+            var comp = Context.Render<MudNavMenu>(parameters =>
+                parameters.Add(p => p.ChildContent, CreateGroups));
+
+            comp.Instance.MultiExpansion.Should().BeTrue();
+
+            var buttons = comp.FindAll(".mud-nav-group > button");
+            await buttons[0].ClickAsync();
+            await buttons[1].ClickAsync();
+
+            comp.FindAll(".mud-nav-group > button.mud-expanded")
+                .Should()
+                .HaveCount(2);
         }
 
         /// <summary>

@@ -347,6 +347,97 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void BarChart_Legend_HasOneFocusableControlPerSeries()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var focusable = comp.FindAll(".mud-chart-legend input, .mud-chart-legend [tabindex]:not([tabindex='-1'])");
+            focusable.Count.Should().Be(chartSeries.Count, "each series should be a single tab stop");
+            comp.FindAll(".mud-chart-legend [role='button']").Should().BeEmpty("the checkbox already carries the toggle semantics");
+        }
+
+        [Test]
+        public void BarChart_Legend_CheckboxIsLabelledBySeriesName()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            // The name has to live inside the checkbox's own label. That is what gives the input an
+            // accessible name and what makes clicking the text toggle the series in a browser.
+            var labels = comp.FindAll(".mud-chart-legend-checkbox label.mud-checkbox");
+            labels.Count.Should().Be(chartSeries.Count);
+
+            for (var i = 0; i < chartSeries.Count; i++)
+            {
+                labels[i].TextContent.Trim().Should().Be(chartSeries[i].Name);
+                labels[i].QuerySelector("input.mud-checkbox-input").Should().NotBeNull();
+            }
+        }
+
+        [Test]
+        public async Task BarChart_Legend_SpaceKey_TogglesVisibility()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            chartSeries[0].Visible.Should().BeTrue("Series 1 should be visible initially");
+
+            comp.Find(".mud-checkbox-input").KeyDown(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " ", Type = "keydown" });
+            await comp.WaitForAssertionAsync(() => chartSeries[0].Visible.Should().BeFalse("Space should hide Series 1"));
+
+            comp.Find(".mud-checkbox-input").KeyDown(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " ", Type = "keydown" });
+            await comp.WaitForAssertionAsync(() => chartSeries[0].Visible.Should().BeTrue("Space again should restore Series 1"));
+        }
+
+        [Test]
+        public async Task BarChart_Legend_ToggleCheckbox_DoesNotTriggerOnLegendSelected()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var initialSelectedIndex = comp.Instance.GetState(x => x.SelectedIndex);
+
+            await comp.Find(".mud-checkbox-input").ChangeAsync(new ChangeEventArgs { Value = false });
+
+            chartSeries[0].Visible.Should().BeFalse("the checkbox drives series visibility");
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(initialSelectedIndex,
+                "toggling a series should not change the selected chart index");
+        }
+
+        [Test]
         public void BarChartOverlay_RendersOverlayBars()
         {
             // Outer StackedBar chart with a nested Bar overlay that shares the outer axis chart.
@@ -442,6 +533,64 @@ namespace MudBlazor.UnitTests.Charts
             hLines.Count.Should().BeLessThanOrEqualTo(5, because: "the doubling safeguard keeps the count within MaxNumYAxisTicks");
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(2, because: "both data points render as bars");
+        }
+
+        [Test]
+        public void BarChart_ShowValues_ShouldRenderValueLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new BarChartOptions { ShowValues = true }));
+
+            var labels = comp.FindAll("text.mud-chart-value-label");
+            labels.Should().HaveCount(4, because: "each bar renders its own value label");
+            labels.Select(l => l.TextContent).Should().ContainInOrder("10", "20", "15", "25");
+        }
+
+        [Test]
+        public void BarChart_ShowValues_Default_ShouldNotRenderValueLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("text.mud-chart-value-label").Should().BeEmpty(because: "ShowValues defaults to false");
+        }
+
+        [Test]
+        public void BarChart_ShowValues_YAxisFormat_ShouldFormatValueLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 1000, 2000 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new BarChartOptions { ShowValues = true, YAxisFormat = "N0", YAxisTicks = 1000 }));
+
+            var labels = comp.FindAll("text.mud-chart-value-label");
+            labels.Should().HaveCount(2);
+            labels.Select(l => l.TextContent).Should().ContainInOrder(1000.ToString("N0"), 2000.ToString("N0"));
         }
     }
 }

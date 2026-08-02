@@ -289,10 +289,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No records");
 
-            // It should be equal to 3 = header row + loading progress row + loading text
+            // LoadingContent replaces the progress bar when there are no records (#11514):
+            // 2 rows = header row + loading text
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
 
             // Remove filter
             await searchString.ChangeAsync("");
@@ -321,10 +322,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 3 = empty row string + header row + loading row
+            // LoadingContent replaces the progress bar when there are no records (#11514):
+            // 2 rows = header row + loading content row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -353,12 +356,36 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 6 = 4 loading rows + header row + loading row
+            // LoadingContentBody replaces the progress bar when there are no records (#11514):
+            // 5 rows = 4 loading rows + header row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(6);
+            comp.FindAll("tr").Count.Should().Be(5);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
 
             // It should be equal to 20 = 4 rows * 5 columns
             comp.FindAll(".mud-skeleton").Count.Should().Be(20);
+        }
+
+        /// <summary>
+        /// Regression test for #11514: when Loading is true and LoadingContent is set, the custom content replaces the built-in progress bar rather than showing both.
+        /// The progress bar is still used when the current page has items (e.g. a background refresh), where the custom content is not rendered.
+        /// </summary>
+        [Test]
+        public async Task LoadingContentReplacesProgressBar()
+        {
+            var comp = Context.Render<TableLoadingTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // Items present + loading => progress bar is shown, custom content is not.
+            await switchElement.ChangeAsync(true);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(1);
+            comp.Markup.Should().NotContain("Loading...");
+
+            // No items + loading => custom content is shown, progress bar is not (the actual bug).
+            await searchString.ChangeAsync("ZZZ");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
+            comp.FindAll("tr").Select(tr => tr.TextContent).Should().Contain("Loading...");
         }
 
         /// <summary>
@@ -2737,6 +2764,26 @@ namespace MudBlazor.UnitTests.Components
             await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(35));
         }
 
+        // Issue #13462
+        // A one-way RowsPerPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page size the user picked via the pager.
+        [Test]
+        public async Task RowsPerPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableRowsPerPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            table.RowsPerPage.Should().Be(100);
+
+            // Simulate the user changing the page size through the pager.
+            await testComponent.InvokeAsync(() => table.SetRowsPerPage(25));
+            table.RowsPerPage.Should().Be(25);
+
+            // A parent re-render re-applies the unchanged RowsPerPage="100" parameter; the pager choice must survive.
+            await buttonComponent.Find("button").ClickAsync();
+            table.RowsPerPage.Should().Be(25);
+        }
+
         /// <summary>
         /// Tests whether record type table items are kept track of when edited
         /// </summary>
@@ -2868,6 +2915,95 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].ClickAsync();
             await comp.WaitForAssertionAsync(() => tableComponent.Instance.CurrentPage.Should().Be(2));
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
+
+        // A one-way CurrentPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page the user navigated to via the pager (same class as #13462).
+        // A genuine parameter change from code must still navigate.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableCurrentPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttons = testComponent.FindComponents<MudButton>();
+            table.CurrentPage.Should().Be(0);
+
+            // Simulate the user navigating with the pager (the one-way parameter is not written back).
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            table.CurrentPage.Should().Be(3);
+
+            // A parent re-render re-applies the unchanged CurrentPage parameter; the pager choice must survive.
+            await buttons[0].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine parameter change from code must still navigate.
+            await buttons[1].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(5);
+        }
+
+        // With ServerData, re-applying an unchanged one-way CurrentPage on a parent re-render must not
+        // trigger a redundant server load (#13462); a genuine code-driven change still loads the new page.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotTriggerRedundantServerLoad()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            // Wait for the initial server load to render the first page.
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+            table.CurrentPage.Should().Be(0);
+            var loadsAfterInit = component.LoadCount;
+
+            // Internal navigation triggers exactly one load for the requested page.
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(3);
+                component.LastRequestedPage.Should().Be(3);
+                component.LoadCount.Should().Be(loadsAfterInit + 1);
+            });
+
+            // A parent re-render re-applies the unchanged CurrentPage: the page must stay selected.
+            await testComponent.Find("#rerender").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine code-driven change navigates with exactly one more load; the re-render added none
+            // (otherwise this total would be loadsAfterInit + 3).
+            await testComponent.Find("#setcode").ClickAsync();
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(5);
+                component.LastRequestedPage.Should().Be(5);
+                component.LoadCount.Should().Be(loadsAfterInit + 2);
+            });
+        }
+
+        // The ServerData reset path: when a load reveals the current page no longer exists, the table
+        // resets to page 0 through SetCurrentPage (MudTable.InvokeServerLoadFunc).
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenCurrentPageOverflows()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+
+            await testComponent.InvokeAsync(() => table.NavigateTo(5));
+            await testComponent.WaitForAssertionAsync(() => table.CurrentPage.Should().Be(5));
+
+            // Data shrinks so page 5 no longer exists; the next load must snap back to page 0.
+            await testComponent.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return table.ReloadServerData();
+            });
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+            });
         }
 
         /// <summary>
@@ -3221,6 +3357,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete("Remove when MudTableBase.AriaLabel is removed")]
         public async Task TableAriaLabel_RendersOnTable()
         {
             var comp = Context.Render<TableRowClickTest>();
@@ -3229,6 +3366,20 @@ namespace MudBlazor.UnitTests.Components
 
             var table = comp.FindComponent<MudTable<int>>();
             await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
+
+        [Test]
+        public async Task TableAttributes_RendersAriaLabel()
+        {
+            var comp = Context.Render<TableRowClickTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudTable<int>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
 
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");

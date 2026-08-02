@@ -28,13 +28,11 @@ jobs:
           path: ${{ env.NUGET_PACKAGES }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
 
       - name: Restore dependencies
         working-directory: src
         run: dotnet restore
-
-      - uses: xt0rted/dotnet-format-problem-matcher@v1
 
       - name: Determine changed files
         id: changed-files

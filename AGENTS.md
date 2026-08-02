@@ -33,9 +33,8 @@
 ### Default working rules
 - Follow `src/.editorconfig`.
 - Treat warnings as errors. Do not ignore analyzer warnings.
-- Do not run solution-wide commands unless explicitly requested.
 - Do not make `dotnet clean` part of the normal local loop. Use it only when incremental build state is clearly stale or corrupted.
-- If no code, project, test, docs app, or asset-pipeline inputs changed, do not call `dotnet`. Changes limited to files such as `README.md`, changelog text, issue templates, or other repo metadata do not require restore, build, test, or format.
+- Incremental builds can miss a missing `using` directive that CI's clean build rejects with `CS0246`. When a change references a type from a namespace not already imported in that file, verify the namespace (many types such as `FormFieldChangedEventArgs` live in `MudBlazor.Utilities`, not `MudBlazor`) or run the build once with `--no-incremental` before finishing.
 - Prefer a single scoped `dotnet build` or `dotnet test` command as the first verification step. Split build and test only when you will reuse the build outputs for multiple test runs.
 - Do not build `src/MudBlazor/MudBlazor.csproj` immediately before testing `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`; the test project already builds `MudBlazor`, `MudBlazor.UnitTests.Shared`, and `MudBlazor.UnitTests.Viewer`.
 
@@ -45,7 +44,6 @@
 - For component behavior changes, identify the likely unit test file before editing.
 - For public API changes, identify the docs page and examples that may need updates.
 - For TS, style, or asset changes, check whether `entrypoint.js` or generated assets are affected.
-- If the task is ambiguous and a wrong assumption could cause a broad change, ask a focused clarifying question.
 
 ## Repository Layout
 
@@ -60,9 +58,8 @@
 
 ## Environment Requirements
 
-- The required .NET SDK is defined in `global.json`; use that version to restore, build, and test this repository.
+- The required .NET SDK is defined in `global.json`; use that version to restore, build, and test this repository. If commands fail with SDK resolution errors, compare `dotnet --version` against `global.json`.
 - The library targets `net8.0`, `net9.0`, and `net10.0`.
-- Verify the active SDK with `dotnet --version`.
 
 ## Scoped Commands and Verification
 
@@ -74,49 +71,31 @@
 
 ### Choose the smallest valid verification loop
 - For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
-- For component `.cs` or `.razor` changes with behavior coverage: prefer a single filtered `dotnet test --project ... -- --filter ...` run against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`. Build `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` first only when you plan to reuse the outputs for multiple test filters.
+- For component `.cs` or `.razor` changes with behavior coverage: use the default local loop below, a single filtered `dotnet test` against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `/p:SkipBunCompile=true`.
 - For component `.cs` or `.razor` changes that only need compile validation: build one framework with `dotnet build src/MudBlazor/MudBlazor.csproj -f net10.0 /p:SkipBunCompile=true`. The library multi-targets net8.0/net9.0/net10.0; `-f` compiles just one for a faster check (CI covers the rest).
 - For `TScripts` or `Styles`: run a normal scoped project build.
 - For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
+- To check whether current `dev` already contains a fix, use https://dev.mudblazor.com, which is continuously deployed from `dev`, before building anything locally. mudblazor.com tracks the latest release.
 - For docs example or API-page changes that need parity with CI, run `dotnet test --project src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj /p:GenerateDocsTests=true`.
-- For analyzer or code-fix changes: prefer a single filtered `dotnet test --project ... -- --filter ...` run from `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`. Build that project first only when you plan multiple filtered test runs.
-- Prefer the narrowest relevant test filter over running an entire test project.
-- Use `dotnet clean <project.csproj>` only when incremental outputs are clearly stale or corrupted.
+- For analyzer or code-fix changes: run a single filtered `dotnet test --project ... -- --filter ...` against `src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj`.
 
 ### Restore
 Do not run restore automatically at the start of every session. Reuse existing assets in the working tree.
 
-Run restore only when restore inputs changed, when the target project's `obj/project.assets.json` is missing, or when a `--no-restore` build or test fails because restore data is stale.
+Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*`, or NuGet configuration files), when the target project's `obj/project.assets.json` is missing, or when a `--no-restore` build or test fails because restore data is stale. Restore only the project graph you are about to validate, for example `dotnet restore src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj`.
 
-Restore only the project graph you are about to validate:
+If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-```bash
-dotnet restore src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
-dotnet restore src/MudBlazor.UnitTests.Analyzers/MudBlazor.UnitTests.Analyzers.csproj
-dotnet restore src/MudBlazor.UnitTests.Docs/MudBlazor.UnitTests.Docs.csproj
-dotnet restore src/MudBlazor.Docs.Server/MudBlazor.Docs.Server.csproj
-dotnet tool restore --tool-manifest .config/dotnet-tools.json
-```
-
-Re-run `dotnet restore` if any of these change:
-- `*.csproj`
-- `src/Directory.Build.*`
-- `Directory.Packages.props`, if added later
-- `NuGet.Config` or other NuGet restore configuration files, if added later
-
-- If `.config/dotnet-tools.json` changes, run:
-
-```bash
-dotnet tool restore --tool-manifest .config/dotnet-tools.json
-```
-
-- If `src/package.json` or `src/bun.lock` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json` or `src/bun.lock` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 
 - For a single validation pass, prefer one filtered `dotnet test` command. This builds the component library plus the relevant test graph and runs the selected tests in one invocation.
 - Use `/p:SkipBunCompile=true` in this loop because it targets C#, Razor, and test validation that does not depend on regenerated frontend assets.
 - This repository uses Microsoft.Testing.Platform via `global.json`, so pass runner-specific options after `--` and prefer `--hangdump`/`--hangdump-timeout` instead of the older VSTest blame flags.
+- If a `FullyQualifiedName~` filter matches zero tests, retry with `Name~<pattern>`, which matches the short display names. "Zero tests ran" means the filter or a runner flag was wrong; treat it as a failed run, not a passing one.
+- Do not pipe `dotnet` output through filters such as `tail`; that masks the exit code. Read the log for `Build succeeded`, `error CS`, or the test summary instead.
+- On Windows, kill leftover `MudBlazor.UnitTests.exe` test hosts before rebuilding; they lock output assemblies and fail the build with `MSB3027`.
 
 ```bash
 dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore /p:SkipBunCompile=true -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
@@ -131,19 +110,16 @@ dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-bu
 ```
 
 ### Bun
-- Frontend asset builds use the local `bundotnet.cli` tool from `.config/dotnet-tools.json`, not a separately installed global Bun.
-- If Bun-related commands fail after tool or config changes, re-run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
-- `/p:SkipBunCompile=true` skips the Bun-driven frontend asset compilation steps that normally run during build.
-- Use it when the goal is to validate .NET, C#, or Razor changes and you do not need regenerated frontend assets as part of verification.
-- It is typically safe for C#-only changes, Razor logic or markup changes, test changes, and documentation-only changes.
-- Do not use it when changes touch `TScripts`, styles, CSS, SCSS, asset pipeline inputs, or tooling files that affect frontend bundles such as `src/package.json` or `src/bun.lock`.
-- Do not use it when the change depends on rebuilt generated JavaScript, CSS, or other static assets being present or up to date.
-- If you are unsure whether the build output depends on regenerated frontend assets, run the normal scoped build without `SkipBunCompile`.
+- Frontend asset builds use the local `bundotnet.cli` tool from `.config/dotnet-tools.json`, not a separately installed global Bun. If Bun-related commands fail after tool or config changes, re-run the tool restore.
+- `/p:SkipBunCompile=true` skips the Bun-driven frontend asset compilation that normally runs during build. Use it for C#, Razor, test, and documentation changes that do not depend on regenerated frontend assets.
+- Do not use it when changes touch `TScripts`, styles, CSS, SCSS, asset-pipeline inputs such as `src/package.json` or `src/bun.lock`, or when verification depends on rebuilt JavaScript, CSS, or other static assets. When unsure, run the normal scoped build without it.
 
 ### Formatting
 Run `dotnet format whitespace --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch whitespace/newline/charset/etc mistakes. Do not run it repeatedly during the normal edit-build-test loop.
 
 Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `--include MudBlazor/Components/List/MudListItem.razor.cs`.
+
+New `.cs` files must be UTF-8 with a BOM (`charset = utf-8-bom` in `src/.editorconfig`). Most agent file-writing tools create files without a BOM, which builds and tests cleanly but fails CI's format check with `error CHARSET`. The final whitespace format pass fixes the encoding in place, so never skip it when new files were added. Keep line endings LF.
 
 If `src/.editorconfig` changed, format the whole `src` tree:
 
@@ -237,6 +213,7 @@ private Task ToggleAsync()
 - When generating HTML or ARIA attributes in component code, prefer fallback values so caller-provided attributes can override them whenever feasible; do not hard-force generated attributes unless the behavior truly requires it.
 - Ensure keyboard navigation works for interactive components.
 - Provide accessible names for interactive controls through a label, `aria-label`, or `aria-labelledby`.
+- To diagnose or verify screen-reader behavior, follow Diagnosing accessibility issues under Testing Rules; a screen reader is not required.
 - Components with logic require bUnit tests and a docs page at `src/MudBlazor.Docs/Pages/Components/<ComponentName>.razor`.
 
 ## Docs Pages and Examples
@@ -258,6 +235,7 @@ private Task ToggleAsync()
 - Docs examples are exercised by generated tests, so they must render without exceptions.
 - Generated docs tests are emitted as `Generated/*.generated.cs` files and must not be edited by hand.
 - `MudBlazor.UnitTests.Docs` does not generate docs tests in the default local build unless `GenerateDocsTests=true`.
+- The committed `ApiDocumentation.generated.cs` and `Snippets.generated.cs` files can lag the live API, and a clean local build does not always regenerate them. Do not hand-edit or force-regenerate them for public API changes; verify no committed file still references a removed symbol and let CI regenerate them.
 
 ## Breaking Changes and Compatibility
 
@@ -265,6 +243,8 @@ private Task ToggleAsync()
 - Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
 - If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
 - For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
+- A binary break is still a breaking change even when source-compatible. For example, changing a parameter from `EventCallback` to `EventCallback<T>` keeps existing Razor markup compiling but breaks precompiled consumers until they rebuild.
+- When current behavior is wrong compared to common web standards, prefer fixing the default over adding a parameter or `MudGlobal` setting to opt out of the fix. If the corrected default is breaking, hold it for the next major version as a single change.
 
 ## Testing Rules
 
@@ -291,6 +271,8 @@ private Task ToggleAsync()
 - Always use `InvokeAsync()` for parameter changes or method calls.
 - Prefer async interactions such as `ClickAsync`, `ChangeAsync`, `BlurAsync`, and `InputAsync` over sync methods.
 - Register or replace services before rendering the component or provider under test.
+- Components that project content through a popover (menu, tooltip, select, autocomplete, pickers) render no popover content without a `MudPopoverProvider` in the test tree. Render the provider and the component as two separate `Context.Render` calls, which share the same popover service, then query the popover content through the provider.
+- bUnit no longer exposes a public `SetParametersAndRender`. `MudBlazor.UnitTests` has a replacement in `Extensions/IRenderedComponentExtensions.cs`; `MudBlazor.UnitTests.Docs` does not reference it, so re-render the same instance there through a small host component that changes state and calls `StateHasChanged()`.
 - For fake-time bUnit flows, dispatch the event, advance the fake time directly, and use bUnit renderer waits for render observation.
 - Use `WaitForAssertion`, `WaitForState`, and `WaitForElement` only to observe renderer updates, not as timers. Custom wait timeouts should be rare and justified by the test scenario.
 - Prefer semantic assertions over broad markup assertions. Query specific elements, text, classes, ARIA attributes, or component state instead of asserting that the whole markup is empty or equal.
@@ -304,9 +286,9 @@ private Task ToggleAsync()
 - Unit tests belong in `src/MudBlazor.UnitTests/Components/<ComponentName>Tests.cs`.
 - Add a viewer test component only when the scenario is too cumbersome to express directly in bUnit C# syntax. In those cases, add the viewer component first, then the unit test.
 - Viewer test components should expose explicit parameters, callbacks, or `TaskCompletionSource` gates for pending, loading, cancellation, or ordering flows instead of simulating latency with sleeps.
-- Test methods should be self-documenting and should not use XML documentation.
+- Give each test method a brief one-sentence XML `<summary>` describing the behavior under test.
 - Helper methods in test classes should include XML documentation when they are non-trivial or reused.
-- When adding a test for a known issue, reference the issue number in the test name or nearby context for traceability.
+- When adding a test for a known issue, reference the issue number in the summary or test name for traceability.
 - Test names must not use `Test` or `Async` suffixes, must not contain `Test_` in the middle, and must not end with trailing underscores.
 - Reference tests: `TextTests.cs`, `ApiMemberTableTests.cs`.
 
@@ -317,50 +299,41 @@ Use `src/MudBlazor.UnitTests.Viewer` to reproduce and verify visual, layout, foc
 Reproduction loop:
 1. Add a focused component under `TestComponents/<Component>/`, or under `TestComponents/Scratch/` for a throwaway repro (that folder is gitignored, so scratch components are never committed).
 2. Build the viewer with `dotnet build src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj /p:SkipBunCompile=true`. Components are discovered by reflection at startup, so a newly added file is not visible until the app is rebuilt and reloaded; `dotnet watch` does not reliably pick up added files or routes.
-3. Run it with `dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj` and open `/viewer/<path>`, where `<path>` is the folder relative to `TestComponents` plus the type name (e.g. `/viewer/Menu/MenuEdgeCasesTest`).
+3. Run it with `dotnet run --project src/MudBlazor.UnitTests.Viewer/MudBlazor.UnitTests.Viewer.csproj` and open the component's `/viewer/<path>` route described under Test locations and naming.
 4. Set visual state through the query string: `theme=light|dark`, `dir=ltr|rtl`, `chrome=full|none`. `chrome=none` hides the viewer UI (drawer and header) while keeping theme, RTL, and the popover/dialog/snackbar providers intact, which is useful for clean screenshots.
 5. Wait for `data-viewer-state="ready"` on the `.test-viewer-surface` before reading it (`error`/`not-found` mean the component threw or the route was unmatched; the landing page has no marker). On first load the WASM runtime boots for a few seconds before any state appears, so poll with a timeout. The surface also carries `data-viewer-theme`/`-dir`/`-chrome` reflecting the query state.
 6. Capture the route, query parameters, viewport, and steps as before/after evidence.
 7. Delete the component (and rebuild) when done; a scratch component is removed with a single file delete.
 
-Use `@attribute [ViewerHidden]` for helper or sub-components that are not meaningful to open on their own; they stay routable but are kept out of the sidebar listing.
+### Diagnosing accessibility issues
+
+Screen readers render the browser's accessibility tree, so diagnose and verify against the tree. A screen reader is not required. The spec to verify against is the matching W3C ARIA Authoring Practices Guide pattern (https://www.w3.org/WAI/ARIA/apg/patterns/) — its role, name, state, and keyboard-interaction tables are the acceptance checklist.
+
+Diagnosis loop:
+1. Host the component in the Viewer using the reproduction loop above (`chrome=none`).
+2. Snapshot the accessibility tree (browser tooling accessibility snapshot, or CDP `Accessibility.getFullAXTree`) and check static structure: roles, accessible names, and `aria-*` states present.
+3. Interact as a keyboard user would (open the popup, arrow through options, select, close) and re-snapshot after each step. Dynamic states are where most bugs live: `aria-expanded` must flip, `aria-activedescendant` must track the visual highlight, `aria-selected` must follow selection. A highlight implemented only as a CSS class is invisible to assistive tech.
+4. Optionally inject axe-core into the Viewer page for a WCAG rule scan (missing names, role conflicts, contrast). It supplements but does not replace the APG checklist.
+5. Diff the snapshots against the APG pattern; each mismatch is a concrete defect.
+
+Verify with bUnit assertions on roles and `aria-*` attributes before and after interaction (reference: `SelectTests.cs`), then re-snapshot the accessibility tree in the Viewer to confirm the pattern checklist passes.
 
 ## Code Style and Analyzer Rules
 
 - Fix new warnings instead of suppressing them.
 - Comments should usually explain why a decision exists, not restate what the code already shows or describe straightforward mechanics.
+- Break comment lines at sentence boundaries, one sentence per line, instead of wrapping at a column width.
+- Do not use `#region`.
+- A helper used by only one method should be a `static` local function inside that method. Reserve private members for helpers shared across multiple methods.
 - Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
 
 ## When Verification Fails
 
 - If `--no-restore` fails because assets are missing or stale, run the scoped restore for the project being verified.
-- If a filtered test fails, inspect the failure and rerun the narrowest relevant filter after changes.
-- Do not broaden to solution-wide build or test unless explicitly requested.
-- Do not use `dotnet clean` unless incremental outputs are clearly stale or corrupted.
-- Do not suppress warnings introduced by the change.
+- If a filtered test fails, inspect the failure and rerun the narrowest relevant filter after changes; do not broaden to solution-wide commands or `dotnet clean`.
 - If verification cannot be completed, report the exact command, failure reason, and next recommended step.
 
-## Common Agent Mistakes To Avoid
-
-- Do not run solution-wide commands for routine validation.
-- Do not build `MudBlazor.csproj` immediately before testing `MudBlazor.UnitTests.csproj`.
-- Do not use `/p:SkipBunCompile=true` for TS, style, `package.json`, `bun.lock`, or asset-pipeline changes.
-- Do not edit generated docs tests.
-- Do not cache bUnit `Find()` or `FindAll()` results across interactions.
-- Do not add public component parameters without XML docs and `[Category(...)]`.
-- Do not add viewer test components when direct bUnit markup is enough.
-
-## Final Response Requirements
-
-When finishing a task, include:
-
-- What changed.
-- Exact verification commands run.
-- Whether formatting was run.
-- Any skipped verification and the reason.
-- Follow-up work intentionally left out of scope.
-
-## Change Checklist
+## Finishing a Task
 
 Before finishing, verify all of the following:
 - Formatting was run for relevant changed files.
@@ -369,14 +342,10 @@ Before finishing, verify all of the following:
 - Docs were updated when component behavior or public API changed.
 - No new dependencies were added without approval.
 
+In the final response, report what changed, the exact verification commands run, whether formatting was run, any skipped verification and the reason, and follow-up work intentionally left out of scope.
+
 ## Maintaining This File
 
-When review feedback identifies a repeated agent mistake, update this file with one of:
+When review feedback identifies a repeated agent mistake, update this file with a routing rule, a concrete example, a verification command, or a final-response expectation.
 
-- a routing rule,
-- a concrete example,
-- a verification command,
-- a common mistake entry,
-- or a final-response expectation.
-
-Prefer concise, enforceable guidance over broad advice. If a rule becomes stable and frequently violated, consider promoting it to an analyzer, script, or CI check.
+State each rule once, in the section where it applies; do not restate it elsewhere. Prefer concise, enforceable guidance over broad advice. If a rule becomes stable and frequently violated, consider promoting it to an analyzer, script, or CI check.

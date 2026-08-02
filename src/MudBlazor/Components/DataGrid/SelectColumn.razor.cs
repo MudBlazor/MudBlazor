@@ -9,10 +9,12 @@ using MudBlazor.Resources;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a checkbox column used to select rows in a <see cref="MudDataGrid{T}"/>.
+/// Checkboxes for selecting rows in a <see cref="MudDataGrid{T}"/>, with an optional header checkbox to select or clear all rows.
 /// </summary>
 /// <typeparam name="T">The type of item to select.</typeparam>
-/// <seealso cref="MudDataGrid{T}"/>
+/// <seealso cref="Column{T}" />
+/// <seealso cref="MudDataGrid{T}" />
+/// <seealso cref="TemplateColumn{T}" />
 public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : TemplateColumn<T>
 {
     [Inject]

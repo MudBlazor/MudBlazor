@@ -293,6 +293,10 @@
       }
     }
 
+    &.mud-adjacent-month {
+      color: var(--mud-palette-text-secondary);
+    }
+
     &.mud-hidden {
       opacity: 0;
       pointer-events: none;

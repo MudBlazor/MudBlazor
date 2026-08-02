@@ -6,9 +6,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for a range of dates.
+    /// Selects a start and end date range from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
+    /// <seealso cref="DateRange" />
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudTimePicker" />
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
@@ -367,7 +369,8 @@ namespace MudBlazor
             var today = TimeProvider.GetLocalNow().Date;
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
             {
                 return b.AddClass("mud-hidden").Build();
             }

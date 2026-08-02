@@ -499,6 +499,26 @@ namespace MudBlazor
         protected bool IsValueInList => _context.TryGetShadowItemByValue(ReadValue, out _);
 
         /// <summary>
+        /// Whether the clear button has something to clear.
+        /// </summary>
+        /// <remarks>
+        /// Clearing resets the selection to <c>default(T)</c>, so there is nothing to clear while the
+        /// selection already equals it. For a non-nullable value type the default (e.g. <c>0</c> or the
+        /// zero enum member) is that cleared state, so the button stays hidden until a different value is
+        /// selected. For nullable and reference types the default is <c>null</c>, so any non-null selection
+        /// (including a value type's zero) is clearable. Uses the same equality as the clear operation (#13372).
+        /// </remarks>
+        private bool HasClearableValue()
+        {
+            if (MultiSelection)
+            {
+                return _selectedValues.Count > 0;
+            }
+
+            return !EqualityComparer<T?>.Default.Equals(ReadValue, default);
+        }
+
+        /// <summary>
         /// Builds fallback accessibility attributes for the focused select trigger.
         /// </summary>
         /// <remarks>
@@ -754,9 +774,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets the focus to this component.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>

@@ -117,6 +117,45 @@ public class FabMenuTests : BunitTest
         container.ClassList.Contains("mud-fab-anchor-top-left").Should().BeFalse();
     }
 
+    /// <summary>
+    /// MudFabMenu should forward its Variant to the inner trigger MudFab button.
+    /// </summary>
+    [TestCase(Variant.Filled, "mud-fab-filled")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined")]
+    [TestCase(Variant.Text, "mud-fab-text")]
+    public void MudFabMenu_ShouldForwardVariantToTriggerButton(Variant variant, string expectedClass)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Variant, variant)
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add));
+
+        comp.Find(".mud-fab-menu-button").ClassList.Should().Contain(expectedClass);
+    }
+
+    /// <summary>
+    /// MudFabMenuItem should forward its Variant to the inner MudFab button.
+    /// Asserting that the other two variant classes are absent makes this a real guard:
+    /// without forwarding the inner MudFab defaults to Filled, so the expected class
+    /// may already be present via Classname concatenation while the wrong variant
+    /// class is simultaneously present.
+    /// </summary>
+    [TestCase(Variant.Filled, "mud-fab-filled", "mud-fab-outlined", "mud-fab-text")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined", "mud-fab-filled", "mud-fab-text")]
+    [TestCase(Variant.Text, "mud-fab-text", "mud-fab-filled", "mud-fab-outlined")]
+    public void MudFabMenuItem_ShouldForwardVariantToButton(Variant variant, string expectedClass, string absentClass1, string absentClass2)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
+            .AddChildContent<MudFabMenuItem>(item => item
+                .Add(p => p.Variant, variant)
+                .Add(p => p.StartIcon, Icons.Material.Filled.Edit)));
+
+        var item = comp.Find(".mud-fab-menu-item");
+        item.ClassList.Should().Contain(expectedClass);
+        item.ClassList.Should().NotContain(absentClass1);
+        item.ClassList.Should().NotContain(absentClass2);
+    }
+
     [Test]
     [Combinatorial]
     public void FabMenuItem_ShouldRenderAnchorIfHrefIsSet(

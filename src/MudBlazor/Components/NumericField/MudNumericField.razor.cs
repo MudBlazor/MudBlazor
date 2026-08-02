@@ -175,10 +175,13 @@ namespace MudBlazor
         private string EffectiveKeyFilterPattern => (Pattern ?? DefaultKeyFilterPattern).TrimEnd('*');
 
         /// <inheritdoc />
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override ValueTask FocusAsync()
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <inheritdoc />

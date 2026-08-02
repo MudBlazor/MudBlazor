@@ -7,9 +7,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for collecting an input value.
+    /// Renders the underlying HTML input element used by text-based components such as <see cref="MudTextField{T}"/> and <see cref="MudNumericField{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
+    /// <seealso cref="MudBaseInput{T}" />
+    /// <seealso cref="MudInputControl" />
+    /// <seealso cref="MudRangeInput{T}" />
+    /// <seealso cref="MudTextField{T}" />
     public partial class MudInput<T> : MudBaseInput<T>
     {
         private string? _internalText;
@@ -45,9 +49,9 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("me-n1", Adornment == Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("me-6", Adornment != Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
                 .AddClass("mud-no-activator")
                 .Build();
@@ -192,14 +196,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public override async ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override async ValueTask FocusAsync(bool preventScroll)
         {
             try
             {
                 if (InputType == InputType.Hidden && ChildContent != null)
-                    await _elementReference1.FocusAsync();
+                    await _elementReference1.FocusAsync(preventScroll);
                 else
-                    await ElementReference.FocusAsync();
+                    await ElementReference.FocusAsync(preventScroll);
             }
             catch (Exception e)
             {

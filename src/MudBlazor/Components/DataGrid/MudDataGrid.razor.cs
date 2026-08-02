@@ -18,9 +18,15 @@ using MudBlazor.Utilities.Clone;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a sortable, filterable data grid with multiselection, pagination, editing, grouping, aggregation, and server-side <see cref="IQueryable{T}"/> support.
+    /// Displays rows of data in a sortable, filterable grid with multiselection, pagination, inline editing, grouping, and aggregation.
     /// </summary>
+    /// <remarks>
+    /// Supports server-side sorting, filtering, and paging of large datasets, including through an <see cref="IQueryable{T}"/> source.
+    /// </remarks>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
@@ -56,6 +62,11 @@ namespace MudBlazor
         private readonly ParameterState<bool> _expandSingleRowState;
 
         /// <summary>
+        /// Holds the editors of the row being edited, which are the only controls a commit validates.
+        /// </summary>
+        internal readonly DataGridInlineEditValidator _inlineEditValidator;
+
+        /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
         internal Dictionary<string, object> FiltersPositionAttributes => new()
@@ -72,6 +83,7 @@ namespace MudBlazor
 
         public MudDataGrid()
         {
+            _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
             SelectedItems = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
@@ -405,6 +417,12 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
 
         /// <summary>
         /// Allows columns to be reordered via the columns panel.
@@ -2234,6 +2252,84 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Checks if the specified item is currently being edited in inline mode.
+        /// </summary>
+        /// <param name="item">The item to check.</param>
+        /// <returns><c>true</c> if the item is being edited; otherwise, <c>false</c>.</returns>
+        public bool IsEditingItem(T item)
+        {
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
+                return false;
+
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+
+            // Check both the source item and the editing copy since the context may have either
+            return comparer.Equals(_editingSourceItem, item) || (!EqualityComparer<T?>.Default.Equals(_editingItem, default) && comparer.Equals(_editingItem, item));
+        }
+
+        /// <summary>
+        /// Gets the editing copy of the item if it's currently being edited in inline mode;
+        /// otherwise, returns the original item.
+        /// </summary>
+        /// <param name="item">The source item to check.</param>
+        /// <returns>The editing copy if the item is being edited; otherwise, the original item.</returns>
+        internal T GetEditingItemOrSource(T item)
+        {
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
+                return item;
+
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+
+            // Check both the source item and the editing copy since the context may have either
+            if (comparer.Equals(_editingSourceItem, item) || (!EqualityComparer<T?>.Default.Equals(_editingItem, default) && comparer.Equals(_editingItem, item)))
+            {
+                var editingItem = _editingItem;
+                if (editingItem is not null)
+                    return editingItem;
+            }
+
+            return item;
+        }
+
+        /// <summary>
+        /// Commits inline edits, persists changes to the source item, and exits edit mode.
+        /// </summary>
+        /// <remarks>
+        /// The row's editors are validated first, and the commit is abandoned when any of them reports an error.
+        /// Use the <see cref="CommittedItemChanges"/> callback for validation the editors cannot express.
+        /// Return <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
+        /// </remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task CommitInlineEditAsync()
+        {
+            if (EditMode != DataGridEditMode.Inline || _editingItem is not { } editingItem || _editingSourceItem is not { } editingSourceItem)
+                return;
+
+            // Mirror Form mode, which validates before copying anything back to the source item.
+            // Errors is read instead of IsValid because that getter starts a second, unawaited validation pass which would clear the errors this one just collected.
+            await _inlineEditValidator.ValidateAsync();
+            if (_inlineEditValidator.Errors.Length > 0)
+                return;
+
+            // Allow consumer to validate/persist
+            if (CommittedItemChanges != null)
+            {
+                var closeBehavior = await CommittedItemChanges(editingItem);
+
+                if (closeBehavior == DataGridEditFormAction.KeepOpen)
+                    return;
+            }
+
+            // Copy values from editing copy back to source
+            foreach (var property in _properties.Where(p => p.CanWrite))
+                property.SetValue(editingSourceItem, property.GetValue(editingItem));
+
+            await CommittedItemChanged.InvokeAsync(editingSourceItem);
+
+            ClearEditingItem();
+        }
+
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
@@ -2472,7 +2568,12 @@ namespace MudBlazor
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            _isEditFormOpen = true;
+
+            // Only open the dialog form for Form mode, not for Inline mode
+            if (EditMode == DataGridEditMode.Form)
+            {
+                _isEditFormOpen = true;
+            }
         }
 
         /// <summary>

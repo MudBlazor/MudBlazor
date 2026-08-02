@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies the orientation of items in a <see cref="MudTimeline"/>
+/// Specifies whether items in a <see cref="MudTimeline"/> are arranged vertically or horizontally.
 /// </summary>
 [EnumExtensions]
 public enum TimelineOrientation

@@ -81,7 +81,7 @@
         <DocsPageSection>
             <SectionHeader Title="Editing">
                 <Description>
-                    Enable editing with <CodeInline>ReadOnly="false"</CodeInline>. Use <CodeInline>DataGridEditMode.Form</CodeInline> for dialog editing or <CodeInline>DataGridEditMode.Cell</CodeInline> for inline editing.
+                    Enable editing with <CodeInline>ReadOnly="false"</CodeInline>. Use <CodeInline>DataGridEditMode.Form</CodeInline> for dialog editing, <CodeInline>DataGridEditMode.Cell</CodeInline> for always-on cell editing, or <CodeInline>DataGridEditMode.Inline</CodeInline> for single-row inline editing triggered manually.
                     <br /><br />
 
                     Edit events:
@@ -107,6 +107,34 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridEditingExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridEditingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline Row Editing">
+                <Description>
+                    Use <CodeInline>DataGridEditMode.Inline</CodeInline> for single-row inline editing. This mode combines the best of form and cell editing:
+                    <ul>
+                        <li><span class="mr-2">&bull;</span>Only one row can be edited at a time</li>
+                        <li><span class="mr-2">&bull;</span>Editing is triggered manually via an Edit button (not by clicking cells)</li>
+                        <li><span class="mr-2">&bull;</span>Edit controls appear inline within the row's cells</li>
+                        <li><span class="mr-2">&bull;</span>All other rows remain read-only while one is being edited</li>
+                    </ul>
+                    <br />
+                    Use <CodeInline>EditTemplate</CodeInline> to define custom editors for each column. The <CodeInline>CellContext</CodeInline> provides:
+                    <ul>
+                        <li><span class="mr-2">&bull;</span><CodeInline>IsEditing</CodeInline>: indicates if the current row is being edited</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Item</CodeInline>: the editing copy when in edit mode, or the source item otherwise</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Actions.StartEditingItemAsync</CodeInline>: begins editing the row</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Actions.CommitEditingItemAsync</CodeInline>: saves changes and exits edit mode</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Actions.CancelEditingItemAsync</CodeInline>: discards changes and exits edit mode</li>
+                    </ul>
+                    <br />
+                    The row's editors are validated before a commit is applied, so a failing <CodeInline>Required</CodeInline> or <CodeInline>Validation</CodeInline> rule keeps the row in edit mode on its own. For checks the editors cannot express, such as uniqueness or a server round-trip, validate in <CodeInline>CommittedItemChanges</CodeInline> and return <CodeInline>KeepOpen</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridInlineRowEditingExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridInlineRowEditingExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -501,6 +529,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridValidatorExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridValidatorExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    Set <CodeInline>aria-label</CodeInline> or <CodeInline>aria-labelledby</CodeInline> in the
+                    <CodeInline>TableAttributes</CodeInline> parameter to provide an accessible name for the HTML
+                    <CodeInline>&lt;table&gt;</CodeInline> element. This helps screen readers announce the purpose of the table.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridAriaLabelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAriaLabelExample />
             </SectionContent>
         </DocsPageSection>
 

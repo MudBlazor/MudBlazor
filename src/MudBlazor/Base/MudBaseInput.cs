@@ -6,7 +6,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing form input components.
+    /// Base class for MudBlazor form input components such as <see cref="MudTextField{T}"/>, <see cref="MudNumericField{T}"/>, and <see cref="MudSelect{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
@@ -447,6 +447,13 @@ namespace MudBlazor
         public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
 
         /// <summary>
+        /// When overridden, obtains focus for this input, optionally preventing the browser from scrolling it into view.
+        /// </summary>
+        /// <param name="preventScroll">When <c>true</c>, the browser does not scroll the newly focused element into view.</param>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
+        internal virtual ValueTask FocusAsync(bool preventScroll) => FocusAsync();
+
+        /// <summary>
         /// When overridden, releases focus from this input.
         /// </summary>
         /// <returns>A <see cref="ValueTask" /> object.</returns>
@@ -716,7 +723,7 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
-                await FocusAsync();
+                await FocusAsync(preventScroll: true);
             }
 
             await base.OnAfterRenderAsync(firstRender);
