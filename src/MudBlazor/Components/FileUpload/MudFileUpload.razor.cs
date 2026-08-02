@@ -571,7 +571,7 @@ namespace MudBlazor
         {
             if (!(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) || typeof(T) == typeof(IBrowserFile)))
             {
-                Logger.LogWarning("T must be of type {type1} or {type2}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile));
+                Logger.LogWarning("T must be of type {Type1} or {Type2}", typeof(IReadOnlyList<IBrowserFile>), typeof(IBrowserFile));
             }
 
             base.OnInitialized();

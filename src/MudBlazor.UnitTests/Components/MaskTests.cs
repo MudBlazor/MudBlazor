@@ -1177,6 +1177,31 @@ namespace MudBlazor.UnitTests.Components
             mask.ReadText.Should().Be("(1)2-_)");
         }
 
+        [Test]
+        public void AutoFocus_ShouldFocusWithoutScrolling()
+        {
+            Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.AutoFocus, true));
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FocusAsync_ShouldFocusWithScrolling()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeFalse();
+        }
+
         /// <summary>
         /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/11564.
         /// The user supplied Class should style the mask input, but must not be

@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div>
-    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" ChartLabels="@ChartLabels" Width="100%" Height="350" ChartOptions="_options"></MudChart>
+    <MudChart T="double" ChartType="ChartType.Line" ChartSeries="@Series" ChartLabels="@ChartLabels" Width="100%" Height="350" ChartOptions="_options"></MudChart>
     <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
     <MudMenu Label="Interpolation Algorithm" FullWidth="true">
         <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.Straight)">Straight</MudMenuItem>
