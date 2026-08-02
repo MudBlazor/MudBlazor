@@ -382,8 +382,8 @@
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
                  @if (showEditMode)
                  {
-                     @* An inline editor registers with the grid's own validator so a commit is gated on the edited row alone, not on everything Validator collected. *@
-                     <CascadingValue TValue="Interfaces.IForm" Value="@(isInlineEditing ? _rowValidator : Validator)" IsFixed="true">
+                     @* An inline editor registers with the grid's own validator, which forwards it to Validator but keeps a commit scoped to the row being edited. *@
+                     <CascadingValue TValue="Interfaces.IForm" Value="@(isInlineEditing ? _inlineEditValidator : Validator)" IsFixed="true">
                          @if (column.EditTemplate is not null)
                          {
                              @column.EditTemplate(cell._cellContext)

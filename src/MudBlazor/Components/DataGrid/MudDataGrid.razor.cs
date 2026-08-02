@@ -62,9 +62,9 @@ namespace MudBlazor
         private readonly ParameterState<bool> _expandSingleRowState;
 
         /// <summary>
-        /// Holds the editors of the row being edited inline, which are the only controls a commit validates.
+        /// Holds the editors of the row being edited, which are the only controls a commit validates.
         /// </summary>
-        private readonly DataGridRowValidator _rowValidator = new();
+        internal readonly DataGridInlineEditValidator _inlineEditValidator;
 
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
@@ -83,6 +83,7 @@ namespace MudBlazor
 
         public MudDataGrid()
         {
+            _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
             SelectedItems = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
@@ -2307,8 +2308,8 @@ namespace MudBlazor
 
             // Mirror Form mode, which validates before copying anything back to the source item.
             // Errors is read instead of IsValid because that getter starts a second, unawaited validation pass which would clear the errors this one just collected.
-            await _rowValidator.ValidateAsync();
-            if (_rowValidator.Errors.Length > 0)
+            await _inlineEditValidator.ValidateAsync();
+            if (_inlineEditValidator.Errors.Length > 0)
                 return;
 
             // Allow consumer to validate/persist
