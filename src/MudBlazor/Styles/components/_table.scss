@@ -486,6 +486,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   padding-inline-end: 2px;
   padding-inline-start: unset;
   flex-wrap: nowrap;
+  overflow: auto hidden;
 
   & .mud-tablepager-left {
     flex-direction: row !important;
