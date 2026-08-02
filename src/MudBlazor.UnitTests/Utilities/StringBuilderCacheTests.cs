@@ -54,6 +54,18 @@ public class StringBuilderCacheTests
     }
 
     [Test]
+    public void Release_CachesBuilderAtMaxSizeBoundary()
+    {
+        // Capacity exactly at MaxBuilderSize (360) is still cacheable (<= boundary).
+        var builder = new StringBuilder(360);
+        StringBuilderCache.Release(builder);
+
+        var acquired = StringBuilderCache.Acquire();
+
+        acquired.Should().BeSameAs(builder);
+    }
+
+    [Test]
     public void GetStringAndRelease_ReturnsTextAndCachesBuilder()
     {
         var builder = StringBuilderCache.Acquire();

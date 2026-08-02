@@ -33,6 +33,16 @@ public class ScrollListenerFactoryTests
         listener.ReportRateMs.Should().Be(25);
     }
 
+    [Test]
+    public void Create_WithNegativeReportRate_Throws()
+    {
+        var factory = CreateFactory();
+
+        var create = () => factory.Create("#main", -1);
+
+        create.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
     private static ScrollListenerFactory CreateFactory()
     {
         var services = new ServiceCollection();

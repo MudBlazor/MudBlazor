@@ -14,7 +14,7 @@
            name="@Rating?.Name"
            disabled="@Disabled"
            checked="@Checked"
-           aria-readonly="@(ReadOnly.ToString().ToLower())" />
+           aria-readonly="@(ReadOnly.ToString().ToLowerInvariant())" />
 
     <MudIcon Icon="@ItemIcon" Color="@ItemColor" Size="@Size" />
 </span>

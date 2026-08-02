@@ -3,6 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities.Converter.Base;
@@ -134,6 +136,53 @@ public class ApiDocumentationBuilder
     }
 
     /// <summary>
+    /// Path to MudBlazor's reference assembly, if known (passed by the build).
+    /// </summary>
+    /// <remarks>
+    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us skip regeneration after library edits that only touch method bodies. 
+    /// Falls back to the implementation assembly (which changes on every build) when not supplied.
+    /// </remarks>
+    public string? ReferenceAssemblyPath { get; set; }
+
+    /// <summary>
+    /// Hashes the inputs that the generated API documentation depends on: the public API surface (reference assembly), the XML doc comments, and the generator version.
+    /// Lets the build skip the expensive reflection pass when none of them changed.
+    /// </summary>
+    private string ComputeInputHash()
+    {
+        using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+
+        var apiSurface = ReferenceAssemblyPath is { Length: > 0 } refPath && File.Exists(refPath)
+            ? refPath
+            : Assemblies[0].Location;
+        AppendFile(hash, apiSurface);
+
+        var xmlPath = Path.ChangeExtension(Assemblies[0].Location, ".xml");
+        if (File.Exists(xmlPath))
+        {
+            AppendFile(hash, xmlPath);
+        }
+
+        // Generator identity, so changing the compiler invalidates the cache.
+        var generator = typeof(ApiDocumentationBuilder).Assembly.Location;
+        hash.AppendData(Encoding.UTF8.GetBytes(generator + File.GetLastWriteTimeUtc(generator).Ticks));
+
+        return Convert.ToHexString(hash.GetHashAndReset());
+
+        // Stream the file through the hash in chunks instead of allocating the whole file (the reference assembly is several MB).
+        static void AppendFile(IncrementalHash hash, string path)
+        {
+            using var stream = File.OpenRead(path);
+            var buffer = new byte[81920];
+            int read;
+            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                hash.AppendData(buffer, 0, read);
+            }
+        }
+    }
+
+    /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
     /// <param name="type">The type to check.</param>
@@ -186,20 +235,13 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
-        // Early exit: if ApiDocumentation.generated.cs exists and is newer than all input assemblies, skip generation
-        if (File.Exists(Paths.ApiDocumentationFilePath))
+        // Early exit: skip generation when the generated file exists and the public API surface, XML comments, and generator are unchanged since the stamp was last written.
+        var inputHash = ComputeInputHash();
+        if (File.Exists(Paths.ApiDocumentationFilePath) && File.Exists(Paths.ApiDocumentationStampFilePath)
+            && File.ReadAllText(Paths.ApiDocumentationStampFilePath).Trim() == inputHash)
         {
-            var outputLastWrite = File.GetLastWriteTimeUtc(Paths.ApiDocumentationFilePath);
-            var newestInputTime = Assemblies
-                .Select(a => File.GetLastWriteTimeUtc(a.Location))
-                .DefaultIfEmpty(DateTime.MinValue)
-                .Max();
-
-            if (outputLastWrite > newestInputTime)
-            {
-                Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date, skipping generation.");
-                return true;
-            }
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date (API surface unchanged), skipping generation.");
+            return true;
         }
 
         AddTypesToDocument();
@@ -208,6 +250,9 @@ public class ApiDocumentationBuilder
         AddGlobalsToDocument();
         ExportApiDocumentation();
         CalculateDocumentationCoverage();
+
+        // Record the inputs we generated from so the next build can skip when nothing changed.
+        Paths.WriteStamp(Paths.ApiDocumentationStampFilePath, inputHash);
         return true;
     }
 
@@ -747,9 +792,7 @@ public class ApiDocumentationBuilder
         }
         else
         {
-            // Touch the file to update its timestamp so future checks skip regeneration
-            File.SetLastWriteTimeUtc(Paths.ApiDocumentationFilePath, DateTime.UtcNow);
-            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged, touched timestamp.");
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged.");
         }
     }
 

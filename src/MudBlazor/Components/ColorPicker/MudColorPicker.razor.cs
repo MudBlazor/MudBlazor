@@ -13,8 +13,12 @@ using MudBlazor.Utilities.Throttle;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a sophisticated and customizable pop-up for choosing a color.
+    /// Picks a color from a spectrum, palette, or predefined grid, with RGB, HSL, and hexadecimal inputs and optional alpha transparency.
     /// </summary>
+    /// <seealso cref="MudColor" />
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudPicker{T}" />
+    /// <seealso cref="MudTimePicker" />
     public partial class MudColorPicker : MudPicker<MudColor>
     {
         private const double MaxY = 250;
@@ -94,7 +98,7 @@ namespace MudBlazor
         {
             // TODO: Revisit this when the state of input components / validation improves, for now mimic old behavior
             var forceUpdate = _valueState.IsInitialized && HasRendered;
-            return SetColorAsync(args.Value, forceUpdate);
+            return SuppressInteractionEffectsWhileAsync(() => SetColorAsync(args.Value, forceUpdate));
         }
 
         private async Task OnAlphaChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
@@ -436,11 +440,17 @@ namespace MudBlazor
 
             if (shouldUpdateBinding || forceUpdate)
             {
-                Touched = true;
+                if (!_suppressInteractionEffects)
+                {
+                    Touched = true;
+                }
                 await SetTextAsync(GetColorTextValue(newColor), false);
                 await _valueState.SetValueAsync(newColor);
                 await BeginValidateAsync();
-                FieldChanged(newColor);
+                if (!_suppressInteractionEffects)
+                {
+                    FieldChanged(newColor);
+                }
             }
             else if (colorChanged)
             {

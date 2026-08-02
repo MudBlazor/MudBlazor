@@ -84,7 +84,7 @@
       }
 
       & .mud-input-control {
-        width: 35px !important;
+        width: auto !important;
       }
     }
   }
@@ -107,6 +107,11 @@
 
 .mud-chart-axis-label {
   fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-value-label {
+  fill: var(--mud-palette-text-primary);
+  user-select: none;
 }
 
 .mud-chart-donut {

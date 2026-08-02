@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using AwesomeAssertions;
+using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using NUnit.Framework;
@@ -117,6 +118,29 @@ public class ScrollManagerTests
     }
 
     [Test]
+    public async Task LockScrollAsync_SwallowsJsRuntimeError()
+    {
+        // Lock runs eagerly on overlay/dialog open, so a missing or disconnected script must degrade instead of tearing down the circuit.
+        // This mirrors UnlockScrollAsync; the pair are symmetric.
+        SetupThrowingInvocation("mudScrollManager.lockScroll", new JSDisconnectedException("disconnected"));
+
+        var act = async () => await _service.LockScrollAsync("#dialog", "locked");
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
+    public async Task UnlockScrollAsync_SwallowsJsRuntimeError()
+    {
+        // Unlock runs during teardown when the circuit may already be gone, so it must not throw.
+        SetupThrowingInvocation("mudScrollManager.unlockScroll", new JSDisconnectedException("disconnected"));
+
+        var act = async () => await _service.UnlockScrollAsync("#dialog", "locked");
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [Test]
     public async Task ScrollToVirtualizedItemAsync_CallsJsWithExpectedArguments()
     {
         SetupVoidInvocation("mudScrollManager.scrollToVirtualizedItem", args =>
@@ -138,5 +162,12 @@ public class ScrollManagerTests
             .Setup(x => x.InvokeAsync<IJSVoidResult>(identifier, It.Is<object[]>(args => argumentMatcher(args))))
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
+    }
+
+    private void SetupThrowingInvocation(string identifier, Exception exception)
+    {
+        _runtimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>(identifier, It.IsAny<object[]>()))
+            .Throws(exception);
     }
 }

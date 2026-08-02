@@ -5,7 +5,7 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Represents the path of a link (edge) between two nodes in a Sankey chart.
+/// The SVG path connecting a source node to a target node in a Sankey chart.
 /// </summary>
 /// <remarks>
 /// An <see cref="EdgePath"/> defines the SVG path data and associated metadata
@@ -42,8 +42,7 @@ public sealed class EdgePath : SvgPath
 }
 
 /// <summary>
-/// Represents a rectangular node in a Sankey chart, including its position,
-/// dimensions, color.
+/// The bounding rectangle of a node in a Sankey chart, holding its position, size, color, and label.
 /// </summary>
 /// <remarks>
 /// A <see cref="NodeRect"/> defines the bounding box of a node (or block)

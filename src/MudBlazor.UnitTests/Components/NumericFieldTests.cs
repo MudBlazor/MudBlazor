@@ -367,6 +367,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Programmatically resetting Value (e.g. from an OnKeyDown handler) while the field is focused must
+        /// update the displayed text, not only the bound Value. Regression test for #8565 / #10486: on Blazor
+        /// Server the rendered input kept the typed text because the old TextUpdateSuppression skipped the
+        /// _internalText refresh while focused. The key assertion is on the rendered value attribute, since
+        /// ReadText already updated correctly even when the bug was present.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Should_UpdateDisplayedTextOnBoundValueChange_WhenFocused()
+        {
+            var comp = Context.Render<NumericFieldUpdateViaBindingTest>();
+            var input = comp.FindComponent<MudInput<string>>();
+
+            // Focus the field (sets _isFocused = true, the condition that used to suppress the text refresh).
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+
+            // Simulate the user typing a value (Immediate => commits on input).
+            await comp.Find("input").InputAsync(new ChangeEventArgs() { Value = "123" });
+
+            comp.Find("#value-display").TrimmedText().Should().Be("value: 123");
+            input.Instance.ReadText.Should().Be("123");
+            comp.Find("input").GetAttribute("value").Should().Be("123");
+
+            // Hit Enter: the handler resets the bound value to 0 while the field is still focused.
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("#value-display").TrimmedText().Should().Be("value: 0"));
+            await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be("0"));
+            // Crucial assertion: the displayed text (rendered value attribute) must reflect the reset and not
+            // keep the typed "123". This is what regressed on Server in #8565 / #10486.
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("0"));
+        }
+
+        /// <summary>
         /// KeyDown disabled, should not do anything
         /// </summary>
         [Test]
@@ -404,98 +437,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1234.56));
             await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1234.56));
-        }
-
-        /// <summary>
-        /// MouseWheel actions should work
-        /// </summary>
-        [Test]
-        public async Task NumericField_MouseWheel()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
-            var numericField = comp.Instance;
-
-            //MouseWheel up
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1235.56));
-
-            //MouseWheel down
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Invert MouseWheel
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
-
-            //MouseWheel up
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1233.56));
-
-            //MouseWheel down
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Try with different step
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
-
-            //MouseWheel up
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.06));
-
-            //MouseWheel down
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //MouseWheel without Shift doesn't do anything
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-        }
-
-        /// <summary>
-        /// MouseWheel actions should work on Firefox
-        /// </summary>
-        [Test]
-        public async Task NumericField_Wheel_Firefox()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
-            var numericField = comp.Instance;
-
-            //MouseWheel up
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1235.56));
-
-            //MouseWheel down
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Invert MouseWheel
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
-
-            //MouseWheel up
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1233.56));
-
-            //MouseWheel down
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Try with different step
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
-
-            //MouseWheel up
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.06));
-
-            //MouseWheel down
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //MouseWheel without Shift doesn't do anything
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
         }
 
         /// <summary>

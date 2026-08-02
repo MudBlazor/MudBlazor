@@ -6,7 +6,7 @@ using static System.String;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing button components.
+    /// Base class for clickable button components such as <see cref="MudButton"/>, <see cref="MudFab"/>, and <see cref="MudIconButton"/>.
     /// </summary>
     public abstract class MudBaseButton : MudComponentBase
     {

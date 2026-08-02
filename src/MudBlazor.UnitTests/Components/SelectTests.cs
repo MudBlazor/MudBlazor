@@ -992,6 +992,54 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearButtonClicked.Should().BeTrue();
         }
 
+        [Test]
+        public async Task SelectClearable_NonNullableEnum_HiddenWhileValueIsDefault()
+        {
+            // #13372: a non-nullable value type's default (here the zero enum member) is the cleared state,
+            // so the clear button must stay hidden until a different value is selected.
+            var comp = Context.Render<MudSelect<MyEnum>>(p => p
+                .Add(x => x.Clearable, true)
+                .Add(x => x.Value, MyEnum.First));
+
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, MyEnum.Second));
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+
+            // Returning to the default hides it again (clearing default would be a no-op).
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, MyEnum.First));
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task SelectClearable_NonNullableInt_HiddenWhileValueIsDefault()
+        {
+            // #13372: default(int) is the cleared state, so no clear button until a non-zero value is selected.
+            var comp = Context.Render<MudSelect<int>>(p => p
+                .Add(x => x.Clearable, true)
+                .Add(x => x.Value, 0));
+
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, 2));
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+        }
+
+        [Test]
+        public async Task SelectClearable_NullableValueType_ShownForZero()
+        {
+            // #13372: for a nullable value type the default is null, so a real zero selection is distinct from
+            // cleared and stays clearable (clearing takes it from 0 to null).
+            var comp = Context.Render<MudSelect<int?>>(p => p
+                .Add(x => x.Clearable, true)
+                .Add(x => x.Value, (int?)null));
+
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Value, (int?)0));
+            comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
+        }
+
         /// <summary>
         /// Reselect an already selected value should not call SelectedValuesChanged event.
         /// </summary>
@@ -1093,6 +1141,34 @@ namespace MudBlazor.UnitTests.Components
             select.Touched.Should().BeTrue();
             select.HasErrors.Should().BeTrue();
             select.ValidationErrors.First().Should().Be("Required");
+        }
+
+        /// <summary>
+        /// #11796: in multi-selection the Validation function runs after SelectedValues commits, so it observes the new selection - once per click.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Validation_RunsAfterSelectedValuesCommit()
+        {
+            var comp = Context.Render<SelectMultiSelectionValidationOrderTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(3));
+            comp.Instance.ObservedCounts.Clear();
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1 },
+                "validation runs once per selection and sees the committed binding (#11796)");
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2 });
+
+            // deselect the first option again
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1 });
+
+            // the Clearable X button must also validate against the committed (now empty) binding
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+            comp.Instance.ObservedCounts.Should().Equal(new[] { 1, 2, 1, 0 });
         }
 
         /// <summary>
@@ -1507,6 +1583,53 @@ namespace MudBlazor.UnitTests.Components
             icons[1].Attributes["d"].Value.Should().Be(@checked);   // test1
             icons[3].Attributes["d"].Value.Should().Be(@unchecked); // test2
             icons[5].Attributes["d"].Value.Should().Be(@unchecked); // test3
+        }
+
+        [Test(Description = "A custom Comparer must drive value->item resolution for highlight/active-descendant, not just selection state.")]
+        public async Task SingleSelectWithCustomComparer_HighlightsKeyEqualItem()
+        {
+            var comp = Context.Render<SingleSelectComparerHighlightTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var input = comp.Find("input");
+                var latte = comp.FindAll("div.mud-list-item").Single(item => item.TextContent.Contains("Cafe Latte"));
+
+                // The bound value is a different Coffee instance with the same Key ("lat") as "Cafe Latte".
+                // Without honoring the comparer the dictionary lookup misses, so no item is highlighted
+                // and aria-activedescendant is omitted.
+                input.GetAttribute("aria-activedescendant").Should().Be(latte.Id);
+                latte.ToMarkup().Should().Contain("mud-selected-item");
+            });
+        }
+
+        [Test(Description = "A custom Comparer must drive value->item resolution for the selected-value template (shadow lookup).")]
+        public async Task SingleSelectWithCustomComparer_RendersKeyEqualItemTemplate()
+        {
+            var comp = Context.Render<SingleSelectComparerPresenterTest>();
+
+            // The bound value is a different Coffee instance with the same Key ("lat") as "Cafe Latte".
+            // Resolving it to the matching item's ChildContent requires honoring the comparer.
+            comp.Find("div.mud-select-input").TextContent.Should().Contain("Latte template");
+        }
+
+        [Test(Description = "A custom Comparer that matches no item resolves to no highlight rather than mis-highlighting.")]
+        public async Task SingleSelectWithCustomComparer_NoMatch_HighlightsNothing()
+        {
+            var comp = Context.Render<SingleSelectComparerNoMatchTest>();
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                // Menu is open, but no item's key matches the bound value, so nothing is highlighted
+                // and no active descendant is published.
+                comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0);
+                comp.FindAll("div.mud-selected-item").Should().BeEmpty();
+                comp.Find("input").GetAttribute("aria-activedescendant").Should().BeNull();
+            });
         }
 
         [Test]
@@ -2171,6 +2294,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Select_ShouldExposeComboboxSemantics_OnCustomPresenter()
+        {
+            var comp = Context.Render<SelectPrecedenceTest>();
+
+            var display = comp.Find("div.mud-select-input[tabindex='0']");
+            display.GetAttribute("role").Should().Be("combobox");
+            display.GetAttribute("aria-haspopup").Should().Be("listbox");
+            display.GetAttribute("aria-expanded").Should().Be("false");
+            display.GetAttribute("aria-label").Should().Be("Select");
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var openDisplay = comp.Find("div.mud-select-input[tabindex='0']");
+                openDisplay.GetAttribute("aria-expanded").Should().Be("true");
+                openDisplay.GetAttribute("aria-controls").Should().NotBeNullOrWhiteSpace();
+            });
+        }
+
+        [Test]
         public void Select_UserAttributes_ShouldOverrideGeneratedAccessibilityAttributes()
         {
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
@@ -2191,6 +2335,36 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-haspopup").Should().Be("dialog");
             input.GetAttribute("aria-label").Should().Be("Custom label");
             input.GetAttribute("aria-activedescendant").Should().Be("custom-option");
+        }
+
+        [Test]
+        public async Task Select_UserAttributes_ForwardedToSelectedValuePresenter()
+        {
+            // A value is preselected and its item renders child content, so the hidden input
+            // is swapped for the focusable presenter div (#13086).
+            var comp = Context.Render<SelectOnFocusTest>();
+            IElement Presenter() => comp.Find("div.mud-select-input[tabindex='0']");
+
+            // Arbitrary consumer attributes reach the presenter, not just role/aria.
+            Presenter().GetAttribute("data-testid").Should().Be("vehicle-select");
+
+            // The consumer @onfocus splat fires when the presenter receives focus.
+            comp.Find("#focus-count").TextContent.Should().Be("0");
+            await Presenter().TriggerEventAsync("onfocus", new FocusEventArgs());
+            await comp.WaitForAssertionAsync(() => comp.Find("#focus-count").TextContent.Should().Be("1"));
+        }
+
+        [Test]
+        public void Select_PresenterAttributes_DoNotDuplicateIdOrFocusDisabled()
+        {
+            var comp = Context.Render<SelectPresenterAttributeTest>();
+
+            // The consumer id stays on the hidden input only; forwarding it to the presenter too would duplicate the DOM id.
+            comp.FindAll("[id='select-with-id']").Count.Should().Be(1);
+            comp.FindAll("div.mud-select-input[id='select-with-id']").Should().BeEmpty();
+
+            // A forwarded tabindex must not make the disabled presenter focusable.
+            comp.Find("div.mud-select-input[data-scenario='disabled']").HasAttribute("tabindex").Should().BeFalse();
         }
 
         [Test]

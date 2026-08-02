@@ -121,8 +121,11 @@
                     <SectionHeader Class="mt-6">
                         <Description>
                             <MudAlert Class="mt-4" Severity="Severity.Warning">
-                                If you experience issues such as certain components not responding to user interactions, your render mode may be configured incorrectly.
-                                Static rendering is not supported and the rendering mode must be interactive.
+                                If you experience issues such as certain components not responding to user interactions, or a logged
+                                <CodeInline>Missing &lt;MudPopoverProvider /&gt;</CodeInline> error, your render mode may be configured incorrectly.
+                                Static rendering is not supported: these providers must render in the same interactive render mode as the components that use them.
+                                With global interactivity (the render mode set on <CodeInline>&lt;Routes /&gt;</CodeInline> in <CodeInline>App.razor</CodeInline>) keep them here in <CodeInline>MainLayout.razor</CodeInline>.
+                                With per-page interactivity, <CodeInline>MainLayout.razor</CodeInline> renders statically, so add the providers to each interactive page instead.
                                 <MudLink Href="https://learn.microsoft.com/aspnet/core/blazor/components/render-modes" Target="_blank">Learn about render modes</MudLink>
                                 or
                                 <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/7430" Target="_blank">view a related discussion</MudLink>.

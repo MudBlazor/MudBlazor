@@ -300,7 +300,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            var effectiveElementId = GetEffectiveElementId();
+            var effectiveElementId = GetEffectiveElementId(ElementId);
 
             if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
@@ -354,6 +354,7 @@ namespace MudBlazor
             if (NestedList != null)
             {
                 await _expandedState.SetValueAsync(!_expandedState.Value);
+                await OnClick.InvokeAsync(eventArgs);
                 return;
             }
             if (TopLevelList is not null && !GetReadOnly())
@@ -379,7 +380,7 @@ namespace MudBlazor
             // the only case a manual Navigition is required, is when
             // the target is empty, but a force reload is desired, all other cases are handled
             // by the html anchor
-            if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
@@ -403,21 +404,7 @@ namespace MudBlazor
             }
         }
 
-        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(), KeyEventKind.Down, args);
-
-        private string GetEffectiveElementId()
-        {
-            if (UserAttributes.TryGetValue("id", out var idValue) && idValue is not null)
-            {
-                var id = idValue.ToString();
-                if (!string.IsNullOrWhiteSpace(id))
-                {
-                    return id;
-                }
-            }
-
-            return ElementId;
-        }
+        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(ElementId), KeyEventKind.Down, args);
 
         private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
 
@@ -536,6 +523,7 @@ namespace MudBlazor
             if (NestedList is not null)
             {
                 await _expandedState.SetValueAsync(!_expandedState.Value);
+                await OnClick.InvokeAsync(new MouseEventArgs());
                 return;
             }
 
@@ -559,7 +547,7 @@ namespace MudBlazor
 
             await OnClick.InvokeAsync(new MouseEventArgs());
 
-            if (activateLink && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            if (activateLink && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Components.Snackbar.InternalComponents;
 
+/// <summary>
+/// Renders a snackbar message supplied as a custom <see cref="RenderFragment"/>.
+/// </summary>
 public partial class SnackbarMessageRenderFragment : ComponentBase
 {
     /// <summary>

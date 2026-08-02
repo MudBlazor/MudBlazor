@@ -9,10 +9,21 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Wraps a single item inside a <see cref="MudDropZone{T}"/> so it can be dragged and dropped between zones using mouse or touch gestures.
+/// </summary>
+/// <typeparam name="T">The type of the data item this element carries.</typeparam>
+/// <seealso cref="MudDropContainer{T}"/>
+/// <seealso cref="MudDropZone{T}"/>
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
     private readonly string _id = Identifier.Create();
+
+    // The id actually rendered on the item div: a consumer-supplied id (splatted after the explicit id, so it wins)
+    // overrides _id. The mudDragAndDrop touch helpers do document.getElementById on this value (and compare it to
+    // sibling element ids), so they must target the rendered id or drag movement throws / mis-targets the item.
+    private string ResolvedElementId => GetEffectiveElementId(_id);
     private double _onTouchStartX;
     private double _onTouchStartY;
     private double _onTouchLastX;
@@ -178,7 +189,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", ResolvedElementId);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -186,7 +197,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedCanceled()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", _id);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", ResolvedElementId);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -219,11 +230,11 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         _onTouchLastY = e.ChangedTouches[0].ClientY;
 
         //Send to JS to move DOM element
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", _id, x, y);
+        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", ResolvedElementId, x, y);
 
         if (Container is not null && Container.TransactionInProgress())
         {
-            var dropIndexOnPositionString = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, _id);
+            var dropIndexOnPositionString = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, ResolvedElementId);
             if (int.TryParse(dropIndexOnPositionString, out var dropIndex))
             {
                 Container.UpdateTransactionIndex(dropIndex);

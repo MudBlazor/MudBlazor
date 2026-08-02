@@ -44,7 +44,7 @@
                           IconSize="@IconSize"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          Clearable="@(Clearable && !GetReadOnlyState() && HasClearableValue())"
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="GetInputUserAttributes()"

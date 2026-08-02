@@ -31,7 +31,7 @@ window.getTabbableElements = (element) => {
 // Legacy serializer kept on `window` for JS interop payload normalization in browser-only call paths.
 // Source inspiration: https://github.com/RemiBou/BrowserInterop
 function serializeParameter(data, spec) {
-    if (typeof data == "undefined" ||
+    if (data === undefined ||
         data === null) {
         return null;
     }

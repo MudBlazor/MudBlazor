@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a series of links used to show the user's current location.
+    /// Breadcrumbs show a navigation trail of links marking the user's current location within a page hierarchy.
     /// </summary>
     /// <seealso cref="BreadcrumbItem" />
     /// <seealso cref="BreadcrumbLink" />

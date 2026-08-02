@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a palette of colors used throughout the application.
+    /// Base class for a MudBlazor color palette, defining the primary, secondary, surface, text, and status colors shared by <see cref="PaletteLight"/> and <see cref="PaletteDark"/>.
     /// </summary>
     [JsonDerivedType(typeof(PaletteLight), typeDiscriminator: nameof(PaletteLight))]
     [JsonDerivedType(typeof(PaletteDark), typeDiscriminator: nameof(PaletteDark))]

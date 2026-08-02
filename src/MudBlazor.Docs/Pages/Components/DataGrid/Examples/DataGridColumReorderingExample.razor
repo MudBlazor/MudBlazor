@@ -37,7 +37,7 @@
     bool _reorderingEnabled = true;
 
     DataGridDragAndDropColumnReorderMode _dragAndDropColumnReorderMode = DataGridDragAndDropColumnReorderMode.Swap;
-    
+
     protected override async Task OnInitializedAsync()
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");

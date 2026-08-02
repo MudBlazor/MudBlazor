@@ -16,6 +16,7 @@ using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
 using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 #nullable enable
@@ -122,6 +123,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+        }
+
+        /// <summary>
+        /// After ResetValidationAsync, blurring an empty required field must re-run validation and show the required error again (#11503).
+        /// </summary>
+        [Test]
+        public async Task TextField_ResetValidation_ThenBlur_RevalidatesRequired()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.RequiredError, "required"));
+
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
+
+            await comp.InvokeAsync(() => comp.Instance.ResetValidationAsync());
+            comp.FindAll("div.mud-input-error").Count.Should().Be(0);
+
+            // Without resetting _validated, this blur short-circuits and the error never returns.
+            await comp.Find("input").BlurAsync();
+            comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
         }
 
         [Test]
@@ -261,7 +283,8 @@ namespace MudBlazor.UnitTests.Components
             textField[1].Instance.ReadText.Should().Be("password");
             textField[1].Instance.ReadValue.Should().Be("password");
             comp.Instance.Model.Password.Should().Be("password");
-            form.IsValid.Should().BeTrue();
+            // #13421: the debounced Username's value has not committed yet (ReadValue is null), so its required field is not yet satisfied and the form stays invalid until the pending value commits (on validate below).
+            form.IsValid.Should().BeFalse();
 
             await comp.Find("#validate-button").ClickAsync();
 
@@ -374,6 +397,43 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("B");
             textfield.ReadValue.Should().Be("By");
             textfield.ReadText.Should().Be("B");
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Converter case).
+        /// Entering text that parses to the same Value a second time must still re-apply the converter's
+        /// formatting, not leave the raw text. Previously the unchanged value short-circuited the
+        /// value->text round-trip, so only the first occurrence of a value formatted.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithConverter_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueConverterTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+
+            // Re-enter the same raw value: it parses to the same Value, but the display must still reformat.
+            await comp.Find("input").ChangeAsync("10");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.0"));
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13096 (Format case).
+        /// Re-entering a raw value that parses to the same number must still re-apply the Format.
+        /// </summary>
+        [Test]
+        public async Task TextField_WithFormat_ReformatsWhenSameValueReentered()
+        {
+            var comp = Context.Render<TextFieldReformatSameValueFormatTest>();
+            var input = comp.Find("input");
+
+            await input.ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
+
+            await comp.Find("input").ChangeAsync("1");
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("1.00"));
         }
 
         [Test]
@@ -515,6 +575,54 @@ namespace MudBlazor.UnitTests.Components
             textfield.Touched.Should().BeFalse();
             textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
+        }
+
+        [Test]
+        public async Task SetTextAsync_ProgrammaticSet_DoesNotMarkTouched()
+        {
+            var comp = Context.Render<MudTextField<string>>();
+            var textField = comp.Instance;
+            textField.Touched.Should().BeFalse();
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+
+            textField.GetState(x => x.Text).Should().Be("hello");
+            textField.Touched.Should().BeFalse("programmatic SetTextAsync is not a user interaction (#12997)");
+
+            await comp.InvokeAsync(() => textField.ResetAsync());
+            textField.Touched.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task SetTextAsync_InForm_DoesNotMarkFormTouched()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .Add(f => f.ValidationDelay, 0)
+                .AddChildContent<MudTextField<string>>());
+            var form = comp.Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+
+            textField.Touched.Should().BeFalse("a programmatic set is not a user interaction (#12997)");
+            form.IsTouched.Should().BeFalse("a programmatic set must not mark the form touched, even briefly during the value sync (#12997)");
+        }
+
+        [Test]
+        public async Task SetTextAsync_FiresFieldChangedOnChangeButNotOnNoOp()
+        {
+            var fieldChangedCount = 0;
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .Add(f => f.ValidationDelay, 0)
+                .Add(f => f.FieldChanged, EventCallback.Factory.Create<FormFieldChangedEventArgs>(this, () => fieldChangedCount++))
+                .AddChildContent<MudTextField<string>>());
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+            fieldChangedCount.Should().Be(1, "a programmatic set that changes the value still notifies the form");
+
+            await comp.InvokeAsync(() => textField.SetTextAsync("hello"));
+            fieldChangedCount.Should().Be(1, "setting the same value is a no-op and must not fire a spurious FieldChanged (#12997)");
         }
 
         /// <summary>
@@ -907,12 +1015,16 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("span").TrimmedText().Should().Be("value: The Stormlight Archive");
             input.Instance.ReadValue.Should().Be("The Stormlight Archive");
             input.Instance.ReadText.Should().Be("The Stormlight Archive");
+            comp.Find("input").GetAttribute("value").Should().Be("The Stormlight Archive");
 
             // now hit Enter to cause the clearing of the focused text field
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => comp.Find("span").TrimmedText().Should().Be("value:"));
             await comp.WaitForAssertionAsync(() => input.Instance.ReadValue.Should().Be(""));
             await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be(""));
+            // Assert the rendered value attribute too: the displayed text (not just ReadText) must clear while
+            // focused. This is the user-visible part that regressed on Server in #8565 / #10486.
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be(""));
         }
 
         [Test]
@@ -2027,6 +2139,28 @@ namespace MudBlazor.UnitTests.Components
             var textField = Context.Render<MudTextField<string>>().Instance;
             await textField.InsertTextAtCurrentCaretPositionAsync("test");
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudInput.insertAtCurrentCaretPosition", It.IsAny<object[]>()), Times.Exactly(1));
+        }
+
+        [TestCase(2, InputSizing.Fixed)]
+        [TestCase(1, InputSizing.Auto)]
+        [TestCase(2, InputSizing.Auto)]
+        public async Task TextFieldWithTextArea_Should_TriggerUserDefinedPasteEventAsync(int lines, InputSizing sizing)
+        {
+            var pasteEventCalled = false;
+            var onPasteHandler = EventCallback.Factory.Create<ClipboardEventArgs>(this, _ =>
+            {
+                pasteEventCalled = true;
+            });
+
+            var comp = Context.Render<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Lines, lines)
+                    .Add(p => p.Sizing, sizing)
+                    .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "onpaste", onPasteHandler } }));
+
+            var textarea = comp.Find("textarea");
+            await textarea.TriggerEventAsync("onpaste", new ClipboardEventArgs());
+            pasteEventCalled.Should().BeTrue();
         }
     }
 }

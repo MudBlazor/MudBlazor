@@ -31,5 +31,20 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("<text x=\"10.05\" y=\"2.02\" font-size=\"12px\" fill=\"white\" text-anchor=\"middle\" stroke=\"black\" stroke-width=\"0.8\" paint-order=\"stroke\" filter=\"url(#text-shadow)\" blazor:elementReference=\"\">");
             comp.Markup.Should().Contain("<tspan x=\"10.05\" dy=\"-.3em\">Some Title</tspan><tspan x=\"10.05\" dy=\"0\">Some Subtitle</tspan></text>");
         }
+
+        [Test]
+        public void NonFiniteCoordinatesSettleInsteadOfLoopingTheRenderer()
+        {
+            // Recalculating the box ends in StateHasChanged, so the change check has to latch or every render queues another one.
+            // NaN != NaN is always true, so a non-finite coordinate used to recurse until the process died with a stack overflow.
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, double.NaN)
+                    .Add(p => p.Y, double.NaN)
+                );
+
+            // One initial render plus the one the recalculation asks for, then it settles.
+            comp.RenderCount.Should().BeLessThanOrEqualTo(3);
+        }
     }
 }

@@ -661,14 +661,21 @@ namespace MudBlazor
 
         private void CancelToken()
         {
+            // Swap in a fresh source before cancelling so the next search never observes the cancelled one.
+            // The previous source must be disposed or it leaks along with its registrations on every search.
+            var previous = _cancellationTokenSrc;
+            _cancellationTokenSrc = new CancellationTokenSource();
             try
             {
-                _cancellationTokenSrc?.Cancel();
+                previous?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch (ObjectDisposedException)
+            {
+                // Already disposed, such as when the component was disposed mid-search.
+            }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                previous?.Dispose();
             }
         }
 
@@ -751,9 +758,11 @@ namespace MudBlazor
             }
             catch (TaskCanceledException)
             {
+                // Cancellation is routine when a newer search or CloseMenuAsync calls CancelToken(), so it must not be logged as a failure like the catch below.
             }
             catch (OperationCanceledException)
             {
+                // Same routine cancellation, thrown by SearchFunc observing the token instead of by awaiting the cancelled task.
             }
             catch (Exception e)
             {
@@ -1136,22 +1145,28 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputBlurredAsync(FocusEventArgs args)
+        private async Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
             _handleNextFocus = false;
 
-            // When Immediate is enabled, then the CoerceValue is set by TextChanged
-            // So only coerce the value on blur when Immediate is disabled
+            // When Immediate is enabled, then the CoerceValue is set by TextChanged.
+            // So only coerce the value on blur when Immediate is disabled, then fall through to the same validation path.
             if (!Immediate)
             {
-                return CoerceValueToTextAsync();
+                await CoerceValueToTextAsync();
             }
 
-            return OnBlur.InvokeAsync(args);
-            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
-            // resulting in a premature validation. thus, don't call base
-            //base.OnBlurred(args);
+            // A blur while the menu is open or a value is being committed is part of selecting an item: the item's mousedown blurs the input before its click lands, so validating now would flag a premature error.
+            // Only a genuine leave runs the base blur, so a required autocomplete surfaces its error on blur like other inputs (#5489).
+            // A leave while a search is still running (menu not yet open) is genuine, so the in-flight opening flag is intentionally not gated on.
+            if (Open || _isProcessingValue)
+            {
+                await OnBlur.InvokeAsync(args);
+                return;
+            }
+
+            await base.OnBlurredAsync(args);
         }
 
         private Task OnOverlayClosedAsync()

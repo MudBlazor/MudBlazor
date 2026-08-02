@@ -97,4 +97,41 @@ public class SplitPanelTests : BunitTest
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_getDividerPosition");
         invocation.Arguments.Count.Should().Be(1);
     }
+
+    [Test]
+    public void NoUserId_JsInteropTargetsRenderedContainerId()
+    {
+        var comp = Context.Render<MudSplitPanel>(parameters => parameters
+            .Add(p => p.FirstPanel, builder => builder.AddContent(0, "First Panel"))
+            .Add(p => p.SecondPanel, builder => builder.AddContent(0, "Second Panel")));
+
+        var renderedId = comp.Find(".mud-split-panel").GetAttribute("id");
+        renderedId.Should().NotBeNullOrWhiteSpace();
+
+        // The JS build must target the exact id rendered on the container, or document.getElementById fails.
+        var build = Context.JSInterop.VerifyInvoke("mudSplitPanel.build");
+        build.Arguments[0].Should().Be(renderedId);
+    }
+
+    [Test]
+    public async Task UserProvidedId_OverridesContainerId_AndJsInteropFollowsIt()
+    {
+        var comp = Context.Render<MudSplitPanel>(parameters => parameters
+            .Add(p => p.FirstPanel, builder => builder.AddContent(0, "First Panel"))
+            .Add(p => p.SecondPanel, builder => builder.AddContent(0, "Second Panel"))
+            .AddUnmatched("id", "custom-split"));
+
+        // The consumer id wins on the rendered container (attribute splat comes after the explicit id).
+        comp.Find(".mud-split-panel").GetAttribute("id").Should().Be("custom-split");
+
+        // Regression for #13070: JS build/destroy must follow the effective rendered id, not the internal GUID,
+        // otherwise document.getElementById('<guid>') is null and the divider drag/keyboard handlers never attach.
+        Context.JSInterop.VerifyInvoke("mudSplitPanel.build").Arguments[0].Should().Be("custom-split");
+
+        await comp.Instance.ResetDividerPositionAsync();
+        Context.JSInterop.VerifyInvoke("mudSplitPanel_resetDividerPosition").Arguments[0].Should().Be("custom-split");
+
+        await Context.DisposeComponentsAsync();
+        Context.JSInterop.VerifyInvoke("mudSplitPanel_destroy").Arguments[0].Should().Be("custom-split");
+    }
 }

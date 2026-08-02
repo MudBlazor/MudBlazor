@@ -6,7 +6,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing form input components.
+    /// Base class for MudBlazor form input components such as <see cref="MudTextField{T}"/>, <see cref="MudNumericField{T}"/>, and <see cref="MudSelect{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
@@ -546,7 +546,11 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
             }
 
-            FieldChanged(value);
+            // Only user interaction notifies the form; the validation below runs either way.
+            if (!_suppressInteractionEffects)
+            {
+                FieldChanged(value);
+            }
             await BeginValidateAsync();
         }
 
@@ -569,7 +573,7 @@ namespace MudBlazor
                 // External value changes, non-Immediate commits, and explicit forced updates still refresh.
                 if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
                 {
-                    await UpdateTextPropertyAsync(false);
+                    await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
                 }
             }
 
@@ -624,14 +628,14 @@ namespace MudBlazor
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         protected override async Task ValidateValue()
@@ -651,7 +655,7 @@ namespace MudBlazor
             // equal to the initial value. This is why we force an update to the Text property here.
             if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
 
             if (Label == null && For != null)
@@ -702,7 +706,7 @@ namespace MudBlazor
 
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
         }
 
@@ -747,6 +751,15 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        /// <inheritdoc />
+        public override Task ResetValidationAsync()
+        {
+            // Clear _validated so the next blur re-runs validation.
+            // Otherwise OnBlurredAsync short-circuits on the stale flag and a required error never reappears (#11503).
+            _validated = false;
+            return base.ResetValidationAsync();
+        }
+
         protected string? GetHelperId()
         {
             if (HelperId is not null)
@@ -789,17 +802,18 @@ namespace MudBlazor
 
         protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
+            // Mark touched before the equality short-circuit: on Blazor Server the suppressed ValueChanged echo can set the text first, so a genuine interaction that arrives with the text already in sync would otherwise skip the Touched write and leave a required field untouched on its first change (#13389).
+            if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
+            {
+                Touched = true;
+            }
+
             if (ReadText == text)
             {
                 return;
             }
 
             _validated = false;
-
-            if (!string.IsNullOrEmpty(text))
-            {
-                Touched = true;
-            }
 
             await _textState.SetValueAsync(text);
             if (updateValue)
@@ -808,22 +822,23 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
-            _validated = false;
-
-            if (!string.IsNullOrEmpty(arg.Value))
+            // A Text parameter change is always parameter-driven (a user edit updates Text via the internal
+            // state without re-triggering this handler), so it must not touch the input. The whole handler
+            // runs suppressed, so the gated Touched write in UpdateValuePropertyAsync's chain is skipped.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                Touched = true;
-            }
+                _validated = false;
 
-            // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
-            // But only if Value is not also being set in the same parameter update
-            // Check ParameterView to see if Value is also present
-            if (!arg.ParameterView.Contains<T?>(nameof(Value)))
-            {
-                await UpdateValuePropertyAsync(updateText: false);
-            }
+                // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
+                // But only if Value is not also being set in the same parameter update
+                // Check ParameterView to see if Value is also present
+                if (!arg.ParameterView.Contains<T?>(nameof(Value)))
+                {
+                    await UpdateValuePropertyAsync(updateText: false);
+                }
+            });
         }
 
         private async Task UpdateInputIdStateAsync()
