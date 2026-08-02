@@ -100,7 +100,7 @@ class MudKeyInterceptor {
             // Normalize direct lookups to lowercase once so event handlers can stay allocation-light.
             this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
         // remove whitespace and enforce lowercase
-        const whitespace = new RegExp("\\s", "g");
+        const whitespace = /\s/g;
         keyOption.preventDown = (keyOption.preventDown || "none").replace(whitespace, "").toLowerCase();
         keyOption.preventUp = (keyOption.preventUp || "none").replace(whitespace, "").toLowerCase();
         keyOption.stopDown = (keyOption.stopDown || "none").replace(whitespace, "").toLowerCase();

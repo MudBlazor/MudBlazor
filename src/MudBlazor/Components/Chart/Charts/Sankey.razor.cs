@@ -362,7 +362,7 @@ namespace MudBlazor.Charts
             var result = new List<ChartSeries<T>>();
             var chartSeries = ChartSeries.Take(aggregated.Length);
 
-            foreach (var (series, index) in chartSeries.Select((s, i) => (s, i)))
+            foreach (var series in chartSeries)
             {
                 var data = new List<(SankeyLink, T)>();
                 var values = series.Data?.Values ?? [];
