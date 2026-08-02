@@ -33,7 +33,7 @@ namespace MudBlazor
                 .AddClass("mud-table-cell-hide", _column.HideSmall)
                 .AddClass("sticky-left", _column.StickyLeft)
                 .AddClass("sticky-right", _column.StickyRight)
-                .AddClass($"edit-mode-cell", _dataGrid.EditMode == DataGridEditMode.Cell && _column.Editable)
+                .AddClass($"edit-mode-cell", (_dataGrid.EditMode == DataGridEditMode.Cell || (_dataGrid.EditMode == DataGridEditMode.Inline && _dataGrid.IsEditingItem(_item))) && _column.Editable)
                 .AddClass(_column.CellClassFunc?.Invoke(_item))
                 .AddClass(_column.CellClass)
                 .Build();
@@ -46,7 +46,7 @@ namespace MudBlazor
 
         #endregion
 
-        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item)
+        public Cell(MudDataGrid<T> dataGrid, Column<T> column, T item, T sourceItem)
         {
             _dataGrid = dataGrid;
             _column = column;
@@ -54,8 +54,8 @@ namespace MudBlazor
 
             OnStartedEditingItem();
 
-            // Create the CellContext
-            _cellContext = new CellContext<T>(_dataGrid, _item);
+            // Create the CellContext with both the effective item and source item
+            _cellContext = new CellContext<T>(_dataGrid, _item, sourceItem);
         }
 
         public async Task StringValueChangedAsync(string? value)

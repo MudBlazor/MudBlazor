@@ -40,7 +40,7 @@ jobs:
           issues: ${{ github.event.issue.number }}
           prompt-path: .github/AutoTriage.prompt
           model-fast: "" # skip fast pass
-          model-pro: 'gemini-3.5-flash'
+          model-pro: 'gemini-3.6-flash'
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

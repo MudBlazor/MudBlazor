@@ -457,6 +457,13 @@ namespace MudBlazor
         public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
 
         /// <summary>
+        /// When overridden, obtains focus for this input, optionally preventing the browser from scrolling it into view.
+        /// </summary>
+        /// <param name="preventScroll">When <c>true</c>, the browser does not scroll the newly focused element into view.</param>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
+        internal virtual ValueTask FocusAsync(bool preventScroll) => FocusAsync();
+
+        /// <summary>
         /// When overridden, releases focus from this input.
         /// </summary>
         /// <returns>A <see cref="ValueTask" /> object.</returns>
@@ -730,7 +737,7 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
-                await FocusAsync();
+                await FocusAsync(preventScroll: true);
             }
 
             await base.OnAfterRenderAsync(firstRender);

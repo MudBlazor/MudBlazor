@@ -400,6 +400,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Drawer.Open.Should().BeFalse();
         }
 
+        [TestCase(Breakpoint.SmAndDown, "sm")]
+        [TestCase(Breakpoint.SmAndUp, "sm")]
+        [TestCase(Breakpoint.MdAndDown, "md")]
+        [TestCase(Breakpoint.MdAndUp, "md")]
+        [TestCase(Breakpoint.LgAndDown, "lg")]
+        [TestCase(Breakpoint.LgAndUp, "lg")]
+        [TestCase(Breakpoint.XlAndDown, "xl")]
+        [TestCase(Breakpoint.XlAndUp, "xl")]
+        public async Task CompositeBreakpoint_UsesNormalizedCssClasses(Breakpoint breakpoint, string normalizedBreakpoint)
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Breakpoint, breakpoint));
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+
+            comp.Find("aside.mud-drawer").ClassList.Should().Contain($"mud-drawer-{normalizedBreakpoint}");
+            comp.Find("div.mud-layout").ClassList.Should().Contain($"mud-drawer-open-responsive-{normalizedBreakpoint}-left");
+            comp.Find(".mud-drawer-overlay").ClassList.Should().Contain($"mud-drawer-overlay-{normalizedBreakpoint}");
+        }
+
         [TestCase(Breakpoint.Xs)]
         [TestCase(Breakpoint.Sm)]
         [TestCase(Breakpoint.SmAndDown)]

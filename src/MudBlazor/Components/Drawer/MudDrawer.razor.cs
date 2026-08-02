@@ -65,7 +65,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
                 .AddClass($"mud-drawer--initial", _initial)
-                .AddClass($"mud-drawer-{Breakpoint.ToStringFast(true)}")
+                .AddClass($"mud-drawer-{NormalizedBreakpoint.ToStringFast(true)}")
                 .AddClass($"mud-drawer-clipped-{ClipMode.ToStringFast(true)}")
                 .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
                 .AddClass($"mud-elevation-{Elevation}")
@@ -78,7 +78,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer-overlay--open", _openState.Value)
                 .AddClass($"mud-drawer-overlay-{EffectiveVariant.ToStringFast(true)}")
-                .AddClass($"mud-drawer-overlay-{Breakpoint.ToStringFast(true)}")
+                .AddClass($"mud-drawer-overlay-{NormalizedBreakpoint.ToStringFast(true)}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
                 .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
                 .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
@@ -417,7 +417,7 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(Breakpoint);
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizedBreakpoint;
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
@@ -436,6 +436,8 @@ namespace MudBlazor
         }
 
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
+
+        internal Breakpoint NormalizedBreakpoint => NormalizeBreakpoint(Breakpoint);
 
         private async Task OnPointerEnterAsync()
         {

@@ -758,9 +758,11 @@ namespace MudBlazor
             }
             catch (TaskCanceledException)
             {
+                // Cancellation is routine when a newer search or CloseMenuAsync calls CancelToken(), so it must not be logged as a failure like the catch below.
             }
             catch (OperationCanceledException)
             {
+                // Same routine cancellation, thrown by SearchFunc observing the token instead of by awaiting the cancelled task.
             }
             catch (Exception e)
             {
@@ -1250,9 +1252,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets focus to this Autocomplete.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>

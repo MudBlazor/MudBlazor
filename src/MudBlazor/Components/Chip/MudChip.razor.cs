@@ -69,8 +69,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
-    private bool IsButton => GetDisabled() is false
-                             && GetReadOnly() is false
+    private bool IsButton => !GetDisabled()
+                             && !GetReadOnly()
                              && (ChipSet is not null || OnClick.HasDelegate);
 
     private bool IsClosable => (OnClose.HasDelegate || ChipSet?.AllClosable == true) && !IsAnchor;
@@ -456,7 +456,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (GetReadOnly() || IsClosable is false)
+        if (GetReadOnly() || !IsClosable)
         {
             return;
         }

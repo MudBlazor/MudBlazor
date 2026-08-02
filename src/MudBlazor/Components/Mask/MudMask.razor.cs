@@ -365,9 +365,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets the cursor to this input.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>
@@ -523,7 +526,7 @@ namespace MudBlazor
             await JsApiService.CopyToClipboardAsync(text ?? string.Empty);
         }
 
-        [GeneratedRegex(@"^.$")]
+        [GeneratedRegex(@"^.$", RegexOptions.None, RegexDefaults.MatchTimeoutMilliseconds)]
         private static partial Regex ValidCharacterRegularExpression();
     }
 }

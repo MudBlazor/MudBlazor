@@ -2166,5 +2166,36 @@ namespace MudBlazor.UnitTests.Components
             await textarea.TriggerEventAsync("onpaste", new ClipboardEventArgs());
             pasteEventCalled.Should().BeTrue();
         }
+
+        /// <summary>
+        /// A field with <see cref="MudBaseInput{T}.AutoFocus"/> must focus without scrolling (#13427).
+        /// Inside a popover the input is still at its initial off-screen position when it first focuses,
+        /// so a scrolling focus would jump the window to the top.
+        /// </summary>
+        [Test]
+        public void AutoFocus_ShouldFocusWithoutScrolling()
+        {
+            Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.AutoFocus, true));
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Calling <see cref="MudTextField{T}.FocusAsync()"/> explicitly keeps the default scrolling behavior.
+        /// </summary>
+        [Test]
+        public async Task FocusAsync_ShouldFocusWithScrolling()
+        {
+            var comp = Context.Render<MudTextField<string>>();
+
+            await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeFalse();
+        }
     }
 }

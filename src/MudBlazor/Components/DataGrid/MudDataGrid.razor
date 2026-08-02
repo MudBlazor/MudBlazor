@@ -203,7 +203,7 @@
                                 }
                             </thead>
                             <tbody class="@BodyClassname">
-                                @if (Virtualize || CurrentPageItems.Count() > 0)
+                                @if (Virtualize || CurrentPageItems.Any())
                                 {
                                     if (IsGrouped)
                                     {
@@ -283,7 +283,7 @@
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
                     {
-                        var cell = new Cell<T>(this, column, _editingItem!);
+                        var cell = new Cell<T>(this, column, _editingItem!, _editingSourceItem!);
 
                         if (column.EditTemplate != null)
                         {
@@ -362,41 +362,58 @@
     internal RenderFragment Cell(Column<T> column, T item) =>
         @<text>
              @{
-                 var cell = new Cell<T>(this, column, item);
+                 // For inline editing, use the editing copy if this row is being edited
+                 var effectiveItem = GetEditingItemOrSource(item);
+                 var cell = new Cell<T>(this, column, effectiveItem, item);
+                 var isInlineEditing = EditMode == DataGridEditMode.Inline && IsEditingItem(item);
+                 var cellTemplate = column.GetCellTemplate();
+                 // Determine if we should show edit mode controls:
+                 // - Column must be Editable AND not ReadOnly
+                 // - Either in Cell edit mode OR this row is being inline edited
+                 // - Must have an EditTemplate OR be a supported type (string/number)
+                 // If we have only a CellTemplate (like action buttons), always use CellTemplate
+                 var hasEditableContent = column.EditTemplate is not null ||
+                                          column.PropertyType == typeof(string) ||
+                                          column.isNumber;
+                 var showEditMode = column.Editable && !ReadOnly &&
+                                    (EditMode == DataGridEditMode.Cell || isInlineEditing) &&
+                                    hasEditableContent;
              }
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
-                 @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
+                 @if (showEditMode)
                  {
-                     if (column.EditTemplate is not null)
-                     {
-                         @column.EditTemplate(cell._cellContext)
-                     }
-                     else
-                     {
-                         if (column.PropertyType == typeof(string))
+                     @* An inline editor registers with the grid's own validator, which forwards it to Validator but keeps a commit scoped to the row being edited. *@
+                     <CascadingValue TValue="Interfaces.IForm" Value="@(isInlineEditing ? _inlineEditValidator : Validator)" IsFixed="true">
+                         @if (column.EditTemplate is not null)
                          {
-                             <MudTextField T="string"
-                                           Value="@cell._valueString"
-                                           ValueChanged="@cell.StringValueChangedAsync"
-                                           Margin="@Margin.Dense" Style="margin-top:0"
-                                           Required="@column.Required"
-                                           Variant="@Variant.Text" Culture="@column.Culture" />
+                             @column.EditTemplate(cell._cellContext)
                          }
-                         else if (column.isNumber)
+                         else
                          {
-                             <MudNumericField T="double?"
-                                              Value="@cell._valueNumber"
-                                              ValueChanged="@cell.NumberValueChangedAsync"
-                                              Margin="@Margin.Dense" Style="margin-top:0"
-                                              Required="@column.Required"
-                                              Variant="@Variant.Text" Culture="@column.Culture"
-                                              Format="@column.ContentFormat" />
+                             if (column.PropertyType == typeof(string))
+                             {
+                                 <MudTextField T="string"
+                                               Value="@cell._valueString"
+                                               ValueChanged="@cell.StringValueChangedAsync"
+                                               Margin="@Margin.Dense" Style="margin-top:0"
+                                               Required="@column.Required"
+                                               Variant="@Variant.Text" Culture="@column.Culture" />
+                             }
+                             else if (column.isNumber)
+                             {
+                                 <MudNumericField T="double?"
+                                                  Value="@cell._valueNumber"
+                                                  ValueChanged="@cell.NumberValueChangedAsync"
+                                                  Margin="@Margin.Dense" Style="margin-top:0"
+                                                  Required="@column.Required"
+                                                  Variant="@Variant.Text" Culture="@column.Culture"
+                                                  Format="@column.ContentFormat" />
+                             }
                          }
-                     }
+                     </CascadingValue>
                  }
                  else
                  {
-                     var cellTemplate = column.GetCellTemplate();
                      if (cellTemplate is not null)
                      {
                          @cellTemplate(cell._cellContext)

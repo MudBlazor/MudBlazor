@@ -65,7 +65,7 @@
                                     }
                                 </MudTHeadRow>
                             }
-                            @if (Loading)
+                            @if (ShowLoadingProgress)
                             {
                                 <tr class="mud-table-loading-row">
                                     <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
@@ -75,7 +75,7 @@
                             }
                         </thead>
                     }
-                    else if (Loading)
+                    else if (ShowLoadingProgress)
                     {
                         <thead class="@HeadClassname">
                             <tr class="mud-table-loading-row">
