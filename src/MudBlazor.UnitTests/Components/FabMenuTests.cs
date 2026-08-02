@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Button;
@@ -134,11 +134,15 @@ public class FabMenuTests : BunitTest
 
     /// <summary>
     /// MudFabMenuItem should forward its Variant to the inner MudFab button.
+    /// Asserting that the other two variant classes are absent makes this a real guard:
+    /// without forwarding the inner MudFab defaults to Filled, so the expected class
+    /// may already be present via Classname concatenation while the wrong variant
+    /// class is simultaneously present.
     /// </summary>
-    [TestCase(Variant.Filled, "mud-fab-filled")]
-    [TestCase(Variant.Outlined, "mud-fab-outlined")]
-    [TestCase(Variant.Text, "mud-fab-text")]
-    public void MudFabMenuItem_ShouldForwardVariantToButton(Variant variant, string expectedClass)
+    [TestCase(Variant.Filled,   "mud-fab-filled",   "mud-fab-outlined", "mud-fab-text")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined",  "mud-fab-filled",  "mud-fab-text")]
+    [TestCase(Variant.Text,     "mud-fab-text",      "mud-fab-filled",  "mud-fab-outlined")]
+    public void MudFabMenuItem_ShouldForwardVariantToButton(Variant variant, string expectedClass, string absentClass1, string absentClass2)
     {
         var comp = Context.Render<MudFabMenu>(parameters => parameters
             .Add(p => p.StartIcon, Icons.Material.Filled.Add)
@@ -146,7 +150,10 @@ public class FabMenuTests : BunitTest
                 .Add(p => p.Variant, variant)
                 .Add(p => p.StartIcon, Icons.Material.Filled.Edit)));
 
-        comp.Find(".mud-fab-menu-item").ClassList.Should().Contain(expectedClass);
+        var item = comp.Find(".mud-fab-menu-item");
+        item.ClassList.Should().Contain(expectedClass);
+        item.ClassList.Should().NotContain(absentClass1);
+        item.ClassList.Should().NotContain(absentClass2);
     }
 
     [Test]
