@@ -448,32 +448,35 @@
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
                  @if (showEditMode)
                  {
-                     if (column.EditTemplate is not null)
-                     {
-                         @column.EditTemplate(cell._cellContext)
-                     }
-                     else
-                     {
-                         if (column.PropertyType == typeof(string))
+                     @* An inline editor registers with the grid's own validator, which forwards it to Validator but keeps a commit scoped to the row being edited. *@
+                     <CascadingValue TValue="Interfaces.IForm" Value="@(isInlineEditing ? _inlineEditValidator : Validator)" IsFixed="true">
+                         @if (column.EditTemplate is not null)
                          {
-                             <MudTextField T="string"
-                                           Value="@cell._valueString"
-                                           ValueChanged="@cell.StringValueChangedAsync"
-                                           Margin="@Margin.Dense" Style="margin-top:0"
-                                           Required="@column.Required"
-                                           Variant="@Variant.Text" Culture="@column.Culture" />
+                             @column.EditTemplate(cell._cellContext)
                          }
-                         else if (column.isNumber)
+                         else
                          {
-                             <MudNumericField T="double?"
-                                              Value="@cell._valueNumber"
-                                              ValueChanged="@cell.NumberValueChangedAsync"
-                                              Margin="@Margin.Dense" Style="margin-top:0"
-                                              Required="@column.Required"
-                                              Variant="@Variant.Text" Culture="@column.Culture"
-                                              Format="@column.ContentFormat" />
+                             if (column.PropertyType == typeof(string))
+                             {
+                                 <MudTextField T="string"
+                                               Value="@cell._valueString"
+                                               ValueChanged="@cell.StringValueChangedAsync"
+                                               Margin="@Margin.Dense" Style="margin-top:0"
+                                               Required="@column.Required"
+                                               Variant="@Variant.Text" Culture="@column.Culture" />
+                             }
+                             else if (column.isNumber)
+                             {
+                                 <MudNumericField T="double?"
+                                                  Value="@cell._valueNumber"
+                                                  ValueChanged="@cell.NumberValueChangedAsync"
+                                                  Margin="@Margin.Dense" Style="margin-top:0"
+                                                  Required="@column.Required"
+                                                  Variant="@Variant.Text" Culture="@column.Culture"
+                                                  Format="@column.ContentFormat" />
+                             }
                          }
-                     }
+                     </CascadingValue>
                  }
                  else
                  {

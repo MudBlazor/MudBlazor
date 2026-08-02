@@ -7878,6 +7878,152 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridInlineEdit_RequiredEditor_BlocksCommitWithoutCallback()
+        {
+            var comp = Context.Render<DataGridInlineRequiredTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRequiredTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+
+            // Clear the Required editor.
+            // Nothing else guards the commit, so the editor has to.
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "an invalid row stays in edit mode");
+            comp.Instance.CommittedItems.Should().BeEmpty();
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_RequiredEditor_CommitsOnceValid()
+        {
+            var comp = Context.Render<DataGridInlineRequiredTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRequiredTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_OuterFormError_DoesNotBlockCommit()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0, because: "the unrelated required field is not part of the edited row");
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_OtherRowError_DoesNotBlockCommit()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.CellField, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0, because: "the second row's empty required cell belongs to another row");
+            comp.Instance.CommittedItems.Should().ContainSingle().Which.Should().Be("Ada");
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_Editors_AreStillTrackedByOuterForm()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            form.IsTouched.Should().BeFalse();
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+
+            form.IsTouched.Should().BeTrue(because: "scoping the commit does not detach the editors from the form they are bound to");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_NullValidator_StillValidatesRow()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.NullValidator, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "the row's own editors gate the commit even when the grid has no validator to forward to");
+
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("Ada");
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(0);
+            comp.Instance.Items[0].Name.Should().Be("Ada");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_EditorLeavesOldFormOnClose()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var form = comp.FindComponent<MudForm>().Instance;
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            // Satisfy the outer form's own field so the editor is the only possible source of errors.
+            await comp.Find(".outer-field input").ChangeAsync("filled");
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+
+            // The invalid editor registered with the outer form, then the grid is handed a different validator before the edit closes.
+            await comp.InvokeAsync(comp.Instance.UnbindOuterForm);
+            await dataGrid.Find(".cancel-btn").ClickAsync();
+
+            // Removal must reach the validator the editor registered with, or the outer form stays invalid forever.
+            await comp.InvokeAsync(form.ValidateAsync);
+            form.IsValid.Should().BeTrue(because: "the editor left the form it registered with even though the grid's validator changed");
+        }
+
+        [Test]
+        public async Task DataGridInlineEdit_ValidatorSwappedDuringEdit_StillBlocksInvalidCommit()
+        {
+            var comp = Context.Render<DataGridInlineRowScopeTest>(parameters => parameters
+                .Add(x => x.OuterField, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridInlineRowScopeTest.Model>>();
+
+            await dataGrid.FindAll(".edit-btn")[0].ClickAsync();
+            await dataGrid.Find("tbody tr:first-child input").ChangeAsync("");
+
+            // The editors registered with the outer form, and the grid is handed a different validator mid-edit.
+            await comp.InvokeAsync(comp.Instance.UnbindOuterForm);
+            await dataGrid.Find(".commit-btn").ClickAsync();
+
+            dataGrid.FindAll(".commit-btn").Count.Should().Be(1, because: "the editors gate the commit no matter which validator the grid holds");
+            comp.Instance.CommittedItems.Should().BeEmpty();
+            comp.Instance.Items[0].Name.Should().Be("John");
+        }
+
+        [Test]
         public async Task DataGridInlineEdit_IsEditingProperty_ReflectsEditState()
         {
             var comp = Context.Render<DataGridInlineEditTest>();

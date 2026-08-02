@@ -130,7 +130,7 @@
                         <li><span class="mr-2">&bull;</span><CodeInline>Actions.CancelEditingItemAsync</CodeInline>: discards changes and exits edit mode</li>
                     </ul>
                     <br />
-                    Validate in <CodeInline>CommittedItemChanges</CodeInline> and return <CodeInline>KeepOpen</CodeInline> to prevent saving invalid data.
+                    The row's editors are validated before a commit is applied, so a failing <CodeInline>Required</CodeInline> or <CodeInline>Validation</CodeInline> rule keeps the row in edit mode on its own. For checks the editors cannot express, such as uniqueness or a server round-trip, validate in <CodeInline>CommittedItemChanges</CodeInline> and return <CodeInline>KeepOpen</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridInlineRowEditingExample)" ShowCode="false" Block="true" FullWidth="true">
