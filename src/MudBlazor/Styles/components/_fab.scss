@@ -162,11 +162,6 @@
     background-color: var(--mud-palette-action-default-hover);
   }
 
-  &:disabled {
-    border: 1px solid var(--mud-palette-action-disabled-background);
-    background-color: transparent;
-  }
-
   @each $color in $mud-palette-colors {
     &.mud-fab-outlined-#{$color} {
       color: var(--mud-palette-#{$color});
@@ -185,6 +180,12 @@
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }
+  }
+
+  // Must follow the color block: :disabled ties it on specificity, so order decides the border.
+  &:disabled {
+    border: 1px solid var(--mud-palette-action-disabled-background);
+    background-color: transparent;
   }
 }
 
