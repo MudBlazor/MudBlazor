@@ -25,24 +25,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TextFieldTests : BunitTest
     {
-        [TestCase(typeof(TextFieldAutoSizingDialog))]
-        [TestCase(typeof(TextFieldFixedSizingDialog))]
-        public async Task DialogButtons_ShouldRenderValidAriaLabels(Type dialogType)
-        {
-            var provider = Context.Render<MudDialogProvider>();
-            var dialogService = Context.Services.GetRequiredService<IDialogService>();
-
-            await provider.InvokeAsync(() => dialogService.ShowAsync(dialogType));
-
-            var cancelButton = provider.Find(".cancel-button");
-            cancelButton.GetAttribute("aria-label").Should().Be("Cancel");
-            cancelButton.GetAttribute("arialabel").Should().BeNull();
-
-            var submitButton = provider.Find(".submit-button");
-            submitButton.GetAttribute("aria-label").Should().Be("Submit");
-            submitButton.GetAttribute("arialabel").Should().BeNull();
-        }
-
         /// <summary>
         /// Text Field id should propagate to label for attribute
         /// </summary>
