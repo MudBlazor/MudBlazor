@@ -1,0 +1,98 @@
+@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+@* Unless a test says otherwise, the row's editors are valid, so anything that blocks the commit comes from outside the edited row. *@
+<MudForm @ref="_outerForm" ValidationDelay="0">
+    @if (OuterField)
+    {
+        <MudTextField T="string" Class="outer-field" @bind-Value="_outerValue" Required="true" />
+    }
+    <MudDataGrid T="Model" Items="@_items" ReadOnly="false"
+                 Validator="@(_boundToOuterForm ? _outerForm : _defaultValidator)"
+                 EditMode="@DataGridEditMode.Inline"
+                 EditTrigger="@DataGridEditTrigger.Manual"
+                 CommittedItemChanged="@(item => CommittedItems.Add(item.Name))">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Editable="true">
+                <EditTemplate>
+                    <MudTextField @bind-Value="context.Item.Name" Required="true" Margin="Margin.Dense" Variant="Variant.Text" />
+                </EditTemplate>
+            </PropertyColumn>
+            <TemplateColumn Editable="false">
+                <CellTemplate>
+                    @if (CellField)
+                    {
+                        <MudTextField T="string" Class="@($"cell-field-{context.Item.Name}")" @bind-Value="context.Item.Note" Required="true" />
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    @if (context.IsEditing)
+                    {
+                        <MudIconButton Class="commit-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@context.Actions.CommitEditingItemAsync" />
+                    }
+                    else
+                    {
+                        <MudIconButton Class="edit-btn" Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudForm>
+
+@code {
+    private MudForm _outerForm = default!;
+    private readonly DataGridRowValidator _defaultValidator = new();
+    private string? _outerValue;
+    private bool _boundToOuterForm;
+
+    // The second row's note is empty, so its cell editor is invalid while the first row is edited.
+    private readonly List<Model> _items =
+    [
+        new Model { Name = "John", Note = "ok" },
+        new Model { Name = "Johanna" }
+    ];
+
+    /// <summary>
+    /// Renders an unrelated required field in the outer form the grid validates against.
+    /// </summary>
+    [Parameter]
+    public bool OuterField { get; set; }
+
+    /// <summary>
+    /// Renders a required input in a non-editing cell of every row.
+    /// </summary>
+    [Parameter]
+    public bool CellField { get; set; }
+
+    public List<Model> Items => _items;
+
+    public List<string> CommittedItems { get; } = [];
+
+    /// <summary>
+    /// Swaps the grid back to its own validator, as the documented outer form toggle does.
+    /// </summary>
+    public void UnbindOuterForm()
+    {
+        _boundToOuterForm = false;
+        StateHasChanged();
+    }
+
+    // The form reference only exists after the first render, so render again to cascade it into the grid.
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && OuterField)
+        {
+            _boundToOuterForm = true;
+            StateHasChanged();
+        }
+    }
+
+    public class Model
+    {
+        public string Name { get; set; } = string.Empty;
+
+        public string Note { get; set; } = string.Empty;
+    }
+}
