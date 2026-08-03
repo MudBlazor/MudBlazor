@@ -481,12 +481,12 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 .mud-table-pagination-toolbar {
   border-top: 1px solid var(--mud-palette-table-lines);
-  height: 52px;
+  height: auto;
+  min-height: 52px;
   padding-right: 2px;
   padding-inline-end: 2px;
   padding-inline-start: unset;
-  flex-wrap: nowrap;
-  overflow: auto hidden;
+  flex-wrap: wrap;
 
   & .mud-tablepager-left {
     flex-direction: row !important;
