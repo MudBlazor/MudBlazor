@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
-@using MudBlazor.Utilities
 @using MudBlazor.Extensions
 @using MudBlazor.Resources
 @inject InternalMudLocalizer Localizer
@@ -343,43 +342,6 @@
         </MudDialog>
     </CascadingValue>
 </CascadingValue>
-<style>
-    .grid-dropzone {
-        position: absolute !important;
-        top: 0;
-        bottom: 0;
-        height: 100% !important;
-        width: 2rem;
-        z-index: 100;
-        background-color: transparent;
-    }
-
-    .mud-table-root th {
-        overflow: visible !important;
-    }
-
-    .dropzone-pre {
-        inset-inline-start: -2.5rem;
-        inset-inline-end: auto;
-    }
-
-    .dropzone-post {
-        inset-inline-end: 0;
-        inset-inline-start: auto;
-    }
-
-    .dropzone-post > div {
-        height: 20rem;
-    }
-
-    .dropzone-pre > div {
-        height: 20rem;
-    }
-
-    .disabled-dropzone {
-        background-color: var(--mud-palette-table-lines);
-    }
-</style>
 
 @code {
 

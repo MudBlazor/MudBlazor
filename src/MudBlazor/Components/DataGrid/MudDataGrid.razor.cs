@@ -147,6 +147,7 @@ namespace MudBlazor
         protected string TableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
+                .AddClass("overflow-visible-table", when: ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                 .Build();
 
         protected string HeadClassname =>
