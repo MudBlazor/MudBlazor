@@ -486,8 +486,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   padding-right: 2px;
   padding-inline-end: 2px;
   padding-inline-start: unset;
-  // Wrap onto another row when the controls no longer fit.
-  // A fixed height with overflow hides the navigation buttons behind a scrollbar and still clips them.
   flex-wrap: wrap;
 
   & .mud-tablepager-left {
@@ -505,8 +503,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 .mud-table-pagination-spacer {
-  // A 100% basis makes the spacer claim a whole flex line once the toolbar can wrap.
-  // That drops the end and center alignment even at widths that never needed to wrap.
   flex: 1 1 auto;
 }
 
