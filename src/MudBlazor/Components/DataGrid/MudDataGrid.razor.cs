@@ -172,7 +172,7 @@ namespace MudBlazor
                 .AddClass("mud-data-grid-columns-panel")
                 .AddClass("px-2")
                 .AddClass("mud-popover-position-override")
-                .AddClass("mud-columns-panel-dense", when: Dense)
+                .AddClass("mud-data-grid-columns-panel-dense", when: Dense)
                 .Build();
 
         protected override void OnParametersSet()
