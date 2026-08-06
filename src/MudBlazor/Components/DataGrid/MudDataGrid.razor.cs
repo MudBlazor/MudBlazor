@@ -167,7 +167,7 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: HasStickyColumns)
                 .Build();
 
-        protected string ColumPanelOverlayClass =>
+        protected string ColumnPanelOverlayClassname =>
             new CssBuilder()
                 .AddClass("mud-data-grid-columns-panel")
                 .AddClass("px-2")
