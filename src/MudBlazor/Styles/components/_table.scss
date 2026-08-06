@@ -488,8 +488,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   padding-inline-start: unset;
   flex-wrap: wrap;
 
-  // MudDataGridPager puts the page-size select directly in the toolbar, and .mud-select grows by default,
-  // so it would absorb the free space the wrap fix leaves on the line.
   & > .mud-select {
     flex-grow: 0;
   }
