@@ -3,7 +3,14 @@
 @inherits MudComponentBase
 @implements IDisposable
 
-<span @onclick="ToggleSortDirection" class="@Classname" style="@Style" @attributes="@UserAttributes">
+<span @onclick="ToggleSortDirection"
+      @onkeydown="HandleKeyDownAsync"
+      role="button"
+      tabindex="@(Enabled ? "0" : null)"
+      aria-disabled="@(Enabled ? null : "true")"
+      class="@Classname"
+      style="@Style"
+      @attributes="@UserAttributes">
     @if (!AppendIcon)
     {
         @ChildContent

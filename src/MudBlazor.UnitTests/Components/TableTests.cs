@@ -3065,6 +3065,52 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
         }
 
+        /// <summary>
+        /// Enabled table sort labels expose button semantics and participate in the tab order.
+        /// </summary>
+        [Test]
+        public void TableSortLabelExposesKeyboardButtonSemantics()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            var sortLabel = comp.Find("span.mud-table-sort-label");
+            sortLabel.GetAttribute("role").Should().Be("button");
+            sortLabel.GetAttribute("tabindex").Should().Be("0");
+            sortLabel.HasAttribute("aria-disabled").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Table sort labels toggle their direction when activated with Enter or Space (#13408).
+        /// </summary>
+        [TestCase("Enter")]
+        [TestCase(" ")]
+        public async Task TableSortLabelKeyboardActivationTogglesDirection(string key)
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            await comp.Find("span.mud-table-sort-label").KeyDownAsync(new KeyboardEventArgs { Key = key });
+
+            comp.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+        }
+
+        /// <summary>
+        /// Disabled table sort labels remain inert and are removed from the tab order.
+        /// </summary>
+        [Test]
+        public async Task DisabledTableSortLabelIsRemovedFromTabOrder()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.Enabled, false));
+
+            var sortLabel = comp.Find("span.mud-table-sort-label");
+            sortLabel.HasAttribute("tabindex").Should().BeFalse();
+            sortLabel.GetAttribute("aria-disabled").Should().Be("true");
+
+            await sortLabel.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.SortDirection.Should().Be(SortDirection.None);
+        }
+
         private Mock<IScrollManager> _mockScrollManager = null!;
 
         public class TestItem { public int Id { get; set; } public string Name { get; set; } }
