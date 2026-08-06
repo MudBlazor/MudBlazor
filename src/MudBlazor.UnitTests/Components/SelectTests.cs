@@ -2390,5 +2390,28 @@ namespace MudBlazor.UnitTests.Components
         {
             return item.QuerySelectorAll("path").Last().GetAttribute("d")!;
         }
+
+        [Test]
+        public void AutoFocus_ShouldFocusWithoutScrolling()
+        {
+            Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.AutoFocus, true));
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FocusAsync_ShouldFocusWithScrolling()
+        {
+            var comp = Context.Render<MudSelect<string>>();
+
+            await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeFalse();
+        }
     }
 }

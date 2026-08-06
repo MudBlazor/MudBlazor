@@ -61,6 +61,11 @@ namespace MudBlazor
         private readonly ParameterState<bool> _expandSingleRowState;
 
         /// <summary>
+        /// Holds the editors of the row being edited, which are the only controls a commit validates.
+        /// </summary>
+        internal readonly DataGridInlineEditValidator _inlineEditValidator;
+
+        /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
         internal Dictionary<string, object> FiltersPositionAttributes => new()
@@ -77,6 +82,7 @@ namespace MudBlazor
 
         public MudDataGrid()
         {
+            _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
             SelectedItems = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
@@ -2303,13 +2309,20 @@ namespace MudBlazor
         /// Commits inline edits, persists changes to the source item, and exits edit mode.
         /// </summary>
         /// <remarks>
-        /// Use the <see cref="CommittedItemChanges"/> callback to perform validation before changes are applied.
+        /// The row's editors are validated first, and the commit is abandoned when any of them reports an error.
+        /// Use the <see cref="CommittedItemChanges"/> callback for validation the editors cannot express.
         /// Return <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
         /// </remarks>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task CommitInlineEditAsync()
         {
             if (EditMode != DataGridEditMode.Inline || _editingItem is not { } editingItem || _editingSourceItem is not { } editingSourceItem)
+                return;
+
+            // Mirror Form mode, which validates before copying anything back to the source item.
+            // Errors is read instead of IsValid because that getter starts a second, unawaited validation pass which would clear the errors this one just collected.
+            await _inlineEditValidator.ValidateAsync();
+            if (_inlineEditValidator.Errors.Length > 0)
                 return;
 
             // Allow consumer to validate/persist

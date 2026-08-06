@@ -108,7 +108,6 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
         if (!await IsNavigationAllowedAsync())
         {
             context.PreventNavigation();
-            return;
         }
     }
 
