@@ -488,6 +488,10 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   padding-inline-start: unset;
   flex-wrap: wrap;
 
+  & > .mud-select {
+    flex-grow: 0;
+  }
+
   & .mud-tablepager-left {
     flex-direction: row !important;
   }
