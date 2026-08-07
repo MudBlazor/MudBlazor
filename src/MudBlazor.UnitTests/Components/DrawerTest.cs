@@ -817,6 +817,82 @@ namespace MudBlazor.UnitTests.Components
             styles.Single(a => a.Name == "--mud-drawer-height").Value.Should().Be(drawerHeight);
         }
 
+        [Test]
+        [TestCase(Anchor.Start, "--mud-drawer-width-left")]
+        [TestCase(Anchor.End, "--mud-drawer-width-right")]
+        public async Task DrawerContainer_WidthChanged_UpdatesContainerVariableAsync(Anchor anchor, string variable)
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
+                .Add(x => x.Anchor, anchor)
+                .Add(x => x.Width, "150px"));
+
+            comp.Find("#drawer-container").GetStyle().Single(a => a.Name == variable).Value.Should().Be("150px");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Width, "250px"));
+
+            comp.Find("#drawer-container").GetStyle().Single(a => a.Name == variable).Value.Should().Be("250px");
+        }
+
+        [Test]
+        public async Task DrawerContainer_MiniWidthChanged_UpdatesContainerVariableAsync()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini)
+                .Add(x => x.MiniWidth, "56px"));
+
+            comp.Find("#drawer-container").GetStyle().Single(a => a.Name == "--mud-drawer-width-mini-left").Value.Should().Be("56px");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.MiniWidth, "72px"));
+
+            comp.Find("#drawer-container").GetStyle().Single(a => a.Name == "--mud-drawer-width-mini-left").Value.Should().Be("72px");
+        }
+
+        [Test]
+        public async Task DrawerContainer_HeightChanged_UpdatesContainerVariableAsync()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
+                .Add(x => x.Anchor, Anchor.Top)
+                .Add(x => x.Height, "150px"));
+
+            comp.Find("#drawer-container").GetStyle().Single(a => a.Name == "--mud-drawer-height-top").Value.Should().Be("150px");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Height, "250px"));
+
+            comp.Find("#drawer-container").GetStyle().Single(a => a.Name == "--mud-drawer-height-top").Value.Should().Be("250px");
+        }
+
+        [Test]
+        public async Task DrawerContainer_WidthChanged_DoesNotRenderRepeatedlyAsync()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
+                .Add(x => x.Width, "150px"));
+            var container = comp.FindComponent<MudDrawerContainer>();
+
+            var changedRenders = new List<int>();
+            foreach (var width in new[] { "250px", "350px", "450px" })
+            {
+                var before = container.RenderCount;
+                await comp.SetParametersAndRenderAsync(parameters => parameters
+                    .Add(x => x.Width, width));
+                changedRenders.Add(container.RenderCount - before);
+            }
+
+            var beforeUnchanged = container.RenderCount;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Width, "450px"));
+            var unchangedRenders = container.RenderCount - beforeUnchanged;
+
+            changedRenders.Should().AllBeEquivalentTo(changedRenders[0]);
+            unchangedRenders.Should().BeLessThan(changedRenders[0]);
+        }
+
         /// <summary>
         /// Test for issue #3378: Verifies that the mud-drawer--initial class is removed after first interaction.
         /// This class is used to skip the initial CSS transition when the drawer first renders.
