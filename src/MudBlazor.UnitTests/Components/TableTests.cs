@@ -3082,15 +3082,16 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Table sort labels toggle their direction when activated with Enter or Space (#13408).
         /// </summary>
-        [TestCase("Enter")]
-        [TestCase(" ")]
-        public async Task TableSortLabelKeyboardActivationTogglesDirection(string key)
+        [TestCase("Enter", SortDirection.Ascending)]
+        [TestCase(" ", SortDirection.Ascending)]
+        [TestCase("Escape", SortDirection.None)]
+        public async Task TableSortLabelOnlyActivatesForSupportedKeyboardKeys(string key, SortDirection expectedDirection)
         {
             var comp = Context.Render<MudTableSortLabel<string>>();
 
             await comp.Find("span.mud-table-sort-label").KeyDownAsync(new KeyboardEventArgs { Key = key });
 
-            comp.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+            comp.Instance.SortDirection.Should().Be(expectedDirection);
         }
 
         /// <summary>
