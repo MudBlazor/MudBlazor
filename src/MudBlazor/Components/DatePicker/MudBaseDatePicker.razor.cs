@@ -460,7 +460,7 @@ namespace MudBlazor
 
         protected virtual async Task SubmitAndCloseAsync()
         {
-            if (PickerActions == null)
+            if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
                 await SubmitAsync();
 

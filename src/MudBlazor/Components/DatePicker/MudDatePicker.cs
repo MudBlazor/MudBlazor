@@ -147,16 +147,7 @@ namespace MudBlazor
                 return;
             await FocusAsync();
             _selectedDate = dateTime;
-            if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
-            {
-                await SubmitAsync();
-
-                if (PickerVariant != PickerVariant.Static)
-                {
-                    await Task.Delay(TimeSpan.FromMilliseconds(ClosingDelay), TimeProvider);
-                    await CloseAsync(false);
-                }
-            }
+            await SubmitAndCloseAsync();
         }
 
         /// <summary>

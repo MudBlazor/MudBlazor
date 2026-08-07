@@ -3,6 +3,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
@@ -990,6 +991,45 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
             datePicker.Instance.Date.Should().BeNull();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DatePicker_Static_WithPickerActions_MonthClickCommits()
+        {
+            // FixDay makes the month the last view, so clicking a month is the whole selection.
+            RenderFragment<MudPicker<DateTime?>> pickerActions = _ => builder => { };
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.PickerActions, pickerActions)
+                .Add(p => p.OpenTo, OpenTo.Month)
+                .Add(p => p.FixDay, 1));
+
+            await comp.FindAll("div.mud-picker-month-container > button.mud-picker-month")[2].ClickAsync();
+
+            // A static picker commits without an action button, the same as a day click does.
+            await comp.WaitForAssertionAsync(() => comp.Instance.Date.Should().Be(new DateTime(DateTime.Now.Year, 3, 1)));
+        }
+
+        [Test]
+        public async Task DatePicker_WithPickerActions_MonthClickDoesNotCommitUntilClose()
+        {
+            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters
+                .Add(p => p.OpenTo, OpenTo.Month)
+                .Add(p => p.FixDay, 1));
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            var initialDate = datePicker.Instance.Date;
+
+            await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1));
+
+            await comp.FindAll("div.mud-picker-month-container > button.mud-picker-month")[2].ClickAsync();
+
+            // An inline picker with action buttons holds the month pending until one of them closes it.
+            datePicker.Instance.Date.Should().Be(initialDate);
+
+            await comp.InvokeAsync(() => datePicker.Instance.CloseAsync(true));
+
+            await comp.WaitForAssertionAsync(() => datePicker.Instance.Date.Should().Be(new DateTime(2025, 3, 1)));
         }
 
         [Test]
