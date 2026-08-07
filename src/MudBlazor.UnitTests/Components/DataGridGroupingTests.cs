@@ -775,5 +775,27 @@ namespace MudBlazor.UnitTests.Components
             Assert.That(groupRowA_X.Instance.GroupDefinition.Expanded, Is.True, "SubGroup X under group A should be expanded");
             Assert.That(groupRowB_X.Instance.GroupDefinition.Expanded, Is.False, "SubGroup X under group B should remain collapsed");
         }
+
+        [Test]
+        public async Task DataGridVirtualizeGroupingRecoversAfterQuickFilterMatchesNothing()
+        {
+            var comp = Context.Render<DataGridVirtualizeGroupingQuickFilterTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridVirtualizeGroupingQuickFilterTest.Item>>();
+
+            dataGrid.FindAll("td.mud-datagrid-group").Count.Should().Be(2);
+
+            await comp.InvokeAsync(() => comp.Instance.SetSearch("zzz"));
+
+            dataGrid.Instance.IsGrouped.Should().BeFalse();
+            dataGrid.FindAll("td.mud-datagrid-group").Should().BeEmpty();
+            dataGrid.FindAll(".no-records").Count.Should().Be(1);
+
+            await comp.InvokeAsync(() => comp.Instance.SetSearch("Alpha"));
+
+            dataGrid.Instance.IsGrouped.Should().BeTrue();
+            dataGrid.FindAll("td.mud-datagrid-group").Count.Should().Be(1);
+            dataGrid.FindAll("tbody tr.mud-table-row td:not(.mud-datagrid-group)").Count.Should().Be(4);
+            dataGrid.FindAll(".no-records").Should().BeEmpty();
+        }
     }
 }
