@@ -203,7 +203,12 @@
                                 }
                             </thead>
                             <tbody class="@BodyClassname">
-                                @if (Virtualize || CurrentPageItems.Any())
+                                @{
+                                    // Reading CurrentPageItems refreshes FilteredItems, and with it the grouping state,
+                                    // so it has to happen before IsGrouped picks which body to render.
+                                    var hasCurrentPageItems = CurrentPageItems.Any();
+                                }
+                                @if (Virtualize || hasCurrentPageItems)
                                 {
                                     if (IsGrouped)
                                     {
