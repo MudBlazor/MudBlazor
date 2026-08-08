@@ -2609,6 +2609,17 @@ namespace MudBlazor.UnitTests.Components
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be(expectedInfoText);
         }
 
+        [Test]
+        public void TablePagerInfoTextIsExcludedFromBrowserTranslation()
+        {
+            var tableComponent = Context.Render<TablePagerInfoTextTest1>();
+
+            tableComponent.Find("div.mud-table-page-number-information")
+                .GetAttribute("translate")
+                .Should()
+                .Be("no");
+        }
+
         /// <summary>
         /// Tests the aria-labels for the pager control buttons
         /// </summary>
