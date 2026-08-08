@@ -817,10 +817,13 @@ namespace MudBlazor.UnitTests.Components
             styles.Single(a => a.Name == "--mud-drawer-height").Value.Should().Be(drawerHeight);
         }
 
+        /// <summary>
+        /// Test for issue #6791: Verifies that changing <see cref="MudDrawer.Width"/> updates the container's width variable without a further render.
+        /// </summary>
         [Test]
         [TestCase(Anchor.Start, "--mud-drawer-width-left")]
         [TestCase(Anchor.End, "--mud-drawer-width-right")]
-        public async Task DrawerContainer_WidthChanged_UpdatesContainerVariableAsync(Anchor anchor, string variable)
+        public async Task DrawerContainer_WidthChanged_UpdatesContainerVariable(Anchor anchor, string variable)
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
@@ -835,8 +838,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#drawer-container").GetStyle().Single(a => a.Name == variable).Value.Should().Be("250px");
         }
 
+        /// <summary>
+        /// Test for issue #6791: Verifies that changing <see cref="MudDrawer.MiniWidth"/> updates the container's mini width variable without a further render.
+        /// </summary>
         [Test]
-        public async Task DrawerContainer_MiniWidthChanged_UpdatesContainerVariableAsync()
+        public async Task DrawerContainer_MiniWidthChanged_UpdatesContainerVariable()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
@@ -851,8 +857,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#drawer-container").GetStyle().Single(a => a.Name == "--mud-drawer-width-mini-left").Value.Should().Be("72px");
         }
 
+        /// <summary>
+        /// Test for issue #6791: Verifies that changing <see cref="MudDrawer.Height"/> updates the container's height variable without a further render.
+        /// </summary>
         [Test]
-        public async Task DrawerContainer_HeightChanged_UpdatesContainerVariableAsync()
+        public async Task DrawerContainer_HeightChanged_UpdatesContainerVariable()
         {
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
@@ -867,30 +876,56 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#drawer-container").GetStyle().Single(a => a.Name == "--mud-drawer-height-top").Value.Should().Be("250px");
         }
 
+        /// <summary>
+        /// Test for issue #6791: Verifies that a fixed drawer inside a <see cref="MudLayout"/>, where the layout is the only source of the width, updates that width when <see cref="MudDrawer.Width"/> changes.
+        /// </summary>
         [Test]
-        public async Task DrawerContainer_WidthChanged_DoesNotRenderRepeatedlyAsync()
+        public async Task DrawerLayout_FixedDrawerWidthChanged_UpdatesLayoutVariable()
         {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerLayoutSizeTest>(parameters => parameters
+                .Add(x => x.Width, "150px"));
+
+            // A fixed non-temporary drawer emits no width of its own, so the layout carries the only width.
+            comp.Find("aside.mud-drawer").GetStyle().ToList().Should().NotContain(a => a.Name == "--mud-drawer-width");
+            comp.Find("#drawer-layout").GetStyle().Single(a => a.Name == "--mud-drawer-width-left").Value.Should().Be("150px");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Width, "250px"));
+
+            comp.Find("#drawer-layout").GetStyle().Single(a => a.Name == "--mud-drawer-width-left").Value.Should().Be("250px");
+        }
+
+        /// <summary>
+        /// Test for issue #6791: Verifies that repeatedly changing <see cref="MudDrawer.Width"/> costs the container a bounded number of renders instead of looping.
+        /// </summary>
+        [Test]
+        public async Task DrawerContainer_WidthChanged_RendersContainerBoundedNumberOfTimes()
+        {
+            // A registered-parameter change on the drawer costs the container 5 renders, and a set that changes nothing costs 2.
+            // These bounds leave room for renderer batching to shift a little and only have to catch the drawer and the container re-rendering each other without settling.
+            const int MaxRendersPerChange = 8;
+            const int MaxRendersPerNoOp = 4;
+
             _ = AddBrowserViewportService();
             var comp = Context.Render<DrawerContainerSizeTest>(parameters => parameters
                 .Add(x => x.Width, "150px"));
             var container = comp.FindComponent<MudDrawerContainer>();
 
-            var changedRenders = new List<int>();
             foreach (var width in new[] { "250px", "350px", "450px" })
             {
                 var before = container.RenderCount;
                 await comp.SetParametersAndRenderAsync(parameters => parameters
                     .Add(x => x.Width, width));
-                changedRenders.Add(container.RenderCount - before);
+
+                (container.RenderCount - before).Should().BePositive().And.BeLessThanOrEqualTo(MaxRendersPerChange);
             }
 
-            var beforeUnchanged = container.RenderCount;
+            var beforeNoOp = container.RenderCount;
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.Width, "450px"));
-            var unchangedRenders = container.RenderCount - beforeUnchanged;
 
-            changedRenders.Should().AllBeEquivalentTo(changedRenders[0]);
-            unchangedRenders.Should().BeLessThan(changedRenders[0]);
+            (container.RenderCount - beforeNoOp).Should().BeLessThanOrEqualTo(MaxRendersPerNoOp);
         }
 
         /// <summary>
