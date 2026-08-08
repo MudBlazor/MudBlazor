@@ -345,7 +345,7 @@
 
 
 
-    internal RenderFragment FooterCells(IEnumerable<T> currentItems) =>
+    internal RenderFragment FooterCells(IEnumerable<T> currentItems, IEnumerable<T>? groupItems = null) =>
         @<text>
              @if (currentItems is not null)
              {
@@ -355,7 +355,7 @@
                      {
                          if (column.AggregateDefinition is not null || column.GetFooterTemplate() is not null || HasFooter)
                          {
-                             <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                             <FooterCell T="T" Column="@column" CurrentItems="@currentItems" GroupItems="@groupItems"></FooterCell>
                          }
                      }
                  }

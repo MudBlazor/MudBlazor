@@ -6403,6 +6403,21 @@ namespace MudBlazor.UnitTests.Components
             builder.CloseComponent();
         };
 
+        private static RenderFragment GroupedSelectColumnWithFuncInFooter => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.DisabledFunc), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.ShowInFooter), true);
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(3);
+            builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, string>>(5);
+            builder.AddAttribute(6, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+            builder.AddAttribute(7, nameof(PropertyColumn<TestDataItem, string>.Grouping), true);
+            builder.CloseComponent();
+        };
+
         private static RenderFragment SelectColumnNoFunc => builder =>
         {
             builder.OpenComponent<SelectColumn<TestDataItem>>(0);
@@ -6687,6 +6702,99 @@ namespace MudBlazor.UnitTests.Components
 
             headerCheckbox.Instance.ReadValue.Should().BeFalse();
             comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task SelectAll_GroupFooterCheckbox_AppliesToItsOwnGroupOnly()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "A" },
+                new() { Id = 2, Name = "A" },
+                new() { Id = 3, Name = "B" },
+                new() { Id = 4, Name = "B" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Groupable, true)
+                .Add(p => p.GroupExpanded, true)
+                .Add(p => p.Columns, GroupedSelectColumnWithFuncInFooter)
+            );
+
+            // In render order: header, group "A" footer, group "B" footer, grid footer.
+            var checkboxes = comp.FindComponents<MudCheckBox<bool?>>();
+            var header = checkboxes[0];
+            var groupA = checkboxes[1];
+            var groupB = checkboxes[2];
+            var gridFooter = checkboxes[3];
+
+            await groupA.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+            groupA.Instance.ReadValue.Should().BeTrue();
+            groupB.Instance.ReadValue.Should().BeFalse();
+            header.Instance.ReadValue.Should().BeNull();
+            gridFooter.Instance.ReadValue.Should().BeNull();
+
+            await groupB.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(items);
+            header.Instance.ReadValue.Should().BeTrue();
+            gridFooter.Instance.ReadValue.Should().BeTrue();
+
+            await groupA.Find("input").ChangeAsync(new ChangeEventArgs { Value = false });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[2], items[3] });
+            groupA.Instance.ReadValue.Should().BeFalse();
+            groupB.Instance.ReadValue.Should().BeTrue();
+
+            await gridFooter.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(items);
+
+            await gridFooter.Find("input").ChangeAsync(new ChangeEventArgs { Value = false });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+            groupA.Instance.ReadValue.Should().BeFalse();
+            groupB.Instance.ReadValue.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task SelectAll_GroupFooterCheckbox_SkipsDisabledRowsAndReportsPartialSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "A" },
+                new() { Id = 2, Name = "A" },
+                new() { Id = 3, Name = "A", ShouldBeDisabled = true },
+                new() { Id = 4, Name = "B" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Groupable, true)
+                .Add(p => p.GroupExpanded, true)
+                .Add(p => p.Columns, GroupedSelectColumnWithFuncInFooter)
+            );
+
+            var checkboxes = comp.FindComponents<MudCheckBox<bool?>>();
+            var groupA = checkboxes[1];
+            var groupB = checkboxes[2];
+
+            await comp.FindAll("tbody td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0] });
+            groupA.Instance.ReadValue.Should().BeNull();
+            groupB.Instance.ReadValue.Should().BeFalse();
+
+            await groupA.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+            groupA.Instance.ReadValue.Should().BeTrue();
+            groupB.Instance.ReadValue.Should().BeFalse();
         }
 
         [Test]

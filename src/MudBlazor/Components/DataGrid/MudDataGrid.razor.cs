@@ -2165,6 +2165,31 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Selects or clears every selectable row of a single group, leaving rows outside of the group untouched.
+        /// </summary>
+        /// <param name="value">When <c>true</c>, the group's rows are added to the selection; otherwise they are removed from it.</param>
+        /// <param name="groupItems">The rows belonging to the group.</param>
+        internal async Task SetGroupSelectAllAsync(bool value, IEnumerable<T> groupItems)
+        {
+            var selectableItems = GetSelectableItems(groupItems);
+
+            if (value)
+            {
+                Selection.UnionWith(selectableItems);
+            }
+            else
+            {
+                Selection.ExceptWith(selectableItems);
+            }
+
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
+            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
+
+            await InvokeAsync(StateHasChanged);
+        }
+
         private SelectColumn<T>? GetSelectColumn()
         {
             return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
@@ -2173,12 +2198,33 @@ namespace MudBlazor
         /// <summary>
         /// The items which select-all would select, i.e. every displayed row whose selection is not disabled.
         /// </summary>
-        internal IEnumerable<T> GetSelectableItems()
+        internal IEnumerable<T> GetSelectableItems() => GetSelectableItems(HasServerData ? ServerItems : FilteredItems);
+
+        /// <summary>
+        /// The items of <paramref name="items"/> whose selection is not disabled.
+        /// </summary>
+        internal IEnumerable<T> GetSelectableItems(IEnumerable<T> items)
         {
             var selectColumn = GetSelectColumn();
-            var items = HasServerData ? ServerItems : FilteredItems;
 
             return items.Where(item => !IsRowSelectionDisabled(item, selectColumn));
+        }
+
+        /// <summary>
+        /// The state of a group's select-all checkbox: <c>true</c> when every selectable row of the group is selected, <c>false</c> when none of them is, otherwise <c>null</c>.
+        /// </summary>
+        /// <param name="groupItems">The rows belonging to the group.</param>
+        internal bool? GetGroupSelectionState(IEnumerable<T> groupItems)
+        {
+            var selectableItems = GetSelectableItems(groupItems).ToList();
+            var selectedCount = selectableItems.Count(Selection.Contains);
+
+            if (selectedCount == 0)
+            {
+                return false;
+            }
+
+            return selectedCount == selectableItems.Count ? true : null;
         }
 
         internal bool? GetRowSelectionState(T item)
