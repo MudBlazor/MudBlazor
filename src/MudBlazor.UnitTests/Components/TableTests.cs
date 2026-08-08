@@ -136,21 +136,21 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync();
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
 
             comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
                 .Add(p => p.InitialSortDirection, SortDirection.Ascending));
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync();
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
             comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
                 .Add(p => p.InitialSortDirection, SortDirection.None));
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync();
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
@@ -1422,25 +1422,25 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
             comp.Find("#counter").TextContent.Should().Be("2");
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
             comp.Find("#counter").TextContent.Should().Be("4");
 
             await comp.Find("#reseter").ClickAsync(); //reset counter and test again
             comp.Find("#counter").TextContent.Should().Be("0");
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
             comp.Find("#counter").TextContent.Should().Be("1");
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
             comp.Find("#counter").TextContent.Should().Be("2");
 
-            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
+            await comp.Find("button.mud-clickable.mud-table-sort-label").ClickAsync(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
         }
 
@@ -3054,7 +3054,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.FullWidth, true)
             );
 
-            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
+            comp.Find("button.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
         }
 
         [Test]
@@ -3062,36 +3062,34 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudTableSortLabel<string>>();
 
-            comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
+            comp.Find("button.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
         }
 
         /// <summary>
-        /// Enabled table sort labels expose button semantics and participate in the tab order.
+        /// Table sort labels use native button semantics so Enter and Space activation do not scroll the page.
         /// </summary>
         [Test]
         public void TableSortLabelExposesKeyboardButtonSemantics()
         {
             var comp = Context.Render<MudTableSortLabel<string>>();
 
-            var sortLabel = comp.Find("span.mud-table-sort-label");
-            sortLabel.GetAttribute("role").Should().Be("button");
-            sortLabel.GetAttribute("tabindex").Should().Be("0");
-            sortLabel.HasAttribute("aria-disabled").Should().BeFalse();
+            var sortLabel = comp.Find("button.mud-table-sort-label");
+            sortLabel.TagName.Should().Be("BUTTON");
+            sortLabel.GetAttribute("type").Should().Be("button");
+            sortLabel.HasAttribute("disabled").Should().BeFalse();
         }
 
         /// <summary>
-        /// Table sort labels toggle their direction when activated with Enter or Space (#13408).
+        /// Table sort labels toggle their direction through the native button activation path (#13408).
         /// </summary>
-        [TestCase("Enter", SortDirection.Ascending)]
-        [TestCase(" ", SortDirection.Ascending)]
-        [TestCase("Escape", SortDirection.None)]
-        public async Task TableSortLabelOnlyActivatesForSupportedKeyboardKeys(string key, SortDirection expectedDirection)
+        [Test]
+        public async Task TableSortLabelActivatesThroughNativeButtonClick()
         {
             var comp = Context.Render<MudTableSortLabel<string>>();
 
-            await comp.Find("span.mud-table-sort-label").KeyDownAsync(new KeyboardEventArgs { Key = key });
+            await comp.Find("button.mud-table-sort-label").ClickAsync();
 
-            comp.Instance.SortDirection.Should().Be(expectedDirection);
+            comp.Instance.SortDirection.Should().Be(SortDirection.Ascending);
         }
 
         /// <summary>
@@ -3103,11 +3101,11 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
                 .Add(p => p.Enabled, false));
 
-            var sortLabel = comp.Find("span.mud-table-sort-label");
+            var sortLabel = comp.Find("button.mud-table-sort-label");
             sortLabel.HasAttribute("tabindex").Should().BeFalse();
-            sortLabel.GetAttribute("aria-disabled").Should().Be("true");
+            sortLabel.HasAttribute("disabled").Should().BeTrue();
 
-            await sortLabel.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await sortLabel.ClickAsync();
 
             comp.Instance.SortDirection.Should().Be(SortDirection.None);
         }

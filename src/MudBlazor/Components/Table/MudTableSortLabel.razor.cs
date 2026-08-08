@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -174,13 +173,6 @@ namespace MudBlazor
                     : SortDirection.Ascending),
                 _ => throw new NotImplementedException()
             };
-        }
-
-        private Task HandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            return args.Key is "Enter" or " "
-                ? ToggleSortDirection()
-                : Task.CompletedTask;
         }
 
         protected override void OnInitialized()
