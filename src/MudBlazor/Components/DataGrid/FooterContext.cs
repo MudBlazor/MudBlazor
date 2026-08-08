@@ -51,17 +51,12 @@ namespace MudBlazor
             {
                 if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
-                    if (_dataGrid.Selection.Count == Items.Count())
-                    {
-                        return true;
-                    }
-
                     if (_dataGrid.Selection.Count == 0)
                     {
                         return false;
                     }
 
-                    return null;
+                    return _dataGrid.Selection.Count == _dataGrid.GetSelectableItems().Count() ? true : null;
                 }
 
                 return false;

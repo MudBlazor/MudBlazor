@@ -2139,11 +2139,7 @@ namespace MudBlazor
 
             if (value) // Logic for selecting all
             {
-                var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
-                var selectColumn = GetSelectColumn();
-                itemsToSelect = itemsToSelect.Where(item => !IsRowSelectionDisabled(item, selectColumn));
-
-                Selection.UnionWith(itemsToSelect);
+                Selection.UnionWith(GetSelectableItems());
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
@@ -2157,6 +2153,17 @@ namespace MudBlazor
         private SelectColumn<T>? GetSelectColumn()
         {
             return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// The items which select-all would select, i.e. every displayed row whose selection is not disabled.
+        /// </summary>
+        internal IEnumerable<T> GetSelectableItems()
+        {
+            var selectColumn = GetSelectColumn();
+            var items = HasServerData ? ServerItems : FilteredItems;
+
+            return items.Where(item => !IsRowSelectionDisabled(item, selectColumn));
         }
 
         internal bool? GetRowSelectionState(T item)

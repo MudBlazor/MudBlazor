@@ -6342,6 +6342,17 @@ namespace MudBlazor.UnitTests.Components
             builder.CloseComponent();
         };
 
+        private static RenderFragment SelectColumnWithFuncInHeaderAndFooter => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.DisabledFunc), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.ShowInFooter), true);
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(3);
+            builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+        };
+
         private static RenderFragment SelectColumnNoFunc => builder =>
         {
             builder.OpenComponent<SelectColumn<TestDataItem>>(0);
@@ -6540,6 +6551,92 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
             comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
             comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task SelectAll_WithDisabledRows_HeaderCheckboxReachesCheckedState()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Enabled Item 2", ShouldBeDisabled = false },
+                new() { Id = 3, Name = "Disabled Item", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            var headerCheckbox = comp.FindComponent<MudCheckBox<bool?>>();
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+            headerCheckbox.Instance.ReadValue.Should().BeTrue();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = false });
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+
+            await comp.FindAll("td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+            headerCheckbox.Instance.ReadValue.Should().BeNull();
+        }
+
+        [Test]
+        public async Task SelectAll_WithDisabledRows_FooterCheckboxReachesCheckedState()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Enabled Item 2", ShouldBeDisabled = false },
+                new() { Id = 3, Name = "Disabled Item", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFuncInHeaderAndFooter)
+            );
+
+            var footerCheckbox = comp.FindComponents<MudCheckBox<bool?>>()[1];
+            footerCheckbox.Instance.ReadValue.Should().BeFalse();
+
+            await comp.Find("tfoot .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+            footerCheckbox.Instance.ReadValue.Should().BeTrue();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+
+            await comp.Find("tfoot .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = false });
+            footerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+
+            await comp.FindAll("td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+            footerCheckbox.Instance.ReadValue.Should().BeNull();
+        }
+
+        [Test]
+        public async Task SelectAll_WithEveryRowDisabled_HeaderCheckboxStaysUnchecked()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Disabled Item 1", ShouldBeDisabled = true },
+                new() { Id = 2, Name = "Disabled Item 2", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            var headerCheckbox = comp.FindComponent<MudCheckBox<bool?>>();
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
         }
 
         [Test]
