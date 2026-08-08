@@ -2172,6 +2172,10 @@ namespace MudBlazor
         /// <param name="groupItems">The rows belonging to the group.</param>
         internal async Task SetGroupSelectAllAsync(bool value, IEnumerable<T> groupItems)
         {
+            // nothing should happen if multiselection is false
+            if (!MultiSelection)
+                return;
+
             var selectableItems = GetSelectableItems(groupItems);
 
             if (value)

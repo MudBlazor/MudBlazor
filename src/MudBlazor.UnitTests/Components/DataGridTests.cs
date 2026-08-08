@@ -6797,6 +6797,33 @@ namespace MudBlazor.UnitTests.Components
             groupB.Instance.ReadValue.Should().BeFalse();
         }
 
+        /// <summary>
+        /// A group footer must not select anything while the grid is in single selection mode, matching the grid-wide select-all.
+        /// </summary>
+        [Test]
+        public async Task SelectAll_GroupFooterCheckbox_DoesNothingWithoutMultiSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "A" },
+                new() { Id = 2, Name = "A" },
+                new() { Id = 3, Name = "B" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, false)
+                .Add(p => p.Groupable, true)
+                .Add(p => p.GroupExpanded, true)
+                .Add(p => p.Columns, GroupedSelectColumnWithFuncInFooter)
+            );
+
+            // SelectColumn hides its own checkbox here, but a custom footer template can still reach the action.
+            await comp.Instance.SetGroupSelectAllAsync(true, items.Take(2));
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+        }
+
         [Test]
         public void DataGridRowDetailInitiallyExpandedMultiple()
         {
