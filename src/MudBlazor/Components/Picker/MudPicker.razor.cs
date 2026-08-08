@@ -665,8 +665,6 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            // Escape cancels, so it always discards the pending selection. Tab is a plain "move on" and must
-            // leave the same value behind as clicking away does, so it mirrors CloseOverlayAsync's decision.
             await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                 .HookKeyDown(OnHandleKeyDownAsync)
                 .When(CanHandleKeys, builder => builder
