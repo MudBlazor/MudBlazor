@@ -30,8 +30,6 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        // "mud-disabled" belongs on the header, not on the root: the root also wraps ChildContent,
-        // and the global ".mud-disabled .mud-icon-root" rule would grey out every icon the user nests there.
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
                 .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
