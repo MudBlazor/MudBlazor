@@ -929,7 +929,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridPaginationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
 
-            dataGrid.FindAll(".mud-table-pagination-caption span[translate='no']")[^1]
+            dataGrid.FindAll(".mud-table-pagination-caption[translate='no']")[^1]
                 .TextContent.Trim().Should().Be("1-10 of 20");
         }
 
