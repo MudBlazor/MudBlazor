@@ -586,6 +586,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSelectedItemsHonorCustomComparer()
+        {
+            var comp = Context.Render<DataGridSelectedItemsComparerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectedItemsComparerTest.Person>>();
+
+            var checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            checkboxes[0].IsChecked().Should().BeTrue();
+            checkboxes[1].IsChecked().Should().BeFalse();
+            checkboxes[2].IsChecked().Should().BeTrue();
+
+            dataGrid.Instance.Selection.Comparer.Should().BeSameAs(comp.Instance.ItemComparer);
+
+            // The rows are checked because the comparer was consulted, not because the instances happened to match.
+            comp.Instance.ItemComparer.EqualsCallCount.Should().BeGreaterThan(0);
+
+            await comp.InvokeAsync(comp.Instance.ReapplySelectedItems);
+
+            checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            checkboxes[0].IsChecked().Should().BeFalse();
+            checkboxes[1].IsChecked().Should().BeTrue();
+            checkboxes[2].IsChecked().Should().BeFalse();
+        }
+
+        [Test]
         public async Task DataGridSingleSelection()
         {
             var comp = Context.Render<DataGridSingleSelectionTest>();
