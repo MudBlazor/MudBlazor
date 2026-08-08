@@ -85,9 +85,7 @@ namespace MudBlazor
         {
             _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
-            // Unlike Selection this is never rebuilt when Comparer changes, because it is only observable while still empty; every set later published into it is built from the live Comparer.
             SelectedItems = new HashSet<T>(Comparer);
-            // Hierarchy expansion is keyed by item as well, so these sets must honor Comparer or an expanded row collapses once a refetch supplies equal-but-new instances.
             _openHierarchies = new HashSet<T>(Comparer);
             _initialExpansions = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
