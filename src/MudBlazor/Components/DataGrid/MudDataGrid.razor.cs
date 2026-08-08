@@ -38,8 +38,8 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
-        internal HashSet<T> _openHierarchies = [];
-        private readonly HashSet<T> _initialExpansions = [];
+        internal HashSet<T> _openHierarchies;
+        private HashSet<T> _initialExpansions;
         private Func<T, bool>? _initialExpandedFunc = null;
         private Func<T, bool>? _buttonDisabledFunc = null;
         private EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> _hierarchyColumnVisibilityToggled;
@@ -86,6 +86,8 @@ namespace MudBlazor
             _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
             SelectedItems = new HashSet<T>(Comparer);
+            _openHierarchies = new HashSet<T>(Comparer);
+            _initialExpansions = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
                 .WithParameter(() => Items)
@@ -1396,7 +1398,9 @@ namespace MudBlazor
         /// The comparer used to determine row selection.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
+        /// Defaults to <see cref="EqualityComparer{T}.Default" />.
+        /// This comparer decides whether a row is selected and whether an expanded hierarchy row is still the same row after the data is refreshed.
+        /// Pass a stable instance: a change is detected by reference, so an inline <c>Comparer="@(new MyComparer())"</c> creates a fresh instance on every render and rebuilds the selection set every time.
         /// </remarks>
         [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         public IEqualityComparer<T>? Comparer { get; set; } = EqualityComparer<T>.Default;
@@ -1656,10 +1660,21 @@ namespace MudBlazor
             }
         }
 
-        private void OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+        private async Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
         {
-            // A HashSet keeps the comparer it was constructed with, so Selection has to be rebuilt to adopt the new one.
+            // A HashSet keeps the comparer it was constructed with, so every item-keyed set has to be rebuilt to adopt the new one.
+            // These are safe to reassign because CellContext captures them by reference but is constructed fresh inside the render fragment on every render.
+            var previousSelectionCount = Selection.Count;
             Selection = new HashSet<T>(Selection, args.Value);
+            _openHierarchies = new HashSet<T>(_openHierarchies, args.Value);
+            _initialExpansions = new HashSet<T>(_initialExpansions, args.Value);
+
+            // A coarser comparer collapses entries that were previously distinct, which silently drops rows from the selection.
+            // Publish that, otherwise the bound SelectedItems keeps contents the grid can no longer hold.
+            if (Selection.Count != previousSelectionCount)
+            {
+                await FireSelectionChangedEventsAsync();
+            }
         }
 
         private async Task OnExpandSingleRowChangedAsync(ParameterChangedEventArgs<bool> args)

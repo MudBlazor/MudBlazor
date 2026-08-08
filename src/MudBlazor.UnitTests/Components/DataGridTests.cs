@@ -585,6 +585,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
         }
 
+        /// <summary>
+        /// Rows bound through SelectedItems render selected when the instances only match under a custom Comparer.
+        /// </summary>
         [Test]
         public async Task DataGridSelectedItemsHonorCustomComparer()
         {
@@ -607,6 +610,53 @@ namespace MudBlazor.UnitTests.Components
             checkboxes[0].IsChecked().Should().BeFalse();
             checkboxes[1].IsChecked().Should().BeTrue();
             checkboxes[2].IsChecked().Should().BeFalse();
+        }
+
+        /// <summary>
+        /// An expanded hierarchy row stays expanded when a refetch replaces the items with equal-but-new instances under a custom Comparer.
+        /// </summary>
+        [Test]
+        public async Task DataGridHierarchyExpansionHonorsCustomComparerAcrossRefetch()
+        {
+            var comp = Context.Render<DataGridHierarchyComparerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyComparerTest.Model>>();
+
+            // Expand the first row through its hierarchy toggle button.
+            await dataGrid.FindAll("tbody button.mud-icon-button")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll("td.hierarchy-detail").Select(x => x.TextContent.Trim()).Should().Equal("Details for Sam"));
+
+            await comp.InvokeAsync(comp.Instance.Refetch);
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll("td.hierarchy-detail").Select(x => x.TextContent.Trim()).Should().Equal("Details for Sam"));
+        }
+
+        /// <summary>
+        /// Swapping Comparer to a coarser instance at runtime collapses the live selection and fires SelectedItemsChanged with the collapsed set.
+        /// </summary>
+        [Test]
+        public async Task DataGridComparerSwapCollapsesSelection()
+        {
+            var comp = Context.Render<DataGridComparerSelectionCollapseTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridComparerSelectionCollapseTest.Person>>();
+
+            // Alpha (GroupId 1, SubId 1) and Bravo (GroupId 1, SubId 2) are distinct under the initial composite comparer.
+            var checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            await checkboxes[0].ChangeAsync(true);
+            checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            await checkboxes[1].ChangeAsync(true);
+
+            comp.Instance.SelectedItems.Count.Should().Be(2);
+            comp.Instance.SelectedItemsChangedCount.Should().Be(2);
+
+            await comp.InvokeAsync(comp.Instance.SwapToGroupComparer);
+
+            // Alpha and Bravo share GroupId 1, so the coarser comparer collapses them into a single selected entry.
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedItems.Count.Should().Be(1));
+            comp.Instance.SelectedItems.Single().GroupId.Should().Be(1);
+            comp.Instance.SelectedItemsChangedCount.Should().Be(3);
         }
 
         [Test]
