@@ -131,8 +131,8 @@
   }
 }
 
-.mud-disabled {
-  & > .mud-expand-panel-header {
+.mud-expand-panel {
+  & > .mud-expand-panel-header.mud-disabled {
     color: var(--mud-palette-text-disabled);
 
     &:hover {
