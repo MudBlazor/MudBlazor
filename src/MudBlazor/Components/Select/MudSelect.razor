@@ -52,7 +52,6 @@
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="GetInputUserAttributes()"
-                          OnBlur="@OnBlurAsync"
                           ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">

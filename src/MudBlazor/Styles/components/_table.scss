@@ -481,12 +481,16 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
 .mud-table-pagination-toolbar {
   border-top: 1px solid var(--mud-palette-table-lines);
-  height: 52px;
+  height: auto;
+  min-height: 52px;
   padding-right: 2px;
   padding-inline-end: 2px;
   padding-inline-start: unset;
-  flex-wrap: nowrap;
-  overflow: auto hidden;
+  flex-wrap: wrap;
+
+  & > .mud-select {
+    flex-grow: 0;
+  }
 
   & .mud-tablepager-left {
     flex-direction: row !important;
@@ -503,7 +507,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 .mud-table-pagination-spacer {
-  flex: 1 1 100%;
+  flex: 1 1 auto;
 }
 
 .mud-table-pagination-caption {
@@ -634,6 +638,16 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       padding-inline-start: unset;
     }
 
+    // Group header cells carry no data-label.
+    // Without this their empty :before still counts as a flex item, so space-between pushes the group content to the far edge.
+    .mud-table-cell.mud-datagrid-group {
+      justify-content: flex-start;
+
+      &:before {
+        content: none;
+      }
+    }
+
     &.mud-table-small-alignright .mud-table-cell:before {
       margin-right: auto;
     }
@@ -709,7 +723,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   .mud-table {
     .mud-table-pagination {
       .mud-table-pagination-toolbar {
-        flex-wrap: wrap;
         padding-top: 16px;
         padding-right: 16px;
         padding-inline-end: 16px;

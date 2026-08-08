@@ -104,6 +104,10 @@ namespace MudBlazor
             _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
                 .WithParameter(() => ExpandSingleRow)
                 .WithChangeHandler(OnExpandSingleRowChangedAsync);
+
+            registerScope.RegisterParameter<IEqualityComparer<T>?>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChanged);
         }
 
         protected string Classname =>
@@ -1394,7 +1398,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         public IEqualityComparer<T>? Comparer { get; set; } = EqualityComparer<T>.Default;
 
         /// <summary>
@@ -1650,6 +1654,12 @@ namespace MudBlazor
                 Selection.Clear();
                 Selection.UnionWith(args.Value);
             }
+        }
+
+        private void OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+        {
+            // A HashSet keeps the comparer it was constructed with, so Selection has to be rebuilt to adopt the new one.
+            Selection = new HashSet<T>(Selection, args.Value);
         }
 
         private async Task OnExpandSingleRowChangedAsync(ParameterChangedEventArgs<bool> args)
