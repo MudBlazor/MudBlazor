@@ -1223,5 +1223,29 @@ namespace MudBlazor.UnitTests.Components
             // But not to the adornment that holds the icon.
             comp.Find("div.mud-input-adornment-end").ClassList.Should().NotContain(customClass);
         }
+
+        /// <summary>
+        /// A value cleared from code must clear the rendered input, even though MudTextField has already emptied the shared mask by the time MudMask sees the change: https://github.com/MudBlazor/MudBlazor/issues/12822.
+        /// </summary>
+        [Test]
+        public async Task TextFieldWithMask_ClearingValueFromCode_ClearsTheInput()
+        {
+            const string initialValue = "01/01/2024";
+
+            var comp = Context.Render<MudTextField<string>>(parameters =>
+            {
+                parameters.Add(m => m.Mask, new DateMask("MM/dd/yyyy"));
+                parameters.Add(m => m.Value, initialValue);
+            });
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            comp.Find("input").GetAttribute("value").Should().Be(initialValue);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(m => m.Value, (string)null));
+
+            comp.Instance.ReadText.Should().BeNullOrEmpty();
+            maskField.ReadText.Should().BeNullOrEmpty();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
     }
 }
