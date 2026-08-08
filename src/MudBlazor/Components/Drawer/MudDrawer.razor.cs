@@ -45,8 +45,6 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnRightToLeftParameterChanged);
-            // The container renders before this component's new parameters are applied, so it reads the previous values off this instance.
-            // Re-render it once the new values have landed.
             registerScope.RegisterParameter<string?>(nameof(Width))
                 .WithParameter(() => Width)
                 .WithChangeHandler(DrawerContainerUpdate);
