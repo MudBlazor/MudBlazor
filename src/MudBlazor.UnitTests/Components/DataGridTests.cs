@@ -924,6 +924,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridPagerInfoTextIsExcludedFromBrowserTranslation()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            dataGrid.FindAll(".mud-table-pagination-caption span[translate='no']")[^1]
+                .TextContent.Trim().Should().Be("1-10 of 20");
+        }
+
+        [Test]
         public async Task DataGridHideNavigation()
         {
             var comp = Context.Render<DataGridPaginationTest>();
