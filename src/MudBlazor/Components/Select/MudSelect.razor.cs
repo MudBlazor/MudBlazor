@@ -950,7 +950,7 @@ namespace MudBlazor
             if (MultiSelection && SelectAll)
             {
                 var enabledValues = new HashSet<T?>(Items
-                    .Where(x => !x.Disabled && x.Value != null)
+                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
                     .Select(x => x.Value), Comparer);
                 var selectedEnabledValuesCount = _selectedValues.Count(enabledValues.Contains);
 
@@ -1003,7 +1003,7 @@ namespace MudBlazor
             if (selectAll)
             {
                 selectedValues.UnionWith(Items
-                    .Where(x => !x.Disabled && x.Value != null)
+                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
                     .Select(x => x.Value));
             }
             else if (selectedValues.Count == 0)
@@ -1036,6 +1036,8 @@ namespace MudBlazor
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
             }
         }
+
+        private static bool HasNonNullValue(T? value) => !ReferenceEquals(value, null);
 
         private async Task OnFocusOutAsync(FocusEventArgs args)
         {
