@@ -3110,6 +3110,28 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SortDirection.Should().Be(SortDirection.None);
         }
 
+        /// <summary>
+        /// Tooltips listen on their root wrapper so disabled sort buttons remain hoverable.
+        /// </summary>
+        [Test]
+        public async Task DisabledTableSortLabelStillShowsTooltip()
+        {
+            Context.Render<MudPopoverProvider>();
+
+            var comp = Context.Render<MudTooltip>(parameters => parameters
+                .Add(p => p.Text, "Sorting is unavailable")
+                .AddChildContent<MudTableSortLabel<string>>(sortLabel => sortLabel
+                    .Add(p => p.Enabled, false)));
+
+            var sortLabel = comp.Find("button.mud-table-sort-label");
+            sortLabel.HasAttribute("disabled").Should().BeTrue();
+
+            await sortLabel.ParentElement!.PointerEnterAsync(new PointerEventArgs());
+
+            comp.FindAll("div.mud-popover-open").Should().ContainSingle();
+            comp.Find("div.mud-popover-open").TextContent.Should().Contain("Sorting is unavailable");
+        }
+
         private Mock<IScrollManager> _mockScrollManager = null!;
 
         public class TestItem { public int Id { get; set; } public string Name { get; set; } }
