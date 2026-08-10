@@ -3116,7 +3116,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DisabledTableSortLabelStillShowsTooltip()
         {
-            Context.Render<MudPopoverProvider>();
+            var provider = Context.Render<MudPopoverProvider>();
 
             var comp = Context.Render<MudTooltip>(parameters => parameters
                 .Add(p => p.Text, "Sorting is unavailable")
@@ -3128,8 +3128,8 @@ namespace MudBlazor.UnitTests.Components
 
             await sortLabel.ParentElement!.PointerEnterAsync(new PointerEventArgs());
 
-            comp.FindAll("div.mud-popover-open").Should().ContainSingle();
-            comp.Find("div.mud-popover-open").TextContent.Should().Contain("Sorting is unavailable");
+            provider.FindAll("div.mud-popover-open").Should().ContainSingle();
+            provider.Find("div.mud-popover-open").TextContent.Should().Contain("Sorting is unavailable");
         }
 
         private Mock<IScrollManager> _mockScrollManager = null!;
