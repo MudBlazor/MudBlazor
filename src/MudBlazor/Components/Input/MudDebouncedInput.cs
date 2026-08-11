@@ -90,19 +90,6 @@ namespace MudBlazor
             await base.ValidateValue();
         }
 
-        /// <inheritdoc />
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            // if input is to be debounced, makes sense to bind the change of the text to oninput
-            // so we set Immediate to true
-            if (DebounceInterval > 0)
-            {
-                // TODO: Don't write to parameter directly
-                Immediate = true;
-            }
-        }
-
         private async Task OnDebounceIntervalChangedAsync(ParameterChangedEventArgs<double> args)
         {
             if (args.Value <= 0)

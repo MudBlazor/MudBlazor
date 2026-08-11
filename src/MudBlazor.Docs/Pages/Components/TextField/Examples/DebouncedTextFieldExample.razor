@@ -1,16 +1,79 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTextField @bind-Value="_normalText" HelperText="@_normalText" Label="Normal" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"/>
-<MudTextField Immediate="true" @bind-Value="_immediateText" HelperText="@_immediateText" Label="Immediate" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
-<MudTextField DebounceInterval="500" OnDebounceIntervalElapsed="HandleIntervalElapsed" @bind-Value="_debouncedText" HelperText="@_debouncedText" Label="Debounced" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+<MudStack Row>
+    <MudTextField @bind-Value="_normalText" Immediate="_immediate" DebounceInterval="_debounceInterval"
+                  Variant="Variant.Outlined"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@Icons.Material.Filled.Search"
+                  HelperText="@_normalText"/>
+
+    @switch (_immediate)
+    {
+        case false when _debounceInterval <= 0:
+            <MudText>
+                I update when the user presses enter or the field loses focus.
+            </MudText>
+            break;
+        case true when _debounceInterval <= 0:
+            <MudText>
+                I update as soon as there is any change to the input.
+            </MudText>
+            break;
+        default:
+        {
+            <MudText>
+                I update @_debounceInterval milliseconds after the user stops typing!
+            </MudText>
+            break;
+        }
+    }
+    
+    
+</MudStack>
+
+<MudStack Row>
+    <MudTooltip>
+        <ChildContent>
+            <MudSwitch @bind-Value="_immediate" Label="Immediate"/>
+        </ChildContent>
+        <TooltipContent>
+            <MudText Typo="Typo.h6">Immediate</MudText>
+            <MudText>If true then this component will fire <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event">input events</a>,if
+                false then this component fires <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event">change events</a>
+                instead.
+            </MudText>
+        </TooltipContent>
+    </MudTooltip>
+
+    <MudTooltip>
+        <ChildContent>
+            <MudNumericField @bind-Value="_debounceInterval" DebounceInterval="500" Label="Debounce Interval"/>
+        </ChildContent>
+        <TooltipContent>
+            <MudText Typo="Typo.h6">Debounce Interval</MudText>
+            <MudText>Determines how long this component should wait before firing an input event.</MudText>
+            <MudText Typo="Typo.body2">Note: setting the Debounce Interval will automatically force use of <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event">input events</a>.
+            </MudText>
+        </TooltipContent>
+    </MudTooltip>
+
+
+</MudStack>
+
 
 @code {
-    string _normalText = "w";
-    string _immediateText = "t";
-    string _debouncedText = "f";
+    string _normalText = "Try me!";
+
+    bool _immediate;
+
+    double _debounceInterval;
 
     void HandleIntervalElapsed(string debouncedText)
     {
         // at this stage, interval has elapsed
     }
+
 }
