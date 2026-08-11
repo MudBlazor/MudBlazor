@@ -92,6 +92,11 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
+        /// For inheritors: determines if the Immediate state is set.
+        /// </summary>
+        private protected virtual bool EffectiveImmediate => Immediate; 
+
+        /// <summary>
         /// Changes the <see cref="Value"/> as soon as input is received.
         /// </summary>
         /// <remarks>

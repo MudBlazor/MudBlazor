@@ -40,6 +40,9 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
+        /// <inheritdoc/>
+        private protected override bool EffectiveImmediate => Immediate || DebounceInterval > 0;
+
         /// <inheritdoc />
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
