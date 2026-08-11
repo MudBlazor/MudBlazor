@@ -23,6 +23,7 @@
         <textarea class="@InputClassname"
                   @ref="ElementReference"
                   rows="@Lines"
+                  title="@_internalText"
                   @attributes="UserAttributes"
                   id="@InputElementId"
                   type="@InputTypeString"
@@ -51,6 +52,7 @@
     {
         <input class="@InputClassname"
                @ref="ElementReference"
+               title="@(InputType != InputType.Password ? _internalText : null)"
                @attributes="UserAttributes"
                id="@InputElementId"
                type="@InputTypeString"

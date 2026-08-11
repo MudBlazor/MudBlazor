@@ -68,5 +68,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public string ForId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The tooltip text shown on hover.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to an empty string.
+        /// </remarks>
+        [Parameter]
+        public string Title { get; set; } = string.Empty;
     }
 }

@@ -79,7 +79,6 @@
     letter-spacing: var(--mud-typography-subtitle1-letterspacing);
     text-transform: var(--mud-typography-subtitle1-text-transform);
     z-index: 0;
-    pointer-events: none;
 
     &.mud-disabled {
       color: var(--mud-palette-text-disabled);

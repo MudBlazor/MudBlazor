@@ -958,6 +958,33 @@ namespace MudBlazor.UnitTests.Components
             inputControl.Instance.CounterText.Should().Be("56 / 25");
         }
 
+        [Test]
+        public void TextField_Should_Render_Label_Title()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Label, "My label")
+                .Add(x => x.Value, "Hello"));
+
+            var inputControl = comp.FindComponent<MudInputControl>();
+            var label = inputControl.Find("label.mud-input-label-inputcontrol");
+            label.GetAttribute("title").Should().Be("My label");
+        }
+
+        [Test]
+        public void TextField_Should_Render_Input_Title_Except_Password()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.Value, "Hello"));
+
+            comp.Find("input").GetAttribute("title").Should().Be("Hello");
+
+            var passwordComp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(x => x.InputType, InputType.Password)
+                .Add(x => x.Value, "Secret"));
+
+            passwordComp.Find("input").HasAttribute("title").Should().BeFalse();
+        }
+
         /// <summary>
         /// This tests the suppression of the suppression (fix for #1012)
         /// </summary>

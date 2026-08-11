@@ -31,7 +31,6 @@
   z-index: 1;
   transform: translate(12px, 20px) scale(1);
   max-width: calc(100% - 12px);
-  pointer-events: none;
 
   &.mud-input-label-margin-dense {
     transform: translate(12px, 17px) scale(1);
@@ -42,7 +41,6 @@
 .mud-input-label-outlined {
   transform: translate(14px, 20px) scale(1);
   max-width: calc(100% - 14px);
-  pointer-events: none;
   background-color: transparent;
   padding: 0px 5px !important;
 
