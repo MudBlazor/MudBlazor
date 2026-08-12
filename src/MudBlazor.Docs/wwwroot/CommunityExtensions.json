@@ -68,7 +68,7 @@
     "Category": "Style",
     "Name": "MudBlocks",
     "Description": "A collection of MudBlazor blocks. Predefined, reusable UI elements or layouts designed to simplify development by combining multiple components into cohesive sections; such as headers, footers, forms, cards, or dashboards.",
-    "Link": "https://mudblocks.cc/",
+    "Link": "https://github.com/mouse0270/MudBlocks",
     "GitHubUserPath": "mouse0270",
     "GitHubRepoPath": "mudblocks"
   },

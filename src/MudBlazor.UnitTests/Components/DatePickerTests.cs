@@ -1206,6 +1206,26 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Mask.Should().BeSameAs(mask);
         }
 
+        /// <summary>
+        /// Setting the bound date to null from code must clear the masked input, not just the Date and Text properties: https://github.com/MudBlazor/MudBlazor/issues/12822.
+        /// </summary>
+        [Test]
+        public async Task Mask_ClearingDateFromCode_ClearsTheInput()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Mask, new DateMask("dd/MM/yyyy"))
+                .Add(p => p.Date, new DateTime(2026, 6, 15)));
+
+            comp.Find("input").GetAttribute("value").Should().NotBeNullOrEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, (DateTime?)null));
+
+            comp.Instance.Date.Should().BeNull();
+            comp.Instance.Text.Should().BeNullOrEmpty();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
         [Test]
         public async Task FocusSelectAndSelectRange_AreNoOps_WhenNoInputIsRendered()
         {
