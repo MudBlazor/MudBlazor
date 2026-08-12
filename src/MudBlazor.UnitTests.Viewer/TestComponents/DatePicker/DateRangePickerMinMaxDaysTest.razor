@@ -18,7 +18,7 @@
 @code {
     public static string __description__ = "DateTime range with a restricted mix & max days selection";
     
-    private MudDateRangePicker? _picker;
+    private MudDateRangePicker _picker = null!;
     
     [Parameter]
     public DateRange? DateRange { get; set; }
