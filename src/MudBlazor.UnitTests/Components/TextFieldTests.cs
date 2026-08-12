@@ -204,7 +204,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            textField.Immediate.Should().BeTrue();
+            textField.EffectiveImmediate.Should().BeTrue();
 
             //input value has changed, but elapsed time is 0, so Value should not change in TextField
             textField.ReadValue.Should().BeNull();

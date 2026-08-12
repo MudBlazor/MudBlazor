@@ -21,8 +21,7 @@ namespace MudBlazor
                 .WithChangeHandler(OnDebounceIntervalChangedAsync);
         }
 
-        [Inject]
-        private TimeProvider TimeProvider { get; set; } = null!;
+        [Inject] private TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
         /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
@@ -41,7 +40,7 @@ namespace MudBlazor
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
         /// <inheritdoc/>
-        private protected override bool EffectiveImmediate => Immediate || DebounceInterval > 0;
+        protected internal override bool EffectiveImmediate => Immediate || DebounceInterval > 0;
 
         /// <inheritdoc />
         protected override Task UpdateTextPropertyAsync(bool updateValue)
@@ -68,6 +67,7 @@ namespace MudBlazor
                 // we have a change coming not from the Text setter, no debouncing is needed
                 return base.UpdateValuePropertyAsync(updateText);
             }
+
             // if debounce interval is 0 or no debouncer, we update immediately
             if (DebounceInterval <= 0 || _debouncer is null)
             {

@@ -12,6 +12,7 @@ namespace MudBlazor
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         private bool _isDirty;
+
         /// <summary>
         /// Prevents validation from occurring more than once during a validation cycle.
         /// </summary>
@@ -19,6 +20,7 @@ namespace MudBlazor
         /// This field is set to <c>true</c> to prevent validation from occurring more than once during a validation cycle.  Each change in the <see cref="Value"/> will reset this field to <c>false</c>.
         /// </remarks>
         private bool _validated;
+
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
@@ -26,6 +28,7 @@ namespace MudBlazor
         /// The resolved input element ID.
         /// </summary>
         protected string? InputElementId => _inputIdState.Value;
+
         private string? _userAttributesId = Identifier.Create("mudinput");
         private readonly string _componentId = Identifier.Create("mudinput");
         private readonly ParameterState<string?> _textState;
@@ -52,8 +55,7 @@ namespace MudBlazor
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
 
-        [Inject]
-        private IJSRuntime JsRuntime { get; set; } = null!;
+        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// Allows the component to receive input.
@@ -94,7 +96,7 @@ namespace MudBlazor
         /// <summary>
         /// For inheritors: determines if the Immediate state is set.
         /// </summary>
-        private protected virtual bool EffectiveImmediate => Immediate; 
+        protected internal virtual bool EffectiveImmediate => Immediate;
 
         /// <summary>
         /// Changes the <see cref="Value"/> as soon as input is received.
@@ -555,6 +557,7 @@ namespace MudBlazor
             {
                 FieldChanged(value);
             }
+
             await BeginValidateAsync();
         }
 
@@ -621,11 +624,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override IConverter<T?, string?> GetDefaultConverter()
         {
-            return new DefaultConverter<T>
-            {
-                Culture = GetCulture,
-                Format = GetFormat
-            };
+            return new DefaultConverter<T> { Culture = GetCulture, Format = GetFormat };
         }
 
         /// <inheritdoc />
@@ -667,7 +666,8 @@ namespace MudBlazor
                 Label = For.GetLabelString();
             }
 
-            _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+            _userAttributesId = UserAttributes.FirstOrDefault(userAttribute =>
+                userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
 
             if (_inputIdState.Value is null)
             {
