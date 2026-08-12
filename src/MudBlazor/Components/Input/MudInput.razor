@@ -23,7 +23,7 @@
         <textarea class="@InputClassname"
                   @ref="ElementReference"
                   rows="@Lines"
-                  @attributes="UserAttributes"
+                  @attributes="GetInputUserAttributes()"
                   id="@InputElementId"
                   type="@InputTypeString"
                   placeholder="@Placeholder"
@@ -39,10 +39,7 @@
                   maxlength="@MaxLength"
                   @onkeydown:preventDefault="@KeyDownPreventDefault"
                   @onkeyup:preventDefault="@KeyUpPreventDefault"
-                  aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-                  required="@Required"
-                  aria-required="@Required.ToString().ToLowerInvariant()">
+                  required="@Required">
             @ReadText
             </textarea>
         @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
@@ -51,7 +48,7 @@
     {
         <input class="@InputClassname"
                @ref="ElementReference"
-               @attributes="UserAttributes"
+               @attributes="GetInputUserAttributes()"
                id="@InputElementId"
                type="@InputTypeString"
                @bind:event="@(Immediate ? "oninput" : "onchange")"
@@ -68,10 +65,7 @@
                maxlength="@MaxLength"
                @onkeydown:preventDefault="KeyDownPreventDefault"
                @onkeyup:preventDefault="@KeyUpPreventDefault"
-               aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-               required="@Required"
-               aria-required="@Required.ToString().ToLowerInvariant()">
+               required="@Required">
 
         @if (GetDisabledState())
         {
