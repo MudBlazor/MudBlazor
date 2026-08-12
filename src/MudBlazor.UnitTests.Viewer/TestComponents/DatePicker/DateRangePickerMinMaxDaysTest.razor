@@ -9,7 +9,7 @@
     AdditionalDateClassesFunc="@((DateTime dt)=>((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" />
 
     <MudStack Row>
-        <MudSwitch @bind-Value="AllowWeekends" @bind-Value:after="@(() => _picker.RecalculateValidDays())" Color="Color.Primary">Allow Weekends</MudSwitch>
+        <MudSwitch @bind-Value="AllowWeekends" @bind-Value:after="@(() => _picker?.RecalculateValidDays())" Color="Color.Primary">Allow Weekends</MudSwitch>
         <MudSwitch @bind-Value="CountDisabledDays" Color="Color.Primary">Include Disabled</MudSwitch>
     </MudStack>
 
@@ -18,7 +18,7 @@
 @code {
     public static string __description__ = "DateTime range with a restricted mix & max days selection";
     
-    private MudDateRangePicker _picker = null!;
+    private MudDateRangePicker? _picker;
     
     [Parameter]
     public DateRange? DateRange { get; set; }
