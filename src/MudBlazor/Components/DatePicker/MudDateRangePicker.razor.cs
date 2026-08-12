@@ -264,7 +264,7 @@ namespace MudBlazor
             var selectedDate = _firstDate.Value;
             var validDateRange = GetValidDateRange(selectedDate);
 
-            return base.IsDayDisabled(date) || IsDateOutOfRange(date, selectedDate, validDateRange);
+            return base.IsDayDisabled(date) || IsDateOutOfRange(date, validDateRange);
         }
 
         private DateRange GetValidDateRange(DateTime selectedDate)
@@ -286,12 +286,11 @@ namespace MudBlazor
             return new DateRange(start, end);
         }
 
-        private static bool IsDateOutOfRange(DateTime date, DateTime selectedDate, DateRange validRange)
+        private static bool IsDateOutOfRange(DateTime date, DateRange validRange)
         {
-            var isNotSelectedDate = date < selectedDate || date > selectedDate;
             var isOutsideValidRange = date < validRange.Start || date > validRange.End;
 
-            return isNotSelectedDate && isOutsideValidRange;
+            return isOutsideValidRange;
         }
 
         private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
