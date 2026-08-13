@@ -1,0 +1,13 @@
+<MudTable @ref="Table" Items="Items">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Table - NavigateTo(int) on an empty table must clamp CurrentPage to 0, not set it to -1 (#13619)";
+
+    public MudTable<string> Table { get; set; } = null!;
+
+    public IEnumerable<string> Items { get; set; } = [];
+}

@@ -541,6 +541,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Navigating an empty table to a page index must clamp CurrentPage to 0, not set it to -1 (#13619).
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToEmptyTableClampsCurrentPageToZero()
+        {
+            var comp = Context.Render<TableNavigateToEmptyTest>();
+            var table = comp.FindComponent<MudTable<string>>();
+
+            table.Instance.CurrentPage.Should().Be(0);
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(0);
+
+            await table.InvokeAsync(() => table.Instance.NavigateTo(0));
+            table.Instance.CurrentPage.Should().Be(0);
+
+            await table.InvokeAsync(() => table.Instance.NavigateTo(5));
+            table.Instance.CurrentPage.Should().Be(0);
+        }
+
+        /// <summary>
         /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
         /// </summary>
         [Test]
