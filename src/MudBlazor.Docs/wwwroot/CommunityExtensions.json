@@ -28,7 +28,7 @@
     "Category": "Components",
     "Name": "CodeBeam MudBlazor Extensions",
     "Description": "MudExtensions has 30+ components and utilities from the core library contributors. There are both unique and extended components that add additional features on current Mud components.",
-    "Link": "https://codebeam-mudextensions.pages.dev/",
+    "Link": "https://mudextensions.codebeam.org/",
     "GitHubUserPath": "CodeBeamOrg",
     "GitHubRepoPath": "CodeBeam.MudBlazor.Extensions"
   },
