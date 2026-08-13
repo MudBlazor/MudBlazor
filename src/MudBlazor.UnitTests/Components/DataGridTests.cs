@@ -1508,7 +1508,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// When CellClick has a delegate, clicking a td fires CellClick and stopPropagation prevents
-        /// RowClick from also firing.
+        /// RowClick from also firing (RowClick is intentionally suppressed; see CellClick API docs).
         /// </summary>
         [Test]
         public async Task DataGridCellClick_WithDelegate_StopsRowClickPropagation()
@@ -1516,7 +1516,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridEventCallbacksTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
 
-            // CellClick is wired — clicking a td must NOT bubble to RowClick.
+            // CellClick is wired — stopPropagation keeps RowClick from also firing.
             await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
 
             comp.Instance.CellClicked.Should().BeTrue();
@@ -1525,7 +1525,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.LastCellClickArgs.RowIndex.Should().Be(0);
             comp.Instance.LastCellClickArgs.ColumnIndex.Should().Be(0);
             comp.Instance.LastCellClickArgs.Column.CellContent(comp.Instance.LastCellClickArgs.Item).Should().Be("A");
-            comp.Instance.RowClicked.Should().BeFalse("CellClick.HasDelegate stops propagation to the tr @onclick");
+            comp.Instance.RowClicked.Should().BeFalse("stopPropagation intentionally suppresses RowClick when CellClick has a delegate");
         }
 
         /// <summary>
@@ -1576,6 +1576,51 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-body tr td")[0].ContextMenu();
 
             comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// Regression: when CellClick has a delegate, clicking a cell must still update
+        /// the selection (SelectedItemChanged must fire).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_SelectionStillUpdates()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick and SelectedItemChanged are both wired in DataGridEventCallbacksTest.
+            dataGrid.Instance.CellClick.HasDelegate.Should().BeTrue();
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue("CellClick should fire");
+            comp.Instance.SelectedItemChanged.Should().BeTrue("subscribing CellClick must not suppress SelectedItemChanged");
+        }
+
+        /// <summary>
+        /// Regression: when CellClick has a delegate, clicking a cell in Cell edit mode with
+        /// EditTrigger.OnRowClick must still activate editing (StartedEditingItem must fire).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellEditStillActivates()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            // CellClick and StartedEditingItem are both wired in DataGridEventCallbacksTest.
+            dataGrid.Instance.CellClick.HasDelegate.Should().BeTrue();
+            comp.Instance.StartedEditingItem.Should().BeFalse();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue("CellClick should fire");
+            comp.Instance.StartedEditingItem.Should().BeTrue("subscribing CellClick must not suppress StartedEditingItem in cell-edit mode");
         }
 
         /// <summary>

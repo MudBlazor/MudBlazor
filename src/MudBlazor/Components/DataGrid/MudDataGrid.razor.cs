@@ -2428,7 +2428,32 @@ namespace MudBlazor
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+            await ActivateRowBehaviorsAsync(item);
+        }
 
+        internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+        }
+
+        internal async Task OnCellClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
+        {
+            // stopPropagation on the <td> prevents this click from bubbling to the <tr> handler
+            // (OnRowClickedAsync), so we share the same row behaviors via ActivateRowBehaviorsAsync.
+            // RowClick is intentionally not raised here; whether it should fire on a cell click
+            // is an explicit API decision.
+            await ActivateRowBehaviorsAsync(item);
+            await CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
+        }
+
+        /// <summary>
+        /// Applies the row-level side effects that should occur on any click interaction with a row
+        /// or one of its cells: edit activation (when configured) and selection update.
+        /// Both <see cref="OnRowClickedAsync"/> and <see cref="OnCellClickedAsync"/> delegate here
+        /// so that new row-click behaviors only need to be added in one place.
+        /// </summary>
+        private async Task ActivateRowBehaviorsAsync(T item)
+        {
             if (EditTrigger == DataGridEditTrigger.OnRowClick)
             {
                 if (EditMode == DataGridEditMode.Cell)
@@ -2438,16 +2463,6 @@ namespace MudBlazor
             }
 
             await SetSelectedItemAsync(item);
-        }
-
-        internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
-        {
-            return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
-        }
-
-        internal Task OnCellClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
-        {
-            return CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
 
         internal Task OnCellContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
