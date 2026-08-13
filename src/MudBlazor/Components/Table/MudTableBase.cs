@@ -698,7 +698,7 @@ namespace MudBlazor
         /// <param name="pageIndex">The index of the page to navigate to.</param>
         public void NavigateTo(int pageIndex)
         {
-            SetCurrentPage(Math.Min(Math.Max(0, pageIndex), NumPages - 1));
+            SetCurrentPage(Math.Clamp(pageIndex, 0, Math.Max(0, NumPages - 1)));
         }
 
         // Applies an internal page change (pager/NavigateTo/clamp/reset); must not update _currentPageParameterValue or it would be mistaken for a parameter change (#13462).

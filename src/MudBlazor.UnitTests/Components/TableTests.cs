@@ -541,6 +541,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Navigating to a page on an empty table must keep CurrentPage at 0 and render "0-0 of 0" instead of a negative page (#13619).
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToPage_EmptyTable_CurrentPageClampedToZero()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<int>())
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.PagerContent, (RenderFragment)(builder =>
+                {
+                    builder.OpenComponent<MudTablePager>(0);
+                    builder.CloseComponent();
+                })));
+
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(0));
+
+            comp.Instance.CurrentPage.Should().Be(0);
+            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("0-0 of 0");
+        }
+
+        /// <summary>
+        /// Out-of-range page indexes on an empty table must clamp to page 0 instead of a negative page (#13619).
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToPage_EmptyTable_OutOfRangeIndexClampedToZero()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<int>())
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context)));
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(-1));
+            comp.Instance.CurrentPage.Should().Be(0);
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(5));
+            comp.Instance.CurrentPage.Should().Be(0);
+        }
+
+        /// <summary>
         /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
         /// </summary>
         [Test]
