@@ -1624,6 +1624,77 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// CellClick fires before selection (mirroring how RowClick fires before ActivateRowBehaviorsAsync).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellClickFiresBeforeSelection()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.EventOrder.Should().ContainInOrder(
+                "OnCellClick",
+                "OnSelectedItemChanged");
+        }
+
+        /// <summary>
+        /// CellClick fires before edit activation (mirroring how RowClick fires before ActivateRowBehaviorsAsync).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellClickFiresBeforeEditActivation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.EventOrder.Should().ContainInOrder(
+                "OnCellClick",
+                "OnStartedEditingItem");
+        }
+
+        /// <summary>
+        /// RowClick and CellClick have the same callback-then-behaviors ordering:
+        /// the public callback (RowClick / CellClick) fires before the row-level side effects
+        /// (selection, edit activation) in both paths.
+        /// </summary>
+        [Test]
+        public async Task DataGridRowClickAndCellClick_HaveTheSameCallbackOrder()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // --- Row click path ---
+            await dataGrid.FindAll(".mud-table-body tr")[0].ClickAsync();
+
+            var rowOrder = comp.Instance.EventOrder.ToList();
+            comp.Instance.EventOrder.Clear();
+
+            // --- Cell click path ---
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            var cellOrder = comp.Instance.EventOrder.ToList();
+
+            // Both paths: public callback fires first, selection fires second.
+            rowOrder.IndexOf("OnRowClick").Should().BeLessThan(rowOrder.IndexOf("OnSelectedItemChanged"),
+                "RowClick should fire before SelectedItemChanged");
+            cellOrder.IndexOf("OnCellClick").Should().BeLessThan(cellOrder.IndexOf("OnSelectedItemChanged"),
+                "CellClick should fire before SelectedItemChanged");
+
+            // The relative position of the callback to selection is the same in both paths.
+            (rowOrder.IndexOf("OnSelectedItemChanged") - rowOrder.IndexOf("OnRowClick"))
+                .Should().Be(cellOrder.IndexOf("OnSelectedItemChanged") - cellOrder.IndexOf("OnCellClick"),
+                "CellClick and RowClick should have the same callback-to-selection offset");
+        }
+
+        /// <summary>
         /// Verifies that GetCellContent returns the bound property value for a PropertyColumn.
         /// </summary>
         [Test]

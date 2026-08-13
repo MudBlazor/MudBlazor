@@ -28,6 +28,8 @@
         new Item("C")
     };
 
+    public List<string> EventOrder { get; } = new();
+
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
     public bool CellClicked { get; set; }
@@ -46,6 +48,7 @@
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
         RowClicked = true;
+        EventOrder.Add(nameof(OnRowClick));
     }
 
     private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
@@ -57,6 +60,7 @@
     {
         CellClicked = true;
         LastCellClickArgs = args;
+        EventOrder.Add(nameof(OnCellClick));
     }
 
     private void OnCellContextMenuClick(DataGridCellClickEventArgs<Item> args)
@@ -73,6 +77,7 @@
     private void OnSelectedItemChanged(Item item)
     {
         SelectedItemChanged = true;
+        EventOrder.Add(nameof(OnSelectedItemChanged));
     }
 
     private void OnSelectedItemsChanged(HashSet<Item> items)
@@ -95,6 +100,7 @@
     private void OnStartedEditingItem(Item item)
     {
         StartedEditingItem = true;
+        EventOrder.Add(nameof(OnStartedEditingItem));
     }
 
     private void OnCanceledEditingItem(Item item)

@@ -2442,8 +2442,8 @@ namespace MudBlazor
             // (OnRowClickedAsync), so we share the same row behaviors via ActivateRowBehaviorsAsync.
             // RowClick is intentionally not raised here; whether it should fire on a cell click
             // is an explicit API decision.
-            await ActivateRowBehaviorsAsync(item);
             await CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
+            await ActivateRowBehaviorsAsync(item);
         }
 
         /// <summary>
