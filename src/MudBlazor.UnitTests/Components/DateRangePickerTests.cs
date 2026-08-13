@@ -1160,7 +1160,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
         }
 
-        [Test]
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13611")]
         public async Task DateRangePicker_MinMaxDays()
         {
             //no restrictions - minimum of 3 days
@@ -1168,10 +1168,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DateRangePickerMinMaxDaysTest>(p => p.Add(x => x.DateRange, startingRange));
 
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ToMarkup().Should().Contain("disabled"); //1 day not allowed
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("17")).ToMarkup().Should().Contain("disabled");
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("18")).ClickAsync(new MouseEventArgs());
 
             comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
+
+            //minimum of 1 day allows selecting only the start date
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MinDays, 1));
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ToMarkup().Should().NotContain("disabled");
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 16).Date));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MinDays, 3));
 
             //no restrictions - maximum of 7 days
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
