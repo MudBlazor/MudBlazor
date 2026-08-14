@@ -447,6 +447,13 @@ namespace MudBlazor
         public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
 
         /// <summary>
+        /// When overridden, obtains focus for this input, optionally preventing the browser from scrolling it into view.
+        /// </summary>
+        /// <param name="preventScroll">When <c>true</c>, the browser does not scroll the newly focused element into view.</param>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
+        internal virtual ValueTask FocusAsync(bool preventScroll) => FocusAsync();
+
+        /// <summary>
         /// When overridden, releases focus from this input.
         /// </summary>
         /// <returns>A <see cref="ValueTask" /> object.</returns>
@@ -472,34 +479,26 @@ namespace MudBlazor
 
             if (ReadOnly)
             {
+                // Readonly inputs never validate, but they can still be focused and blurred.
+                await OnBlur.InvokeAsync(obj);
+
                 return;
             }
-
-            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
-            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await OnBlur.InvokeAsync(obj);
-                    }
+                    await OnBlur.InvokeAsync(obj);
+                }
+                else if (OnBlur.HasDelegate)
+                {
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
                 }
                 else
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
-                    }
-                    else
-                    {
-                        await ValidateValue();
-                    }
+                    await ValidateValue();
                 }
             }
         }
@@ -716,7 +715,7 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
-                await FocusAsync();
+                await FocusAsync(preventScroll: true);
             }
 
             await base.OnAfterRenderAsync(firstRender);

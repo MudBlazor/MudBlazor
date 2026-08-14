@@ -196,14 +196,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public override async ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override async ValueTask FocusAsync(bool preventScroll)
         {
             try
             {
                 if (InputType == InputType.Hidden && ChildContent != null)
-                    await _elementReference1.FocusAsync();
+                    await _elementReference1.FocusAsync(preventScroll);
                 else
-                    await ElementReference.FocusAsync();
+                    await ElementReference.FocusAsync(preventScroll);
             }
             catch (Exception e)
             {

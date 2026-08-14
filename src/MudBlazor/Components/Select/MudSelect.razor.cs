@@ -774,9 +774,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets the focus to this component.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>
@@ -1390,11 +1393,6 @@ namespace MudBlazor
 
             await SelectFirstItem(key);
             await FocusAsync();
-        }
-
-        internal Task OnBlurAsync(FocusEventArgs obj)
-        {
-            return OnBlurredAsync(obj);
         }
 
         protected override void OnInitialized()

@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
             IElement Switch() => comp.Find("#switch");
             await Switch().ChangeAsync(true);
             await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeTrue());
-            await comp.InvokeAsync(() => select.Instance.OnBlurAsync(new FocusEventArgs()));
+            await comp.Find($"#{select.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
             await comp.WaitForAssertionAsync(() => Switch().HasAttribute("checked").Should().BeFalse());
         }
 
@@ -714,6 +714,20 @@ namespace MudBlazor.UnitTests.Components
                 await comp.Find($"#{select.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
             });
             eventCounter.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Select_OnBlurShouldFireOnceOnFocusLoss()
+        {
+            // A focus loss raises both inner blur and outer focusout; expose one callback.
+            var calls = 0;
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.OnBlur, _ => calls++));
+
+            await comp.Find("input").BlurAsync();
+            await comp.Find($"#{comp.Instance.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs());
+
+            calls.Should().Be(1);
         }
 
         [Test]
@@ -2389,6 +2403,29 @@ namespace MudBlazor.UnitTests.Components
         private static string GetCheckboxPath(IElement item)
         {
             return item.QuerySelectorAll("path").Last().GetAttribute("d")!;
+        }
+
+        [Test]
+        public void AutoFocus_ShouldFocusWithoutScrolling()
+        {
+            Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(p => p.AutoFocus, true));
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FocusAsync_ShouldFocusWithScrolling()
+        {
+            var comp = Context.Render<MudSelect<string>>();
+
+            await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeFalse();
         }
     }
 }

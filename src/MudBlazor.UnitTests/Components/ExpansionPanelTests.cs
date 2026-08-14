@@ -355,6 +355,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests that a disabled panel puts "mud-disabled" on the header only, so the global ".mud-disabled .mud-icon-root" rule cannot grey out icons the user nests in the panel body (#11453).
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_Disabled_AppliesDisabledClassToHeaderOnly()
+        {
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters
+                .Add(p => p.Text, "Panel"));
+
+            comp.Find(".mud-expand-panel").ClassList.Should().NotContain("mud-disabled");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().NotContain("mud-disabled");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, true));
+
+            comp.Find(".mud-expand-panel").ClassList.Should().NotContain("mud-disabled");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().Contain("mud-disabled");
+        }
+
+        /// <summary>
         /// Tests that content is rendered even when collapsed when KeepContentAlive is true.
         /// </summary>
         [Test]
