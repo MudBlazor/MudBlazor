@@ -541,6 +541,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Issue #13619: Navigating an empty table keeps the current page at zero.
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToEmptyTableKeepsCurrentPageAtZero()
+        {
+            var table = Context.Render<MudTable<string>>();
+
+            await table.InvokeAsync(() => table.Instance.NavigateTo(0));
+
+            table.Instance.CurrentPage.Should().Be(0);
+        }
+
+        /// <summary>
         /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
         /// </summary>
         [Test]
