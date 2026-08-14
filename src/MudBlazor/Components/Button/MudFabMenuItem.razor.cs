@@ -18,17 +18,9 @@ public partial class MudFabMenuItem : MudFab
     /// <summary>
     /// CSS class names for the component, including base classes and conditional classes based on properties.
     /// </summary>
-    private new string Classname => new CssBuilder("mud-button-root mud-fab")
-        .AddClass("mud-fab-extended", !string.IsNullOrEmpty(Label))
-        .AddClass($"mud-fab-{EffectiveVariant.ToStringFast(true)}")
-        .AddClass($"mud-fab-{EffectiveVariant.ToStringFast(true)}-{Color.ToStringFast(true)}")
-        .AddClass($"mud-fab-{Color.ToStringFast(true)}", EffectiveVariant == MudBlazor.Variant.Filled)
-        .AddClass($"mud-fab-size-{Size.ToStringFast(true)}")
-        .AddClass($"mud-ripple", Ripple && !GetDisabledState())
-        .AddClass($"mud-fab-disable-elevation", !DropShadow)
-        .AddClass("mud-fab-menu-item")
-        .AddClass(Class)
-        .Build();
+    private new string Classname => new CssBuilder("mud-fab-menu-item")
+            .AddClass(Class)
+            .Build();
 
     /// <summary>
     /// The parent <see cref="MudFabMenu"/> component, used to inherit <see cref="Variant"/> when not explicitly set.
