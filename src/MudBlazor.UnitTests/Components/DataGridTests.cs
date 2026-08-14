@@ -1377,6 +1377,8 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SortChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.FilterChanged.HasDelegate.Should().Be(true);
@@ -1451,6 +1453,295 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.InvokeAsync(dataGrid.Instance.ClearFiltersAsync);
             comp.Instance.FilterChangedCallCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Verifies CellClick and CellContextMenuClick fire with correct args: Item, RowIndex, ColumnIndex, Column,
+        /// CellContent, and MouseEventArgs.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellEventCallbacks()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Confirm delegates are wired.
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Nothing fired yet.
+            comp.Instance.CellClicked.Should().Be(false);
+            comp.Instance.CellContextMenuClicked.Should().Be(false);
+            comp.Instance.LastCellClickArgs.Should().BeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Should().BeNull();
+
+            // Fire CellClick by clicking the first <td>.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().Be(true);
+            var clickArgs = comp.Instance.LastCellClickArgs;
+            clickArgs.Should().NotBeNull();
+            clickArgs.Item.Should().NotBeNull();
+            clickArgs.Item.Name.Should().Be("A");
+            clickArgs.RowIndex.Should().Be(0);
+            clickArgs.ColumnIndex.Should().Be(0);
+            clickArgs.Column.Should().NotBeNull();
+            clickArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            clickArgs.Column.CellContent(clickArgs.Item).Should().Be("A");
+            clickArgs.MouseEventArgs.Should().NotBeNull();
+
+            // Fire CellContextMenuClick by right-clicking the first <td>.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().Be(true);
+            var contextArgs = comp.Instance.LastCellContextMenuClickArgs;
+            contextArgs.Should().NotBeNull();
+            contextArgs.Item.Should().NotBeNull();
+            contextArgs.Item.Name.Should().Be("A");
+            contextArgs.RowIndex.Should().Be(0);
+            contextArgs.ColumnIndex.Should().Be(0);
+            contextArgs.Column.Should().NotBeNull();
+            contextArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            contextArgs.Column.CellContent(contextArgs.Item).Should().Be("A");
+            contextArgs.MouseEventArgs.Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// When CellClick has a delegate, clicking a td fires CellClick and stopPropagation prevents
+        /// RowClick from also firing (RowClick is intentionally suppressed; see CellClick API docs).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_StopsRowClickPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick is wired — stopPropagation keeps RowClick from also firing.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue();
+            comp.Instance.LastCellClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.Column.CellContent(comp.Instance.LastCellClickArgs.Item).Should().Be("A");
+            comp.Instance.RowClicked.Should().BeFalse("stopPropagation intentionally suppresses RowClick when CellClick has a delegate");
+        }
+
+        /// <summary>
+        /// When CellClick has NO delegate, clicking a td bubbles through to RowClick normally.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithoutDelegate_BubblesToRowClick()
+        {
+            // DataGridCellClickBubbleTest wires RowClick but NOT CellClick.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            await comp.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.RowClicked.Should().BeTrue("without a CellClick delegate the click bubbles to the tr @onclick");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
+        /// stopPropagation prevents RowContextMenuClick from also firing.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithDelegate_StopsRowContextMenuPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellContextMenuClick is wired — right-clicking a td must NOT bubble to RowContextMenuClick.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().BeTrue();
+            comp.Instance.LastCellContextMenuClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellContextMenuClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.Column.CellContent(comp.Instance.LastCellContextMenuClickArgs.Item).Should().Be("A");
+            comp.Instance.RowContextMenuClicked.Should().BeFalse("CellContextMenuClick.HasDelegate stops propagation to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has NO delegate, right-clicking a td bubbles through to RowContextMenuClick.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithoutDelegate_BubblesToRowContextMenuClick()
+        {
+            // DataGridCellClickBubbleTest wires RowContextMenuClick but NOT CellContextMenuClick.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            comp.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// Regression: when CellClick has a delegate, clicking a cell must still update
+        /// the selection (SelectedItemChanged must fire).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_SelectionStillUpdates()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick and SelectedItemChanged are both wired in DataGridEventCallbacksTest.
+            dataGrid.Instance.CellClick.HasDelegate.Should().BeTrue();
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue("CellClick should fire");
+            comp.Instance.SelectedItemChanged.Should().BeTrue("subscribing CellClick must not suppress SelectedItemChanged");
+        }
+
+        /// <summary>
+        /// Regression: when CellClick has a delegate, clicking a cell in Cell edit mode with
+        /// EditTrigger.OnRowClick must still activate editing (StartedEditingItem must fire).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellEditStillActivates()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            // CellClick and StartedEditingItem are both wired in DataGridEventCallbacksTest.
+            dataGrid.Instance.CellClick.HasDelegate.Should().BeTrue();
+            comp.Instance.StartedEditingItem.Should().BeFalse();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue("CellClick should fire");
+            comp.Instance.StartedEditingItem.Should().BeTrue("subscribing CellClick must not suppress StartedEditingItem in cell-edit mode");
+        }
+
+        /// <summary>
+        /// CellClick fires before selection (mirroring how RowClick fires before ActivateRowBehaviorsAsync).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellClickFiresBeforeSelection()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.EventOrder.Should().ContainInOrder(
+                "OnCellClick",
+                "OnSelectedItemChanged");
+        }
+
+        /// <summary>
+        /// CellClick fires before edit activation (mirroring how RowClick fires before ActivateRowBehaviorsAsync).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellClickFiresBeforeEditActivation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.EventOrder.Should().ContainInOrder(
+                "OnCellClick",
+                "OnStartedEditingItem");
+        }
+
+        /// <summary>
+        /// RowClick and CellClick have the same callback-then-behaviors ordering:
+        /// the public callback (RowClick / CellClick) fires before the row-level side effects
+        /// (selection, edit activation) in both paths.
+        /// </summary>
+        [Test]
+        public async Task DataGridRowClickAndCellClick_HaveTheSameCallbackOrder()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // --- Row click path ---
+            await dataGrid.FindAll(".mud-table-body tr")[0].ClickAsync();
+
+            var rowOrder = comp.Instance.EventOrder.ToList();
+            comp.Instance.EventOrder.Clear();
+
+            // --- Cell click path ---
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            var cellOrder = comp.Instance.EventOrder.ToList();
+
+            // Both paths: public callback fires first, selection fires second.
+            rowOrder.IndexOf("OnRowClick").Should().BeLessThan(rowOrder.IndexOf("OnSelectedItemChanged"),
+                "RowClick should fire before SelectedItemChanged");
+            cellOrder.IndexOf("OnCellClick").Should().BeLessThan(cellOrder.IndexOf("OnSelectedItemChanged"),
+                "CellClick should fire before SelectedItemChanged");
+
+            // The relative position of the callback to selection is the same in both paths.
+            (rowOrder.IndexOf("OnSelectedItemChanged") - rowOrder.IndexOf("OnRowClick"))
+                .Should().Be(cellOrder.IndexOf("OnSelectedItemChanged") - cellOrder.IndexOf("OnCellClick"),
+                "CellClick and RowClick should have the same callback-to-selection offset");
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent returns the bound property value for a PropertyColumn.
+        /// </summary>
+        [Test]
+        public void GetCellContent_PropertyColumn_ReturnsPropertyValue()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var propertyColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is PropertyColumn<DataGridGetCellContentTest.Item, string>);
+            var item = dataGrid.Instance.CurrentPageItems.First();
+
+            propertyColumn.GetCellContent(item).Should().Be(item.Name);
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent returns null for a TemplateColumn, which has no backing property.
+        /// </summary>
+        [Test]
+        public void GetCellContent_TemplateColumn_ReturnsNull()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var templateColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is TemplateColumn<DataGridGetCellContentTest.Item>);
+            var item = dataGrid.Instance.CurrentPageItems.First();
+
+            templateColumn.GetCellContent(item).Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent is consistent with CellContent for a PropertyColumn.
+        /// </summary>
+        [Test]
+        public void GetCellContent_MatchesCellContent_ForPropertyColumn()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var propertyColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is PropertyColumn<DataGridGetCellContentTest.Item, string>);
+
+            foreach (var item in dataGrid.Instance.CurrentPageItems)
+            {
+                propertyColumn.GetCellContent(item).Should().Be(propertyColumn.CellContent(item));
+            }
         }
 
         [Test]
