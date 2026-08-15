@@ -720,6 +720,44 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Testing that <see cref="MudNumericField{T}.EffectiveImmediate"/> reflects the Immediate and Debounce state of this component.
+        /// </summary>
+        /// <remarks>Added for <a href="https://github.com/MudBlazor/MudBlazor/pull/13610">PR #13610</a></remarks>
+        [Test]
+        public async Task NumericField_EffectiveImmediate_Should_Reflect_Immediate_And_Debounced_State()
+        {
+            var notImmediateOrDebounced = Context.Render<MudNumericField<int>>();
+
+            var justImmediate = Context.Render<MudNumericField<int>>(param =>
+            {
+                param.Add(x => x.Immediate, true);
+            });
+
+            var justDebounced = Context.Render<MudNumericField<int>>(param =>
+            {
+                param.Add(x => x.DebounceInterval, 500);
+            });
+
+            var immediateAndDebounced = Context.Render<MudNumericField<int>>(param =>
+            {
+                param.Add(x => x.Immediate, true)
+                    .Add(x => x.DebounceInterval, 500);
+            });
+
+            await notImmediateOrDebounced.WaitForAssertionAsync(() =>
+                notImmediateOrDebounced.Instance.EffectiveImmediate.Should().BeFalse());
+
+            await justImmediate.WaitForAssertionAsync(() =>
+                justImmediate.Instance.EffectiveImmediate.Should().BeTrue());
+
+            await justDebounced.WaitForAssertionAsync(() =>
+                justDebounced.Instance.EffectiveImmediate.Should().BeTrue());
+
+            await immediateAndDebounced.WaitForAssertionAsync(() =>
+                immediateAndDebounced.Instance.EffectiveImmediate.Should().BeTrue());
+        }
+
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Validation<T>(T value)
         {
