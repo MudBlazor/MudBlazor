@@ -26,12 +26,12 @@ public partial class MudFabMenuItem : MudFab
     /// The parent <see cref="MudFabMenu"/> component, used to inherit <see cref="Variant"/> when not explicitly set.
     /// </summary>
     [CascadingParameter]
-    public MudFabMenu? MudFabMenu { get; set; }
+    public MudFabMenu? ParentMenu { get; set; }
 
     /// <summary>
     /// The display variation to use.
     /// </summary>
-    private Variant EffectiveVariant => _variantExplicitlySet ? Variant : MudFabMenu?.Variant ?? Variant;
+    private Variant EffectiveVariant => _variantExplicitlySet ? Variant : ParentMenu?.Variant ?? Variant;
 
     /// <summary>
     /// The size of the menu item.
