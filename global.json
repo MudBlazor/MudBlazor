@@ -1,7 +1,8 @@
 {
   "sdk": {
-    "version": "10.0.100",
-    "rollForward": "latestFeature"
+    "version": "10.0.400",
+    "rollForward": "latestPatch",
+    "errorMessage": "MudBlazor builds on the .NET SDK 10.0.4xx feature band (pinned in global.json). Install it from https://dotnet.microsoft.com/download/dotnet/10.0 - any 10.0.4xx patch works. Run 'dotnet --list-sdks' to see what you have."
   },
   "test": {
     "runner": "Microsoft.Testing.Platform"

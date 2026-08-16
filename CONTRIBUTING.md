@@ -52,7 +52,7 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
--   [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (pinned in `global.json`; it can build the older targets too)
+-   [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0), 10.0.4xx feature band (pinned in `global.json`; any 10.0.4xx patch works — it can build the older targets too)
 
 The `MudBlazor` library multi-targets net8.0, net9.0, and net10.0. `dotnet test` and IDE builds only compile the framework that is needed (the tests build just net10.0), but a direct `dotnet build src/MudBlazor` compiles all three. For a faster single-framework build while developing, pass `-f`:
 

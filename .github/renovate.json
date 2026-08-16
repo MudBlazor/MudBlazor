@@ -7,9 +7,6 @@
         ":ignoreModulesAndTests",
         "mergeConfidence:all-badges"
     ],
-    "ignoreDeps": [
-        "dotnet-sdk"
-    ],
     "labels": [
         "dependency",
         "build"
@@ -25,6 +22,49 @@
         ]
     },
     "packageRules": [
+        {
+            "description": ".NET SDK versions are x.y.znn where z is the feature band and nn the in-band patch. Renovate's default versioning classifies BOTH 10.0.400->10.0.401 and 10.0.400->10.0.500 as 'patch'. Remap the band digit into the 'minor' slot so the two are separable.",
+            "matchDatasources": [
+                "dotnet-version"
+            ],
+            "matchPackageNames": [
+                "dotnet-sdk"
+            ],
+            "versioning": "regex:^(?<major>\\d+)\\.\\d+\\.(?<minor>\\d)(?<patch>\\d{2})$",
+            "separateMinorPatch": true
+        },
+        {
+            "description": "In-band SDK servicing patches are a no-op for CI (setup-dotnet installs the channel head of the band regardless of the patch digits) and raising the pinned floor would only break contributors who have not patched this month. No PRs for them.",
+            "matchDatasources": [
+                "dotnet-version"
+            ],
+            "matchPackageNames": [
+                "dotnet-sdk"
+            ],
+            "matchUpdateTypes": [
+                "patch"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "A new SDK feature band swaps Roslyn, the Razor source generator, and dotnet format. Surface it as one reviewable PR instead of letting CI roll onto it unannounced. This grouping also overrides the 'dotnet monorepo' group from group:monorepos, which would otherwise absorb the SDK bump.",
+            "matchDatasources": [
+                "dotnet-version"
+            ],
+            "matchPackageNames": [
+                "dotnet-sdk"
+            ],
+            "matchUpdateTypes": [
+                "major",
+                "minor"
+            ],
+            "groupName": "dotnet sdk feature band",
+            "groupSlug": "dotnet-sdk-feature-band",
+            "reviewers": [
+                "team:core-team"
+            ],
+            "minimumReleaseAge": "5 days"
+        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
