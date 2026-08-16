@@ -23,7 +23,7 @@
     },
     "packageRules": [
         {
-            "description": ".NET SDK feature bands (the z in x.y.znn) swap Roslyn, the Razor source generator, and dotnet format; the last two bands (10.0.300, 10.0.400) each broke CI on release day. Allowing only band-floor versions (patch 00) means in-band servicing patches get no PR (CI installs the band head regardless, and raising the pinned floor would only break contributors who have not patched), while a new band arrives as one reviewable PR after a soak. The group also overrides the 'dotnet monorepo' group from group:monorepos, which would otherwise absorb the bump. Renovate classifies a band jump as 'patch', so any future patch-wide automerge rule must exclude dotnet-sdk.",
+            "description": "A new SDK feature band means a new compiler, so it arrives as its own reviewable PR pinned to the band floor (x.y.z00). In-band servicing patches reach CI automatically and get no PR.",
             "matchDatasources": [
                 "dotnet-version"
             ],
@@ -32,11 +32,7 @@
             ],
             "allowedVersions": "/^\\d+\\.\\d+\\.\\d00$/",
             "groupName": "dotnet sdk feature band",
-            "groupSlug": "dotnet-sdk-feature-band",
-            "reviewers": [
-                "team:core-team"
-            ],
-            "minimumReleaseAge": "5 days"
+            "groupSlug": "dotnet-sdk-feature-band"
         },
         {
             "matchPackageNames": [
