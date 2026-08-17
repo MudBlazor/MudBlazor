@@ -216,7 +216,7 @@ If no response is received, it will be automatically closed.
 ```
 
 ### Pull Requests Only
-- Never close pull requests due to staleness
+- Close pull requests that have been stale for >=168 consecutive days
 
 Mark pull requests as `stale` while ALL conditions are met:
 - Has any `needs:` label
