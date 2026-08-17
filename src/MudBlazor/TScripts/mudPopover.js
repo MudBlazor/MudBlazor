@@ -667,7 +667,15 @@ window.mudpopoverHelper = {
             // skip any overlay marked with mud-skip-overlay
             if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
                 // Only assign z-index if it doesn't already exist or has changed
-                const popoverContentNodeZindex = Number(popoverContentNode.style['z-index'] || 0);
+                let popoverContentNodeZindex = Number(popoverContentNode.style['z-index'] || 0);
+                // The overlay must always be able to catch outside clicks over a fixed AppBar to
+                // close the popover, regardless of where the popover itself happens to render
+                // (matches .mud-overlay-drawer's own "always above the AppBar" rule in _overlay.scss).
+                const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
+                if (appBarElements.length > 0) {
+                    const appBarZIndex = Number.parseInt(window.getComputedStyle(appBarElements[0]).zIndex) || 0;
+                    popoverContentNodeZindex = Math.max(popoverContentNodeZindex, appBarZIndex + 1);
+                }
                 const overlayZindex = Number(overlay.style['z-index'] || 0);
                 if (popoverContentNodeZindex > overlayZindex) {
                     overlay.style['z-index'] = popoverContentNodeZindex;
