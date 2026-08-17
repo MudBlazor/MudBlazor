@@ -231,12 +231,22 @@ public partial class MudFabMenu : MudFab
         _lastInteractionWasTouch = false;
     }
 
-    private async Task OnMenuClickAsync()
+    private Task OnMenuClickAsync() => CloseOnItemClickedAsync();
+
+    /// <summary>
+    /// Closes the menu after a menu item was clicked, when <see cref="CloseOnMenuItemClicked"/> is set.
+    /// </summary>
+    internal async Task CloseOnItemClickedAsync()
     {
-        if (CloseOnMenuItemClicked)
+        if (!CloseOnMenuItemClicked)
         {
-            await ToggleMenuAsync(false);
+            return;
         }
+
+        await ToggleMenuAsync(false);
+
+        // A menu item's click handler does not render, so the closed state needs a render of its own.
+        StateHasChanged();
     }
 
     private void OnTouchStart()

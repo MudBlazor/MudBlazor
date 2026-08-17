@@ -1,0 +1,15 @@
+<div class="outer-element" @onclick="@(() => OuterClickCount++)">
+    <MudFabMenu StartIcon="@Icons.Material.Outlined.Settings" OpenOnMouseHover="false">
+        <MudFabMenuItem EndIcon="@Icons.Material.Outlined.LooksOne"
+                        ClickPropagation="@ClickPropagation"
+                        OnClick="@(() => ItemClickCount++)" />
+    </MudFabMenu>
+</div>
+
+@code {
+    [Parameter] public bool ClickPropagation { get; set; }
+
+    public int OuterClickCount { get; private set; }
+
+    public int ItemClickCount { get; private set; }
+}

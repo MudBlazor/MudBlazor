@@ -178,4 +178,43 @@ public class FabMenuTests : BunitTest
         var expectedRel = rel ?? (target == "_blank" ? "noopener" : null);
         item.GetAttribute("rel").Should().Be(expectedRel);
     }
+
+    /// <summary>
+    /// Test case for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/13605"/>
+    /// </summary>
+    [Test]
+    public async Task ItemClick_ShouldNotReachAncestor_WhenClickPropagationIsFalse()
+    {
+        var comp = Context.Render<FabMenuClickPropagationTest>();
+
+        await comp.Find(".mud-fab-menu-button").ClickAsync();
+        await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Should().ContainSingle());
+
+        await comp.FindAll(".mud-fab-menu-item")[0].ClickAsync();
+
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Instance.ItemClickCount.Should().Be(1);
+            comp.Instance.OuterClickCount.Should().Be(0);
+            // the menu must still close, even though the click no longer bubbles to the menu container
+            comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Should().BeEmpty();
+        });
+    }
+
+    [Test]
+    public async Task ItemClick_ShouldReachAncestor_WhenClickPropagationIsTrue()
+    {
+        var comp = Context.Render<FabMenuClickPropagationTest>(parameters => parameters.Add(p => p.ClickPropagation, true));
+
+        await comp.Find(".mud-fab-menu-button").ClickAsync();
+        await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-fab-menu.mud-fab-menu-open").Should().ContainSingle());
+
+        await comp.FindAll(".mud-fab-menu-item")[0].ClickAsync();
+
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Instance.ItemClickCount.Should().Be(1);
+            comp.Instance.OuterClickCount.Should().Be(1);
+        });
+    }
 }
