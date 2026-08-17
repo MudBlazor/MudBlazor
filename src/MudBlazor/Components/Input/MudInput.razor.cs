@@ -241,29 +241,6 @@ namespace MudBlazor
         /// The hidden input can no longer fire them, so forwarding them here does not double up.
         /// Caller-provided <c>UserAttributes</c> take precedence over the computed accessibility fallbacks. Returns <c>null</c> for every other render so the always-emitted (but hidden) presenter <c>div</c> does not get spurious attributes or allocate on the common input path.
         /// </remarks>
-        /// <summary>
-        /// Builds the attributes splatted onto the rendered input, applying the computed accessibility values as fallbacks so caller-provided <c>UserAttributes</c> take precedence.
-        /// </summary>
-        /// <remarks>
-        /// These were previously literal attributes written after the <c>UserAttributes</c> splat, so last-write-wins meant a consumer could never override them.
-        /// <c>required</c> stays a literal attribute because it is native behavior rather than an ARIA annotation.
-        /// </remarks>
-        private Dictionary<string, object?> GetInputUserAttributes()
-        {
-            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
-
-            var describedBy = GetAriaDescribedByString();
-            if (describedBy is not null)
-            {
-                attributes.TryAdd("aria-describedby", describedBy);
-            }
-
-            attributes.TryAdd("aria-invalid", HasErrors.ToString().ToLowerInvariant());
-            attributes.TryAdd("aria-required", Required.ToString().ToLowerInvariant());
-
-            return attributes;
-        }
-
         private Dictionary<string, object?>? GetDisplayUserAttributes()
         {
             if (InputType != InputType.Hidden || ChildContent is null)
