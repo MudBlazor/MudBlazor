@@ -18,7 +18,6 @@
                            AriaLabel="@AdornmentAriaLabel" />
     }
 
-    @*note: the aria-* attributes below are written before @attributes on purpose. They are fallbacks, and the last write wins, so the splat lets a consumer override them through UserAttributes. required stays after the splat because it is native behavior rather than an annotation.*@
     @if (ShouldUseTextArea)
     {
         <textarea class="@InputClassname"
