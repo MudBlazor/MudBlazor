@@ -23,6 +23,9 @@
         <textarea class="@InputClassname"
                   @ref="ElementReference"
                   rows="@Lines"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
+                  aria-required="@Required.ToString().ToLowerInvariant()"
                   @attributes="UserAttributes"
                   id="@InputElementId"
                   type="@InputTypeString"
@@ -39,10 +42,7 @@
                   maxlength="@MaxLength"
                   @onkeydown:preventDefault="@KeyDownPreventDefault"
                   @onkeyup:preventDefault="@KeyUpPreventDefault"
-                  aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-                  required="@Required"
-                  aria-required="@Required.ToString().ToLowerInvariant()">
+                  required="@Required">
             @ReadText
             </textarea>
         @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
@@ -51,6 +51,9 @@
     {
         <input class="@InputClassname"
                @ref="ElementReference"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
+               aria-required="@Required.ToString().ToLowerInvariant()"
                @attributes="UserAttributes"
                id="@InputElementId"
                type="@InputTypeString"
@@ -68,10 +71,7 @@
                maxlength="@MaxLength"
                @onkeydown:preventDefault="KeyDownPreventDefault"
                @onkeyup:preventDefault="@KeyUpPreventDefault"
-               aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-               required="@Required"
-               aria-required="@Required.ToString().ToLowerInvariant()">
+               required="@Required">
 
         @if (GetDisabledState())
         {
