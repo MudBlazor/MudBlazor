@@ -276,7 +276,7 @@
                                              Identifier="@($"{PrePrefix}{context.PropertyName}")"
                                              AllowReorder="@isPreZoneAllowed"
                                              Class="grid-dropzone dropzone-pre"
-                                             CanDrop="@(item => context.DragAndDropEnabled != false)" />
+                                             CanDrop="@(item => isPreZoneAllowed)" />
                                 <div style="width: 100%">
                                     @context.HeaderCell.TableHeader()
                                 </div>

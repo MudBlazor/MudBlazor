@@ -1,5 +1,5 @@
 ﻿<MudPopoverProvider></MudPopoverProvider>
-<CascadingValue Name="RightToLeft" Value="true" IsFixed="true">
+<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
     <MudDataGrid Items="@_items" DragDropColumnReordering="true" DragIndicatorIcon="@Icons.Material.Filled.DragIndicator" ColumnReorderMode="DataGridDragAndDropColumnReorderMode.Insert" ColumnResizeMode="ResizeMode.Column">
         <Columns>
             <PropertyColumn DragAndDropEnabled="false" Property="x => x.Name" />

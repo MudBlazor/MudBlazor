@@ -5591,23 +5591,28 @@ namespace MudBlazor.UnitTests.Components
             var headerValues = dataGrid.FindAll(".sortable-column-header");
             headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
 
-            headerValues[4].InnerHtml.Should().Be("HiredOn");
+            headerValues[2].InnerHtml.Should().Be("Status");
 
-            var resizers = comp.FindAll(".mud-resizer");
-            var getHiredOnResizer = () => comp.FindAll(".mud-resizer").ElementAt(4);
+            var getStatusResizer = () => comp.FindAll(".mud-resizer").ElementAt(2);
 
-            await getHiredOnResizer().PointerDownAsync(new PointerEventArgs { ClientX = 100, PointerId = 1, Detail = 1 });
-            await getHiredOnResizer().PointerMoveAsync(new PointerEventArgs { ClientX = 150, PointerId = 1 });
-            await getHiredOnResizer().PointerUpAsync(new PointerEventArgs { ClientX = 150, PointerId = 1 });
+            var moveTarget = rightToLeft ? 80 : 120;
+
+            await getStatusResizer().PointerDownAsync(new PointerEventArgs { ClientX = 100, PointerId = 1, Detail = 1 });
+            await getStatusResizer().PointerMoveAsync(new PointerEventArgs { ClientX = moveTarget, PointerId = 1 });
+            await getStatusResizer().PointerUpAsync(new PointerEventArgs { ClientX = moveTarget, PointerId = 1 });
+
+            var thElements = comp.FindAll("th");
+            var headerStyle = thElements.ElementAt(2).GetStyle();
+            headerStyle.Should().Contain(cssProp => cssProp.Name == "width", because: "the dragged column should retain its resized inline width style");
 
             var zone = dataGrid.FindAll(".mud-drop-zone");
             zone.Count.Should().Be(11);
 
-            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "HiredOn").FirstOrDefault();
+            var firstDropZone = zone.FirstOrDefault(entry => entry.GetAttribute("identifier") == "Status");
             firstDropZone.Should().NotBeNull();
             var firstDropItem = firstDropZone!.Children[0];
 
-            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            var secondDropZone = zone.FirstOrDefault(entry => entry.GetAttribute("identifier") == "__mud_dg_post__:HiredOn");
             secondDropZone.Should().NotBeNull();
             var secondDropItem = secondDropZone!.Children[0];
 
@@ -5616,14 +5621,14 @@ namespace MudBlazor.UnitTests.Components
 
             var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
             newHeaderValues[0].InnerHtml.Should().Be("Name");
-            newHeaderValues[1].InnerHtml.Should().Be("HiredOn");
-            newHeaderValues[2].InnerHtml.Should().Be("Age");
-            newHeaderValues[3].InnerHtml.Should().Be("Status");
-            newHeaderValues[4].InnerHtml.Should().Be("Hired");
+            newHeaderValues[1].InnerHtml.Should().Be("Age");
+            newHeaderValues[2].InnerHtml.Should().Be("Hired");
+            newHeaderValues[3].InnerHtml.Should().Be("HiredOn");
+            newHeaderValues[4].InnerHtml.Should().Be("Status");
 
-            var thElements = comp.FindAll("th");
+            thElements = comp.FindAll("th");
 
-            var movedHeaderStyle = thElements.ElementAt(1).GetStyle();
+            var movedHeaderStyle = thElements.ElementAt(4).GetStyle();
             movedHeaderStyle.Should().Contain(cssProp => cssProp.Name == "width", because: "the dragged column should retain its resized inline width style");
         }
 
@@ -5674,6 +5679,42 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[2].InnerHtml.Should().Be("HiredOn");
             newHeaderValues[3].InnerHtml.Should().Be("Status");
             newHeaderValues[4].InnerHtml.Should().Be("Hired");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropOnDisabledPreColumn(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_pre__:HiredOn").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the pre-insert drop zone for HiredOn should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().BeEmpty(because: "the pre-insert drop zone for HiredOn should not contain a drop target item");
         }
 
         [Test]
