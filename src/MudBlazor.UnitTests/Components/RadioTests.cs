@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
             var r2 = comp.Find(".r2");
             r2.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".r2 label.mud-radio span.mud-typography");
-            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            element1.GetAttribute("aria-hidden").Should().Be("true");
             var input1 = comp.Find(".r2 label.mud-radio input");
             var input1ForId = input1.GetAttribute("aria-labelledby");
             comp.Find($".r2 label.mud-radio #{input1ForId}").Should().NotBeNull();
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
             var r4 = comp.Find(".r4");
             r4.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".r4 label.mud-radio span.mud-typography");
-            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            element3.GetAttribute("aria-hidden").Should().Be("true");
             var input3 = comp.Find(".r4 label.mud-radio input");
             var input3ForId = input3.GetAttribute("aria-labelledby");
             comp.Find($".r4 label.mud-radio #{input3ForId}").Should().NotBeNull();

@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
             // switch two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
             switches[1].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".s2 label.mud-switch span.mud-typography");
-            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            element1.GetAttribute("aria-hidden").Should().Be("true");
             var input1 = comp.Find(".s2 label.mud-switch input");
             var input1ForId = input1.GetAttribute("aria-labelledby");
             comp.Find($".s2 label.mud-switch #{input1ForId}").Should().NotBeNull();
@@ -71,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
             // switch four should look identical to two except this time it's with ChildContent
             switches[3].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".s4 label.mud-switch span.mud-typography");
-            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            element3.GetAttribute("aria-hidden").Should().Be("true");
             var input3 = comp.Find(".s4 label.mud-switch input");
             var input3ForId = input3.GetAttribute("aria-labelledby");
             comp.Find($".s4 label.mud-switch #{input3ForId}").Should().NotBeNull();
