@@ -4,11 +4,11 @@
 
 @inject InternalMudLocalizer Localizer
 
-<nav @attributes="UserAttributes"
+<nav aria-label="@Title"
+     @attributes="UserAttributes"
      class="@Classname"
      disabled="@_navigationContext.Disabled"
-     style="@Style"
-     aria-label="@Title">
+     style="@Style">
     <button @onclick="ExpandedToggleAsync"
             tabindex="@ButtonTabIndex"
             class="@ButtonClassname"
