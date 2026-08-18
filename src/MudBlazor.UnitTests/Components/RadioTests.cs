@@ -533,5 +533,29 @@ namespace MudBlazor.UnitTests.Components
             var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
         }
+
+        /// <summary>
+        /// A radiogroup cannot carry the native required attribute, so aria-required is its only required-ness signal and callers must be able to set it.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Without a caller-supplied value the radiogroup still announces required-ness from the parameter.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_ComputeAriaRequiredFromParameter()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
     }
 }
