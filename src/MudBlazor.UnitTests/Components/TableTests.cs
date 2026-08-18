@@ -3522,5 +3522,36 @@ namespace MudBlazor.UnitTests.Components
             pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
             pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
         }
+
+        /// <summary>
+        /// Rows spell out aria-disabled as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public void RowAriaDisabled_ReflectsDisabledState()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1, 2 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.RowDisabledFunc, item => item == 2)
+            );
+
+            var rows = comp.FindAll("tbody tr.mud-table-row");
+
+            rows.Count.Should().Be(2);
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-disabled default of false, so the token has to be spelled out.
+            rows[1].ClassList.Should().Contain("mud-table-row-disabled");
+            rows[1].GetAttribute("aria-disabled").Should().Be("true");
+
+            rows[0].ClassList.Should().NotContain("mud-table-row-disabled");
+            rows[0].GetAttribute("aria-disabled").Should().Be("false");
+        }
     }
 }

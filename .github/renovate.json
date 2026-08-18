@@ -7,9 +7,6 @@
         ":ignoreModulesAndTests",
         "mergeConfidence:all-badges"
     ],
-    "ignoreDeps": [
-        "dotnet-sdk"
-    ],
     "labels": [
         "dependency",
         "build"
@@ -25,6 +22,18 @@
         ]
     },
     "packageRules": [
+        {
+            "description": "A new SDK feature band means a new compiler, so it arrives as its own reviewable PR pinned to the band floor (x.y.z00). In-band servicing patches reach CI automatically and get no PR.",
+            "matchDatasources": [
+                "dotnet-version"
+            ],
+            "matchPackageNames": [
+                "dotnet-sdk"
+            ],
+            "allowedVersions": "/^\\d+\\.\\d+\\.\\d00$/",
+            "groupName": "dotnet sdk feature band",
+            "groupSlug": "dotnet-sdk-feature-band"
+        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"

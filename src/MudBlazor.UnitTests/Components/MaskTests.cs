@@ -1247,5 +1247,54 @@ namespace MudBlazor.UnitTests.Components
             maskField.ReadText.Should().BeNullOrEmpty();
             comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
         }
+
+        /// <summary>
+        /// Caller-supplied ARIA attributes should win over the computed values, and required should still follow the parameter.
+        /// </summary>
+        [Test]
+        public void Mask_Should_LetUserAttributesOverrideAriaAttributes()
+        {
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object>
+                {
+                    { "aria-required", "true" },
+                    { "aria-invalid", "true" },
+                    { "aria-describedby", "my-hint" }
+                }));
+
+            var input = comp.Find("input");
+            input.GetAttribute("aria-required").Should().Be("true");
+            input.GetAttribute("aria-invalid").Should().Be("true");
+            input.GetAttribute("aria-describedby").Should().Be("my-hint");
+            input.HasAttribute("required").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The multiline mask renders a textarea and should honour caller-supplied ARIA attributes the same way.
+        /// </summary>
+        [Test]
+        public void Mask_Should_LetUserAttributesOverrideAriaAttributesOnTextArea()
+        {
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Lines, 3)
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Without caller-supplied values the computed ARIA attributes are still rendered.
+        /// </summary>
+        [Test]
+        public void Mask_Should_ComputeAriaAttributesWhenUserAttributesAreAbsent()
+        {
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            var input = comp.Find("input");
+            input.GetAttribute("aria-required").Should().Be("true");
+            input.GetAttribute("aria-invalid").Should().Be("false");
+            input.HasAttribute("required").Should().BeTrue();
+        }
     }
 }

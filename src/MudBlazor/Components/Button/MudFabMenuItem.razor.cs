@@ -11,13 +11,28 @@ namespace MudBlazor;
 /// <seealso cref="MudFabMenu" />
 public partial class MudFabMenuItem : MudFab
 {
-    [CascadingParameter]
-    protected MudFabMenu? ParentMenu { get; set; }
+    /// <summary>
+    /// Indicates whether the <see cref="Variant"/> property was explicitly set by the user.
+    /// </summary>
+    private bool _variantExplicitlySet;
 
-    private new string Classname => new CssBuilder(base.Classname)
-        .AddClass("mud-fab-menu-item")
-        .AddClass(Class)
-        .Build();
+    /// <summary>
+    /// CSS class names for the component, including base classes and conditional classes based on properties.
+    /// </summary>
+    private new string Classname => new CssBuilder("mud-fab-menu-item")
+            .AddClass(Class)
+            .Build();
+
+    /// <summary>
+    /// The parent <see cref="MudFabMenu"/> component, used to inherit <see cref="Variant"/> when not explicitly set.
+    /// </summary>
+    [CascadingParameter]
+    public MudFabMenu? ParentMenu { get; set; }
+
+    /// <summary>
+    /// The display variation to use.
+    /// </summary>
+    private Variant EffectiveVariant => _variantExplicitlySet ? Variant : ParentMenu?.Variant ?? Variant;
 
     /// <summary>
     /// The size of the menu item.
@@ -28,6 +43,20 @@ public partial class MudFabMenuItem : MudFab
     [Parameter, Category(CategoryTypes.Button.Appearance)]
     public override Size Size { get; set; } = Size.Medium;
 
+    /// <summary>
+    /// Sets the parameters for the component and determines if the Variant was explicitly set.
+    /// </summary>
+    /// <param name="parameters">The parameters to set.</param>
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        _variantExplicitlySet = parameters.TryGetValue<Variant>(nameof(Variant), out _);
+        return base.SetParametersAsync(parameters);
+    }
+
+    /// <summary>
+    /// Handles a click on the menu item and closes the parent menu.
+    /// </summary>
+    /// <param name="ev">The mouse event arguments.</param>
     protected override async Task OnClickHandler(MouseEventArgs ev)
     {
         if (GetDisabledState())

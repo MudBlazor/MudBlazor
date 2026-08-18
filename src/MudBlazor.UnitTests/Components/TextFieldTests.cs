@@ -1758,6 +1758,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A caller-supplied aria-required should win over the value computed from Required, and required should still follow the parameter.
+        /// </summary>
+        [Test]
+        public void TextField_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller-supplied aria-invalid should win over the value computed from the error state.
+        /// </summary>
+        [Test]
+        public void TextField_Should_LetUserAttributesOverrideAriaInvalid()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-invalid", "true" } }));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
+        }
+
+        /// <summary>
         /// Bug : https://github.com/MudBlazor/MudBlazor/issues/10606
         /// When the user inputs a single space, the required text field should show an error.
         /// </summary>

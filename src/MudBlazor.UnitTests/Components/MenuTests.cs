@@ -1509,5 +1509,29 @@ namespace MudBlazor.UnitTests.Components
             popoverOpenDuringClick.Should().BeTrue();
             await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
+
+        /// <summary>
+        /// A custom activator spells out aria-expanded as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public async Task ActivatorContent_AriaExpanded_ReflectsOpenState()
+        {
+            Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, _ => builder =>
+                {
+                    builder.OpenElement(0, "span");
+                    builder.AddContent(1, "Activate");
+                    builder.CloseElement();
+                }));
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-expanded default, so the token has to be spelled out.
+            comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("false");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Open, true));
+
+            comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("true");
+        }
     }
 }
