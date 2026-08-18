@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
             // verify switch one maintains it's original structure, no aria class used, label with a span element
             switches[0].GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
             var element0 = comp.Find(".s1 label.mud-switch span.mud-typography");
-            element0.GetAttribute("aria-hidden").Should().Be("false");
+            element0.HasAttribute("aria-hidden").Should().BeFalse();
 
             // switch two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
             switches[1].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests.Components
             // switch three should have original structure intact, no aria class used, label with a span element for child content
             switches[2].GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
             var element2 = comp.Find(".s3 label.mud-switch span.mud-typography");
-            element2.GetAttribute("aria-hidden").Should().Be("false");
+            element2.HasAttribute("aria-hidden").Should().BeFalse();
 
             // switch four should look identical to two except this time it's with ChildContent
             switches[3].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);

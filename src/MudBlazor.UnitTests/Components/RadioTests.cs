@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
             var r1 = comp.Find(".r1");
             r1.GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
             var element0 = comp.Find(".r1 label.mud-radio span.mud-typography");
-            element0.GetAttribute("aria-hidden").Should().Be("false");
+            element0.HasAttribute("aria-hidden").Should().BeFalse();
 
             // radio two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
             var r2 = comp.Find(".r2");
@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
             var r3 = comp.Find(".r3");
             r3.GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
             var element2 = comp.Find(".r3 label.mud-radio span.mud-typography");
-            element2.GetAttribute("aria-hidden").Should().Be("false");
+            element2.HasAttribute("aria-hidden").Should().BeFalse();
 
             // radio four should look identical to two except this time it's with ChildContent
             var r4 = comp.Find(".r4");
