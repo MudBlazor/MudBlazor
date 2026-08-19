@@ -41,6 +41,9 @@ namespace MudBlazor
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
         /// <inheritdoc />
+        protected internal override bool EffectiveImmediate => Immediate || DebounceInterval > 0;
+
+        /// <inheritdoc />
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             // Don't update text if we're debouncing and the value hasn't actually changed
@@ -85,19 +88,6 @@ namespace MudBlazor
             }
 
             await base.ValidateValue();
-        }
-
-        /// <inheritdoc />
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            // if input is to be debounced, makes sense to bind the change of the text to oninput
-            // so we set Immediate to true
-            if (DebounceInterval > 0)
-            {
-                // TODO: Don't write to parameter directly
-                Immediate = true;
-            }
         }
 
         private async Task OnDebounceIntervalChangedAsync(ParameterChangedEventArgs<double> args)

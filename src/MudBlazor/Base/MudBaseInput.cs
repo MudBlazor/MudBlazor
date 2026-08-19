@@ -92,6 +92,11 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
+        /// For inheritors: determines if the Immediate state is set.
+        /// </summary>
+        protected internal virtual bool EffectiveImmediate => Immediate;
+
+        /// <summary>
         /// Changes the <see cref="Value"/> as soon as input is received.
         /// </summary>
         /// <remarks>
@@ -479,34 +484,26 @@ namespace MudBlazor
 
             if (ReadOnly)
             {
+                // Readonly inputs never validate, but they can still be focused and blurred.
+                await OnBlur.InvokeAsync(obj);
+
                 return;
             }
-
-            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
-            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await OnBlur.InvokeAsync(obj);
-                    }
+                    await OnBlur.InvokeAsync(obj);
+                }
+                else if (OnBlur.HasDelegate)
+                {
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
                 }
                 else
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
-                    }
-                    else
-                    {
-                        await ValidateValue();
-                    }
+                    await ValidateValue();
                 }
             }
         }

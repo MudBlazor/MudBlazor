@@ -10,7 +10,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -38,8 +37,8 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
-        internal HashSet<T> _openHierarchies = [];
-        private readonly HashSet<T> _initialExpansions = [];
+        internal HashSet<T> _openHierarchies;
+        private HashSet<T> _initialExpansions;
         private Func<T, bool>? _initialExpandedFunc = null;
         private Func<T, bool>? _buttonDisabledFunc = null;
         private EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> _hierarchyColumnVisibilityToggled;
@@ -86,6 +85,8 @@ namespace MudBlazor
             _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
             SelectedItems = new HashSet<T>(Comparer);
+            _openHierarchies = new HashSet<T>(Comparer);
+            _initialExpansions = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
                 .WithParameter(() => Items)
@@ -104,6 +105,10 @@ namespace MudBlazor
             _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
                 .WithParameter(() => ExpandSingleRow)
                 .WithChangeHandler(OnExpandSingleRowChangedAsync);
+
+            registerScope.RegisterParameter<IEqualityComparer<T>?>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChanged);
         }
 
         protected string Classname =>
@@ -344,6 +349,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a cell has been clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<DataGridCellClickEventArgs<T>> CellClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a cell has been right-clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<DataGridCellClickEventArgs<T>> CellContextMenuClick { get; set; }
 
         /// <summary>
         /// Occurs when edit mode begins for an item.
@@ -1392,9 +1411,11 @@ namespace MudBlazor
         /// The comparer used to determine row selection.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
+        /// Defaults to <see cref="EqualityComparer{T}.Default" />.
+        /// This comparer decides whether a row is selected and whether an expanded hierarchy row is still the same row after the data is refreshed.
+        /// Pass a stable instance: a change is detected by reference, so an inline <c>Comparer="@(new MyComparer())"</c> creates a fresh instance on every render and rebuilds the selection set every time.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         public IEqualityComparer<T>? Comparer { get; set; } = EqualityComparer<T>.Default;
 
         /// <summary>
@@ -1649,6 +1670,23 @@ namespace MudBlazor
             {
                 Selection.Clear();
                 Selection.UnionWith(args.Value);
+            }
+        }
+
+        private async Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+        {
+            // A HashSet keeps the comparer it was constructed with, so every item-keyed set has to be rebuilt to adopt the new one.
+            // These are safe to reassign because CellContext captures them by reference but is constructed fresh inside the render fragment on every render.
+            var previousSelectionCount = Selection.Count;
+            Selection = new HashSet<T>(Selection, args.Value);
+            _openHierarchies = new HashSet<T>(_openHierarchies, args.Value);
+            _initialExpansions = new HashSet<T>(_initialExpansions, args.Value);
+
+            // A coarser comparer collapses entries that were previously distinct, which silently drops rows from the selection.
+            // Publish that, otherwise the bound SelectedItems keeps contents the grid can no longer hold.
+            if (Selection.Count != previousSelectionCount)
+            {
+                await FireSelectionChangedEventsAsync();
             }
         }
 
@@ -2129,11 +2167,7 @@ namespace MudBlazor
 
             if (value) // Logic for selecting all
             {
-                var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
-                var selectColumn = GetSelectColumn();
-                itemsToSelect = itemsToSelect.Where(item => !IsRowSelectionDisabled(item, selectColumn));
-
-                Selection.UnionWith(itemsToSelect);
+                Selection.UnionWith(GetSelectableItems());
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
@@ -2144,9 +2178,70 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Selects or clears every selectable row of a single group, leaving rows outside of the group untouched.
+        /// </summary>
+        /// <param name="value">When <c>true</c>, the group's rows are added to the selection; otherwise they are removed from it.</param>
+        /// <param name="groupItems">The rows belonging to the group.</param>
+        internal async Task SetGroupSelectAllAsync(bool value, IEnumerable<T> groupItems)
+        {
+            // nothing should happen if multiselection is false
+            if (!MultiSelection)
+                return;
+
+            var selectableItems = GetSelectableItems(groupItems);
+
+            if (value)
+            {
+                Selection.UnionWith(selectableItems);
+            }
+            else
+            {
+                Selection.ExceptWith(selectableItems);
+            }
+
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
+            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
+
+            await InvokeAsync(StateHasChanged);
+        }
+
         private SelectColumn<T>? GetSelectColumn()
         {
             return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// The items which select-all would select, i.e. every displayed row whose selection is not disabled.
+        /// </summary>
+        internal IEnumerable<T> GetSelectableItems() => GetSelectableItems(HasServerData ? ServerItems : FilteredItems);
+
+        /// <summary>
+        /// The items of <paramref name="items"/> whose selection is not disabled.
+        /// </summary>
+        internal IEnumerable<T> GetSelectableItems(IEnumerable<T> items)
+        {
+            var selectColumn = GetSelectColumn();
+
+            return items.Where(item => !IsRowSelectionDisabled(item, selectColumn));
+        }
+
+        /// <summary>
+        /// The state of a group's select-all checkbox: <c>true</c> when every selectable row of the group is selected, <c>false</c> when none of them is, otherwise <c>null</c>.
+        /// </summary>
+        /// <param name="groupItems">The rows belonging to the group.</param>
+        internal bool? GetGroupSelectionState(IEnumerable<T> groupItems)
+        {
+            var selectableItems = GetSelectableItems(groupItems).ToList();
+            var selectedCount = selectableItems.Count(Selection.Contains);
+
+            if (selectedCount == 0)
+            {
+                return false;
+            }
+
+            return selectedCount == selectableItems.Count ? true : null;
         }
 
         internal bool? GetRowSelectionState(T item)
@@ -2333,7 +2428,32 @@ namespace MudBlazor
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+            await ActivateRowBehaviorsAsync(item);
+        }
 
+        internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+        }
+
+        internal async Task OnCellClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
+        {
+            // stopPropagation on the <td> prevents this click from bubbling to the <tr> handler
+            // (OnRowClickedAsync), so we share the same row behaviors via ActivateRowBehaviorsAsync.
+            // RowClick is intentionally not raised here; whether it should fire on a cell click
+            // is an explicit API decision.
+            await CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
+            await ActivateRowBehaviorsAsync(item);
+        }
+
+        /// <summary>
+        /// Applies the row-level side effects that should occur on any click interaction with a row
+        /// or one of its cells: edit activation (when configured) and selection update.
+        /// Both <see cref="OnRowClickedAsync"/> and <see cref="OnCellClickedAsync"/> delegate here
+        /// so that new row-click behaviors only need to be added in one place.
+        /// </summary>
+        private async Task ActivateRowBehaviorsAsync(T item)
+        {
             if (EditTrigger == DataGridEditTrigger.OnRowClick)
             {
                 if (EditMode == DataGridEditMode.Cell)
@@ -2345,10 +2465,20 @@ namespace MudBlazor
             await SetSelectedItemAsync(item);
         }
 
-        internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        internal Task OnCellContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
         {
-            return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+            return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
+
+        private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => CellClick.HasDelegate
+                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column))
+                : EventCallback<MouseEventArgs>.Empty;
+
+        private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => CellContextMenuClick.HasDelegate
+                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))
+                : EventCallback<MouseEventArgs>.Empty;
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.

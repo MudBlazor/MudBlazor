@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
-@using MudBlazor.Utilities
 @using MudBlazor.Extensions
 @using MudBlazor.Resources
 @inject InternalMudLocalizer Localizer
@@ -203,7 +202,11 @@
                                 }
                             </thead>
                             <tbody class="@BodyClassname">
-                                @if (Virtualize || CurrentPageItems.Any())
+                                @{
+                                    // Reading CurrentPageItems refreshes FilteredItems, and with it the grouping state, so it has to happen before IsGrouped picks which body to render.
+                                    var hasCurrentPageItems = CurrentPageItems.Any();
+                                }
+                                @if (Virtualize || hasCurrentPageItems)
                                 {
                                     if (IsGrouped)
                                     {
@@ -341,7 +344,7 @@
 
 
 
-    internal RenderFragment FooterCells(IEnumerable<T> currentItems) =>
+    internal RenderFragment FooterCells(IEnumerable<T> currentItems, IEnumerable<T>? groupItems = null) =>
         @<text>
              @if (currentItems is not null)
              {
@@ -351,7 +354,7 @@
                      {
                          if (column.AggregateDefinition is not null || column.GetFooterTemplate() is not null || HasFooter)
                          {
-                             <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                             <FooterCell T="T" Column="@column" CurrentItems="@currentItems" GroupItems="@groupItems"></FooterCell>
                          }
                      }
                  }
@@ -359,7 +362,7 @@
          </text>;
 
 
-    internal RenderFragment Cell(Column<T> column, T item) =>
+    internal RenderFragment Cell(Column<T> column, T item, int rowIndex, int colIndex) =>
         @<text>
              @{
                  // For inline editing, use the editing copy if this row is being edited
@@ -378,8 +381,16 @@
                  var showEditMode = column.Editable && !ReadOnly &&
                                     (EditMode == DataGridEditMode.Cell || isInlineEditing) &&
                                     hasEditableContent;
+                 var cellClickCallback = GetCellClickCallback(item, rowIndex, colIndex, column);
+                 var cellContextMenuClickCallback = GetCellContextMenuClickCallback(item, rowIndex, colIndex, column);
              }
-             <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle">
+             <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle"
+                 @onclick="cellClickCallback"
+                 @onclick:stopPropagation="@CellClick.HasDelegate"
+                 @oncontextmenu="cellContextMenuClickCallback"
+                 @oncontextmenu:stopPropagation="@CellContextMenuClick.HasDelegate"
+                 @oncontextmenu:preventDefault="@CellContextMenuClick.HasDelegate">
+
                  @if (showEditMode)
                  {
                      @* An inline editor registers with the grid's own validator, which forwards it to Validator but keeps a commit scoped to the row being edited. *@

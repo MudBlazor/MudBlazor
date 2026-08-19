@@ -585,6 +585,80 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
         }
 
+        /// <summary>
+        /// Rows bound through SelectedItems render selected when the instances only match under a custom Comparer.
+        /// </summary>
+        [Test]
+        public async Task DataGridSelectedItemsHonorCustomComparer()
+        {
+            var comp = Context.Render<DataGridSelectedItemsComparerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectedItemsComparerTest.Person>>();
+
+            var checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            checkboxes[0].IsChecked().Should().BeTrue();
+            checkboxes[1].IsChecked().Should().BeFalse();
+            checkboxes[2].IsChecked().Should().BeTrue();
+
+            dataGrid.Instance.Selection.Comparer.Should().BeSameAs(comp.Instance.ItemComparer);
+
+            // The rows are checked because the comparer was consulted, not because the instances happened to match.
+            comp.Instance.ItemComparer.EqualsCallCount.Should().BeGreaterThan(0);
+
+            await comp.InvokeAsync(comp.Instance.ReapplySelectedItems);
+
+            checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            checkboxes[0].IsChecked().Should().BeFalse();
+            checkboxes[1].IsChecked().Should().BeTrue();
+            checkboxes[2].IsChecked().Should().BeFalse();
+        }
+
+        /// <summary>
+        /// An expanded hierarchy row stays expanded when a refetch replaces the items with equal-but-new instances under a custom Comparer.
+        /// </summary>
+        [Test]
+        public async Task DataGridHierarchyExpansionHonorsCustomComparerAcrossRefetch()
+        {
+            var comp = Context.Render<DataGridHierarchyComparerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyComparerTest.Model>>();
+
+            // Expand the first row through its hierarchy toggle button.
+            await dataGrid.FindAll("tbody button.mud-icon-button")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll("td.hierarchy-detail").Select(x => x.TextContent.Trim()).Should().Equal("Details for Sam"));
+
+            await comp.InvokeAsync(comp.Instance.Refetch);
+
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.FindAll("td.hierarchy-detail").Select(x => x.TextContent.Trim()).Should().Equal("Details for Sam"));
+        }
+
+        /// <summary>
+        /// Swapping Comparer to a coarser instance at runtime collapses the live selection and fires SelectedItemsChanged with the collapsed set.
+        /// </summary>
+        [Test]
+        public async Task DataGridComparerSwapCollapsesSelection()
+        {
+            var comp = Context.Render<DataGridComparerSelectionCollapseTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridComparerSelectionCollapseTest.Person>>();
+
+            // Alpha (GroupId 1, SubId 1) and Bravo (GroupId 1, SubId 2) are distinct under the initial composite comparer.
+            var checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            await checkboxes[0].ChangeAsync(true);
+            checkboxes = dataGrid.FindAll("tbody input[type=checkbox]");
+            await checkboxes[1].ChangeAsync(true);
+
+            comp.Instance.SelectedItems.Count.Should().Be(2);
+            comp.Instance.SelectedItemsChangedCount.Should().Be(2);
+
+            await comp.InvokeAsync(comp.Instance.SwapToGroupComparer);
+
+            // Alpha and Bravo share GroupId 1, so the coarser comparer collapses them into a single selected entry.
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedItems.Count.Should().Be(1));
+            comp.Instance.SelectedItems.Single().GroupId.Should().Be(1);
+            comp.Instance.SelectedItemsChangedCount.Should().Be(3);
+        }
+
         [Test]
         public async Task DataGridSingleSelection()
         {
@@ -921,6 +995,16 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudSelect<int>>().Count.Should().Be(1);
 
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("0-0 of 0");
+        }
+
+        [Test]
+        public void DataGridPagerInfoTextIsExcludedFromBrowserTranslation()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            dataGrid.FindAll(".mud-table-pagination-caption[translate='no']")[^1]
+                .TextContent.Trim().Should().Be("1-10 of 20");
         }
 
         [Test]
@@ -1293,6 +1377,8 @@ namespace MudBlazor.UnitTests.Components
             // Include callbacks in test coverage.
             dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.RowContextMenuClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
             dataGrid.Instance.SortChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.SelectedItemChanged.HasDelegate.Should().Be(true);
             dataGrid.Instance.FilterChanged.HasDelegate.Should().Be(true);
@@ -1367,6 +1453,295 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.InvokeAsync(dataGrid.Instance.ClearFiltersAsync);
             comp.Instance.FilterChangedCallCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Verifies CellClick and CellContextMenuClick fire with correct args: Item, RowIndex, ColumnIndex, Column,
+        /// CellContent, and MouseEventArgs.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellEventCallbacks()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Confirm delegates are wired.
+            dataGrid.Instance.CellClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.CellContextMenuClick.HasDelegate.Should().Be(true);
+
+            // Nothing fired yet.
+            comp.Instance.CellClicked.Should().Be(false);
+            comp.Instance.CellContextMenuClicked.Should().Be(false);
+            comp.Instance.LastCellClickArgs.Should().BeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Should().BeNull();
+
+            // Fire CellClick by clicking the first <td>.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().Be(true);
+            var clickArgs = comp.Instance.LastCellClickArgs;
+            clickArgs.Should().NotBeNull();
+            clickArgs.Item.Should().NotBeNull();
+            clickArgs.Item.Name.Should().Be("A");
+            clickArgs.RowIndex.Should().Be(0);
+            clickArgs.ColumnIndex.Should().Be(0);
+            clickArgs.Column.Should().NotBeNull();
+            clickArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            clickArgs.Column.CellContent(clickArgs.Item).Should().Be("A");
+            clickArgs.MouseEventArgs.Should().NotBeNull();
+
+            // Fire CellContextMenuClick by right-clicking the first <td>.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().Be(true);
+            var contextArgs = comp.Instance.LastCellContextMenuClickArgs;
+            contextArgs.Should().NotBeNull();
+            contextArgs.Item.Should().NotBeNull();
+            contextArgs.Item.Name.Should().Be("A");
+            contextArgs.RowIndex.Should().Be(0);
+            contextArgs.ColumnIndex.Should().Be(0);
+            contextArgs.Column.Should().NotBeNull();
+            contextArgs.Column.PropertyName.Should().Be(nameof(DataGridEventCallbacksTest.Item.Name));
+            contextArgs.Column.CellContent(contextArgs.Item).Should().Be("A");
+            contextArgs.MouseEventArgs.Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// When CellClick has a delegate, clicking a td fires CellClick and stopPropagation prevents
+        /// RowClick from also firing (RowClick is intentionally suppressed; see CellClick API docs).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_StopsRowClickPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick is wired — stopPropagation keeps RowClick from also firing.
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue();
+            comp.Instance.LastCellClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellClickArgs.Column.CellContent(comp.Instance.LastCellClickArgs.Item).Should().Be("A");
+            comp.Instance.RowClicked.Should().BeFalse("stopPropagation intentionally suppresses RowClick when CellClick has a delegate");
+        }
+
+        /// <summary>
+        /// When CellClick has NO delegate, clicking a td bubbles through to RowClick normally.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithoutDelegate_BubblesToRowClick()
+        {
+            // DataGridCellClickBubbleTest wires RowClick but NOT CellClick.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            await comp.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.RowClicked.Should().BeTrue("without a CellClick delegate the click bubbles to the tr @onclick");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
+        /// stopPropagation prevents RowContextMenuClick from also firing.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithDelegate_StopsRowContextMenuPropagation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellContextMenuClick is wired — right-clicking a td must NOT bubble to RowContextMenuClick.
+            dataGrid.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.CellContextMenuClicked.Should().BeTrue();
+            comp.Instance.LastCellContextMenuClickArgs.Should().NotBeNull();
+            comp.Instance.LastCellContextMenuClickArgs.Item.Name.Should().Be("A");
+            comp.Instance.LastCellContextMenuClickArgs.RowIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.ColumnIndex.Should().Be(0);
+            comp.Instance.LastCellContextMenuClickArgs.Column.CellContent(comp.Instance.LastCellContextMenuClickArgs.Item).Should().Be("A");
+            comp.Instance.RowContextMenuClicked.Should().BeFalse("CellContextMenuClick.HasDelegate stops propagation to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// When CellContextMenuClick has NO delegate, right-clicking a td bubbles through to RowContextMenuClick.
+        /// </summary>
+        [Test]
+        public async Task DataGridCellContextMenuClick_WithoutDelegate_BubblesToRowContextMenuClick()
+        {
+            // DataGridCellClickBubbleTest wires RowContextMenuClick but NOT CellContextMenuClick.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            comp.FindAll(".mud-table-body tr td")[0].ContextMenu();
+
+            comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
+        }
+
+        /// <summary>
+        /// Regression: when CellClick has a delegate, clicking a cell must still update
+        /// the selection (SelectedItemChanged must fire).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_SelectionStillUpdates()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // CellClick and SelectedItemChanged are both wired in DataGridEventCallbacksTest.
+            dataGrid.Instance.CellClick.HasDelegate.Should().BeTrue();
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue("CellClick should fire");
+            comp.Instance.SelectedItemChanged.Should().BeTrue("subscribing CellClick must not suppress SelectedItemChanged");
+        }
+
+        /// <summary>
+        /// Regression: when CellClick has a delegate, clicking a cell in Cell edit mode with
+        /// EditTrigger.OnRowClick must still activate editing (StartedEditingItem must fire).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellEditStillActivates()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            // CellClick and StartedEditingItem are both wired in DataGridEventCallbacksTest.
+            dataGrid.Instance.CellClick.HasDelegate.Should().BeTrue();
+            comp.Instance.StartedEditingItem.Should().BeFalse();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.CellClicked.Should().BeTrue("CellClick should fire");
+            comp.Instance.StartedEditingItem.Should().BeTrue("subscribing CellClick must not suppress StartedEditingItem in cell-edit mode");
+        }
+
+        /// <summary>
+        /// CellClick fires before selection (mirroring how RowClick fires before ActivateRowBehaviorsAsync).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellClickFiresBeforeSelection()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.EventOrder.Should().ContainInOrder(
+                "OnCellClick",
+                "OnSelectedItemChanged");
+        }
+
+        /// <summary>
+        /// CellClick fires before edit activation (mirroring how RowClick fires before ActivateRowBehaviorsAsync).
+        /// </summary>
+        [Test]
+        public async Task DataGridCellClick_WithDelegate_CellClickFiresBeforeEditActivation()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Cell)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            comp.Instance.EventOrder.Should().ContainInOrder(
+                "OnCellClick",
+                "OnStartedEditingItem");
+        }
+
+        /// <summary>
+        /// RowClick and CellClick have the same callback-then-behaviors ordering:
+        /// the public callback (RowClick / CellClick) fires before the row-level side effects
+        /// (selection, edit activation) in both paths.
+        /// </summary>
+        [Test]
+        public async Task DataGridRowClickAndCellClick_HaveTheSameCallbackOrder()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // --- Row click path ---
+            await dataGrid.FindAll(".mud-table-body tr")[0].ClickAsync();
+
+            var rowOrder = comp.Instance.EventOrder.ToList();
+            comp.Instance.EventOrder.Clear();
+
+            // --- Cell click path ---
+            await dataGrid.FindAll(".mud-table-body tr td")[0].ClickAsync();
+
+            var cellOrder = comp.Instance.EventOrder.ToList();
+
+            // Both paths: public callback fires first, selection fires second.
+            rowOrder.IndexOf("OnRowClick").Should().BeLessThan(rowOrder.IndexOf("OnSelectedItemChanged"),
+                "RowClick should fire before SelectedItemChanged");
+            cellOrder.IndexOf("OnCellClick").Should().BeLessThan(cellOrder.IndexOf("OnSelectedItemChanged"),
+                "CellClick should fire before SelectedItemChanged");
+
+            // The relative position of the callback to selection is the same in both paths.
+            (rowOrder.IndexOf("OnSelectedItemChanged") - rowOrder.IndexOf("OnRowClick"))
+                .Should().Be(cellOrder.IndexOf("OnSelectedItemChanged") - cellOrder.IndexOf("OnCellClick"),
+                "CellClick and RowClick should have the same callback-to-selection offset");
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent returns the bound property value for a PropertyColumn.
+        /// </summary>
+        [Test]
+        public void GetCellContent_PropertyColumn_ReturnsPropertyValue()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var propertyColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is PropertyColumn<DataGridGetCellContentTest.Item, string>);
+            var item = dataGrid.Instance.CurrentPageItems.First();
+
+            propertyColumn.GetCellContent(item).Should().Be(item.Name);
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent returns null for a TemplateColumn, which has no backing property.
+        /// </summary>
+        [Test]
+        public void GetCellContent_TemplateColumn_ReturnsNull()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var templateColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is TemplateColumn<DataGridGetCellContentTest.Item>);
+            var item = dataGrid.Instance.CurrentPageItems.First();
+
+            templateColumn.GetCellContent(item).Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that GetCellContent is consistent with CellContent for a PropertyColumn.
+        /// </summary>
+        [Test]
+        public void GetCellContent_MatchesCellContent_ForPropertyColumn()
+        {
+            var comp = Context.Render<DataGridGetCellContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGetCellContentTest.Item>>();
+
+            var propertyColumn = dataGrid.Instance.RenderedColumns
+                .First(c => c is PropertyColumn<DataGridGetCellContentTest.Item, string>);
+
+            foreach (var item in dataGrid.Instance.CurrentPageItems)
+            {
+                propertyColumn.GetCellContent(item).Should().Be(propertyColumn.CellContent(item));
+            }
         }
 
         [Test]
@@ -6318,6 +6693,32 @@ namespace MudBlazor.UnitTests.Components
             builder.CloseComponent();
         };
 
+        private static RenderFragment SelectColumnWithFuncInHeaderAndFooter => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.DisabledFunc), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.ShowInFooter), true);
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(3);
+            builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+        };
+
+        private static RenderFragment GroupedSelectColumnWithFuncInFooter => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.DisabledFunc), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.AddAttribute(2, nameof(SelectColumn<TestDataItem>.ShowInFooter), true);
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(3);
+            builder.AddAttribute(4, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, string>>(5);
+            builder.AddAttribute(6, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+            builder.AddAttribute(7, nameof(PropertyColumn<TestDataItem, string>.Grouping), true);
+            builder.CloseComponent();
+        };
+
         private static RenderFragment SelectColumnNoFunc => builder =>
         {
             builder.OpenComponent<SelectColumn<TestDataItem>>(0);
@@ -6516,6 +6917,212 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
             comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
             comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task SelectAll_WithDisabledRows_HeaderCheckboxReachesCheckedState()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Enabled Item 2", ShouldBeDisabled = false },
+                new() { Id = 3, Name = "Disabled Item", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            var headerCheckbox = comp.FindComponent<MudCheckBox<bool?>>();
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+            headerCheckbox.Instance.ReadValue.Should().BeTrue();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = false });
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+
+            await comp.FindAll("td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+            headerCheckbox.Instance.ReadValue.Should().BeNull();
+        }
+
+        [Test]
+        public async Task SelectAll_WithDisabledRows_FooterCheckboxReachesCheckedState()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Enabled Item 2", ShouldBeDisabled = false },
+                new() { Id = 3, Name = "Disabled Item", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFuncInHeaderAndFooter)
+            );
+
+            var footerCheckbox = comp.FindComponents<MudCheckBox<bool?>>()[1];
+            footerCheckbox.Instance.ReadValue.Should().BeFalse();
+
+            await comp.Find("tfoot .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+            footerCheckbox.Instance.ReadValue.Should().BeTrue();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+
+            await comp.Find("tfoot .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = false });
+            footerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+
+            await comp.FindAll("td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+            footerCheckbox.Instance.ReadValue.Should().BeNull();
+        }
+
+        [Test]
+        public async Task SelectAll_WithEveryRowDisabled_HeaderCheckboxStaysUnchecked()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Disabled Item 1", ShouldBeDisabled = true },
+                new() { Id = 2, Name = "Disabled Item 2", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            var headerCheckbox = comp.FindComponent<MudCheckBox<bool?>>();
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task SelectAll_GroupFooterCheckbox_AppliesToItsOwnGroupOnly()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "A" },
+                new() { Id = 2, Name = "A" },
+                new() { Id = 3, Name = "B" },
+                new() { Id = 4, Name = "B" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Groupable, true)
+                .Add(p => p.GroupExpanded, true)
+                .Add(p => p.Columns, GroupedSelectColumnWithFuncInFooter)
+            );
+
+            // In render order: header, group "A" footer, group "B" footer, grid footer.
+            var checkboxes = comp.FindComponents<MudCheckBox<bool?>>();
+            var header = checkboxes[0];
+            var groupA = checkboxes[1];
+            var groupB = checkboxes[2];
+            var gridFooter = checkboxes[3];
+
+            await groupA.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+            groupA.Instance.ReadValue.Should().BeTrue();
+            groupB.Instance.ReadValue.Should().BeFalse();
+            header.Instance.ReadValue.Should().BeNull();
+            gridFooter.Instance.ReadValue.Should().BeNull();
+
+            await groupB.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(items);
+            header.Instance.ReadValue.Should().BeTrue();
+            gridFooter.Instance.ReadValue.Should().BeTrue();
+
+            await groupA.Find("input").ChangeAsync(new ChangeEventArgs { Value = false });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[2], items[3] });
+            groupA.Instance.ReadValue.Should().BeFalse();
+            groupB.Instance.ReadValue.Should().BeTrue();
+
+            await gridFooter.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(items);
+
+            await gridFooter.Find("input").ChangeAsync(new ChangeEventArgs { Value = false });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+            groupA.Instance.ReadValue.Should().BeFalse();
+            groupB.Instance.ReadValue.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task SelectAll_GroupFooterCheckbox_SkipsDisabledRowsAndReportsPartialSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "A" },
+                new() { Id = 2, Name = "A" },
+                new() { Id = 3, Name = "A", ShouldBeDisabled = true },
+                new() { Id = 4, Name = "B" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Groupable, true)
+                .Add(p => p.GroupExpanded, true)
+                .Add(p => p.Columns, GroupedSelectColumnWithFuncInFooter)
+            );
+
+            var checkboxes = comp.FindComponents<MudCheckBox<bool?>>();
+            var groupA = checkboxes[1];
+            var groupB = checkboxes[2];
+
+            await comp.FindAll("tbody td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0] });
+            groupA.Instance.ReadValue.Should().BeNull();
+            groupB.Instance.ReadValue.Should().BeFalse();
+
+            await groupA.Find("input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[0], items[1] });
+            groupA.Instance.ReadValue.Should().BeTrue();
+            groupB.Instance.ReadValue.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A group footer must not select anything while the grid is in single selection mode, matching the grid-wide select-all.
+        /// </summary>
+        [Test]
+        public async Task SelectAll_GroupFooterCheckbox_DoesNothingWithoutMultiSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "A" },
+                new() { Id = 2, Name = "A" },
+                new() { Id = 3, Name = "B" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, false)
+                .Add(p => p.Groupable, true)
+                .Add(p => p.GroupExpanded, true)
+                .Add(p => p.Columns, GroupedSelectColumnWithFuncInFooter)
+            );
+
+            // SelectColumn hides its own checkbox here, but a custom footer template can still reach the action.
+            await comp.Instance.SetGroupSelectAllAsync(true, items.Take(2));
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
         }
 
         [Test]
