@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack Row>
-    <MudTextField @bind-Value="_normalText" Immediate="_immediate" DebounceInterval="_debounceInterval"
+    <MudTextField @bind-Value="@_normalText" Immediate="@_immediate" DebounceInterval="@_debounceInterval"
+                  OnDebounceIntervalElapsed="@HandleIntervalElapsed"
                   Variant="Variant.Outlined"
                   Adornment="Adornment.End"
                   AdornmentIcon="@Icons.Material.Filled.Search"
@@ -27,19 +28,17 @@
             break;
         }
     }
-    
-    
 </MudStack>
 
 <MudStack Row>
     <MudTooltip>
         <ChildContent>
-            <MudSwitch @bind-Value="_immediate" Label="Immediate"/>
+            <MudSwitch @bind-Value="@_immediate" Label="Immediate"/>
         </ChildContent>
         <TooltipContent>
             <MudText Typo="Typo.h6">Immediate</MudText>
             <MudText>If true then this component will fire <a
-                    href="https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event">input events</a>,if
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event">input events</a>, if
                 false then this component fires <a
                     href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event">change events</a>
                 instead.
@@ -49,7 +48,7 @@
 
     <MudTooltip>
         <ChildContent>
-            <MudNumericField @bind-Value="_debounceInterval" DebounceInterval="500" Label="Debounce Interval"/>
+            <MudNumericField @bind-Value="@_debounceInterval" DebounceInterval="500" Label="Debounce Interval"/>
         </ChildContent>
         <TooltipContent>
             <MudText Typo="Typo.h6">Debounce Interval</MudText>
@@ -59,21 +58,15 @@
             </MudText>
         </TooltipContent>
     </MudTooltip>
-
-
 </MudStack>
 
-
 @code {
-    string _normalText = "Try me!";
+    private string _normalText = "Try me!";
+    private bool _immediate;
+    private double _debounceInterval;
 
-    bool _immediate;
-
-    double _debounceInterval;
-
-    void HandleIntervalElapsed(string debouncedText)
+    private void HandleIntervalElapsed(string debouncedText)
     {
         // at this stage, interval has elapsed
     }
-
 }
