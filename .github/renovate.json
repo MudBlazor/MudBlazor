@@ -82,10 +82,10 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads and which spells the package in lower case, so match it case-insensitively.",
+            "description": "Group Bun toolchain updates. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads.",
             "matchPackageNames": [
                 "bun",
-                "/^bundotnet\\.cli$/i"
+                "BunDotNet.Cli"
             ],
             "matchFileNames": [
                 "src/Directory.Build.props",
