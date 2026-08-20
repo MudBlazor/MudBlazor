@@ -94,10 +94,13 @@
             ]
         },
         {
-            "description": "The web assets are built from the exact dependency set in src/bun.lock. Renovate only opens a PR when a release falls outside the package.json range, so eslint, sass and their transitives would otherwise never move. Lock file maintenance re-resolves them within the existing ranges.",
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them exactly like the NuGet references and take one reviewable PR per release. Lock file maintenance is what refreshes the transitive packages, which pinning direct dependencies cannot reach.",
             "matchManagers": [
                 "bun"
             ],
+            "rangeStrategy": "pin",
+            "groupName": "bun dependencies",
+            "groupSlug": "bun-dependencies",
             "lockFileMaintenance": {
                 "enabled": true,
                 "schedule": [

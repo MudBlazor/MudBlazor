@@ -4,8 +4,8 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "eslint": "^10.8.1",
-        "sass": "^1.103.0",
+        "eslint": "10.8.1",
+        "sass": "1.103.0",
       },
     },
   },
