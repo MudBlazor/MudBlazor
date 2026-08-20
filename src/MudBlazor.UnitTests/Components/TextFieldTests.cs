@@ -219,6 +219,62 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A DebounceInterval assigned in the constructor of a derived component never travels through the
+        /// ParameterView, so the change handler does not run for it. It must still be honored.
+        /// </summary>
+        [Test]
+        public async Task DebounceInterval_SetInDerivedComponentConstructor_ShouldDebounce()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<InheritedDebouncedTextField>();
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+
+            //Act
+            await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+
+            //Assert
+            textField.DebounceInterval.Should().Be(200d);
+            textField.Immediate.Should().BeTrue();
+
+            //input value has changed, but elapsed time is 0, so Value should not change in TextField
+            textField.ReadValue.Should().BeNull();
+
+            //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            textField.ReadValue.Should().BeNull();
+
+            //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
+        }
+
+        /// <summary>
+        /// When the constructor value and the value passed in markup are equal, the parameter counts as
+        /// unchanged and the change handler is skipped. Debouncing must still work.
+        /// </summary>
+        [Test]
+        public async Task DebounceInterval_MatchingConstructorAndParameterValue_ShouldDebounce()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<InheritedDebouncedTextField>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+
+            //Act
+            await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+
+            //Assert
+            textField.ReadValue.Should().BeNull();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            textField.ReadValue.Should().BeNull();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
+        }
+
+        /// <summary>
         /// DebounceInterval updates with epsilon-equivalent values should not break debouncing
         /// </summary>
         [Test]
