@@ -35,6 +35,7 @@
     <BunVersion>1.4.0</BunVersion>
     <BunToolRestore>dotnet tool restore --tool-manifest ../../.config/dotnet-tools.json</BunToolRestore>
     <BunWrapper>dotnet tool run bun -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
+    <BunInstall>$(BunWrapper) install --frozen-lockfile</BunInstall>
   </PropertyGroup>
 
   <!--
