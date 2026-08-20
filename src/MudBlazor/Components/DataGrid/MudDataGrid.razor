@@ -91,7 +91,7 @@
                                     <MudOverlay @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
-                                            <MudPopover UserAttributes="@ColumnsPanelPositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="@ColumnPanelOverlayClassname" OverflowBehavior="OverflowBehavior.FlipOnOpen"
+                                            <MudPopover UserAttributes="@ColumnsPanelPositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="@ColumnsPanelOverlayClassname" OverflowBehavior="OverflowBehavior.FlipOnOpen"
                                                         AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4"
                                                         Style="max-width:700px;" MaxHeight="400">
@@ -110,7 +110,7 @@
                                                     <ItemRenderer>
                                                         @if (string.IsNullOrEmpty(_columnsPanelSearch) || context.Title?.Contains(_columnsPanelSearch, StringComparison.InvariantCultureIgnoreCase) == true)
                                                         {
-                                                            <MudStack Row="true" Spacing="@(Dense ? 0 : 2)" AlignItems="AlignItems.Center" Style="border-bottom: 1px solid var(--mud-palette-table-lines);">
+                                                            <MudStack Row="true" Spacing="@(Dense ? 1 : 2)" AlignItems="AlignItems.Center" Style="border-bottom: 1px solid var(--mud-palette-table-lines);">
                                                                 @if (ColumnsPanelReordering)
                                                                 {
                                                                     <MudStack Spacing="0">

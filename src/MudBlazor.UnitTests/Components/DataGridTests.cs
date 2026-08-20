@@ -7530,6 +7530,40 @@ namespace MudBlazor.UnitTests.Components
                 CustomFilterButton().Icon.Should().Be("test_grid_filter_filled_icon"));
         }
 
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGrid_DenseColumnsPanel(bool dense)
+        {
+            var comp = Context.Render<DataGridColumnsPanelTest>(parameters =>
+                parameters.Add(x => x.Dense, dense));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnsPanelTest.Model>>();
+
+            var buttons = comp.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon");
+            await buttons[0].ClickAsync();
+
+            var menuItem = comp.Find(".mud-menu-item");
+            await menuItem.ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var popovers = comp.FindAll(".mud-popover.mud-data-grid-columns-panel");
+                popovers.Count.Should().Be(1);
+                var columnsPanel = popovers[0];
+
+                if (dense)
+                {
+                    columnsPanel.ClassList.Should().Contain("mud-data-grid-columns-panel-dense");
+                    comp.FindAll(".mud-data-grid-columns-panel-dense").Should().HaveCount(1);
+                }
+                else
+                {
+                    columnsPanel.ClassList.Should().NotContain("mud-data-grid-columns-panel-dense");
+                    comp.FindAll(".mud-data-grid-columns-panel-dense").Should().BeEmpty();
+                }
+            });
+        }
+
         #region Selection Cleanup Tests (ObservableCollection)
 
         [Test]

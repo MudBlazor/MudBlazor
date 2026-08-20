@@ -245,43 +245,7 @@
 }
 
 .mud-data-grid-columns-panel-dense{
-  .mud-drop-container {
-    .d-flex{
-      .mud-icon-button-size-small {
-        margin: -2px;
-      }
-    }
-    .mud-drop-item {
-      margin-bottom: 0;
-
-      div[role="group"] {
-        padding-top: 2px;
-        padding-bottom: 2px;
-      }
-    }
-
-    .mud-icon-button-size-small {
-      padding: 0 !important;
-      width: 24px !important;
-      height: 24px !important;
-
-      .mud-svg-icon {
-        font-size: 1.1rem !important;
-      }
-    }
-
-    .mud-switch {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-    }
-
-    .mud-input-control-margin-dense {
-      margin-top: 2px !important;
-      margin-bottom: 2px !important;
-
-      .mud-input-text {
-        margin-top: 0 !important;
-      }
-    }
+  .mud-data-grid-columns-panel-dense {
+    .mud-icon-button-size-small { padding: 2px; }
   }
 }
