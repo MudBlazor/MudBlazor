@@ -102,10 +102,7 @@
             "groupName": "bun dependencies",
             "groupSlug": "bun-dependencies",
             "lockFileMaintenance": {
-                "enabled": true,
-                "schedule": [
-                    "before 5am on monday"
-                ]
+                "enabled": true
             },
             "reviewers": [
                 "meenzen"
