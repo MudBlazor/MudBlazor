@@ -541,6 +541,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Issue #13619: Navigating an empty table keeps the current page at zero.
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToEmptyTableKeepsCurrentPageAtZero()
+        {
+            var table = Context.Render<MudTable<string>>();
+
+            await table.InvokeAsync(() => table.Instance.NavigateTo(0));
+
+            table.Instance.CurrentPage.Should().Be(0);
+        }
+
+        /// <summary>
         /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
         /// </summary>
         [Test]
@@ -2609,6 +2622,17 @@ namespace MudBlazor.UnitTests.Components
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be(expectedInfoText);
         }
 
+        [Test]
+        public void TablePagerInfoTextIsExcludedFromBrowserTranslation()
+        {
+            var tableComponent = Context.Render<TablePagerInfoTextTest1>();
+
+            tableComponent.Find("div.mud-table-page-number-information")
+                .GetAttribute("translate")
+                .Should()
+                .Be("no");
+        }
+
         /// <summary>
         /// Tests the aria-labels for the pager control buttons
         /// </summary>
@@ -3497,6 +3521,37 @@ namespace MudBlazor.UnitTests.Components
 
             pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
             pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
+        }
+
+        /// <summary>
+        /// Rows spell out aria-disabled as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public void RowAriaDisabled_ReflectsDisabledState()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1, 2 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.RowDisabledFunc, item => item == 2)
+            );
+
+            var rows = comp.FindAll("tbody tr.mud-table-row");
+
+            rows.Count.Should().Be(2);
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-disabled default of false, so the token has to be spelled out.
+            rows[1].ClassList.Should().Contain("mud-table-row-disabled");
+            rows[1].GetAttribute("aria-disabled").Should().Be("true");
+
+            rows[0].ClassList.Should().NotContain("mud-table-row-disabled");
+            rows[0].GetAttribute("aria-disabled").Should().Be("false");
         }
     }
 }

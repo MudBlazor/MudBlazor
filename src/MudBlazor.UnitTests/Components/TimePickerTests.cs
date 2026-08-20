@@ -587,6 +587,70 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Tab_CommitsPendingTime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters.Add(x => x.Time, new TimeSpan(2, 0, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(3, 0, 0)));
+            picker.Time.Should().Be(new TimeSpan(2, 0, 0));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(3, 0, 0)));
+            comp.Find("input").GetAttribute("value").Should().Be("03:00");
+        }
+
+        [Test]
+        public async Task Tab_AfterEscape_DoesNotCommitDiscardedTime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters.Add(x => x.Time, new TimeSpan(2, 0, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(3, 0, 0)));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            picker.Time.Should().Be(new TimeSpan(2, 0, 0));
+
+            // Tabbing on through the closed picker must not resurrect the selection Escape threw away.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+
+            await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(2, 0, 0)));
+            comp.Find("input").GetAttribute("value").Should().Be("02:00");
+        }
+
+        [Test]
+        public async Task Tab_WithPickerActions_DoesNotCommitPendingTime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<AutoCompleteTimePickerTest>();
+            var picker = comp.Instance.Picker;
+            await comp.InvokeAsync(() => picker.OpenAsync());
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(5, 45, 0)));
+
+            // PickerActions means the user commits explicitly with OK, so Tab must leave the value alone.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            picker.Time.Should().Be(new TimeSpan(0, 45, 0));
+            comp.Find("input").GetAttribute("value").Should().Be("00:45");
+        }
+
+        [Test]
         public async Task OnClick_Callback_FiresWhenInputClicked()
         {
             var clicked = false;

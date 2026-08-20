@@ -307,19 +307,16 @@ namespace MudBlazor
                 return;
             var text = ConvertSet(ReadValue);
             var cleanText = Mask.GetCleanText();
-            if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
-                return;
-
-            if (cleanText != text)
-            {
-                var maskText = Mask.Text;
+            if (!IsSameText(cleanText, text))
                 Mask.SetText(text);
-                if (maskText == Mask.Text)
-                    return;
-            }
 
-            if (ReadText != Mask.Text)
+            // Refresh whenever the displayed text disagrees with the mask, not only when the mask itself just changed.
+            // MudTextField shares this mask instance and applies the incoming value to it first, so a value cleared from code left the mask empty while our own text, and with it the rendered input, stayed on the old value (#12822).
+            if (!IsSameText(ReadText, Mask.Text))
                 await UpdateAsync();
+
+            static bool IsSameText(string? first, string? second)
+                => first == second || (string.IsNullOrEmpty(first) && string.IsNullOrEmpty(second));
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)

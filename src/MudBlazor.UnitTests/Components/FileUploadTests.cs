@@ -864,5 +864,31 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty(); // ErrorText should be cleared
             fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
         }
+
+        /// <summary>
+        /// A caller-supplied aria-required should win over the computed value, and required should still follow the parameter.
+        /// </summary>
+        [Test]
+        public void FileUpload_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            var input = comp.Find("input[type=file]");
+            input.GetAttribute("aria-required").Should().Be("true");
+            input.HasAttribute("required").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The generated per-input id stays component-owned so the file picker interop keeps working.
+        /// </summary>
+        [Test]
+        public void FileUpload_Should_KeepGeneratedInputId()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "id", "caller-id" } }));
+
+            comp.Find("input[type=file]").GetAttribute("id").Should().NotBe("caller-id");
+        }
     }
 }

@@ -20,6 +20,11 @@ namespace MudBlazor
         private readonly MudDataGrid<T> _dataGrid;
 
         /// <summary>
+        /// Supplies the rows of the group this footer belongs to, or <c>null</c> when the footer applies to the whole grid.
+        /// </summary>
+        internal Func<IEnumerable<T>?> GroupItemsFunc { private get; init; } = static () => null;
+
+        /// <summary>
         /// The items which apply to the footer.
         /// </summary>
         public IEnumerable<T> Items
@@ -49,19 +54,19 @@ namespace MudBlazor
         {
             get
             {
+                if (GroupItemsFunc() is { } groupItems)
+                {
+                    return _dataGrid.GetGroupSelectionState(groupItems);
+                }
+
                 if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
                 {
-                    if (_dataGrid.Selection.Count == Items.Count())
-                    {
-                        return true;
-                    }
-
                     if (_dataGrid.Selection.Count == 0)
                     {
                         return false;
                     }
 
-                    return null;
+                    return _dataGrid.Selection.Count == _dataGrid.GetSelectableItems().Count() ? true : null;
                 }
 
                 return false;
@@ -77,7 +82,9 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new FooterActions
             {
-                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x ?? false),
+                SetSelectAllAsync = x => GroupItemsFunc() is { } groupItems
+                    ? _dataGrid.SetGroupSelectAllAsync(x ?? false, groupItems)
+                    : _dataGrid.SetSelectAllAsync(x ?? false),
             };
         }
 
