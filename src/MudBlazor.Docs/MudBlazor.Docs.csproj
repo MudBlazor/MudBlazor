@@ -87,7 +87,6 @@
   <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <!-- The build script shapes the emitted stylesheet, so it is an input too. -->
     <BuildScriptInputs Include="build.mjs" />
     <WebAssetInputs Include="@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />

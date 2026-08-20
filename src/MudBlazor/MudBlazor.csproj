@@ -105,7 +105,6 @@
   <ItemGroup>
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <!-- The build script and the lint rules shape the emitted bundle, so they are inputs too. -->
     <BuildScriptInputs Include="build.mjs" />
     <BuildScriptInputs Include="../eslint.config.ts" />
     <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />

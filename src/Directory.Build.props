@@ -40,9 +40,7 @@
   <!--
     Shared inputs for every Bun-built asset: the dependency graph and the toolchain version.
     Projects that build web assets add these to their own WebAssetInputs, plus their local build.mjs.
-    Without them the incremental Inputs/Outputs check only watches .js and .scss sources, so changing
-    a dependency or the Bun version leaves the previously built assets in place and the build silently
-    ships stale output.
+    Without them the incremental Inputs/Outputs check only watches .js and .scss sources, so changing a dependency or the Bun version leaves the previously built assets in place and the build silently ships stale output.
     This file is listed because it defines BunVersion, which selects the Bun binary that emits the bundle.
   -->
   <ItemGroup>
