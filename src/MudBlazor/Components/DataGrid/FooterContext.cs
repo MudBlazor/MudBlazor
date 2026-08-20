@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MudBlazor
@@ -50,28 +49,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates whether all values are currently selected.
         /// </summary>
-        public bool? IsAllSelected
-        {
-            get
-            {
-                if (GroupItemsFunc() is { } groupItems)
-                {
-                    return _dataGrid.GetGroupSelectionState(groupItems);
-                }
-
-                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
-                {
-                    if (_dataGrid.Selection.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    return _dataGrid.Selection.Count == _dataGrid.GetSelectableItems().Count() ? true : null;
-                }
-
-                return false;
-            }
-        }
+        public bool? IsAllSelected => _dataGrid.GetSelectionState(GroupItemsFunc() ?? Items);
 
         /// <summary>
         /// Creates a new instance.
