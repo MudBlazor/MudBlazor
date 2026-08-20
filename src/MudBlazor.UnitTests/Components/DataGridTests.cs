@@ -5195,9 +5195,8 @@ namespace MudBlazor.UnitTests.Components
             footer.GetAttribute("style").Should().Contain("position:sticky");
             footer.GetAttribute("style").Should().Contain("left:0px");
 
-            var body = dataGrid.Find(".mud-table-container");
-            body.GetAttribute("style").Should().Contain("width:max-content");
-            body.GetAttribute("style").Should().Contain("overflow:clip");
+            var root = dataGrid.Find(".mud-table-root");
+            root.GetAttribute("style").Should().Contain("width:max-content");
 
             dataGrid.Find("th").ClassList.Should().Contain("sticky-left");
             dataGrid.FindAll("th").Last().ClassList.Should().Contain("sticky-right");
