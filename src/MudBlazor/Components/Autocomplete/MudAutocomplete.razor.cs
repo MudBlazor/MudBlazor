@@ -18,7 +18,6 @@ namespace MudBlazor
         private readonly string _componentId = Identifier.Create();
 
         private bool _isCleared;
-        private bool _isClearing;
         private bool _isProcessingValue;
         private int _selectedListItemIndex;
         private readonly int _elementKey = 0;
@@ -611,7 +610,7 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (_isClearing || _isProcessingValue)
+            if (_elementReference.IsClearing || _isProcessingValue)
             {
                 //When you select a value in the popover, SelectOptionAsync will be called.
                 //When it reaches SetValueAsync, it will be awaited.
@@ -858,7 +857,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ClearAsync()
         {
-            _isClearing = true;
+            _elementReference.IsClearing = true;
             try
             {
                 _isCleared = true;
@@ -874,7 +873,7 @@ namespace MudBlazor
             }
             finally
             {
-                _isClearing = false;
+                _elementReference.IsClearing = false;
             }
         }
 
@@ -1069,6 +1068,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            if (_elementReference.IsClearing)
+            {
+                // To avoid reacting to the clicking of the clear button, we ignore this event because it is propagated.
+                return Task.CompletedTask;
+            }
+
             return OnInputActivatedAsync(true);
         }
 
@@ -1083,6 +1088,12 @@ namespace MudBlazor
             if (GetReadOnlyState())
             {
                 // A readonly input doesn't trigger onblur later correctly, so we have to disable focus features for it.
+                return;
+            }
+
+            if (_elementReference.IsClearing)
+            {
+                // To avoid reacting to the clicking of the clear button, we have to disable focus features while the clearing event chain is happening.
                 return;
             }
 
@@ -1122,13 +1133,16 @@ namespace MudBlazor
             _debounceTimer?.Dispose();
             if (_items?.Length > 0)
                 _items = [];
-            _open = true;
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedListItemIndex = 0;
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
+            if (Open)
+            {
+                await OpenMenuAsync();
+            }
         }
         internal async Task AdornmentClickHandlerAsync()
         {

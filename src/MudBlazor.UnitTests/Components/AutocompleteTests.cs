@@ -2600,9 +2600,47 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_OpenChanged_HandleClearButton()
         {
             var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
+
+            //Trigger the focus of the autocomplete using the clear button. 
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
             comp.Instance.OpenedCount.Should().Be(0);
             comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Remain_Open_On_ClearButton_Usage()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            //Trigger the focus of the autocomplete using the clear button. 
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_ClearButton_Usage()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+
+            //Trigger the focus of the autocomplete using the clear button. 
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(1);
             comp.Instance.ClearCount.Should().Be(1);
         }
 

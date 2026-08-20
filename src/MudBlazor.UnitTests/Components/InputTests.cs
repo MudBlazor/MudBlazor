@@ -73,6 +73,34 @@ public class InputTests : BunitTest
         }
     }
 
+    [Test]
+    public async Task MudInputIsClearingShouldRespectMouseState()
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        var button = comp.Find("div.mud-input .mud-input-clear-button");
+        button.Should().NotBeNull();
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+        await button.ClickAsync();
+        comp.Instance.IsClearing.Should().BeFalse();
+
+        comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        button = comp.Find("div.mud-input .mud-input-clear-button");
+
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+        await button.MouseLeaveAsync();
+        comp.Instance.IsClearing.Should().BeFalse();
+    }
+
     /// <summary>
     /// A caller-supplied aria-required should reach both halves of the range, while required still follows the parameter.
     /// </summary>
