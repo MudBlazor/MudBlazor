@@ -76,21 +76,34 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates and request Bun reviewer.",
-            "matchManagers": [
-                "custom.regex"
-            ],
+            "description": "Group Bun toolchain updates and request Bun reviewer. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads and which spells the package in lower case, so match it case-insensitively.",
             "matchPackageNames": [
                 "bun",
-                "BunDotNet.Cli"
+                "/^bundotnet\\.cli$/i"
             ],
             "matchFileNames": [
-                "src/Directory.Build.props"
+                "src/Directory.Build.props",
+                ".config/dotnet-tools.json"
             ],
             "groupName": "bun toolchain",
             "groupSlug": "bun-toolchain",
             "separateMajorMinor": false,
             "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
+        },
+        {
+            "description": "The web assets are built from the exact dependency set in src/bun.lock. Renovate only opens a PR when a release falls outside the package.json range, so eslint, sass and their transitives would otherwise never move. Lock file maintenance re-resolves them within the existing ranges.",
+            "matchManagers": [
+                "bun"
+            ],
+            "lockFileMaintenance": {
+                "enabled": true,
+                "schedule": [
+                    "before 5am on monday"
+                ]
+            },
             "reviewers": [
                 "meenzen"
             ]
@@ -124,17 +137,6 @@
             ],
             "depNameTemplate": "bun",
             "datasourceTemplate": "npm"
-        },
-        {
-            "customType": "regex",
-            "managerFilePatterns": [
-                "/(^|/)Directory\\.Build\\.props$/"
-            ],
-            "matchStrings": [
-                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
-            ],
-            "depNameTemplate": "BunDotNet.Cli",
-            "datasourceTemplate": "nuget"
         }
     ]
 }
