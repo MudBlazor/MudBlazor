@@ -76,7 +76,7 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates and request Bun reviewer. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads and which spells the package in lower case, so match it case-insensitively.",
+            "description": "Group Bun toolchain updates. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads and which spells the package in lower case, so match it case-insensitively.",
             "matchPackageNames": [
                 "bun",
                 "/^bundotnet\\.cli$/i"
@@ -94,7 +94,7 @@
             ]
         },
         {
-            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them exactly like the NuGet references and take one reviewable PR per release. Lock file maintenance is what refreshes the transitive packages, which pinning direct dependencies cannot reach.",
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them. Lock file maintenance is what refreshes the transitive packages, which pinning direct dependencies cannot reach.",
             "matchManagers": [
                 "bun"
             ],
