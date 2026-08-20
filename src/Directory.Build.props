@@ -35,6 +35,13 @@
     <BunVersion>1.3.14</BunVersion>
     <BunToolRestore>dotnet tool restore --tool-manifest ../../.config/dotnet-tools.json</BunToolRestore>
     <BunWrapper>dotnet tool run bun -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
+    <!--
+      Install the exact dependency set recorded in bun.lock before running any build script.
+      Without this Bun falls back to auto-install, which ignores the lockfile and resolves the package.json ranges against the registry on every build, so the emitted CSS and JS depend on what npm happened to serve.
+      The command runs from a project directory and Bun walks up to src/package.json on its own.
+      The frozen flag makes the build fail rather than silently rewrite the lockfile when it disagrees with package.json.
+    -->
+    <BunInstall>$(BunWrapper) install --frozen-lockfile</BunInstall>
   </PropertyGroup>
 
   <!--

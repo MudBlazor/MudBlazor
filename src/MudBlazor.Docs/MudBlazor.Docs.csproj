@@ -111,6 +111,9 @@
     <Exec Command="$(BunToolRestore)"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
+    <Exec Command="$(BunInstall)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
     <Exec Command="$(BunWrapper) run build.mjs"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>

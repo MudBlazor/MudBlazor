@@ -3,9 +3,5 @@
     "eslint": "^10.8.1",
     "sass": "^1.103.0"
   },
-  "overrides": {
-    "flatted": "^3.4.0",
-    "picomatch": "^4.0.4"
-  },
   "trustedDependencies": ["sass"]
 }
