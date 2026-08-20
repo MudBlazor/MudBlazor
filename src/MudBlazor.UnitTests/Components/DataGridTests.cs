@@ -7005,6 +7005,62 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task SelectAll_WithSelectedDisabledRow_HeaderCheckboxNotFalselyChecked()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled Selected", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Disabled Selected", ShouldBeDisabled = true },
+                new() { Id = 3, Name = "Enabled Unselected", ShouldBeDisabled = false },
+                new() { Id = 4, Name = "Disabled Unselected", ShouldBeDisabled = true }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.SelectedItems, new HashSet<TestDataItem> { items[0], items[1] }));
+
+            // The selected count matches the selectable count, but the selected disabled row must not stand in for the unselected enabled row.
+            var headerCheckbox = comp.FindComponent<MudCheckBox<bool?>>();
+            headerCheckbox.Instance.ReadValue.Should().BeNull();
+        }
+
+        [Test]
+        public async Task SelectAll_Toggle_PreservesSelectedDisabledRow()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Enabled Selected", ShouldBeDisabled = false },
+                new() { Id = 2, Name = "Disabled Selected", ShouldBeDisabled = true },
+                new() { Id = 3, Name = "Enabled Unselected", ShouldBeDisabled = false }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.SelectedItems, new HashSet<TestDataItem> { items[0], items[1] }));
+
+            var headerCheckbox = comp.FindComponent<MudCheckBox<bool?>>();
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+            headerCheckbox.Instance.ReadValue.Should().BeTrue();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(items);
+
+            // Deselecting all only removes the rows the header checkbox controls; the disabled row's selection survives.
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = false });
+            headerCheckbox.Instance.ReadValue.Should().BeFalse();
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo(new[] { items[1] });
+        }
+
+        [Test]
         public async Task SelectAll_GroupFooterCheckbox_AppliesToItsOwnGroupOnly()
         {
             var items = new List<TestDataItem>

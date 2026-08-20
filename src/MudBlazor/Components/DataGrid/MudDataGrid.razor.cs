@@ -2166,11 +2166,16 @@ namespace MudBlazor
             if (!MultiSelection)
                 return;
 
-            Selection.Clear(); // Clear selection first, regardless of selecting or unselecting all.
+            var selectableItems = GetSelectableItems();
 
-            if (value) // Logic for selecting all
+            if (value)
             {
-                Selection.UnionWith(GetSelectableItems());
+                Selection.UnionWith(selectableItems);
+            }
+            else
+            {
+                // Only remove the rows the checkbox controls so selections it cannot restore, such as disabled rows, survive.
+                Selection.ExceptWith(selectableItems);
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
@@ -2231,12 +2236,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The state of a group's select-all checkbox: <c>true</c> when every selectable row of the group is selected, <c>false</c> when none of them is, otherwise <c>null</c>.
+        /// The state of a select-all checkbox covering <paramref name="items"/>: <c>true</c> when every selectable row is selected, <c>false</c> when none of them is, otherwise <c>null</c>.
         /// </summary>
-        /// <param name="groupItems">The rows belonging to the group.</param>
-        internal bool? GetGroupSelectionState(IEnumerable<T> groupItems)
+        /// <param name="items">The rows the checkbox covers, e.g. all displayed rows for the header checkbox or a group's rows for a group footer checkbox.</param>
+        internal bool? GetSelectionState(IEnumerable<T> items)
         {
-            var selectableItems = GetSelectableItems(groupItems).ToList();
+            var selectableItems = GetSelectableItems(items).ToList();
             var selectedCount = selectableItems.Count(Selection.Contains);
 
             if (selectedCount == 0)
