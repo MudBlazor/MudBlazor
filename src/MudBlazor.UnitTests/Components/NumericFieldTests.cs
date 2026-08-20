@@ -1201,6 +1201,24 @@ namespace MudBlazor.UnitTests.Components
             field.GetAttribute("type").Should().Be("text");
         }
 
+        /// <summary>
+        /// Existing quantifiers and end anchors are preserved while single-key patterns remain repeatable (#13646).
+        /// </summary>
+        [TestCase("", "")]
+        [TestCase(@"[0-9,.\-]", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9,.\-]*", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9]+", @"[0-9]+")]
+        [TestCase(@"[0-9]?", @"[0-9]?")]
+        [TestCase(@"[0-9]{1,3}", @"[0-9]{1,3}")]
+        [TestCase(@"^-?[0-9.,]*$", @"^-?[0-9.,]*$")]
+        public void NumericField_Should_RenderEffectivePattern(string pattern, string expectedPattern)
+        {
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(x => x.Pattern, pattern));
+
+            comp.Find("input").GetAttribute("pattern").Should().Be(expectedPattern);
+        }
+
         [Test]
         public void NumericField_Should_RenderSpinbuttonAriaAttributes()
         {
