@@ -1,7 +1,11 @@
 {
   "dependencies": {
-    "eslint": "^10.0.0",
-    "sass": "^1.97.2"
+    "eslint": "^10.8.1",
+    "sass": "^1.103.0"
+  },
+  "overrides": {
+    "flatted": "^3.4.0",
+    "picomatch": "^4.0.4"
   },
   "trustedDependencies": ["sass"]
 }
