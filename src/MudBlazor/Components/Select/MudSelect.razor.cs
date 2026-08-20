@@ -949,11 +949,16 @@ namespace MudBlazor
         {
             if (MultiSelection && SelectAll)
             {
-                if (_selectedValues.Count == 0)
+                var enabledValues = new HashSet<T?>(Items
+                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                    .Select(x => x.Value), Comparer);
+                var selectedEnabledValuesCount = _selectedValues.Count(enabledValues.Contains);
+
+                if (selectedEnabledValuesCount == 0)
                 {
                     _selectAllChecked = false;
                 }
-                else if (Items.Count(x => !x.Disabled) == _selectedValues.Count)
+                else if (selectedEnabledValuesCount == enabledValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -980,25 +985,33 @@ namespace MudBlazor
                 _selectAllChecked = true;
             }
 
-            // Define the items selection
-            if (_selectAllChecked.Value)
-            {
-                await SelectAllItems();
-            }
-            else
-            {
-                await ClearAsync();
-            }
+            await UpdateSelectAllSelectionAsync(_selectAllChecked.Value);
         }
 
-        private async Task SelectAllItems()
+        private async Task UpdateSelectAllSelectionAsync(bool selectAll)
         {
             if (!MultiSelection)
             {
                 return;
             }
 
-            var selectedValues = new HashSet<T?>(Items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), Comparer);
+            var disabledValues = new HashSet<T?>(Items
+                .Where(x => x.Disabled)
+                .Select(x => x.Value), Comparer);
+            var selectedValues = new HashSet<T?>(_selectedValues.Where(disabledValues.Contains), Comparer);
+
+            if (selectAll)
+            {
+                selectedValues.UnionWith(Items
+                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                    .Select(x => x.Value));
+            }
+            else if (selectedValues.Count == 0)
+            {
+                await ClearAsync();
+                return;
+            }
+
             _selectedValues = new HashSet<T?>(selectedValues, Comparer);
 
             if (MultiSelectionTextFunc != null)
@@ -1023,6 +1036,8 @@ namespace MudBlazor
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
             }
         }
+
+        private static bool HasNonNullValue(T? value) => !ReferenceEquals(value, null);
 
         private async Task OnFocusOutAsync(FocusEventArgs args)
         {

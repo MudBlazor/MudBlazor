@@ -879,6 +879,30 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(0));
         }
 
+        /// <summary>
+        /// SelectAll preserves disabled selected items when selecting and deselecting enabled items (#11236).
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_SelectAll_PreservesDisabledSelectedItems()
+        {
+            var comp = Context.Render<MultiSelectTest7>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await select.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Comparer, StringComparer.OrdinalIgnoreCase)
+                .Add(x => x.SelectedValues, ["FOURTHA"]));
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues)
+                .Should().BeEquivalentTo(["FirstA", "SecondA", "ThirdA", "FOURTHA"]));
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues)
+                .Should().BeEquivalentTo(["FOURTHA"]));
+        }
+
         [Test]
         public async Task SingleSelect_Should_CallValidationFunc()
         {
