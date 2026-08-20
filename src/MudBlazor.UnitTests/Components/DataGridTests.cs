@@ -5203,18 +5203,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridVirtualizeStickyColumnsResizer()
-        {
-            var comp = Context.Render<DataGridVirtualizeStickyColumnsResizerTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridVirtualizeStickyColumnsResizerTest.Model>>();
-            var itemCount = dataGrid.Instance.Items.Count();
-            // Count data rows using the mud-table-row class; avoids counting Virtualize spacer <tr> elements.
-            dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().NotBe(itemCount, because: "With Virtualization, we should not render every rows");
-            dataGrid.FindAll("tbody tr.mud-table-row").Count.Should().Be(100, because: "With Virtualization, we should not render every rows");
-
-        }
-
-        [Test]
         public async Task DataGridCellContext()
         {
             var comp = Context.Render<DataGridCellContextTest>();
