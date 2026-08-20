@@ -7004,6 +7004,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
         }
 
+        /// <summary>
+        /// A selected disabled row must not stand in for an unselected enabled row in the select-all state: regression from https://github.com/MudBlazor/MudBlazor/pull/13596.
+        /// </summary>
         [Test]
         public async Task SelectAll_WithSelectedDisabledRow_HeaderCheckboxNotFalselyChecked()
         {
@@ -7029,6 +7032,9 @@ namespace MudBlazor.UnitTests.Components
             headerCheckbox.Instance.ReadValue.Should().BeNull();
         }
 
+        /// <summary>
+        /// Toggling select-all only affects the rows its checkbox controls, so a disabled row selected from code survives: https://github.com/MudBlazor/MudBlazor/pull/13596.
+        /// </summary>
         [Test]
         public async Task SelectAll_Toggle_PreservesSelectedDisabledRow()
         {
