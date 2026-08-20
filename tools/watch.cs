@@ -23,6 +23,7 @@ static async Task Run()
     var buildPropsFile = Path.Combine(srcDirectory, "Directory.Build.props");
     var versions = GetVersions(buildPropsFile);
     await RestoreTools(repositoryRoot);
+    await InstallBunDependencies(srcDirectory, toolsDirectory, versions.BunVersion);
 
     using var docsProcess = new Process()
     {
@@ -162,6 +163,57 @@ static async Task RestoreTools(string repositoryRoot)
     if (process.ExitCode != 0)
     {
         throw new InvalidOperationException($"Failed to restore dotnet tools. Exit code: {process.ExitCode}");
+    }
+}
+
+// The MSBuild asset targets install from bun.lock before running build.mjs; do the same here so watch mode uses the pinned dependency set.
+static async Task InstallBunDependencies(string srcDirectory, string toolsDirectory, string bunVersion)
+{
+    using var process = new Process
+    {
+        StartInfo = new ProcessStartInfo
+        {
+            FileName = "dotnet",
+            WorkingDirectory = srcDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+        },
+    };
+
+    string[] args =
+    [
+        "tool", "run", "bun", "--",
+        "wrapper", "--version", bunVersion, "--path", toolsDirectory, "--silent", "--",
+        "install", "--frozen-lockfile",
+    ];
+
+    foreach (var arg in args)
+    {
+        process.StartInfo.ArgumentList.Add(arg);
+    }
+
+    process.Start();
+    var outputTask = process.StandardOutput.ReadToEndAsync();
+    var errorTask = process.StandardError.ReadToEndAsync();
+    await Task.WhenAll(outputTask, errorTask, process.WaitForExitAsync());
+    var output = await outputTask;
+    var error = await errorTask;
+
+    if (!string.IsNullOrWhiteSpace(output))
+    {
+        Console.WriteLine(output.TrimEnd());
+    }
+
+    if (!string.IsNullOrWhiteSpace(error))
+    {
+        Console.Error.WriteLine(error.TrimEnd());
+    }
+
+    if (process.ExitCode != 0)
+    {
+        throw new InvalidOperationException($"Failed to install bun dependencies. Exit code: {process.ExitCode}");
     }
 }
 

@@ -12,6 +12,12 @@
         "build"
     ],
     "commitMessagePrefix": "Build: ",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "constraints": {
+        "bun": "1.3.14"
+    },
     "vulnerabilityAlerts": {
         "enabled": true,
         "addLabels": [
@@ -94,16 +100,13 @@
             ]
         },
         {
-            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them. Lock file maintenance is what refreshes the transitive packages, which pinning direct dependencies cannot reach.",
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them. Lock file maintenance is enabled at the top level, where Renovate actually reads it, and refreshes the transitives that pinning cannot reach. constraints.bun must track BunVersion: lock file maintenance regenerates bun.lock from scratch, and a newer bun writes lockfileVersion 2, which the pinned bun cannot read.",
             "matchManagers": [
                 "bun"
             ],
             "rangeStrategy": "pin",
             "groupName": "bun dependencies",
             "groupSlug": "bun-dependencies",
-            "lockFileMaintenance": {
-                "enabled": true
-            },
             "reviewers": [
                 "meenzen"
             ]
