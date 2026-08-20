@@ -105,7 +105,10 @@
   <ItemGroup>
     <JsAssetInputs Include="TScripts/**/*.js" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
+    <!-- The build script and the lint rules shape the emitted bundle, so they are inputs too. -->
+    <BuildScriptInputs Include="build.mjs" />
+    <BuildScriptInputs Include="../eslint.config.ts" />
+    <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
     <WebAssetOutputs Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.js.map;wwwroot/MudBlazor.min.css" />
   </ItemGroup>
