@@ -86,7 +86,7 @@ Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*
 
 If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-If `src/package.json` or `src/bun.lock` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, or a project's `build.mjs` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 
