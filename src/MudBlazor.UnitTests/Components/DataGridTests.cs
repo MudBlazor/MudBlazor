@@ -1613,6 +1613,46 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Re-rendering must not rebuild a column's compiled property accessors; Roslyn hands the column a new
+        /// expression-tree instance on every render, so identity alone cannot decide whether it really changed.
+        /// </summary>
+        [Test]
+        public void DataGridPropertyColumn_KeepsUnchangedPropertyExpression()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var column = comp.FindComponents<PropertyColumn<DataGridSortableTest.Item, string>>().First().Instance;
+
+            var before = column.PropertyExpression;
+
+            comp.Render();
+
+            column.PropertyExpression.Should().BeSameAs(before,
+                "an unchanged property expression must not be reprocessed");
+        }
+
+        /// <summary>
+        /// A column must still follow a property expression that genuinely changed, and must keep reading values
+        /// captured by the expression at evaluation time rather than freezing them when it was compiled.
+        /// </summary>
+        [Test]
+        public void DataGridPropertyColumn_FollowsChangedPropertyExpression()
+        {
+            var comp = Context.Render<DataGridPropertyExpressionSwapTest>();
+            var column = comp.FindComponents<PropertyColumn<DataGridPropertyExpressionSwapTest.Item, string>>().First().Instance;
+
+            comp.Markup.Should().Contain("first").And.Contain("alpha");
+            column.PropertyName.Should().Be("First");
+
+            comp.Instance.Selector = x => x.Second;
+            comp.Instance.Key = "b";
+            comp.Render();
+
+            comp.Markup.Should().Contain("second", "a genuinely different expression must be picked up");
+            comp.Markup.Should().Contain("beta", "a captured value must still be read when the expression is evaluated");
+            column.PropertyName.Should().Be("Second");
+        }
+
+        /// <summary>
         /// A cell must read its bound property exactly once per render; the value is used by several
         /// render paths and re-reading it invokes the compiled property expression again.
         /// </summary>

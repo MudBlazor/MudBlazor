@@ -1,0 +1,27 @@
+﻿@using System.Linq.Expressions
+
+<MudDataGrid T="Item" Items="@_items">
+    <Columns>
+        <PropertyColumn Property="@Selector" />
+        <PropertyColumn Property="@(x => x.Values[Key])" Title="Dynamic" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Used to verify a column follows a property expression that really changed";
+
+    public Expression<Func<Item, string>> Selector { get; set; } = x => x.First;
+
+    public string Key { get; set; } = "a";
+
+    private readonly List<Item> _items = new() { new Item() };
+
+    public class Item
+    {
+        public string First { get; set; } = "first";
+
+        public string Second { get; set; } = "second";
+
+        public Dictionary<string, string> Values { get; } = new() { ["a"] = "alpha", ["b"] = "beta" };
+    }
+}

@@ -24,10 +24,11 @@ namespace MudBlazor
         private readonly Guid _id = Guid.NewGuid();
 
         private string? _propertyName;
+        private string? _lastMemberName;
         private Func<T, object?>? _cellContentFunc;
         private Func<T, TProperty>? _compiledPropertyFunc;
         private Expression<Func<T, TProperty>>? _lastAssignedProperty;
-        private Expression<Func<T, TProperty>>? _compiledPropertyFuncFor;
+        private int _lastAssignedPropertyHash;
 
         /// <summary>
         /// The property whose values are displayed in the column.
@@ -50,32 +51,46 @@ namespace MudBlazor
         {
             base.OnParametersSet();
             // We have to do a bit of pre-processing on the lambda expression. Only do that if it's new or changed.
-            if (_lastAssignedProperty != Property)
+            // Razor rebuilds the expression tree on every render, so the instance always differs and identity alone
+            // would mean recompiling every time. Compare the shape instead, and keep the first instance of a given
+            // shape as the canonical one so callers that cache against PropertyExpression keep hitting their cache.
+            // A lambda that captures hashes its closure by reference, so those still recompile, which is the safe answer.
+            if (!ReferenceEquals(_lastAssignedProperty, Property))
             {
-                _lastAssignedProperty = Property;
-                var safePropertyExpression = ExpressionNull.AddNullChecks(Property);
-                var compiledPropertyExpression = safePropertyExpression.Compile();
-                _cellContentFunc = item => compiledPropertyExpression(item);
+                var propertyHash = ExpressionHasher.GetHashCode(Property);
+                if (_lastAssignedProperty is null || propertyHash != _lastAssignedPropertyHash)
+                {
+                    _lastAssignedProperty = Property;
+                    _lastAssignedPropertyHash = propertyHash;
+
+                    var safePropertyExpression = ExpressionNull.AddNullChecks(Property);
+                    var compiledPropertyExpression = safePropertyExpression.Compile();
+                    _cellContentFunc = item => compiledPropertyExpression(item);
+                    _compiledPropertyFunc = null;
+
+                    var property = PropertyPath.Visit(Property);
+                    if (property.IsBodyMemberExpression)
+                    {
+                        _propertyName = property.GetPath();
+                    }
+                    else
+                    {
+                        // Most likely this is a dynamic expression that people use as workaround https://try.mudblazor.com/snippet/cYGxuTmhyqAQeCVM
+                        // We can't assign any meaningful name at all, therefore we should assign an unique ID like we do for TemplateColumn
+                        _propertyName = _id.ToString();
+                    }
+
+                    _lastMemberName = property.GetLastMemberName();
+                }
             }
 
-            var property = PropertyPath.Visit(Property);
-            if (property.IsBodyMemberExpression)
-            {
-                _propertyName = property.GetPath();
-            }
-            else
-            {
-                // Most likely this is a dynamic expression that people use as workaround https://try.mudblazor.com/snippet/cYGxuTmhyqAQeCVM
-                // We can't assign any meaningful name at all, therefore we should assign an unique ID like we do for TemplateColumn
-                _propertyName = _id.ToString();
-            }
-            Title ??= property.GetLastMemberName();
+            Title ??= _lastMemberName;
 
             CompileGroupBy();
         }
 
         protected internal override LambdaExpression? PropertyExpression
-            => Property;
+            => _lastAssignedProperty ?? Property;
 
         /// <summary>
         /// The name of the property.
@@ -91,11 +106,8 @@ namespace MudBlazor
 
         protected internal override object? PropertyFunc(T item)
         {
-            if (_compiledPropertyFunc == null || _compiledPropertyFuncFor != Property)
-            {
-                _compiledPropertyFunc = Property.Compile();
-                _compiledPropertyFuncFor = Property;
-            }
+            // Invalidated in OnParametersSet when the expression actually changes.
+            _compiledPropertyFunc ??= (_lastAssignedProperty ?? Property).Compile();
 
             return _compiledPropertyFunc(item);
         }
