@@ -467,7 +467,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
-            if (_valueState.Value is not null)
+            if (_valueState.Value is not null || !string.IsNullOrEmpty(_textState.Value))
             {
                 await SetColorAsync(null);
             }
