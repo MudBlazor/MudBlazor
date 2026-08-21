@@ -18,7 +18,6 @@ namespace MudBlazor
     /// <seealso cref="MudDataGrid{T}"/>
     public partial class HeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
-        private bool _selected;
         private bool _isResizing;
         private double? _resizerHeight;
         private bool _filtersMenuVisible;
@@ -260,8 +259,6 @@ namespace MudBlazor
             if (DataGrid != null)
             {
                 DataGrid.SortChangedEvent += OnGridSortChanged;
-                DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
-                DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
             }
         }
 
@@ -308,19 +305,6 @@ namespace MudBlazor
             {
                 Column.SortIndex = sortDefinition.Index;
             }
-        }
-
-        private void OnSelectedAllItemsChanged(bool value)
-        {
-            _selected = value;
-            StateHasChanged();
-        }
-
-        private void OnSelectedItemsChanged(HashSet<T> items)
-        {
-            Debug.Assert(DataGrid is not null);
-            _selected = items.Count == DataGrid.GetFilteredItemsCount();
-            StateHasChanged();
         }
 
         private async Task OnResizerPointerDown(PointerEventArgs args)
@@ -769,8 +753,6 @@ namespace MudBlazor
             if (DataGrid is not null)
             {
                 DataGrid.SortChangedEvent -= OnGridSortChanged;
-                DataGrid.SelectedAllItemsChangedEvent -= OnSelectedAllItemsChanged;
-                DataGrid.SelectedItemsChangedEvent -= OnSelectedItemsChanged;
             }
         }
     }

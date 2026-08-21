@@ -1613,6 +1613,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A selection change must render each header cell once; the grid's own StateHasChanged already covers them.
+        /// </summary>
+        [Test]
+        public async Task DataGridHeaderCell_RendersOncePerSelectionChange()
+        {
+            var comp = Context.Render<DataGridHeaderRenderOnSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderRenderOnSelectionTest.Item>>();
+            var item = dataGrid.Instance.Items.First();
+
+            comp.Instance.HeaderRenders = 0;
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, item));
+            comp.Instance.HeaderRenders.Should().Be(1, "selecting a row should render the header once");
+
+            comp.Instance.HeaderRenders = 0;
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            comp.Instance.HeaderRenders.Should().Be(1, "select-all should render the header once");
+
+            // The header must still reflect the new state, so the test cannot pass by rendering zero times.
+            comp.FindAll("thead input[type=checkbox]")[0].IsChecked().Should().BeTrue();
+
+            comp.Instance.HeaderRenders = 0;
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(false));
+            comp.Instance.HeaderRenders.Should().Be(1, "deselect-all should render the header once");
+            comp.FindAll("thead input[type=checkbox]")[0].IsChecked().Should().BeFalse();
+        }
+
+        /// <summary>
         /// A cell must read its bound property exactly once per render; the value is used by several
         /// render paths and re-reading it invokes the compiled property expression again.
         /// </summary>
