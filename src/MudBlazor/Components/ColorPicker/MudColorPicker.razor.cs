@@ -464,6 +464,19 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
+        public override async Task ClearAsync(bool close = true)
+        {
+            // The base implementation only closes the popover, so without this override the public API cleared nothing.
+            // The clear button appeared to work only because it pushes an empty string up the text channel first.
+            if (_valueState.Value is not null)
+            {
+                await SetColorAsync(null);
+            }
+
+            await base.ClearAsync(close);
+        }
+
         protected override async Task SetTextAsync(string? value, bool callback)
         {
             if (callback)
