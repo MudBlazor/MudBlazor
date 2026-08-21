@@ -4721,6 +4721,54 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Typing into the column filter menu's value box does not re-render the grid, because the filter is not applied until the Filter button is pressed.
+        /// </summary>
+        /// <remarks>
+        /// Re-rendering every row and header cell per keystroke made typing lag badly on a large grid (#13639).
+        /// </remarks>
+        [Test]
+        public async Task DataGridColumnFilterMenu_TypingValue_DoesNotRerenderGrid()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            var filterInput = comp.FindComponent<MudTextField<string>>();
+
+            var rendersBeforeTyping = dataGrid.RenderCount;
+            await comp.InvokeAsync(() => filterInput.Instance.ValueChanged.InvokeAsync("Ira"));
+
+            dataGrid.RenderCount.Should().Be(rendersBeforeTyping);
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            // The typed value is still captured, so applying it filters as usual.
+            await comp.Find(".apply-filter-button").ClickAsync();
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Editing a filter which is already applied still updates the rows as the value changes.
+        /// </summary>
+        [Test]
+        public async Task DataGridColumnFilterMenu_EditingAppliedFilter_UpdatesRows()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("Ira"));
+            await comp.Find(".apply-filter-button").ClickAsync();
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+
+            // Re-open the applied filter and retype: the grid follows the new value without pressing Filter again.
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("Sam"));
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.FindAll("tbody tr td")[0].TextContent.Trim().Should().Be("Sam");
+        }
 
         [Test]
         public async Task DataGridCustomPropertyFilterTemplate()
