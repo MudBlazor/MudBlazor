@@ -31,9 +31,7 @@ charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# The Visual Studio resource designer owns the layout of .resx files: it re-emits
-# the ResX schema comment with trailing whitespace and no final newline on every
-# save. Leave those two alone so the designer and the repo do not fight.
+# The Visual Studio resource designer owns the layout of .resx files: it re-emits the ResX schema comment with trailing whitespace and no final newline on every save. Leave those two alone so the designer and the repo do not fight.
 [*.resx]
 insert_final_newline = unset
 trim_trailing_whitespace = false
