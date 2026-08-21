@@ -24,5 +24,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true
-  }
+  },
+
+  // With no include, this config globs all of src, which drags .NET build output into the project.
+  "exclude": ["**/bin", "**/obj"]
 }
