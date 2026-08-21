@@ -1543,6 +1543,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With no CellClick or CellContextMenuClick delegate the cells must carry no event handlers at all,
+        /// otherwise every td registers a DOM listener that does nothing.
+        /// </summary>
+        [Test]
+        public void DataGridCell_WithoutDelegates_RegistersNoCellEventHandlers()
+        {
+            // DataGridCellClickBubbleTest wires the row events but neither cell event.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            var cellHandlers = comp.FindAll(".mud-table-body tr td")
+                .SelectMany(td => td.Attributes.Select(attribute => attribute.Name))
+                .Where(name => name.Contains("onclick") || name.Contains("oncontextmenu"))
+                .ToList();
+
+            cellHandlers.Should().BeEmpty("EventCallback<T>.Empty has a live no-op delegate, so the callbacks must fall back to default instead");
+        }
+
+        /// <summary>
+        /// When both cell delegates are supplied the cells must carry the click and context-menu handlers.
+        /// </summary>
+        [Test]
+        public void DataGridCell_WithDelegates_RegistersCellEventHandlers()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+
+            var firstCell = comp.FindAll(".mud-table-body tr td")[0];
+            var cellHandlers = firstCell.Attributes.Select(attribute => attribute.Name).ToList();
+
+            cellHandlers.Should().Contain(name => name.Contains("onclick"));
+            cellHandlers.Should().Contain(name => name.Contains("oncontextmenu"));
+        }
+
+        /// <summary>
         /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
         /// stopPropagation prevents RowContextMenuClick from also firing.
         /// </summary>
