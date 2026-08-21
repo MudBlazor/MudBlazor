@@ -39,6 +39,18 @@ trim_trailing_whitespace = false
 # JSON files
 [*.json]
 indent_size = 2
+# RFC 8259 says an implementation must not add a byte order mark to JSON text.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# HTML files
+[*.html]
+indent_size = 4
+# UTF-8 needs no BOM to be read as UTF-8, and most of these are charset-less fragments.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # Powershell files
 [*.ps1]
