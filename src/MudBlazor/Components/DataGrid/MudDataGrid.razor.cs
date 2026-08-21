@@ -2248,7 +2248,16 @@ namespace MudBlazor
 
         private SelectColumn<T>? GetSelectColumn()
         {
-            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+            // Called once per rendered row, so avoid the LINQ iterator; RenderedColumns is a List and foreach uses its struct enumerator.
+            foreach (var column in RenderedColumns)
+            {
+                if (column is SelectColumn<T> selectColumn)
+                {
+                    return selectColumn;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -2272,15 +2281,40 @@ namespace MudBlazor
         /// <param name="items">The rows the checkbox covers, e.g. all displayed rows for the header checkbox or a group's rows for a group footer checkbox.</param>
         internal bool? GetSelectionState(IEnumerable<T> items)
         {
-            var selectableItems = GetSelectableItems(items).ToList();
-            var selectedCount = selectableItems.Count(Selection.Contains);
-
-            if (selectedCount == 0)
+            // The checkbox covers every filtered row, not just the visible page, so walk the rows once and stop as soon as the answer cannot change.
+            if (Selection.Count == 0)
             {
                 return false;
             }
 
-            return selectedCount == selectableItems.Count ? true : null;
+            var selectColumn = GetSelectColumn();
+            var anySelected = false;
+            var anyUnselected = false;
+
+            foreach (var item in items)
+            {
+                if (IsRowSelectionDisabled(item, selectColumn))
+                {
+                    continue;
+                }
+
+                if (Selection.Contains(item))
+                {
+                    anySelected = true;
+                }
+                else
+                {
+                    anyUnselected = true;
+                }
+
+                if (anySelected && anyUnselected)
+                {
+                    return null;
+                }
+            }
+
+            // No selectable row is selected, or every one of them is.
+            return anySelected;
         }
 
         internal bool? GetRowSelectionState(T item)

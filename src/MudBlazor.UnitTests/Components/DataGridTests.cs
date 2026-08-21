@@ -1576,6 +1576,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The select-all checkbox covers every filtered row, so its state must be resolved without walking
+        /// the whole data set on each render.
+        /// </summary>
+        [Test]
+        public void DataGridSelectAll_DoesNotScanEveryFilteredRow()
+        {
+            // 500 items, 10 per page, nothing selected.
+            var comp = Context.Render<DataGridSelectAllScanTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectAllScanTest.Item>>();
+
+            comp.Instance.DisabledFuncCalls = 0;
+            dataGrid.Render();
+
+            comp.Instance.DisabledFuncCalls.Should().BeLessThan(100,
+                "the select-all state must not be resolved by scanning all 500 filtered rows");
+        }
+
+        /// <summary>
         /// A cell must read its bound property exactly once per render; the value is used by several
         /// render paths and re-reading it invokes the compiled property expression again.
         /// </summary>
