@@ -14,8 +14,10 @@ namespace MudBlazor
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
+        private readonly ParameterState<DateRange?> _dateRangeState;
         private DateTime? _firstDate, _secondDate, _minValidDate, _maxValidDate;
         private DateRange? _dateRange;
+        private DateRange? _dateRangeParameter;
         private Range<string>? _rangeText;
 
         /// <summary>
@@ -27,6 +29,10 @@ namespace MudBlazor
             _allowDisabledDatesInCountState = registerScope.RegisterParameter<bool>(nameof(AllowDisabledDatesInCount))
                 .WithParameter(() => AllowDisabledDatesInCount)
                 .WithChangeHandler(RecalculateValidDays);
+            _dateRangeState = registerScope.RegisterParameter<DateRange?>(nameof(DateRange))
+                .WithParameter(() => _dateRangeParameter)
+                .WithEventCallback(() => DateRangeChanged)
+                .WithChangeHandler(OnDateRangeParameterChangedAsync);
 
             DisplayMonths = 2;
         }
@@ -106,9 +112,15 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
-            // awaits inside SetDateRangeAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
-            set => SetDateRangeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
+            // DateRange is managed by MudBlazor's ParameterState framework (see _dateRangeState in the constructor).
+            // Blazor stores the assigned parameter value here (raw); the state's change handler
+            // (OnDateRangeParameterChangedAsync) reflects a programmatic/parent assignment in the display WITHOUT
+            // raising DateRangeChanged (#10834). A genuine user selection instead writes through
+            // _dateRangeState.SetValueAsync, which DOES raise DateRangeChanged. The getter keeps returning the
+            // processed value (_dateRange) so normalization and disabled-date filtering remain observable through
+            // the public API. Because assignment no longer starts async work here, the earlier suppression race
+            // (PR #13328) can no longer occur through this setter.
+            set => _dateRangeParameter = value;
         }
 
         /// <summary>
@@ -121,62 +133,99 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
+        // Internal value change (user calendar selection, clear, or text edit): update the display AND notify the
+        // parent through DateRangeChanged (two-way binding write-back). Programmatic/parent assignments instead flow
+        // through the ParameterState change handler (OnDateRangeParameterChangedAsync), which never notifies.
         protected async Task SetDateRangeAsync(DateRange? range, bool updateValue, bool suppressInteraction = false)
+        {
+            if (!await UpdateDateRangeDisplayAsync(range, updateValue, suppressInteraction))
+            {
+                return;
+            }
+
+            // Keep the raw parameter mirror aligned with the internally selected value so that change detection in
+            // SetParametersAsync compares a subsequent programmatic assignment against what the user actually sees
+            // (otherwise a parent could re-assign the pre-change value and it would be missed as "unchanged").
+            _dateRangeParameter = _dateRange;
+
+            // Writing through the state raises DateRangeChanged and keeps the tracked ParameterState value in sync,
+            // so a later programmatic assignment of the same value is still detected as "unchanged".
+            await _dateRangeState.SetValueAsync(_dateRange);
+            await BeginValidateAsync();
+            if (!suppressInteraction)
+            {
+                FieldChanged(_value);
+            }
+        }
+
+        // Runs when DateRange is assigned programmatically (from a parent) via the ParameterState framework.
+        // It reflects the new value in the display but must NOT raise DateRangeChanged: echoing back an event the
+        // parent never triggered is exactly the bug reported in #10834. suppressInteraction mirrors the previous
+        // behavior where a parameter assignment was never treated as user interaction.
+        private async Task OnDateRangeParameterChangedAsync(ParameterChangedEventArgs<DateRange?> args)
+        {
+            if (await UpdateDateRangeDisplayAsync(args.Value, updateValue: true, suppressInteraction: true))
+            {
+                await BeginValidateAsync();
+            }
+        }
+
+        // Applies a date range to the picker's display state (normalization, text, highlighted date, picker month,
+        // disabled-date filtering). Returns true when the value was accepted and actually changed, false when it was
+        // unchanged or rejected (e.g. it contains a disabled date). This method never raises DateRangeChanged.
+        private async Task<bool> UpdateDateRangeDisplayAsync(DateRange? range, bool updateValue, bool suppressInteraction)
         {
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
 
-            if (_dateRange != range)
+            if (_dateRange == range)
             {
-                var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
-                    .Range(0, int.MaxValue)
-                    .Select(index => range.Start.Value.AddDays(index))
-                    .TakeWhile(date => date <= range.End.Value)
-                    .Any(date => IsDateDisabledFunc(date.Date));
+                return false;
+            }
 
-                if (doesRangeContainDisabledDates)
+            var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
+                .Range(0, int.MaxValue)
+                .Select(index => range.Start.Value.AddDays(index))
+                .TakeWhile(date => date <= range.End.Value)
+                .Any(date => IsDateDisabledFunc(date.Date));
+
+            if (doesRangeContainDisabledDates)
+            {
+                _rangeText = null;
+                await SetTextAsync(null, false);
+                return false;
+            }
+
+            if (!suppressInteraction)
+            {
+                Touched = true;
+            }
+
+            if (range?.Start is not null && StartMonth == null)
+                PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
+
+            _dateRange = range;
+            _value = range?.End;
+            HighlightedDate = range?.Start;
+
+            if (updateValue)
+            {
+                ResetConverterErrors();
+                if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                 {
                     _rangeText = null;
                     await SetTextAsync(null, false);
-                    return;
                 }
-
-                if (!suppressInteraction)
+                else
                 {
-                    Touched = true;
-                }
-
-                if (range?.Start is not null && StartMonth == null)
-                    PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
-
-                _dateRange = range;
-                _value = range?.End;
-                HighlightedDate = range?.Start;
-
-                if (updateValue)
-                {
-                    ResetConverterErrors();
-                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
-                    {
-                        _rangeText = null;
-                        await SetTextAsync(null, false);
-                    }
-                    else
-                    {
-                        _rangeText = new Range<string>(
-                            ConvertSet(_dateRange.Start),
-                            ConvertSet(_dateRange.End));
-                        await SetTextAsync(_dateRange.ToString(GetConverter()), false);
-                    }
-                }
-
-                await DateRangeChanged.InvokeAsync(_dateRange);
-                await BeginValidateAsync();
-                if (!suppressInteraction)
-                {
-                    FieldChanged(_value);
+                    _rangeText = new Range<string>(
+                        ConvertSet(_dateRange.Start),
+                        ConvertSet(_dateRange.End));
+                    await SetTextAsync(_dateRange.ToString(GetConverter()), false);
                 }
             }
+
+            return true;
         }
 
         private Range<string>? RangeText
