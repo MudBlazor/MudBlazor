@@ -36,7 +36,7 @@ trim_trailing_whitespace = true
 # HTML files
 [*.html]
 indent_size = 4
-# The encoding belongs in <meta charset>, so a BOM is redundant here.
+# UTF-8 needs no BOM to be read as UTF-8, and most of these are charset-less fragments.
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
