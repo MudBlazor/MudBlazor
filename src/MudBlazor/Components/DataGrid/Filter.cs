@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
@@ -40,6 +41,9 @@ namespace MudBlazor
         internal EventCallback<TimeSpan?> TimeValueChanged => EventCallback.Factory.Create<TimeSpan?>(this, TimeValueChangedAsync);
         internal EventCallback<DateTime?> DateOnlyValueChanged => EventCallback.Factory.Create<DateTime?>(this, DateOnlyValueChangedAsync);
         internal EventCallback<Guid?> GuidValueChanged => EventCallback.Factory.Create<Guid?>(this, GuidValueChangedAsync);
+
+        // Keydown fires for every character typed, so it needs the same non-component receiver for the same reason, even though the handler only acts on Enter and Escape.
+        internal EventCallback<KeyboardEventArgs> KeyDown => EventCallback.Factory.Create<KeyboardEventArgs>(this, KeyDownAsync);
 
         public Filter(MudDataGrid<T> dataGrid, IFilterDefinition<T> filterDefinition, Column<T>? column)
         {
@@ -187,12 +191,30 @@ namespace MudBlazor
             return ApplyChangesAsync();
         }
 
+        // The column filter menu's keyboard shortcuts: Enter applies the filter and Escape clears it.
+        // Both paths refresh the grid themselves, so nothing here relies on an automatic render.
+        private Task KeyDownAsync(KeyboardEventArgs args)
+        {
+            if (_column is null)
+            {
+                return Task.CompletedTask;
+            }
+
+            return args.Key switch
+            {
+                "Enter" => _column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
+                "Escape" => _column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
+                _ => Task.CompletedTask
+            };
+        }
+
         // Regroups the data after a filter edit and, in Simple mode, raises FilterChanged.
         // Simple mode applies filters live, so it notifies here; the row and menu modes notify from their own apply paths instead.
         private Task ApplyChangesAsync()
         {
             // The column filter menu edits a definition the grid has not applied yet, and only FilterDefinitions feeds the rows and the header's filtered icon, so its value cannot change anything on screen.
-            // Regrouping and re-rendering every cell per keystroke there is pure waste, and it is what makes typing in the menu's value box lag on a large grid (#13639). The menu's Filter button applies the definition and refreshes the grid then.
+            // Regrouping and re-rendering every cell per keystroke there is pure waste, and it is what makes typing in the menu's value box lag on a large grid (#13639).
+            // The menu's Filter button applies the definition and refreshes the grid then.
             if (_dataGrid.FilterDefinitions.All(x => x.Id != _filterDefinition.Id))
             {
                 return Task.CompletedTask;

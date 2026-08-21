@@ -4734,10 +4734,17 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
 
             await comp.Find(".filter-button").ClickAsync();
-            var filterInput = comp.FindComponent<MudTextField<string>>();
 
             var rendersBeforeTyping = dataGrid.RenderCount;
-            await comp.InvokeAsync(() => filterInput.Instance.ValueChanged.InvokeAsync("Ira"));
+
+            // Type through the rendered input: a real keystroke fires keydown as well as input, and both used to re-render the whole grid.
+            var typed = "";
+            foreach (var character in "Ira")
+            {
+                typed += character;
+                await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = character.ToString() });
+                await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = typed });
+            }
 
             dataGrid.RenderCount.Should().Be(rendersBeforeTyping);
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
@@ -4746,6 +4753,34 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find(".apply-filter-button").ClickAsync();
             dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Enter in the column filter menu's value box applies the filter, and Escape clears it.
+        /// </summary>
+        /// <remarks>
+        /// These shortcuts share the value box's keydown handler, which deliberately does not re-render the grid (#13639).
+        /// </remarks>
+        [Test]
+        public async Task DataGridColumnFilterMenu_EnterApplies_EscapeClears()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = "Ira" });
+            await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
         }
 
         /// <summary>
