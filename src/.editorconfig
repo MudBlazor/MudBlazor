@@ -26,18 +26,17 @@ indent_size = 2
 indent_size = 2
 
 # JSON files
-# RFC 8259 says an implementation must not add a byte order mark to JSON text.
 [*.json]
 indent_size = 2
+# RFC 8259 says an implementation must not add a byte order mark to JSON text.
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
 
 # HTML files
-# Already 4-space throughout. The encoding belongs in <meta charset>, so a BOM
-# is redundant here too.
 [*.html]
 indent_size = 4
+# The encoding belongs in <meta charset>, so a BOM is redundant here.
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
