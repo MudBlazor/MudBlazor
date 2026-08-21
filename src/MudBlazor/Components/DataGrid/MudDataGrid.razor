@@ -53,7 +53,7 @@
                                 <tr class="mud-table-row">
                                     @foreach (var column in RenderedColumns)
                                     {
-                                        <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
+                                        <HeaderCell @key="column" SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
                                     }
                                 </tr>
                                 @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
@@ -268,7 +268,36 @@
                         </table>
                     </ChildContent>
                     <ItemRenderer>
-                        @context.HeaderCell.TableHeader()
+                        @if (DragDropColumnReordering && ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+                        {
+                            var currentIndex = RenderedColumns.IndexOf(context);
+                            var isFirst = currentIndex == 0;
+                            var previousColumn = !isFirst ? RenderedColumns[currentIndex - 1] : null;
+                            var isPreZoneAllowed = (context.DragAndDropEnabled ?? true) && (previousColumn?.DragAndDropEnabled ?? true);
+
+                            <div class="d-flex position-relative" style="width: 100%; height: 100%;">
+                                <MudDropZone T="Column<T>"
+                                             Identifier="@($"{PrePrefix}{context.PropertyName}")"
+                                             AllowReorder="@isPreZoneAllowed"
+                                             Class="grid-dropzone dropzone-pre"
+                                             CanDrop="@(item => isPreZoneAllowed)" />
+                                <div style="width: 100%">
+                                    @context.HeaderCell.TableHeader()
+                                </div>
+                                @if (currentIndex == RenderedColumns.Count - 1)
+                                {
+                                    <MudDropZone T="Column<T>"
+                                                 Identifier="@($"{PostPrefix}{context.PropertyName}")"
+                                                 AllowReorder="@(context.DragAndDropEnabled ?? true)"
+                                                 Class="grid-dropzone dropzone-post"
+                                                 CanDrop="@(item => context.DragAndDropEnabled != false)" />
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            @context.HeaderCell.TableHeader()
+                        }
                     </ItemRenderer>
                 </MudDropContainer>
             </div>
