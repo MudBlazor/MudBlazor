@@ -28,29 +28,17 @@ namespace MudBlazor
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
-        // The filter editors live in a render fragment owned by MudDataGrid, so binding their ValueChanged
-        // straight to a handler makes the grid the callback's receiver, and Blazor then re-renders the whole
-        // grid - every header cell, every popover, every visible row - after each keystroke (#13639).
-        // Routing them through this non-component receiver opts out of that automatic render; ApplyChangesAsync
-        // re-renders deliberately, and only when the edited filter is actually applied to the data.
+        // The filter editors live in a render fragment owned by MudDataGrid, so binding their ValueChanged straight to a handler makes the grid the callback's receiver, and Blazor then re-renders the whole grid - every header cell, every popover, every visible row - after each keystroke (#13639).
+        // Routing them through this non-component receiver opts out of that automatic render; ApplyChangesAsync re-renders deliberately, and only when the edited filter is actually applied to the data.
         internal EventCallback<Column<T>> FieldChanged => EventCallback.Factory.Create<Column<T>>(this, FieldChangedAsync);
-
         internal EventCallback<string> OperatorChanged => EventCallback.Factory.Create<string>(this, OperatorChangedAsync);
-
         internal EventCallback<string> StringValueChanged => EventCallback.Factory.Create<string>(this, StringValueChangedAsync);
-
         internal EventCallback<double?> NumberValueChanged => EventCallback.Factory.Create<double?>(this, NumberValueChangedAsync);
-
         internal EventCallback<Enum> EnumValueChanged => EventCallback.Factory.Create<Enum>(this, EnumValueChangedAsync);
-
         internal EventCallback<bool?> BoolValueChanged => EventCallback.Factory.Create<bool?>(this, BoolValueChangedAsync);
-
         internal EventCallback<DateTime?> DateValueChanged => EventCallback.Factory.Create<DateTime?>(this, DateValueChangedAsync);
-
         internal EventCallback<TimeSpan?> TimeValueChanged => EventCallback.Factory.Create<TimeSpan?>(this, TimeValueChangedAsync);
-
         internal EventCallback<DateTime?> DateOnlyValueChanged => EventCallback.Factory.Create<DateTime?>(this, DateOnlyValueChangedAsync);
-
         internal EventCallback<Guid?> GuidValueChanged => EventCallback.Factory.Create<Guid?>(this, GuidValueChangedAsync);
 
         public Filter(MudDataGrid<T> dataGrid, IFilterDefinition<T> filterDefinition, Column<T>? column)
