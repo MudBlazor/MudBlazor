@@ -1561,6 +1561,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With no RowContextMenuClick delegate the rows must carry no context-menu handler, otherwise every row registers a DOM listener that does nothing.
+        /// </summary>
+        [Test]
+        public void DataGridRow_WithoutContextMenuDelegate_RegistersNoContextMenuHandler()
+        {
+            // DataGridCellClickBubbleTest wires RowClick and RowContextMenuClick.
+            var withDelegate = Context.Render<DataGridCellClickBubbleTest>();
+            withDelegate.FindAll(".mud-table-body tr")
+                .SelectMany(row => row.Attributes.Select(attribute => attribute.Name))
+                .Should().Contain(name => name.Contains("oncontextmenu"));
+
+            // DataGridCellValueReadsTest wires neither.
+            var withoutDelegate = Context.Render<DataGridCellValueReadsTest>();
+            withoutDelegate.FindAll(".mud-table-body tr")
+                .SelectMany(row => row.Attributes.Select(attribute => attribute.Name))
+                .Should().NotContain(name => name.Contains("oncontextmenu"));
+        }
+
+        /// <summary>
         /// When both cell delegates are supplied the cells must carry the click and context-menu handlers.
         /// </summary>
         [Test]

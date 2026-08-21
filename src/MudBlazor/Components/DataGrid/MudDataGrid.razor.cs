@@ -2543,15 +2543,23 @@ namespace MudBlazor
             return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
 
+        // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method
+        // declares one, even when the branch that needs it is never taken.
         private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellClick.HasDelegate
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column))
+                ? CreateCellClickCallback(item, rowIndex, colIndex, column)
                 : default;
+
+        private EventCallback<MouseEventArgs> CreateCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column));
 
         private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellContextMenuClick.HasDelegate
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))
+                ? CreateCellContextMenuClickCallback(item, rowIndex, colIndex, column)
                 : default;
+
+        private EventCallback<MouseEventArgs> CreateCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column));
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.
