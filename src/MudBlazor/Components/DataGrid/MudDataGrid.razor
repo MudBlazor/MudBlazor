@@ -116,28 +116,28 @@
                                                                     <MudStack Spacing="0">
                                                                         @if (RenderedColumns.IndexOf(context) != 0)
                                                                         {
-                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
+                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp].Value Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
                                                                         }
                                                                         @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
                                                                         {
-                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
+                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown].Value Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
                                                                         }
                                                                     </MudStack>
                                                                 }
 
                                                                 @if (context.GroupingState.Value)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context.HeaderCell.UngroupColumnAsync())"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup].Value Disabled="!context.groupable" OnClick="@(e => context.HeaderCell.UngroupColumnAsync())"></MudIconButton>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context.HeaderCell.GroupColumnAsync())"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group].Value Disabled="!context.groupable" OnClick="@(e => context.HeaderCell.GroupColumnAsync())"></MudIconButton>
                                                                 }
                                                                 <MudSwitch T="bool" Ripple="false" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Value="@context.HiddenState.Value" ValueChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
                                                                 <MudSpacer />
 
                                                                 <div>
-                                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort].Value Disabled="!context.sortable" OnClick="@(e => context.HeaderCell.SortChangedAsync(e))"></MudIconButton>
                                                                     @if (context.DataGrid.SortMode == SortMode.Multiple)
                                                                     {
                                                                         if (context.SortIndex < 0)
@@ -153,11 +153,11 @@
 
                                                                 @if (context.HeaderCell.hasFilter)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@context.DataGrid.FilterIconFilled" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.OpenFilters"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@context.DataGrid.FilterIconFilled" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter].Value Disabled="!context.filterable" OnClick="@context.HeaderCell.OpenFilters"></MudIconButton>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@context.DataGrid.FilterIconEmpty" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.AddFilter"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@context.DataGrid.FilterIconEmpty" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter].Value Disabled="!context.filterable" OnClick="@context.HeaderCell.AddFilter"></MudIconButton>
                                                                 }
 
                                                                 @if (ColumnsPanelReordering)
@@ -494,7 +494,7 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="1" Class="d-flex">
-                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter]"></MudIconButton>
+                        <MudIconButton Class="remove-filter-button" Icon="@Icons.Material.Filled.Close" OnClick="@filter.RemoveFilterAsync" Size="@Size.Small" Style="align-self: flex-end" aria-label="@Localizer[LanguageResource.MudDataGrid_RemoveFilter].Value"></MudIconButton>
                     </MudItem>
                     <MudItem xs="4">
                         <MudSelect T="Column<T>" 

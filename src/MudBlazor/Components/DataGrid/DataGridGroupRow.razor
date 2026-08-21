@@ -8,7 +8,7 @@
     <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
         <div style="display:flex; align-items:center;">
             <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))" OnClick="@GroupExpandClick"
-                           aria-label="@(_expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup] : @Localizer[LanguageResource.MudDataGrid_ExpandGroup])" />
+                           aria-label="@(_expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup].Value : @Localizer[LanguageResource.MudDataGrid_ExpandGroup].Value)" />
             @if (GroupDefinition.GroupTemplate is not null)
             {
                 @GroupDefinition.GroupTemplate(GroupDefinition)

@@ -21,7 +21,7 @@
                 OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
                 Size="@IconSize"
                 Disabled="ButtonDisabledFunc.Invoke(context.Item)"
-                aria-label="@(context.OpenHierarchies.Contains(context.Item) ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup] : @Localizer[LanguageResource.MudDataGrid_ExpandGroup])" />
+                aria-label="@(context.OpenHierarchies.Contains(context.Item) ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup].Value : @Localizer[LanguageResource.MudDataGrid_ExpandGroup].Value)" />
         }
     </CellTemplate>
 </TemplateColumn>
