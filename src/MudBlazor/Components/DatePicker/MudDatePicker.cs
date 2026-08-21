@@ -63,8 +63,12 @@ namespace MudBlazor
 
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
-            // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            // without this the UI doesn't display a validation error correctly.
+            // Empty text is not user input that failed to convert, so it must not re-enter this branch.
+            // A clear-button click empties the text before ClearAsync runs, so re-entering here would overwrite
+            // Text with null whenever the debounce window above had already closed, leaving the observable result
+            // dependent on the wall clock.
+            if (_value != date || (date is null && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
