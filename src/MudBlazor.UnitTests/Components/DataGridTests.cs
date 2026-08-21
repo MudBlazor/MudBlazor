@@ -3597,6 +3597,140 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridSimpleFilterEscapeClosesFiltersPanel()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await dataGrid.FindAll(".filter-button")[0].ClickAsync();
+
+            comp.FindAll(".filters-panel").Should().HaveCount(1);
+
+            var input = comp.Find(".filters-panel .filter-input input");
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".filters-panel").Should().BeEmpty();
+            });
+        }
+
+        [Test]
+        public async Task DataGridSimpleFilterEscapeRemovesIncompleteFilter()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await dataGrid.FindAll(".filter-button")[0].ClickAsync();
+
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+            comp.FindAll(".filters-panel").Should().HaveCount(1);
+
+            var input = comp.Find(".filters-panel .filter-input input");
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".filters-panel").Should().BeEmpty();
+                dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+            });
+        }
+
+        [Test]
+        public async Task DataGridSimpleFilterOpensAtCursorPosition()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+
+            var openPosition = new MouseEventArgs
+            {
+                PageX = 101,
+                PageY = 202
+            };
+
+            await comp.Find(".filter-button").ClickAsync(openPosition);
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var filterPanel = comp.Find(".filters-panel");
+                filterPanel.GetAttribute("data-pc-x").Should().Be("101");
+                filterPanel.GetAttribute("data-pc-y").Should().Be("202");
+            });
+        }
+
+        [Test]
+        public async Task DataGridSimpleFilterNonEscapeDoesNotCloseFiltersPanel()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await dataGrid.FindAll(".filter-button")[0].ClickAsync();
+
+            comp.FindAll(".filters-panel").Should().HaveCount(1);
+
+            var input = comp.Find(".filters-panel .filter-input input");
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".filters-panel").Should().HaveCount(1);
+            });
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringEscapeOnPopupWrapperClosesFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+
+            await comp.Find(".filter-button").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            });
+
+            var popupWrapper = comp.Find(".column-filter-popup").QuerySelector("div");
+            popupWrapper.Should().NotBeNull();
+
+            await popupWrapper!.KeyDownAsync(new KeyboardEventArgs
+            {
+                Key = "Escape",
+                Type = "keydown"
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().BeEmpty();
+            });
+
+        }
+
+        [Test]
+        public async Task DataGridColumnPopupFilteringNonEscapeOnPopupWrapperDoesNotCloseFilter()
+        {
+            var comp = Context.Render<DataGridColumnPopupFilteringTest>();
+
+            await comp.Find(".filter-button").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            });
+
+            var popupWrapper = comp.Find(".column-filter-popup.mud-popover-open > div");
+
+            await popupWrapper.KeyDownAsync(new KeyboardEventArgs
+            {
+                Key = "Enter",
+                Type = "keydown"
+            });
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(".column-filter-popup.mud-popover-open").Should().HaveCount(1);
+            });
+        }
+
+        [Test]
         public async Task DataGridFilters()
         {
             var comp = Context.Render<DataGridFiltersTest>();

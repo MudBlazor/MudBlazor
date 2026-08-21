@@ -1941,9 +1941,15 @@ namespace MudBlazor
             return args.Key switch
             {
                 "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
-                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
+                "Escape" => column.FilterContext.HeaderCell?.CloseFilterAsync() ?? Task.CompletedTask,
                 _ => Task.CompletedTask
             };
+        }
+        private Task OnFiltersMenuKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key == "Escape"
+                ? CloseFilterAsync()
+                : Task.CompletedTask;
         }
 
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)

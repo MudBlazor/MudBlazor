@@ -505,12 +505,12 @@
                             @if (fieldType.IsString && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
                                 <MudTextField T="string" Value="@filter._valueString" ValueChanged="@filter.StringValueChangedAsync" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                              Immediate="true" Class="filter-input" />
+                                              Immediate="true" Class="filter-input" OnKeyDown="OnFiltersMenuKeyDownAsync" />
                             }
                             else if (fieldType.IsNumber && !(filterDefinition.Operator ?? "").EndsWith("empty"))
                             {
                                 <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChangedAsync" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                                 Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
+                                                 Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" OnKeyDown="OnFiltersMenuKeyDownAsync" />
                             }
                             else if (fieldType.IsEnum)
                             {
@@ -550,7 +550,7 @@
                             else if (fieldType.IsGuid)
                             {
                                 <MudTextField T="Guid?" Value="@filter._valueGuid" ValueChanged="@filter.GuidValueChangedAsync" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
-                                              Immediate="true" Class="filter-input"/>
+                                              Immediate="true" Class="filter-input" OnKeyDown="OnFiltersMenuKeyDownAsync" />
                             }
                         </MudItem>
                     }
