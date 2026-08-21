@@ -187,17 +187,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The clear button leaves Text as an empty string even when the SetDateAsync debounce window has already
-        /// elapsed between the input clearing its text and the picker running ClearAsync.
+        /// The clear button leaves Text as an empty string even when the SetDateAsync debounce window has already elapsed between the input clearing its text and the picker running ClearAsync.
         /// </summary>
         [Test]
         public async Task DatePicker_Should_Clear_WhenDebounceWindowElapsed()
         {
             var timeProvider = Context.AddFakeTimeProvider();
-            // A single clear-button click reaches SetDateAsync twice: once from the input emptying its text, and
-            // once from ClearAsync.
-            // On a loaded machine the second call can land after the 100ms debounce window, which used to overwrite
-            // the already-empty Text with null.
+            // A single clear-button click reaches SetDateAsync twice: once from the input emptying its text, and once from ClearAsync.
+            // On a loaded machine the second call can land after the 100ms debounce window, which used to overwrite the already-empty Text with null.
             // Auto-advancing the clock on every read reproduces that slow machine deterministically.
             timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
 
