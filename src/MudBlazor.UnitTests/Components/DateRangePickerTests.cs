@@ -800,6 +800,87 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Two edits that overlap inside a yielding TextChanged handler still leave Text and DateRange describing the same edit.
+        /// </summary>
+        [Test]
+        [CancelAfter(20000)]
+        public async Task DateRangePicker_OverlappingEdits_ShouldKeepTextAndDateRangeInStep()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var comp = await RenderGatedRangePicker(gateTextChanged: true, out var gate, out var arm);
+            var picker = comp.Instance;
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+
+            // Hold the first end-date edit inside its callback, then let a second one overtake it.
+            arm();
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 29).ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 30).ToShortDateString());
+            gate.SetResult();
+
+            await comp.WaitForAssertionAsync(() => picker.DateRange.Should().Be(new DateRange(start, new DateTime(2020, 10, 30))));
+            picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), new DateTime(2020, 10, 30).ToShortDateString()));
+        }
+
+        /// <summary>
+        /// An edit superseded while its DateRangeChanged handler yields does not write its stale text over the newer edit.
+        /// </summary>
+        [Test]
+        [CancelAfter(20000)]
+        public async Task DateRangePicker_SupersededEdit_ShouldNotOverwriteNewerText()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var comp = await RenderGatedRangePicker(gateTextChanged: false, out var gate, out var arm);
+            var picker = comp.Instance;
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+
+            arm();
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 29).ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 30).ToShortDateString());
+            gate.SetResult();
+
+            await comp.WaitForAssertionAsync(() => picker.DateRange.Should().Be(new DateRange(start, new DateTime(2020, 10, 30))));
+            picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), new DateTime(2020, 10, 30).ToShortDateString()));
+        }
+
+        /// <summary>
+        /// Renders an editable range picker whose TextChanged or DateRangeChanged handler blocks on a gate the first time it is armed.
+        /// </summary>
+        /// <param name="gateTextChanged">When <c>true</c> the gate sits on TextChanged; otherwise it sits on DateRangeChanged.</param>
+        /// <param name="gate">Receives the gate to release once both edits have been dispatched.</param>
+        /// <param name="arm">Receives the action that arms the gate for the next callback only.</param>
+        private Task<IRenderedComponent<MudDateRangePicker>> RenderGatedRangePicker(bool gateTextChanged, out TaskCompletionSource gate, out Action arm)
+        {
+            var source = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var armed = false;
+            gate = source;
+            arm = () => armed = true;
+
+            async Task WaitIfArmedAsync()
+            {
+                if (armed)
+                {
+                    armed = false;
+                    await source.Task;
+                }
+            }
+
+            var comp = Context.Render<MudDateRangePicker>(parameters =>
+            {
+                parameters.Add(p => p.Editable, true);
+                if (gateTextChanged)
+                {
+                    parameters.Add(p => p.TextChanged, async (string _) => await WaitIfArmedAsync());
+                }
+                else
+                {
+                    parameters.Add(p => p.DateRangeChanged, async (DateRange _) => await WaitIfArmedAsync());
+                }
+            });
+
+            return Task.FromResult(comp);
+        }
+
+        /// <summary>
         /// The clear button clears Text along with DateRange and both visible inputs, and tells a bound consumer.
         /// </summary>
         [Test]

@@ -17,6 +17,7 @@ namespace MudBlazor
         private DateTime? _firstDate, _secondDate, _minValidDate, _maxValidDate;
         private DateRange? _dateRange;
         private Range<string>? _rangeText;
+        private int _rangeTextEdit;
 
         /// <summary>
         /// Creates a new instance.
@@ -193,12 +194,21 @@ namespace MudBlazor
                 _rangeText = value;
                 // The range input binds its Value rather than its Text, so nothing else writes MudPicker.Text on the user-input path.
                 // Without this, Text only tracked programmatic DateRange assignments and went stale on typing and on the clear button.
-                ApplyRangeTextAsync(value).CatchAndLog();
+                ApplyRangeTextAsync(value, ++_rangeTextEdit).CatchAndLog();
 
-                async Task ApplyRangeTextAsync(Range<string>? rangeText)
+                async Task ApplyRangeTextAsync(Range<string>? rangeText, int edit)
                 {
-                    await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
+                    // The range goes first so it lands before any consumer callback can yield, as it did before Text was written here at all.
                     await SetDateRangeAsync(rangeText is null ? null : ParseDateRangeValue(rangeText.Start, rangeText.End), false);
+
+                    // A handler on that callback can yield long enough for a newer edit to overtake this one.
+                    // Writing Text now would leave it describing an edit the range no longer reflects.
+                    if (edit != _rangeTextEdit)
+                    {
+                        return;
+                    }
+
+                    await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
                 }
             }
         }
