@@ -191,11 +191,8 @@ namespace MudBlazor
         // Simple mode applies filters live, so it notifies here; the row and menu modes notify from their own apply paths instead.
         private Task ApplyChangesAsync()
         {
-            // The column filter menu edits a definition the grid has not applied yet, and only FilterDefinitions
-            // feeds the rows and the header's filtered icon, so its value cannot change anything on screen.
-            // Regrouping and re-rendering every cell per keystroke there is pure waste, and it is what makes
-            // typing in the menu's value box lag on a large grid (#13639). The menu's Filter button applies the
-            // definition and refreshes the grid then.
+            // The column filter menu edits a definition the grid has not applied yet, and only FilterDefinitions feeds the rows and the header's filtered icon, so its value cannot change anything on screen.
+            // Regrouping and re-rendering every cell per keystroke there is pure waste, and it is what makes typing in the menu's value box lag on a large grid (#13639). The menu's Filter button applies the definition and refreshes the grid then.
             if (_dataGrid.FilterDefinitions.All(x => x.Id != _filterDefinition.Id))
             {
                 return Task.CompletedTask;
