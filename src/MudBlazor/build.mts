@@ -89,9 +89,11 @@ async function typecheck() {
         stderr: "inherit",
     });
 
-    await proc.exited;
-    if (proc.exitCode !== 0) {
-        process.exit(proc.exitCode);
+    // exitCode is null when tsc is killed by a signal, and process.exit(null) exits 0.
+    // The awaited value is always a number and carries the conventional 128+n for signals.
+    const exitCode = await proc.exited;
+    if (exitCode !== 0) {
+        process.exit(exitCode);
     }
 
     timer.stop();
