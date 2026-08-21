@@ -1939,6 +1939,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// ClearAsync clears a picker given Text without a Value, which the original value-only guard skipped.
+        /// </summary>
+        [Test]
+        public async Task ColorPicker_ClearAsync_ShouldClearTextWithoutValue()
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(p => p.Text, "#180f6fff")
+                .Add(p => p.Clearable, true));
+            var picker = comp.Instance;
+            picker.ReadValue.Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().Be("#180f6fff");
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.GetState(x => x.Text).Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
         /// Calling ClearAsync programmatically clears the color, not just the popover.
         /// </summary>
         [Test]
