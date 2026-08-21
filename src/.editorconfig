@@ -39,9 +39,8 @@ end_of_line = lf
 indent_size = 2
 
 # Sassy CSS - CSS preprocessor
-# charset is utf-8 without a BOM: Sass already decodes stylesheets as UTF-8, so a BOM is redundant, and the EditorConfig spec discourages utf-8-bom.
-# Dart Sass strips it either way, so this is a consistency rule rather than a correctness one - it keeps one encoding across the stylesheets.
 [*.scss]
+# charset is utf-8 without a BOM: Sass already decodes stylesheets as UTF-8, so a BOM is redundant, and the EditorConfig spec discourages utf-8-bom.
 charset = utf-8
 indent_size = 2
 end_of_line = lf
