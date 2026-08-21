@@ -1977,21 +1977,6 @@ namespace MudBlazor
                        FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
         }
 
-        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
-        {
-            if (column is null)
-            {
-                return Task.CompletedTask;
-            }
-
-            return args.Key switch
-            {
-                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
-                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
-                _ => Task.CompletedTask
-            };
-        }
-
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -2263,7 +2248,16 @@ namespace MudBlazor
 
         private SelectColumn<T>? GetSelectColumn()
         {
-            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+            // Called once per rendered row, so avoid the LINQ iterator; RenderedColumns is a List and foreach uses its struct enumerator.
+            foreach (var column in RenderedColumns)
+            {
+                if (column is SelectColumn<T> selectColumn)
+                {
+                    return selectColumn;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -2287,15 +2281,40 @@ namespace MudBlazor
         /// <param name="items">The rows the checkbox covers, e.g. all displayed rows for the header checkbox or a group's rows for a group footer checkbox.</param>
         internal bool? GetSelectionState(IEnumerable<T> items)
         {
-            var selectableItems = GetSelectableItems(items).ToList();
-            var selectedCount = selectableItems.Count(Selection.Contains);
-
-            if (selectedCount == 0)
+            // The checkbox covers every filtered row, not just the visible page, so walk the rows once and stop as soon as the answer cannot change.
+            if (Selection.Count == 0)
             {
                 return false;
             }
 
-            return selectedCount == selectableItems.Count ? true : null;
+            var selectColumn = GetSelectColumn();
+            var anySelected = false;
+            var anyUnselected = false;
+
+            foreach (var item in items)
+            {
+                if (IsRowSelectionDisabled(item, selectColumn))
+                {
+                    continue;
+                }
+
+                if (Selection.Contains(item))
+                {
+                    anySelected = true;
+                }
+                else
+                {
+                    anyUnselected = true;
+                }
+
+                if (anySelected && anyUnselected)
+                {
+                    return null;
+                }
+            }
+
+            // No selectable row is selected, or every one of them is.
+            return anySelected;
         }
 
         internal bool? GetRowSelectionState(T item)
@@ -2524,15 +2543,23 @@ namespace MudBlazor
             return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
 
+        // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method
+        // declares one, even when the branch that needs it is never taken.
         private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellClick.HasDelegate
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column))
+                ? CreateCellClickCallback(item, rowIndex, colIndex, column)
                 : default;
+
+        private EventCallback<MouseEventArgs> CreateCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column));
 
         private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellContextMenuClick.HasDelegate
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))
+                ? CreateCellContextMenuClickCallback(item, rowIndex, colIndex, column)
                 : default;
+
+        private EventCallback<MouseEventArgs> CreateCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column));
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.

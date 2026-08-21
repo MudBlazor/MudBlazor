@@ -1,5 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,7 @@
     <GenerateDocsTests Condition="'$(CI)' == 'true'">true</GenerateDocsTests>
     <GenerateDocsTests Condition="'$(GenerateDocsTests)' == ''">false</GenerateDocsTests>
   </PropertyGroup>
-  
+
   <!--Execute the code generator-->
   <Target Name="GenerateTests" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true' and '$(GenerateDocsTests)' == 'true'">
     <!--Command-line for the code generator-->
@@ -54,7 +54,7 @@
     <Using Include="MudBlazor.UnitTests.Shared.Mocks" />
     <Using Include="MudBlazor.UnitTests.Shared.Extensions" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />

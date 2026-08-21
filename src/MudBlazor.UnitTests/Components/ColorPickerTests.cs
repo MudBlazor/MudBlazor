@@ -1937,5 +1937,64 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
+
+        /// <summary>
+        /// ClearAsync clears a picker given Text without a Value, which the original value-only guard skipped.
+        /// </summary>
+        [Test]
+        public async Task ColorPicker_ClearAsync_ShouldClearTextWithoutValue()
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(p => p.Text, "#180f6fff")
+                .Add(p => p.Clearable, true));
+            var picker = comp.Instance;
+            picker.ReadValue.Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().Be("#180f6fff");
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.GetState(x => x.Text).Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Calling ClearAsync programmatically clears the color, not just the popover.
+        /// </summary>
+        [Test]
+        public async Task ColorPicker_ClearAsync_ShouldClearValue()
+        {
+            var color = new MudColor("#180f6fff");
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(p => p.Value, color)
+                .Add(p => p.Clearable, true));
+            var picker = comp.Instance;
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.ReadValue.Should().BeNull();
+            picker.GetState(x => x.Text).Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// The clear button clears the color through the text channel rather than through ClearAsync, and reports null text where the date and time pickers report an empty string.
+        /// </summary>
+        [Test]
+        public async Task ColorPicker_ClearButton_ShouldClearValueAndReportNullText()
+        {
+            var textChanges = new List<string>();
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(p => p.Value, new MudColor("#180f6fff"))
+                .Add(p => p.TextChanged, text => textChanges.Add(text))
+                .Add(p => p.Clearable, true));
+            var picker = comp.Instance;
+
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+
+            picker.ReadValue.Should().BeNull();
+            picker.GetState(x => x.Text).Should().BeNull();
+            textChanges.Should().Equal(["#180f6fff", null]); // the initial color, then the clear
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
     }
 }
