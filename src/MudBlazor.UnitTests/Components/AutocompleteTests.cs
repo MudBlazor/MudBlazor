@@ -1841,6 +1841,89 @@ namespace MudBlazor.UnitTests.Components
             items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(1);
         }
 
+        // https://github.com/MudBlazor/MudBlazor/issues/13358
+        // With Strict="false" and a value type whose default is a valid item (e.g. an enum with a 0 member), only the actually-selected item should be highlighted, not also the default-valued item.
+        [Test]
+        public async Task AutocompleteStrictFalse_ValueType_HighlightsOnlySelectedItem()
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var comp = Context.Render<AutocompleteEnumStrictFalseTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumStrictFalseTest.TestEnum>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Search for and select "Third" (value 2), which is not the default (First = 0).
+            await autocompleteComponent.Find("input").InputAsync("Third");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.Value.Should().Be(AutocompleteEnumStrictFalseTest.TestEnum.Third));
+
+            // Reopen the menu; searchingWhileSelected returns all items with "Third" centered and selected.
+            await comp.InvokeAsync(autocomplete.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Only "Third" should be highlighted. The default (First = 0) item must not also be highlighted.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var selectedItems = comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}");
+                selectedItems.Count.Should().Be(1);
+                selectedItems[0].TextContent.Should().Contain("Third");
+            });
+        }
+
+        // https://github.com/MudBlazor/MudBlazor/issues/13358
+        // When the selected value drops out of refreshed results, no row should be highlighted.
+        // In particular the default-valued (First = 0) item must not be highlighted as a fallback.
+        [Test]
+        public async Task AutocompleteStrictFalse_ValueType_SelectedItemRemovedOnRefresh_HighlightsNothing()
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var comp = Context.Render<AutocompleteEnumStrictFalseTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumStrictFalseTest.TestEnum>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Search for and select "Third" (value 2), which is not the default (First = 0).
+            await autocompleteComponent.Find("input").InputAsync("Third");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.Value.Should().Be(AutocompleteEnumStrictFalseTest.TestEnum.Third));
+
+            // Drop the selected item from the source so the refreshed results no longer contain it, while First (0) remains.
+            comp.Instance.Source.Remove(AutocompleteEnumStrictFalseTest.TestEnum.Third);
+
+            // Reopen; the selected value is gone (index -1), so nothing should be highlighted.
+            await comp.InvokeAsync(autocomplete.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(listItemQuerySelector).Count.Should().Be(4); // First, Second, Fourth, Fifth
+                comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}").Count.Should().Be(0);
+            });
+        }
+
+        // A consumer can put a typed MudListItem<T> in BeforeItemsTemplate/AfterItemsTemplate.
+        // It sits under the internal list, so it must keep finding the cascading MudList<T> to inherit Dense, and must not be selected just because its value is default(T).
+        [Test]
+        public async Task Autocomplete_TypedListItemInBeforeItemsTemplate_InheritsListCascade()
+        {
+            var comp = Context.Render<AutocompleteBeforeItemsListItemTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteBeforeItemsListItemTest.Season>>();
+
+            await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var beforeItem = comp.Find("div.before-item");
+                beforeItem.ClassList.Should().Contain("mud-list-item-dense");
+                beforeItem.ClassList.Should().NotContain("mud-selected-item");
+            });
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Throw_When_SearchFunc_Is_Null()
         {
