@@ -1,4 +1,4 @@
-﻿@mixin slider-track {
+@mixin slider-track {
   &::-webkit-slider-runnable-track {
     @content
   }
