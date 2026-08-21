@@ -27,8 +27,7 @@ namespace MudBlazor
         /// The cell's value.
         /// </summary>
         /// <remarks>
-        /// <see cref="Column{T}.CellContent"/> invokes a compiled property expression and boxes value types, so the result is
-        /// cached for the lifetime of this cell, which is a single render.
+        /// <see cref="Column{T}.CellContent"/> invokes a compiled property expression and boxes value types, so the result is cached for the lifetime of this cell, which is a single render.
         /// </remarks>
         internal object? ComputedValue
         {
@@ -67,6 +66,7 @@ namespace MudBlazor
             get
             {
                 var cellStyle = _column.CellStyleFunc?.Invoke(_item);
+
                 // Most cells style nothing, and StyleBuilder would return an empty string anyway.
                 if (cellStyle is null && _column.CellStyle is null)
                 {
