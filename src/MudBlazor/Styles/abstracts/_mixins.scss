@@ -1,4 +1,4 @@
-﻿@mixin inputplaceholder {
+@mixin inputplaceholder {
   // CSS Pseudo-Element
   &::placeholder {
     @content
