@@ -1561,8 +1561,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// With no RowContextMenuClick delegate the rows must carry no context-menu handler, otherwise every row
-        /// registers a DOM listener that does nothing.
+        /// With no RowContextMenuClick delegate the rows must carry no context-menu handler, otherwise every row registers a DOM listener that does nothing.
         /// </summary>
         [Test]
         public void DataGridRow_WithoutContextMenuDelegate_RegistersNoContextMenuHandler()
