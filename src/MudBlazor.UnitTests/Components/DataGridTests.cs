@@ -1543,6 +1543,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A cell must read its bound property exactly once per render; the value is used by several
+        /// render paths and re-reading it invokes the compiled property expression again.
+        /// </summary>
+        [Test]
+        public void DataGridCell_ReadsBoundPropertyOncePerRender()
+        {
+            var comp = Context.Render<DataGridCellValueReadsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellValueReadsTest.Item>>();
+
+            // 3 rows x 2 property columns.
+            const int CellCount = 6;
+
+            comp.Instance.Reads = 0;
+            dataGrid.Render();
+
+            comp.Instance.Reads.Should().Be(CellCount, "each cell should read its property once per render");
+        }
+
+        /// <summary>
         /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
         /// stopPropagation prevents RowContextMenuClick from also firing.
         /// </summary>
@@ -5213,16 +5232,16 @@ namespace MudBlazor.UnitTests.Components
             var column = dataGrid.Instance.RenderedColumns.First();
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item, item);
 
-            cell._cellContext.Selected.Should().Be(false);
-            await cell._cellContext.Actions.SetSelectedItemAsync(true);
-            cell._cellContext.Selected.Should().Be(true);
+            cell.Context.Selected.Should().Be(false);
+            await cell.Context.Actions.SetSelectedItemAsync(true);
+            cell.Context.Selected.Should().Be(true);
 
-            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
-            cell._cellContext.OpenHierarchies.Should().Contain(item);
-            cell._cellContext.Open.Should().Be(true);
-            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
-            cell._cellContext.OpenHierarchies.Should().NotContain(item);
-            cell._cellContext.Open.Should().Be(false);
+            await cell.Context.Actions.ToggleHierarchyVisibilityForItemAsync();
+            cell.Context.OpenHierarchies.Should().Contain(item);
+            cell.Context.Open.Should().Be(true);
+            await cell.Context.Actions.ToggleHierarchyVisibilityForItemAsync();
+            cell.Context.OpenHierarchies.Should().NotContain(item);
+            cell.Context.Open.Should().Be(false);
         }
 
         [Test]

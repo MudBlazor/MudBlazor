@@ -319,7 +319,7 @@
 
                         if (column.EditTemplate != null)
                         {
-                            @column.EditTemplate(cell._cellContext)
+                            @column.EditTemplate(cell.Context)
                         }
                         else
                         {
@@ -426,7 +426,7 @@
                      <CascadingValue TValue="Interfaces.IForm" Value="@(isInlineEditing ? _inlineEditValidator : Validator)" IsFixed="true">
                          @if (column.EditTemplate is not null)
                          {
-                             @column.EditTemplate(cell._cellContext)
+                             @column.EditTemplate(cell.Context)
                          }
                          else
                          {
@@ -456,7 +456,7 @@
                  {
                      if (cellTemplate is not null)
                      {
-                         @cellTemplate(cell._cellContext)
+                         @cellTemplate(cell.Context)
                      }
                      else if (column.Culture is not null && column.isNumber)
                      {

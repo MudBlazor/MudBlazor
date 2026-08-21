@@ -12,21 +12,45 @@ namespace MudBlazor
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
+        private readonly T _sourceItem;
+        private CellContext<T>? _cellContext;
+        private object? _computedValue;
+        private bool _hasComputedValue;
         internal T _item;
         internal string? _valueString;
         internal double? _valueNumber;
         internal bool _editing;
-        internal CellContext<T> _cellContext;
 
         #region Computed Properties
 
+        /// <summary>
+        /// The cell's value.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Column{T}.CellContent"/> invokes a compiled property expression and boxes value types, so the result is
+        /// cached for the lifetime of this cell, which is a single render.
+        /// </remarks>
         internal object? ComputedValue
         {
             get
             {
-                return _column.CellContent(_item);
+                if (!_hasComputedValue)
+                {
+                    _computedValue = _column.CellContent(_item);
+                    _hasComputedValue = true;
+                }
+
+                return _computedValue;
             }
         }
+
+        /// <summary>
+        /// The state and actions passed to this cell's template.
+        /// </summary>
+        /// <remarks>
+        /// Only templates read this, so it is built on demand rather than for every cell of every render.
+        /// </remarks>
+        internal CellContext<T> Context => _cellContext ??= new CellContext<T>(_dataGrid, _item, _sourceItem);
 
         internal string ComputedClass =>
             new CssBuilder("mud-table-cell")
@@ -38,11 +62,23 @@ namespace MudBlazor
                 .AddClass(_column.CellClass)
                 .Build();
 
-        internal string ComputedStyle =>
-            new StyleBuilder()
-                .AddStyle(_column.CellStyleFunc?.Invoke(_item))
-                .AddStyle(_column.CellStyle)
-                .Build();
+        internal string ComputedStyle
+        {
+            get
+            {
+                var cellStyle = _column.CellStyleFunc?.Invoke(_item);
+                // Most cells style nothing, and StyleBuilder would return an empty string anyway.
+                if (cellStyle is null && _column.CellStyle is null)
+                {
+                    return string.Empty;
+                }
+
+                return new StyleBuilder()
+                    .AddStyle(cellStyle)
+                    .AddStyle(_column.CellStyle)
+                    .Build();
+            }
+        }
 
         #endregion
 
@@ -51,11 +87,9 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             _column = column;
             _item = item;
+            _sourceItem = sourceItem;
 
             OnStartedEditingItem();
-
-            // Create the CellContext with both the effective item and source item
-            _cellContext = new CellContext<T>(_dataGrid, _item, sourceItem);
         }
 
         public async Task StringValueChangedAsync(string? value)
@@ -65,6 +99,7 @@ namespace MudBlazor
                 await _dataGrid.BeginCellEditAsync(_item);
 
             _column.SetProperty(_item, value);
+            _hasComputedValue = false;
 
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
@@ -77,6 +112,7 @@ namespace MudBlazor
                 await _dataGrid.BeginCellEditAsync(_item);
 
             _column.SetProperty(_item, value);
+            _hasComputedValue = false;
 
             if (_dataGrid.EditMode == DataGridEditMode.Cell)
                 await _dataGrid.CommitItemChangesAsync(_item);
@@ -84,12 +120,13 @@ namespace MudBlazor
 
         private void OnStartedEditingItem()
         {
-            if (ComputedValue is null)
+            var computedValue = ComputedValue;
+            if (computedValue is null)
             {
                 return;
             }
 
-            if (ComputedValue is JsonElement element)
+            if (computedValue is JsonElement element)
             {
                 if (_column.dataType == typeof(string))
                 {
@@ -104,11 +141,11 @@ namespace MudBlazor
             {
                 if (_column.dataType == typeof(string))
                 {
-                    _valueString = (string)ComputedValue;
+                    _valueString = (string)computedValue;
                 }
                 else if (_column.isNumber)
                 {
-                    _valueNumber = Convert.ToDouble(ComputedValue);
+                    _valueNumber = Convert.ToDouble(computedValue);
                 }
             }
         }
