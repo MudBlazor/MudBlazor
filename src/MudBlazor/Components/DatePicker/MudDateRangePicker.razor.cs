@@ -126,7 +126,9 @@ namespace MudBlazor
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
 
-            if (_dateRange != range)
+            // Text that fails to convert leaves the range null, so a null assignment looks like a no-op and the bad text would stick.
+            // Run it anyway while text remains, as MudDatePicker does.
+            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text)))
             {
                 var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)

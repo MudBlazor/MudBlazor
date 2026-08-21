@@ -861,6 +861,26 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), end.ToShortDateString()));
         }
 
+        /// <summary>
+        /// Setting DateRange to null clears text that failed to convert, which is the only way out of the conversion error.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ShouldClearInvalidText_WhenDateRangeSetNull()
+        {
+            const string Invalid = "INVALID_RANGE";
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+            picker.DateRange.Should().BeNull();
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, null));
+
+            picker.DateRange.Should().BeNull();
+            picker.Text.Should().BeNull();
+        }
+
         [Test]
         public async Task OnPointerOver_ShouldCallJavaScriptFunction()
         {
