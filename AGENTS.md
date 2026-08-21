@@ -43,7 +43,7 @@
 - Search for existing patterns before adding helpers, abstractions, or new APIs.
 - For component behavior changes, identify the likely unit test file before editing.
 - For public API changes, identify the docs page and examples that may need updates.
-- For TS, style, or asset changes, check whether `entrypoint.js` or generated assets are affected.
+- For TS, style, or asset changes, check whether `entrypoint.ts` or generated assets are affected.
 
 ## Repository Layout
 
@@ -86,7 +86,7 @@ Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*
 
 If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, or a project's `build.mjs` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, any `tsconfig.json` or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 
@@ -325,7 +325,7 @@ Verify with bUnit assertions on roles and `aria-*` attributes before and after i
 - Break comment lines at sentence boundaries, one sentence per line, instead of wrapping at a column width.
 - Do not use `#region`.
 - A helper used by only one method should be a `static` local function inside that method. Reserve private members for helpers shared across multiple methods.
-- Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
+- Keep `src/MudBlazor/TScripts/entrypoint.ts` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.ts`.
 
 ## When Verification Fails
 
