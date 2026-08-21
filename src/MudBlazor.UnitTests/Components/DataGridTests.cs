@@ -1543,6 +1543,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With no CellClick or CellContextMenuClick delegate the cells must carry no event handlers at all,
+        /// otherwise every td registers a DOM listener that does nothing.
+        /// </summary>
+        [Test]
+        public void DataGridCell_WithoutDelegates_RegistersNoCellEventHandlers()
+        {
+            // DataGridCellClickBubbleTest wires the row events but neither cell event.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            var cellHandlers = comp.FindAll(".mud-table-body tr td")
+                .SelectMany(td => td.Attributes.Select(attribute => attribute.Name))
+                .Where(name => name.Contains("onclick") || name.Contains("oncontextmenu"))
+                .ToList();
+
+            cellHandlers.Should().BeEmpty("EventCallback<T>.Empty has a live no-op delegate, so the callbacks must fall back to default instead");
+        }
+
+        /// <summary>
+        /// When both cell delegates are supplied the cells must carry the click and context-menu handlers.
+        /// </summary>
+        [Test]
+        public void DataGridCell_WithDelegates_RegistersCellEventHandlers()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+
+            var firstCell = comp.FindAll(".mud-table-body tr td")[0];
+            var cellHandlers = firstCell.Attributes.Select(attribute => attribute.Name).ToList();
+
+            cellHandlers.Should().Contain(name => name.Contains("onclick"));
+            cellHandlers.Should().Contain(name => name.Contains("oncontextmenu"));
+        }
+
+        /// <summary>
         /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
         /// stopPropagation prevents RowContextMenuClick from also firing.
         /// </summary>
@@ -5838,14 +5871,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridDragAndDrop()
+        public async Task DataGridDragAndDrop_SwapMode()
         {
-            var comp = Context.Render<DataGridDragAndDropTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest.Model>>();
+            var comp = Context.Render<DataGridDragAndDropTest_SwapMode>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_SwapMode.Model>>();
             dataGrid.Instance.DropContainerHasChanged();
 
             var headerValues = dataGrid.FindAll(".sortable-column-header");
-            headerValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDrop_SwapMode");
 
             headerValues[0].InnerHtml.Should().Be("Name");
             headerValues[1].InnerHtml.Should().Be("Age");
@@ -5857,7 +5890,7 @@ namespace MudBlazor.UnitTests.Components
             container.Children.Should().HaveCount(1);
 
             var zone = dataGrid.FindAll(".mud-drop-zone");
-            zone.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+            zone.Count.Should().Be(5, because: "5 columns in DataGridDragAndDrop_SwapMode");
 
             var firstDropZone = zone[1];
             var firstDropItem = firstDropZone.Children[0];
@@ -5869,15 +5902,362 @@ namespace MudBlazor.UnitTests.Components
             await secondDropItem.DropAsync(new DragEventArgs());
 
             var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
-            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridFiltersTest");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDrop_SwapMode");
 
             newHeaderValues[0].InnerHtml.Should().Be("Name");
             newHeaderValues[1].InnerHtml.Should().Be("Status");
             newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
-
         }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropOnColumn(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "HiredOn").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the HiredOn drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the HiredOn drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the Age drop zone should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a drop target item");
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("HiredOn");
+            newHeaderValues[2].InnerHtml.Should().Be("Age");
+            newHeaderValues[3].InnerHtml.Should().Be("Status");
+            newHeaderValues[4].InnerHtml.Should().Be("Hired");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_ResizeThenDropOnColumn(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var gridElement = (ElementReference)dataGrid.Instance.GetType()
+                .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(dataGrid.Instance)!;
+
+            Context.JSInterop
+                .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+                .SetResult(new Interop.BoundingClientRect { Width = 500 });
+
+            var colComps = comp.FindComponents<HeaderCell<DataGridDragAndDropTest_InsertMode.Model>>();
+            foreach (var colComp in colComps)
+            {
+                var col = colComp.Instance;
+                if (!col.Column.HiddenState.Value)
+                {
+                    var headerElement = (ElementReference)col.GetType()
+                        .GetField("_headerElement", BindingFlags.NonPublic | BindingFlags.Instance)!
+                        .GetValue(col)!;
+
+                    Context.JSInterop
+                        .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", headerElement)
+                        .SetResult(new Interop.BoundingClientRect { Width = 100 });
+                }
+            }
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[2].InnerHtml.Should().Be("Status");
+
+            var getStatusResizer = () => comp.FindAll(".mud-resizer").ElementAt(2);
+
+            var moveTarget = rightToLeft ? 80 : 120;
+
+            await getStatusResizer().PointerDownAsync(new PointerEventArgs { ClientX = 100, PointerId = 1, Detail = 1 });
+            await getStatusResizer().PointerMoveAsync(new PointerEventArgs { ClientX = moveTarget, PointerId = 1 });
+            await getStatusResizer().PointerUpAsync(new PointerEventArgs { ClientX = moveTarget, PointerId = 1 });
+
+            var thElements = comp.FindAll("th");
+            var headerStyle = thElements.ElementAt(2).GetStyle();
+            headerStyle.Should().Contain(cssProp => cssProp.Name == "width", because: "the dragged column should retain its resized inline width style");
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11);
+
+            var firstDropZone = zone.FirstOrDefault(entry => entry.GetAttribute("identifier") == "Status");
+            firstDropZone.Should().NotBeNull();
+            var firstDropItem = firstDropZone!.Children[0];
+
+            var secondDropZone = zone.FirstOrDefault(entry => entry.GetAttribute("identifier") == "__mud_dg_post__:HiredOn");
+            secondDropZone.Should().NotBeNull();
+            var secondDropItem = secondDropZone!.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Age");
+            newHeaderValues[2].InnerHtml.Should().Be("Hired");
+            newHeaderValues[3].InnerHtml.Should().Be("HiredOn");
+            newHeaderValues[4].InnerHtml.Should().Be("Status");
+
+            thElements = comp.FindAll("th");
+
+            var movedHeaderStyle = thElements.ElementAt(4).GetStyle();
+            movedHeaderStyle.Should().Contain(cssProp => cssProp.Name == "width", because: "the dragged column should retain its resized inline width style");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropPreColumn(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "HiredOn").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the HiredOn drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the HiredOn drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_pre__:Status").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the pre-insert drop zone for Status should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the pre-insert drop zone for Status should contain a drop target item");
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Age");
+            newHeaderValues[2].InnerHtml.Should().Be("HiredOn");
+            newHeaderValues[3].InnerHtml.Should().Be("Status");
+            newHeaderValues[4].InnerHtml.Should().Be("Hired");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropOnDisabledPreColumn(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_pre__:HiredOn").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the pre-insert drop zone for HiredOn should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().BeEmpty(because: "the pre-insert drop zone for HiredOn should not contain a drop target item");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropPostColumn(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_post__:HiredOn").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the post-insert drop zone for HiredOn should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the post-insert drop zone for HiredOn should contain a drop target item");
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Status");
+            newHeaderValues[2].InnerHtml.Should().Be("Hired");
+            newHeaderValues[3].InnerHtml.Should().Be("HiredOn");
+            newHeaderValues[4].InnerHtml.Should().Be("Age");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropOnDisabledDropZone(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "__mud_dg_pre__:Hired").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the pre-insert drop zone for Hired should exist before dropping the dragged item");
+            secondDropZone!.Children.Should().BeEmpty(because: "the pre-insert drop zone for Hired should not contain a drop target item");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DataGridDragAndDrop_InsertMode_DropOnSelf(bool rightToLeft)
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDragAndDropTest_InsertMode.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var headerValues = dataGrid.FindAll(".sortable-column-header");
+            headerValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            headerValues[0].InnerHtml.Should().Be("Name");
+            headerValues[1].InnerHtml.Should().Be("Age");
+            headerValues[2].InnerHtml.Should().Be("Status");
+            headerValues[3].InnerHtml.Should().Be("Hired");
+            headerValues[4].InnerHtml.Should().Be("HiredOn");
+
+            var container = dataGrid.Find(".mud-drop-container");
+            container.Children.Should().HaveCount(1);
+
+            var zone = dataGrid.FindAll(".mud-drop-zone");
+            zone.Count.Should().Be(11, because: "5 columns with 1 pre drop zone each + one extra trailing after the last column in DataGridDragAndDropTest_InsertMode");
+
+            var firstDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            firstDropZone.Should().NotBeNull(because: "the Age drop zone should exist before starting the drag operation");
+            firstDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a draggable item");
+            var firstDropItem = firstDropZone.Children[0];
+
+            var secondDropZone = zone.Where(entry => entry.GetAttribute("identifier") == "Age").FirstOrDefault();
+            secondDropZone.Should().NotBeNull(because: "the Age drop zone should still exist when dropping the column onto itself");
+            secondDropZone!.Children.Should().NotBeEmpty(because: "the Age drop zone should contain a drop target item");
+            var secondDropItem = secondDropZone.Children[0];
+
+            await firstDropItem.DragStartAsync(new DragEventArgs());
+            await secondDropItem.DropAsync(new DragEventArgs());
+
+            var newHeaderValues = dataGrid.FindAll(".sortable-column-header");
+            newHeaderValues.Count.Should().Be(5, because: "5 columns in DataGridDragAndDropTest_InsertMode");
+
+            newHeaderValues[0].InnerHtml.Should().Be("Name");
+            newHeaderValues[1].InnerHtml.Should().Be("Age");
+            newHeaderValues[2].InnerHtml.Should().Be("Status");
+            newHeaderValues[3].InnerHtml.Should().Be("Hired");
+            newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
+        }
+
         [Test]
         public async Task DataGridEditFormDialogIsCustomizable()
         {

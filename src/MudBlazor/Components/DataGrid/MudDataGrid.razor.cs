@@ -60,6 +60,9 @@ namespace MudBlazor
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
 
+        private const string PrePrefix = "__mud_dg_pre__:";
+        private const string PostPrefix = "__mud_dg_post__:";
+
         /// <summary>
         /// Holds the editors of the row being edited, which are the only controls a commit validates.
         /// </summary>
@@ -152,6 +155,7 @@ namespace MudBlazor
         protected string TableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
+                .AddClass("overflow-visible-table", when: ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                 .Build();
 
         protected string HeadClassname =>
@@ -246,6 +250,24 @@ namespace MudBlazor
 
         internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
+        private static void Move<TItem>(List<TItem> list, int fromIndex, int toIndex, int positionModifier)
+        {
+            if (fromIndex == toIndex)
+            {
+                return;
+            }
+
+            var item = list[fromIndex];
+            list.RemoveAt(fromIndex);
+
+            if (fromIndex < toIndex)
+            {
+                toIndex--;
+            }
+
+            list.Insert(toIndex + positionModifier, item);
+        }
+
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
             (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
@@ -257,23 +279,37 @@ namespace MudBlazor
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
-            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
+            var destinationPropertyName = dropItem.DropzoneIdentifier;
+            if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+            {
+                if (dropItem.DropzoneIdentifier.StartsWith(PrePrefix, StringComparison.Ordinal))
+                {
+                    destinationPropertyName = dropItem.DropzoneIdentifier[PrePrefix.Length..];
+                }
+                else if (dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal))
+                {
+                    destinationPropertyName = dropItem.DropzoneIdentifier[PostPrefix.Length..];
+                }
+            }
+
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == destinationPropertyName);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+                {
+                    var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal) ? 1 : 0;
+                    Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex, position);
+                }
+                else
+                {
+                    Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                }
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
-
-                // swap source / destination
-                var dest = dragAndDropDestination.HeaderCell.Width;
-                var src = dragAndDropSource.HeaderCell.Width;
-
-                dragAndDropSource.HeaderCell.Width = dest;
-                dragAndDropDestination.HeaderCell.Width = src;
 
                 StateHasChanged();
             }
@@ -1428,6 +1464,16 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
 
+        /// <summary>
+        /// The behavior of the grid when the user reorders column headers via drag and drop.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c>.
+        /// This mode applies to header drag-and-drop reordering. Reordering from the columns panel uses insert-by-index behavior.
+        /// </remarks>
+        [Parameter]
+        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Swap;
+
         #endregion
 
         /// <summary>
@@ -2481,12 +2527,12 @@ namespace MudBlazor
         private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellClick.HasDelegate
                 ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column))
-                : EventCallback<MouseEventArgs>.Empty;
+                : default;
 
         private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellContextMenuClick.HasDelegate
                 ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))
-                : EventCallback<MouseEventArgs>.Empty;
+                : default;
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.
