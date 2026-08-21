@@ -2527,12 +2527,12 @@ namespace MudBlazor
         private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellClick.HasDelegate
                 ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column))
-                : EventCallback<MouseEventArgs>.Empty;
+                : default;
 
         private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellContextMenuClick.HasDelegate
                 ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))
-                : EventCallback<MouseEventArgs>.Empty;
+                : default;
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.
