@@ -17,8 +17,8 @@ internal sealed class MudSelectContext<T>
     private readonly MudSelect<T> _select;
     private readonly List<MudSelectItem<T>> _items = [];
     private readonly List<Func<IReadOnlyCollection<T?>, Task>> _selectionObservers = [];
-    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup;
-    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup;
+    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
+    private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MudSelectContext{T}"/> class.
@@ -27,8 +27,6 @@ internal sealed class MudSelectContext<T>
     public MudSelectContext(MudSelect<T> select)
     {
         _select = select;
-        _valueLookup = new((EqualityComparer<NullableObject<T?>>?)select.Comparer);
-        _shadowLookup = new((EqualityComparer<NullableObject<T?>>?)select.Comparer);
     }
 
     /// <summary>
