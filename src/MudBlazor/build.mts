@@ -97,6 +97,41 @@ async function typecheck() {
   timer.stop();
 }
 
+async function test() {
+  console.log("Running Tests");
+  const timer = startTimer("tests");
+
+  const proc = Bun.spawn({
+    cmd: [bunExecutable, "test"],
+    cwd: scriptDirectory,
+    stdout: "ignore",
+    stderr: "ignore",
+  });
+  await proc.exited;
+
+  if (proc.exitCode !== 0) {
+    // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
+    const retryProc = Bun.spawn({
+      cmd: [bunExecutable, "test"],
+      cwd: scriptDirectory,
+      stdout: "inherit",
+      stderr: "inherit",
+    });
+    await retryProc.exited;
+
+    if (retryProc.exitCode !== 0) {
+      process.exit(retryProc.exitCode);
+    } else {
+      console.error(
+        "Tests failed, but re-run succeeded. This should never happen.",
+      );
+      process.exit(1);
+    }
+  }
+
+  timer.stop();
+}
+
 async function eslint() {
   console.log("Linting Scripts");
   const timer = startTimer("eslint");
@@ -155,6 +190,7 @@ function buildSCSS() {
 async function buildAll() {
   await eslint();
   await typecheck();
+  await test();
   await buildJS();
   buildSCSS();
   printTimings();
@@ -178,6 +214,7 @@ if (process.argv.includes("watch")) {
       try {
         await eslint();
         await typecheck();
+        await test();
         await buildJS();
         printTimings();
       } catch (e) {

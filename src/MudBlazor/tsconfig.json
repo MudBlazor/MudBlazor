@@ -2,6 +2,7 @@
   "extends": "../tsconfig.json",
   "include": [
     "build.mts",
+    "test-setup.ts",
     "TScripts/**/*"
   ]
 }
