@@ -48,7 +48,12 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # JavaScript / TypeScript files
-[*.{js,mjs,ts}]
+# charset is utf-8 without a BOM: the EditorConfig spec discourages utf-8-bom,
+# and unlike C# nothing in this toolchain expects one here.
+# The glob lists every module extension so a new one cannot silently escape the
+# rules the way .mts would have.
+[*.{js,cjs,mjs,ts,cts,mts}]
+charset = utf-8
 indent_size = 4
 end_of_line = lf
 insert_final_newline = true
