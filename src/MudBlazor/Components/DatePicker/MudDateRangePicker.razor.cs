@@ -189,7 +189,15 @@ namespace MudBlazor
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(value is null ? null : ParseDateRangeValue(value.Start, value.End), false).CatchAndLog();
+                // The range input binds its Value rather than its Text, so nothing else writes MudPicker.Text on the user-input path.
+                // Without this, Text only tracked programmatic DateRange assignments and went stale on typing and on the clear button.
+                ApplyRangeTextAsync(value).CatchAndLog();
+
+                async Task ApplyRangeTextAsync(Range<string>? rangeText)
+                {
+                    await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
+                    await SetDateRangeAsync(rangeText is null ? null : ParseDateRangeValue(rangeText.Start, rangeText.End), false);
+                }
             }
         }
 

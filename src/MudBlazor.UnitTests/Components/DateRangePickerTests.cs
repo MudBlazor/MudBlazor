@@ -799,6 +799,68 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().BeNull();
         }
 
+        /// <summary>
+        /// The clear button clears Text along with DateRange and both visible inputs, and tells a bound consumer.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ClearButton_ShouldClearText()
+        {
+            var textChanges = new List<string>();
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.TextChanged, text => textChanges.Add(text))
+                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29))));
+
+            var rangeText = RangeUtility.Join(new DateTime(2020, 10, 26).ToShortDateString(), new DateTime(2020, 10, 29).ToShortDateString());
+            picker.Text.Should().Be(rangeText);
+            textChanges.Should().Equal(rangeText);
+
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+
+            picker.DateRange.Should().BeNull();
+            comp.FindAll("input").Should().AllSatisfy(input => input.GetAttribute("value").Should().BeNullOrEmpty());
+            picker.Text.Should().BeNull();
+            textChanges.Should().Equal(rangeText, null);
+        }
+
+        /// <summary>
+        /// Calling ClearAsync directly clears Text as well as DateRange, unlike the clear button.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ClearAsync_ShouldClearTextAndDateRange()
+        {
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29))));
+            picker.Text.Should().NotBeNull();
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.DateRange.Should().BeNull();
+            picker.Text.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Typing a range into the inputs updates Text as well as DateRange, even though the range input binds its Value rather than its Text.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_TypedRange_ShouldUpdateText()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var end = new DateTime(2020, 10, 29);
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters.Add(p => p.Editable, true));
+            var picker = comp.Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(end.ToShortDateString());
+
+            picker.DateRange.Should().Be(new DateRange(start, end));
+            picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), end.ToShortDateString()));
+        }
+
         [Test]
         public async Task OnPointerOver_ShouldCallJavaScriptFunction()
         {
