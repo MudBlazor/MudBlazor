@@ -1654,9 +1654,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input").Should().NotBeEmpty();
 
             // A value that passes the async rule commits and leaves edit mode.
-            // The value is set through the field rather than the DOM: the async rule re-renders the row, which
-            // re-registers the input's onchange handler, and bUnit keeps serving the element it parsed before that
-            // render. The clicks either side still go through the DOM.
+            // The value is set through the field rather than the DOM because the async rule re-renders the row, which re-registers the input's onchange handler while bUnit keeps serving the element it parsed before that render.
+            // The clicks either side still go through the DOM.
             await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("B"));
             await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
             comp.Instance.CommitCount.Should().Be(1);

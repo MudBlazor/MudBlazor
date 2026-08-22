@@ -45,9 +45,8 @@ internal sealed class InternalMudLocalizer
     /// <param name="arguments">The list of arguments to be passed to the string resource.</param>
     /// <returns>The localized string resource.</returns>
     /// <remarks>
-    /// Returns <see cref="string" /> rather than <see cref="LocalizedString" /> so components can pass the result
-    /// straight to a parameter or attribute. Blazor compares parameters by value only for known-immutable types, so a
-    /// freshly allocated <see cref="LocalizedString" /> would read as changed on every render and rebuild the child.
+    /// Returns <see cref="string" /> rather than <see cref="LocalizedString" /> so components can pass the result straight to a parameter or attribute.
+    /// Blazor compares parameters by value only for known-immutable types, so a freshly allocated <see cref="LocalizedString" /> would read as changed on every render and rebuild the child.
     /// </remarks>
     public string this[string key, params object[] arguments] => _interceptor.Handle(key, arguments).Value;
 

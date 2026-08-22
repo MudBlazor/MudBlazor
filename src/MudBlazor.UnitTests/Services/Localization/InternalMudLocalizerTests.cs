@@ -14,9 +14,8 @@ public class InternalMudLocalizerTests
     [Test]
     public void Indexer_ReturnsString_SoBlazorCanCompareItByValue()
     {
-        // Blazor only compares parameters by value for known-immutable types; ChangeDetection.MayHaveChanged returns
-        // true for every other reference type. A LocalizedString return would therefore rebuild any component given a
-        // localized attribute, on every render of its parent, forever.
+        // Blazor only compares parameters by value for known-immutable types, and ChangeDetection.MayHaveChanged returns true for every other reference type.
+        // A LocalizedString return would therefore rebuild any component given a localized attribute, on every render of its parent, forever.
         var indexer = typeof(InternalMudLocalizer).GetProperty("Item", new[] { typeof(string), typeof(object[]) });
 
         indexer.Should().NotBeNull();
