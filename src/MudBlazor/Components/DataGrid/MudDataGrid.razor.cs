@@ -334,8 +334,6 @@ namespace MudBlazor
         #region Notify Children Delegates
 
         internal Action<Dictionary<string, SortDefinition<T>>, HashSet<string>?>? SortChangedEvent { get; set; }
-        internal Action<HashSet<T>>? SelectedItemsChangedEvent { get; set; }
-        internal Action<bool>? SelectedAllItemsChangedEvent { get; set; }
         internal Action? StartedEditingItemEvent { get; set; }
         internal Action? EditingCanceledEvent { get; set; }
 
@@ -1076,13 +1074,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fires SelectedItemsChanged event and invokes SelectedItemsChangedEvent.
+        /// Publishes the current selection so bound parameters and their change callbacks see it.
         /// </summary>
         private async Task FireSelectionChangedEventsAsync()
         {
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
-            SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
         private void ApplyInitialExpansionForNewItems(NotifyCollectionChangedEventArgs e)
@@ -2168,7 +2165,6 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
         }
@@ -2211,8 +2207,6 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
-            await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
             await InvokeAsync(StateHasChanged);
         }
@@ -2241,7 +2235,6 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
         }
