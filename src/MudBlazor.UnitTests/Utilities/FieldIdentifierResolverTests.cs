@@ -22,8 +22,15 @@ namespace MudBlazor.UnitTests.Utilities
             public string? Street { get; set; }
         }
 
+        private struct Wrapper
+        {
+            public Address Inner { get; set; }
+        }
+
         private class Person
         {
+            public Wrapper? Maybe { get; set; } = new Wrapper { Inner = new Address() };
+
             public string? Name { get; set; }
 
             public Address Home { get; set; } = new();
@@ -34,6 +41,20 @@ namespace MudBlazor.UnitTests.Utilities
         private static Person? s_static = new();
 
         private Person _person = new();
+
+        /// <summary>
+        /// A chain through a nullable struct resolves to the same field the framework resolves.
+        /// </summary>
+        [Test]
+        public void NullableStructInChain_MatchesFieldIdentifierCreate()
+        {
+            // The tree carries a real Nullable<T>.Value member access, and reflection accepts the boxed T as its owner.
+            Expression<Func<string?>> accessor = () => _person.Maybe!.Value.Inner.Street;
+
+            FieldIdentifierResolver.TryCreate(accessor, out var resolved).Should().BeTrue();
+            resolved.Should().Be(FieldIdentifier.Create(accessor));
+            resolved.Model.Should().BeSameAs(_person.Maybe!.Value.Inner);
+        }
 
         /// <summary>
         /// A member read straight off the model resolves to the same field the framework resolves.
