@@ -37,7 +37,7 @@
                 else if (fieldType.IsBoolean)
                 {
                     <MudSelect T="bool?" Value="@valueBool" ValueChanged="@BoolValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
-                        <MudSelectItem T="bool?" Value="@(null)"></MudSelectItem>
+                        <MudSelectItem T="bool?" Value="@(null)">@Localizer[LanguageResource.MudDataGrid_All]</MudSelectItem>
                         <MudSelectItem T="bool?" Value="@(true)">@Localizer[LanguageResource.MudDataGrid_True]</MudSelectItem>
                         <MudSelectItem T="bool?" Value="@(false)">@Localizer[LanguageResource.MudDataGrid_False]</MudSelectItem>
                     </MudSelect>
