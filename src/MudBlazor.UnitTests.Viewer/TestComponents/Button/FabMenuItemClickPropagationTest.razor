@@ -1,0 +1,12 @@
+<MudPaper @onclick="@(() => ContainerClickedCount += 1)">
+    <MudFabMenu ClickPropagation="@ClickPropagation">
+        <MudFabMenuItem OnClick="@(() => ItemClickedCount += 1)" />
+    </MudFabMenu>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public bool ClickPropagation { get; set; }
+    public int ItemClickedCount { get; set; }
+    public int ContainerClickedCount { get; set; }
+}
