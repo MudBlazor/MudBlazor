@@ -4,7 +4,7 @@
     <BeforeItemsTemplate>
         @* A consumer-authored typed list item: it must still find the cascading MudList<T> to inherit Dense.
            Its value is the enum's 0 member, so it must not be selected while nothing is selected either. *@
-        <MudListItem T="Season" Value="Season.Spring" Text="Header" Class="before-item" />
+        <MudListItem T="Season" Value="Season.Spring" Class="before-item">Header</MudListItem>
     </BeforeItemsTemplate>
 </MudAutocomplete>
 
