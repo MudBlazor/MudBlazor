@@ -675,6 +675,34 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Gets the position of an item within <see cref="FilteredItems"/>, or <c>-1</c> when it is not present.
+        /// </summary>
+        /// <remarks>
+        /// Equivalent to <c>FilteredItems.ToList().IndexOf(item)</c> without copying the filtered list, which the row markup would otherwise do once per rendered row.
+        /// </remarks>
+        internal int GetFilteredItemIndex(T item)
+        {
+            var filteredItems = FilteredItems;
+            if (filteredItems is IList<T> list)
+            {
+                return list.IndexOf(item);
+            }
+
+            var index = 0;
+            foreach (var candidate in filteredItems)
+            {
+                if (EqualityComparer<T>.Default.Equals(candidate, item))
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Gets whether <see cref="Items"/> contains the specified item.
         /// </summary>
         /// <param name="item">The item to find.</param>
