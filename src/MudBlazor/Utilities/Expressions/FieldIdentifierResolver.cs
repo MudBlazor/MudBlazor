@@ -48,10 +48,11 @@ internal static class FieldIdentifierResolver
             case ConstantExpression constant:
                 value = constant.Value;
                 return true;
-            case MemberExpression { Member: FieldInfo field } member when TryEvaluate(member.Expression, out var fieldOwner) && (fieldOwner is not null || field.IsStatic):
+            // A static member has a null Expression, so it fails the recursive call and reports unresolved rather than reading off a null owner.
+            case MemberExpression { Member: FieldInfo field } member when TryEvaluate(member.Expression, out var fieldOwner) && fieldOwner is not null:
                 value = field.GetValue(fieldOwner);
                 return true;
-            case MemberExpression { Member: PropertyInfo property } member when property.GetIndexParameters().Length == 0 && TryEvaluate(member.Expression, out var propertyOwner) && (propertyOwner is not null || property.GetMethod?.IsStatic == true):
+            case MemberExpression { Member: PropertyInfo property } member when property.GetIndexParameters().Length == 0 && TryEvaluate(member.Expression, out var propertyOwner) && propertyOwner is not null:
                 value = property.GetValue(propertyOwner);
                 return true;
             default:
