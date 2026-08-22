@@ -621,6 +621,13 @@ namespace MudBlazor
             await OpenMenuAsync(args, true);
         }
 
+        // Only wire oncontextmenu when right-click actually activates this menu.
+        // The no-op lambda this replaces was still a live delegate, so every menu registered a real DOM listener that did nothing, which on Blazor Server turns every right-click inside a menu into a wasted network round-trip.
+        private EventCallback<MouseEventArgs> ContextMenuCallback =>
+            ActivationEvent == MouseEvent.RightClick && ActivatorContent is null
+                ? EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync)
+                : default;
+
         /// <summary>
         /// Toggles the menu's open or closed state.
         /// </summary>
