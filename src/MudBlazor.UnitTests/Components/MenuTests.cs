@@ -19,6 +19,35 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MenuTests : BunitTest
     {
+        /// <summary>
+        /// A left-click menu must not register a contextmenu DOM listener, so a right-click cannot cost a round-trip.
+        /// </summary>
+        [Test]
+        public async Task Menu_LeftClickActivation_RegistersNoContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters.Add(p => p.Label, "Menu"));
+            var root = comp.Find("div.mud-menu");
+
+            var contextMenu = async () => await root.ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().ThrowAsync<MissingEventHandlerException>();
+        }
+
+        /// <summary>
+        /// A right-click menu keeps its contextmenu DOM listener.
+        /// </summary>
+        [Test]
+        public async Task Menu_RightClickActivation_RegistersContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.Label, "Menu")
+                .Add(p => p.ActivationEvent, MouseEvent.RightClick));
+
+            var contextMenu = async () => await comp.Find("div.mud-menu").ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().NotThrowAsync();
+        }
+
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
