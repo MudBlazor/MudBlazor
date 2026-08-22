@@ -2791,6 +2791,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The stray Enter keyup must stay suppressed even when it arrives while an asynchronous clear callback is still pending (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Enter_ClearButton_Activation_With_Pending_Callback()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.GateClear, true));
+
+            // Enter fires the click on keydown; the gated callback keeps the clear transaction pending.
+            var clickTask = comp.Find("button.mud-input-clear-button").ClickAsync(new());
+            comp.Instance.ClearCount.Should().Be(1, "the click must have reached the gated clear callback");
+
+            // The keyup lands on the input while the clear callback is still awaited.
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.ClearGate.SetResult();
+            await clickTask;
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+        }
+
+        /// <summary>
         /// Enter on the clear button while the menu is open must not let the stray keyup select the highlighted item and restore the cleared value (follow-up to #13529).
         /// </summary>
         [Test]

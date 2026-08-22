@@ -42,15 +42,24 @@
 
     [Parameter] public int DebounceInterval { get; set; } = 100;
 
+    // When set, ClearClicked stays pending until the test releases ClearGate, so keyups can be dispatched mid-transaction.
+    [Parameter] public bool GateClear { get; set; }
+
+    public TaskCompletionSource ClearGate { get; } = new();
+
     string StatusMessage { get { return $"State: Clear = {ClearCount} - Open = {OpenedCount} - Close = {ClosedCount} - Text = {_text ?? "null"}"; } }
 
     public int ClosedCount { get; private set; }
     public int OpenedCount { get; private set; }
     public int ClearCount { get; private set; }
 
-    private void ClearClicked()
+    private async Task ClearClicked()
     {
         ClearCount++;
+        if (GateClear)
+        {
+            await ClearGate.Task;
+        }
     }
 
     private void OpenChanged(bool opened)

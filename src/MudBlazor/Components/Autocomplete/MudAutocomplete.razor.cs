@@ -953,8 +953,9 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (_skipNextEnterKeyUp)
+                    if (_skipNextEnterKeyUp || _elementReference.IsClearing)
                     {
+                        // A stray keyup from clear-button activation; the keystroke began on the button, not the input.
                         _skipNextEnterKeyUp = false;
                         break;
                     }
@@ -1142,6 +1143,10 @@ namespace MudBlazor
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
 
+            // Enter activates the clear button on keydown, and the matching keyup lands on the input the clear transaction focuses.
+            // Arm the suppression before the first await so the keyup can't slip in while an asynchronous clear callback is still pending.
+            _skipNextEnterKeyUp = true;
+
             // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
             _debounceTimer?.Dispose();
             if (_items?.Length > 0)
@@ -1156,10 +1161,6 @@ namespace MudBlazor
             {
                 await OpenMenuAsync();
             }
-
-            // Enter activates the clear button on keydown, and the matching keyup lands on the input we just focused.
-            // Swallow that stray keyup so it can't reopen the menu or select the highlighted item.
-            _skipNextEnterKeyUp = true;
         }
         internal async Task AdornmentClickHandlerAsync()
         {
