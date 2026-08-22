@@ -87,7 +87,7 @@ else if (Column != null && !Column.HiddenState.Value)
             <span class="@OptionsClass">
                 @if (sortable)
                 {
-                    <MudIconButton Icon="@DataGrid.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort].Value"></MudIconButton>
+                    <MudIconButton Icon="@DataGrid.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
 
                     if (DataGrid.SortMode == SortMode.Multiple)
                     {
@@ -106,11 +106,11 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     if (hasFilter)
                     {
-                        <MudIconButton Class="filter-button filtered" Icon="@DataGrid.FilterIconFilled" Size="@Size.Small" OnClick="@OpenFilters" aria-label="@Localizer[LanguageResource.MudDataGrid_OpenFilters].Value"></MudIconButton>
+                        <MudIconButton Class="filter-button filtered" Icon="@DataGrid.FilterIconFilled" Size="@Size.Small" OnClick="@OpenFilters" aria-label="@Localizer[LanguageResource.MudDataGrid_OpenFilters]"></MudIconButton>
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@DataGrid.FilterIconEmpty" Size="@Size.Small" OnClick="@AddFilter" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter].Value"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@DataGrid.FilterIconEmpty" Size="@Size.Small" OnClick="@AddFilter" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter]"></MudIconButton>
                     }
                 }
 
@@ -175,7 +175,7 @@ else if (Column != null && !Column.HiddenState.Value)
              <MudIconButton Icon="@GetGroupIcon()"
                             Class="ma-n3 pa-1 mud-hierarchy-toggle-button"
                             OnClick="@ToggleHierarchyAsync"
-                            aria-label="@(Expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseAllGroups].Value : @Localizer[LanguageResource.MudDataGrid_ExpandAllGroups].Value)"/>
+                            aria-label="@(Expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseAllGroups] : @Localizer[LanguageResource.MudDataGrid_ExpandAllGroups])"/>
          </text>;
 
 }
