@@ -1543,8 +1543,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// With no CellClick or CellContextMenuClick delegate the cells must carry no event handlers at all,
-        /// otherwise every td registers a DOM listener that does nothing.
+        /// With no CellClick or CellContextMenuClick delegate the cells must carry no event handlers at all, otherwise every td registers a DOM listener that does nothing.
         /// </summary>
         [Test]
         public void DataGridCell_WithoutDelegates_RegistersNoCellEventHandlers()
@@ -1595,8 +1594,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The select-all checkbox covers every filtered row, so its state must be resolved without walking
-        /// the whole data set on each render.
+        /// The select-all checkbox covers every filtered row, so its state must be resolved without walking the whole data set on each render.
         /// </summary>
         [Test]
         public void DataGridSelectAll_DoesNotScanEveryFilteredRow()
@@ -1640,8 +1638,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A cell must read its bound property exactly once per render; the value is used by several
-        /// render paths and re-reading it invokes the compiled property expression again.
+        /// A cell must read its bound property exactly once per render, because the value is used by several render paths and re-reading it invokes the compiled property expression again.
         /// </summary>
         [Test]
         public void DataGridCell_ReadsBoundPropertyOncePerRender()

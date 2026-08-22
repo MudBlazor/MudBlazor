@@ -2536,8 +2536,7 @@ namespace MudBlazor
             return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
 
-        // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method
-        // declares one, even when the branch that needs it is never taken.
+        // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method declares one, even when the branch that needs it is never taken.
         private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellClick.HasDelegate
                 ? CreateCellClickCallback(item, rowIndex, colIndex, column)

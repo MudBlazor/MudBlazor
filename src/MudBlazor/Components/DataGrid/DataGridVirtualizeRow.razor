@@ -100,7 +100,8 @@
         return _resolvedItems;
     }
 
-    // ContextRowClick only ever reaches DataGrid.RowContextMenuClick, so without that delegate the handler would be a no-op that still costs a DOM listener on every row. The lambda lives in its own method so its closure is not allocated when the branch is not taken.
+    // ContextRowClick only ever reaches DataGrid.RowContextMenuClick, so without that delegate the handler would be a no-op that still costs a DOM listener on every row.
+    // The lambda lives in its own method so its closure is not allocated when the branch is not taken.
     private EventCallback<MouseEventArgs> GetContextMenuCallback(IndexBag<T> itemBag)
         => DataGrid.RowContextMenuClick.HasDelegate
             ? CreateContextMenuCallback(itemBag)
