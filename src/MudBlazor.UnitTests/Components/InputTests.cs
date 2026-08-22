@@ -76,4 +76,68 @@ public class InputTests : BunitTest
             comp.Find("div.mud-input").ClassList.Should().NotContain("mud-input-full-width");
         }
     }
+
+    [Test]
+    public async Task MudInputIsClearingShouldRespectMouseState()
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        var button = comp.Find("div.mud-input .mud-input-clear-button");
+        button.Should().NotBeNull();
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+        await button.ClickAsync();
+        comp.Instance.IsClearing.Should().BeFalse();
+
+        comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        button = comp.Find("div.mud-input .mud-input-clear-button");
+
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+        await button.MouseLeaveAsync();
+        comp.Instance.IsClearing.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// A caller-supplied aria-required should reach both halves of the range, while required still follows the parameter.
+    /// </summary>
+    [Test]
+    public void RangeInputLetsUserAttributesOverrideAriaRequired()
+    {
+        var comp = Context.Render<MudRangeInput<string>>(parameters => parameters
+            .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+        var inputs = comp.FindAll("input");
+        inputs.Should().HaveCount(2);
+
+        foreach (var input in inputs)
+        {
+            input.GetAttribute("aria-required").Should().Be("true");
+            input.HasAttribute("required").Should().BeFalse();
+        }
+    }
+
+    /// <summary>
+    /// The per-input aria-label and id stay component-owned so the two halves keep distinct names and identifiers.
+    /// </summary>
+    [Test]
+    public void RangeInputKeepsPerInputAriaLabelAndId()
+    {
+        var comp = Context.Render<MudRangeInput<string>>(parameters => parameters
+            .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+        var inputs = comp.FindAll("input");
+
+        inputs[0].GetAttribute("aria-label").Should().Be("Start");
+        inputs[1].GetAttribute("aria-label").Should().Be("End");
+        inputs[0].GetAttribute("id").Should().EndWith("-start");
+        inputs[1].GetAttribute("id").Should().EndWith("-end");
+    }
 }

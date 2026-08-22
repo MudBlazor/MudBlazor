@@ -331,6 +331,13 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
         top: $header-height-with-filter-dense;
       }
 
+      // Row 1 (loading row with no header row above it, or one that renders no cells and so has no height).
+      // The offsets above assume a header row is there to sit under; without one they push the loader into empty space.
+      .mud-table-loading-row:first-child > .mud-table-loading,
+      tr:not(:has(> *)) + .mud-table-loading-row > .mud-table-loading {
+        top: 0;
+      }
+
       & * .mud-table-cell.sticky-left,
       & * .mud-table-cell.sticky-right {
         z-index: 3;

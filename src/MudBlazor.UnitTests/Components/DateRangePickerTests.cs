@@ -799,6 +799,169 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().BeNull();
         }
 
+        /// <summary>
+        /// Two edits that overlap inside a yielding TextChanged handler still leave Text and DateRange describing the same edit.
+        /// </summary>
+        [Test]
+        [CancelAfter(20000)]
+        public async Task DateRangePicker_OverlappingEdits_ShouldKeepTextAndDateRangeInStep()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var comp = await RenderGatedRangePicker(gateTextChanged: true, out var gate, out var arm);
+            var picker = comp.Instance;
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+
+            // Hold the first end-date edit inside its callback, then let a second one overtake it.
+            arm();
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 29).ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 30).ToShortDateString());
+            gate.SetResult();
+
+            await comp.WaitForAssertionAsync(() => picker.DateRange.Should().Be(new DateRange(start, new DateTime(2020, 10, 30))));
+            picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), new DateTime(2020, 10, 30).ToShortDateString()));
+        }
+
+        /// <summary>
+        /// An edit superseded while its DateRangeChanged handler yields does not write its stale text over the newer edit.
+        /// </summary>
+        [Test]
+        [CancelAfter(20000)]
+        public async Task DateRangePicker_SupersededEdit_ShouldNotOverwriteNewerText()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var comp = await RenderGatedRangePicker(gateTextChanged: false, out var gate, out var arm);
+            var picker = comp.Instance;
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+
+            arm();
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 29).ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(new DateTime(2020, 10, 30).ToShortDateString());
+            gate.SetResult();
+
+            await comp.WaitForAssertionAsync(() => picker.DateRange.Should().Be(new DateRange(start, new DateTime(2020, 10, 30))));
+            picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), new DateTime(2020, 10, 30).ToShortDateString()));
+        }
+
+        /// <summary>
+        /// Renders an editable range picker whose TextChanged or DateRangeChanged handler blocks on a gate the first time it is armed.
+        /// </summary>
+        /// <param name="gateTextChanged">When <c>true</c> the gate sits on TextChanged; otherwise it sits on DateRangeChanged.</param>
+        /// <param name="gate">Receives the gate to release once both edits have been dispatched.</param>
+        /// <param name="arm">Receives the action that arms the gate for the next callback only.</param>
+        private Task<IRenderedComponent<MudDateRangePicker>> RenderGatedRangePicker(bool gateTextChanged, out TaskCompletionSource gate, out Action arm)
+        {
+            var source = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var armed = false;
+            gate = source;
+            arm = () => armed = true;
+
+            async Task WaitIfArmedAsync()
+            {
+                if (armed)
+                {
+                    armed = false;
+                    await source.Task;
+                }
+            }
+
+            var comp = Context.Render<MudDateRangePicker>(parameters =>
+            {
+                parameters.Add(p => p.Editable, true);
+                if (gateTextChanged)
+                {
+                    parameters.Add(p => p.TextChanged, async (string _) => await WaitIfArmedAsync());
+                }
+                else
+                {
+                    parameters.Add(p => p.DateRangeChanged, async (DateRange _) => await WaitIfArmedAsync());
+                }
+            });
+
+            return Task.FromResult(comp);
+        }
+
+        /// <summary>
+        /// The clear button clears Text along with DateRange and both visible inputs, and tells a bound consumer.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ClearButton_ShouldClearText()
+        {
+            var textChanges = new List<string>();
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.TextChanged, text => textChanges.Add(text))
+                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29))));
+
+            var rangeText = RangeUtility.Join(new DateTime(2020, 10, 26).ToShortDateString(), new DateTime(2020, 10, 29).ToShortDateString());
+            picker.Text.Should().Be(rangeText);
+            textChanges.Should().Equal(rangeText);
+
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+
+            picker.DateRange.Should().BeNull();
+            comp.FindAll("input").Should().AllSatisfy(input => input.GetAttribute("value").Should().BeNullOrEmpty());
+            picker.Text.Should().BeNull();
+            textChanges.Should().Equal(rangeText, null);
+        }
+
+        /// <summary>
+        /// Calling ClearAsync directly clears Text as well as DateRange, unlike the clear button.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ClearAsync_ShouldClearTextAndDateRange()
+        {
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.DateRange, new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29))));
+            picker.Text.Should().NotBeNull();
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.DateRange.Should().BeNull();
+            picker.Text.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Typing a range into the inputs updates Text as well as DateRange, even though the range input binds its Value rather than its Text.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_TypedRange_ShouldUpdateText()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var end = new DateTime(2020, 10, 29);
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters.Add(p => p.Editable, true));
+            var picker = comp.Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(end.ToShortDateString());
+
+            picker.DateRange.Should().Be(new DateRange(start, end));
+            picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), end.ToShortDateString()));
+        }
+
+        /// <summary>
+        /// Setting DateRange to null clears text that failed to convert, which is the only way out of the conversion error.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ShouldClearInvalidText_WhenDateRangeSetNull()
+        {
+            const string Invalid = "INVALID_RANGE";
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+            picker.DateRange.Should().BeNull();
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, null));
+
+            picker.DateRange.Should().BeNull();
+            picker.Text.Should().BeNull();
+        }
+
         [Test]
         public async Task OnPointerOver_ShouldCallJavaScriptFunction()
         {
@@ -1160,7 +1323,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
         }
 
-        [Test]
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13611")]
         public async Task DateRangePicker_MinMaxDays()
         {
             //no restrictions - minimum of 3 days
@@ -1168,10 +1331,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DateRangePickerMinMaxDaysTest>(p => p.Add(x => x.DateRange, startingRange));
 
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ToMarkup().Should().Contain("disabled"); //1 day not allowed
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("17")).ToMarkup().Should().Contain("disabled");
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("18")).ClickAsync(new MouseEventArgs());
 
             comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
+
+            //minimum of 1 day allows selecting only the start date
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MinDays, 1));
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ToMarkup().Should().NotContain("disabled");
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 16).Date));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MinDays, 3));
 
             //no restrictions - maximum of 7 days
             await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("16")).ClickAsync(new MouseEventArgs());

@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
             await input.InputAsync(new ChangeEventArgs() { Value = "100" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            numericField.Immediate.Should().BeTrue();
+            numericField.EffectiveImmediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in NumericField
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
@@ -726,6 +726,30 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Testing that <see cref="MudBaseInput{T}.EffectiveImmediate"/> reflects the Immediate and Debounce state of this component.
+        /// </summary>
+        /// <remarks>Added for <a href="https://github.com/MudBlazor/MudBlazor/pull/13610">PR #13610</a></remarks>
+        [Test]
+        public void NumericField_EffectiveImmediate_Should_Reflect_Immediate_And_Debounced_State()
+        {
+            Context.Render<MudNumericField<int>>()
+                .Instance.EffectiveImmediate.Should().BeFalse();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Immediate, true))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Immediate, true)
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+        }
+
         [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Validation<T>(T value)
         {
@@ -1178,6 +1202,24 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().NotContain("pattern");
             field.GetAttribute("type").Should().Be("text");
+        }
+
+        /// <summary>
+        /// Existing quantifiers and end anchors are preserved while single-key patterns remain repeatable (#13646).
+        /// </summary>
+        [TestCase("", "")]
+        [TestCase(@"[0-9,.\-]", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9,.\-]*", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9]+", @"[0-9]+")]
+        [TestCase(@"[0-9]?", @"[0-9]?")]
+        [TestCase(@"[0-9]{1,3}", @"[0-9]{1,3}")]
+        [TestCase(@"^-?[0-9.,]*$", @"^-?[0-9.,]*$")]
+        public void NumericField_Should_RenderEffectivePattern(string pattern, string expectedPattern)
+        {
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(x => x.Pattern, pattern));
+
+            comp.Find("input").GetAttribute("pattern").Should().Be(expectedPattern);
         }
 
         [Test]

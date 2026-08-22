@@ -62,6 +62,62 @@ namespace MudBlazor.UnitTests.Components
             picker.ReadValue.Should().Be(null);
         }
 
+        /// <summary>
+        /// A programmatic clear leaves Text as an empty string, because TimeSpanConverter converts null to string.Empty where the date converter yields null.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_ClearAsync_ShouldLeaveEmptyText()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters.Add(p => p.Time, new TimeSpan(10, 30, 0)));
+            var picker = comp.Instance;
+            picker.Text.Should().Be("10:30");
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.ReadValue.Should().BeNull();
+            picker.Text.Should().Be("");
+        }
+
+        /// <summary>
+        /// Setting Time to null clears text that failed to convert, which is the only way out of the conversion error.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_ShouldClearInvalidText_WhenTimeSetNull()
+        {
+            var comp = Context.Render<MudTimePicker>();
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
+
+            const string Invalid = "INVALID_TIME";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+            picker.ReadValue.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Time, null));
+
+            // TimeSpanConverter converts null to string.Empty, where the date converter would yield null.
+            picker.ReadValue.Should().Be(null);
+            picker.Text.Should().Be("");
+        }
+
+        /// <summary>
+        /// ClearAsync also clears text that failed to convert, even though the value was already null.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_ClearAsync_ShouldClearInvalidText()
+        {
+            const string Invalid = "INVALID_TIME";
+            var comp = Context.Render<MudTimePicker>(parameters => parameters.Add(p => p.Text, Invalid));
+            var picker = comp.Instance;
+            picker.Text.Should().Be(Invalid);
+            picker.ReadValue.Should().Be(null);
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.Text.Should().Be("");
+        }
+
         [Test]
         public async Task Open_ClickOutside_CheckClosed()
         {
@@ -584,6 +640,70 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
 
             await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(5, 45, 0)));
+        }
+
+        [Test]
+        public async Task Tab_CommitsPendingTime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters.Add(x => x.Time, new TimeSpan(2, 0, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(3, 0, 0)));
+            picker.Time.Should().Be(new TimeSpan(2, 0, 0));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(3, 0, 0)));
+            comp.Find("input").GetAttribute("value").Should().Be("03:00");
+        }
+
+        [Test]
+        public async Task Tab_AfterEscape_DoesNotCommitDiscardedTime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SimpleTimePickerTest>(parameters => parameters.Add(x => x.Time, new TimeSpan(2, 0, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(3, 0, 0)));
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            picker.Time.Should().Be(new TimeSpan(2, 0, 0));
+
+            // Tabbing on through the closed picker must not resurrect the selection Escape threw away.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+
+            await comp.WaitForAssertionAsync(() => picker.Time.Should().Be(new TimeSpan(2, 0, 0)));
+            comp.Find("input").GetAttribute("value").Should().Be("02:00");
+        }
+
+        [Test]
+        public async Task Tab_WithPickerActions_DoesNotCommitPendingTime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<AutoCompleteTimePickerTest>();
+            var picker = comp.Instance.Picker;
+            await comp.InvokeAsync(() => picker.OpenAsync());
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(5, 45, 0)));
+
+            // PickerActions means the user commits explicitly with OK, so Tab must leave the value alone.
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+            picker.Time.Should().Be(new TimeSpan(0, 45, 0));
+            comp.Find("input").GetAttribute("value").Should().Be("00:45");
         }
 
         [Test]

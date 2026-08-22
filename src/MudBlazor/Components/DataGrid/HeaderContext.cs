@@ -41,28 +41,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates whether all items are currently selected.
         /// </summary>
-        public bool? IsAllSelected
-        {
-            get
-            {
-                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
-                {
-                    if (_dataGrid.Selection.Count == Items.Count())
-                    {
-                        return true;
-                    }
-
-                    if (_dataGrid.Selection.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    return null;
-                }
-
-                return false;
-            }
-        }
+        public bool? IsAllSelected => _dataGrid.GetSelectionState(Items);
 
         /// <summary>
         /// Creates a new instance.

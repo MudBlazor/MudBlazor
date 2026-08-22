@@ -56,7 +56,7 @@
                                     ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
             <!-- Group Footer -->
             <tr class="mud-table-row">
-                @DataGrid.FooterCells(Items)
+                @DataGrid.FooterCells(Items, Items)
             </tr>
         }
     }

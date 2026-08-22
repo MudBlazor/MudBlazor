@@ -669,7 +669,8 @@ namespace MudBlazor
                 .HookKeyDown(OnHandleKeyDownAsync)
                 .When(CanHandleKeys, builder => builder
                     .OnKeyDown("Backspace", HandleBackspaceAsync)
-                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+                    .OnKeyDown("Escape", () => CloseAsync(false))
+                    .OnKeyDown("Tab", () => CloseAsync(Open && PickerActions == null))));
         }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();

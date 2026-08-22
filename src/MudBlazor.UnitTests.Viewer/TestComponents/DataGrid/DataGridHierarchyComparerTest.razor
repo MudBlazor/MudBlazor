@@ -1,0 +1,58 @@
+﻿@* Test component for hierarchy expansion surviving a refetch under a custom Comparer *@
+
+<MudDataGrid T="Model" Items="@Items" Comparer="@ItemComparer">
+    <Columns>
+        <HierarchyColumn T="Model" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+    <ChildRowContent>
+        <tr>
+            <td colspan="2" class="hierarchy-detail">Details for @context.Item.Name</td>
+        </tr>
+    </ChildRowContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "An expanded hierarchy row must stay expanded when a refetch replaces the items with equal-but-new instances.";
+
+    public IdComparer ItemComparer { get; } = new();
+
+    public List<Model> Items { get; set; } =
+    [
+        new Model(1, "Sam"),
+        new Model(2, "Alicia"),
+        new Model(3, "Ira")
+    ];
+
+    /// <summary>
+    /// Replaces every item with a distinct instance which is equal only under <see cref="ItemComparer"/>, the way a server refetch would.
+    /// </summary>
+    public void Refetch()
+    {
+        Items = Items.Select(x => new Model(x.Id, x.Name)).ToList();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// A reference type on purpose, so two instances are never equal under the default comparer.
+    /// </summary>
+    public class Model
+    {
+        public Model(int id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
+        public int Id { get; }
+
+        public string Name { get; }
+    }
+
+    public class IdComparer : IEqualityComparer<Model>
+    {
+        public bool Equals(Model? x, Model? y) => x?.Id == y?.Id;
+
+        public int GetHashCode(Model obj) => obj.Id;
+    }
+}
