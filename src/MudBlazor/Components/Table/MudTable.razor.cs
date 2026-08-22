@@ -683,23 +683,11 @@ namespace MudBlazor
         internal int GetFilteredItemIndex(T item)
         {
             var filteredItems = FilteredItems;
-            if (filteredItems is IList<T> list)
-            {
-                return list.IndexOf(item);
-            }
 
-            var index = 0;
-            foreach (var candidate in filteredItems)
-            {
-                if (EqualityComparer<T>.Default.Equals(candidate, item))
-                {
-                    return index;
-                }
-
-                index++;
-            }
-
-            return -1;
+            // FilteredItems is materialised before it is returned, so this is the path that runs; the fallback only guards the type, which is IEnumerable.
+            return filteredItems is IList<T> list
+                ? list.IndexOf(item)
+                : filteredItems.ToList().IndexOf(item);
         }
 
         /// <summary>
