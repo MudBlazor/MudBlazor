@@ -15,6 +15,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TableTests : BunitTest
     {
+        /// <summary>
+        /// A row's index is its position in the filtered items, and duplicates resolve to the first match.
+        /// </summary>
+        [Test]
+        public void TableRowIndex_IsPositionInFilteredItems()
+        {
+            var comp = Context.Render<TableRowIndexTest>();
+
+            // "a" appears twice, so the third row resolves to the first match, matching List.IndexOf.
+            comp.Instance.SeenIndexes.Should().Equal(0, 1, 0, 3);
+
+            var rowIds = comp.FindAll("tbody tr").Select(row => row.Id).ToList();
+            rowIds.Should().HaveCount(4);
+            rowIds[0].Should().EndWith("_row_0");
+            rowIds[1].Should().EndWith("_row_1");
+            rowIds[2].Should().EndWith("_row_0");
+            rowIds[3].Should().EndWith("_row_3");
+        }
+
         [Test]
         public async Task CustomTableClass()
         {
