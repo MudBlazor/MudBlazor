@@ -50,10 +50,10 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
             // We have to do a bit of pre-processing on the lambda expression. Only do that if it's new or changed.
-            // Razor rebuilds the expression tree on every render, so the instance always differs and identity alone
-            // would mean recompiling every time. Compare the shape instead, and keep the first instance of a given
-            // shape as the canonical one so callers that cache against PropertyExpression keep hitting their cache.
+            // Razor rebuilds the expression tree on every render, so the instance always differs and identity alone would mean recompiling every time.
+            // Compare the shape instead, and keep the first instance of a given shape as the canonical one so callers that cache against PropertyExpression keep hitting their cache.
             // A lambda that captures hashes its closure by reference, so those still recompile, which is the safe answer.
             if (!ReferenceEquals(_lastAssignedProperty, Property))
             {
