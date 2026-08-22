@@ -999,10 +999,10 @@ namespace MudBlazor.UnitTests.Components
             var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var expectedTexts = new[]
             {
-                localizer[LanguageResource.MudColorPicker_SpectrumView].Value,
-                localizer[LanguageResource.MudColorPicker_GridView].Value,
-                localizer[LanguageResource.MudColorPicker_PaletteView].Value,
-                localizer[LanguageResource.MudColorPicker_ModeSwitch].Value,
+                localizer[LanguageResource.MudColorPicker_SpectrumView],
+                localizer[LanguageResource.MudColorPicker_GridView],
+                localizer[LanguageResource.MudColorPicker_PaletteView],
+                localizer[LanguageResource.MudColorPicker_ModeSwitch],
             };
 
             var tooltips = comp.FindComponents<MudTooltip>();
