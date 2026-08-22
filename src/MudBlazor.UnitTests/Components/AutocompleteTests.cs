@@ -2728,10 +2728,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Clicking the clear button without a preceding mousedown, as with keyboard activation or element.click(), must not open the menu (follow-up to #13529).
+        /// Clicking the clear button without a preceding mousedown, as with element.click(), must not open the menu (follow-up to #13529).
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Remain_Closed_On_Keyboard_ClearButton_Activation()
+        public async Task Autocomplete_Should_Remain_Closed_On_Programmatic_ClearButton_Click()
         {
             var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
                 .Add(x => x.DebounceInterval, 0));
@@ -2760,6 +2760,52 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Autocomplete.Open.Should().BeFalse();
             comp.Instance.OpenedCount.Should().Be(0);
             comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Enter activates the clear button on keydown and its keyup lands on the input focused by the clear handler; that stray keyup must not reopen the menu, while a subsequent full Enter keystroke still opens it (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Enter_ClearButton_Activation()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+            var input = comp.Find("input");
+
+            // Enter on the focused clear button: the click fires on keydown with no mousedown,
+            // then the keyup lands on the input because the clear handler moved focus there.
+            await comp.Find("button.mud-input-clear-button").ClickAsync(new());
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+
+            // A genuine Enter keystroke on the input still opens the menu.
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Autocomplete.Open.Should().BeTrue();
+            comp.Instance.OpenedCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Enter on the clear button while the menu is open must not let the stray keyup select the highlighted item and restore the cleared value (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Not_Select_On_Enter_ClearButton_Activation_While_Open()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            await comp.Find("button.mud-input-clear-button").ClickAsync(new());
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Autocomplete.Open.Should().BeTrue();
+            comp.Instance.Autocomplete.Value.Should().BeNull();
             comp.Instance.ClearCount.Should().Be(1);
         }
 

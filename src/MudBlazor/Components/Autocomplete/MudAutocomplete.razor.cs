@@ -19,6 +19,7 @@ namespace MudBlazor
 
         private bool _isCleared;
         private bool _isProcessingValue;
+        private bool _skipNextEnterKeyUp;
         private int _selectedListItemIndex;
         private readonly int _elementKey = 0;
         private int _returnedItemsCount;
@@ -903,6 +904,9 @@ namespace MudBlazor
 
         private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
+            // A genuine keystroke on the input starts with keydown, so any pending stray-keyup suppression is over.
+            _skipNextEnterKeyUp = false;
+
             switch (args.Key)
             {
                 // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
@@ -949,6 +953,12 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
+                    if (_skipNextEnterKeyUp)
+                    {
+                        _skipNextEnterKeyUp = false;
+                        break;
+                    }
+
                     if (Open)
                     {
                         await OnEnterKeyAsync();
@@ -1146,6 +1156,10 @@ namespace MudBlazor
             {
                 await OpenMenuAsync();
             }
+
+            // Enter activates the clear button on keydown, and the matching keyup lands on the input we just focused.
+            // Swallow that stray keyup so it can't reopen the menu or select the highlighted item.
+            _skipNextEnterKeyUp = true;
         }
         internal async Task AdornmentClickHandlerAsync()
         {
