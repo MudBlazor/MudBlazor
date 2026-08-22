@@ -2,12 +2,11 @@
   // Adapted from https://bun.com/docs/typescript
   "compilerOptions": {
     // Environment setup & latest features
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
     "allowJs": true,
-    "types": ["bun", "node"],
 
     // Bundler mode
     "moduleResolution": "bundler",
