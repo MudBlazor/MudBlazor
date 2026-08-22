@@ -645,6 +645,9 @@ namespace MudBlazor
             else if (Immediate)
                 await CoerceValueToTextAsync();
 
+            if (_elementReference?.IsClearing == true)
+                return;
+
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
             else

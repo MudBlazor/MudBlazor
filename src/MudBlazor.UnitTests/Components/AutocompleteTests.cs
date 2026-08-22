@@ -2727,6 +2727,63 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// Clicking the clear button without a preceding mousedown, as with keyboard activation or element.click(), must not open the menu (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Keyboard_ClearButton_Activation()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            await comp.Find("button.mud-input-clear-button").ClickAsync(new());
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// A full pointer interaction on the clear button, mousedown followed by click through the input's own handler, must not open a closed menu (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Pointer_ClearButton_Interaction()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            var button = comp.Find("button.mud-input-clear-button");
+            await button.MouseDownAsync(new());
+            await button.ClickAsync(new());
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// A full pointer interaction on the clear button while the menu is open must keep it open (#13528).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Open_On_Pointer_ClearButton_Interaction()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            var button = comp.Find("button.mud-input-clear-button");
+            await button.MouseDownAsync(new());
+            await button.ClickAsync(new());
+
+            comp.Instance.Autocomplete.Open.Should().BeTrue();
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
         [Test]
         public void PopoverSettings_SetsDefaultValues()
         {

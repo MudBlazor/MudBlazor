@@ -6,6 +6,7 @@
                  @bind-Value="_value"
                  @bind-Text="_text"
                  Clearable
+                 DebounceInterval="DebounceInterval"
                  SearchFunc="Search"
                  OnClearButtonClick=@ClearClicked
                  OpenChanged=@OpenChanged />
@@ -38,6 +39,8 @@
     }
 
     public MudAutocomplete<string> Autocomplete { get; private set; } = default!;
+
+    [Parameter] public int DebounceInterval { get; set; } = 100;
 
     string StatusMessage { get { return $"State: Clear = {ClearCount} - Open = {OpenedCount} - Close = {ClosedCount} - Text = {_text ?? "null"}"; } }
 
