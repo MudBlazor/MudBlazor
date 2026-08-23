@@ -2,12 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Highlighter; // Added for FragmentInfo
 using MudBlazor.Utilities;
-// Removed: using static MudBlazor.Components.Highlighter.Splitter; 
-// We will call Splitter methods statically: Splitter.GetFragments, Splitter.GetHtmlAwareFragments
 
 namespace MudBlazor;
 
@@ -17,8 +14,7 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudHighlighter : MudComponentBase
 {
-    private Memory<string> _fragments;
-    private string? _regex;
+    private List<FragmentInfo> _plainTextFragments = [];
     private List<FragmentInfo> _htmlAwareFragments = [];
 
     /// <summary>
@@ -81,21 +77,12 @@ public partial class MudHighlighter : MudComponentBase
         base.OnParametersSet();
         if (Markup)
         {
-            _htmlAwareFragments = Splitter.GetHtmlAwareFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
-            _fragments = Memory<string>.Empty;
+            _htmlAwareFragments = Splitter.GetHtmlAwareFragments(Text, HighlightedText, HighlightedTexts, out _, CaseSensitive, UntilNextBoundary);
         }
         else
         {
-            _fragments = Splitter.GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
-
-            if (_htmlAwareFragments == null)
-                _htmlAwareFragments = [];
-            else
-                _htmlAwareFragments.Clear();
+            _plainTextFragments = Splitter.GetTextFragments(Text, HighlightedText, HighlightedTexts, out _, CaseSensitive, UntilNextBoundary);
+            _htmlAwareFragments.Clear();
         }
     }
-
-    bool IsMatch(string fragment) => !string.IsNullOrWhiteSpace(fragment) &&
-                                     !string.IsNullOrWhiteSpace(_regex) &&
-                                     Regex.IsMatch(fragment, _regex, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase, RegexDefaults.MatchTimeout);
 }

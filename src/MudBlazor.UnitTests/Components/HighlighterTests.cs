@@ -140,6 +140,58 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void GetTextFragments_PreservesMatchMetadataAtAllBoundaries()
+        {
+            var fragments = Splitter.GetTextFragments("match middle matchmatch", "match", null, out _);
+
+            fragments.Should().BeEquivalentTo(new[]
+            {
+                new FragmentInfo("match", FragmentType.HighlightedText),
+                new FragmentInfo(" middle ", FragmentType.Text),
+                new FragmentInfo("match", FragmentType.HighlightedText),
+                new FragmentInfo("match", FragmentType.HighlightedText)
+            }, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void GetTextFragments_EmptyAndNonMatchInputIsPlainText()
+        {
+            Splitter.GetTextFragments(null, "match", null, out _).Should().BeEmpty();
+            Splitter.GetTextFragments(string.Empty, "match", null, out _).Should().BeEmpty();
+            Splitter.GetTextFragments("plain text", "match", null, out _).Should().BeEquivalentTo(
+                new[] { new FragmentInfo("plain text", FragmentType.Text) });
+        }
+
+        [Test]
+        public void GetTextFragments_PreservesCaseSensitivityAndOverlappingTermBehavior()
+        {
+            Splitter.GetTextFragments("Match match", "match", null, out _, caseSensitive: true)
+                .Should().BeEquivalentTo(new[]
+                {
+                    new FragmentInfo("Match match", FragmentType.Text)
+                }, options => options.WithStrictOrdering());
+
+            Splitter.GetTextFragments("ababa", null, new[] { "aba", "ba" }, out _)
+                .Should().BeEquivalentTo(new[]
+                {
+                    new FragmentInfo("aba", FragmentType.HighlightedText),
+                    new FragmentInfo("ba", FragmentType.HighlightedText)
+                }, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void GetTextFragments_UntilNextBoundaryPreservesMatchedText()
+        {
+            var fragments = Splitter.GetTextFragments("first item", "it", null, out _, untilNextBoundary: true);
+
+            fragments.Should().BeEquivalentTo(new[]
+            {
+                new FragmentInfo("first ", FragmentType.Text),
+                new FragmentInfo("item", FragmentType.HighlightedText)
+            }, options => options.WithStrictOrdering());
+        }
+
+        [Test]
         public void GetHtmlAwareFragments_NullOrEmptyText_ReturnsEmptyList()
         {
             var resultNull = GetHtmlAwareFragments(null, "any", null, out var outRegex, false, false);

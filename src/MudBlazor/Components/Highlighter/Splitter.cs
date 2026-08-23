@@ -36,24 +36,41 @@ public static partial class Splitter
                                               IEnumerable<string>? highlightedTexts, out string regex,
                                               bool caseSensitive = false, bool untilNextBoundary = false)
     {
+        var fragments = GetTextFragments(text, highlightedText, highlightedTexts, out regex, caseSensitive, untilNextBoundary);
+        return new Memory<string>(fragments.Select(fragment => fragment.Content).ToArray());
+    }
+
+    internal static List<FragmentInfo> GetTextFragments(string? text, string? highlightedText,
+                                                       IEnumerable<string>? highlightedTexts, out string regex,
+                                                       bool caseSensitive = false, bool untilNextBoundary = false)
+    {
         if (string.IsNullOrEmpty(text))
         {
             regex = string.Empty;
-            return Memory<string>.Empty;
+            return [];
         }
 
         var highlightTerms = BuildHighlightTermsList(highlightedText, highlightedTexts);
         if (highlightTerms.Count == 0)
         {
             regex = string.Empty;
-            return new[] { text };
+            return [new FragmentInfo(text, FragmentType.Text)];
         }
 
         regex = BuildRegexPattern(highlightTerms, untilNextBoundary);
         var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive) | RegexOptions.NonBacktracking, RegexDefaults.MatchTimeout);
-        var nonEmpty = splits.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+        var fragments = new List<FragmentInfo>(splits.Length);
 
-        return new Memory<string>(nonEmpty);
+        for (var i = 0; i < splits.Length; i++)
+        {
+            var split = splits[i];
+            if (string.IsNullOrEmpty(split))
+                continue;
+
+            fragments.Add(new FragmentInfo(split, i % 2 == 1 ? FragmentType.HighlightedText : FragmentType.Text));
+        }
+
+        return fragments;
     }
 
     public static List<FragmentInfo> GetHtmlAwareFragments(string? text, string? highlightedText,

@@ -37,17 +37,17 @@
         @((MarkupString)Text)
     }
 }
-else if (_fragments.Length > 0)
+else if (_plainTextFragments.Count > 0)
 {
-    foreach (var fragment in _fragments.Span)
+    foreach (var fragment in _plainTextFragments)
     {
-        if (IsMatch(fragment))
+        if (fragment.Type == FragmentType.HighlightedText)
         {
-            <mark class="@Class" style="@Style" @attributes="@UserAttributes">@fragment</mark>
+            <mark class="@Class" style="@Style" @attributes="@UserAttributes">@fragment.Content</mark>
         }
         else
         {
-            @fragment
+            @fragment.Content
         }
     }
 }
