@@ -539,12 +539,12 @@ namespace MudBlazor
                 return;
             }
 
-            var index = direction > 0 ? 0 : _items.Count - 1;
-            for (; index >= 0 && index < _items.Count; index += direction)
+            var boundaryIndex = direction > 0 ? 0 : _items.Count - 1;
+            for (; boundaryIndex >= 0 && boundaryIndex < _items.Count; boundaryIndex += direction)
             {
-                if (_items[index].IsEnabled())
+                if (_items[boundaryIndex].IsEnabled())
                 {
-                    await _items[index].FocusAsync();
+                    await _items[boundaryIndex].FocusAsync();
                     return;
                 }
             }
