@@ -1,3 +1,4 @@
+// Legacy side effect imports
 import "./mudAAAlicense";
 import "./mudDragAndDrop";
 import "./mudElementReference";
@@ -22,4 +23,14 @@ import "./mudSplitPanel";
 import "./mudTableCell";
 import "./mudThemeProvider";
 import "./mudTimePicker";
-import "./mudWindow";
+
+// Code ported to TypeScript
+import MudWindow from "./MudWindow";
+
+declare global {
+    interface Window {
+        mudWindow: MudWindow;
+    }
+}
+
+window.mudWindow = new MudWindow();
