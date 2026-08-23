@@ -86,7 +86,7 @@ namespace MudBlazor.Charts
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Select(s => s.Data?.Values.Count ?? 0).DefaultIfEmpty(0).Max();
+        private int SeriesLength => _series.Select(s => s.Data?.Count ?? 0).DefaultIfEmpty(0).Max();
 
         // The number of rows visible
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
@@ -250,12 +250,17 @@ namespace MudBlazor.Charts
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
             var cols = SeriesLength;
+            var customHeatMapCells = new Dictionary<(int Row, int Column), MudHeatMapCell<T>>();
+            foreach (var customHeatMapCell in _customHeatMapCells)
+            {
+                customHeatMapCells.TryAdd((customHeatMapCell.Row, customHeatMapCell.Column), customHeatMapCell);
+            }
 
             for (var row = 0; row < rows; row++)
             {
                 for (var col = 0; col < cols; col++)
                 {
-                    var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
+                    customHeatMapCells.TryGetValue((row, col), out var mudHeatMapOverride);
                     var value = mudHeatMapOverride?.Value ?? GetDataValue(row, col); // Method to retrieve the value for each cell                    
                     _heatMapCells.Add(new HeatMapCell<T>
                     {
@@ -393,12 +398,23 @@ namespace MudBlazor.Charts
             }
 
             // need to ensure column index exists in case there is no data for a column in a series
-            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Values.Count)
+            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Count)
             {
                 return null;
             }
 
-            return _series[row].Data[col].Y;
+            return _series[row].Data.GetValue(col);
+        }
+
+        internal HeatMapCell<T>? GetCell(int row, int column)
+        {
+            if (row < 0 || row >= _series.Count || column < 0 || column >= SeriesLength)
+            {
+                return null;
+            }
+
+            var index = row * SeriesLength + column;
+            return index < _heatMapCells.Count ? _heatMapCells[index] : null;
         }
 
         private string GetColorForValue(T? value)

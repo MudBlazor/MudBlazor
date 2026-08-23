@@ -20,10 +20,10 @@
             @* 4-point gradients for each cell *@
             @for (var row = 0; row < series.Count; row++)
             {
-                var dataLength = series[row].Data?.Values.Count ?? 0;
+                var dataLength = series[row].Data?.Count ?? 0;
                 for (var col = 0; col < dataLength; col++)
                 {
-                    var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+                    var cell = GetCell(row, col);
                     var color = GetColorForValue(cell?.Value);
 
                     // Define each gradient for 4 directions
@@ -59,12 +59,12 @@
 
         // how tall each cell should be
         var y = row * (_cellDimension.Height + _cellDimension.Padding) + _verticalStartSpace;
-        var seriesLength = series[row].Data != null ? series[row].Data.Values.Count : 0;
+        var seriesLength = series[row].Data?.Count ?? 0;
 
         for (var col = 0; col < seriesLength; col++)
         {
             var colIndex = col;
-            var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+            var cell = GetCell(row, col);
             var x = col * (_cellDimension.Width + _cellDimension.Padding) + _horizontalStartSpace;
 
             // Gradient Overlays
