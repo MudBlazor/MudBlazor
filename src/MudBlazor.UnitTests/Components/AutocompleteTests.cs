@@ -1320,15 +1320,21 @@ namespace MudBlazor.UnitTests.Components
                     value == "empty" ? [] : value == "second" ? secondResults : firstResults)));
 
             await autocomplete.Find("input").InputAsync("first");
-            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Count.Should().Be(3));
-            provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindComponents<MudListItem<string>>().Count.Should().Be(3);
+                provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            });
 
             await autocomplete.Find("input").InputAsync("empty");
             await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Should().BeEmpty());
 
             await autocomplete.Find("input").InputAsync("second");
-            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Count.Should().Be(2));
-            provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindComponents<MudListItem<string>>().Count.Should().Be(2);
+                provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            });
         }
 
         [Test]
