@@ -28,6 +28,10 @@ namespace MudBlazor.UnitTests.Components
             avatars[2].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
             avatars[3].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
             avatars[4].ClassList.Should().Contain("mud-avatar-group-max-avatar");
+            avatars[0].GetAttribute("style").Should().Contain("z-index: 6");
+            avatars[1].GetAttribute("style").Should().Contain("z-index: 5");
+            avatars[2].GetAttribute("style").Should().Contain("z-index: 4");
+            avatars[3].GetAttribute("style").Should().Contain("z-index: 3");
         }
 
         [Test]
@@ -142,10 +146,20 @@ namespace MudBlazor.UnitTests.Components
         public async Task AvatarGroupRemove()
         {
             var comp = Context.Render<AvatarGroupRemoveTest>();
+            var group = comp.FindComponent<MudAvatarGroup>();
+            var removedAvatar = group.Instance._avatars[0];
+            var remainingAvatar = group.Instance._avatars[1];
 
             await comp.Find("#empty-button").ClickAsync();
 
-            comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
+            group.Instance._avatars.Count.Should().Be(0);
+
+            group.Instance.AddAvatar(removedAvatar);
+            group.Instance.AddAvatar(remainingAvatar);
+            group.Instance.RemoveAvatar(removedAvatar);
+
+            group.Instance.GetAvatarZindex(remainingAvatar).Build().Should().Contain("z-index: 1");
+            group.Instance.MaxGroupReached(remainingAvatar).Should().Be(false);
         }
 
         [Test]
