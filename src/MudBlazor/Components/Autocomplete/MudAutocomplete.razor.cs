@@ -814,19 +814,18 @@ namespace MudBlazor
                 }
             }
 
-            _items = searchedItems;
-
-            var itemDisabled = new bool[_items.Length];
-            var enabledItemIndices = new List<int>(_items.Length);
-            for (int i = 0; i < _items.Length; i++)
+            var itemDisabled = new bool[searchedItems.Length];
+            var enabledItemIndices = new List<int>(searchedItems.Length);
+            for (int i = 0; i < searchedItems.Length; i++)
             {
-                itemDisabled[i] = ItemDisabledFunc?.Invoke(_items[i]) == true;
+                itemDisabled[i] = ItemDisabledFunc?.Invoke(searchedItems[i]) == true;
                 if (!itemDisabled[i])
                 {
                     enabledItemIndices.Add(i);
                 }
             }
 
+            _items = searchedItems;
             _itemDisabled = itemDisabled;
             _enabledItemIndices = enabledItemIndices;
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
