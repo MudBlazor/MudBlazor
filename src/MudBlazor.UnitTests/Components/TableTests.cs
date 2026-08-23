@@ -2901,12 +2901,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comparer = new CountingIntComparer();
             var table = new TestableMudTable<int>();
-            table.Comparer = comparer;
+            table.SetComparer(comparer);
             table.Context.Selection.UnionWith(Enumerable.Range(0, 100));
             comparer.Reset();
 
             table.IsRowChecked(50).Should().BeTrue();
             comparer.EqualsCalls.Should().BeLessThan(3);
+            comparer.GetHashCodeCalls.Should().Be(1);
         }
 
         /// <summary>
@@ -2917,8 +2918,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comparer = StringComparer.OrdinalIgnoreCase;
             var table = new TestableMudTable<string>();
-            table.Comparer = comparer;
-            table.SelectedItems = new HashSet<string>(["selected"], StringComparer.Ordinal);
+            table.SetComparer(comparer);
+            table.SetSelectedItems(new HashSet<string>(["selected"], StringComparer.Ordinal));
 
             table.IsRowChecked("SELECTED").Should().BeTrue();
         }
@@ -3608,11 +3609,16 @@ namespace MudBlazor.UnitTests.Components
         private sealed class TestableMudTable<T> : MudTable<T>
         {
             public bool IsRowChecked(T item) => IsCheckedRow(item);
+
+            public void SetComparer(IEqualityComparer<T> comparer) => Comparer = comparer;
+
+            public void SetSelectedItems(HashSet<T> selectedItems) => SelectedItems = selectedItems;
         }
 
         private sealed class CountingIntComparer : IEqualityComparer<int>
         {
             public int EqualsCalls { get; private set; }
+            public int GetHashCodeCalls { get; private set; }
 
             public bool Equals(int x, int y)
             {
@@ -3620,9 +3626,17 @@ namespace MudBlazor.UnitTests.Components
                 return x == y;
             }
 
-            public int GetHashCode(int obj) => obj;
+            public int GetHashCode(int obj)
+            {
+                GetHashCodeCalls++;
+                return obj;
+            }
 
-            public void Reset() => EqualsCalls = 0;
+            public void Reset()
+            {
+                EqualsCalls = 0;
+                GetHashCodeCalls = 0;
+            }
         }
     }
 }
