@@ -760,7 +760,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(1, "Charlie")]
+        [TestCase(1, "Alpha")]
         [TestCase(-1, "Charlie")]
         public async Task FocusAdjacentItem_WithDisabledCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
         {
