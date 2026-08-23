@@ -405,12 +405,12 @@ namespace MudBlazor.UnitTests.Components
                 builder.OpenComponent<MudHeatMapCell<double>>(0);
                 builder.AddAttribute(1, "Row", 0);
                 builder.AddAttribute(2, "Column", 0);
-                builder.AddAttribute(3, "Value", 10);
+                builder.AddAttribute(3, "Value", 10d);
                 builder.CloseComponent();
                 builder.OpenComponent<MudHeatMapCell<double>>(4);
                 builder.AddAttribute(5, "Row", 0);
                 builder.AddAttribute(6, "Column", 0);
-                builder.AddAttribute(7, "Value", 20);
+                builder.AddAttribute(7, "Value", 20d);
                 builder.CloseComponent();
             }
 
