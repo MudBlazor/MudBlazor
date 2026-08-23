@@ -909,6 +909,7 @@ namespace MudBlazor
             {
                 // For is a fresh expression instance on every render for an inline lambda, so the reference check above never holds and this runs on every parameter set.
                 // FieldIdentifier.Create compiles the expression for anything deeper than model.Property, so resolve the member chain directly and only fall back for exotic shapes.
+                // The resolver reports false without having evaluated anything, so the fallback never runs a user getter a second time.
                 if (!FieldIdentifierResolver.TryCreate(For, out var fieldIdentifier))
                 {
                     fieldIdentifier = FieldIdentifier.Create(For);

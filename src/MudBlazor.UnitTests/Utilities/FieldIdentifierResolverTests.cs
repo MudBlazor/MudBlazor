@@ -35,12 +35,46 @@ namespace MudBlazor.UnitTests.Utilities
 
             public Address Home { get; set; } = new();
 
+            public Person? Partner { get; set; }
+
             public List<Address> Addresses { get; } = [new()];
+        }
+
+        private class Counting
+        {
+            private readonly Queue<Person?> _results;
+
+            public Counting(params Person?[] results) => _results = new Queue<Person?>(results);
+
+            public int Reads { get; private set; }
+
+            public Person? Tracked
+            {
+                get
+                {
+                    Reads++;
+                    return _results.Count > 1 ? _results.Dequeue() : _results.Peek();
+                }
+            }
+
+            public Person Boom => throw new InvalidOperationException("boom");
         }
 
         private static Person? s_static = new();
 
         private Person _person = new();
+
+        /// <summary>
+        /// Runs the same accessor through the resolver and the framework and asserts both fail with the same exception type and message.
+        /// </summary>
+        private static void AssertThrowsLikeFramework<T>(Expression<Func<T>> accessor)
+        {
+            var framework = ((Action)(() => FieldIdentifier.Create(accessor))).Should().Throw<Exception>().Which;
+            var resolver = ((Action)(() => FieldIdentifierResolver.TryCreate(accessor, out _))).Should().Throw<Exception>().Which;
+
+            resolver.Should().BeOfType(framework.GetType());
+            resolver.Message.Should().Be(framework.Message);
+        }
 
         /// <summary>
         /// A chain through a nullable struct resolves to the same field the framework resolves.
@@ -140,6 +174,78 @@ namespace MudBlazor.UnitTests.Utilities
             Expression<Func<string?>> accessor = () => GetPerson().Name!.ToUpperInvariant();
 
             FieldIdentifierResolver.TryCreate(accessor, out _).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A recognized chain whose model is null must throw what the framework throws, and each side reads the getter exactly once — no fallback re-evaluation.
+        /// </summary>
+        [Test]
+        public void NullModelInNestedChain_ThrowsLikeFramework_WithoutFallingBack()
+        {
+            var counting = new Counting([null]);
+
+            AssertThrowsLikeFramework(() => counting.Tracked!.Name);
+
+            counting.Reads.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A getter that returns null once and a value afterwards must fail like the framework's single evaluation would, not bind the second read.
+        /// </summary>
+        [Test]
+        public void GetterReturningNullThenValue_DoesNotBindTheSecondRead()
+        {
+            var counting = new Counting(null, new Person());
+            Expression<Func<string?>> accessor = () => counting.Tracked!.Name;
+
+            Action act = () => FieldIdentifierResolver.TryCreate(accessor, out _);
+
+            act.Should().Throw<ArgumentException>();
+            counting.Reads.Should().Be(1);
+        }
+
+        /// <summary>
+        /// A null owner in the middle of a recognized chain must throw the framework's NullReferenceException instead of reporting unresolved.
+        /// </summary>
+        [Test]
+        public void NullIntermediateOwner_ThrowsLikeFramework()
+        {
+            _person.Partner = null;
+
+            AssertThrowsLikeFramework(() => _person.Partner!.Home.Street);
+        }
+
+        /// <summary>
+        /// An empty nullable struct in the chain must throw the framework's InvalidOperationException without invoking Nullable&lt;T&gt;.Value reflectively.
+        /// </summary>
+        [Test]
+        public void EmptyNullableInChain_ThrowsLikeFramework()
+        {
+            _person.Maybe = null;
+
+            AssertThrowsLikeFramework(() => _person.Maybe!.Value.Inner.Street);
+        }
+
+        /// <summary>
+        /// An exception thrown by a getter must surface as itself, not wrapped in the reflection envelope.
+        /// </summary>
+        [Test]
+        public void ThrowingGetter_SurfacesTheOriginalException()
+        {
+            var counting = new Counting();
+
+            AssertThrowsLikeFramework(() => counting.Boom.Name);
+        }
+
+        /// <summary>
+        /// A null model read straight off a closure field takes the framework's non-compiled path, which fails with a different exception than a nested chain; both must match.
+        /// </summary>
+        [Test]
+        public void NullFlatRoot_ThrowsLikeFramework()
+        {
+            _person = null!;
+
+            AssertThrowsLikeFramework(() => _person.Name);
         }
 
         private Person GetPerson() => _person;
