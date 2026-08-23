@@ -998,23 +998,29 @@ namespace MudBlazor
             var disabledValues = Items
                 .Where(x => x.Disabled)
                 .Select(x => x.Value);
+            Func<T?, bool> disabledValueClause = x => disabledValues.Contains(x, Comparer);
 
-            // force select all
             if (selectAll)
             {
-                _selectedValues = new HashSet<T?>(Items.Where(x => x.Value is not null).Select(x => x.Value), Comparer);
+                // Select all non disabled item but keeping disabled if already selected
+                var itemsSelection = _selectedValues
+                    .Where(disabledValueClause)
+                    .Union(Items.Where(x => !x.Disabled && x.Value is not null)
+                        .Select(x => x.Value)
+                        );
+                _selectedValues = new HashSet<T?>(itemsSelection, Comparer);
             }
-            // if any selected element is disabled but select all selection is requested : clearing
+            // if any selected element is disabled but deselect all selection is requested, do not clear
             else if (!_selectedValues
-                     .Any(disabledValues.Contains))
+                     .Any(disabledValueClause))
             {
                 await ClearAsync();
                 return;
             }
-            // do not select Disabled items
+            // keep only Disabled items selected
             else
             {
-                _selectedValues = new HashSet<T?>(Items.Where(x => !x.Disabled && x.Value is not null).Select(x => x.Value), Comparer);
+                _selectedValues = new HashSet<T?>(_selectedValues.Where(disabledValueClause), Comparer);
             }
 
             if (MultiSelectionTextFunc != null)
