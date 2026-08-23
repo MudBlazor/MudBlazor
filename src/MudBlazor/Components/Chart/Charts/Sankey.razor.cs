@@ -323,8 +323,8 @@ namespace MudBlazor.Charts
             if (ChartLabels.Length > 0)
                 return ChartLabels.Length;
 
-            return ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                              .Max(x => x?.Data?.Values.Count ?? 0);
+            return ChartSeries.Where(x => x.Data is not null).DefaultIfEmpty()
+                              .Max(x => x?.Data?.Count ?? 0);
         }
 
         private List<ChartSeries<T>> AggregateByLabel()
@@ -342,12 +342,12 @@ namespace MudBlazor.Charts
 
                 foreach (var series in visibleSeries)
                 {
-                    var values = series.Data?.Values ?? [];
+                    var values = series.Data;
 
-                    if (i < values.Count)
+                    if (values is not null && i < values.Count)
                     {
                         var link = new SankeyLink(label, series.Name);
-                        data.Add((link, values[i]));
+                        data.Add((link, values.GetValue(i)));
                     }
                 }
 
@@ -370,14 +370,14 @@ namespace MudBlazor.Charts
             foreach (var series in chartSeries)
             {
                 var data = new List<(SankeyLink, T)>();
-                var values = series.Data?.Values ?? [];
-
                 if (!series.Visible) continue;
 
-                for (var i = 0; i < values.Count; i++)
+                if (series.Data is null) continue;
+
+                for (var i = 0; i < series.Data.Count; i++)
                 {
                     var link = new SankeyLink(series.Name, ChartLabels[i]);
-                    data.Add((link, values[i]));
+                    data.Add((link, series.Data.GetValue(i)));
                 }
 
                 result.Add(new ChartSeries<T>

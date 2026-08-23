@@ -121,7 +121,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
                 Points = points,
                 LabelXValue = ChartOptions.ShowAsPercentage
                     ? ToS(Math.Round(normalizedData[seriesIndex] * 100, 1)) + "%"
-                    : series.Data.Values.SumGeneric().ToString(null, CultureInfo.InvariantCulture),
+                    : series.Data.SumGeneric().ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = series.Name
             };
 
@@ -135,7 +135,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         var path = new StringBuilder("M ");
         var points = new List<SvgPathPoint>();
 
-        for (var i = 0; i < Math.Min(series.Data.Values.Count, numAxes); i++)
+        for (var i = 0; i < Math.Min(series.Data.Count, numAxes); i++)
         {
             var value = series.Data[i].Y;
             var scale = radius * (axisMaxValue == 0 ? 0 : double.CreateSaturating(value) / axisMaxValue);
@@ -292,12 +292,12 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
 
         var groupedData = new List<ChartSeries<T>>();
         var dataLength = dataSet.Count != 0
-                            ? dataSet.Max(series => series.Data.Values.Count)
+                            ? dataSet.Max(series => series.Data.Count)
                             : 0;
 
         for (var i = 0; i < dataLength; i++)
         {
-            var data = dataSet.Select(series => i < series.Data.Values.Count ? series.Data.Values[i] : T.Zero).ToArray();
+            var data = dataSet.Select(series => i < series.Data.Count ? series.Data.GetValue(i) : T.Zero).ToArray();
             var label = i < labels.Length ? labels[i] : $"Axis {i + 1}";
 
             groupedData.Add(new ChartSeries<T>

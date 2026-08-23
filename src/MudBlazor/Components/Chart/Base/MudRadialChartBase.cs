@@ -163,15 +163,20 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     {
         return ChartLabels.Length > 0
             ? ChartLabels.Length
-            : ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                          .Max(x => x?.Data?.Values.Count ?? 0);
+            : ChartSeries.Where(x => x.Data is not null).DefaultIfEmpty()
+                          .Max(x => x?.Data?.Count ?? 0);
     }
 
     private T[] AggregateByLabel(T[] aggregated)
     {
         foreach (var series in ChartSeries.Where(s => s.Visible))
         {
-            var values = series.Data?.Values ?? [];
+            var values = series.Data;
+
+            if (values is null)
+            {
+                continue;
+            }
 
             for (var i = 0; i < values.Count; i++)
             {
@@ -196,7 +201,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 continue;
             }
 
-            aggregated[index] = series.Data?.Values.SumGeneric() ?? T.Zero;
+            aggregated[index] = series.Data?.SumGeneric() ?? T.Zero;
         }
 
         return aggregated;
