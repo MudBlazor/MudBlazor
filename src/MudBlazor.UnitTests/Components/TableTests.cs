@@ -2894,6 +2894,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Uses the selection hash set when its comparer matches the table comparer.
+        /// </summary>
+        [Test]
+        public void IsCheckedRow_UsesHashSetWithMatchingComparer()
+        {
+            var comparer = new CountingIntComparer();
+            var table = new TestableMudTable<int>();
+            table.Comparer = comparer;
+            table.Context.Selection.UnionWith(Enumerable.Range(0, 100));
+            comparer.Reset();
+
+            table.IsRowChecked(50).Should().BeTrue();
+            comparer.EqualsCalls.Should().BeLessThan(3);
+        }
+
+        /// <summary>
+        /// Uses the table comparer when externally supplied selection has a different comparer.
+        /// </summary>
+        [Test]
+        public void IsCheckedRow_UsesTableComparerWithMismatchedSelectionComparer()
+        {
+            var comparer = StringComparer.OrdinalIgnoreCase;
+            var table = new TestableMudTable<string>();
+            table.Comparer = comparer;
+            table.SelectedItems = new HashSet<string>(["selected"], StringComparer.Ordinal);
+
+            table.IsRowChecked("SELECTED").Should().BeTrue();
+        }
+
+        /// <summary>
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
         [Test]
@@ -3573,6 +3603,26 @@ namespace MudBlazor.UnitTests.Components
 
             rows[0].ClassList.Should().NotContain("mud-table-row-disabled");
             rows[0].GetAttribute("aria-disabled").Should().Be("false");
+        }
+
+        private sealed class TestableMudTable<T> : MudTable<T>
+        {
+            public bool IsRowChecked(T item) => IsCheckedRow(item);
+        }
+
+        private sealed class CountingIntComparer : IEqualityComparer<int>
+        {
+            public int EqualsCalls { get; private set; }
+
+            public bool Equals(int x, int y)
+            {
+                EqualsCalls++;
+                return x == y;
+            }
+
+            public int GetHashCode(int obj) => obj;
+
+            public void Reset() => EqualsCalls = 0;
         }
     }
 }
