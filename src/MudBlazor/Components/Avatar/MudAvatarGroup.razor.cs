@@ -148,6 +148,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         internal List<MudAvatar> _avatars = new();
+        private readonly Dictionary<MudAvatar, int> _avatarIndices = new();
 
         public MudAvatarGroup()
         {
@@ -164,24 +165,34 @@ namespace MudBlazor
 
         internal void AddAvatar(MudAvatar avatar)
         {
+            _avatarIndices.Add(avatar, _avatars.Count);
             _avatars.Add(avatar);
             StateHasChanged();
         }
 
         internal void RemoveAvatar(MudAvatar avatar)
         {
-            _avatars.Remove(avatar);
+            if (_avatars.Remove(avatar) && _avatarIndices.Remove(avatar, out var removedIndex))
+            {
+                foreach (var registeredAvatar in _avatars)
+                {
+                    if (_avatarIndices[registeredAvatar] > removedIndex)
+                    {
+                        _avatarIndices[registeredAvatar]--;
+                    }
+                }
+            }
         }
 
         internal CssBuilder GetAvatarSpacing() => new CssBuilder()
             .AddClass($"ms-n{Spacing}");
 
         internal StyleBuilder GetAvatarZindex(MudAvatar avatar) => new StyleBuilder()
-            .AddStyle("z-index", $"{_avatars.Count - _avatars.IndexOf(avatar)}");
+            .AddStyle("z-index", $"{_avatars.Count - _avatarIndices[avatar]}");
 
         internal bool MaxGroupReached(MudAvatar avatar)
         {
-            return _avatars.IndexOf(avatar) >= Max;
+            return _avatarIndices[avatar] >= Max;
         }
 
         /// <inheritdoc />
