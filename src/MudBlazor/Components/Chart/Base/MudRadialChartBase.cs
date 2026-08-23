@@ -182,7 +182,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
             {
                 if (!HiddenIndices.Contains(i) && i < aggregated.Length)
                 {
-                    aggregated[i] += values[i];
+                    aggregated[i] += values.GetValue(i);
                 }
             }
         }
@@ -201,7 +201,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 continue;
             }
 
-            aggregated[index] = series.Data?.SumGeneric() ?? T.Zero;
+            aggregated[index] = series.Data is null ? T.Zero : series.Data.Aggregate(T.Zero, static (sum, value) => sum + value);
         }
 
         return aggregated;
