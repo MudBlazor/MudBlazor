@@ -192,12 +192,14 @@ namespace MudBlazor
             .AddClass($"ms-n{Spacing}");
 
         internal StyleBuilder GetAvatarZindex(MudAvatar avatar) => new StyleBuilder()
-            .AddStyle("z-index", $"{_avatars.Count - _avatarIndices[avatar]}");
+            .AddStyle("z-index", $"{_avatars.Count - GetAvatarIndex(avatar)}");
 
         internal bool MaxGroupReached(MudAvatar avatar)
         {
-            return _avatarIndices[avatar] >= Max;
+            return GetAvatarIndex(avatar) >= Max;
         }
+
+        private int GetAvatarIndex(MudAvatar avatar) => _avatarIndices.TryGetValue(avatar, out var index) ? index : -1;
 
         /// <inheritdoc />
         protected override void OnParametersSet()
