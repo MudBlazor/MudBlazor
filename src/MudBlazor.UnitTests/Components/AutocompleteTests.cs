@@ -1303,6 +1303,46 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SearchFuncCallCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// Keeps disabled-item state aligned when unlimited results are replaced.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Update_DisabledItems_When_UnlimitedResultsChange()
+        {
+            var firstResults = new[] { "Enabled 1", "Disabled 1", "Enabled 2" };
+            var secondResults = new[] { "Disabled 2", "Enabled 3" };
+            var provider = Context.Render<MudPopoverProvider>();
+            var autocomplete = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.MaxItems, null)
+                .Add(x => x.ItemDisabledFunc, item => item.StartsWith("Disabled", StringComparison.Ordinal))
+                .Add(x => x.SearchFunc, (value, _) => Task.FromResult<IEnumerable<string>>(
+                    value == "empty" ? [] : value == "second" ? secondResults : firstResults)));
+
+            await autocomplete.Find("input").InputAsync("first");
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindComponents<MudListItem<string>>().Count.Should().Be(3);
+                provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            });
+
+            await autocomplete.Find("input").InputAsync("empty");
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Should().BeEmpty());
+
+            await autocomplete.Find("input").InputAsync("second");
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindComponents<MudListItem<string>>().Count.Should().Be(2);
+                provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+                provider.FindComponents<MudListItem<string>>().Single(x => x.Markup.Contains("Disabled 2")).Instance.Disabled.Should().BeTrue();
+                provider.FindComponents<MudListItem<string>>().Single(x => x.Markup.Contains("Enabled 3")).Instance.Disabled.Should().BeFalse();
+            });
+
+            await autocomplete.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await autocomplete.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await autocomplete.WaitForAssertionAsync(() => autocomplete.Instance.ReadValue.Should().Be("Enabled 3"));
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Select_Disabled_Item()
         {
