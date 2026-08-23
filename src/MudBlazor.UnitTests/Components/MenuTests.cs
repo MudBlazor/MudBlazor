@@ -1214,6 +1214,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Menu_RegisterItem_IgnoresDuplicatesAndResetsAfterClose()
+        {
+            var comp = Context.Render<MudMenu>();
+            var menu = comp.Instance;
+            var first = new object();
+            var second = new object();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+
+            var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
+                .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            menuItems.Should().Equal(first, second);
+
+            await comp.InvokeAsync(menu.CloseMenuAsync);
+
+            menuItems.Should().BeEmpty();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+            menuItems.Should().Equal(first, second);
+        }
+
+        [Test]
         public async Task NestedMenu_SubMenuArrow_PointsRightInLtr()
         {
             var comp = Context.Render<MenuWithNestingTest>();
