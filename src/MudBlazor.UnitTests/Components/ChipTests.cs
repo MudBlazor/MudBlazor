@@ -29,6 +29,68 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Chip_PlainChips_ShouldNotSubscribeToKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            for (var i = 0; i < 20; i++)
+            {
+                Context.Render<MudChip<string>>();
+            }
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
+        [Test]
+        public void Chip_InteractiveChips_ShouldSubscribeToKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClick, () => { }));
+            Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClose, _ => { }));
+
+            keyInterceptorService.ObserversCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Chip_KeyInterceptorSubscription_ShouldFollowParameterTransitions()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudChip<string>>();
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.OnClick, () => { }));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.OnClick, null));
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Chip_KeyboardInterceptor_ShouldInvokeClickAndClose()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var clicked = 0;
+            var closed = 0;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClick, () => clicked++)
+                .Add(p => p.OnClose, _ => closed++));
+            var elementId = comp.Find(".mud-chip-container").GetAttribute("id")!;
+
+            await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " " });
+            await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Delete" });
+            await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Backspace" });
+
+            clicked.Should().Be(1);
+            closed.Should().Be(2);
+        }
+
+        [Test]
         [Combinatorial]
         public void Chip_ShouldRenderAnchorIfLinkSet(
             [Values("", "ASDF", "nofollow", "_blank")] string target,
