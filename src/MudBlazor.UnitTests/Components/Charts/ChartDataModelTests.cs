@@ -128,6 +128,28 @@ public class ChartDataModelTests : BunitTest
         data[0].Y.Should().Be(9.0);
     }
 
+    [TestCase(5.0, true)]
+    [TestCase(null, false)]
+    public void ChartData_NullableSingleValueCtor_FlagsHasValue(double? value, bool expectedHasValue)
+    {
+        var data = new ChartData<double>(value);
+
+        data.Count.Should().Be(1);
+        data[0].HasValue.Should().Be(expectedHasValue);
+        data.GetValue(0).Should().Be(value ?? default);
+    }
+
+    [Test]
+    public void ChartData_NullableListCtor_MarksNullsAsNoValue()
+    {
+        IReadOnlyList<double?> values = new List<double?> { 1.0, null, 3.0 };
+        var data = new ChartData<double>(values);
+
+        data.Count.Should().Be(3);
+        data.Points.Select(p => p.HasValue).Should().Equal(true, false, true);
+        data.Values.Should().Equal(1.0, 0.0, 3.0);
+    }
+
     #endregion
 
     #region ChartData enumerators
@@ -236,6 +258,27 @@ public class ChartDataModelTests : BunitTest
         edgeArray[0].Y.Should().Be(6.0);
     }
 
+    [Test]
+    public void ChartData_ImplicitFromNullableValue()
+    {
+        ChartData<double> withValue = (double?)7.0;
+        withValue[0].HasValue.Should().BeTrue();
+        withValue.GetValue(0).Should().Be(7.0);
+
+        ChartData<double> withoutValue = (double?)null;
+        withoutValue[0].HasValue.Should().BeFalse();
+    }
+
+    [Test]
+    public void ChartData_ImplicitFromNullableCollections_FlagNulls()
+    {
+        ChartData<double> array = new double?[] { 1.0, null, 3.0 };
+        array.Points.Select(p => p.HasValue).Should().Equal(true, false, true);
+
+        ChartData<double> list = new List<double?> { null, 5.0 };
+        list.Points.Select(p => p.HasValue).Should().Equal(false, true);
+    }
+
     #endregion
 
     #region ChartPoint
@@ -256,6 +299,16 @@ public class ChartDataModelTests : BunitTest
 
         point.X.Should().Be("label");
         point.Y.Should().Be(1.0);
+    }
+
+    [Test]
+    public void ChartPoint_HasValue_DefaultsTrue_AndIsSettable()
+    {
+        var point = new ChartPoint<double>(1.0);
+        point.HasValue.Should().BeTrue();
+
+        point.HasValue = false;
+        point.HasValue.Should().BeFalse();
     }
 
     [TestCaseSource(nameof(ChartPointConversionCases))]

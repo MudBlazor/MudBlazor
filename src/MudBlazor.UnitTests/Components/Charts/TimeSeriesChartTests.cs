@@ -328,17 +328,6 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void TimeSeriesChart_CreateInterpolator_Throws()
-        {
-            var comp = Context.Render<TimeSeries<double>>();
-            var instance = comp.Instance;
-
-            Action act = () => instance.CreateInterpolator(0, 0, 20d, 1d, 1d);
-            act.Should().Throw<NotImplementedException>()
-                .WithMessage("*not implemented*");
-        }
-
-        [Test]
         public async Task TimeSeriesChart_CanHideSeries()
         {
             var mockYAxisLabelSize = new ElementSize { Width = 27.5, Height = 14.8 };

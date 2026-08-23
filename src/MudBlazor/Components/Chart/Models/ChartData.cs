@@ -32,6 +32,21 @@ public partial class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>,
     public ChartData(IReadOnlyList<T> values) => Points = [.. values.Select(v => new ChartPoint<T>(null, v))];
 
     /// <summary>
+    /// Create a data series with a single nullable Y value.
+    /// </summary>
+    /// <param name="value">The nullable Y value of the chart series</param>
+    public ChartData(T? value) => Points = [value.HasValue ? new ChartPoint<T>(null, value.Value) : new ChartPoint<T>(null, default) { HasValue = false }];
+
+    /// <summary>
+    /// Create a data series with multiple nullable Y values.
+    /// </summary>
+    /// <param name="values">The nullable Y values of the chart series</param>
+    public ChartData(IReadOnlyList<T?> values) => Points = [.. values.Select(v =>
+        v.HasValue
+            ? new ChartPoint<T>(null, v.Value)
+            : new ChartPoint<T>(null, default) { HasValue = false })];
+
+    /// <summary>
     /// A list of data points in the chart series.
     /// </summary>
     public IReadOnlyList<ChartPoint<T>> Points { get; } = [];
@@ -59,8 +74,11 @@ public partial class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>,
     public int Count => Points.Count;
 
     public static implicit operator ChartData<T>(T value) => new(value);
+    public static implicit operator ChartData<T>(T? value) => new(value);
     public static implicit operator ChartData<T>(T[] values) => new(values);
     public static implicit operator ChartData<T>(List<T> values) => new(values);
+    public static implicit operator ChartData<T>(T?[] values) => new(values);
+    public static implicit operator ChartData<T>(List<T?> values) => new(values);
 
     ///<inheritdoc/>
     public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();

@@ -90,17 +90,6 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected abstract (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace);
 
     /// <summary>
-    /// Creates a line interpolator for a series.
-    /// </summary>
-    /// <param name="seriesIndex">The index of the series.</param>
-    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
-    /// <param name="gridYUnits">The Y-axis grid units.</param>
-    /// <param name="horizontalSpace">The horizontal space between points.</param>
-    /// <param name="verticalSpace">The vertical space between points.</param>
-    /// <returns>The line interpolator.</returns>
-    internal abstract ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace);
-
-    /// <summary>
     /// Generates the vertical grid lines for the chart.
     /// </summary>
     /// <param name="numVerticalLines">The number of vertical lines.</param>
@@ -166,7 +155,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         {
             var series = Series[i];
 
-            if (!series.Visible || !series.Data.Points.Any())
+            if (!series.Visible || !series.Data.Points.Any(p => p.HasValue))
             {
                 continue;
             }
@@ -223,26 +212,38 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
         var series = Series[seriesIndex];
         var dataLength = series.Data.Points.Count;
+        var needsMoveTo = true;
 
         for (var j = 0; j < dataLength; j++)
         {
+            if (!series.Data[j].HasValue)
+            {
+                if (ChartOptions?.ConnectNullPoints != true)
+                {
+                    needsMoveTo = true;
+                }
+                continue;
+            }
+
             var (x, y) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
 
-            if (j == 0)
+            if (needsMoveTo)
             {
-                chartLine.Append("M ");
-                firstPointX = x;
-                firstPointY = y;
+                chartLine.Append(chartLine.Length > 0 ? " M " : "M ");
+                needsMoveTo = false;
+
+                if (firstPointX == 0 && firstPointY == 0)
+                {
+                    firstPointX = x;
+                    firstPointY = y;
+                }
             }
             else
             {
                 chartLine.Append(" L ");
             }
 
-            if (j == dataLength - 1)
-            {
-                lastPointX = x;
-            }
+            lastPointX = x;
 
             chartLine.Append(ToS(x));
             chartLine.Append(' ');
@@ -287,63 +288,174 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     {
         double firstPointX = 0, firstPointY = 0, lastPointX = 0;
 
-        const int InterpolationResolution = 10;
-        var interpolator = CreateInterpolator(seriesIndex, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
-
         var series = Series[seriesIndex];
-        var isPositiveOnly = series.Data.Values.All(v => v >= T.Zero);
+        var data = series.Data;
+        var isPositiveOnly = data.Points.Where(p => p.HasValue).All(p => p.Y >= T.Zero);
         var zeroPointY = GetYForZeroPoint(lowestHorizontalLine);
 
-        for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
+        // Split data into contiguous segments of non-null points
+        var segments = ChartOptions?.ConnectNullPoints == true
+            ? [Enumerable.Range(0, data.Count).Where(i => data[i].HasValue).ToList()]
+            : GetContiguousSegments(data);
+
+        foreach (var segment in segments)
         {
-            var x = interpolator.InterpolatedXs[j];
-            var y = interpolator.InterpolatedYs[j];
-
-            if (ChartOptions?.ClampToZero is true && isPositiveOnly && y > zeroPointY)
+            if (segment.Count <= 1)
             {
-                y = zeroPointY;
-            }
+                // Single point — just emit an M (no interpolation possible)
+                var (sx, sy) = GetXYForDataPoint(seriesIndex, segment[0], lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+                chartLine.Append(chartLine.Length > 0 ? " M " : "M ");
+                chartLine.Append(ToS(sx));
+                chartLine.Append(' ');
+                chartLine.Append(ToS(sy));
 
-            if (j == 0)
-            {
-                chartLine.Append("M ");
-                firstPointX = x;
-                firstPointY = y;
-            }
-            else
-            {
-                chartLine.Append(" L ");
-            }
-
-            if (j == interpolator.InterpolatedYs.Length - 1)
-            {
-                lastPointX = x;
-            }
-
-            chartLine.Append(ToS(x));
-            chartLine.Append(' ');
-            chartLine.Append(ToS(y));
-
-            var originalIndex = j / InterpolationResolution;
-            // Add tooltip points for interpolated data if needed
-            if (j % InterpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
-                Series[seriesIndex].Data != null && originalIndex < Series[seriesIndex].Data.Points.Count)
-            {
-
-                chartDataCircles.Add(new SvgCircle
+                if (firstPointX == 0 && firstPointY == 0)
                 {
-                    Index = seriesIndex,
-                    CX = x,
-                    CY = y,
-                    LabelX = x,
-                    LabelXValue = GetLabelXValue(seriesIndex, originalIndex),
-                    LabelY = y,
-                    LabelYValue = GetDataValueAsString(seriesIndex, originalIndex)
-                });
+                    firstPointX = sx;
+                    firstPointY = sy;
+                }
+                lastPointX = sx;
+
+                if (ChartOptions?.ShowToolTips == true)
+                {
+                    chartDataCircles.Add(new SvgCircle
+                    {
+                        Index = seriesIndex,
+                        CX = sx,
+                        CY = sy,
+                        LabelX = sx,
+                        LabelXValue = GetLabelXValue(seriesIndex, segment[0]),
+                        LabelY = sy,
+                        LabelYValue = GetDataValueAsString(seriesIndex, segment[0])
+                    });
+                }
+
+                continue;
+            }
+
+            var interpolator = CreateInterpolator(seriesIndex, segment, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            const int InterpolationResolution = 10;
+
+            for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
+            {
+                var x = interpolator.InterpolatedXs[j];
+                var y = interpolator.InterpolatedYs[j];
+
+                if (ChartOptions?.ClampToZero is true && isPositiveOnly && y > zeroPointY)
+                {
+                    y = zeroPointY;
+                }
+
+                if (j == 0)
+                {
+                    chartLine.Append(chartLine.Length > 0 ? " M " : "M ");
+
+                    if (firstPointX == 0 && firstPointY == 0)
+                    {
+                        firstPointX = x;
+                        firstPointY = y;
+                    }
+                }
+                else
+                {
+                    chartLine.Append(" L ");
+                }
+
+                lastPointX = x;
+
+                chartLine.Append(ToS(x));
+                chartLine.Append(' ');
+                chartLine.Append(ToS(y));
+
+                var localIndex = j / InterpolationResolution;
+                // Add tooltip points for interpolated data if needed
+                if (j % InterpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
+                    localIndex < segment.Count)
+                {
+                    var originalIndex = segment[localIndex];
+                    chartDataCircles.Add(new SvgCircle
+                    {
+                        Index = seriesIndex,
+                        CX = x,
+                        CY = y,
+                        LabelX = x,
+                        LabelXValue = GetLabelXValue(seriesIndex, originalIndex),
+                        LabelY = y,
+                        LabelYValue = GetDataValueAsString(seriesIndex, originalIndex)
+                    });
+                }
             }
         }
 
         return (firstPointX, firstPointY, lastPointX);
+    }
+
+    /// <summary>
+    /// Splits data points into contiguous segments of non-null (HasValue) indices.
+    /// </summary>
+    private static List<List<int>> GetContiguousSegments<TData>(ChartData<TData> data)
+        where TData : struct, INumber<TData>, IMinMaxValue<TData>, IFormattable
+    {
+        var segments = new List<List<int>>();
+        List<int>? current = null;
+
+        for (var i = 0; i < data.Count; i++)
+        {
+            if (data[i].HasValue)
+            {
+                current ??= [];
+                current.Add(i);
+            }
+            else
+            {
+                if (current is not null && current.Count > 0)
+                {
+                    segments.Add(current);
+                    current = null;
+                }
+            }
+        }
+
+        if (current is not null && current.Count > 0)
+        {
+            segments.Add(current);
+        }
+
+        return segments;
+    }
+
+    /// <summary>
+    /// Creates a line interpolator for a contiguous segment of data point indices.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="segment">The segment of data point indices.</param>
+    /// <param name="lowestHorizontalLine">The lowest horizontal line.</param>
+    /// <param name="gridYUnits">The Y-axis grid units.</param>
+    /// <param name="horizontalSpace">The horizontal space between points.</param>
+    /// <param name="verticalSpace">The vertical space between points.</param>
+    /// <returns>An instance of <see cref="ILineInterpolator"/>.</returns>
+    internal virtual ILineInterpolator CreateInterpolator(int seriesIndex, List<int> segment, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
+    {
+        var xValues = new double[segment.Count];
+        var yValues = new double[segment.Count];
+
+        for (var i = 0; i < segment.Count; i++)
+        {
+            (xValues[i], yValues[i]) = GetXYForDataPoint(seriesIndex, segment[i], lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+        }
+
+        var series = Series[seriesIndex];
+        var overrideSettings = GetSeriesDisplayOverride(series);
+        var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
+        const int interpolationResolution = 10;
+
+        return interpolationOption switch
+        {
+            InterpolationOption.NaturalSpline => new NaturalSpline(xValues, yValues, interpolationResolution),
+            InterpolationOption.EndSlope => new EndSlopeSpline(xValues, yValues, interpolationResolution),
+            InterpolationOption.Periodic => new PeriodicSpline(xValues, yValues, interpolationResolution),
+            _ => throw new NotImplementedException("Interpolation option not implemented yet")
+        };
     }
 
     /// <summary>
