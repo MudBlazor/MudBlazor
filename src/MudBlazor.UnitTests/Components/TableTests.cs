@@ -2897,11 +2897,11 @@ namespace MudBlazor.UnitTests.Components
         /// Uses the selection hash set when its comparer matches the table comparer.
         /// </summary>
         [Test]
-        public void IsCheckedRow_UsesHashSetWithMatchingComparer()
+        public async Task IsCheckedRow_UsesHashSetWithMatchingComparer()
         {
             var comparer = new CountingIntComparer();
-            var table = new TestableMudTable<int>();
-            table.SetComparer(comparer);
+            var table = Context.Render<TestableMudTable<int>>().Instance;
+            await table.SetComparerAsync(comparer);
             table.Context.Selection.UnionWith(Enumerable.Range(0, 100));
             comparer.Reset();
 
@@ -2914,12 +2914,12 @@ namespace MudBlazor.UnitTests.Components
         /// Uses the table comparer when externally supplied selection has a different comparer.
         /// </summary>
         [Test]
-        public void IsCheckedRow_UsesTableComparerWithMismatchedSelectionComparer()
+        public async Task IsCheckedRow_UsesTableComparerWithMismatchedSelectionComparer()
         {
             var comparer = StringComparer.OrdinalIgnoreCase;
-            var table = new TestableMudTable<string>();
-            table.SetComparer(comparer);
-            table.SetSelectedItems(new HashSet<string>(["selected"], StringComparer.Ordinal));
+            var table = Context.Render<TestableMudTable<string>>().Instance;
+            await table.SetComparerAsync(comparer);
+            await table.SetSelectedItemsAsync(new HashSet<string>(["selected"], StringComparer.Ordinal));
 
             table.IsRowChecked("SELECTED").Should().BeTrue();
         }
@@ -3610,9 +3610,9 @@ namespace MudBlazor.UnitTests.Components
         {
             public bool IsRowChecked(T item) => IsCheckedRow(item);
 
-            public void SetComparer(IEqualityComparer<T> comparer) => Comparer = comparer;
+            public Task SetComparerAsync(IEqualityComparer<T> comparer) => InvokeAsync(() => Comparer = comparer);
 
-            public void SetSelectedItems(HashSet<T> selectedItems) => SelectedItems = selectedItems;
+            public Task SetSelectedItemsAsync(HashSet<T> selectedItems) => InvokeAsync(() => SelectedItems = selectedItems);
         }
 
         private sealed class CountingIntComparer : IEqualityComparer<int>
