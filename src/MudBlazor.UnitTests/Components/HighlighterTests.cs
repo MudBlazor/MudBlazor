@@ -168,7 +168,8 @@ namespace MudBlazor.UnitTests.Components
             Splitter.GetTextFragments("Match match", "match", null, out _, caseSensitive: true)
                 .Should().BeEquivalentTo(new[]
                 {
-                    new FragmentInfo("Match match", FragmentType.Text)
+                    new FragmentInfo("Match ", FragmentType.Text),
+                    new FragmentInfo("match", FragmentType.HighlightedText)
                 }, options => options.WithStrictOrdering());
 
             Splitter.GetTextFragments("ababa", null, new[] { "aba", "ba" }, out _)
