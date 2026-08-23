@@ -34,6 +34,7 @@ namespace MudBlazor
         private MudIconButton? _iconButtonActivator;
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
+        private readonly HashSet<object> _registeredItems = [];
         private readonly string _elementId = Identifier.Create("menu");
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
@@ -514,6 +515,7 @@ namespace MudBlazor
             _focusedIndex = -1;
             _lastInteractionWasKeyboard = false;
             _menuItems.Clear();
+            _registeredItems.Clear();
             await Task.Yield();
 
             if (_openState.Value)
@@ -1075,7 +1077,7 @@ namespace MudBlazor
         /// </summary>
         internal void RegisterItem(object item)
         {
-            if (!_menuItems.Contains(item))
+            if (_registeredItems.Add(item))
             {
                 _menuItems.Add(item);
             }
