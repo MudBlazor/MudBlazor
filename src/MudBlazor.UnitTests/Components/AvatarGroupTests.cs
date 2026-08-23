@@ -29,8 +29,8 @@ namespace MudBlazor.UnitTests.Components
             avatars[3].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
             avatars[4].ClassList.Should().Contain("mud-avatar-group-max-avatar");
 
-            group.Instance.GetAvatarZindex(group.Instance._avatars[0]).Build().Should().Be("z-index: 6;");
-            group.Instance.GetAvatarZindex(group.Instance._avatars[5]).Build().Should().Be("z-index: 1;");
+            group.Instance.GetAvatarZindex(group.Instance._avatars[0]).Build().Should().Be("z-index:6;");
+            group.Instance.GetAvatarZindex(group.Instance._avatars[5]).Build().Should().Be("z-index:1;");
         }
 
         [Test]
