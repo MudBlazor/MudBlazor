@@ -86,7 +86,8 @@ namespace MudBlazor.Charts
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Select(s => s.Data?.Count ?? 0).DefaultIfEmpty(0).Max();
+        private int SeriesLength => _seriesLength;
+        private int _seriesLength;
 
         // The number of rows visible
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
@@ -244,6 +245,7 @@ namespace MudBlazor.Charts
             _toggleLegend.Clear();
             _minValue = T.MaxValue;
             _maxValue = T.MinValue;
+            _seriesLength = _series.Select(s => s.Data?.Count ?? 0).DefaultIfEmpty(0).Max();
 
             var hasValues = false;
             // # of rows
