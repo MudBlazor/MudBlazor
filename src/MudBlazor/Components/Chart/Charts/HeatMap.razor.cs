@@ -408,12 +408,13 @@ namespace MudBlazor.Charts
 
         internal HeatMapCell<T>? GetCell(int row, int column)
         {
-            if (row < 0 || row >= _series.Count || column < 0 || column >= SeriesLength)
+            var seriesLength = SeriesLength;
+            if (row < 0 || row >= _series.Count || column < 0 || column >= seriesLength)
             {
                 return null;
             }
 
-            var index = row * SeriesLength + column;
+            var index = row * seriesLength + column;
             return index < _heatMapCells.Count ? _heatMapCells[index] : null;
         }
 
