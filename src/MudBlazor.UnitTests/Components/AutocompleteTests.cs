@@ -1311,7 +1311,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var firstResults = new[] { "Enabled 1", "Disabled 1", "Enabled 2" };
             var secondResults = new[] { "Disabled 2", "Enabled 3" };
-            Context.Render<MudPopoverProvider>();
+            var provider = Context.Render<MudPopoverProvider>();
             var autocomplete = Context.Render<MudAutocomplete<string>>(parameters => parameters
                 .Add(x => x.DebounceInterval, 0)
                 .Add(x => x.MaxItems, null)
@@ -1320,15 +1320,15 @@ namespace MudBlazor.UnitTests.Components
                     value == "empty" ? [] : value == "second" ? secondResults : firstResults)));
 
             await autocomplete.Find("input").InputAsync("first");
-            await autocomplete.WaitForAssertionAsync(() => autocomplete.FindComponents<MudListItem<string>>().Count.Should().Be(3));
-            autocomplete.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Count.Should().Be(3));
+            provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
 
             await autocomplete.Find("input").InputAsync("empty");
-            await autocomplete.WaitForAssertionAsync(() => autocomplete.FindComponents<MudListItem<string>>().Should().BeEmpty());
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Should().BeEmpty());
 
             await autocomplete.Find("input").InputAsync("second");
-            await autocomplete.WaitForAssertionAsync(() => autocomplete.FindComponents<MudListItem<string>>().Count.Should().Be(2));
-            autocomplete.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Count.Should().Be(2));
+            provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
         }
 
         [Test]
