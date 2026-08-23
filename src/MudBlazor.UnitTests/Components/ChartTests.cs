@@ -371,6 +371,75 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void HeatMap_ShouldLookupRectangularGridCellsAndGradients()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3, 4]) },
+                new() { Name = "Series 2", Data = new([5, 6, 7, 8]) },
+                new() { Name = "Series 3", Data = new([9, 10, 11, 12]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { EnableSmoothGradient = true })
+            );
+
+            var heatMap = comp.FindComponent<HeatMap<double>>().Instance;
+            heatMap.GetCell(0, 0)!.Value.Should().Be(1);
+            heatMap.GetCell(1, 2)!.Value.Should().Be(7);
+            heatMap.GetCell(2, 3)!.Value.Should().Be(12);
+            heatMap.GetCell(-1, 0).Should().BeNull();
+            heatMap.GetCell(3, 4).Should().BeNull();
+            comp.FindAll(".mud-chart-cell").Should().HaveCount(12);
+            comp.FindAll("linearGradient").Should().HaveCount(48);
+            comp.FindAll("rect[fill^='url(#gradient-']").Should().HaveCount(48);
+        }
+
+        [Test]
+        public void HeatMap_ShouldPreferFirstDuplicateCustomCoordinate()
+        {
+            static void Cells(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
+            {
+                builder.OpenComponent<MudHeatMapCell<double>>(0);
+                builder.AddAttribute(1, "Row", 0);
+                builder.AddAttribute(2, "Column", 0);
+                builder.AddAttribute(3, "Value", 10);
+                builder.CloseComponent();
+                builder.OpenComponent<MudHeatMapCell<double>>(4);
+                builder.AddAttribute(5, "Row", 0);
+                builder.AddAttribute(6, "Column", 0);
+                builder.AddAttribute(7, "Value", 20);
+                builder.CloseComponent();
+            }
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new([1]) }])
+                .AddChildContent(Cells)
+            );
+
+            comp.FindComponent<HeatMap<double>>().Instance.GetCell(0, 0)!.Value.Should().Be(10);
+        }
+
+        [Test]
+        public void HeatMap_ShouldUseMissingColorForRaggedSmoothGradientNeighbors()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, [
+                    new ChartSeries<double> { Name = "Series 1", Data = new([1, 2]) },
+                    new ChartSeries<double> { Name = "Series 2", Data = new([3]) }
+                ])
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { EnableSmoothGradient = true })
+            );
+
+            comp.FindAll(".mud-chart-cell").Should().HaveCount(3);
+            comp.Markup.Should().Contain("stop-color:#fff");
+        }
+
+        [Test]
         [TestCase(XAxisLabelPosition.Top)]
         [TestCase(XAxisLabelPosition.Bottom)]
         [TestCase(YAxisLabelPosition.Left)]
