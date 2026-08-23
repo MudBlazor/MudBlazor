@@ -419,8 +419,8 @@ namespace MudBlazor
 
         private bool? GetCheckBoxStateTriState()
         {
-            var hasSelectedDescendant = _selectedState;
-            var hasUnselectedDescendant = !_selectedState;
+            var hasSelectedDescendant = _selectedState.Value;
+            var hasUnselectedDescendant = !_selectedState.Value;
 
             foreach (var child in _childItems)
             {
