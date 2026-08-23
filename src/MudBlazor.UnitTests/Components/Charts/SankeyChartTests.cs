@@ -378,6 +378,9 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("svg > path").Count.Should().Be(0);
         }
 
+        /// <summary>
+        /// Preserves all nodes and valid edge endpoints for a large deterministic graph.
+        /// </summary>
         [Test]
         public void LargeGraph_PreservesNodeAndEdgeMembership()
         {
