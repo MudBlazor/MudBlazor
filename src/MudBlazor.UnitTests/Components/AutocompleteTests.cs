@@ -1334,7 +1334,13 @@ namespace MudBlazor.UnitTests.Components
             {
                 provider.FindComponents<MudListItem<string>>().Count.Should().Be(2);
                 provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+                provider.FindComponents<MudListItem<string>>().Single(x => x.Markup.Contains("Disabled 2")).Instance.Disabled.Should().BeTrue();
+                provider.FindComponents<MudListItem<string>>().Single(x => x.Markup.Contains("Enabled 3")).Instance.Disabled.Should().BeFalse();
             });
+
+            await autocomplete.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await autocomplete.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await autocomplete.WaitForAssertionAsync(() => autocomplete.Instance.ReadValue.Should().Be("Enabled 3"));
         }
 
         [Test]
