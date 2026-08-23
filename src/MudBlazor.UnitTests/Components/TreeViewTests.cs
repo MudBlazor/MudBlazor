@@ -274,6 +274,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewWith_MultiSelection_ShouldCalculateTriStateAcrossAllDescendants()
+        {
+            var comp = Context.Render<TreeViewTriStateTraversalTest>(self => self
+                .Add(x => x.SelectedValues,
+                [
+                    "selected-leaf",
+                    "fully-selected", "fully-selected-child", "fully-selected-grandchild",
+                    "selected-parent", "selected-parent-child", "selected-parent-grandchild",
+                    "wide", "wide-selected", "wide-selected-2",
+                    "deep", "deep-1", "deep-2", "deep-3",
+                    "unselected-parent-grandchild"
+                ]));
+
+            static string CheckboxState(string className, IRenderedComponent<TreeViewTriStateTraversalTest> component) =>
+                component.Find($".{className} .mud-checkbox span").ClassList
+                    .Single(x => x is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+
+            CheckboxState("selected-leaf", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("unselected-leaf", comp).Should().Be("mud-checkbox-false");
+            CheckboxState("fully-selected", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("fully-unselected", comp).Should().Be("mud-checkbox-false");
+            CheckboxState("selected-parent", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("unselected-parent", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("root", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("wide", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("deep", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-1", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-2", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-3", comp).Should().Be("mud-checkbox-true");
+        }
+
+        [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
         {
             var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));

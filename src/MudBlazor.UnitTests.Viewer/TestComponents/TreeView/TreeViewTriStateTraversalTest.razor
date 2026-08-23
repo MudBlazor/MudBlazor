@@ -1,0 +1,41 @@
+<MudTreeView T="string" SelectionMode="SelectionMode.MultiSelection" AutoSelectParent="false" SelectedValues="@SelectedValues">
+    <MudTreeViewItem Class="root" Value='"root"'>
+        <MudTreeViewItem Class="selected-leaf" Value='"selected-leaf"' />
+        <MudTreeViewItem Class="unselected-leaf" Value='"unselected-leaf"' />
+        <MudTreeViewItem Class="fully-selected" Value='"fully-selected"'>
+            <MudTreeViewItem Class="fully-selected-child" Value='"fully-selected-child"' />
+            <MudTreeViewItem Class="fully-selected-grandchild" Value='"fully-selected-grandchild"' />
+        </MudTreeViewItem>
+        <MudTreeViewItem Class="fully-unselected" Value='"fully-unselected"'>
+            <MudTreeViewItem Class="fully-unselected-child" Value='"fully-unselected-child"' />
+            <MudTreeViewItem Class="fully-unselected-grandchild" Value='"fully-unselected-grandchild"' />
+        </MudTreeViewItem>
+        <MudTreeViewItem Class="selected-parent" Value='"selected-parent"'>
+            <MudTreeViewItem Class="selected-parent-child" Value='"selected-parent-child"'>
+                <MudTreeViewItem Class="selected-parent-grandchild" Value='"selected-parent-grandchild"' />
+            </MudTreeViewItem>
+            <MudTreeViewItem Class="selected-parent-unselected-grandchild" Value='"selected-parent-unselected-grandchild"' />
+        </MudTreeViewItem>
+        <MudTreeViewItem Class="unselected-parent" Value='"unselected-parent"'>
+            <MudTreeViewItem Class="unselected-parent-child" Value='"unselected-parent-child"'>
+                <MudTreeViewItem Class="unselected-parent-grandchild" Value='"unselected-parent-grandchild"' />
+            </MudTreeViewItem>
+        </MudTreeViewItem>
+        <MudTreeViewItem Class="wide" Value='"wide"'>
+            <MudTreeViewItem Class="wide-selected" Value='"wide-selected"' />
+            <MudTreeViewItem Class="wide-unselected" Value='"wide-unselected"' />
+            <MudTreeViewItem Class="wide-selected-2" Value='"wide-selected-2"' />
+        </MudTreeViewItem>
+        <MudTreeViewItem Class="deep" Value='"deep"'>
+            <MudTreeViewItem Class="deep-1" Value='"deep-1"'>
+                <MudTreeViewItem Class="deep-2" Value='"deep-2"'>
+                    <MudTreeViewItem Class="deep-3" Value='"deep-3"' />
+                </MudTreeViewItem>
+            </MudTreeViewItem>
+        </MudTreeViewItem>
+    </MudTreeView>
+
+@code {
+    [Parameter]
+    public IReadOnlyCollection<string> SelectedValues { get; set; } = [];
+}
