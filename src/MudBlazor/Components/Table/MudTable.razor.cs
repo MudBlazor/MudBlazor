@@ -423,7 +423,8 @@ namespace MudBlazor
 
         /// <summary>
         /// Checks if the row is selected.
-        /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
+        /// Uses a hash set lookup when the selection comparer matches the table comparer.
+        /// Otherwise, uses the table comparer to check each selected item.
         /// </summary>
         protected bool IsCheckedRow(T item) =>
             _comparer is null || ReferenceEquals(Context.Selection.Comparer, _comparer)
