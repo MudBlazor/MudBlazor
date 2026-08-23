@@ -379,6 +379,27 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void LargeGraph_PreservesNodeAndEdgeMembership()
+        {
+            const int nodeCount = 300;
+            var edges = Enumerable.Range(0, nodeCount - 1)
+                .Select(i => new SankeyEdge<double>($"Node{i}", $"Node{i + 1}", i + 1))
+                .ToList();
+
+            var comp = RenderSankey(edges);
+            var sankey = comp.FindComponent<Sankey<double>>().Instance;
+            var nodeNames = sankey.Nodes.Select(n => n.Name).ToHashSet(StringComparer.Ordinal);
+
+            sankey.Nodes.Count.Should().Be(nodeCount);
+            sankey.Edges.Count.Should().Be(nodeCount - 1);
+            sankey.Edges.Should().AllSatisfy(edge =>
+            {
+                nodeNames.Should().Contain(edge.Source);
+                nodeNames.Should().Contain(edge.Target);
+            });
+        }
+
+        [Test]
         [TestCase(AggregationOption.GroupByDataSet)]
         [TestCase(AggregationOption.GroupByLabel)]
         public void Aggregation_BuildsEdgesBetweenSeriesAndLabels(AggregationOption aggregation)
