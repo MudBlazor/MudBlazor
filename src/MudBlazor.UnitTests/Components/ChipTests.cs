@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Chip;
 using NUnit.Framework;
 
@@ -67,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
             keyInterceptorService.ObserversCount.Should().Be(1);
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(p => p.OnClick, null));
+                .Add(p => p.Disabled, true));
             keyInterceptorService.ObserversCount.Should().Be(0);
         }
 
@@ -77,14 +78,17 @@ namespace MudBlazor.UnitTests.Components
             var keyInterceptorService = Context.AddKeyInterceptorService();
             var clicked = 0;
             var closed = 0;
-            var comp = Context.Render<MudChip<string>>(parameters => parameters
+            var clickable = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => clicked++)
+                .Add(p => p.OnClose, () => { }));
+            var closable = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClose, () => closed++));
-            var elementId = comp.Find(".mud-chip-container").GetAttribute("id")!;
+            var clickableId = clickable.Find(".mud-chip-container").GetAttribute("id")!;
+            var closableId = closable.Find(".mud-chip-container").GetAttribute("id")!;
 
-            await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " " });
-            await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Delete" });
-            await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Backspace" });
+            await clickable.InvokeAsync(() => keyInterceptorService.OnKeyDown(clickableId, new KeyboardEventArgs { Key = " " }));
+            await closable.InvokeAsync(() => keyInterceptorService.OnKeyDown(closableId, new KeyboardEventArgs { Key = "Delete" }));
+            await closable.InvokeAsync(() => keyInterceptorService.OnKeyDown(closableId, new KeyboardEventArgs { Key = "Backspace" }));
 
             clicked.Should().Be(1);
             closed.Should().Be(2);
