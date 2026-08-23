@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
             var removedAvatar = group.Instance._avatars[0];
             var remainingAvatar = group.Instance._avatars[1];
 
-            group.Instance.RemoveAvatar(removedAvatar);
+            await group.InvokeAsync(() => group.Instance.RemoveAvatar(removedAvatar));
             group.Instance._avatars.Should().ContainSingle().Which.Should().Be(remainingAvatar);
             group.Instance.GetAvatarZindex(remainingAvatar).Build().Should().Contain("z-index:1");
             group.Instance.MaxGroupReached(remainingAvatar).Should().Be(false);
