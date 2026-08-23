@@ -184,6 +184,8 @@ namespace MudBlazor
             {
                 _avatarIndices[_avatars[i]] = i;
             }
+
+            StateHasChanged();
         }
 
         internal CssBuilder GetAvatarSpacing() => new CssBuilder()
