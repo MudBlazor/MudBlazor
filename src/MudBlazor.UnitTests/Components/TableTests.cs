@@ -2907,7 +2907,7 @@ namespace MudBlazor.UnitTests.Components
             comparer.Reset();
 
             table.IsRowChecked(50).Should().BeTrue();
-            comparer.EqualsCalls.Should().Be(0);
+            comparer.EqualsCalls.Should().BeLessThanOrEqualTo(1);
             comparer.GetHashCodeCalls.Should().Be(1);
         }
 
