@@ -70,6 +70,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Disabled, true));
             keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, false));
+            keyInterceptorService.ObserversCount.Should().Be(1);
         }
 
         [Test]
