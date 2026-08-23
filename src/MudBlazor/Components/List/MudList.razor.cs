@@ -523,31 +523,40 @@ namespace MudBlazor
 
         internal async Task FocusAdjacentItemAsync(MudListItem<T> currentItem, int direction)
         {
-            var items = _items.Where(x => x.IsEnabled()).ToList();
-            if (items.Count == 0)
+            var currentIndex = _items.IndexOf(currentItem);
+            if (currentIndex >= 0 && currentItem.IsEnabled())
             {
+                for (var index = currentIndex + direction; index >= 0 && index < _items.Count; index += direction)
+                {
+                    if (_items[index].IsEnabled())
+                    {
+                        await _items[index].FocusAsync();
+                        return;
+                    }
+                }
+
+                await currentItem.FocusAsync();
                 return;
             }
 
-            var currentIndex = items.FindIndex(x => ReferenceEquals(x, currentItem));
-            if (currentIndex < 0)
+            var index = direction > 0 ? 0 : _items.Count - 1;
+            for (; index >= 0 && index < _items.Count; index += direction)
             {
-                currentIndex = direction > 0 ? -1 : items.Count;
+                if (_items[index].IsEnabled())
+                {
+                    await _items[index].FocusAsync();
+                    return;
+                }
             }
-
-            var nextIndex = Math.Clamp(currentIndex + direction, 0, items.Count - 1);
-            await items[nextIndex].FocusAsync();
         }
 
         internal async Task FocusBoundaryItemAsync(bool first)
         {
-            var items = _items.Where(x => x.IsEnabled()).ToList();
-            if (items.Count == 0)
+            var item = first ? _items.Find(x => x.IsEnabled()) : _items.FindLast(x => x.IsEnabled());
+            if (item is not null)
             {
-                return;
+                await item.FocusAsync();
             }
-
-            await (first ? items[0] : items[^1]).FocusAsync();
         }
 
         private MudListItem<T>? EnsureActiveItem()

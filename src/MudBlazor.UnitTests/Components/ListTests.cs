@@ -760,6 +760,70 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(1, "Charlie")]
+        [TestCase(-1, "Alpha")]
+        public async Task FocusAdjacentItem_WithDisabledCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Charlie")));
+            var list = comp.Instance;
+            var currentItem = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Bravo").Instance;
+
+            await list.FocusAdjacentItemAsync(currentItem, direction);
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        [TestCase(1, "Alpha")]
+        [TestCase(-1, "Charlie")]
+        public async Task FocusAdjacentItem_WithUnregisteredCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Charlie")));
+            var otherList = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Unregistered")));
+            var currentItem = otherList.FindComponent<MudListItem<string>>().Instance;
+
+            await comp.Instance.FocusAdjacentItemAsync(currentItem, direction);
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(-1)]
+        public async Task FocusAdjacentItem_WithNoEnabledItems_DoesNothing(int direction)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true)));
+
+            await comp.Instance.FocusAdjacentItemAsync(comp.FindComponents<MudListItem<string>>()[0].Instance, direction);
+
+            comp.FindAll("div.mud-list-item").Should().OnlyContain(item => item.GetAttribute("tabindex") == "-1");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task FocusBoundaryItem_WithNoEnabledItems_DoesNothing(bool first)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true)));
+
+            await comp.Instance.FocusBoundaryItemAsync(first);
+
+            comp.FindAll("div.mud-list-item").Should().OnlyContain(item => item.GetAttribute("tabindex") == "-1");
+        }
+
+        [Test]
         public async Task Keyboard_Space_TogglesMultiSelection_WithCheckboxesHiddenFromTabOrder()
         {
             var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.SelectionMode, SelectionMode.MultiSelection));
