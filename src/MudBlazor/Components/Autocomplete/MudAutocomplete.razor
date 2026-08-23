@@ -92,7 +92,7 @@
                             {
                                 var item = _items[index];
                                 bool isSelected = index == _selectedListItemIndex;
-                                bool isDisabled = !_enabledItemIndices.Contains(index);
+                                bool isDisabled = _itemDisabled[index];
                                 bool showSelectedTemplate = ItemSelectedTemplate is not null && isSelected;
                                 bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
                                 var captureIndex = index;

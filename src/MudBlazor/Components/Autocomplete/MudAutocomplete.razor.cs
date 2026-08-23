@@ -31,6 +31,7 @@ namespace MudBlazor
         private Task? _currentSearchTask;
         private ITimer? _debounceTimer;
         private T[]? _items;
+        private bool[] _itemDisabled = [];
         private List<int> _enabledItemIndices = [];
         private bool _handleNextFocus;
 
@@ -815,15 +816,18 @@ namespace MudBlazor
 
             _items = searchedItems;
 
+            var itemDisabled = new bool[_items.Length];
             var enabledItemIndices = new List<int>(_items.Length);
             for (int i = 0; i < _items.Length; i++)
             {
-                if (ItemDisabledFunc?.Invoke(_items[i]) != true)
+                itemDisabled[i] = ItemDisabledFunc?.Invoke(_items[i]) == true;
+                if (!itemDisabled[i])
                 {
                     enabledItemIndices.Add(i);
                 }
             }
 
+            _itemDisabled = itemDisabled;
             _enabledItemIndices = enabledItemIndices;
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
