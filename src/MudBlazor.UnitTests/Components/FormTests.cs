@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -2894,7 +2895,7 @@ namespace MudBlazor.UnitTests.Components
                 .Select(index => new CountingFormComponent
                 {
                     Required = index == 99,
-                    HasValueResult = index != 99,
+                    HasValueResult = true,
                     Touched = index == 50,
                     ValidationErrors = index % 10 == 0 ? ["shared", $"error-{index}"] : []
                 })
@@ -2946,7 +2947,7 @@ namespace MudBlazor.UnitTests.Components
                 }
                 set => TouchedResult = value;
             }
-            public object? Validation { get; set; }
+            public object Validation { get; set; }
             public bool IsForNull => false;
             public List<string> ValidationErrors
             {
