@@ -611,7 +611,7 @@ namespace MudBlazor
 
         private void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
 
-        internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
+        internal IReadOnlyCollection<MudTreeViewItem<T>> ChildItems => _childItems;
 
         private bool HasIcon => (_expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon))) || (!_expandedState && !string.IsNullOrWhiteSpace(Icon));
 
