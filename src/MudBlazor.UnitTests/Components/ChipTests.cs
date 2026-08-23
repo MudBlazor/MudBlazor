@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { }));
             Context.Render<MudChip<string>>(parameters => parameters
-                .Add(p => p.OnClose, _ => { }));
+                .Add(p => p.OnClose, () => { }));
 
             keyInterceptorService.ObserversCount.Should().Be(2);
         }
@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Components
             var closed = 0;
             var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => clicked++)
-                .Add(p => p.OnClose, _ => closed++));
+                .Add(p => p.OnClose, () => closed++));
             var elementId = comp.Find(".mud-chip-container").GetAttribute("id")!;
 
             await keyInterceptorService.OnKeyDown(elementId, new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " " });
