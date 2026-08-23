@@ -844,8 +844,9 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                            selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                        var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                        await SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                            selectedConvertedValues: convertedValues,
                             multiSelectionTextFunc: MultiSelectionTextFunc);
                     }
                     else
@@ -1016,8 +1017,9 @@ namespace MudBlazor
 
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                    selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                await SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                    selectedConvertedValues: convertedValues,
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
@@ -1602,11 +1604,15 @@ namespace MudBlazor
             // a comma separated list of selected values
             if (MultiSelectionTextFunc != null)
             {
-                return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc)
-                    : base.UpdateTextPropertyAsync(updateValue);
+                if (MultiSelection)
+                {
+                    var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                    return SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                        selectedConvertedValues: convertedValues,
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
+
+                return base.UpdateTextPropertyAsync(updateValue);
             }
 
             return MultiSelection

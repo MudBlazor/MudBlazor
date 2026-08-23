@@ -785,7 +785,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MultiSelect_CustomText_ProgrammaticSelection_ConvertsEachValueOnce()
         {
             var conversionCount = 0;
-            IReadOnlyList<string?> capturedValues = null;
+            IReadOnlyList<string> capturedValues = null;
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(x => x.MultiSelection, true)
                 .Add(x => x.ToStringFunc, value =>
@@ -815,7 +815,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MultiSelect_CustomText_SelectAll_ConvertsEachValueOnce()
         {
             var conversionCount = 0;
-            IReadOnlyList<string?> capturedValues = null;
+            IReadOnlyList<string> capturedValues = null;
             Context.Render<MudPopoverProvider>();
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(x => x.MultiSelection, true)
@@ -850,7 +850,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task MultiSelect_CustomText_TextUpdate_ConvertsEachValueOnce()
         {
             var conversionCount = 0;
-            IReadOnlyList<string?> capturedValues = null;
+            IReadOnlyList<string> capturedValues = null;
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(x => x.MultiSelection, true)
                 .Add(x => x.SelectedValues, new[] { "one", "null", (string)null })
