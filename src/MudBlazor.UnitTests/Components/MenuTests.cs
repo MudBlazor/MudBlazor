@@ -1236,7 +1236,9 @@ namespace MudBlazor.UnitTests.Components
             menuItems.Should().BeEmpty();
 
             menu.RegisterItem(first);
-            menuItems.Should().Equal(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+            menuItems.Should().Equal(first, second);
         }
 
         [Test]
