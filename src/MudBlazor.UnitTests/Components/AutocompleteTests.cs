@@ -1319,7 +1319,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.SearchFunc, (value, _) => Task.FromResult<IEnumerable<string>>(
                     value == "empty" ? [] : value == "second" ? secondResults : firstResults)));
 
-            await autocomplete.Find("input").FocusAsync();
+            await autocomplete.Find("input").InputAsync("first");
             await autocomplete.WaitForAssertionAsync(() => autocomplete.FindComponents<MudListItem<string>>().Count.Should().Be(3));
             autocomplete.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
 
