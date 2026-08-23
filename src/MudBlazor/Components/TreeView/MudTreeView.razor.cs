@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -55,6 +57,7 @@ namespace MudBlazor
         // When the parent replaces Items with new node objects, the old entries can disappear with them.
         private readonly ConditionalWeakTable<ITreeItemData<T>, ServerDataState> _serverDataStates = new();
         private bool _isFirstRender = true;
+        private bool _hasLoggedInvalidVirtualizeConfiguration;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
 
@@ -179,6 +182,47 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// Renders only visible data items instead of all items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and only applies when <see cref="Items"/> and <see cref="ItemTemplate"/> are set.
+        /// Expansion state is tracked on <see cref="ITreeItemData{T}.Expanded"/> when virtualized, so item templates should bind item expansion to the backing item data.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool Virtualize { get; set; }
+
+        /// <summary>
+        /// The number of additional items rendered outside the visible region when <see cref="Virtualize"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>3</c>. This value can reduce the amount of rendering during scrolling, but higher values can affect performance.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public int OverscanCount { get; set; } = 3;
+
+        /// <summary>
+        /// The height of each item, in pixels, when <see cref="Virtualize"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>40</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public float ItemSize { get; set; } = 40f;
+
+        /// <summary>
+        /// The maximum number of items rendered when <see cref="Virtualize"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="int.MaxValue"/>. This only affects .NET 9 and later.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public int MaxItemCount { get; set; } = int.MaxValue;
 
         /// <summary>
         /// Sets a fixed height.
@@ -356,12 +400,36 @@ namespace MudBlazor
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <inheritdoc />
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Virtualize && !IsVirtualized && !_hasLoggedInvalidVirtualizeConfiguration)
+            {
+                Logger.LogWarning(
+                    "{Component} requires {Items}, {ItemTemplate}, and either {Height} or {MaxHeight} when {Virtualize} is true. Falling back to standard rendering.",
+                    nameof(MudTreeView<T>),
+                    nameof(Items),
+                    nameof(ItemTemplate),
+                    nameof(Height),
+                    nameof(MaxHeight),
+                    nameof(Virtualize));
+                _hasLoggedInvalidVirtualizeConfiguration = true;
+            }
+        }
+
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && MudTreeRoot == this)
             {
                 _isFirstRender = false;
+                var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection());
                 await UpdateItemsAsync();
+                if (shouldRefresh)
+                {
+                    StateHasChanged();
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -433,6 +501,13 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllAsync()
         {
+            if (IsVirtualized)
+            {
+                ExpandDataItems(Items);
+                StateHasChanged();
+                return;
+            }
+
             foreach (var item in _childItems)
             {
                 await item.ExpandAllAsync();
@@ -444,6 +519,13 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllAsync()
         {
+            if (IsVirtualized)
+            {
+                CollapseDataItems(Items);
+                StateHasChanged();
+                return;
+            }
+
             foreach (var item in _childItems)
             {
                 await item.CollapseAllAsync();
@@ -477,6 +559,43 @@ namespace MudBlazor
             return SetSelectedValuesAsync(args.Value ?? Array.Empty<T>());
         }
 
+        [MemberNotNullWhen(true, nameof(ItemTemplate), nameof(Items))]
+        private bool IsVirtualized =>
+            Virtualize
+            && ItemTemplate is not null
+            && Items is not null
+            && (!string.IsNullOrWhiteSpace(Height) || !string.IsNullOrWhiteSpace(MaxHeight));
+
+        private List<TreeViewItemContext<T>> GetVisibleItems()
+        {
+            var items = new List<TreeViewItemContext<T>>();
+
+            if (Items is not null)
+            {
+                AddVisibleItems(items, Items, 0);
+            }
+
+            return items;
+        }
+
+        private static void AddVisibleItems(List<TreeViewItemContext<T>> result, IEnumerable<ITreeItemData<T>> items, int depth)
+        {
+            foreach (var item in items)
+            {
+                if (!item.Visible)
+                {
+                    continue;
+                }
+
+                result.Add(new TreeViewItemContext<T>(item, depth));
+
+                if (item.Expanded && item.HasChildren)
+                {
+                    AddVisibleItems(result, item.Children, depth + 1);
+                }
+            }
+        }
+
         private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>> args)
         {
             if (_isFirstRender)
@@ -503,6 +622,19 @@ namespace MudBlazor
             }
             if (MultiSelection)
             {
+                if (IsVirtualized && clickedItem.CurrentItemData is not null)
+                {
+                    ToggleDataItemSelection(clickedItem.CurrentItemData);
+                    if (AutoSelectParent)
+                    {
+                        UpdateDataParentItems(clickedItem.CurrentItemData);
+                    }
+                    await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+                    await UpdateItemsAsync();
+                    StateHasChanged();
+                    return;
+                }
+
                 var items = clickedItem.GetChildItemsRecursive();
                 items.Add(clickedItem!);
                 var allSelected = items.All(x => x.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)));
@@ -588,8 +720,13 @@ namespace MudBlazor
                 _selection.Add(value);
                 if (!_isFirstRender)
                 {
+                    var shouldRefresh = ApplyVirtualizedAutoExpand(_selection);
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                     await UpdateItemsAsync();
+                    if (shouldRefresh)
+                    {
+                        StateHasChanged();
+                    }
                 }
                 return;
             }
@@ -597,7 +734,12 @@ namespace MudBlazor
             await _selectedValueState.SetValueAsync(value);
             if (!_isFirstRender)
             {
+                var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection());
                 await UpdateItemsAsync();
+                if (shouldRefresh)
+                {
+                    StateHasChanged();
+                }
             }
         }
 
@@ -623,7 +765,12 @@ namespace MudBlazor
             var isValid = value != null && GetSelectableValues().Contains(value);
             // note: if there is no item that corresponds to the value, the value is reset to default!
             await _selectedValueState.SetValueAsync(isValid ? value : default);
+            var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection());
             await UpdateItemsAsync();
+            if (shouldRefresh)
+            {
+                StateHasChanged();
+            }
         }
 
         ///  <summary>
@@ -640,7 +787,12 @@ namespace MudBlazor
             }
             _selection = newSelection;
             await _selectedValuesState.SetValueAsync(newSelection);
+            var shouldRefresh = ApplyVirtualizedAutoExpand(_selection);
             await UpdateItemsAsync();
+            if (shouldRefresh)
+            {
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -691,9 +843,10 @@ namespace MudBlazor
 
             foreach (var item in items)
             {
-                if (item.Value is not null)
+                var value = GetDataItemValue(item);
+                if (value is not null)
                 {
-                    values.Add(item.Value);
+                    values.Add(value);
                 }
 
                 if (item.Children is not null && item.Children.Count > 0)
@@ -732,6 +885,230 @@ namespace MudBlazor
         internal bool GetServerDataLoaded(ITreeItemData<T> item) => _serverDataStates.GetOrCreateValue(item).IsLoaded;
 
         internal void SetServerDataLoaded(ITreeItemData<T> item, bool isLoaded) => _serverDataStates.GetOrCreateValue(item).IsLoaded = isLoaded;
+
+        internal bool? GetVirtualizedCheckBoxState(ITreeItemData<T> item)
+        {
+            var itemSelected = IsDataItemSelected(item);
+            var descendants = GetDataItemDescendants(item).ToList();
+            var allChildrenChecked = descendants.All(IsDataItemSelected);
+            var noChildrenChecked = descendants.All(x => !IsDataItemSelected(x));
+
+            if (allChildrenChecked && itemSelected)
+            {
+                return true;
+            }
+            if (noChildrenChecked && !itemSelected)
+            {
+                return false;
+            }
+            return null;
+        }
+
+        internal void RefreshVirtualizedItems()
+        {
+            if (IsVirtualized)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private void ToggleDataItemSelection(ITreeItemData<T> item)
+        {
+            var values = GetDataItemAndDescendants(item)
+                .Select(GetDataItemValue)
+                .Where(value => value is not null)
+                .Select(value => value!)
+                .ToList();
+
+            var allSelected = values.Count > 0 && values.All(_selection.Contains);
+
+            foreach (var value in values)
+            {
+                if (allSelected)
+                {
+                    _selection.Remove(value);
+                }
+                else
+                {
+                    _selection.Add(value);
+                }
+            }
+        }
+
+        private void UpdateDataParentItems(ITreeItemData<T> item)
+        {
+            var parentItem = FindDataParent(item);
+
+            while (parentItem is not null)
+            {
+                var parentValue = GetDataItemValue(parentItem);
+                if (parentValue is not null)
+                {
+                    var parentSelected = parentItem.Children?
+                        .Select(GetDataItemValue)
+                        .Where(value => value is not null)
+                        .Select(value => value!)
+                        .All(_selection.Contains) == true;
+
+                    if (parentSelected)
+                    {
+                        _selection.Add(parentValue);
+                    }
+                    else
+                    {
+                        _selection.Remove(parentValue);
+                    }
+                }
+
+                parentItem = FindDataParent(parentItem);
+            }
+        }
+
+        private bool IsDataItemSelected(ITreeItemData<T> item)
+        {
+            var value = GetDataItemValue(item);
+            return value is not null && _selection.Contains(value);
+        }
+
+        private static IEnumerable<ITreeItemData<T>> GetDataItemAndDescendants(ITreeItemData<T> item)
+        {
+            yield return item;
+
+            foreach (var descendant in GetDataItemDescendants(item))
+            {
+                yield return descendant;
+            }
+        }
+
+        private static IEnumerable<ITreeItemData<T>> GetDataItemDescendants(ITreeItemData<T> item)
+        {
+            if (!item.HasChildren)
+            {
+                yield break;
+            }
+
+            foreach (var child in item.Children)
+            {
+                yield return child;
+
+                foreach (var descendant in GetDataItemDescendants(child))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+
+        private ITreeItemData<T>? FindDataParent(ITreeItemData<T> item)
+        {
+            return Items is null ? null : FindDataParent(Items, item);
+        }
+
+        private static ITreeItemData<T>? FindDataParent(IEnumerable<ITreeItemData<T>> items, ITreeItemData<T> item, ITreeItemData<T>? parent = null)
+        {
+            foreach (var child in items)
+            {
+                if (ReferenceEquals(child, item))
+                {
+                    return parent;
+                }
+
+                if (child.HasChildren)
+                {
+                    var found = FindDataParent(child.Children, item, child);
+                    if (found is not null)
+                    {
+                        return found;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static T? GetDataItemValue(ITreeItemData<T> item)
+        {
+            if (typeof(T) == typeof(string) && item.Value is null && item.Text is not null)
+            {
+                return (T)(object)item.Text;
+            }
+
+            return item.Value;
+        }
+
+        private void ExpandDataItems(IEnumerable<ITreeItemData<T>>? items)
+        {
+            if (items is null)
+            {
+                return;
+            }
+
+            foreach (var item in items)
+            {
+                if (!item.Expandable || !item.HasChildren)
+                {
+                    continue;
+                }
+
+                item.Expanded = true;
+                ExpandDataItems(item.Children);
+            }
+        }
+
+        private void CollapseDataItems(IEnumerable<ITreeItemData<T>>? items)
+        {
+            if (items is null)
+            {
+                return;
+            }
+
+            foreach (var item in items)
+            {
+                item.Expanded = false;
+
+                if (item.HasChildren)
+                {
+                    CollapseDataItems(item.Children);
+                }
+            }
+        }
+
+        private bool ApplyVirtualizedAutoExpand(HashSet<T> selection)
+        {
+            if (!IsVirtualized || !AutoExpand || Items is null || selection.Count == 0)
+            {
+                return false;
+            }
+
+            ExpandDataParentsOfSelectedItems(Items, selection, out var changed);
+            return changed;
+        }
+
+        private bool ExpandDataParentsOfSelectedItems(IEnumerable<ITreeItemData<T>> items, HashSet<T> selection, out bool changed)
+        {
+            var containsSelection = false;
+            changed = false;
+
+            foreach (var item in items)
+            {
+                var childContainsSelection = false;
+                if (item.HasChildren)
+                {
+                    childContainsSelection = ExpandDataParentsOfSelectedItems(item.Children, selection, out var childChanged);
+                    changed = changed || childChanged;
+                }
+
+                if (childContainsSelection && item.Expandable && !item.Expanded)
+                {
+                    item.Expanded = true;
+                    changed = true;
+                }
+
+                var value = GetDataItemValue(item);
+                containsSelection = containsSelection || childContainsSelection || (value is not null && selection.Contains(value));
+            }
+
+            return containsSelection;
+        }
 
         private sealed class ServerDataState
         {

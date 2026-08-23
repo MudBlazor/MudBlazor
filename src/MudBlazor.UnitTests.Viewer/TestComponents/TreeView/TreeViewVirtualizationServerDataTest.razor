@@ -1,0 +1,30 @@
+﻿<MudTreeView T="string" Items="_treeItems" Virtualize="true" Height="200px" ExpandOnClick="true" ServerData="LoadServerData">
+    <ItemTemplate>
+        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" CanExpand="@context.Expandable" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private readonly List<TreeItemData<string>> _treeItems = [];
+    private int _loadCount;
+
+    public IReadOnlyList<TreeItemData<string>> TreeItems => _treeItems;
+
+    protected override void OnInitialized()
+    {
+        _treeItems.Add(new TreeItemData<string>
+        {
+            Value = "Root",
+            Text = "Root",
+            Expandable = true
+        });
+    }
+
+    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string? parentValue)
+    {
+        _loadCount++;
+        return Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([
+            new TreeItemData<string> { Value = $"Loaded {_loadCount}", Text = $"Loaded {_loadCount}" }
+        ]);
+    }
+}

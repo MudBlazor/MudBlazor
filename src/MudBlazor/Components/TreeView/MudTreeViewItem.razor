@@ -4,7 +4,7 @@
 
 @if (Visible)
 {
-    <li @attributes="UserAttributes" class="@Classname" style="@Style">
+    <li @attributes="UserAttributes" class="@Classname" style="@Stylename">
         <div class="@ContentClassname" @onclick="OnItemClickedAsync" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClickedAsync" @ondblclick:stopPropagation="true">
             @if (Content != null)
             {
@@ -53,7 +53,7 @@
                 }
             }
         </div>
-        @if (HasChildren())
+        @if (HasChildren() && !IsVirtualizedItem)
         {
             <MudCollapse Expanded="@_expandedState.Value">
                 <CascadingValue Value="@MudTreeRoot" IsFixed="true">

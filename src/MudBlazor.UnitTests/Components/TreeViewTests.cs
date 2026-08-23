@@ -1,4 +1,5 @@
-﻿using AwesomeAssertions;
+﻿using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -712,6 +713,206 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewVirtualize_DataItems_UsesFlattenedVisibleItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+
+            var virtualize = comp.FindComponent<MudVirtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.Enabled.Should().BeTrue();
+            virtualize.Instance.ItemSize.Should().Be(40f);
+            virtualize.Instance.OverscanCount.Should().Be(3);
+            virtualize.Instance.MaxItemCount.Should().Be(int.MaxValue);
+            virtualize.Instance.Items.Should().NotBeNull();
+            virtualize.Instance.Items!.Select(x => x.Item.Value).Should().Equal("Root", "Child A", "Child B", "Other");
+            virtualize.Instance.Items!.Select(x => x.Depth).Should().Equal(0, 1, 1, 0);
+            comp.FindAll("li.mud-treeview-item")
+                .Select(x => x.GetAttribute("style") ?? string.Empty)
+                .Should()
+                .Contain(style => style.Contains("padding-inline-start:17px", StringComparison.Ordinal));
+            comp.FindAll("ul.mud-treeview-group").Should().BeEmpty();
+        }
+
+        [Test]
+        public void TreeViewVirtualize_DataItemsWithoutConstrainedHeight_UsesStandardRenderer()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Height, (string)null!));
+
+            comp.FindComponents<MudVirtualize<TreeViewItemContext<string>>>().Should().BeEmpty();
+            comp.FindAll("ul.mud-treeview-group").Should().NotBeEmpty();
+        }
+
+        [Test]
+        public void TreeViewVirtualize_DataItemsWithMaxHeight_UsesFlattenedVisibleItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Height, (string)null!)
+                .Add(x => x.MaxHeight, "200px"));
+
+            var virtualize = comp.FindComponent<MudVirtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.Enabled.Should().BeTrue();
+            virtualize.Instance.Items.Should().NotBeNull();
+            virtualize.Instance.Items!.Select(x => x.Item.Value).Should().Equal("Root", "Child A", "Child B", "Other");
+            virtualize.Instance.Items!.Select(x => x.Depth).Should().Equal(0, 1, 1, 0);
+        }
+
+        [Test]
+        public void TreeViewVirtualize_DataItems_PassesVirtualizationSettings()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.ItemSize, 40f)
+                .Add(x => x.OverscanCount, 8)
+                .Add(x => x.MaxItemCount, 500));
+
+            var virtualize = comp.FindComponent<MudVirtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.ItemSize.Should().Be(40f);
+            virtualize.Instance.OverscanCount.Should().Be(8);
+            virtualize.Instance.MaxItemCount.Should().Be(500);
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_TogglingExpansionUpdatesFlattenedItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+
+            GetVirtualizedValues(comp).Should().Equal("Root", "Child A", "Child B", "Other");
+
+            await FindTreeItem(comp, "Child B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Child A", "Child B", "Grandchild", "Other"));
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_OneWayExpansionUpdatesFlattenedItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.BindExpanded, false));
+
+            GetVirtualizedValues(comp).Should().Equal("Root", "Child A", "Child B", "Other");
+
+            await FindTreeItem(comp, "Child B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Child A", "Child B", "Grandchild", "Other"));
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_ReusedRowsReceiveCurrentItemContext()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            await FindTreeItem(comp, "Child B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() =>
+            {
+                var grandchild = FindTreeItem(comp, "Grandchild");
+                grandchild.GetAttribute("style").Should().Contain("padding-inline-start:34px");
+            });
+
+            await FindTreeItem(comp, "Grandchild").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["Child B", "Grandchild"]);
+            comp.Instance.SelectedValues.Should().NotContain("Other");
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_ReusedRowReceivesCurrentDepth()
+        {
+            var comp = Context.Render<TreeViewVirtualizedRowReuseTest>();
+
+            FindTreeItem(comp, "Movable").GetAttribute("style").Should().Contain("padding-inline-start:0px");
+
+            await comp.InvokeAsync(comp.Instance.MoveItemUnderParent);
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Movable").GetAttribute("style").Should().Contain("padding-inline-start:17px"));
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_SelectedValueUsesTextFallbackWhenValueIsNull()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.UseTextOnlyValues, true)
+                .Add(x => x.AutoExpand, true));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValue, "Grandchild"));
+
+            comp.WaitForAssertion(() =>
+            {
+                comp.Instance.SelectedValue.Should().Be("Grandchild");
+                GetVirtualizedTexts(comp).Should().Contain("Grandchild");
+            });
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_SelectingParentSelectsDescendants()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            await FindTreeItem(comp, "Root").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["Root", "Child A", "Child B", "Grandchild"]);
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_UsesDataTreeForTriStateAndParentSelection()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValues, ["Child A"]));
+
+            FindTreeItem(comp, "Root").QuerySelector(".mud-checkbox span")!.ClassList.Should().Contain("mud-checkbox-null");
+
+            await FindTreeItem(comp, "Child B").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["Root", "Child A", "Child B", "Grandchild"]);
+            FindTreeItem(comp, "Root").QuerySelector(".mud-checkbox span")!.ClassList.Should().Contain("mud-checkbox-true");
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_ExpandAllAndCollapseAllUpdateFlattenedItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Child A", "Child B", "Grandchild", "Other"));
+
+            await comp.InvokeAsync(comp.Instance.CollapseAllAsync);
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Other"));
+        }
+
+        [Test]
+        public void TreeViewVirtualize_DataItems_AutoExpandShowsSelectedDescendant()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.RootExpanded, false)
+                .Add(x => x.AutoExpand, true)
+                .Add(x => x.SelectedValue, "Grandchild"));
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Child A", "Child B", "Grandchild", "Other"));
+            FindTreeItem(comp, "Grandchild").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected");
+        }
+
+        [Test]
+        public async Task TreeViewVirtualize_ServerData_AddsLoadedChildrenToFlattenedItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerDataTest>();
+
+            GetVirtualizedValues(comp).Should().Equal("Root");
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Loaded 1"));
+            FindTreeItem(comp, "Loaded 1").GetAttribute("style").Should().Contain("padding-inline-start:17px");
+        }
+
+        [Test]
         public async Task TreeViewServer()
         {
             var comp = Context.Render<TreeViewServerTest>();
@@ -1413,6 +1614,35 @@ namespace MudBlazor.UnitTests.Components
 
             await arrows()[1].ClickAsync();
             comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
+        }
+
+        private static IElement FindTreeItem<TComponent>(IRenderedComponent<TComponent> component, string text)
+            where TComponent : IComponent
+        {
+            return component.FindAll("li.mud-treeview-item")
+                .Single(item => item.TextContent.Contains(text, StringComparison.Ordinal));
+        }
+
+        private static IReadOnlyList<string> GetVirtualizedValues(IRenderedComponent<TreeViewVirtualizationTest> component)
+        {
+            return GetTreeViewItemContexts(component).Select(itemContext => itemContext.Item.Value ?? string.Empty).ToList();
+        }
+
+        private static IReadOnlyList<string> GetVirtualizedTexts(IRenderedComponent<TreeViewVirtualizationTest> component)
+        {
+            return GetTreeViewItemContexts(component).Select(itemContext => itemContext.Item.Text ?? string.Empty).ToList();
+        }
+
+        private static IReadOnlyList<string> GetVirtualizedValues(IRenderedComponent<TreeViewVirtualizationServerDataTest> component)
+        {
+            return GetTreeViewItemContexts(component).Select(itemContext => itemContext.Item.Value ?? string.Empty).ToList();
+        }
+
+        private static ICollection<TreeViewItemContext<string>> GetTreeViewItemContexts(IRenderedComponent<IComponent> component)
+        {
+            return component.FindComponent<MudVirtualize<TreeViewItemContext<string>>>()
+                .Instance
+                .Items!;
         }
     }
 }

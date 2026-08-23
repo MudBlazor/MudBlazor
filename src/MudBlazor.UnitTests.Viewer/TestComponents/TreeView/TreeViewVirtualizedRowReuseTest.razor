@@ -1,0 +1,29 @@
+<MudTreeView T="string" Items="_treeItems" Virtualize="true" Height="120px" SelectionMode="SelectionMode.MultiSelection">
+    <ItemTemplate>
+        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value" Text="@context.Text" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private readonly TreeItemData<string> _movableItem = new() { Value = "Movable", Text = "Movable" };
+    private readonly TreeItemData<string> _parentItem;
+    private IReadOnlyCollection<TreeItemData<string>> _treeItems;
+
+    public TreeViewVirtualizedRowReuseTest()
+    {
+        _parentItem = new TreeItemData<string>
+        {
+            Value = "Parent",
+            Text = "Parent",
+            Children = [_movableItem]
+        };
+        _treeItems = [_parentItem, _movableItem];
+    }
+
+    public void MoveItemUnderParent()
+    {
+        _parentItem.Expanded = true;
+        _treeItems = [_parentItem];
+        StateHasChanged();
+    }
+}

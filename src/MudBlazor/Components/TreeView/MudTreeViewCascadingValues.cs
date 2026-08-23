@@ -7,4 +7,5 @@ namespace MudBlazor;
 internal static class MudTreeViewCascadingValues
 {
     internal const string ItemData = "MudTreeViewItemData";
+    internal const string ItemDepth = "MudTreeViewItemDepth";
 }
