@@ -771,7 +771,7 @@ namespace MudBlazor.UnitTests.Components
             var list = comp.Instance;
             var currentItem = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Bravo").Instance;
 
-            await list.FocusAdjacentItemAsync(currentItem, direction);
+            await comp.InvokeAsync(() => list.FocusAdjacentItemAsync(currentItem, direction));
 
             comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
                 .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0");
@@ -789,7 +789,7 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Unregistered")));
             var currentItem = otherList.FindComponent<MudListItem<string>>().Instance;
 
-            await comp.Instance.FocusAdjacentItemAsync(currentItem, direction);
+            await comp.InvokeAsync(() => comp.Instance.FocusAdjacentItemAsync(currentItem, direction));
 
             comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
                 .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0");
