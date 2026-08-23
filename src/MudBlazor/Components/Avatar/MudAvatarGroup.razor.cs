@@ -172,8 +172,14 @@ namespace MudBlazor
 
         internal void RemoveAvatar(MudAvatar avatar)
         {
-            if (_avatars.Remove(avatar) && _avatarIndices.Remove(avatar, out var removedIndex))
+            if (!_avatarIndices.TryGetValue(avatar, out var removedIndex))
             {
+                return;
+            }
+
+            if (_avatars.Remove(avatar))
+            {
+                _avatarIndices.Remove(avatar);
                 foreach (var registeredAvatar in _avatars)
                 {
                     if (_avatarIndices[registeredAvatar] > removedIndex)
@@ -188,11 +194,11 @@ namespace MudBlazor
             .AddClass($"ms-n{Spacing}");
 
         internal StyleBuilder GetAvatarZindex(MudAvatar avatar) => new StyleBuilder()
-            .AddStyle("z-index", $"{_avatars.Count - _avatarIndices[avatar]}");
+            .AddStyle("z-index", $"{_avatars.Count - (_avatarIndices.TryGetValue(avatar, out var index) ? index : -1)}");
 
         internal bool MaxGroupReached(MudAvatar avatar)
         {
-            return _avatarIndices[avatar] >= Max;
+            return _avatarIndices.TryGetValue(avatar, out var index) && index >= Max;
         }
 
         /// <inheritdoc />
