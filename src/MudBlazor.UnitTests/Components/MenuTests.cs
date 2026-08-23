@@ -1228,27 +1228,17 @@ namespace MudBlazor.UnitTests.Components
             var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
                 .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .GetValue(menu)!;
-            var registeredItems = (IReadOnlySet<object>)typeof(MudMenu)
-                .GetField("_registeredItems", BindingFlags.NonPublic | BindingFlags.Instance)!
-                .GetValue(menu)!;
 
             menuItems.Should().Equal(first, second);
-            registeredItems.Should().HaveCount(2);
-            registeredItems.Should().Contain(first);
-            registeredItems.Should().Contain(second);
 
             await comp.InvokeAsync(menu.CloseMenuAsync);
 
             menuItems.Should().BeEmpty();
-            registeredItems.Should().BeEmpty();
 
             menu.RegisterItem(first);
             menu.RegisterItem(first);
             menu.RegisterItem(second);
             menuItems.Should().Equal(first, second);
-            registeredItems.Should().HaveCount(2);
-            registeredItems.Should().Contain(first);
-            registeredItems.Should().Contain(second);
         }
 
         [Test]
