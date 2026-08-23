@@ -435,6 +435,9 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ChartOptions, new HeatMapChartOptions { EnableSmoothGradient = true })
             );
 
+            var heatMap = comp.FindComponent<HeatMap<double>>().Instance;
+            heatMap.GetCell(1, 1)!.Value.Should().BeNull();
+            heatMap.GetCell(2, 0).Should().BeNull();
             comp.FindAll(".mud-chart-cell").Should().HaveCount(3);
             comp.Markup.Should().Contain("stop-color:#fff");
         }
