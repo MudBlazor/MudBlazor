@@ -310,10 +310,17 @@ namespace MudBlazor
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
-            await ElementReference.FocusAsync();
-            await OnClearButtonClick.InvokeAsync(e);
-            IsClearing = false;
+            IsClearing = true;
+            try
+            {
+                await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
+                await ElementReference.FocusAsync();
+                await OnClearButtonClick.InvokeAsync(e);
+            }
+            finally
+            {
+                IsClearing = false;
+            }
         }
 
         protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
