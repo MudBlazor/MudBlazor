@@ -778,6 +778,103 @@ namespace MudBlazor.UnitTests.Components
             validatedValue.Should().Be("2, 3");
         }
 
+        /// <summary>
+        /// Programmatic selected values changes convert each value once for custom multi-selection text.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_CustomText_ProgrammaticSelection_ConvertsEachValueOnce()
+        {
+            var conversionCount = 0;
+            IReadOnlyList<string?> capturedValues = null;
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.ToStringFunc, value =>
+                {
+                    conversionCount++;
+                    return value is "null" or null ? null : value;
+                })
+                .Add(x => x.MultiSelectionTextFunc, values =>
+                {
+                    capturedValues = values;
+                    return string.Join("|", values.Select(value => value ?? "<null>"));
+                }));
+            var select = comp.Instance;
+
+            conversionCount = 0;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new[] { "one", "null", (string)null }));
+
+            conversionCount.Should().Be(3);
+            capturedValues.Should().Equal("one", null, null);
+            select.ReadText.Should().Be("one|<null>|<null>");
+        }
+
+        /// <summary>
+        /// Select All converts each value once for custom multi-selection text.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_CustomText_SelectAll_ConvertsEachValueOnce()
+        {
+            var conversionCount = 0;
+            IReadOnlyList<string?> capturedValues = null;
+            Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectAll, true)
+                .Add(x => x.ToStringFunc, value =>
+                {
+                    conversionCount++;
+                    return value is "null" or null ? null : value;
+                })
+                .Add(x => x.MultiSelectionTextFunc, values =>
+                {
+                    capturedValues = values;
+                    return string.Join("|", values.Select(value => value ?? "<null>"));
+                })
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "one"))
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "two")));
+            var select = comp.Instance;
+
+            conversionCount = 0;
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+
+            conversionCount.Should().Be(2);
+            capturedValues.Should().Equal("one", "two");
+            select.ReadText.Should().Be("one|two");
+        }
+
+        /// <summary>
+        /// Multi-selection text updates convert each value once when MultiSelection changes.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_CustomText_TextUpdate_ConvertsEachValueOnce()
+        {
+            var conversionCount = 0;
+            IReadOnlyList<string?> capturedValues = null;
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedValues, new[] { "one", "null", (string)null })
+                .Add(x => x.ToStringFunc, value =>
+                {
+                    conversionCount++;
+                    return value is "null" or null ? null : value;
+                })
+                .Add(x => x.MultiSelectionTextFunc, values =>
+                {
+                    capturedValues = values;
+                    return string.Join("|", values.Select(value => value ?? "<null>"));
+                }));
+
+            conversionCount = 0;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, false));
+            conversionCount = 0;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
+
+            conversionCount.Should().Be(3);
+            capturedValues.Should().Equal("one", null, null);
+            comp.Instance.ReadText.Should().Be("one|<null>|<null>");
+        }
+
         [Test]
         public async Task MultiSelect_SelectAll()
         {
