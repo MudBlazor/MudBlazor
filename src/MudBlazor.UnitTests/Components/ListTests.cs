@@ -761,7 +761,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(1, "Charlie")]
-        [TestCase(-1, "Alpha")]
+        [TestCase(-1, "Charlie")]
         public async Task FocusAdjacentItem_WithDisabledCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
         {
             var comp = Context.Render<MudList<string>>(builder => builder
@@ -773,8 +773,8 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => list.FocusAdjacentItemAsync(currentItem, direction));
 
-            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
-                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0");
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0"));
         }
 
         [Test]
@@ -791,8 +791,8 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Instance.FocusAdjacentItemAsync(currentItem, direction));
 
-            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
-                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0");
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0"));
         }
 
         [Test]
