@@ -238,12 +238,24 @@ namespace MudBlazor
         protected async Task OnEvaluateForm()
         {
             _errors.Clear();
-            foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
-                _errors.Add(error);
-            var valid = EvaluateIsValid();
+            var noErrors = true;
+            var requiredAllHaveValue = true;
+            var touched = false;
+            foreach (var control in _formControls)
+            {
+                foreach (var error in control.ValidationErrors)
+                    _errors.Add(error);
+                if (noErrors && control.HasErrors)
+                    noErrors = false;
+                if (requiredAllHaveValue && control.Required && !control.HasValue())
+                    requiredAllHaveValue = false;
+                if (!touched && control.Touched)
+                    touched = true;
+            }
+            var valid = noErrors && requiredAllHaveValue;
 
             var oldTouched = _touched;
-            _touched = _formControls.Any(x => x.Touched);
+            _touched = touched;
             try
             {
                 _shouldRender = false;

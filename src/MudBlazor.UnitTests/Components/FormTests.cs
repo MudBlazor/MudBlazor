@@ -2849,5 +2849,122 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudTextField<int?>>());
             return (comp.Instance, comp, comp.FindComponent<MudTextField<int?>>().Instance);
         }
+
+        /// <summary>
+        /// Form evaluation should enumerate controls once while retaining property access short-circuiting.
+        /// </summary>
+        [Test]
+        public async Task FormEvaluationEnumeratesControlsOnce()
+        {
+            var form = Context.Render<CountingMudForm>().Instance;
+            var controls = new[]
+            {
+                new CountingFormComponent { ValidationErrors = ["duplicate", "first"], Touched = false },
+                new CountingFormComponent { Required = true, HasValueResult = false, HasErrorsResult = true, ValidationErrors = ["duplicate", "second"], Touched = true },
+                new CountingFormComponent { Required = true, HasValueResult = false, HasErrorsResult = true, ValidationErrors = ["third"], Touched = true }
+            };
+            foreach (var control in controls)
+                form.AddControl(control);
+
+            await form.EvaluateAsync();
+
+            form.IsValid.Should().BeFalse();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Should().BeEquivalentTo("duplicate", "first", "second", "third");
+            controls[0].HasErrorsAccesses.Should().Be(1);
+            controls[1].HasErrorsAccesses.Should().Be(1);
+            controls[2].HasErrorsAccesses.Should().Be(0);
+            controls[0].HasValueAccesses.Should().Be(0);
+            controls[1].HasValueAccesses.Should().Be(1);
+            controls[2].HasValueAccesses.Should().Be(0);
+            controls[0].TouchedAccesses.Should().Be(1);
+            controls[1].TouchedAccesses.Should().Be(1);
+            controls[2].TouchedAccesses.Should().Be(0);
+            controls.Should().OnlyContain(x => x.ValidationErrorsAccesses == 1);
+        }
+
+        /// <summary>
+        /// Form evaluation should preserve validity, touched state, and deduplicated errors for many controls.
+        /// </summary>
+        [Test]
+        public async Task FormEvaluationHandlesManyControls()
+        {
+            var form = Context.Render<CountingMudForm>().Instance;
+            var controls = Enumerable.Range(0, 100)
+                .Select(index => new CountingFormComponent
+                {
+                    Required = index == 99,
+                    HasValueResult = index != 99,
+                    Touched = index == 50,
+                    ValidationErrors = index % 10 == 0 ? ["shared", $"error-{index}"] : []
+                })
+                .ToArray();
+            foreach (var control in controls)
+                form.AddControl(control);
+
+            await form.EvaluateAsync();
+
+            form.IsValid.Should().BeTrue();
+            form.IsTouched.Should().BeTrue();
+            form.Errors.Should().BeEquivalentTo(["shared", "error-0", "error-10", "error-20", "error-30", "error-40", "error-50", "error-60", "error-70", "error-80", "error-90"]);
+        }
+
+        private sealed class CountingMudForm : MudForm
+        {
+            public void AddControl(IFormComponent control) => ((IForm)this).Add(control);
+
+            public Task EvaluateAsync() => OnEvaluateForm();
+        }
+
+        private sealed class CountingFormComponent : IFormComponent
+        {
+            private List<string> _validationErrors = [];
+
+            public bool Required { get; set; }
+            public bool Error { get; set; }
+            public bool HasErrorsResult { get; set; }
+            public bool HasValueResult { get; set; }
+            public bool TouchedResult { get; set; }
+            public int HasErrorsAccesses { get; private set; }
+            public int HasValueAccesses { get; private set; }
+            public int TouchedAccesses { get; private set; }
+            public int ValidationErrorsAccesses { get; private set; }
+            public bool HasErrors
+            {
+                get
+                {
+                    HasErrorsAccesses++;
+                    return HasErrorsResult;
+                }
+            }
+            public bool Touched
+            {
+                get
+                {
+                    TouchedAccesses++;
+                    return TouchedResult;
+                }
+                set => TouchedResult = value;
+            }
+            public object? Validation { get; set; }
+            public bool IsForNull => false;
+            public List<string> ValidationErrors
+            {
+                get
+                {
+                    ValidationErrorsAccesses++;
+                    return _validationErrors;
+                }
+                set => _validationErrors = value;
+            }
+            public bool HasValue()
+            {
+                HasValueAccesses++;
+                return HasValueResult;
+            }
+            public Task ValidateAsync() => Task.CompletedTask;
+            public Task ResetAsync() => Task.CompletedTask;
+            public Task ResetValidationAsync() => Task.CompletedTask;
+        }
     }
 }
