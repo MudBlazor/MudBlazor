@@ -91,7 +91,7 @@
                                     <MudOverlay @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
-                                            <MudPopover UserAttributes="@ColumnsPanelPositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="@ColumnsPanelOverlayClassname" OverflowBehavior="OverflowBehavior.FlipOnOpen"
+                                            <MudPopover UserAttributes="@ColumnsPanelPositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="@ColumnsPanelClassname" OverflowBehavior="OverflowBehavior.FlipOnOpen"
                                                         AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4"
                                                         Style="max-width:700px;" MaxHeight="400">
