@@ -143,7 +143,7 @@ namespace MudBlazor
 
         internal bool Checked { get; private set; }
 
-        internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
+        internal MudRadioGroup<T>? MudRadioGroup => IMudRadioGroup as MudRadioGroup<T>;
 
         internal void SetChecked(bool value)
         {
