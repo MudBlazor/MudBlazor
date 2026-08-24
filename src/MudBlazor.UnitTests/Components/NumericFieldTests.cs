@@ -235,6 +235,216 @@ namespace MudBlazor.UnitTests.Components
             numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
         }
 
+        // Regression test for #6762: 0 + 0.1 * 3 used to display "0.30000000000000004".
+        [Test]
+        public async Task NumericField_Double_FractionalStep_ShouldNotIntroducePrecisionError()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0.0)
+                .Add(x => x.Step, 0.1));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(0.3);
+            comp.Find("input").GetAttribute("value").Should().Be("0.3");
+
+            // decrement back across 0.0 must land exactly on zero, not 1.38e-16.
+            await comp.InvokeAsync(() => numericField.Decrement());
+            await comp.InvokeAsync(() => numericField.Decrement());
+            await comp.InvokeAsync(() => numericField.Decrement());
+
+            numericField.ReadValue.Should().Be(0.0);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        // Regression test for #6762: same as the double case but for float.
+        // Steps deep enough (0.01 x 16) to expose float noise: converting via the widened double renders
+        // "0.16000001" here, so the decimal conversion must come from the float's own 7-digit value.
+        [Test]
+        public async Task NumericField_Float_FractionalStep_ShouldNotIntroducePrecisionError()
+        {
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0f)
+                .Add(x => x.Step, 0.01f));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 16; i++)
+                await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(0.16f);
+            comp.Find("input").GetAttribute("value").Should().Be("0.16");
+        }
+
+        /// <summary>
+        /// Fractional double steps reaching zero should produce positive zero from either direction.
+        /// </summary>
+        [TestCase(-0.2, true, TestName = "NumericField_Double_IncrementFromNegativeFraction_ZeroHasPositiveSign")]
+        [TestCase(0.2, false, TestName = "NumericField_Double_DecrementFromPositiveFraction_ZeroHasPositiveSign")]
+        public async Task NumericField_Double_FractionalStep_ZeroHasPositiveSign(double value, bool increment)
+        {
+            var changedValueBits = BitConverter.DoubleToInt64Bits(value);
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, value)
+                .Add(x => x.Step, 0.1)
+                .Add(x => x.ValueChanged, changedValue => changedValueBits = BitConverter.DoubleToInt64Bits(changedValue)));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 2; i++)
+            {
+                if (increment)
+                    await comp.InvokeAsync(() => numericField.Increment());
+                else
+                    await comp.InvokeAsync(() => numericField.Decrement());
+            }
+
+            BitConverter.DoubleToInt64Bits(numericField.ReadValue).Should().Be(0L);
+            changedValueBits.Should().Be(0L);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        /// <summary>
+        /// Fractional float steps reaching zero should produce positive zero from either direction.
+        /// </summary>
+        [TestCase(-0.2f, true, TestName = "NumericField_Float_IncrementFromNegativeFraction_ZeroHasPositiveSign")]
+        [TestCase(0.2f, false, TestName = "NumericField_Float_DecrementFromPositiveFraction_ZeroHasPositiveSign")]
+        public async Task NumericField_Float_FractionalStep_ZeroHasPositiveSign(float value, bool increment)
+        {
+            var changedValueBits = BitConverter.SingleToInt32Bits(value);
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, value)
+                .Add(x => x.Step, 0.1f)
+                .Add(x => x.ValueChanged, changedValue => changedValueBits = BitConverter.SingleToInt32Bits(changedValue)));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 2; i++)
+            {
+                if (increment)
+                    await comp.InvokeAsync(() => numericField.Increment());
+                else
+                    await comp.InvokeAsync(() => numericField.Decrement());
+            }
+
+            BitConverter.SingleToInt32Bits(numericField.ReadValue).Should().Be(0);
+            changedValueBits.Should().Be(0);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        // Values beyond decimal range must fall back to double arithmetic instead of overflowing.
+        [Test]
+        public async Task NumericField_Double_BeyondDecimalRange_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 1e300)
+                .Add(x => x.Step, 1e300));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(2e300);
+        }
+
+        // A value with more significant digits than the decimal conversion keeps must step in double arithmetic.
+        // The lossy round trip used to land below the original value and trip the overflow clamp, jumping to double.MaxValue.
+        [Test]
+        public async Task NumericField_Double_PrecisionBeyondDecimal_ShouldUseDoubleArithmetic()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, Math.PI)
+                .Add(x => x.Step, 5e-16));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(Math.PI + 5e-16);
+        }
+
+        // Stepping by zero must be a no-op regardless of the value's precision.
+        [Test]
+        public async Task NumericField_Double_ZeroStep_ShouldNotChangeValue()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, Math.PI)
+                .Add(x => x.Step, 0.0));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(Math.PI);
+        }
+
+        // A sum that exceeds decimal's range while both operands fit must fall back to double arithmetic instead of clamping.
+        [Test]
+        public async Task NumericField_Double_SumBeyondDecimalRange_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 7e28)
+                .Add(x => x.Step, 7e28));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(7e28 + 7e28);
+        }
+
+        // The doubles nearest decimal.MinValue/MaxValue pass a lenient range check but overflow when converted; they must not clamp or flip sign.
+        [Test]
+        public async Task NumericField_Double_NearDecimalBoundary_ShouldNotClamp()
+        {
+            var boundary = (double)decimal.MinValue;
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, boundary)
+                .Add(x => x.Step, 0.0));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(boundary);
+        }
+
+        // Steps smaller than decimal's epsilon must not collapse to zero, and values that small must not corrupt when stepped.
+        [Test]
+        public async Task NumericField_Double_StepBelowDecimalEpsilon_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0.0)
+                .Add(x => x.Step, 1e-30));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            numericField.ReadValue.Should().Be(1e-30);
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            numericField.ReadValue.Should().Be(1e-30 + 1e-30);
+        }
+
+        // Float variant of the sub-epsilon step: 1e-30f is a valid float but converts to 0m.
+        [Test]
+        public async Task NumericField_Float_StepBelowDecimalEpsilon_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0f)
+                .Add(x => x.Step, 1e-30f));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(1e-30f);
+        }
+
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
