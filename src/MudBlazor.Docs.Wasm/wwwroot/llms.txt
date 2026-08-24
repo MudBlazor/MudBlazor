@@ -2,7 +2,7 @@
 
 > MudBlazor is a Blazor component library based on Material Design, written in C# with almost no JavaScript. It targets .NET 8, 9, and 10, and runs in Blazor Server, Blazor WebAssembly, and Blazor Hybrid apps.
 
-The documentation site is a Blazor WebAssembly app, so pages are rendered client-side. Component pages show runnable examples with their source; every documented type also has a generated API page listing its parameters, events, and methods.
+The documentation site is a Blazor WebAssembly app, but it prerenders full HTML for recognized crawlers, so the pages below can be fetched and read directly. Component pages show runnable examples with their source; every documented type also has a generated API page listing its parameters, events, and methods.
 
 ## Getting started
 
@@ -23,13 +23,13 @@ The documentation site is a Blazor WebAssembly app, so pages are rendered client
 - [Table](https://mudblazor.com/components/table): The simpler tabular component, with client- and server-side paging.
 - [Dialog](https://mudblazor.com/components/dialog): Modal dialogs shown through IDialogService, with results and custom content.
 - [Snackbar](https://mudblazor.com/components/snackbar): Transient notifications shown through ISnackbar.
-- [Charts](https://mudblazor.com/components/charts): Bar, line, pie, donut, heatmap, radar, sankey, scatter, and time-series charts.
+- [Charts](https://mudblazor.com/components/charts): Bar, stacked-bar, line, pie, donut, heatmap, radar, rose, sankey, scatter, and time-series charts.
 
 ## Features
 
 - [Icons](https://mudblazor.com/features/icons): The bundled Material icon set and how to supply custom SVG icons.
 - [Colors](https://mudblazor.com/features/colors): The Color enum and the Material palette behind it.
-- [Breakpoints](https://mudblazor.com/features/breakpoints): Responsive breakpoints and the MudHidden and IBreakpointService APIs.
+- [Breakpoints](https://mudblazor.com/features/breakpoints): Responsive breakpoints, the MudHidden component, and the IBrowserViewportService API.
 - [Parameter State](https://mudblazor.com/features/parameterstate): The ParameterState framework every component uses for parameter change handling.
 - [Localization](https://mudblazor.com/features/localization): Translating built-in component strings.
 - [RTL Languages](https://mudblazor.com/features/rtl-languages): Right-to-left layout support.
