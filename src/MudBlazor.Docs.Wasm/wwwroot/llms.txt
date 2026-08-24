@@ -1,0 +1,12 @@
+# MudBlazor
+
+> MudBlazor is a Blazor component library based on Material Design, written in C# with almost no JavaScript. It targets .NET 8, 9, and 10, and runs in Blazor Server, Blazor WebAssembly, and Blazor Hybrid apps.
+
+The documentation site is a Blazor WebAssembly app, so pages are rendered client-side. Component pages show runnable examples with their source; every documented type also has a generated API page listing its parameters, events, and methods.
+
+## Getting started
+
+- [Installation](https://mudblazor.com/getting-started/installation): Add MudBlazor to a Blazor Server, WebAssembly, or Hybrid project.
+- [Usage](https://mudblazor.com/getting-started/usage): The providers, imports, and minimal layout a MudBlazor app needs before anything renders.
+- [Layouts](https://mudblazor.com/getting-started/layouts): Compose an app shell from MudLayout, MudAppBar, MudDrawer, and MudMainContent.
+- [Wireframes](https://mudblazor.com/getting-started/wireframes): Copy-paste starting points for common page shapes.
