@@ -66,10 +66,8 @@ namespace MudBlazor
         /// Creates a <see cref="RefChanged"/> callback that stores the captured reference without re-rendering the caller.
         /// </summary>
         /// <remarks>
-        /// The callback <c>@bind-Ref</c> emits is bound to the consuming component, so invoking it runs through
-        /// <c>ComponentBase.HandleEventAsync</c> and calls <c>StateHasChanged</c> there.
-        /// Capturing an element reference is not a state change, and that extra render is a large share of the cost of
-        /// building many items at once, such as opening a select with hundreds of options (#13519).
+        /// The callback <c>@bind-Ref</c> emits is bound to the consuming component, so invoking it runs through <c>ComponentBase.HandleEventAsync</c> and calls <c>StateHasChanged</c> there.
+        /// Capturing an element reference is not a state change, and that extra render is a large share of the cost of building many items at once, such as opening a select with hundreds of options (#13519).
         /// </remarks>
         /// <param name="setter">Stores the captured reference.</param>
         internal static EventCallback<ElementReference> CaptureRef(Action<ElementReference> setter) => new(null, setter);
