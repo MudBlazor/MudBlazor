@@ -13,102 +13,103 @@
     }
   }
 
+  /*
+    One shell.
+
+    The bar used to sit on top of the preview with a MudSpacer filling its
+    left half, and the source was a separate sibling glued on by cancelling
+    border radii and deleting one border-bottom. The shell now owns the
+    single border, and the bar has moved to the join between preview and
+    source — which is where its two actions belong, since both concern the
+    code. Its empty left half now carries the file name.
+  */
   .docs-section-content {
     border-radius: 8px;
     background-color: var(--mud-palette-surface);
-    transition: border-radius 250ms cubic-bezier(.4, 0, .2, 1);
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow: hidden;
 
-    .docs-section-content-toolbar {
-      height: unset;
-      padding: 0;
-      border-radius: 8px 8px 0 0;
-
-      .mud-button {
-        text-transform: none;
-        font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-        font-size: 14px;
-        border-radius: 0;
-        padding: 4px 8px;
-
-        &.file-button {
-          border-color: var(--mud-palette-lines-default);
-          letter-spacing: normal;
-          margin-top: -1px;
-
-          &:first-child {
-            border-top-left-radius: 8px;
-          }
-        }
-
-        &:last-child:not(.file-button) {
-          border-top-right-radius: 8px;
-        }
-      }
-
-      &.outlined {
-        .file-button {
-          &:not(.active) {
-            border: 1px solid var(--mud-palette-lines-default);
-            border-top: none;
-            border-radius: 0 0 4px 4px;
-
-            &:first-child {
-              border-top-left-radius: 8px;
-              border-bottom-left-radius: 0px;
-              border-left: none;
-            }
-          }
-
-          &.active {
-            color: var(--mud-palette-primary);
-          }
-        }
-      }
-
-      &.darken {
-        background-color: var(--mud-palette-gray-light);
-
-        .file-button {
-          &.active {
-            background-color: var(--mud-palette-background-gray);
-          }
-        }
-      }
-    }
-
-    .docs-section-content-inner {
-      & > *:not(.mud-grid) {
-        margin: 8px;
-      }
+    &.outlined {
+      border: 1px solid var(--mud-palette-lines-default);
     }
 
     &.darken {
       background: linear-gradient(0deg, var(--mud-palette-gray-lighter) 0%, var(--mud-palette-background-gray) 50%);
     }
 
-    &.outlined {
-      border: 1px solid var(--mud-palette-lines-default);
+    .docs-section-content-inner {
+      /*
+        gap, not per-child margins: margins doubled against the pane padding
+        at the edges and the container could not control the rhythm.
+      */
+      gap: 12px;
     }
 
-    &.show-code {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+    .docs-section-content-toolbar {
+      display: flex;
+      align-items: center;
+      height: unset;
+      min-height: unset;
+      padding: 4px 4px 4px 0;
+      border-radius: 0;
+      gap: 4px;
 
-      &.outlined {
-        border-bottom: none;
+      /* the chevron points at what it reveals */
+      .docs-section-code-toggle .mud-button-icon-end {
+        transition: transform 180ms cubic-bezier(.4, 0, .2, 1);
       }
 
-      + .docs-section-source {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
+      .docs-section-code-toggle.expanded .mud-button-icon-end {
+        transform: rotate(180deg);
+      }
 
-        &.outlined {
-          border: 1px solid var(--mud-palette-lines-default);
+      .mud-button {
+        text-transform: none;
+        font-size: 13px;
+        letter-spacing: normal;
+        border-radius: 4px;
+        padding: 4px 8px;
+
+        &.file-button {
+          font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+          color: var(--mud-palette-text-secondary);
+
+          &.active {
+            color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-primary-hover);
+          }
         }
       }
+
+      /* the seam: divides the preview from its source */
+      &.seam {
+        border-top: 1px solid var(--mud-palette-lines-default);
+        background-color: var(--mud-palette-background-gray);
+      }
+    }
+
+    /* the file this example lives in — the one fact the card used to withhold */
+    .docs-section-filename {
+      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-size: 12px;
+      line-height: 1;
+      color: var(--mud-palette-text-secondary);
+      padding-inline-start: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      .extension {
+        opacity: .65;
+      }
+    }
+
+    /* nested in the shell, the source drops its own card chrome */
+    .docs-section-source {
+      border-radius: 0;
+      background-color: var(--mud-palette-background-gray);
     }
   }
 
@@ -117,7 +118,10 @@
     overflow: hidden;
     border-radius: 8px;
     background-color: var(--mud-palette-background-gray);
-    transition: border-radius 250ms cubic-bezier(.4, 0, .2, 1);
+
+    &.outlined {
+      border: 1px solid var(--mud-palette-lines-default);
+    }
 
     .copy-code-button {
       position: absolute;
@@ -125,39 +129,74 @@
       right: 8px;
       background-color: transparent;
     }
-    /*Show only on hover if on desktop*/
-    /*TODO: Show if code is focused*/
+    /*
+      Was rgba(5, 0, 51, 0.0) — fully transparent, hardcoded, not theme-aware,
+      and revealed on hover only, so keyboard users tabbed to an invisible
+      target. Resting opacity plus a focus-visible reveal; resolves the
+      "show if code is focused" TODO that sat here.
+    */
     @media(hover: hover) and (pointer: fine) {
       .copy-code-button {
-        color: rgba(5, 0, 51, 0.0);
-        transition: color 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
-        background-color: unset;
+        color: var(--mud-palette-text-secondary);
+        opacity: .5;
+        transition: opacity 250ms cubic-bezier(.4, 0, .2, 1) 0ms;
       }
 
-      &:hover {
-        .copy-code-button {
-          color: var(--mud-palette-text-secondary) !important;
-          background-color: transparent;
-        }
+      &:hover .copy-code-button,
+      .copy-code-button:focus-visible {
+        opacity: 1;
       }
     }
 
     .docs-section-source-container {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.15s ease-out;
+      overflow: auto;
+      max-height: 500px;
+
+      /*
+        Scroll shadows. The `local` gradients scroll with the content and mask
+        the `scroll` shadows when you reach an end, so a shadow shows only while
+        there is more code in that direction — the 500px cap used to truncate
+        long examples silently.
+      */
+      background:
+        linear-gradient(var(--mud-palette-background-gray) 30%, rgba(0, 0, 0, 0)) top / 100% 32px no-repeat local,
+        linear-gradient(rgba(0, 0, 0, 0), var(--mud-palette-background-gray) 70%) bottom / 100% 32px no-repeat local,
+        radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .14), rgba(0, 0, 0, 0)) top / 100% 12px no-repeat scroll,
+        radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .14), rgba(0, 0, 0, 0)) bottom / 100% 12px no-repeat scroll;
     }
 
-    &.show-code {
-      .docs-section-source-container {
-        overflow: auto;
-        max-height: 500px;
-        transition: max-height 0.25s ease-in;
+    &[hidden] {
+      display: none;
+    }
+  }
 
-        &::-webkit-scrollbar-thumb {
-          border-bottom-right-radius: 0;
-        }
-      }
+  /*
+    Section headings already have stable ids and drive the side navigation;
+    this makes them linkable. Hidden until the heading is hovered or the
+    control itself is focused, so keyboard users can still reach it.
+  */
+  .docs-section-anchor {
+    .docs-section-anchor-link {
+      opacity: 0;
+      transition: opacity 150ms cubic-bezier(.4, 0, .2, 1);
+      text-decoration: none;
+      color: var(--mud-palette-text-secondary);
+      margin-inline-start: .35em;
+      font-weight: 400;
+      user-select: none;
+    }
+
+    &:hover .docs-section-anchor-link,
+    .docs-section-anchor-link:focus-visible {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .docs-section-code-toggle .mud-button-icon-end,
+    .docs-section-anchor-link,
+    .copy-code-button {
+      transition: none;
     }
   }
 }
