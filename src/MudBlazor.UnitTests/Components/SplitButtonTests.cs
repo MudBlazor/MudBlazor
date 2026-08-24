@@ -136,6 +136,91 @@ public class SplitButtonTests : BunitTest
     }
 
     /// <summary>
+    /// The toggle announces that it opens a menu, and reports it collapsed until it is opened.
+    /// </summary>
+    [Test]
+    public void ToggleExposesMenuPopupSemantics()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        var toggle = comp.Find(".mud-menu-icon-button-activator");
+
+        // ARIA treats aria-haspopup="true" as equivalent to "menu"; this matches MudMenu's other activators.
+        toggle.GetAttribute("aria-haspopup").Should().Be("true");
+        toggle.GetAttribute("aria-expanded").Should().Be("false");
+    }
+
+    /// <summary>
+    /// aria-expanded follows the menu's open state.
+    /// </summary>
+    [Test]
+    public async Task ToggleAriaExpandedReflectsOpenState()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        await comp.Find(".mud-menu-icon-button-activator").ClickAsync(new MouseEventArgs());
+
+        comp.WaitForAssertion(() =>
+            comp.Find(".mud-menu-icon-button-activator").GetAttribute("aria-expanded").Should().Be("true"));
+    }
+
+    /// <summary>
+    /// The icon-only toggle carries a default accessible name.
+    /// </summary>
+    [Test]
+    public void ToggleHasADefaultAccessibleName()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        comp.Find(".mud-menu-icon-button-activator").GetAttribute("aria-label").Should().Be("More actions");
+    }
+
+    /// <summary>
+    /// A caller-supplied ToggleAriaLabel replaces the default accessible name.
+    /// </summary>
+    [Test]
+    public void ToggleAriaLabelOverridesTheDefault()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.ToggleAriaLabel, "More reply options")
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        comp.Find(".mud-menu-icon-button-activator").GetAttribute("aria-label").Should().Be("More reply options");
+    }
+
+    /// <summary>
+    /// Escape closes an open menu.
+    /// </summary>
+    [Test]
+    public async Task EscapeClosesTheMenu()
+    {
+        var open = true;
+        var provider = Context.Render<MudPopoverProvider>();
+        Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.Open, true)
+            .Add(p => p.OpenChanged, EventCallback.Factory.Create<bool>(this, v => open = v))
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        provider.WaitForAssertion(() => provider.FindAll("[data-testid='menu-wrapper']").Count.Should().Be(1));
+
+        await provider.Find("[data-testid='menu-wrapper']").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+        await provider.WaitForAssertionAsync(() => open.Should().BeFalse());
+    }
+
+    /// <summary>
     /// Builds a menu-item fragment for the split button's ChildContent.
     /// </summary>
     private static RenderFragment MenuItems(params string[] labels) => builder =>

@@ -1,0 +1,23 @@
+<MudStack Spacing="4">
+    <MudSplitButton Label="Reply" Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => _last = "Reply")">
+        <MudMenuItem OnClick="@(() => _last = "Reply All")">Reply All</MudMenuItem>
+        <MudMenuItem OnClick="@(() => _last = "Forward")">Forward</MudMenuItem>
+        <MudDivider />
+        <MudMenuItem OnClick="@(() => _last = "Reply & Delete")">Reply &amp; Delete</MudMenuItem>
+    </MudSplitButton>
+
+    <MudSplitButton Label="Save" Variant="Variant.Filled" Color="Color.Secondary" ToggleAriaLabel="More save options">
+        <MudMenuItem>Save as draft</MudMenuItem>
+        <MudMenuItem>Save and publish</MudMenuItem>
+    </MudSplitButton>
+
+    <MudSplitButton Label="Disabled" Variant="Variant.Filled" Disabled="true">
+        <MudMenuItem>Unreachable</MudMenuItem>
+    </MudSplitButton>
+
+    <MudText Typo="Typo.body2">Last action: @_last</MudText>
+</MudStack>
+
+@code {
+    private string _last = "none";
+}

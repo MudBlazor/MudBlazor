@@ -202,6 +202,16 @@ namespace MudBlazor
         public string ToggleIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
+        /// The accessible name of the menu toggle.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>More actions</c>.  The toggle shows only an icon, so it needs a name of its own.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Behavior)]
+        public string? ToggleAriaLabel { get; set; } = "More actions";
+
+        /// <summary>
         /// Prevents interaction with the menu toggle only.
         /// </summary>
         /// <remarks>
