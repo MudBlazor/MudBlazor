@@ -203,4 +203,25 @@ public class TextTests : BunitTest
             element.ClassList.Should().NotContain("d-inline");
         }
     }
+
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void Truncate_ShouldAddNowrapClass(bool truncate)
+    {
+        var comp = Context.Render<MudText>(parameters => parameters
+            .Add(p => p.Truncate, truncate));
+
+        var element = comp.Find(".mud-typography");
+
+        if (truncate)
+        {
+            element.ClassList.Should().Contain("mud-typography-nowrap");
+        }
+        else
+        {
+            element.ClassList.Should().NotContain("mud-typography-nowrap");
+        }
+
+    }
 }
