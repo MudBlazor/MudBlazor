@@ -950,7 +950,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var start = new DateTime(2020, 10, 26);
             var end = new DateTime(2020, 10, 30);
-            var comp = Context.Render<MudDateRangePicker>();
+            DateRange bound = null;
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Bind(x => x.DateRange, bound, value => bound = value));
             var picker = comp.Instance;
 
             await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
@@ -968,6 +970,36 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
             picker.DateRange.Should().Be(new DateRange(start, end));
+        }
+
+        /// <summary>
+        /// A deliberate null assignment must still clear text that failed to convert, even after the binding echo preserved it.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ExplicitNull_ShouldClearInvalidText_AfterTheEchoPreservedIt()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var end = new DateTime(2020, 10, 30);
+            DateRange bound = null;
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Bind(x => x.DateRange, bound, value => bound = value));
+
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(end.ToShortDateString());
+            await comp.FindAll("input")[0].ChangeAsync("INVALID");
+
+            // The binding hands the resulting null straight back, which must leave the edit alone.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
+
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be("INVALID");
+            ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(end.ToShortDateString());
+
+            // Assigning null again is the consumer deliberately clearing, which is the only way out of a conversion error.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
+
+            comp.Instance.Text.Should().BeNull();
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().BeEmpty();
+            ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().BeEmpty();
         }
 
         /// <summary>

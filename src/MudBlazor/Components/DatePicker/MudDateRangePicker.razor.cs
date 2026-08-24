@@ -18,6 +18,7 @@ namespace MudBlazor
         private DateRange? _dateRange;
         private Range<string>? _rangeText;
         private int _rangeTextEdit;
+        private int _echoPendingForEdit = -1;
 
         /// <summary>
         /// Creates a new instance.
@@ -128,9 +129,12 @@ namespace MudBlazor
             range = NormalizeDateRange(range);
 
             // Text that fails to convert leaves the range null, so a null assignment looks like a no-op and the bad text would stick.
-            // Run it anyway while text remains, as MudDatePicker does, but not while that text is the edit the user is making right now.
-            var textIsLiveUserEdit = _rangeText is not null && string.Equals(Text, RangeUtility.Join(_rangeText.Start, _rangeText.End), StringComparison.Ordinal);
-            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text) && !textIsLiveUserEdit))
+            // Run it anyway while text remains, as MudDatePicker does, except for the null a two-way binding hands straight back from the edit that produced it.
+            // Only the assignment right after that edit can be the echo, so consuming the marker leaves a later deliberate null free to clear.
+            var isEditEcho = _echoPendingForEdit == _rangeTextEdit;
+            _echoPendingForEdit = -1;
+
+            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text) && !isEditEcho))
             {
                 var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)
@@ -210,6 +214,11 @@ namespace MudBlazor
                     }
 
                     await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
+
+                    if (_dateRange is null && DateRangeChanged.HasDelegate)
+                    {
+                        _echoPendingForEdit = edit;
+                    }
                 }
             }
         }
