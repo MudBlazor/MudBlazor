@@ -31,13 +31,20 @@
         }
     </MudButton>
     <MudMenu Class="mud-split-button-toggle"
-             Icon="@Icons.Material.Filled.ArrowDropDown"
+             Icon="@ToggleIcon"
              Color="@Color"
              Size="@Size"
              Variant="@Variant"
-             Disabled="@Disabled"
+             Disabled="@(Disabled || ToggleDisabled)"
              Ripple="@Ripple"
-             DropShadow="@DropShadow">
+             DropShadow="@DropShadow"
+             Dense="@Dense"
+             AnchorOrigin="@AnchorOrigin"
+             TransformOrigin="@TransformOrigin"
+             PopoverClass="@PopoverClass"
+             ListClass="@ListClass"
+             Open="@_openState.Value"
+             OpenChanged="@OnMenuOpenChangedAsync">
         @ChildContent
     </MudMenu>
 </MudButtonGroup>

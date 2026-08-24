@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -12,9 +13,28 @@ namespace MudBlazor
     /// <seealso cref="MudMenu" />
     public partial class MudSplitButton : MudComponentBase
     {
+        private readonly ParameterState<bool> _openState;
+
+        public MudSplitButton()
+        {
+            using var registerScope = CreateRegisterScope();
+            _openState = registerScope.RegisterParameter<bool>(nameof(Open))
+                .WithParameter(() => Open)
+                .WithEventCallback(() => OpenChanged);
+        }
+
         protected string Classname => new CssBuilder("mud-split-button")
             .AddClass(Class)
             .Build();
+
+        /// <summary>
+        /// Relays the menu's own open state back through <see cref="Open" />.
+        /// </summary>
+        /// <remarks>
+        /// The menu owns closing itself (an item was chosen, the overlay was clicked), so its state
+        /// has to travel back up rather than being pushed down only.
+        /// </remarks>
+        private Task OnMenuOpenChangedAsync(bool open) => _openState.SetValueAsync(open);
 
         /// <summary>
         /// The text of the primary action.
@@ -170,5 +190,85 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.SplitButton.Appearance)]
         public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// The icon displayed on the menu toggle.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Appearance)]
+        public string ToggleIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+
+        /// <summary>
+        /// Prevents interaction with the menu toggle only.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Use <see cref="Disabled" /> to disable both segments.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Behavior)]
+        public bool ToggleDisabled { get; set; }
+
+        /// <summary>
+        /// Whether the menu is open and its items are visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When this property changes, <see cref="OpenChanged" /> occurs.
+        /// </remarks>
+        [Parameter, ParameterState]
+        [Category(CategoryTypes.SplitButton.Behavior)]
+        public bool Open { get; set; }
+
+        /// <summary>
+        /// Occurs when <see cref="Open" /> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> OpenChanged { get; set; }
+
+        /// <summary>
+        /// Uses compact vertical padding for the menu items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Appearance)]
+        public bool Dense { get; set; }
+
+        /// <summary>
+        /// The origin point on the split button where the menu opens from.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which lets <see cref="MudMenu" /> choose an origin.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Appearance)]
+        public Origin? AnchorOrigin { get; set; }
+
+        /// <summary>
+        /// The direction the menu expands in from its anchor.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopLeft" />.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Appearance)]
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// The CSS classes applied to the menu's popover.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Appearance)]
+        public string? PopoverClass { get; set; }
+
+        /// <summary>
+        /// The CSS classes applied to the menu's item list.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SplitButton.Appearance)]
+        public string? ListClass { get; set; }
     }
 }
