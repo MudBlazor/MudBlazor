@@ -32,7 +32,7 @@ public class SplitButtonTests : BunitTest
     public async Task PrimaryClickInvokesOnClick()
     {
         var clicks = 0;
-        Context.Render<MudPopoverProvider>();
+        var provider = Context.Render<MudPopoverProvider>();
         var comp = Context.Render<MudSplitButton>(parameters => parameters
             .Add(p => p.Label, "Reply")
             .Add(p => p.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, () => clicks++))
@@ -41,7 +41,8 @@ public class SplitButtonTests : BunitTest
         await comp.Find(".mud-split-button-primary").ClickAsync(new MouseEventArgs());
 
         clicks.Should().Be(1);
-        comp.FindAll(".mud-popover-open").Count.Should().Be(0);
+        // The menu renders into the provider's tree, so the split button's own tree can never show it either way.
+        provider.FindAll(".mud-menu-item").Should().BeEmpty();
     }
 
     /// <summary>
@@ -218,6 +219,73 @@ public class SplitButtonTests : BunitTest
         await provider.Find("[data-testid='menu-wrapper']").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
 
         await provider.WaitForAssertionAsync(() => open.Should().BeFalse());
+    }
+
+    /// <summary>
+    /// Size reaches the primary segment, so its icons scale with the rest of the button.
+    /// </summary>
+    [Test]
+    public void SizeAppliesToThePrimarySegment()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Save")
+            .Add(p => p.StartIcon, Icons.Material.Filled.Save)
+            .Add(p => p.Size, Size.Large)
+            .Add(p => p.ChildContent, MenuItems("Save as draft")));
+
+        comp.FindComponent<MudButton>().Instance.Size.Should().Be(Size.Large);
+        comp.Find(".mud-split-button-primary .mud-icon-root").ClassList
+            .Should().Contain("mud-icon-size-large");
+    }
+
+    /// <summary>
+    /// A disabled toggle keeps its menu shut even when Open is set programmatically.
+    /// </summary>
+    [Test]
+    public void ToggleDisabledKeepsTheMenuShutWhenOpenIsSet()
+    {
+        var provider = Context.Render<MudPopoverProvider>();
+        Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Publish")
+            .Add(p => p.ToggleDisabled, true)
+            .Add(p => p.Open, true)
+            .Add(p => p.ChildContent, MenuItems("Unreachable")));
+
+        provider.FindAll(".mud-menu-item").Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// A blank ToggleIcon falls back to the default arrow rather than dropping the toggle segment.
+    /// </summary>
+    [Test]
+    public void BlankToggleIconFallsBackToTheDefaultArrow()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.ToggleIcon, string.Empty)
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        comp.FindAll(".mud-menu-icon-button-activator").Count.Should().Be(1);
+        comp.FindComponent<MudIconButton>().Instance.Icon
+            .Should().Be(Icons.Material.Filled.ArrowDropDown);
+    }
+
+    /// <summary>
+    /// Flattening the button does not flatten its menu, which needs elevation to read against the page.
+    /// </summary>
+    [Test]
+    public void DropShadowDoesNotFlattenTheMenu()
+    {
+        Context.Render<MudPopoverProvider>();
+        var comp = Context.Render<MudSplitButton>(parameters => parameters
+            .Add(p => p.Label, "Reply")
+            .Add(p => p.DropShadow, false)
+            .Add(p => p.ChildContent, MenuItems("Reply All")));
+
+        comp.FindComponent<MudButtonGroup>().Instance.DropShadow.Should().BeFalse();
+        comp.FindComponent<MudMenu>().Instance.DropShadow.Should().BeTrue();
     }
 
     /// <summary>

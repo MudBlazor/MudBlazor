@@ -13,13 +13,13 @@
     <MudButton Class="mud-split-button-primary"
                StartIcon="@StartIcon"
                EndIcon="@EndIcon"
+               Size="@Size"
                ButtonType="@ButtonType"
                Href="@Href"
                Target="@Target"
                Rel="@Rel"
                Disabled="@Disabled"
                Ripple="@Ripple"
-               DropShadow="@DropShadow"
                OnClick="@OnClick">
         @if (ButtonContent is not null)
         {
@@ -31,20 +31,19 @@
         }
     </MudButton>
     <MudMenu Class="mud-split-button-toggle"
-             Icon="@ToggleIcon"
+             Icon="@GetToggleIcon()"
              AriaLabel="@ToggleAriaLabel"
              Color="@Color"
              Size="@Size"
              Variant="@Variant"
-             Disabled="@(Disabled || ToggleDisabled)"
+             Disabled="@GetToggleDisabled()"
              Ripple="@Ripple"
-             DropShadow="@DropShadow"
              Dense="@Dense"
              AnchorOrigin="@AnchorOrigin"
              TransformOrigin="@TransformOrigin"
              PopoverClass="@PopoverClass"
              ListClass="@ListClass"
-             Open="@_openState.Value"
+             Open="@GetMenuOpen()"
              OpenChanged="@OnMenuOpenChangedAsync">
         @ChildContent
     </MudMenu>

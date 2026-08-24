@@ -37,6 +37,32 @@ namespace MudBlazor
         private Task OnMenuOpenChangedAsync(bool open) => _openState.SetValueAsync(open);
 
         /// <summary>
+        /// Whether the menu toggle is unavailable, from either its own or the whole button's disabled state.
+        /// </summary>
+        private bool GetToggleDisabled() => Disabled || ToggleDisabled;
+
+        /// <summary>
+        /// Falls back to the default arrow when <see cref="ToggleIcon" /> is blank.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="MudMenu" /> drops its activator entirely when it has no icon, label or activator content,
+        /// which would take the whole toggle segment with it and leave the menu unreachable.
+        /// </remarks>
+        private string GetToggleIcon() => string.IsNullOrWhiteSpace(ToggleIcon)
+            ? Icons.Material.Filled.ArrowDropDown
+            : ToggleIcon;
+
+        /// <summary>
+        /// Whether the menu should render open.
+        /// </summary>
+        /// <remarks>
+        /// A disabled toggle keeps its menu shut even when <see cref="Open" /> was set programmatically:
+        /// <see cref="MudMenu" /> assigns its open state before checking whether it is disabled, so without this
+        /// the popover and its overlay would appear for a menu whose keyboard handling was never wired up.
+        /// </remarks>
+        private bool GetMenuOpen() => _openState.Value && !GetToggleDisabled();
+
+        /// <summary>
         /// The text of the primary action.
         /// </summary>
         /// <remarks>
@@ -172,10 +198,11 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
-        /// Displays a shadow.
+        /// Displays a shadow under the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>true</c>.  Applies to the button itself; the open menu keeps its own elevation so it
+        /// stays legible against the content behind it.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.SplitButton.Appearance)]
