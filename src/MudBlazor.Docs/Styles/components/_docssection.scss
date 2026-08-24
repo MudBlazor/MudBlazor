@@ -72,6 +72,15 @@
         border-radius: 4px;
         padding: 4px 8px;
 
+        /*
+          Centre the icons against the glyphs rather than the line box. The
+          inherited 1.75 line-height leaves asymmetric leading above and below
+          the text, which parked the play and chevron icons ~1px low.
+        */
+        .mud-button-label {
+          line-height: 1;
+        }
+
         &.file-button {
           font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
           color: var(--mud-palette-text-secondary);
