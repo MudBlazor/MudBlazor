@@ -1,4 +1,5 @@
 ﻿using AwesomeAssertions;
+using MudBlazor.Utilities.Exceptions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
@@ -350,6 +351,22 @@ namespace MudBlazor.UnitTests.Components
             {
                 typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException).Should().Be(ex.InnerException.GetType());
             }
+        }
+
+        /// <summary>
+        /// A mismatched group must leave the typed parent null rather than fail the cast, because every consumer of it runs from the render and disposal paths where an InvalidCastException takes a Blazor Server circuit down before the diagnostic is ever shown.
+        /// </summary>
+        [Test]
+        public void Radio_TypeMismatch_ShouldNotLeaveACastThatThrows()
+        {
+            var radio = new MudRadio<string>();
+            var group = new MudRadioGroup<char>();
+
+            // The cascade is assigned before the group rejects it, so the mismatched parent stays behind.
+            var assign = () => radio.IMudRadioGroup = group;
+            assign.Should().Throw<GenericTypeMismatchException>();
+
+            radio.MudRadioGroup.Should().BeNull();
         }
 
         /// <summary>

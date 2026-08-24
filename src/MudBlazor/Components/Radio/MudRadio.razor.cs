@@ -143,7 +143,9 @@ namespace MudBlazor
 
         internal bool Checked { get; private set; }
 
-        internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
+        // A mismatched group still lands here, because the cascade is stored before CheckGenericTypeMatch rejects it.
+        // Casting it hard turns that diagnostic into an InvalidCastException from the render path, which takes the circuit with it.
+        internal MudRadioGroup<T>? MudRadioGroup => IMudRadioGroup as MudRadioGroup<T>;
 
         internal void SetChecked(bool value)
         {
