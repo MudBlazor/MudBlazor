@@ -9,6 +9,8 @@
 /src/package.json @meenzen
 /src/tsconfig.json @meenzen
 /src/MudBlazor/build.mts @meenzen
+/src/MudBlazor/bunfig.toml @meenzen
+/src/MudBlazor/test-setup.ts @meenzen
 /src/MudBlazor/tsconfig.json @meenzen
 /src/MudBlazor.Docs/build.mjs @meenzen
 /tools/watch.cs @meenzen
