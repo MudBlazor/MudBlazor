@@ -13,7 +13,10 @@ namespace MudBlazor
         /// <summary>
         /// Stores the rendered element reference without re-rendering this button.
         /// </summary>
-        protected readonly EventCallback<ElementReference> _captureElementReference;
+        /// <remarks>
+        /// Only the button markup in this assembly binds it, so it stays off the public API surface.
+        /// </remarks>
+        private protected readonly EventCallback<ElementReference> _captureElementReference;
 
         protected MudBaseButton()
         {
