@@ -322,38 +322,34 @@ namespace MudBlazor
 
                 if (effectiveElementId is not null)
                 {
-                    await SubscribeToKeyInterceptorAsync(effectiveElementId);
+                    var options = new KeyInterceptorOptions(
+                        [
+                            // prevent scrolling page
+                            new(" ", preventDown: "key+none", preventUp: "key+none"),
+                            // prevent scrolling page and move focus to previous item
+                            new("ArrowUp", preventDown: "key+none"),
+                            // prevent scrolling page and move focus to next item
+                            new("ArrowDown", preventDown: "key+none"),
+                            new("Home", preventDown: "key+none"),
+                            new("End", preventDown: "key+none"),
+                            new("Enter", preventDown: "key+none"),
+                            new("NumpadEnter", preventDown: "key+none")
+                        ]);
+
+                    await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
+                        .When(CanHandleKeys, builder => builder
+                            .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                            .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                            .OnKeyDown("Home", HandleHomeAsync)
+                            .OnKeyDown("End", HandleEndAsync)
+                            .OnKeyDown(" ", HandleSpaceAsync)
+                            .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+
                     _subscribedElementId = effectiveElementId;
                 }
             }
 
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        private Task SubscribeToKeyInterceptorAsync(string elementId)
-        {
-            var options = new KeyInterceptorOptions(
-                [
-                    // prevent scrolling page
-                    new(" ", preventDown: "key+none", preventUp: "key+none"),
-                    // prevent scrolling page and move focus to previous item
-                    new("ArrowUp", preventDown: "key+none"),
-                    // prevent scrolling page and move focus to next item
-                    new("ArrowDown", preventDown: "key+none"),
-                    new("Home", preventDown: "key+none"),
-                    new("End", preventDown: "key+none"),
-                    new("Enter", preventDown: "key+none"),
-                    new("NumpadEnter", preventDown: "key+none")
-                ]);
-
-            return KeyInterceptorService.SubscribeAsync(elementId, options, keys => keys
-                .When(CanHandleKeys, builder => builder
-                    .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                    .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                    .OnKeyDown("Home", HandleHomeAsync)
-                    .OnKeyDown("End", HandleEndAsync)
-                    .OnKeyDown(" ", HandleSpaceAsync)
-                    .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
         }
 
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
