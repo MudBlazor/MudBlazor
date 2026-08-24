@@ -96,7 +96,7 @@
                                 bool showSelectedTemplate = ItemSelectedTemplate is not null && isSelected;
                                 bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
                                 var captureIndex = index;
-                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" KeyboardEnabled="false" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (showDisabledTemplate)
                                     {
                                         @ItemDisabledTemplate!(item)

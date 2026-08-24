@@ -13,6 +13,42 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ListTests : BunitTest
     {
+        /// <summary>
+        /// List items install their own key interceptor by default.
+        /// </summary>
+        [Test]
+        public void ListItems_RegisterKeyInterceptorsByDefault()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+
+            keyInterceptorService.ObserversCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Items skip their key interceptor when keyboard handling is delegated to a parent component.
+        /// </summary>
+        [Test]
+        public async Task KeyboardDisabled_SkipsAndRemovesKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudListItem<string>>(parameters => parameters
+                .Add(x => x.KeyboardEnabled, false));
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.KeyboardEnabled, true));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.KeyboardEnabled, false));
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
         [Test]
         public async Task ListItem_RendersText_AndSecondaryText()
         {

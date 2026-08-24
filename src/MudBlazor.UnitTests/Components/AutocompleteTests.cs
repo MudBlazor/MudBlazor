@@ -21,6 +21,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        /// <summary>
+        /// Autocomplete owns result keyboard navigation without installing an interceptor for every result.
+        /// </summary>
+        [Test]
+        public async Task AutocompleteResults_DoNotRegisterKeyInterceptors()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(["one", "two", "three"])));
+
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "o" });
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Should().HaveCount(3));
+
+            provider.FindComponents<MudListItem<string>>().Should().OnlyContain(x => !x.Instance.KeyboardEnabled);
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
         [Test]
         public async Task Autocomplete_Should_Handle_Converter_WithStrict()
         {
