@@ -966,7 +966,6 @@ namespace MudBlazor.UnitTests.Components
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be("INVALID", "the text the user typed must stay put");
             ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(end.ToShortDateString(), "the end date still converts and was not edited");
 
-            // Fixing the start recovers the whole range rather than only half of it.
             await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
             picker.DateRange.Should().Be(new DateRange(start, end));
         }
