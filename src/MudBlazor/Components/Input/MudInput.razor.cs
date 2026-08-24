@@ -323,6 +323,18 @@ namespace MudBlazor
             }
         }
 
+        // The clear button lives inside components that open on mousedown, such as MudSelect and the pickers, so its own mousedown must not reach them.
+        // A `@onmousedown:stopPropagation` directive cannot sit beside `@onmousedown` on a component, so both travel through the splat instead, which is what the directive compiles to anyway.
+        // Built once per input because the callbacks are bound to instance methods and never change.
+        private Dictionary<string, object>? _clearButtonAttributes;
+
+        private Dictionary<string, object> ClearButtonAttributes => _clearButtonAttributes ??= new Dictionary<string, object>(3)
+        {
+            ["onmousedown"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseDownAsync),
+            ["__internal_stopPropagation_onmousedown"] = true,
+            ["onmouseleave"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseLeaveAsync),
+        };
+
         protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
         {
             IsClearing = true;
