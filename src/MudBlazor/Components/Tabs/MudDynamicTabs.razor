@@ -24,8 +24,6 @@
     /// </summary>
     public RenderFragment Render => base.BuildRenderTree;
 
-    @* The close button sits inside the tab header, whose own @onkeydown already reaches it by bubbling and carries this same panel.
-       Wiring the button as well made one Delete or Backspace raise CloseTab twice, the second time for a panel the consumer had just removed. *@
     private RenderFragment<MudTabPanel> MudTabPanelPanelHeader => context =>
         @<MudRender>
             @if (context.ShowCloseIcon)
