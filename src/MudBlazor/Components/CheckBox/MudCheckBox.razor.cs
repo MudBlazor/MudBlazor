@@ -15,6 +15,7 @@ namespace MudBlazor
     {
         private readonly string _elementId = Identifier.Create("checkbox");
         private readonly string _ariaId = Identifier.Create("cbox-aria-");
+        private bool _keyInterceptorSubscribed;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -160,7 +161,7 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
+            if (KeyboardEnabled && !_keyInterceptorSubscribed)
             {
                 var options = new KeyInterceptorOptions(
                     "mud-button-root",
@@ -178,7 +179,15 @@ namespace MudBlazor
                         .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
                         .OnKeyDown("Backspace", HandleBackspaceAsync)
                         .OnKeyDown(" ", HandleSpaceAsync)));
+
+                _keyInterceptorSubscribed = true;
             }
+            else if (!KeyboardEnabled && _keyInterceptorSubscribed)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                _keyInterceptorSubscribed = false;
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -224,9 +233,10 @@ namespace MudBlazor
         {
             await base.DisposeAsyncCore();
 
-            if (IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable && _keyInterceptorSubscribed)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                _keyInterceptorSubscribed = false;
             }
         }
     }

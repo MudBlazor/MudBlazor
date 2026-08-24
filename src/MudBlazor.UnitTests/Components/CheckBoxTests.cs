@@ -346,6 +346,27 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => checkbox.ReadValue.Should().Be(null));
         }
 
+        /// <summary>
+        /// Disabling keyboard handling avoids and removes the checkbox key interceptor.
+        /// </summary>
+        [Test]
+        public async Task KeyboardEnabled_ControlsKeyInterceptorLifetime()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(x => x.KeyboardEnabled, false));
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.KeyboardEnabled, true));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.KeyboardEnabled, false));
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
         [Test]
         [TestCase(Color.Default, Color.Primary)]
         [TestCase(Color.Primary, Color.Secondary)]

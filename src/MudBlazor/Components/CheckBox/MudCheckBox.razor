@@ -7,7 +7,8 @@
         <label class="@LabelClassname" id="@_elementId" @onkeydown="HandleKeyDownAsync" @onclick:stopPropagation="@StopClickPropagation">
             <span class="@IconClassname">
                 @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
-                <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
+                @*note: when keyboard handling is off there is no key interceptor to swallow Space, so suppress the browser's own keyup activation instead. Only keyup is suppressed, so Tab still moves focus.*@
+                <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onkeyup:preventDefault="@(!KeyboardEnabled)" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
                 <MudIcon Disabled="@Disabled" Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
             </span>
             @if (!string.IsNullOrEmpty(Label))
