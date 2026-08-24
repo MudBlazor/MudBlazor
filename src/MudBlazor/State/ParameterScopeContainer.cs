@@ -20,8 +20,8 @@ internal class ParameterScopeContainer : IParameterScopeContainer
 {
     private readonly IParameterStatesReader _parameterStatesReader;
 
-    // A scope holds a handful of parameters, so an array scanned linearly beats any hashed lookup:
-    // it is materialized once per component instance and read far less often than it is built.
+    // A scope holds a handful of parameters, so an array scanned linearly beats any hashed lookup.
+    // The scope is materialized once per component instance and read far less often than it is built.
     private IParameterComponentLifeCycle[]? _parameters;
 
     // Cache handler count for fast path optimization
@@ -84,8 +84,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// Registering the same parameter twice is a component bug, so it must not be silently accepted.
     /// </summary>
     /// <remarks>
-    /// A scope holds a handful of parameters whose names are compile-time literals, so pairwise comparison is cheaper
-    /// than building a hashed set for the check.
+    /// A scope holds a handful of parameters whose names are compile-time literals, so pairwise comparison is cheaper than building a hashed set for the check.
     /// </remarks>
     private static void ThrowOnDuplicates(IParameterComponentLifeCycle[] parameters)
     {
@@ -106,7 +105,8 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and materializes the parameters.
     /// </summary>
     /// <remarks>
-    /// This method is designed for performance optimization. By calling this method, the parameters are materialized immediately instead of waiting for the Blazor lifecycle to access the values.
+    /// This method is designed for performance optimization.
+    /// By calling this method, the parameters are materialized immediately instead of waiting for the Blazor lifecycle to access the values.
     /// This helps avoid potential slowdowns in rendering speed that could occur if the parameters were materialized during the Blazor lifecycle.
     /// </remarks>
     public void ForceParametersAttachment() => _ = Parameters;
