@@ -22,9 +22,11 @@ namespace MudBlazor
         internal string ElementId { get; } = Identifier.Create("list-item");
 
         private readonly ParameterState<bool> _expandedState;
+        private readonly EventCallback<ElementReference> _captureElementReference;
 
         public MudListItem()
         {
+            _captureElementReference = MudElement.CaptureRef(reference => _elementReference = reference);
             using var registerScope = CreateRegisterScope();
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)

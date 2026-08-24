@@ -608,5 +608,36 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(comp.Instance.Recover);
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
+
+        /// <summary>
+        /// Buttons still receive their element reference, so <c>FocusAsync</c> has an element to focus.
+        /// </summary>
+        [Test]
+        public async Task ButtonsCaptureTheirElementReference()
+        {
+            var button = Context.Render<MudButton>();
+            var fab = Context.Render<MudFab>();
+            var iconButton = Context.Render<MudIconButton>();
+
+            var focus = async () =>
+            {
+                await button.InvokeAsync(async () => await button.Instance.FocusAsync());
+                await fab.InvokeAsync(async () => await fab.Instance.FocusAsync());
+                await iconButton.InvokeAsync(async () => await iconButton.Instance.FocusAsync());
+            };
+
+            await focus.Should().NotThrowAsync();
+        }
+
+        /// <summary>
+        /// Capturing the element reference must not cost a button a second render (#13519).
+        /// </summary>
+        [Test]
+        public void ButtonsRenderOnceWhenElementReferenceIsCaptured()
+        {
+            Context.Render<MudButton>().RenderCount.Should().Be(1);
+            Context.Render<MudFab>().RenderCount.Should().Be(1);
+            Context.Render<MudIconButton>().RenderCount.Should().Be(1);
+        }
     }
 }

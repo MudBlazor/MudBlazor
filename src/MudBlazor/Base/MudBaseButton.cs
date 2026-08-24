@@ -11,6 +11,16 @@ namespace MudBlazor
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
+        /// Stores the rendered element reference without re-rendering this button.
+        /// </summary>
+        protected readonly EventCallback<ElementReference> _captureElementReference;
+
+        protected MudBaseButton()
+        {
+            _captureElementReference = MudElement.CaptureRef(reference => _elementReference = reference);
+        }
+
+        /// <summary>
         /// The custom activation behavior.
         /// </summary>
         /// <remarks>
