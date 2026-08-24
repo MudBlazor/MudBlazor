@@ -1,0 +1,88 @@
+@page "/components/splitbutton"
+
+<DocsPage>
+    <DocsPageHeader Title="Split Button" Component="@nameof(MudSplitButton)">
+        <Description>
+            <MudText>
+                A split button pairs one primary action with a menu of related actions. Use it when a command has an
+                obvious default that most people want, plus a few close variations worth keeping one click away.
+            </MudText>
+            <MudText Class="mt-2">
+                See also: <MudLink Href="/components/buttongroup">Button Group</MudLink>,
+                <MudLink Href="/components/menu">Menu</MudLink>.
+            </MudText>
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    <CodeInline>Label</CodeInline> and <CodeInline>OnClick</CodeInline> define the primary action.
+                    The child content is the menu, so anything <CodeInline>MudMenu</CodeInline> accepts works here —
+                    including <CodeInline>MudDivider</CodeInline> and nested menus. Clicking the toggle opens the menu
+                    and never raises <CodeInline>OnClick</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SplitButtonBasicExample)">
+                <SplitButtonBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Two-way Binding">
+                <Description>
+                    <CodeInline>@("@bind-Open")</CodeInline> both opens the menu and reports it closing, so the menu
+                    state can be driven from elsewhere on the page.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SplitButtonBindingExample)">
+                <SplitButtonBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>
+                    <CodeInline>Color</CodeInline>, <CodeInline>Variant</CodeInline> and <CodeInline>Size</CodeInline>
+                    apply to both segments, and <CodeInline>ToggleIcon</CodeInline> replaces the drop-down arrow.
+                    <CodeInline>ToggleDisabled</CodeInline> disables only the menu, leaving the primary action usable;
+                    <CodeInline>Disabled</CodeInline> disables both.
+                    <MudText Class="mt-2" Typo="Typo.body2">
+                        The toggle shows only an icon, so it carries its own accessible name. It defaults to
+                        <CodeInline>"More actions"</CodeInline> — set <CodeInline>ToggleAriaLabel</CodeInline> to
+                        something that names the specific menu whenever there is more than one split button on a page.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SplitButtonCustomizationExample)">
+                <SplitButtonCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Keyboard and Accessibility">
+                <Description>
+                    <MudText>
+                        The two segments are separate tab stops. The toggle follows the
+                        <MudLink Href="https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/" Target="_blank">WAI-ARIA menu button pattern</MudLink>:
+                        it reports <CodeInline>aria-haspopup</CodeInline> and an <CodeInline>aria-expanded</CodeInline>
+                        state that tracks the menu.
+                    </MudText>
+                    <MudSimpleTable Class="mt-4" Dense="true" Bordered="true">
+                        <thead>
+                            <tr><th>Key</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><CodeInline>Tab</CodeInline></td><td>Moves between the primary action and the toggle.</td></tr>
+                            <tr><td><CodeInline>Enter</CodeInline> / <CodeInline>Space</CodeInline></td><td>Invokes the focused segment — running the primary action, or opening the menu.</td></tr>
+                            <tr><td><CodeInline>Up</CodeInline> / <CodeInline>Down</CodeInline></td><td>Moves through the menu items while the menu is open.</td></tr>
+                            <tr><td><CodeInline>Escape</CodeInline></td><td>Closes the menu and returns focus to the toggle.</td></tr>
+                        </tbody>
+                    </MudSimpleTable>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
