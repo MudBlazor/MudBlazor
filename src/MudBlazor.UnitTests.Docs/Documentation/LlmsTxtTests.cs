@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -150,5 +150,25 @@ public class LlmsTxtTests
 
         deadLinks.Should().BeEmpty(
             "every llms.txt link must resolve; a renamed docs route fails here instead of rotting silently");
+    }
+
+    /// <summary>
+    /// Verifies llms.txt links into every top-level docs area, so a curated file cannot silently drop one.
+    /// </summary>
+    /// <remarks>
+    /// These are the six areas <see cref="NavigationSection" /> models plus the two route prefixes it
+    /// does not, <c>/getting-started</c> and <c>/mud</c>.
+    /// </remarks>
+    [TestCase("/getting-started")]
+    [TestCase("/components")]
+    [TestCase("/api")]
+    [TestCase("/features")]
+    [TestCase("/customization")]
+    [TestCase("/utilities")]
+    [TestCase("/mud")]
+    public void CoversDocsArea(string prefix)
+    {
+        GetLinkedSitePaths().Should().Contain(path => path.StartsWith(prefix, StringComparison.Ordinal),
+            $"llms.txt must point an agent at the {prefix} area of the docs");
     }
 }
