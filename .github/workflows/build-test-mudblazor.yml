@@ -59,16 +59,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - project-path: src/MudBlazor.UnitTests
-            project-name: MudBlazor.UnitTests
-            generate-coverage: true
-          - project-path: src/MudBlazor.UnitTests.Docs
-            project-name: MudBlazor.UnitTests.Docs
-            generate-coverage: true
-          - project-path: src/MudBlazor.UnitTests.Analyzers
-            project-name: MudBlazor.UnitTests.Analyzers
-            generate-coverage: false
+        project-path:
+          [
+            "src/MudBlazor.UnitTests",
+            "src/MudBlazor.UnitTests.Docs",
+            "src/MudBlazor.UnitTests.Analyzers",
+          ]
 
     steps:
       - uses: actions/checkout@v7
@@ -80,44 +76,56 @@ jobs:
 
       - name: Test ${{ matrix.project-path }}
         run: |
-          coverage_args=()
-          if [ "${{ matrix.generate-coverage }}" = "true" ]; then
-            coverage_args=(
-              --coverlet
-              --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute"
-              --coverlet-exclude-by-attribute "CompilerGeneratedAttribute"
-              --coverlet-exclude-by-file "**/*.g.cs"
-              --coverlet-include "[MudBlazor]*"
-              --coverlet-skip-auto-props
-            )
-          fi
-
           dotnet test \
           --project ${{ matrix.project-path }} \
           -c Release \
           --no-build \
           --hangdump \
           --hangdump-timeout 60s \
-          "${coverage_args[@]}" \
+          --coverlet \
+          --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute" \
+          --coverlet-exclude-by-attribute "CompilerGeneratedAttribute" \
+          --coverlet-exclude-by-file "**/*.g.cs" \
+          --coverlet-include "[MudBlazor]*" \
+          --coverlet-skip-auto-props \
           --report-spekt-junit \
           --report-spekt-junit-filename junit.xml \
           --results-directory ${{ matrix.project-path }}/TestResults
 
+      - name: Extract project name
+        id: project
+        run: |
+          path="${{ matrix.project-path }}"
+          echo "name=${path##*/}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report-${{ steps.project.outputs.name }}
+          path: |
+            ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+            ${{ matrix.project-path }}/TestResults/junit.xml
+
+  upload-codecov:
+    needs: build-test
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download coverage report
+        uses: actions/download-artifact@v8
+
       - name: Publish coverage
-        if: ${{ !cancelled() && matrix.generate-coverage }}
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
-          flags: ${{ matrix.project-name }}
 
       - name: Publish test results
-        if: ${{ !cancelled() }}
         uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ matrix.project-path }}/TestResults/junit.xml
-          flags: ${{ matrix.project-name }}
           report_type: test_results
 
   build-only:
