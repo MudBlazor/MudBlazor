@@ -629,6 +629,41 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
         }
 
+        /// <summary>
+        /// A debounced field commits from oninput just like an Immediate one, so its own value echo must not rewrite the text the user is still typing.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Debounced_ValueEcho_DoesNotRewriteTextWhileTyping()
+        {
+            // The debounce commit echoes back through the parent binding, and that echo used to reformat mid-typing because the suppression read Immediate, which a debounced field leaves false.
+            // "1." became "1", so continuing with "50" produced 150 instead of 1.50.
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 200d)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Instance.Immediate.Should().BeFalse();
+            comp.Instance.EffectiveImmediate.Should().BeTrue("a debounced field still commits from oninput");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "1" });
+            await comp.Find("input").InputAsync("1");
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "." });
+            await comp.Find("input").InputAsync("1.");
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+
+            // The parent's two-way binding hands the committed value straight back.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1d));
+
+            comp.Instance.ReadText.Should().Be("1.", "the trailing separator the user typed must survive the echo");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "5" });
+            await comp.Find("input").InputAsync("1.5");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1.5d));
+        }
+
         [Test]
         public async Task NumericField_Immediate_WithCulture_CanTypeZeroAfterDecimalPoint()
         {
