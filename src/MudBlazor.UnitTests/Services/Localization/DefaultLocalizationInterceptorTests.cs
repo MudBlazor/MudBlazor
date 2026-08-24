@@ -255,8 +255,7 @@ public class DefaultLocalizationInterceptorTests
     /// A key that is not a resource must keep reporting itself as missing, so it is never served from the cache.
     /// </summary>
     /// <remarks>
-    /// Callers pass arbitrary strings through this path, such as a conversion exception message, so caching a miss
-    /// would let the cache grow without bound.
+    /// Callers pass arbitrary strings through this path, such as a conversion exception message, so caching a miss would let the cache grow without bound.
     /// </remarks>
     [Test]
     public void UnknownKey_RepeatedReads_KeepReportingResourceNotFound()

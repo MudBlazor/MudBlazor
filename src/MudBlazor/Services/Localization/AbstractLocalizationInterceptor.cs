@@ -70,12 +70,11 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
     private sealed class InvariantLanguageResourceLocalizer(IStringLocalizer inner) : IStringLocalizer
     {
         // Reading always happens under the invariant culture, so a key's value never changes and can be cached.
-        // Only found keys are cached: callers also pass arbitrary strings, such as a conversion exception message,
-        // and those must not accumulate.
+        // Only found keys are cached, because callers also pass arbitrary strings such as a conversion exception message and those must not accumulate.
         private readonly ConcurrentDictionary<string, LocalizedString> _cache = new(StringComparer.Ordinal);
 
-        // The swap is repeated per member rather than shared through a Func, which would allocate a closure on every
-        // lookup. Components read localized strings while rendering, so this runs in the render loop.
+        // The swap is repeated per member rather than shared through a Func, which would allocate a closure on every lookup.
+        // Components read localized strings while rendering, so this runs in the render loop.
         // Each swap and restore is synchronous with no await in between, so the culture never leaks to another flow.
         public LocalizedString this[string name]
         {
