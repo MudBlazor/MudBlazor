@@ -18,6 +18,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
     private readonly string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+    private bool _hasKeyInterceptorSubscription;
 
     internal readonly ParameterState<bool> SelectedState;
 
@@ -414,21 +415,33 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender)
+        var needsKeyInterceptor = CanHandleKeys() && (IsButton || IsClosable);
+        if (needsKeyInterceptor && !_hasKeyInterceptorSubscription)
         {
-            var options = new KeyInterceptorOptions(
-                "mud-chip",
-                [
-                    new(" ", preventDown: "key+none", preventUp: "key+none"),
-                    new("Backspace", preventDown: "key+none"),
-                    new("Delete", preventDown: "key+none")
-                ]);
-
-            await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
-                .When(CanHandleKeys, builder => builder
-                    .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
-                    .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
+            await SubscribeToKeyInterceptorAsync();
+            _hasKeyInterceptorSubscription = true;
         }
+        else if (!needsKeyInterceptor && _hasKeyInterceptorSubscription)
+        {
+            await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
+            _hasKeyInterceptorSubscription = false;
+        }
+    }
+
+    private Task SubscribeToKeyInterceptorAsync()
+    {
+        var options = new KeyInterceptorOptions(
+            "mud-chip",
+            [
+                new(" ", preventDown: "key+none", preventUp: "key+none"),
+                new("Backspace", preventDown: "key+none"),
+                new("Delete", preventDown: "key+none")
+            ]);
+
+        return KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
+            .When(CanHandleKeys, builder => builder
+                .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
+                .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
     }
 
     private bool CanHandleKeys() => !GetDisabled() && !GetReadOnly();
@@ -477,9 +490,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
                 await ChipSet.RemoveAsync(this);
             }
 
-            if (IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable && _hasKeyInterceptorSubscription)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
+                _hasKeyInterceptorSubscription = false;
             }
         }
         catch (Exception)
