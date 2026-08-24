@@ -635,8 +635,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NumericField_Debounced_ValueEcho_DoesNotRewriteTextWhileTyping()
         {
-            // The debounce commit echoes back through the parent binding, and that echo used to reformat
-            // mid-typing because the suppression read Immediate, which a debounced field leaves false.
+            // The debounce commit echoes back through the parent binding, and that echo used to reformat mid-typing because the suppression read Immediate, which a debounced field leaves false.
             // "1." became "1", so continuing with "50" produced 150 instead of 1.50.
             var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
