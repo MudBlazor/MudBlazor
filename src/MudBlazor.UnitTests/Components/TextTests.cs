@@ -29,6 +29,18 @@ public class TextTests : BunitTest
         comp.MarkupMatches("""<p class="mud-typography mud-typography-body1"></p>""");
     }
 
+    /// <summary>
+    /// The typography element is rendered directly, without a nested component between the caller and the DOM.
+    /// </summary>
+    [Test]
+    public void Text_ShouldRenderItsElementWithoutAWrapperComponent()
+    {
+        var comp = Context.Render<MudText>(parameters => parameters.AddChildContent("Flat white"));
+
+        comp.FindComponents<MudElement>().Should().BeEmpty();
+        comp.Find("p.mud-typography").TextContent.Should().Be("Flat white");
+    }
+
     [Test]
     public void UserAttributes_ShouldBeSplattedOnTheRootElement()
     {
